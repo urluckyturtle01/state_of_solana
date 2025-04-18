@@ -18,7 +18,7 @@ export default function Sidebar() {
   return (
     <div className="h-screen w-48 bg-black text-gray-200 flex flex-col fixed border-r border-gray-900 shadow-xl">
       <div className="px-4 pt-4 pb-3">
-        <div className="relative w-32 h-7 grayscale brightness-200 opacity-95">
+        <div className="relative w-32 h-7 grayscale brightness-300 opacity-100">
           <Image
             src="https://topledger.xyz/assets/images/logo/topledger-full.svg?imwidth=384"
             alt="TopLedger Logo"

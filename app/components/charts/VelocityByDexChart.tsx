@@ -13,23 +13,16 @@ import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
 import TimeFilterSelector from './TimeFilter';
+import { tvlVelocityColors } from './TvlVelocityChart';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
   return (
-    <svg 
-      className={className} 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 2v6h-6"></path>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+      <path d="M3 22v-6h6"></path>
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
     </svg>
   );
 };
@@ -813,9 +806,9 @@ const VelocityByDexChart: React.FC<VelocityByDexChartProps> = ({
                           
                           x={(d) => indexScale(d.idx)}
                           y={(d) => brushVelocityScale(d.velocity)}
-                          stroke={getColorForProgramType(firstProgramType, activeProgramTypes)}
+                          stroke={tvlVelocityColors.tvlBar}
                           strokeWidth={1}
-                          opacity={0.7} // Slightly more opaque
+                          opacity={0.5} // Match TVL velocity chart opacity
                           curve={curveMonotoneX}
                         />
                       );
