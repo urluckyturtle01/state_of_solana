@@ -10,6 +10,7 @@ import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint
 import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/velocityByDexData";
 import { getLatestVolumeStats } from "../../api/volumeData";
 import { getLatestTvlStats } from "../../api/tvlData";
+import { getLatestTradersStats } from "../../api/tradersData";
 
 // Define colors for program types (same as in VelocityByDexChart)
 const baseColors = [
@@ -54,6 +55,14 @@ export default function DexSummaryPage() {
     isPositive: true
   });
   const [isTvlStatsLoading, setIsTvlStatsLoading] = useState(true);
+
+  // Add state for traders data
+  const [tradersStats, setTradersStats] = useState({
+    cumulativeTraders: 0,
+    percentChange: 0,
+    isPositive: true
+  });
+  const [isTradersLoading, setIsTradersLoading] = useState(true);
 
   // Add state for download button loading
   const [isTvlDownloading, setIsTvlDownloading] = useState(false);
@@ -128,6 +137,23 @@ export default function DexSummaryPage() {
     fetchTvlStats();
   }, []);
 
+  // Fetch traders data
+  useEffect(() => {
+    const fetchTradersData = async () => {
+      setIsTradersLoading(true);
+      try {
+        const stats = await getLatestTradersStats();
+        setTradersStats(stats);
+      } catch (error) {
+        console.error('Error fetching traders data:', error);
+      } finally {
+        setIsTradersLoading(false);
+      }
+    };
+
+    fetchTradersData();
+  }, []);
+
   // Format the cumulative volume for display in trillions
   const formatCumulativeVolume = (value: number) => {
     if (value >= 1) {
@@ -141,6 +167,11 @@ export default function DexSummaryPage() {
   // Format the current TVL for display in billions
   const formatCurrentTvl = (value: number) => {
     return `$${value.toFixed(2)}B`;
+  };
+
+  // Format the cumulative traders in millions
+  const formatCumulativeTraders = (value: number) => {
+    return `${value.toFixed(1)}M`;
   };
 
   // Function to download TVL velocity data as CSV
@@ -274,7 +305,7 @@ export default function DexSummaryPage() {
           value={isTvlStatsLoading ? "0" : formatCurrentTvl(tvlStats.currentTvl)}
           trend={isTvlStatsLoading ? undefined : { 
             value: parseFloat(tvlStats.percentChange.toFixed(1)), 
-            label: "vs last day" 
+            label: "vs yesterday" 
           }}
           icon={<TvlIcon />}
           variant="blue"
@@ -283,11 +314,14 @@ export default function DexSummaryPage() {
         
         <Counter 
           title="All-time Traders"
-          value="3.2M"
-          trend={{ value: 7.8, label: "vs last month" }}
+          value={isTradersLoading ? "0" : formatCumulativeTraders(tradersStats.cumulativeTraders)}
+          trend={isTradersLoading ? undefined : { 
+            value: parseFloat(tradersStats.percentChange.toFixed(1)), 
+            label: "vs yesterday" 
+          }}
           icon={<UsersIcon />}
           variant="purple"
-          isLoading={false}
+          isLoading={isTradersLoading}
         />
       </div>
       
