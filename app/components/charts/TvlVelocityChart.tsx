@@ -61,12 +61,51 @@ const formatDate = (dateStr: string, timeFilter?: TimeFilter) => {
   }
 };
 
-const colors = {
+export const tvlVelocityColors = {
   axisLines: '#374151',
   tickLabels: '#6b7280',
   tvlBar: '#60a5fa',
   velocityLine: '#a78bfa',
   grid: '#1f2937',
+};
+
+// Export a function to get chart colors for external use
+export const getTvlVelocityChartColors = () => {
+  return {
+    tvl: tvlVelocityColors.tvlBar,
+    velocity: tvlVelocityColors.velocityLine
+  };
+};
+
+// Helper function to get available metrics from the data
+const getAvailableChartMetrics = (data: TvlVelocityDataPoint[], colors: { tvl: string, velocity: string }) => {
+  if (!data || data.length === 0) return [];
+  
+  // Get the first data point to extract property names
+  const samplePoint = data[0];
+  
+  // Filter out date and any other non-metric properties
+  return Object.keys(samplePoint)
+    .filter(key => key !== 'date')
+    .map(key => {
+      // Use proper display names for metrics
+      const displayNames: Record<string, string> = {
+        tvl: 'TVL',
+        velocity: 'Velocity'
+      };
+      
+      // Use the mapped display name or fallback to capitalized key
+      const displayName = displayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
+      
+      // Determine shape and color based on metric name
+      const isLine = key === 'velocity';
+      return {
+        key,
+        displayName,
+        shape: isLine ? 'circle' : 'square',
+        color: isLine ? colors.velocity : colors.tvl
+      };
+    });
 };
 
 const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({ 
@@ -501,8 +540,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
           <ChartTooltip
             title={formatDate(tooltip.dataPoint.date, activeTimeFilter)}
             items={[
-              { color: colors.tvlBar, label: 'TVL', value: formatTvl(tooltip.dataPoint.tvl), shape: 'square' },
-              { color: colors.velocityLine, label: 'Velocity', value: formatVelocity(tooltip.dataPoint.velocity), shape: 'circle' }
+              { color: tvlVelocityColors.tvlBar, label: 'TVL', value: formatTvl(tooltip.dataPoint.tvl), shape: 'square' },
+              { color: tvlVelocityColors.velocityLine, label: 'Velocity', value: formatVelocity(tooltip.dataPoint.velocity), shape: 'circle' }
             ]}
             top={tooltip.top - (isModal ? 50 : 400)}
             left={tooltip.left - (isModal ? 50 : 240)}
@@ -551,11 +590,11 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               return (
                   <svg width={width} height={height} className="overflow-visible">
                     <Group left={margin.left} top={margin.top}>
-                    <GridRows scale={tvlScale} width={innerWidth} stroke={colors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
+                    <GridRows scale={tvlScale} width={innerWidth} stroke={tvlVelocityColors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
                     
                     {/* Display active brush status */}
                     {activeIsBrushActive && (
-                      <text x={0} y={-8} fontSize={8} fill={colors.velocityLine} textAnchor="start">
+                      <text x={0} y={-8} fontSize={8} fill={tvlVelocityColors.velocityLine} textAnchor="start">
                         {`Filtered: ${displayData.length} item${displayData.length !== 1 ? 's' : ''}`}
                       </text>
                     )}
@@ -568,14 +607,14 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                         if (barX === undefined || barHeight < 0) return null;
                         return (
                         <Bar key={`bar-${d.date}`} x={barX} y={innerHeight - barHeight} width={barWidth} height={barHeight}
-                          fill={colors.tvlBar} opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7} />
+                          fill={tvlVelocityColors.tvlBar} opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7} />
                         );
                       })}
                     
                     <LinePath data={displayData}
                       x={(d) => (dateScale(new Date(d.date)) ?? 0) + dateScale.bandwidth() / 2}
                       y={(d) => velocityScale(d.velocity)}
-                      stroke={colors.velocityLine} strokeWidth={1.5} curve={curveMonotoneX} />
+                      stroke={tvlVelocityColors.velocityLine} strokeWidth={1.5} curve={curveMonotoneX} />
                     
                     <AxisBottom top={innerHeight} scale={dateScale}
                       tickFormat={(date) => {
@@ -589,10 +628,10 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                           default: return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                         }
                       }}
-                      stroke={colors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0}
+                      stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0}
                       hideZero={true}
                       tickLabelProps={(value, index) => ({ 
-                        fill: colors.tickLabels, 
+                        fill: tvlVelocityColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
                         letterSpacing: '0.05em',
@@ -602,10 +641,10 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                       })}
                       numTicks={activeTimeFilter === 'Y' ? data.length : Math.min(5, data.length)} />
                     
-                    <AxisLeft scale={tvlScale} stroke={colors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0} numTicks={5}
+                    <AxisLeft scale={tvlScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0} numTicks={5}
                       tickFormat={(value) => formatTvl(Number(value))}
                       tickLabelProps={() => ({ 
-                        fill: colors.tickLabels, 
+                        fill: tvlVelocityColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
                         letterSpacing: '0.05em',
@@ -614,16 +653,16 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                         dy: '0.25em' 
                       })} />
                     
-                    <AxisRight left={innerWidth} scale={velocityScale} stroke={colors.axisLines} strokeWidth={0.5}
+                    <AxisRight left={innerWidth} scale={velocityScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5}
                       tickStroke="transparent" tickLength={0} numTicks={5}
                       tickFormat={(value) => formatVelocity(Number(value))}
                       tickLabelProps={() => ({ 
-                        fill: colors.tickLabels, 
+                        fill: tvlVelocityColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
                         letterSpacing: '0.05em',
                         textAnchor: 'start', 
-                        dx: '0.6em', 
+                        dx: '0.5em', 
                         dy: '0.25em' 
                       })} />
                   </Group>
@@ -702,8 +741,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                       data={sourceData}
                       x={(d, i) => indexScale(i)}
                       y={(d) => brushTvlScale(d.tvl)}
-                      stroke={colors.tvlBar} 
-                      strokeWidth={0.5} 
+                      stroke={tvlVelocityColors.tvlBar} 
+                      strokeWidth={1} 
                       curve={curveMonotoneX} 
                       opacity={0.5} 
                     />
@@ -721,7 +760,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                       onClick={activeClearBrush}
                       selectedBoxStyle={{ 
                         fill: isModal ? 'rgba(167, 139, 250, 0)' : 'rgba(96, 165, 250, 0)', 
-                        stroke: colors.axisLines, 
+                        stroke: tvlVelocityColors.axisLines, 
                         strokeWidth: 0.5,
                         rx: 4,
                         ry: 4,
@@ -762,21 +801,36 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] pl-3">
-              <div className="flex flex-col gap-5 pt-4">
-                
-                  
-                  <div className="flex items-start">
-                    <div className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5" style={{ background: colors.tvlBar }}></div>
-                    <span className="text-[11px] text-gray-300">TVL</span>
+              <div className="flex flex-col gap-4 pt-4">
+                {!modalLoading && modalData.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {getAvailableChartMetrics(modalData, { 
+                      tvl: tvlVelocityColors.tvlBar, 
+                      velocity: tvlVelocityColors.velocityLine 
+                    }).map(metric => (
+                      <div key={metric.key} className="flex items-start">
+                        <div 
+                          className={`w-2.5 h-2.5 mr-2 ${metric.shape === 'circle' ? 'rounded-full' : 'rounded-sm'} mt-0.5`}
+                          style={{ background: metric.color }}
+                        ></div>
+                        <span className="text-[11px] text-gray-300">{metric.displayName}</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-start">
-                    <div className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5" style={{ background: colors.velocityLine }}></div>
-                    <span className="text-[11px] text-gray-300">Velocity</span>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {/* Loading states */}
+                    <div className="flex items-start">
+                      <div className="w-2.5 h-2.5 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
+                      <span className="text-[11px] text-gray-300">Loading...</span>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="w-2.5 h-2.5 bg-purple-500 mr-2 rounded-full mt-0.5 animate-pulse"></div>
+                      <span className="text-[11px] text-gray-300">Loading...</span>
+                    </div>
                   </div>
-                
-                
-                
-                
+                )}
               </div>
             </div>
           </div>

@@ -13,6 +13,11 @@ export interface TvlVelocityDataPoint {
 // Time filter options
 export type TimeFilter = 'D' | 'M' | 'Q' | 'Y';
 
+const displayNames: Record<string, string> = {
+  tvl: 'TVL',
+  velocity: 'Velocity'
+};
+
 /**
  * Simple function to fetch TVL and Velocity data from the API.
  */

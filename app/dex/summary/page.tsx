@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Counter from "../../components/shared/Counter";
 import { VolumeIcon, TvlIcon, UsersIcon, ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
-import TvlVelocityChart from "../../components/charts/TvlVelocityChart";
+import TvlVelocityChart, { getTvlVelocityChartColors } from "../../components/charts/TvlVelocityChart";
 import VelocityByDexChart from "../../components/charts/VelocityByDexChart";
 import TimeFilterSelector from "../../components/charts/TimeFilter";
 import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/chartData";
@@ -22,9 +22,43 @@ const baseColors = [
   '#facc15', // yellow
 ];
 
+// Get TVL and Velocity colors from the chart component
+const tvlVelocityColors = getTvlVelocityChartColors();
+
 const getColorForProgramType = (programType: string, programTypes: string[]) => {
   const index = programTypes.indexOf(programType) % baseColors.length;
   return baseColors[index];
+};
+
+// Function to get available metrics from TVL velocity data
+const getAvailableMetrics = (data: TvlVelocityDataPoint[]) => {
+  if (!data || data.length === 0) return [];
+  
+  // Get the first data point to extract property names
+  const samplePoint = data[0];
+  
+  // Define proper display names for metrics
+  const displayNames: Record<string, string> = {
+    tvl: 'TVL',
+    velocity: 'Velocity'
+  };
+  
+  // Filter out date and any other non-metric properties
+  return Object.keys(samplePoint)
+    .filter(key => key !== 'date')
+    .map(key => {
+      // Use the mapped display name or fallback to capitalized key
+      const displayName = displayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
+      
+      // Determine shape and color based on metric name
+      const isLine = key === 'velocity';
+      return {
+        key,
+        displayName,
+        shape: isLine ? 'circle' : 'square',
+        color: isLine ? tvlVelocityColors.velocity : tvlVelocityColors.tvl
+      };
+    });
 };
 
 export default function DexSummaryPage() {
@@ -305,7 +339,7 @@ export default function DexSummaryPage() {
           value={isTvlStatsLoading ? "0" : formatCurrentTvl(tvlStats.currentTvl)}
           trend={isTvlStatsLoading ? undefined : { 
             value: parseFloat(tvlStats.percentChange.toFixed(1)), 
-            label: "vs yesterday" 
+            label: "vs last day" 
           }}
           icon={<TvlIcon />}
           variant="blue"
@@ -317,7 +351,7 @@ export default function DexSummaryPage() {
           value={isTradersLoading ? "0" : formatCumulativeTraders(tradersStats.cumulativeTraders)}
           trend={isTradersLoading ? undefined : { 
             value: parseFloat(tradersStats.percentChange.toFixed(1)), 
-            label: "vs yesterday" 
+            label: "vs last day" 
           }}
           icon={<UsersIcon />}
           variant="purple"
@@ -329,7 +363,6 @@ export default function DexSummaryPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         {/* TVL and Velocity Chart Container */}
         <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
-          {/* Header Section with Title and Expand Icon */}
           <div className="flex justify-between items-center mb-2">
             <div className="-mt-1">
               <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">TVL and Velocity Trends</h2>
@@ -348,20 +381,20 @@ export default function DexSummaryPage() {
                   <DownloadIcon className="w-4 h-4" />
                 )}
               </button>
-              <button 
-                className="p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors"
+            <button 
+              className="p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors"
                 onClick={() => setTvlChartModalOpen(true)}
                 title="Expand Chart"
-              >
-                <ExpandIcon className="w-4 h-4" />
-              </button>
+            >
+              <ExpandIcon className="w-4 h-4" />
+            </button>
             </div>
           </div>
           
           {/* First Divider */}
           <div className="h-px bg-gray-900 w-full"></div>
           
-          {/* Filter Space - More compact with less padding */}
+          {/* Filter Space - Match layout of DEX velocity chart */}
           <div className="flex items-center justify-start pl-1 py-1.5">
             <TimeFilterSelector value={tvlTimeFilter} onChange={setTvlTimeFilter} />
           </div>
@@ -369,9 +402,9 @@ export default function DexSummaryPage() {
           {/* Second Divider */}
           <div className="h-px bg-gray-900 w-full mb-3"></div>
           
-          {/* Content Area - Split into 5 columns */}
+          {/* Content Area - Split into columns */}
           <div className="flex h-80">
-            {/* Chart Area - 4 columns */}
+            {/* Chart Area */}
             <div className="flex-grow pr-3 border-r border-gray-900">
               <TvlVelocityChart 
                 timeFilter={tvlTimeFilter} 
@@ -380,18 +413,36 @@ export default function DexSummaryPage() {
               />
             </div>
             
-            {/* Legend Area - 1 column */}
+            {/* Legend area */}
             <div className="w-1/5 pl-3">
               <div className="flex flex-col gap-2 pt-1">
                 <div className="flex flex-col gap-2">
+                  {!isTvlDataLoading && tvlVelocityData.length > 0 ? (
+                    <>
+                      {getAvailableMetrics(tvlVelocityData).map(metric => (
+                        <div key={metric.key} className="flex items-start">
+                          <div 
+                            className={`w-2 h-2 mr-2 ${metric.shape === 'circle' ? 'rounded-full' : 'rounded-sm'} mt-0.5`}
+                            style={{ background: metric.color }}
+                          ></div>
+                          <span className="text-[10px] text-gray-300">{metric.displayName}</span>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {/* Loading states */}
                   <div className="flex items-start">
-                    <div className="w-2 h-2 bg-blue-500 mr-2 rounded-sm mt-0.5"></div>
-                    <span className="text-[10px] text-gray-300">TVL</span>
+                        <div className="w-2 h-2 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
+                        <div className="text-[10px] text-gray-300">Loading...</div>
                   </div>
+                      
                   <div className="flex items-start">
-                    <div className="w-2 h-2 bg-indigo-500 mr-2 rounded-sm mt-0.5"></div>
-                    <span className="text-[10px] text-gray-300">Velocity</span>
+                        <div className="w-2 h-2 bg-purple-500 mr-2 rounded-full mt-0.5 animate-pulse"></div>
+                        <div className="text-[10px] text-gray-300">Loading...</div>
                   </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -424,8 +475,8 @@ export default function DexSummaryPage() {
                 onClick={() => setVelocityChartModalOpen(true)}
                 title="Expand Chart"
               >
-                <ExpandIcon className="w-4 h-4" />
-              </button>
+              <ExpandIcon className="w-4 h-4" />
+            </button>
             </div>
           </div>
           
@@ -471,16 +522,16 @@ export default function DexSummaryPage() {
                     <>
                       <div className="flex items-start">
                         <div className="w-2 h-2 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <span className="text-[10px] text-gray-300">Loading...</span>
+                        <div className="text-[10px] text-gray-300">Loading...</div>
                       </div>
-                      <div className="flex items-start">
+                  <div className="flex items-start">
                         <div className="w-2 h-2 bg-purple-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <span className="text-[10px] text-gray-300">Loading...</span>
-                      </div>
-                      <div className="flex items-start">
+                        <div className="text-[10px] text-gray-300">Loading...</div>
+                  </div>
+                  <div className="flex items-start">
                         <div className="w-2 h-2 bg-green-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <span className="text-[10px] text-gray-300">Loading...</span>
-                      </div>
+                        <div className="text-[10px] text-gray-300">Loading...</div>
+                  </div>
                     </>
                   )}
                 </div>
