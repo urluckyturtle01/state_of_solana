@@ -31,9 +31,12 @@ jobs:
         run: npm run build
         
       - name: Create .nojekyll file
+        run: touch out/.nojekyll
+        
+      - name: Prepare out directory
         run: |
-          touch out/.nojekyll
-          echo "state_of_solana" > out/CNAME
+          cp -f app/favicon.ico out/ || true
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/state_of_solana/" /></head><body>Redirecting...</body></html>' > out/404.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
