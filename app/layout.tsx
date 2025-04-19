@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientHydration from "./components/ClientHydration";
@@ -13,13 +13,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1
+};
+
 export const metadata: Metadata = {
   title: "State of Solana",
-  description: "Dashboard for Solana blockchain metrics",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1
-  }
+  description: "Dashboard for Solana blockchain metrics"
 };
 
 export default function RootLayout({
@@ -29,9 +30,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-gray-100`}
       >
