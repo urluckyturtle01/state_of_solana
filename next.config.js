@@ -13,6 +13,9 @@ const nextConfig = {
   distDir: 'out',
   reactStrictMode: false,
   swcMinify: true,
+  experimental: {
+    optimizeCss: true
+  }
 };
 
 module.exports = nextConfig;

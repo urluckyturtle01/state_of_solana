@@ -1,3 +1,7 @@
+"use client";
+
+import './globals.css';
+
 export default function RootPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
@@ -15,7 +19,7 @@ export default function RootPage() {
         </a>
         <a 
           href="/state_of_solana/rev" 
-          className="bg-purple-900/30 border border-purple-800 p-6 rounded-lg hover:bg-purple-800/30 transition-colors"
+          className="bg-purple-900/30 border border-purple-800 p-6 rounded-lg hover:bg-blue-800/30 transition-colors"
         >
           <h2 className="text-xl font-semibold mb-2">Revenue Metrics</h2>
           <p className="text-gray-400">Analyze transaction fees and other revenue metrics</p>
