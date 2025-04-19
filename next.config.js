@@ -4,11 +4,12 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/state-of-solana' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/state_of_solana' : '',
   images: {
     unoptimized: true,
   },
   trailingSlash: true,
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/state_of_solana' : '',
 };
 
 module.exports = nextConfig; 
