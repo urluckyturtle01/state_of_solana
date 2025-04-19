@@ -1,29 +1,46 @@
 "use client";
 
 import './globals.css';
+import Counter from "./components/shared/Counter";
+import { ChartIcon, TvlIcon, ExchangeIcon } from "./components/shared/Icons";
 
-export default function RootPage() {
+export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
-      <h1 className="text-3xl font-bold mb-6">State of Solana Dashboard</h1>
-      <p className="mb-8 text-gray-300 text-center max-w-2xl">
-        An interactive dashboard displaying key metrics and visualizations for the Solana blockchain ecosystem, focusing on DeFi and DEX activity.
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-        <a 
-          href="/state_of_solana/dex" 
-          className="bg-blue-900/30 border border-blue-800 p-6 rounded-lg hover:bg-blue-800/30 transition-colors"
-        >
-          <h2 className="text-xl font-semibold mb-2">DEX Metrics</h2>
-          <p className="text-gray-400">Explore DEX volumes, TVL, and trader activity</p>
-        </a>
-        <a 
-          href="/state_of_solana/rev" 
-          className="bg-purple-900/30 border border-purple-800 p-6 rounded-lg hover:bg-blue-800/30 transition-colors"
-        >
-          <h2 className="text-xl font-semibold mb-2">Revenue Metrics</h2>
-          <p className="text-gray-400">Analyze transaction fees and other revenue metrics</p>
-        </a>
+    <div className="space-y-6">
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-200 mb-4">Key Statistics</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Counter 
+            title="Key Metrics"
+            value="845K"
+            trend={{ value: 12.5, label: "vs last month" }}
+            icon={<ChartIcon />}
+            variant="indigo"
+          />
+          
+          <Counter 
+            title="Total Value Locked"
+            value="$6.3B"
+            trend={{ value: 4.2, label: "vs last week" }}
+            icon={<TvlIcon />}
+            variant="blue"
+          />
+          
+          <Counter 
+            title="Network Status"
+            value="Healthy"
+            icon={<ExchangeIcon />}
+            variant="purple"
+          />
+        </div>
+      </div>
+      
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-200 mb-4">Network Summary</h2>
+        <div className="h-80 flex items-center justify-center bg-gray-900/50 rounded-lg">
+          <p className="text-gray-400">Network status dashboard will appear here</p>
+        </div>
       </div>
     </div>
   );
