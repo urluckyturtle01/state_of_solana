@@ -80,4 +80,7 @@ export function formatDisplayDate(dateStr: string, timeFilter?: VolumeTimeFilter
     console.error('Error formatting date:', e);
     return dateStr; // Fallback to original string on error
   }
-} 
+}
+
+// Alias for formatDisplayDate to match function name used in VolumeHistoryChart
+export const formatVolumeDate = formatDisplayDate; 

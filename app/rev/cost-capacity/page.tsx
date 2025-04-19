@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import CostCapacityChart, { costCapacityColors } from "../../components/charts/CostCapacityChart";
 import TransactionMetricsChart, { transactionMetricsColors } from "../../components/charts/TransactionMetricsChart";
-import { TimeFilter, CurrencyType } from "../../api/REV/cost-capacity";
+import { TimeFilter, CurrencyType, fetchCostCapacityData, formatDate, CostCapacityDataPoint } from "../../api/REV/cost-capacity";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
-import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
+import TimeFilterSelector from "../../components/charts/TimeFilter";
 import CurrencyFilter from "../../components/shared/filters/CurrencyFilter";
 import DisplayModeFilter, { DisplayMode } from "../../components/shared/filters/DisplayModeFilter";
 
@@ -71,11 +71,13 @@ export default function CostCapacityPage() {
   const [successVolumeTimeFilter, setSuccessVolumeTimeFilter] = useState<TimeFilter>('M');
   const [successVolumeDisplayMode, setSuccessVolumeDisplayMode] = useState<DisplayMode>('absolute');
   const [successVolumeChartModalOpen, setSuccessVolumeChartModalOpen] = useState(false);
+  const [isSuccessVolumeDownloading, setIsSuccessVolumeDownloading] = useState(false);
   
   // State for TPS Metrics chart
   const [tpsTimeFilter, setTpsTimeFilter] = useState<TimeFilter>('M');
   const [tpsDisplayMode, setTpsDisplayMode] = useState<DisplayMode>('absolute');
   const [tpsChartModalOpen, setTpsChartModalOpen] = useState(false);
+  const [isTpsDownloading, setIsTpsDownloading] = useState(false);
   
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -87,14 +89,191 @@ export default function CostCapacityPage() {
     setIsDownloading(true);
     
     try {
-      alert("Download functionality to be implemented");
-      // Implementation would be similar to TVL velocity chart's download function
-      // Fetch data if needed and convert to CSV
+      // Fetch data with current timeFilter and currencyFilter
+      const costCapacityData = await fetchCostCapacityData(feeTimeFilter, feeCurrencyFilter);
       
+      if (costCapacityData.length === 0) {
+        console.error('No cost capacity data available for download');
+        alert('No data available to download. Please try a different time range.');
+        return;
+      }
+      
+      // Create CSV header with fee types
+      const headers = ["Date", "Base Fee", "Priority Fee", "Jito MEV Tips", "Vote Fees"];
+      
+      // Convert data to CSV rows
+      const csvRows = [
+        headers.join(","), // CSV header row
+        ...costCapacityData.map((item: CostCapacityDataPoint) => {
+          // Format the date according to the selected time filter
+          const formattedDate = formatDate(item.date, feeTimeFilter);
+          // Include all fee metrics in the CSV
+          return [
+            formattedDate,
+            item.base_fee,
+            item.priority_fee,
+            item.jito_total_tips,
+            item.vote_fees
+          ].join(",");
+        })
+      ];
+      
+      // Create the full CSV content
+      const csvContent = csvRows.join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      // Create download link and trigger download
+      const link = document.createElement("a");
+      const currencyText = feeCurrencyFilter === 'USD' ? 'usd' : 'sol';
+      const fileName = `solana_transaction_fees_${feeTimeFilter}_${currencyText}_${new Date().toISOString().split("T")[0]}.csv`;
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error('Error downloading Cost Capacity data:', error);
+      alert('Failed to download data. Please try again.');
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  // Download function for Transaction Success & Volume data
+  const downloadSuccessVolumeCSV = async () => {
+    // Prevent multiple clicks
+    if (isSuccessVolumeDownloading) return;
+    
+    setIsSuccessVolumeDownloading(true);
+    
+    try {
+      // Import the fetchTransactionsData function
+      const { fetchTransactionsData } = await import('../../api/REV/cost-capacity/transactionsData');
+      
+      // Fetch data with current timeFilter
+      const transactionsData = await fetchTransactionsData(successVolumeTimeFilter);
+      
+      if (transactionsData.length === 0) {
+        console.error('No transaction data available for download');
+        alert('No data available to download. Please try a different time range.');
+        return;
+      }
+      
+      // Create CSV header with transaction metrics types
+      const headers = [
+        "Date", 
+        "Success Rate (%)", 
+        "Non-Vote Success Rate (%)", 
+        "Vote Transactions", 
+        "Non-Vote Transactions"
+      ];
+      
+      // Convert data to CSV rows
+      const csvRows = [
+        headers.join(","), // CSV header row
+        ...transactionsData.map((item: TransactionDataPoint) => {
+          // Format the date according to the selected time filter
+          const formattedDate = formatDate(item.date, successVolumeTimeFilter);
+          // Include all relevant metrics in the CSV
+          return [
+            formattedDate,
+            item.successful_transactions_perc.toFixed(2),
+            item.successful_non_vote_transactions_perc.toFixed(2),
+            item.total_vote_transactions,
+            item.total_non_vote_transactions
+          ].join(",");
+        })
+      ];
+      
+      // Create the full CSV content
+      const csvContent = csvRows.join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      // Create download link and trigger download
+      const link = document.createElement("a");
+      const fileName = `solana_transaction_volume_${successVolumeTimeFilter}_${new Date().toISOString().split("T")[0]}.csv`;
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading Transaction Success & Volume data:', error);
+      alert('Failed to download data. Please try again.');
+    } finally {
+      setIsSuccessVolumeDownloading(false);
+    }
+  };
+
+  // Download function for TPS Metrics data
+  const downloadTpsMetricsCSV = async () => {
+    // Prevent multiple clicks
+    if (isTpsDownloading) return;
+    
+    setIsTpsDownloading(true);
+    
+    try {
+      // Import the fetchTransactionsData function
+      const { fetchTransactionsData } = await import('../../api/REV/cost-capacity/transactionsData');
+      
+      // Fetch data with current timeFilter
+      const transactionsData = await fetchTransactionsData(tpsTimeFilter);
+      
+      if (transactionsData.length === 0) {
+        console.error('No TPS metrics data available for download');
+        alert('No data available to download. Please try a different time range.');
+        return;
+      }
+      
+      // Create CSV header with TPS metrics types
+      const headers = [
+        "Date", 
+        "Total TPS", 
+        "Success TPS", 
+        "Failed TPS", 
+        "Real TPS"
+      ];
+      
+      // Convert data to CSV rows
+      const csvRows = [
+        headers.join(","), // CSV header row
+        ...transactionsData.map((item: TransactionDataPoint) => {
+          // Format the date according to the selected time filter
+          const formattedDate = formatDate(item.date, tpsTimeFilter);
+          // Include all relevant metrics in the CSV
+          return [
+            formattedDate,
+            item.total_tps.toFixed(2),
+            item.success_tps.toFixed(2),
+            item.failed_tps.toFixed(2),
+            item.real_tps.toFixed(2)
+          ].join(",");
+        })
+      ];
+      
+      // Create the full CSV content
+      const csvContent = csvRows.join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      // Create download link and trigger download
+      const link = document.createElement("a");
+      const fileName = `solana_tps_metrics_${tpsTimeFilter}_${new Date().toISOString().split("T")[0]}.csv`;
+      link.setAttribute("href", url);
+      link.setAttribute("download", fileName);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading TPS Metrics data:', error);
+      alert('Failed to download data. Please try again.');
+    } finally {
+      setIsTpsDownloading(false);
     }
   };
 
@@ -231,6 +410,20 @@ export default function CostCapacityPage() {
           </div>
           {/* Action buttons */}
           <div className="flex space-x-2">
+            {/* Download button */}
+            <button 
+              className={`p-1.5 ${isSuccessVolumeDownloading ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'} rounded-md transition-colors`}
+              onClick={downloadSuccessVolumeCSV}
+              disabled={isSuccessVolumeDownloading}
+              title="Download Data"
+            >
+              {isSuccessVolumeDownloading ? (
+                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <DownloadIcon className="w-4 h-4" />
+              )}
+            </button>
+            
             {/* Expand button */}
             <button 
               className="p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors"
@@ -286,6 +479,20 @@ export default function CostCapacityPage() {
           </div>
           {/* Action buttons */}
           <div className="flex space-x-2">
+            {/* Download button */}
+            <button 
+              className={`p-1.5 ${isTpsDownloading ? 'opacity-50 cursor-not-allowed' : 'bg-purple-500/10 text-purple-400 hover:bg-purple-500/20'} rounded-md transition-colors`}
+              onClick={downloadTpsMetricsCSV}
+              disabled={isTpsDownloading}
+              title="Download Data"
+            >
+              {isTpsDownloading ? (
+                <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <DownloadIcon className="w-4 h-4" />
+              )}
+            </button>
+            
             {/* Expand button */}
             <button 
               className="p-1.5 bg-purple-500/10 rounded-md text-purple-400 hover:bg-purple-500/20 transition-colors"

@@ -120,6 +120,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
           
           return (
             <svg width={width} height={height}>
+              
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect
@@ -130,14 +131,20 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   fill="transparent"
                 />
                 
+                
                 {/* Line representing the data */}
+
+                
                 <LinePath 
                   data={lineData}
                   x={(d) => indexScale(d.idx)}
                   y={(d) => valueScale(d.value)}
-                  stroke={lineColor}
+                  stroke="#53a7fe"
+                  //fill="#53a7fe"
+                  //fillOpacity={0.2}
+                  strokeOpacity={0.3}
                   strokeWidth={1.5}
-                  opacity={0.8}
+                  
                   curve={curveMonotoneX}
                 />
                 

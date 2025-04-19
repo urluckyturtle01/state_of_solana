@@ -13,7 +13,7 @@ import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
-import TimeFilterSelector from '../shared/filters/TimeFilter';
+import TimeFilterSelector from './TimeFilter';
 import BrushTimeScale from '../shared/BrushTimeScale';
 
 // Define RefreshIcon component directly in this file

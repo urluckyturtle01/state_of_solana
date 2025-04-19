@@ -10,7 +10,7 @@ import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
-import TimeFilterSelector from '../shared/filters/TimeFilter';
+import TimeFilterSelector from './TimeFilter';
 import BrushTimeScale from '../shared/BrushTimeScale';
 
 // Define RefreshIcon component directly in this file
@@ -380,8 +380,8 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
       );
     }
 
-    return (
-      <div className="flex flex-col h-full">
+return (
+  <div className="flex flex-col h-full">
         {tooltip.visible && tooltip.dataPoint && (
           <ChartTooltip
             title={formatVolumeDate(tooltip.dataPoint.date, activeTimeFilter)}
@@ -399,7 +399,7 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
           onMouseMove={(e) => handleMouseMove(e, isModal)}
           onMouseLeave={handleMouseLeave}
         >
-          <ParentSize>
+      <ParentSize>
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null; 
           
@@ -415,55 +415,55 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
               const dateDomain = displayData.map(d => new Date(d.date));
               
               // Setup scales for chart
-              const dateScale = scaleBand<Date>({
+          const dateScale = scaleBand<Date>({
                 domain: dateDomain,
-                range: [0, innerWidth],
-                padding: 0.3,
-              });
+            range: [0, innerWidth],
+            padding: 0.3,
+          });
 
-              const volumeScale = scaleLinear<number>({
+          const volumeScale = scaleLinear<number>({
                 domain: [0, Math.max(...displayData.map(d => d.volume)) * 1.1 || 1],
-                range: [innerHeight, 0],
+            range: [innerHeight, 0],
                 nice: true,
-              });
+          });
 
-              return (
+          return (
                 <svg width={width} height={height} className="overflow-visible">
-                  <Group left={margin.left} top={margin.top}>
-                    <GridRows scale={volumeScale} width={innerWidth} stroke={volumeHistoryColors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
+              <Group left={margin.left} top={margin.top}>
+                <GridRows scale={volumeScale} width={innerWidth} stroke={volumeHistoryColors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
                     
                     {/* Display active brush status */}
                     {activeIsBrushActive && (
-                      <text x={0} y={-8} fontSize={8} fill={volumeHistoryColors.volumeBar} textAnchor="start">
-                        {`Filtered: ${displayData.length} item${displayData.length !== 1 ? 's' : ''}`}
-                      </text>
-                    )}
+                  <text x={0} y={-8} fontSize={8} fill={volumeHistoryColors.volumeBar} textAnchor="start">
+                    {`Filtered: ${displayData.length} item${displayData.length !== 1 ? 's' : ''}`}
+                  </text>
+                )}
                     
                     {/* Volume bars */}
                     {displayData.map((d) => {
                       const date = new Date(d.date);
                       const barX = dateScale(date);
-                      const barWidth = dateScale.bandwidth();
-                      const barHeight = Math.max(0, innerHeight - volumeScale(d.volume));
+                  const barWidth = dateScale.bandwidth();
+                  const barHeight = Math.max(0, innerHeight - volumeScale(d.volume));
                       if (barX === undefined || barHeight < 0) return null;
-                      return (
-                        <Bar
+                  return (
+                    <Bar
                           key={`bar-${d.date}`} 
-                          x={barX}
-                          y={innerHeight - barHeight}
-                          width={barWidth}
-                          height={barHeight}
-                          fill={volumeHistoryColors.volumeBar}
-                          opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7}
-                          rx={2}
-                        />
-                      );
-                    })}
+                      x={barX}
+                      y={innerHeight - barHeight}
+                      width={barWidth}
+                      height={barHeight}
+                      fill={volumeHistoryColors.volumeBar}
+                      opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7}
+                      rx={2}
+                    />
+                  );
+                })}
                     
                     {/* X-axis (dates) */}
-                    <AxisBottom 
-                      top={innerHeight} 
-                      scale={dateScale}
+                 <AxisBottom 
+                  top={innerHeight} 
+                  scale={dateScale}
                       tickFormat={(date) => {
                         const d = date as Date;
                         return formatVolumeDate(d.toISOString(), activeTimeFilter);
@@ -473,7 +473,7 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
                       tickStroke="transparent" 
                       tickLength={0}
                       hideZero={true}
-                      tickLabelProps={(value, index) => ({ 
+                  tickLabelProps={(value, index) => ({ 
                         fill: volumeHistoryColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
@@ -486,15 +486,15 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
                     />
                     
                     {/* Y-axis (volume) */}
-                    <AxisLeft 
-                      scale={volumeScale}
+                <AxisLeft 
+                  scale={volumeScale}
                       stroke={volumeHistoryColors.axisLines} 
                       strokeWidth={0.5} 
                       tickStroke="transparent" 
                       tickLength={0} 
                       numTicks={5}
-                      tickFormat={(value) => formatVolume(value as number)}
-                      tickLabelProps={() => ({ 
+                  tickFormat={(value) => formatVolume(value as number)}
+                  tickLabelProps={() => ({ 
                         fill: volumeHistoryColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300, 
@@ -502,18 +502,18 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
                         textAnchor: 'end', 
                         dx: '-0.6em', 
                         dy: '0.25em' 
-                      })}
-                    />
-                  </Group>
-                </svg>
-              );
-            }}
-          </ParentSize>
-        </div>
+                  })}
+                />
+              </Group>
+            </svg>
+          );
+        }}
+      </ParentSize>
+    </div>
 
         {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
-          <BrushTimeScale
+      <BrushTimeScale
             data={isModal ? modalData : data}
             isModal={isModal}
             activeBrushDomain={isModal ? modalBrushDomain : brushDomain}
@@ -523,14 +523,14 @@ const VolumeHistoryChart: React.FC<VolumeHistoryChartProps> = ({
               : () => { setBrushDomain(null); setIsBrushActive(false); }
             }
             getDate={(d) => d.date}
-            getValue={(d) => d.volume} 
-            lineColor={volumeHistoryColors.volumeBar}
+        getValue={(d) => d.volume} 
+        lineColor={volumeHistoryColors.volumeBar}
             margin={{ top: 5, right: 25, bottom: 10, left: 45 }}
-          />
-        </div>
-      </div>
-    );
-  };
+      />
+    </div>
+  </div>
+);
+};
 
   return (
     <div className="h-full w-full relative">
