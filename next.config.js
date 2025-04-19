@@ -11,6 +11,8 @@ const nextConfig = {
   trailingSlash: true,
   assetPrefix: process.env.NODE_ENV === 'production' ? '/state_of_solana' : '',
   distDir: 'out',
+  reactStrictMode: false,
+  swcMinify: true,
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;

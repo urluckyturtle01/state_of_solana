@@ -30,8 +30,16 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Create .nojekyll file
-        run: touch out/.nojekyll
+      - name: Prepare static files
+        run: |
+          # Create .nojekyll file
+          touch out/.nojekyll
+          
+          # Create custom 404 page
+          cp out/index.html out/404.html
+          
+          # Ensure README.md isn't served instead of index.html
+          cp out/index.html ./index.html
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
