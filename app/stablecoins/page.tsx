@@ -1,12 +1,14 @@
-import Layout from "../components/Layout";
+"use client";
 
 export default function StablecoinsPage() {
   return (
-    <Layout>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold">Stablecoins</h1>
-        <p className="text-lg">Stablecoin metrics and statistics on Solana</p>
+    <div className="space-y-6">
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-200 mb-4">Stablecoins Overview</h2>
+        <div className="h-80 flex items-center justify-center bg-gray-900/50 rounded-lg">
+          <p className="text-gray-400">Stablecoin metrics will appear here</p>
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 } 

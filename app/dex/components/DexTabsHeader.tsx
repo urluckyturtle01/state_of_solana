@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import TabsNavigation, { Tab } from "@/app/components/shared/TabsNavigation";
 
 interface DexTabsHeaderProps {
   activeTab?: string;
 }
 
 export default function DexTabsHeader({ activeTab = "summary" }: DexTabsHeaderProps) {
-  const tabs = [
+  const tabs: Tab[] = [
     { 
       name: "Summary", 
       path: "/dex/summary",
@@ -42,56 +41,12 @@ export default function DexTabsHeader({ activeTab = "summary" }: DexTabsHeaderPr
   ];
   
   return (
-    <div>
-      <div>
-        <h1 className="text-lg font-medium text-gray-200">DEX</h1>
-        <p className="text-gray-400 text-xs pb-2">Decentralized Exchange metrics for Solana</p>
-        <div className="h-px bg-gradient-to-r from-gray-900 via-gray-800 to-transparent mb-3"></div>
-      </div>
-      
-      <div className="pl-0">
-        <div className="bg-black/60 backdrop-blur-sm rounded-lg border border-gray-900/50 overflow-hidden inline-block">
-          <div className="flex overflow-x-auto hide-scrollbar">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.key;
-              
-              return (
-                <Link
-                  key={tab.name}
-                  href={tab.path}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 whitespace-nowrap transition-all duration-200 ${
-                    isActive 
-                      ? "text-white bg-gray-900/40 border-b border-emerald-500" 
-                      : "text-gray-400 hover:text-gray-200"
-                  }`}
-                >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-3.5 w-3.5" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
-                    strokeWidth={1.5}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
-                  </svg>
-                  <span className="font-medium text-[13px]">{tab.name}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      
-      <style jsx>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </div>
+    <TabsNavigation 
+      tabs={tabs} 
+      activeTab={activeTab}
+      title="DEX"
+      description="Decentralized Exchange metrics for Solana"
+      showDivider={true}
+    />
   );
 } 

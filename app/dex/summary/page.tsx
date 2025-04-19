@@ -6,11 +6,11 @@ import { VolumeIcon, TvlIcon, UsersIcon, ExpandIcon, DownloadIcon } from "../../
 import TvlVelocityChart, { getTvlVelocityChartColors } from "../../components/charts/TvlVelocityChart";
 import VelocityByDexChart from "../../components/charts/VelocityByDexChart";
 import TimeFilterSelector from "../../components/charts/TimeFilter";
-import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/chartData";
-import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/velocityByDexData";
-import { getLatestVolumeStats } from "../../api/volumeData";
-import { getLatestTvlStats } from "../../api/tvlData";
-import { getLatestTradersStats } from "../../api/tradersData";
+import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/dex/summary/chartData";
+import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/dex/summary/velocityByDexData";
+import { getLatestVolumeStats } from "../../api/dex/summary/volumeData";
+import { getLatestTvlStats } from "../../api/dex/summary/tvlData";
+import { getLatestTradersStats } from "../../api/dex/summary/tradersData";
 
 // Define colors for program types (same as in VelocityByDexChart)
 const baseColors = [
@@ -359,11 +359,11 @@ export default function DexSummaryPage() {
         />
       </div>
       
-      {/* Two chart containers side by side */}
+      {/* Two chart containers stacked on mobile, side by side on desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         {/* TVL and Velocity Chart Container */}
         <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <div className="-mt-1">
               <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">TVL and Velocity Trends</h2>
               <p className="text-gray-500 text-[10px] tracking-wide">Tracking value locked and market velocity across the ecosystem</p>
@@ -395,7 +395,7 @@ export default function DexSummaryPage() {
           <div className="h-px bg-gray-900 w-full"></div>
           
           {/* Filter Space - Match layout of DEX velocity chart */}
-          <div className="flex items-center justify-start pl-1 py-1.5">
+          <div className="flex items-center justify-start pl-1 py-2 overflow-x-auto">
             <TimeFilterSelector value={tvlTimeFilter} onChange={setTvlTimeFilter} />
           </div>
           
@@ -403,9 +403,9 @@ export default function DexSummaryPage() {
           <div className="h-px bg-gray-900 w-full mb-3"></div>
           
           {/* Content Area - Split into columns */}
-          <div className="flex h-80">
+          <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
             {/* Chart Area */}
-            <div className="flex-grow pr-3 border-r border-gray-900">
+            <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-80 lg:h-auto">
               <TvlVelocityChart 
                 timeFilter={tvlTimeFilter} 
                 isModalOpen={tvlChartModalOpen}
@@ -414,9 +414,9 @@ export default function DexSummaryPage() {
             </div>
             
             {/* Legend area */}
-            <div className="w-1/5 pl-3">
-              <div className="flex flex-col gap-2 pt-1">
-                <div className="flex flex-col gap-2">
+            <div className="w-full lg:w-1/5 mt-2 lg:mt-0 lg:pl-3 flex flex-row lg:flex-col">
+              <div className="flex flex-row lg:flex-col gap-4 lg:gap-3 pt-1 pb-2 lg:pb-0">
+                <div className="flex flex-row lg:flex-col gap-4 lg:gap-3">
                   {!isTvlDataLoading && tvlVelocityData.length > 0 ? (
                     <>
                       {getAvailableMetrics(tvlVelocityData).map(metric => (
@@ -425,7 +425,7 @@ export default function DexSummaryPage() {
                             className={`w-2 h-2 mr-2 ${metric.shape === 'circle' ? 'rounded-full' : 'rounded-sm'} mt-0.5`}
                             style={{ background: metric.color }}
                           ></div>
-                          <span className="text-[10px] text-gray-300">{metric.displayName}</span>
+                          <span className="text-xs text-gray-300">{metric.displayName}</span>
                         </div>
                       ))}
                     </>
@@ -434,12 +434,12 @@ export default function DexSummaryPage() {
                       {/* Loading states */}
                   <div className="flex items-start">
                         <div className="w-2 h-2 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <div className="text-[10px] text-gray-300">Loading...</div>
+                        <div className="text-xs text-gray-300">Loading...</div>
                   </div>
                       
                   <div className="flex items-start">
                         <div className="w-2 h-2 bg-purple-500 mr-2 rounded-full mt-0.5 animate-pulse"></div>
-                        <div className="text-[10px] text-gray-300">Loading...</div>
+                        <div className="text-xs text-gray-300">Loading...</div>
                   </div>
                     </>
                   )}
@@ -452,7 +452,7 @@ export default function DexSummaryPage() {
         {/* Velocity By DEX Program Category Chart Container */}
         <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-purple-900/20 transition-all duration-300">
           {/* Header Section with Title and Expand Icon */}
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <div className="-mt-1">
               <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">Velocity By DEX Program Category</h2>
               <p className="text-gray-500 text-[10px] tracking-wide">Tracking velocity trends across different DEX program types</p>
@@ -484,17 +484,17 @@ export default function DexSummaryPage() {
           <div className="h-px bg-gray-900 w-full"></div>
           
           {/* Filter Space - Match layout of first chart */}
-          <div className="flex items-center justify-start pl-1 py-1.5">
+          <div className="flex items-center justify-start pl-1 py-2 overflow-x-auto">
             <TimeFilterSelector value={velocityTimeFilter} onChange={setVelocityTimeFilter} />
           </div>
           
           {/* Second Divider */}
           <div className="h-px bg-gray-900 w-full mb-3"></div>
           
-          {/* Content Area - Split into 5 columns */}
-          <div className="flex h-80">
-            {/* Chart Area - 4 columns */}
-            <div className="flex-grow pr-3 border-r border-gray-900">
+          {/* Content Area - Split into columns on desktop, stacked on mobile */}
+          <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
+            {/* Chart Area */}
+            <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-80 lg:h-auto">
               <VelocityByDexChart
                 timeFilter={velocityTimeFilter}
                 isModalOpen={velocityChartModalOpen}
@@ -502,19 +502,19 @@ export default function DexSummaryPage() {
               />
             </div>
             
-            {/* Legend Area - 1 column */}
-            <div className="w-1/5 pl-3">
-              <div className="flex flex-col gap-2 pt-1">
-                <div className="flex flex-col gap-2">
+            {/* Legend Area - horizontal on mobile, vertical on desktop */}
+            <div className="w-full lg:w-1/5 mt-2 lg:mt-0 lg:pl-3 flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible">
+              <div className="flex flex-row lg:flex-col gap-4 lg:gap-3 pt-1 pb-2 lg:pb-0">
+                <div className="flex flex-row lg:flex-col gap-4 lg:gap-3">
                   {!isLoadingDexVelocity && programTypes.length > 0 ? (
                     programTypes.map((programType, index) => (
-                      <div key={programType} className="flex items-start">
+                      <div key={programType} className="flex items-start whitespace-nowrap">
                         <div 
                           className="w-2 h-2 mr-2 rounded-sm mt-0.5" 
                           style={{ background: getColorForProgramType(programType, programTypes) }}
                         ></div>
-                        <span className="text-[10px] text-gray-300 truncate" title={programType}>
-                          {programType.length > 8 ? `${programType.substring(0, 8)}...` : programType}
+                        <span className="text-xs text-gray-300 truncate" title={programType}>
+                          {programType.length > 12 ? `${programType.substring(0, 12)}...` : programType}
                         </span>
                       </div>
                     ))
@@ -522,15 +522,15 @@ export default function DexSummaryPage() {
                     <>
                       <div className="flex items-start">
                         <div className="w-2 h-2 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <div className="text-[10px] text-gray-300">Loading...</div>
+                        <div className="text-xs text-gray-300">Loading...</div>
                       </div>
                   <div className="flex items-start">
                         <div className="w-2 h-2 bg-purple-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <div className="text-[10px] text-gray-300">Loading...</div>
+                        <div className="text-xs text-gray-300">Loading...</div>
                   </div>
                   <div className="flex items-start">
                         <div className="w-2 h-2 bg-green-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                        <div className="text-[10px] text-gray-300">Loading...</div>
+                        <div className="text-xs text-gray-300">Loading...</div>
                   </div>
                     </>
                   )}

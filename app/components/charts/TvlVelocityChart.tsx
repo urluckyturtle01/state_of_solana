@@ -8,12 +8,13 @@ import { curveMonotoneX } from '@visx/curve';
 import { LinePath, Bar } from '@visx/shape';
 import { Brush } from '@visx/brush';
 import { PatternLines } from '@visx/pattern';
-import { fetchTvlVelocityData, TimeFilter, TvlVelocityDataPoint } from '../../api/chartData';
+import { fetchTvlVelocityData, TimeFilter, TvlVelocityDataPoint } from '../../api/dex/summary/chartData';
 import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
 import TimeFilterSelector from './TimeFilter';
+import BrushTimeScale from '../shared/BrushTimeScale';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -674,103 +675,20 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         
         {/* Brush component - now shown for both main chart and modal */}
         <div className="h-[15%] w-full mt-1">
-          <ParentSize>
-            {({ width, height }) => {
-              if (width <= 0 || height <= 0) return null;
-              
-              // Use appropriate data source
-              const sourceData = isModal ? modalData : data;
-              if (sourceData.length === 0) return null;
-              
-              const margin = { top: 5, right: 25, bottom: 10, left: 45 };
-              const innerWidth = width - margin.left - margin.right;
-              const innerHeight = height - margin.top - margin.bottom;
-              if (innerWidth <= 0 || innerHeight <= 0) return null;
-              
-              // Get actual date objects for the time scale
-              const dates = sourceData.map(d => new Date(d.date));
-              const dateExtent = [
-                new Date(Math.min(...dates.map(d => d.getTime()))),
-                new Date(Math.max(...dates.map(d => d.getTime())))
-              ];
-              
-              // Use scaleTime for the brush
-              const brushDateScale = scaleTime<number>({
-                domain: dateExtent,
-                range: [0, innerWidth],
-                nice: true
-              });
-              
-              const brushTvlScale = scaleLinear<number>({
-                domain: [0, Math.max(...sourceData.map(d => d.tvl)) * 1.1],
-                range: [innerHeight, 0],
-                nice: true,
-              });
-              
-              // Initial brush position - always default to full range if no specific selection
-              const initialBrushPosition = activeBrushDomain 
-                ? { 
-                    start: { x: brushDateScale(activeBrushDomain[0]) }, 
-                    end: { x: brushDateScale(activeBrushDomain[1]) } 
-                  }
-                : { 
-                    start: { x: 0 }, 
-                    end: { x: innerWidth } 
-                  };
-              
-              // Create linear scale for distributing data points evenly across x-axis
-              const indexScale = scaleLinear({
-                domain: [0, sourceData.length - 1],
-                range: [0, innerWidth],
-              });
-              
-              return (
-                <svg width={width} height={height}>
-                  <Group left={margin.left} top={margin.top}>
-                    {/* Background rectangle to ensure brush is visible when empty */}
-                    <rect
-                      x={0}
-                      y={0}
-                      width={innerWidth}
-                      height={innerHeight}
-                      fill="transparent"
-                    />
-                    
-                    {/* Line chart with evenly distributed points */}
-                    <LinePath 
-                      data={sourceData}
-                      x={(d, i) => indexScale(i)}
-                      y={(d) => brushTvlScale(d.tvl)}
-                      stroke={tvlVelocityColors.tvlBar} 
-                      strokeWidth={1} 
-                      curve={curveMonotoneX} 
-                      opacity={0.5} 
-                    />
-                    
-                    <Brush
-                      xScale={brushDateScale}
-                      yScale={brushTvlScale}
-                      width={innerWidth}
-                      height={innerHeight}
-                      handleSize={8}
-                      resizeTriggerAreas={['left', 'right']}
-                      brushDirection="horizontal"
-                      initialBrushPosition={initialBrushPosition}
-                      onChange={activeHandleBrushChange}
-                      onClick={activeClearBrush}
-                      selectedBoxStyle={{ 
-                        fill: isModal ? 'rgba(167, 139, 250, 0)' : 'rgba(96, 165, 250, 0)', 
-                        stroke: tvlVelocityColors.axisLines, 
-                        strokeWidth: 0.5,
-                        rx: 4,
-                        ry: 4,
-                      }}
-                    />
-                  </Group>
-                </svg>
-              );
-            }}
-          </ParentSize>
+          <BrushTimeScale 
+            data={isModal ? modalData : data}
+            isModal={isModal}
+            activeBrushDomain={isModal ? modalBrushDomain : brushDomain}
+            onBrushChange={isModal ? handleModalBrushChange : handleBrushChange}
+            onClearBrush={isModal 
+              ? () => { setModalBrushDomain(null); setIsModalBrushActive(false); }
+              : () => { setBrushDomain(null); setIsBrushActive(false); }
+            }
+            getDate={(d) => d.date}
+            getValue={(d) => d.tvl}
+            lineColor={tvlVelocityColors.tvlBar}
+            margin={{ top: 5, right: 25, bottom: 10, left: 45 }}
+          />
         </div>
       </div>
     );

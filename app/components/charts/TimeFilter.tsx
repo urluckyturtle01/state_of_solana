@@ -1,38 +1,52 @@
 import React from 'react';
-import { TimeFilter } from '../../api/chartData';
 
-interface TimeFilterProps {
-  value: TimeFilter;
-  onChange: (value: TimeFilter) => void;
+// Define a type that includes all possible time filter values
+export type AllTimeFilters = 'D' | 'M' | 'Q' | 'Y' | 'W';
+
+interface TimeFilterProps<T extends string = AllTimeFilters> {
+  value: T;
+  onChange: (value: T) => void;
+  options?: Array<{value: string, label: string}>;
 }
 
-// Simplified labels
-const filterLabels: Record<TimeFilter, string> = {
+// Expanded labels for better readability
+const filterLabels: Record<string, string> = {
   'D': 'D',
-  
   'M': 'M',
   'Q': 'Q',
-  'Y': 'Y'
+  'Y': 'Y',
+  'W': 'W'
 };
 
-const TimeFilterSelector: React.FC<TimeFilterProps> = ({ value, onChange }) => {
+function TimeFilterSelector<T extends string = AllTimeFilters>({ 
+  value, 
+  onChange, 
+  options 
+}: TimeFilterProps<T>) {
+  // Use custom options if provided, otherwise use default filters
+  const filterOptions = options || 
+    (['D', 'M', 'Q', 'Y'] as string[]).map(filter => ({ 
+      value: filter, 
+      label: filterLabels[filter] 
+    }));
+
   return (
-    <div className="inline-flex bg-gray-800/40 rounded-sm p-0">
-      {(['D', 'M', 'Q', 'Y'] as TimeFilter[]).map((filter) => (
+    <div className="inline-flex bg-gray-800/40 rounded-md p-0 shadow-inner">
+      {filterOptions.map((option) => (
         <button
-          key={filter}
-          onClick={() => onChange(filter)}
-          className={`px-1.5 py-0.5 text-[10px] font-medium rounded-sm transition-colors ${
-            value === filter
-              ? 'bg-gray-800 text-white'
+          key={option.value}
+          onClick={() => onChange(option.value as T)}
+          className={`px-0 py-1 text-xs font-medium rounded transition-colors min-w-[30px] ${
+            value === option.value
+              ? 'bg-gray-800 text-white shadow'
               : 'bg-transparent text-gray-400 hover:text-gray-200'
           }`}
         >
-          {filterLabels[filter]}
+          {option.label}
         </button>
       ))}
     </div>
   );
-};
+}
 
 export default TimeFilterSelector; 

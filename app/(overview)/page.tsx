@@ -1,15 +1,13 @@
-import Layout from "./components/Layout";
-import Counter from "./components/shared/Counter";
-import { ChartIcon, TvlIcon, ExchangeIcon } from "./components/shared/Icons";
+"use client";
+
+import Counter from "../components/shared/Counter";
+import { ChartIcon, TvlIcon, ExchangeIcon } from "../components/shared/Icons";
 
 export default function Home() {
   return (
-    <Layout>
-      <div className="space-y-8">
-        <div className="border-b border-gray-900 pb-6">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Overview</h1>
-          <p className="text-gray-400 mt-2">Welcome to the State of Solana dashboard</p>
-        </div>
+    <div className="space-y-6">
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-200 mb-4">Key Statistics</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Counter 
@@ -36,6 +34,13 @@ export default function Home() {
           />
         </div>
       </div>
-    </Layout>
+      
+      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-200 mb-4">Network Summary</h2>
+        <div className="h-80 flex items-center justify-center bg-gray-900/50 rounded-lg">
+          <p className="text-gray-400">Network status dashboard will appear here</p>
+        </div>
+      </div>
+    </div>
   );
-}
+} 

@@ -157,24 +157,24 @@ export default function Counter({ title, value, trend, icon, variant = "indigo",
   }, [value, animatedValue]);
   
   return (
-    <div className={`bg-black/80 backdrop-blur-sm p-5 rounded-xl border border-gray-900 shadow-lg ${styles.shadow} transition-all duration-300`}>
-      <div className="flex items-center justify-between mb-2.5">
-        <h2 className="text-sm font-medium text-gray-300">{title}</h2>
-        <div className={`p-1.5 ${styles.bg} rounded-md`}>
-          <div className={styles.text}>
+    <div className={`bg-black/80 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-gray-900 shadow-lg ${styles.shadow} transition-all duration-300 min-h-[90px]`}>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xs md:text-sm font-normal text-gray-500">{title}</h2>
+        <div className={`p-1 md:p-1.5 ${styles.bg} rounded-md`}>
+          <div className={`${styles.text} w-4 h-4 md:w-5 md:h-5`}>
             {icon}
           </div>
         </div>
       </div>
-      <div className="mt-0.5">
-        <div className="text-2xl font-semibold text-white leading-tight">
+      <div className="mt-1">
+        <div className="text-xl md:text-2xl font-medium text-gray-300 leading-relaxed truncate">
           {value === "Loading..." ? animatedValue : isAnimating ? animatedValue : value}
         </div>
         {trend && (
-          <div className="flex items-center mt-1 text-xs">
+          <div className="flex items-center mt-1 text-xs md:text-sm">
             <span className={`${trend.value >= 0 ? 'text-green-400' : 'text-red-400'} flex items-center`}>
               <svg 
-                className="w-2.5 h-2.5 mr-0.5" 
+                className="w-3 h-3 md:w-3.5 md:h-3.5 mr-0.5" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24" 
@@ -192,7 +192,7 @@ export default function Counter({ title, value, trend, icon, variant = "indigo",
               </svg>
               {Math.abs(trend.value)}%
             </span>
-            <span className="text-gray-500 ml-1.5">{trend.label}</span>
+            <span className="text-gray-500 ml-1 md:ml-1.5">{trend.label}</span>
           </div>
         )}
       </div>

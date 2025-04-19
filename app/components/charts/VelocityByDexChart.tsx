@@ -7,13 +7,14 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { curveMonotoneX } from '@visx/curve';
 import { LinePath } from '@visx/shape';
 import { Brush } from '@visx/brush';
-import { fetchVelocityByDexData, TimeFilter, VelocityByDexDataPoint, getUniqueProgramTypes, getUniqueDates } from '../../api/velocityByDexData';
+import { fetchVelocityByDexData, TimeFilter, VelocityByDexDataPoint, getUniqueProgramTypes, getUniqueDates } from '../../api/dex/summary/velocityByDexData';
 import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
 import TimeFilterSelector from './TimeFilter';
 import { tvlVelocityColors } from './TvlVelocityChart';
+import BrushTimeScale from '../shared/BrushTimeScale';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -629,13 +630,6 @@ const VelocityByDexChart: React.FC<VelocityByDexChartProps> = ({
                   <Group left={margin.left} top={margin.top}>
                     <GridRows scale={velocityScale} width={innerWidth} stroke={colors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
                     
-                    {/* Display active brush status */}
-                    {activeIsBrushActive && uniqueDates.length < getUniqueDates(activeData).length && (
-                      <text x={0} y={-8} fontSize={8} fill={baseColors[1]} textAnchor="start">
-                        {`Filtered: ${uniqueDates.length} dates`}
-                      </text>
-                    )}
-                    
                     {/* Render line for each program type */}
                     {activeProgramTypes.map((programType) => {
                       // Filter data for this program type
@@ -711,133 +705,21 @@ const VelocityByDexChart: React.FC<VelocityByDexChartProps> = ({
         
         {/* Brush component - now shown for both main chart and modal */}
         <div className="h-[15%] w-full mt-1">
-          <ParentSize>
-            {({ width, height }) => {
-              if (width <= 0 || height <= 0) return null;
-              
-              // Use appropriate data source
-              const sourceData = isModal ? modalData : data;
-              if (sourceData.length === 0) return null;
-              
-              const margin = { top: 5, right: 25, bottom: 10, left: 45 };
-              const innerWidth = width - margin.left - margin.right;
-              const innerHeight = height - margin.top - margin.bottom;
-              if (innerWidth <= 0 || innerHeight <= 0) return null;
-              
-              // Get unique dates for scaling
-              const uniqueDates = getUniqueDates(sourceData);
-              const dateDomain = uniqueDates.map(d => new Date(d));
-              const dateExtent = [
-                new Date(Math.min(...dateDomain.map(d => d.getTime()))),
-                new Date(Math.max(...dateDomain.map(d => d.getTime())))
-              ];
-              
-              // Use scaleTime for the brush
-              const brushDateScale = scaleTime<number>({
-                domain: dateExtent,
-                range: [0, innerWidth],
-                nice: true
-              });
-              
-              // Find max velocity for scaling
-              const maxVelocity = Math.max(
-                ...sourceData.map(d => d.velocity),
-                1 // Ensure minimum scale even if all values are 0
-              );
-              
-              const brushVelocityScale = scaleLinear<number>({
-                domain: [0, maxVelocity * 1.1],
-                range: [innerHeight, 0],
-                nice: true,
-              });
-              
-              // Create linear scale for indices
-              const indexScale = scaleLinear({
-                domain: [0, uniqueDates.length - 1],
-                range: [0, innerWidth],
-              });
-              
-              // Initial brush position - always default to full range if no specific selection
-              const initialBrushPosition = activeBrushDomain 
-                ? { 
-                    start: { x: brushDateScale(activeBrushDomain[0]) }, 
-                    end: { x: brushDateScale(activeBrushDomain[1]) } 
-                  }
-                : { 
-                    start: { x: 0 }, 
-                    end: { x: innerWidth } 
-                  };
-              
-              return (
-                <svg width={width} height={height}>
-                  <Group left={margin.left} top={margin.top}>
-                    {/* Background rectangle to ensure brush is visible when empty */}
-                    <rect
-                      x={0}
-                      y={0}
-                      width={innerWidth}
-                      height={innerHeight}
-                      fill="transparent"
-                    />
-                    
-                    {/* Render mini-line for only the first program type */}
-                    {activeProgramTypes.length > 0 && (() => {
-                      const thirdProgramType = activeProgramTypes[2];
-                      const firstProgramType = activeProgramTypes[0];
-                      // Filter data for this program type
-                      const programData = sourceData.filter(d => d.program_type === thirdProgramType);
-                      
-                      // Group and organize data by date
-                      const lineData = uniqueDates.map((date, idx) => {
-                        const dataPoint = programData.find(d => d.date === date);
-                        return {
-                          date,
-                          idx,
-                          velocity: dataPoint ? dataPoint.velocity : 0
-                        };
-                      });
-
-                      if (lineData.length === 0) return null;
-                      
-                      return (
-                        <LinePath 
-                          key={`mini-line-${thirdProgramType}`}
-                          data={lineData}
-                          
-                          x={(d) => indexScale(d.idx)}
-                          y={(d) => brushVelocityScale(d.velocity)}
-                          stroke={tvlVelocityColors.tvlBar}
-                          strokeWidth={1}
-                          opacity={0.5} // Match TVL velocity chart opacity
-                          curve={curveMonotoneX}
-                        />
-                      );
-                    })()}
-                    
-                    <Brush
-                      xScale={brushDateScale}
-                      yScale={brushVelocityScale}
-                      width={innerWidth}
-                      height={innerHeight}
-                      handleSize={8}
-                      resizeTriggerAreas={['left', 'right']}
-                      brushDirection="horizontal"
-                      initialBrushPosition={initialBrushPosition}
-                      onChange={activeHandleBrushChange}
-                      onClick={activeClearBrush}
-                      selectedBoxStyle={{ 
-                        fill: isModal ? 'rgba(167, 139, 250, 0)' : 'rgba(96, 165, 250, 0)', 
-                        stroke: colors.axisLines, 
-                        strokeWidth: 0.5,
-                        rx: 4,
-                        ry: 4,
-                      }}
-                    />
-                  </Group>
-                </svg>
-              );
-            }}
-          </ParentSize>
+          <BrushTimeScale
+            data={isModal ? modalData : data}
+            isModal={isModal}
+            activeBrushDomain={isModal ? modalBrushDomain : brushDomain}
+            onBrushChange={isModal ? handleModalBrushChange : handleBrushChange}
+            onClearBrush={isModal 
+              ? () => { setModalBrushDomain(null); setIsModalBrushActive(false); }
+              : () => { setBrushDomain(null); setIsBrushActive(false); }
+            }
+            getDate={(d) => d.date}
+            getValue={(d) => d.velocity}
+            getUniqueDates={getUniqueDates}
+            lineColor={tvlVelocityColors.tvlBar}
+            margin={{ top: 5, right: 25, bottom: 10, left: 45 }}
+          />
         </div>
       </div>
     );
