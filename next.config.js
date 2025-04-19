@@ -10,6 +10,7 @@ const nextConfig = {
   },
   trailingSlash: true,
   assetPrefix: process.env.NODE_ENV === 'production' ? '/state_of_solana' : '',
+  distDir: 'out',
 };
 
 module.exports = nextConfig; 

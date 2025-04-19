@@ -10,6 +10,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  deployments: write
 
 jobs:
   build-and-deploy:
@@ -30,17 +31,58 @@ jobs:
       - name: Build
         run: npm run build
         
-      - name: Create .nojekyll file
-        run: touch out/.nojekyll
-        
-      - name: Prepare out directory
+      - name: Add custom files
         run: |
+          # Create .nojekyll file to disable Jekyll processing
+          touch out/.nojekyll
+          
+          # Create a better 404 page with proper redirect
+          cat > out/404.html << 'EOL'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>State of Solana Dashboard</title>
+            <script>
+              // Redirect to base path with the current URL path appended
+              var segmentCount = 1; // Number of segments in path to remove (for repository name)
+              var location = window.location;
+              var pathname = location.pathname;
+              var redirectPath = pathname.split('/').slice(segmentCount + 1).join('/');
+              window.location.href = '/state_of_solana/' + redirectPath + location.search + location.hash;
+            </script>
+          </head>
+          <body>
+            <p>Redirecting to State of Solana Dashboard...</p>
+          </body>
+          </html>
+          EOL
+          
+          # Create root index.html if it doesn't exist
+          if [ ! -f out/index.html ]; then
+            cat > out/index.html << 'EOL'
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <title>State of Solana Dashboard</title>
+              <script>
+                window.location.href = '/state_of_solana/';
+              </script>
+            </head>
+            <body>
+              <p>Redirecting to State of Solana Dashboard...</p>
+            </body>
+            </html>
+            EOL
+          fi
+          
+          # Copy the favicon if it exists
           cp -f app/favicon.ico out/ || true
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/state_of_solana/" /></head><body>Redirecting...</body></html>' > out/404.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: out
           branch: gh-pages
+          folder: out
           clean: true
