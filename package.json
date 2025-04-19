@@ -2,14 +2,14 @@
   "name": "state-of-solana",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://topledger.github.io/state-of-solana",
+  "homepage": "https://topledger.github.io/state_of_solana",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export",
-    "predeploy": "npm run build",
+    "export": "next build",
+    "predeploy": "npm run build && touch out/.nojekyll",
     "deploy": "gh-pages -d out"
   },
   "dependencies": {

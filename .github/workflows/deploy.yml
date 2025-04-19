@@ -29,6 +29,11 @@ jobs:
 
       - name: Build
         run: npm run build
+        
+      - name: Create .nojekyll file
+        run: |
+          touch out/.nojekyll
+          echo "state_of_solana" > out/CNAME
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
