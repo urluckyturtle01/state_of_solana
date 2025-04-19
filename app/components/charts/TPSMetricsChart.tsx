@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
+import { LinePath } from '@visx/shape';
 import { GridRows } from '@visx/grid';
-import { scaleLinear, scaleBand, scaleTime } from '@visx/scale';
-import { AxisBottom, AxisLeft, AxisRight } from '@visx/axis';
+import { scaleLinear, scaleTime, scaleBand } from '@visx/scale';
+import { AxisBottom, AxisLeft } from '@visx/axis';
 import { curveMonotoneX } from '@visx/curve';
-import { LinePath, Bar } from '@visx/shape';
-import { Brush } from '@visx/brush';
-import { PatternLines } from '@visx/pattern';
-import { fetchTvlVelocityData, TimeFilter, TvlVelocityDataPoint } from '../../api/dex/summary/chartData';
-import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
+import Loader from '../shared/Loader';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
 import TimeFilterSelector from '../shared/filters/TimeFilter';
+import DisplayModeFilter, { DisplayMode } from '../shared/filters/DisplayModeFilter';
 import BrushTimeScale from '../shared/BrushTimeScale';
+import { TimeFilter } from '../../api/REV/cost-capacity';
+import { TransactionDataPoint, fetchTransactionsData } from '../../api/REV/cost-capacity/transactionsData';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -36,103 +36,61 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface TvlVelocityChartProps {
+// Props interface
+interface TPSMetricsChartProps {
   timeFilter: TimeFilter;
+  displayMode?: DisplayMode;
   isModalOpen?: boolean;
   onModalClose?: () => void;
+  onTimeFilterChange?: (filter: TimeFilter) => void;
+  onDisplayModeChange?: (mode: DisplayMode) => void;
 }
 
-// Helper functions
-const formatTvl = (value: number) => `$${(value / 1e9).toFixed(1)}B`;
-const formatVelocity = (value: number) => Number.isInteger(value) ? value.toString() : value.toFixed(1);
-const formatDate = (dateStr: string, timeFilter?: TimeFilter) => {
-  try {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
-    
-    switch(timeFilter) {
-      case 'Y': return date.getFullYear().toString();
-      case 'Q': return `Q${Math.floor(date.getMonth() / 3) + 1} ${date.getFullYear()}`;
-      case 'M': return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-      case 'D':
-      default: return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-  } catch (e) {
-    return dateStr;
-  }
-};
-
-export const tvlVelocityColors = {
+// Chart colors
+export const tpsMetricsColors = {
+  total_tps: '#60a5fa', // blue
+  success_tps: '#34d399', // green
+  failed_tps: '#f87171', // red
+  real_tps: '#a78bfa', // purple
+  grid: '#1f2937',
   axisLines: '#374151',
   tickLabels: '#6b7280',
-  tvlBar: '#60a5fa',
-  velocityLine: '#a78bfa',
-  grid: '#1f2937',
 };
 
-// Export a function to get chart colors for external use
-export const getTvlVelocityChartColors = () => {
-  return {
-    tvl: tvlVelocityColors.tvlBar,
-    velocity: tvlVelocityColors.velocityLine
-  };
-};
-
-// Helper function to get available metrics from the data
-const getAvailableChartMetrics = (data: TvlVelocityDataPoint[], colors: { tvl: string, velocity: string }) => {
-  if (!data || data.length === 0) return [];
-  
-  // Get the first data point to extract property names
-  const samplePoint = data[0];
-  
-  // Filter out date and any other non-metric properties
-  return Object.keys(samplePoint)
-    .filter(key => key !== 'date')
-    .map(key => {
-      // Use proper display names for metrics
-      const displayNames: Record<string, string> = {
-        tvl: 'TVL',
-        velocity: 'Velocity'
-      };
-      
-      // Use the mapped display name or fallback to capitalized key
-      const displayName = displayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
-      
-      // Determine shape and color based on metric name
-      const isLine = key === 'velocity';
-      return {
-        key,
-        displayName,
-        shape: isLine ? 'circle' : 'square',
-        color: isLine ? colors.velocity : colors.tvl
-      };
-    });
-};
-
-const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({ 
-  timeFilter, 
-  isModalOpen = false, 
-  onModalClose = () => {} 
+const TPSMetricsChart: React.FC<TPSMetricsChartProps> = ({
+  timeFilter,
+  displayMode = 'absolute',
+  isModalOpen = false,
+  onModalClose = () => {},
+  onTimeFilterChange,
+  onDisplayModeChange,
 }) => {
-  // Main chart data
-  const [data, setData] = useState<TvlVelocityDataPoint[]>([]);
+  // Chart data state
+  const [data, setData] = useState<TransactionDataPoint[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filteredData, setFilteredData] = useState<TvlVelocityDataPoint[]>([]);
+  const [filteredData, setFilteredData] = useState<TransactionDataPoint[]>([]);
   const [brushDomain, setBrushDomain] = useState<[Date, Date] | null>(null);
   const [isBrushActive, setIsBrushActive] = useState(false);
+  const [_displayMode, _setDisplayMode] = useState<DisplayMode>(displayMode);
   
   // Modal specific data
-  const [modalData, setModalData] = useState<TvlVelocityDataPoint[]>([]);
+  const [modalData, setModalData] = useState<TransactionDataPoint[]>([]);
   const [modalLoading, setModalLoading] = useState<boolean>(true);
   const [modalError, setModalError] = useState<string | null>(null);
   const [modalTimeFilter, setModalTimeFilter] = useState<TimeFilter>(timeFilter);
   const [modalBrushDomain, setModalBrushDomain] = useState<[Date, Date] | null>(null);
   const [isModalBrushActive, setIsModalBrushActive] = useState(false);
-  const [modalFilteredData, setModalFilteredData] = useState<TvlVelocityDataPoint[]>([]);
+  const [modalFilteredData, setModalFilteredData] = useState<TransactionDataPoint[]>([]);
+  const [modalDisplayMode, setModalDisplayMode] = useState<DisplayMode>(_displayMode);
   
   // Shared tooltip state
-  const [tooltip, setTooltip] = useState({ visible: false, dataPoint: null as TvlVelocityDataPoint | null, left: 0, top: 0 });
+  const [tooltip, setTooltip] = useState({ 
+    visible: false, 
+    dataPoint: null as TransactionDataPoint | null, 
+    left: 0, 
+    top: 0 
+  });
 
   // Add refs for throttling
   const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -145,8 +103,11 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const chartData = await fetchTvlVelocityData(timeFilter);
+      // Use the real API endpoint
+      const chartData = await fetchTransactionsData(timeFilter);
+      
       if (chartData.length === 0) {
+        console.error('No data available for this period');
         setError('No data available for this period.');
         setData([]);
       } else {
@@ -177,7 +138,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     setModalLoading(true);
     setModalError(null);
     try {
-      const chartData = await fetchTvlVelocityData(modalTimeFilter);
+      const chartData = await fetchTransactionsData(modalTimeFilter);
       if (chartData.length === 0) {
         setModalError('No data available for this period.');
         setModalData([]);
@@ -187,7 +148,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         setModalFilteredData(chartData);
         
         // Set brush as active but don't set a specific domain
-        // This will result in the full range being selected
         setIsModalBrushActive(true);
         setModalBrushDomain(null);
       }
@@ -205,11 +165,16 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     }
   }, [modalTimeFilter]);
 
-  // Fetch data for main chart on mount and when timeFilter changes
+  // Fetch data on mount and when filters change
   useEffect(() => {
     fetchData();
   }, [fetchData]);
   
+  // Sync internal state with props when they change
+  useEffect(() => {
+    _setDisplayMode(displayMode);
+  }, [displayMode]);
+
   // Handle brush change with throttling
   const handleBrushChange = useCallback((domain: any) => {
     if (!domain) {
@@ -217,6 +182,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         setBrushDomain(null);
         setIsBrushActive(false);
       }
+      
       // Clear any pending throttle timeout
       if (throttleTimeoutRef.current) {
         clearTimeout(throttleTimeoutRef.current);
@@ -231,7 +197,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     const endDate = new Date(x1);
     
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return; // Ignore invalid dates
+      return; // Ignore invalid dates
     }
 
     // Update immediate brush domain for visual feedback
@@ -240,10 +206,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
-
-    // Filtering update is handled by the useEffect based on brushDomain,
-    // but throttled via canUpdateFilteredDataRef
-
+    
+    // Filtering logic is moved to useEffect
   }, [isBrushActive]);
 
   // Handle modal brush change with throttling
@@ -253,6 +217,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         setModalBrushDomain(null);
         setIsModalBrushActive(false);
       }
+      
       // Clear any pending throttle timeout
       if (modalThrottleTimeoutRef.current) {
         clearTimeout(modalThrottleTimeoutRef.current);
@@ -267,7 +232,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     const endDate = new Date(x1);
     
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return; // Ignore invalid dates
+      return; // Ignore invalid dates
     }
 
     // Update immediate brush domain for visual feedback
@@ -276,9 +241,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
-
-    // Filtering update is handled by the useEffect based on modalBrushDomain
-
+    
+    // Filtering logic is moved to useEffect
   }, [isModalBrushActive]);
 
   // Apply throttled brush domain to filter data
@@ -304,8 +268,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     
     // Throttle the actual filtering logic
     if (!canUpdateFilteredDataRef.current) {
-        // Skip update if throttled
-        return;
+      // Skip update if throttled
+      return;
     }
 
     const [start, end] = brushDomain;
@@ -356,8 +320,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     
     // Throttle the actual filtering logic
     if (!canUpdateModalFilteredDataRef.current) {
-        // Skip update if throttled
-        return;
+      // Skip update if throttled
+      return;
     }
 
     const [start, end] = modalBrushDomain;
@@ -384,19 +348,94 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     }, 100); // 100ms throttle interval
 
   }, [modalBrushDomain, modalData, isModalBrushActive]);
+  
+  // Cleanup throttle timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (throttleTimeoutRef.current) {
+        clearTimeout(throttleTimeoutRef.current);
+      }
+      if (modalThrottleTimeoutRef.current) {
+        clearTimeout(modalThrottleTimeoutRef.current);
+      }
+    };
+  }, []); // Empty dependency array runs only on mount/unmount
+
+  // Handle modal-related effects
+  useEffect(() => {
+    if (isModalOpen) {
+      // Set modal filters from main chart
+      setModalTimeFilter(timeFilter);
+      setModalDisplayMode(_displayMode);
+      
+      // Initialize with current main chart data
+      setModalData(data);
+      setModalFilteredData(filteredData.length > 0 ? filteredData : data);
+      setModalBrushDomain(brushDomain);
+      setIsModalBrushActive(isBrushActive);
+      
+      // Force fetch new data for modal to ensure it's updated
+      fetchModalData();
+    }
+  }, [isModalOpen, timeFilter, _displayMode, data, filteredData, brushDomain, isBrushActive, fetchModalData]);
+  
+  // Fetch modal data when time filter changes in modal
+  useEffect(() => {
+    if (isModalOpen) {
+      fetchModalData();
+    }
+  }, [isModalOpen, modalTimeFilter, fetchModalData]);
+
+  // Handle modal time filter change
+  const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
+    setModalTimeFilter(newFilter);
+  }, []);
+
+  // Handle display mode change
+  const handleDisplayModeChange = useCallback((newMode: DisplayMode) => {
+    _setDisplayMode(newMode);
+    if (onDisplayModeChange) {
+      onDisplayModeChange(newMode);
+    }
+  }, [onDisplayModeChange]);
+
+  // Handle modal display mode change
+  const handleModalDisplayModeChange = useCallback((newMode: DisplayMode) => {
+    setModalDisplayMode(newMode);
+  }, []);
+
+  // Format large numbers with appropriate suffixes
+  const formatLargeNumber = (value: number): string => {
+    if (value >= 1e9) {
+      return `${(value / 1e9).toFixed(1)}B`;
+    } else if (value >= 1e6) {
+      return `${(value / 1e6).toFixed(1)}M`;
+    } else if (value >= 1e3) {
+      return `${(value / 1e3).toFixed(1)}K`;
+    }
+    return value.toFixed(0);
+  };
+  
+  // Format TPS values
+  const formatTPS = (value: number): string => {
+    return value.toFixed(1);
+  };
+  
+  // Format date for display
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
 
   // Create tooltip handler
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
-    console.log('TvlVelocity - Mouse move event', { isModal, clientX: e.clientX, clientY: e.clientY });
-    
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    const margin = { left: 45 };
+    const margin = { left: 50 };
     const innerWidth = rect.width - margin.left - 20;
     
     if (mouseX < margin.left || mouseX > innerWidth + margin.left) {
       if (tooltip.visible) {
-        console.log('TvlVelocity - Mouse outside chart area, hiding tooltip');
         setTooltip(prev => ({ ...prev, visible: false }));
       }
       return;
@@ -413,14 +452,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     if (index >= 0 && index < currentData.length) {
       const dataPoint = currentData[index];
       if (!tooltip.visible || tooltip.dataPoint?.date !== dataPoint.date) {
-        console.log('TvlVelocity - Setting tooltip data', { 
-          dataPoint,
-          left: e.clientX,
-          top: e.clientY,
-          offsetLeft: e.clientX - (isModal ? 50 : 50),
-          offsetTop: e.clientY - (isModal ? 50 : 50)
-        });
-        
         setTooltip({
           visible: true,
           dataPoint,
@@ -429,81 +460,20 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         });
       }
     }
-  }, [data, filteredData, modalData, modalFilteredData, isBrushActive, isModalBrushActive, tooltip.visible, tooltip.dataPoint?.date]);
+  }, [data, filteredData, modalData, modalFilteredData, isBrushActive, isModalBrushActive, tooltip]);
   
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
     if (tooltip.visible) {
-      console.log('TvlVelocity - Mouse leave, hiding tooltip');
       setTooltip(prev => ({ ...prev, visible: false }));
     }
   }, [tooltip.visible]);
 
-  // Cleanup throttle timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (throttleTimeoutRef.current) {
-        clearTimeout(throttleTimeoutRef.current);
-      }
-      if (modalThrottleTimeoutRef.current) {
-        clearTimeout(modalThrottleTimeoutRef.current);
-      }
-    };
-  }, []); // Empty dependency array runs only on mount/unmount
-
-  // Update modalTimeFilter when timeFilter changes
-  useEffect(() => {
-    // Only update modalTimeFilter from timeFilter when the modal isn't open
-    // This prevents overriding user selections in the modal
-    if (!isModalOpen) {
-      setModalTimeFilter(timeFilter);
-    }
-  }, [timeFilter, isModalOpen]);
-
-  // Initialize modal data when modal opens
-  useEffect(() => {
-    if (isModalOpen) {
-      // Initialize modal time filter with main time filter only on initial open
-      // not on every render while modal is open
-      setModalTimeFilter(timeFilter);
-      
-      // If we already have data loaded for the main chart with the same filter,
-      // we can just use that data for the modal initially
-      if (data.length > 0) {
-        setModalData(data);
-        setModalFilteredData(data);
-        setModalLoading(false);
-        setModalError(null);
-        
-        // Set brush as active but don't set a specific domain
-        // This will result in the full range being selected
-        setIsModalBrushActive(true);
-        setModalBrushDomain(null);
-      } else {
-        // Otherwise fetch data specifically for the modal
-        fetchModalData();
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalOpen, timeFilter, data]); // Include necessary dependencies but not fetchModalData
-  
-  // Fetch modal data when modalTimeFilter changes and modal is open
-  useEffect(() => {
-    if (isModalOpen) {
-      fetchModalData();
-    }
-  }, [modalTimeFilter, isModalOpen, fetchModalData]);
-
-  // Handle modal time filter change
-  const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
-    console.log('Time filter changed to:', newFilter);
-    setModalTimeFilter(newFilter);
-  }, []);
-
   // Render chart content
   const renderChartContent = (height: number, width: number, isModal = false) => {
-    // Use modalTimeFilter and modalData if in modal mode, otherwise use the main timeFilter and data
+    // Use modal data/filters if in modal mode, otherwise use the main data/filters
     const activeTimeFilter = isModal ? modalTimeFilter : timeFilter;
+    const activeDisplayMode = isModal ? modalDisplayMode : _displayMode;
     const activeData = isModal ? modalData : data;
     const activeFilteredData = isModal ? (isModalBrushActive ? modalFilteredData : modalData) : (isBrushActive ? filteredData : data);
     const activeLoading = isModal ? modalLoading : loading;
@@ -539,13 +509,36 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       <div className="flex flex-col h-full">
         {tooltip.visible && tooltip.dataPoint && (
           <ChartTooltip
-            title={formatDate(tooltip.dataPoint.date, activeTimeFilter)}
+            title={formatDate(tooltip.dataPoint.date)}
             items={[
-              { color: tvlVelocityColors.tvlBar, label: 'TVL', value: formatTvl(tooltip.dataPoint.tvl), shape: 'square' },
-              { color: tvlVelocityColors.velocityLine, label: 'Velocity', value: formatVelocity(tooltip.dataPoint.velocity), shape: 'circle' }
+              {
+                color: tpsMetricsColors.total_tps,
+                label: 'Total TPS',
+                value: formatTPS(tooltip.dataPoint.total_tps),
+                shape: 'circle'
+              },
+              {
+                color: tpsMetricsColors.success_tps,
+                label: 'Success TPS',
+                value: formatTPS(tooltip.dataPoint.success_tps),
+                shape: 'circle'
+              },
+              {
+                color: tpsMetricsColors.failed_tps,
+                label: 'Failed TPS',
+                value: formatTPS(tooltip.dataPoint.failed_tps),
+                shape: 'circle'
+              },
+              {
+                color: tpsMetricsColors.real_tps,
+                label: 'Real TPS',
+                value: formatTPS(tooltip.dataPoint.real_tps),
+                shape: 'circle'
+              }
             ]}
-            top={tooltip.top - (isModal ? 50 : 400)}
+            top={tooltip.top - (isModal ? 50 : 240)}
             left={tooltip.left - (isModal ? 50 : 240)}
+            isModal={isModal}
           />
         )}
         
@@ -563,119 +556,164 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;
 
-              // Use displayed data for this chart (modal or main)
+              // Get data for chart
               const displayData = activeFilteredData;
               
-              // Create a time domain from the current data
-              const dateDomain = displayData.map(d => new Date(d.date));
+              // Calculate max value for y-axis scales
+              const maxTpsValue = Math.max(
+                ...displayData.map(d => Math.max(
+                  d.total_tps,
+                  d.success_tps,
+                  d.failed_tps,
+                  d.real_tps
+                ))
+              );
+
+              // Create scales
+              const yScale = scaleLinear({
+                domain: [0, maxTpsValue * 1.1], // Add 10% padding
+                range: [innerHeight, 0],
+                nice: true,
+                round: false // Don't round values to ensure all grid lines show up
+              });
               
-              // Use consistent scaleTime for both chart and brush
-              const dateScale = scaleBand<Date>({
-                domain: dateDomain,
+              // Calculate explicit tick values for better grid line display
+              const yTickValues = Array.from({ length: 8 }, (_, i) => 
+                i * (maxTpsValue * 1.1) / 7
+              );
+                          
+              // X scale based on dates
+              const xScale = scaleBand({
+                domain: displayData.map((_, i) => i.toString()),
                 range: [0, innerWidth],
-                padding: 0.3,
+                padding: 0.2,
               });
-
-              const tvlScale = scaleLinear<number>({
-                domain: [0, Math.max(...displayData.map(d => d.tvl)) * 1.1],
-                range: [innerHeight, 0],
-                nice: true,
-              });
-
-              const velocityScale = scaleLinear<number>({
-                domain: [0, Math.max(...displayData.map(d => d.velocity)) * 1.1],
-                range: [innerHeight, 0],
-                nice: true,
-              });
+              
+              // Create map for date lookup
+              const dateMap = displayData.map(d => new Date(d.date));
               
               return (
-                  <svg width={width} height={height} className="overflow-visible">
-                    <Group left={margin.left} top={margin.top}>
-                    <GridRows scale={tvlScale} width={innerWidth} stroke={tvlVelocityColors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
+                <svg width={width} height={height}>
+                  <Group left={margin.left} top={margin.top}>
+                    {/* Grid lines */}
+                    <GridRows
+                      scale={yScale}
+                      width={innerWidth}
+                      height={innerHeight}
+                      stroke={tpsMetricsColors.grid}
+                      strokeOpacity={0.6}
+                      strokeDasharray="2,3"
+                      tickValues={yTickValues}
+                    />
                     
-                    {/* Display active brush status */}
-                    {activeIsBrushActive && (
-                      <text x={0} y={-8} fontSize={8} fill={tvlVelocityColors.velocityLine} textAnchor="start">
-                        {`Filtered: ${displayData.length} item${displayData.length !== 1 ? 's' : ''}`}
-                      </text>
-                    )}
+                    {/* Line for Total TPS */}
+                    <LinePath
+                      data={displayData}
+                      x={(d, i) => xPosition(i.toString()) + xScale.bandwidth() / 2}
+                      y={(d) => yScale(d.total_tps)}
+                      stroke={tpsMetricsColors.total_tps}
+                      strokeWidth={1.5}
+                      curve={curveMonotoneX}
+                    />
                     
-                    {displayData.map((d) => {
-                      const date = new Date(d.date);
-                      const barX = dateScale(date);
-                        const barWidth = dateScale.bandwidth();
-                      const barHeight = Math.max(0, innerHeight - tvlScale(d.tvl));
-                        if (barX === undefined || barHeight < 0) return null;
-                        return (
-                        <Bar key={`bar-${d.date}`} x={barX} y={innerHeight - barHeight} width={barWidth} height={barHeight}
-                          fill={tvlVelocityColors.tvlBar} opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7} />
-                        );
-                      })}
+                    {/* Line for Success TPS */}
+                    <LinePath
+                      data={displayData}
+                      x={(d, i) => xPosition(i.toString()) + xScale.bandwidth() / 2}
+                      y={(d) => yScale(d.success_tps)}
+                      stroke={tpsMetricsColors.success_tps}
+                      strokeWidth={1.5}
+                      curve={curveMonotoneX}
+                    />
                     
-                    <LinePath data={displayData}
-                      x={(d) => (dateScale(new Date(d.date)) ?? 0) + dateScale.bandwidth() / 2}
-                      y={(d) => velocityScale(d.velocity)}
-                      stroke={tvlVelocityColors.velocityLine} strokeWidth={1.5} curve={curveMonotoneX} />
+                    {/* Line for Failed TPS */}
+                    <LinePath
+                      data={displayData}
+                      x={(d, i) => xPosition(i.toString()) + xScale.bandwidth() / 2}
+                      y={(d) => yScale(d.failed_tps)}
+                      stroke={tpsMetricsColors.failed_tps}
+                      strokeWidth={1.5}
+                      curve={curveMonotoneX}
+                    />
                     
-                    <AxisBottom top={innerHeight} scale={dateScale}
-                      tickFormat={(date) => {
-                        const d = date as Date;
-                        // Custom formatting to exclude year
+                    {/* Line for Real TPS */}
+                    <LinePath
+                      data={displayData}
+                      x={(d, i) => xPosition(i.toString()) + xScale.bandwidth() / 2}
+                      y={(d) => yScale(d.real_tps)}
+                      stroke={tpsMetricsColors.real_tps}
+                      strokeWidth={1.5}
+                      curve={curveMonotoneX}
+                    />
+                    
+                    {/* X-axis */}
+                    <AxisBottom 
+                      top={innerHeight} 
+                      scale={xScale}
+                      tickFormat={(index) => {
+                        const idx = parseInt(index);
+                        if (isNaN(idx) || idx < 0 || idx >= dateMap.length) return '';
+                        const date = dateMap[idx];
+                        // Custom formatting based on active time filter
                         switch(activeTimeFilter) {
-                          case 'Y': return d.getFullYear().toString();
-                          case 'Q': return `Q${Math.floor(d.getMonth() / 3) + 1}`;
-                          case 'M': return d.toLocaleDateString('en-US', { month: 'short' });
+                          case 'Y': return date.getFullYear().toString();
+                          case 'Q': return `Q${Math.floor(date.getMonth() / 3) + 1}`;
+                          case 'M': return date.toLocaleDateString('en-US', { month: 'short' });
+                          case 'W': return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                           case 'D':
-                          default: return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                          default: return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                         }
                       }}
-                      stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0}
+                      stroke={tpsMetricsColors.axisLines} 
+                      strokeWidth={0.5} 
+                      tickStroke="transparent" 
+                      tickLength={0}
                       hideZero={true}
-                      tickLabelProps={(value, index) => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
-                        fontSize: 11, 
-                        fontWeight: 300,
-                        letterSpacing: '0.05em',
-                        textAnchor: index === 0 ? 'start' : 'middle', 
-                        dy: '0.5em',
-                        dx: index === 0 ? '0.5em' : 0
-                      })}
-                      numTicks={activeTimeFilter === 'Y' ? data.length : Math.min(5, data.length)} />
-                    
-                    <AxisLeft scale={tvlScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0} numTicks={5}
-                      tickFormat={(value) => formatTvl(Number(value))}
                       tickLabelProps={() => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
+                        fill: tpsMetricsColors.tickLabels, 
                         fontSize: 11, 
-                        fontWeight: 300,
+                        fontWeight: 300, 
+                        letterSpacing: '0.05em',
+                        textAnchor: 'middle', 
+                        dy: '0.7em',
+                      })}
+                      numTicks={Math.min(5, displayData.length)}
+                    />
+                    
+                    {/* Y-axis (TPS values) */}
+                    <AxisLeft 
+                      scale={yScale}
+                      stroke={tpsMetricsColors.axisLines} 
+                      strokeWidth={0.5} 
+                      tickStroke="transparent" 
+                      tickLength={0} 
+                      numTicks={5}
+                      tickFormat={(value) => formatTPS(value as number)}
+                      tickLabelProps={() => ({ 
+                        fill: tpsMetricsColors.tickLabels, 
+                        fontSize: 11, 
+                        fontWeight: 300, 
                         letterSpacing: '0.05em',
                         textAnchor: 'end', 
                         dx: '-0.6em', 
                         dy: '0.25em' 
-                      })} />
-                    
-                    <AxisRight left={innerWidth} scale={velocityScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5}
-                      tickStroke="transparent" tickLength={0} numTicks={5}
-                      tickFormat={(value) => formatVelocity(Number(value))}
-                      tickLabelProps={() => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
-                        fontSize: 11, 
-                        fontWeight: 300,
-                        letterSpacing: '0.05em',
-                        textAnchor: 'start', 
-                        dx: '0.5em', 
-                        dy: '0.25em' 
-                      })} />
+                      })}
+                    />
                   </Group>
                 </svg>
               );
+              
+              // Helper function to get x position from index
+              function xPosition(index: string): number {
+                return (xScale(index) || 0);
+              }
             }}
           </ParentSize>
         </div>
         
-        {/* Brush component - now shown for both main chart and modal */}
+        {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
-          <BrushTimeScale 
+          <BrushTimeScale
             data={isModal ? modalData : data}
             isModal={isModal}
             activeBrushDomain={isModal ? modalBrushDomain : brushDomain}
@@ -685,8 +723,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               : () => { setBrushDomain(null); setIsBrushActive(false); }
             }
             getDate={(d) => d.date}
-            getValue={(d) => d.tvl}
-            lineColor={tvlVelocityColors.tvlBar}
+            getValue={(d) => d.total_tps}
+            lineColor={tpsMetricsColors.total_tps}
             margin={{ top: 5, right: 25, bottom: 10, left: 45 }}
           />
         </div>
@@ -699,15 +737,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       {renderChartContent(0, 0)}
       
       {/* Modal */}
-      <Modal isOpen={isModalOpen} onClose={onModalClose} title="TVL and Velocity Trends" subtitle="Tracking value locked and market velocity across the ecosystem">
-        
-        {/* Time filter */}
-        <div className="flex items-center justify-start pl-1 py-0 mb-3">
-          <TimeFilterSelector value={modalTimeFilter} onChange={handleModalTimeFilterChange} />
-        </div>
-        
-        {/* Horizontal line */}
-        <div className="h-px bg-gray-900 w-full mb-3"></div>
+      <Modal isOpen={isModalOpen} onClose={onModalClose} title="TPS Metrics" subtitle="Tracking Transactions Per Second (TPS) metrics in Solana">
         
         <div className="h-[60vh]">
           {/* Chart with legends in modal */}
@@ -718,37 +748,39 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
             </div>
             
             {/* Legend area - 10% width */}
-            <div className="w-[10%] pl-3">
-              <div className="flex flex-col gap-4 pt-4">
-                {!modalLoading && modalData.length > 0 ? (
-                  <div className="flex flex-col gap-2">
-                    {getAvailableChartMetrics(modalData, { 
-                      tvl: tvlVelocityColors.tvlBar, 
-                      velocity: tvlVelocityColors.velocityLine 
-                    }).map(metric => (
-                      <div key={metric.key} className="flex items-start">
-                        <div 
-                          className={`w-2.5 h-2.5 mr-2 ${metric.shape === 'circle' ? 'rounded-full' : 'rounded-sm'} mt-0.5`}
-                          style={{ background: metric.color }}
-                        ></div>
-                        <span className="text-[11px] text-gray-300">{metric.displayName}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-2">
-                    {/* Loading states */}
-                    <div className="flex items-start">
-                      <div className="w-2.5 h-2.5 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                      <span className="text-[11px] text-gray-300">Loading...</span>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="w-2.5 h-2.5 bg-purple-500 mr-2 rounded-full mt-0.5 animate-pulse"></div>
-                      <span className="text-[11px] text-gray-300">Loading...</span>
-                    </div>
-                  </div>
-                )}
+            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
+              <div className="text-[10px] text-gray-400 mb-2">METRICS</div>
+              
+              <div className="flex items-center mb-1.5">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full mr-1.5" 
+                  style={{ backgroundColor: tpsMetricsColors.total_tps }}
+                ></div>
+                <span className="text-[11px] text-gray-300">Total TPS</span>
+              </div>
+              
+              <div className="flex items-center mb-1.5">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full mr-1.5" 
+                  style={{ backgroundColor: tpsMetricsColors.success_tps }}
+                ></div>
+                <span className="text-[11px] text-gray-300">Success TPS</span>
+              </div>
+              
+              <div className="flex items-center mb-1.5">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full mr-1.5" 
+                  style={{ backgroundColor: tpsMetricsColors.failed_tps }}
+                ></div>
+                <span className="text-[11px] text-gray-300">Failed TPS</span>
+              </div>
+              
+              <div className="flex items-center mb-1.5">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full mr-1.5" 
+                  style={{ backgroundColor: tpsMetricsColors.real_tps }}
+                ></div>
+                <span className="text-[11px] text-gray-300">Real TPS</span>
               </div>
             </div>
           </div>
@@ -758,4 +790,4 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
   );
 };
 
-export default TvlVelocityChart; 
+export default TPSMetricsChart; 

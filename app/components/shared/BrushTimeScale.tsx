@@ -36,6 +36,9 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   lineColor,
   margin = { top: 5, right: 25, bottom: 10, left: 45 }
 }) => {
+  // Add a dataKey to force remounting the brush when data changes
+  const dataKey = React.useMemo(() => data.length, [data.length]);
+  
   if (data.length === 0) return null;
   
   return (
@@ -77,6 +80,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
             domain: [0, maxValue * 1.1], // Add 10% headroom
             range: [innerHeight, 0],
             nice: true,
+            round: false // Prevent rounding to ensure all gridlines show
           });
           
           // Create linear scale for distributing indices
@@ -132,12 +136,13 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   x={(d) => indexScale(d.idx)}
                   y={(d) => valueScale(d.value)}
                   stroke={lineColor}
-                  strokeWidth={1}
-                  opacity={0.5}
+                  strokeWidth={1.5}
+                  opacity={0.8}
                   curve={curveMonotoneX}
                 />
                 
                 <Brush
+                  key={dataKey} // Use dataKey to force remounting
                   xScale={brushDateScale}
                   yScale={valueScale}
                   width={innerWidth}

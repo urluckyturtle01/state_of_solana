@@ -9,16 +9,22 @@ interface RevTabsHeaderProps {
 export default function RevTabsHeader({ activeTab = "overview" }: RevTabsHeaderProps) {
   const tabs: Tab[] = [
     { 
-      name: "Overview", 
+      name: "Summary", 
       path: "/rev",
       key: "overview",
       icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
     },
     { 
-      name: "By Protocol", 
-      path: "/rev/by-protocol",
-      key: "by-protocol",
+      name: "Cost & Capacity", 
+      path: "/rev/cost-capacity",
+      key: "cost-capacity",
       icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+    },
+    { 
+      name: "Transactions", 
+      path: "/rev/transactions",
+      key: "transactions",
+      icon: "M13 10V3L4 14h7v7l9-11h-7z"
     },
     { 
       name: "Growth", 
