@@ -37,44 +37,40 @@ jobs:
           touch out/.nojekyll
           
           # Create a better 404 page with proper redirect
-          cat > out/404.html << EOL
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>State of Solana Dashboard</title>
-  <script>
-    // Redirect to base path with the current URL path appended
-    var segmentCount = 1; // Number of segments in path to remove (for repository name)
-    var location = window.location;
-    var pathname = location.pathname;
-    var redirectPath = pathname.split('/').slice(segmentCount + 1).join('/');
-    window.location.href = '/state_of_solana/' + redirectPath + location.search + location.hash;
-  </script>
-</head>
-<body>
-  <p>Redirecting to State of Solana Dashboard...</p>
-</body>
-</html>
-EOL
+          echo '<!DOCTYPE html>' > out/404.html
+          echo '<html>' >> out/404.html
+          echo '<head>' >> out/404.html
+          echo '  <meta charset="utf-8">' >> out/404.html
+          echo '  <title>State of Solana Dashboard</title>' >> out/404.html
+          echo '  <script>' >> out/404.html
+          echo '    // Redirect to base path with the current URL path appended' >> out/404.html
+          echo '    var segmentCount = 1; // Number of segments in path to remove (for repository name)' >> out/404.html
+          echo '    var location = window.location;' >> out/404.html
+          echo '    var pathname = location.pathname;' >> out/404.html
+          echo '    var redirectPath = pathname.split("/").slice(segmentCount + 1).join("/");' >> out/404.html
+          echo '    window.location.href = "/state_of_solana/" + redirectPath + location.search + location.hash;' >> out/404.html
+          echo '  </script>' >> out/404.html
+          echo '</head>' >> out/404.html
+          echo '<body>' >> out/404.html
+          echo '  <p>Redirecting to State of Solana Dashboard...</p>' >> out/404.html
+          echo '</body>' >> out/404.html
+          echo '</html>' >> out/404.html
           
           # Create root index.html if it doesn't exist
           if [ ! -f out/index.html ]; then
-            cat > out/index.html << EOL
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>State of Solana Dashboard</title>
-  <script>
-    window.location.href = '/state_of_solana/';
-  </script>
-</head>
-<body>
-  <p>Redirecting to State of Solana Dashboard...</p>
-</body>
-</html>
-EOL
+            echo '<!DOCTYPE html>' > out/index.html
+            echo '<html>' >> out/index.html
+            echo '<head>' >> out/index.html
+            echo '  <meta charset="utf-8">' >> out/index.html
+            echo '  <title>State of Solana Dashboard</title>' >> out/index.html
+            echo '  <script>' >> out/index.html
+            echo '    window.location.href = "/state_of_solana/";' >> out/index.html
+            echo '  </script>' >> out/index.html
+            echo '</head>' >> out/index.html
+            echo '<body>' >> out/index.html
+            echo '  <p>Redirecting to State of Solana Dashboard...</p>' >> out/index.html
+            echo '</body>' >> out/index.html
+            echo '</html>' >> out/index.html
           fi
           
           # Copy the favicon if it exists
