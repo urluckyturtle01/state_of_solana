@@ -7,78 +7,47 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
-  deployments: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-
+      
       - name: Build
         run: npm run build
-        
-      - name: Add custom files
-        run: |
-          # Create .nojekyll file to disable Jekyll processing
-          touch out/.nojekyll
-          
-          # Create a better 404 page with proper redirect
-          echo '<!DOCTYPE html>' > out/404.html
-          echo '<html>' >> out/404.html
-          echo '<head>' >> out/404.html
-          echo '  <meta charset="utf-8">' >> out/404.html
-          echo '  <title>State of Solana Dashboard</title>' >> out/404.html
-          echo '  <script>' >> out/404.html
-          echo '    // Redirect to base path with the current URL path appended' >> out/404.html
-          echo '    var segmentCount = 1; // Number of segments in path to remove (for repository name)' >> out/404.html
-          echo '    var location = window.location;' >> out/404.html
-          echo '    var pathname = location.pathname;' >> out/404.html
-          echo '    var redirectPath = pathname.split("/").slice(segmentCount + 1).join("/");' >> out/404.html
-          echo '    window.location.href = "/state_of_solana/" + redirectPath + location.search + location.hash;' >> out/404.html
-          echo '  </script>' >> out/404.html
-          echo '</head>' >> out/404.html
-          echo '<body>' >> out/404.html
-          echo '  <p>Redirecting to State of Solana Dashboard...</p>' >> out/404.html
-          echo '</body>' >> out/404.html
-          echo '</html>' >> out/404.html
-          
-          # Create root index.html if it doesn't exist
-          if [ ! -f out/index.html ]; then
-            echo '<!DOCTYPE html>' > out/index.html
-            echo '<html>' >> out/index.html
-            echo '<head>' >> out/index.html
-            echo '  <meta charset="utf-8">' >> out/index.html
-            echo '  <title>State of Solana Dashboard</title>' >> out/index.html
-            echo '  <script>' >> out/index.html
-            echo '    window.location.href = "/state_of_solana/";' >> out/index.html
-            echo '  </script>' >> out/index.html
-            echo '</head>' >> out/index.html
-            echo '<body>' >> out/index.html
-            echo '  <p>Redirecting to State of Solana Dashboard...</p>' >> out/index.html
-            echo '</body>' >> out/index.html
-            echo '</html>' >> out/index.html
-          fi
-          
-          # Copy the favicon if it exists
-          cp -f app/favicon.ico out/ || true
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Create .nojekyll file
+        run: touch out/.nojekyll
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: out
-          clean: true
+          path: ./out
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
