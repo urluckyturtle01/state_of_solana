@@ -1,5 +1,5 @@
-// Export all from issuanceInflationData.ts file
-export * from './issuanceInflationData'; 
+// Export all from issuanceData.ts file
+export * from './issuanceData'; 
 
 // API Key and URL
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'demo-key';
