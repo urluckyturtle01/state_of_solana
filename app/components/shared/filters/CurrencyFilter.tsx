@@ -20,13 +20,13 @@ const CurrencyFilter: React.FC<CurrencyFilterProps> = ({
       {!isCompact && <span className="text-xs text-gray-400 mr-2">Currency:</span>}
       <div className="flex space-x-1 bg-gray-900/60 rounded-md p-0.5">
         <button
-          className={`text-xs px-2 py-0.5 rounded ${currency === 'USD' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
+          className={`text-xs px-1.5 py-0.5 rounded ${currency === 'USD' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
           onClick={() => onChange('USD')}
         >
           USD
         </button>
         <button
-          className={`text-xs px-2 py-0.5 rounded ${currency === 'SOL' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
+          className={`text-xs px-1.5 py-0.5 rounded ${currency === 'SOL' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
           onClick={() => onChange('SOL')}
         >
           SOL

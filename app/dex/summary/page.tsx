@@ -5,7 +5,7 @@ import Counter from "../../components/shared/Counter";
 import { VolumeIcon, TvlIcon, UsersIcon, ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
 import TvlVelocityChart, { getTvlVelocityChartColors } from "../../components/charts/TvlVelocityChart";
 import VelocityByDexChart from "../../components/charts/VelocityByDexChart";
-import TimeFilterSelector from "../../components/charts/TimeFilter";
+import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/dex/summary/chartData";
 import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/dex/summary/velocityByDexData";
 import { getLatestVolumeStats } from "../../api/dex/summary/volumeData";

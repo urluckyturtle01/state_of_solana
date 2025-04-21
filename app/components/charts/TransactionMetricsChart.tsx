@@ -11,7 +11,7 @@ import ChartTooltip from '../shared/ChartTooltip';
 import Loader from '../shared/Loader';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
-import TimeFilterSelector from './TimeFilter';
+import TimeFilterSelector from '../shared/filters/TimeFilter';
 import CurrencyFilter from '../shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../shared/filters/DisplayModeFilter';
 import BrushTimeScale from '../shared/BrushTimeScale';

@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
 import { GridRows } from '@visx/grid';
-import { scaleLinear, scaleBand, scaleTime } from '@visx/scale';
-import { AxisBottom, AxisLeft, AxisRight } from '@visx/axis';
+import { scaleLinear, scaleBand } from '@visx/scale';
+import { AxisBottom, AxisLeft } from '@visx/axis';
 import { curveMonotoneX } from '@visx/curve';
 import { LinePath, Bar } from '@visx/shape';
-import { fetchTvlVelocityData, TimeFilter, TvlVelocityDataPoint } from '../../api/dex/summary/chartData';
+import { fetchIssuanceData, IssuanceDataPoint, CurrencyType, formatPercentage, formatDate } from '../../api/REV/issuance-inflation/issuanceData';
 import Loader from '../shared/Loader';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 import Modal from '../shared/Modal';
-import TimeFilterSelector from '../shared/filters/TimeFilter';
 import BrushTimeScale from '../shared/BrushTimeScale';
+import CurrencyFilter from '../shared/filters/CurrencyFilter';
 
-// Define RefreshIcon component directly in this file
+// Define RefreshIcon component
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
   return (
     <svg 
@@ -34,125 +34,92 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface TvlVelocityChartProps {
-  timeFilter: TimeFilter;
+interface BurnRatioChartProps {
+  currency: CurrencyType;
   isModalOpen?: boolean;
   onModalClose?: () => void;
 }
 
-// Helper functions
-const formatTvl = (value: number) => `$${(value / 1e9).toFixed(1)}B`;
-const formatVelocity = (value: number) => Number.isInteger(value) ? value.toString() : value.toFixed(1);
-const formatDate = (dateStr: string, timeFilter?: TimeFilter) => {
-  try {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
-    
-    switch(timeFilter) {
-      case 'Y': return date.getFullYear().toString();
-      case 'Q': return `Q${Math.floor(date.getMonth() / 3) + 1} ${date.getFullYear()}`;
-      case 'M': return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-      case 'D':
-      default: return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-  } catch (e) {
-    return dateStr;
-  }
-};
-
-export const tvlVelocityColors = {
+// Chart colors
+export const burnRatioColors = {
   axisLines: '#374151',
   tickLabels: '#6b7280',
-  tvlBar: '#60a5fa',
-  velocityLine: '#a78bfa',
+  burnRatio: '#f43f5e', // red
   grid: '#1f2937',
 };
 
-// Export a function to get chart colors for external use
-export const getTvlVelocityChartColors = () => {
+// Export colors for external use
+export const getBurnRatioColors = () => {
   return {
-    tvl: tvlVelocityColors.tvlBar,
-    velocity: tvlVelocityColors.velocityLine
+    burnRatio: burnRatioColors.burnRatio
   };
 };
 
-// Helper function to get available metrics from the data
-const getAvailableChartMetrics = (data: TvlVelocityDataPoint[], colors: { tvl: string, velocity: string }) => {
-  if (!data || data.length === 0) return [];
-  
-  // Get the first data point to extract property names
-  const samplePoint = data[0];
-  
-  // Filter out date and any other non-metric properties
-  return Object.keys(samplePoint)
-    .filter(key => key !== 'date')
-    .map(key => {
-      // Use proper display names for metrics
-      const displayNames: Record<string, string> = {
-        tvl: 'TVL',
-        velocity: 'Velocity'
-      };
-      
-      // Use the mapped display name or fallback to capitalized key
-      const displayName = displayNames[key] || key.charAt(0).toUpperCase() + key.slice(1);
-      
-      // Determine shape and color based on metric name
-      const isLine = key === 'velocity';
-      return {
-        key,
-        displayName,
-        shape: isLine ? 'circle' : 'square',
-        color: isLine ? colors.velocity : colors.tvl
-      };
-    });
+// Helper function to get available metrics for legend
+export const getBurnRatioChartMetrics = (colors: { burnRatio: string }) => {
+  return [
+    {
+      key: 'burn_ratio',
+      displayName: 'Burn Ratio',
+      shape: 'square',
+      color: colors.burnRatio
+    }
+  ];
 };
 
-const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({ 
-  timeFilter, 
+// Internal version for the chart itself
+const getAvailableChartMetrics = (data: IssuanceDataPoint[], colors: { burnRatio: string }) => {
+  if (!data || data.length === 0) return [];
+  
+  return getBurnRatioChartMetrics(colors);
+};
+
+const BurnRatioChart: React.FC<BurnRatioChartProps> = ({ 
+  currency, 
   isModalOpen = false, 
   onModalClose = () => {} 
 }) => {
   // Main chart data
-  const [data, setData] = useState<TvlVelocityDataPoint[]>([]);
+  const [data, setData] = useState<IssuanceDataPoint[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [filteredData, setFilteredData] = useState<TvlVelocityDataPoint[]>([]);
+  const [filteredData, setFilteredData] = useState<IssuanceDataPoint[]>([]);
   const [brushDomain, setBrushDomain] = useState<[Date, Date] | null>(null);
   const [isBrushActive, setIsBrushActive] = useState(false);
   
   // Modal specific data
-  const [modalData, setModalData] = useState<TvlVelocityDataPoint[]>([]);
+  const [modalData, setModalData] = useState<IssuanceDataPoint[]>([]);
   const [modalLoading, setModalLoading] = useState<boolean>(true);
   const [modalError, setModalError] = useState<string | null>(null);
-  const [modalTimeFilter, setModalTimeFilter] = useState<TimeFilter>(timeFilter);
+  const [modalCurrency, setModalCurrency] = useState<CurrencyType>(currency);
   const [modalBrushDomain, setModalBrushDomain] = useState<[Date, Date] | null>(null);
   const [isModalBrushActive, setIsModalBrushActive] = useState(false);
-  const [modalFilteredData, setModalFilteredData] = useState<TvlVelocityDataPoint[]>([]);
+  const [modalFilteredData, setModalFilteredData] = useState<IssuanceDataPoint[]>([]);
   
   // Shared tooltip state
-  const [tooltip, setTooltip] = useState({ visible: false, dataPoint: null as TvlVelocityDataPoint | null, left: 0, top: 0 });
-
-  // Add refs for throttling
-  const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const canUpdateFilteredDataRef = useRef<boolean>(true);
-  const modalThrottleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const canUpdateModalFilteredDataRef = useRef<boolean>(true);
+  const [tooltip, setTooltip] = useState({ 
+    visible: false, 
+    dataPoint: null as IssuanceDataPoint | null, 
+    left: 0, 
+    top: 0 
+  });
   
   // Create a fetchData function that can be called to refresh data for main chart
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const chartData = await fetchTvlVelocityData(timeFilter);
+      const chartData = await fetchIssuanceData(currency);
+      
       if (chartData.length === 0) {
-        setError('No data available for this period.');
+        setError('No data available.');
         setData([]);
+        setFilteredData([]);
       } else {
         setData(chartData);
         setFilteredData(chartData);
         
         // Set brush as active but don't set a specific domain
-        // This will result in the full range being selected
         setIsBrushActive(true);
         setBrushDomain(null);
       }
@@ -168,16 +135,16 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [timeFilter]);
+  }, [currency]);
 
   // Create a separate fetchData function for modal
   const fetchModalData = useCallback(async () => {
     setModalLoading(true);
     setModalError(null);
     try {
-      const chartData = await fetchTvlVelocityData(modalTimeFilter);
+      const chartData = await fetchIssuanceData(modalCurrency);
       if (chartData.length === 0) {
-        setModalError('No data available for this period.');
+        setModalError('No data available.');
         setModalData([]);
         setModalFilteredData([]);
       } else {
@@ -185,7 +152,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         setModalFilteredData(chartData);
         
         // Set brush as active but don't set a specific domain
-        // This will result in the full range being selected
         setIsModalBrushActive(true);
         setModalBrushDomain(null);
       }
@@ -201,26 +167,20 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     } finally {
       setModalLoading(false);
     }
-  }, [modalTimeFilter]);
+  }, [modalCurrency]);
 
-  // Fetch data for main chart on mount and when timeFilter changes
+  // Fetch data for main chart on mount and when currency changes
   useEffect(() => {
     fetchData();
   }, [fetchData]);
   
-  // Handle brush change with throttling
+  // Handle brush change
   const handleBrushChange = useCallback((domain: any) => {
     if (!domain) {
       if (isBrushActive) {
         setBrushDomain(null);
         setIsBrushActive(false);
       }
-      // Clear any pending throttle timeout
-      if (throttleTimeoutRef.current) {
-        clearTimeout(throttleTimeoutRef.current);
-        throttleTimeoutRef.current = null;
-        canUpdateFilteredDataRef.current = true; // Allow immediate update on clear
-      }
       return;
     }
     
@@ -229,34 +189,24 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     const endDate = new Date(x1);
     
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return; // Ignore invalid dates
+      return; // Ignore invalid dates
     }
 
-    // Update immediate brush domain for visual feedback
+    // Update brush domain for visual feedback
     const newDomain: [Date, Date] = [startDate, endDate];
     setBrushDomain(newDomain);
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
-
-    // Filtering update is handled by the useEffect based on brushDomain,
-    // but throttled via canUpdateFilteredDataRef
-
   }, [isBrushActive]);
 
-  // Handle modal brush change with throttling
+  // Handle modal brush change
   const handleModalBrushChange = useCallback((domain: any) => {
     if (!domain) {
       if (isModalBrushActive) {
         setModalBrushDomain(null);
         setIsModalBrushActive(false);
       }
-      // Clear any pending throttle timeout
-      if (modalThrottleTimeoutRef.current) {
-        clearTimeout(modalThrottleTimeoutRef.current);
-        modalThrottleTimeoutRef.current = null;
-        canUpdateModalFilteredDataRef.current = true; // Allow immediate update on clear
-      }
       return;
     }
     
@@ -265,21 +215,18 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     const endDate = new Date(x1);
     
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return; // Ignore invalid dates
+      return; // Ignore invalid dates
     }
 
-    // Update immediate brush domain for visual feedback
+    // Update brush domain for visual feedback
     const newDomain: [Date, Date] = [startDate, endDate];
     setModalBrushDomain(newDomain);
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
-
-    // Filtering update is handled by the useEffect based on modalBrushDomain
-
   }, [isModalBrushActive]);
 
-  // Apply throttled brush domain to filter data
+  // Apply brush domain to filter data
   useEffect(() => {
     if (data.length === 0) {
       if (filteredData.length > 0) setFilteredData([]);
@@ -299,12 +246,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       }
       return;
     }
-    
-    // Throttle the actual filtering logic
-    if (!canUpdateFilteredDataRef.current) {
-        // Skip update if throttled
-        return;
-    }
 
     const [start, end] = brushDomain;
     const startTime = start.getTime();
@@ -315,23 +256,11 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       return itemDate >= startTime && itemDate <= endTime;
     });
     
-    // Apply filter and start throttle period
+    // Apply filter
     setFilteredData(filtered.length > 0 ? filtered : data);
-    canUpdateFilteredDataRef.current = false; // Prevent updates during throttle period
-
-    // Clear previous timeout just in case
-    if (throttleTimeoutRef.current) {
-      clearTimeout(throttleTimeoutRef.current);
-    }
-
-    // Set timeout to allow updates again after interval
-    throttleTimeoutRef.current = setTimeout(() => {
-      canUpdateFilteredDataRef.current = true;
-    }, 100); // 100ms throttle interval
-
   }, [brushDomain, data, isBrushActive]);
 
-  // Apply throttled brush domain to filter modal data
+  // Apply modal brush domain to filter modal data
   useEffect(() => {
     if (modalData.length === 0) {
       if (modalFilteredData.length > 0) setModalFilteredData([]);
@@ -351,12 +280,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       }
       return;
     }
-    
-    // Throttle the actual filtering logic
-    if (!canUpdateModalFilteredDataRef.current) {
-        // Skip update if throttled
-        return;
-    }
 
     const [start, end] = modalBrushDomain;
     const startTime = start.getTime();
@@ -367,26 +290,12 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       return itemDate >= startTime && itemDate <= endTime;
     });
     
-    // Apply filter and start throttle period
+    // Apply filter
     setModalFilteredData(filtered.length > 0 ? filtered : modalData);
-    canUpdateModalFilteredDataRef.current = false; // Prevent updates during throttle period
-
-    // Clear previous timeout just in case
-    if (modalThrottleTimeoutRef.current) {
-      clearTimeout(modalThrottleTimeoutRef.current);
-    }
-
-    // Set timeout to allow updates again after interval
-    modalThrottleTimeoutRef.current = setTimeout(() => {
-      canUpdateModalFilteredDataRef.current = true;
-    }, 100); // 100ms throttle interval
-
   }, [modalBrushDomain, modalData, isModalBrushActive]);
 
   // Create tooltip handler
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
-    console.log('TvlVelocity - Mouse move event', { isModal, clientX: e.clientX, clientY: e.clientY });
-    
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const margin = { left: 45 };
@@ -394,7 +303,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     
     if (mouseX < margin.left || mouseX > innerWidth + margin.left) {
       if (tooltip.visible) {
-        console.log('TvlVelocity - Mouse outside chart area, hiding tooltip');
         setTooltip(prev => ({ ...prev, visible: false }));
       }
       return;
@@ -411,14 +319,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
     if (index >= 0 && index < currentData.length) {
       const dataPoint = currentData[index];
       if (!tooltip.visible || tooltip.dataPoint?.date !== dataPoint.date) {
-        console.log('TvlVelocity - Setting tooltip data', { 
-          dataPoint,
-          left: e.clientX,
-          top: e.clientY,
-          offsetLeft: e.clientX - (isModal ? 50 : 50),
-          offsetTop: e.clientY - (isModal ? 50 : 50)
-        });
-        
         setTooltip({
           visible: true,
           dataPoint,
@@ -432,40 +332,25 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
     if (tooltip.visible) {
-      console.log('TvlVelocity - Mouse leave, hiding tooltip');
       setTooltip(prev => ({ ...prev, visible: false }));
     }
   }, [tooltip.visible]);
 
-  // Cleanup throttle timeout on unmount
+  // Update modalCurrency when currency changes
   useEffect(() => {
-    return () => {
-      if (throttleTimeoutRef.current) {
-        clearTimeout(throttleTimeoutRef.current);
-      }
-      if (modalThrottleTimeoutRef.current) {
-        clearTimeout(modalThrottleTimeoutRef.current);
-      }
-    };
-  }, []); // Empty dependency array runs only on mount/unmount
-
-  // Update modalTimeFilter when timeFilter changes
-  useEffect(() => {
-    // Only update modalTimeFilter from timeFilter when the modal isn't open
-    // This prevents overriding user selections in the modal
+    // Only update modalCurrency from currency when the modal isn't open
     if (!isModalOpen) {
-      setModalTimeFilter(timeFilter);
+      setModalCurrency(currency);
     }
-  }, [timeFilter, isModalOpen]);
+  }, [currency, isModalOpen]);
 
   // Initialize modal data when modal opens
   useEffect(() => {
     if (isModalOpen) {
-      // Initialize modal time filter with main time filter only on initial open
-      // not on every render while modal is open
-      setModalTimeFilter(timeFilter);
+      // Initialize modal currency with main currency only on initial open
+      setModalCurrency(currency);
       
-      // If we already have data loaded for the main chart with the same filter,
+      // If we already have data loaded for the main chart with the same currency,
       // we can just use that data for the modal initially
       if (data.length > 0) {
         setModalData(data);
@@ -474,7 +359,6 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         setModalError(null);
         
         // Set brush as active but don't set a specific domain
-        // This will result in the full range being selected
         setIsModalBrushActive(true);
         setModalBrushDomain(null);
       } else {
@@ -482,26 +366,24 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         fetchModalData();
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalOpen, timeFilter, data]); // Include necessary dependencies but not fetchModalData
+  }, [isModalOpen, currency, data, fetchModalData]);
   
-  // Fetch modal data when modalTimeFilter changes and modal is open
+  // Fetch modal data when modalCurrency changes and modal is open
   useEffect(() => {
     if (isModalOpen) {
       fetchModalData();
     }
-  }, [modalTimeFilter, isModalOpen, fetchModalData]);
+  }, [modalCurrency, isModalOpen, fetchModalData]);
 
-  // Handle modal time filter change
-  const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
-    console.log('Time filter changed to:', newFilter);
-    setModalTimeFilter(newFilter);
+  // Handle modal currency change
+  const handleModalCurrencyChange = useCallback((newCurrency: CurrencyType) => {
+    setModalCurrency(newCurrency);
   }, []);
 
   // Render chart content
   const renderChartContent = (height: number, width: number, isModal = false) => {
-    // Use modalTimeFilter and modalData if in modal mode, otherwise use the main timeFilter and data
-    const activeTimeFilter = isModal ? modalTimeFilter : timeFilter;
+    // Use modal or main data based on context
+    const activeCurrency = isModal ? modalCurrency : currency;
     const activeData = isModal ? modalData : data;
     const activeFilteredData = isModal ? (isModalBrushActive ? modalFilteredData : modalData) : (isBrushActive ? filteredData : data);
     const activeLoading = isModal ? modalLoading : loading;
@@ -537,10 +419,14 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       <div className="flex flex-col h-full">
         {tooltip.visible && tooltip.dataPoint && (
           <ChartTooltip
-            title={formatDate(tooltip.dataPoint.date, activeTimeFilter)}
+            title={formatDate(tooltip.dataPoint.date)}
             items={[
-              { color: tvlVelocityColors.tvlBar, label: 'TVL', value: formatTvl(tooltip.dataPoint.tvl), shape: 'square' },
-              { color: tvlVelocityColors.velocityLine, label: 'Velocity', value: formatVelocity(tooltip.dataPoint.velocity), shape: 'circle' }
+              { 
+                color: burnRatioColors.burnRatio, 
+                label: 'Burn Ratio', 
+                value: formatPercentage(tooltip.dataPoint.burn_ratio), 
+                shape: 'square' 
+              }
             ]}
             top={tooltip.top - (isModal ? 50 : 400)}
             left={tooltip.left - (isModal ? 50 : 240)}
@@ -554,7 +440,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
         >
           <ParentSize>
             {({ width, height }) => {
-              if (width <= 0 || height <= 0) return null; 
+              // Add check to prevent rendering with invalid dimensions
+              if (width < 10 || height < 10) return <div style={{ width: '100%', height: '100%' }}></div>;
               
               const margin = { top: 5, right: 25, bottom: 30, left: 45 };
               const innerWidth = width - margin.left - margin.right;
@@ -564,106 +451,114 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               // Use displayed data for this chart (modal or main)
               const displayData = activeFilteredData;
               
-              // Create a time domain from the current data
+              // Create a date domain from the current data
               const dateDomain = displayData.map(d => new Date(d.date));
               
-              // Use consistent scaleTime for both chart and brush
+              // Use scaleBand for dates
               const dateScale = scaleBand<Date>({
                 domain: dateDomain,
                 range: [0, innerWidth],
                 padding: 0.3,
               });
 
-              const tvlScale = scaleLinear<number>({
-                domain: [0, Math.max(...displayData.map(d => d.tvl)) * 1.1],
-                range: [innerHeight, 0],
-                nice: true,
-              });
+              // Find max/min for y-scale
+              const burnRatios = displayData.map(d => d.burn_ratio);
+              const maxRatio = Math.max(...burnRatios);
+              // Make sure we include 0 in the domain
+              const minRatio = Math.min(0, ...burnRatios);
 
-              const velocityScale = scaleLinear<number>({
-                domain: [0, Math.max(...displayData.map(d => d.velocity)) * 1.1],
+              // Use a linear scale for the burn ratio
+              const ratioScale = scaleLinear<number>({
+                domain: [minRatio, maxRatio * 1.1], // Add 10% padding on top
                 range: [innerHeight, 0],
                 nice: true,
               });
               
               return (
-                  <svg width={width} height={height} className="overflow-visible">
-                    <Group left={margin.left} top={margin.top}>
-                    <GridRows scale={tvlScale} width={innerWidth} stroke={tvlVelocityColors.grid} strokeDasharray="2,3" strokeOpacity={0.5} numTicks={5} />
+                <svg width={width} height={height} className="overflow-visible">
+                  <Group left={margin.left} top={margin.top}>
+                    <GridRows 
+                      scale={ratioScale} 
+                      width={innerWidth} 
+                      stroke={burnRatioColors.grid} 
+                      strokeDasharray="2,3" 
+                      strokeOpacity={0.5} 
+                      numTicks={5} 
+                    />
                     
                     {/* Display active brush status */}
                     {activeIsBrushActive && (
-                      <text x={0} y={-8} fontSize={8} fill={tvlVelocityColors.velocityLine} textAnchor="start">
+                      <text x={0} y={-8} fontSize={8} fill={burnRatioColors.burnRatio} textAnchor="start">
                         {`Filtered: ${displayData.length} item${displayData.length !== 1 ? 's' : ''}`}
                       </text>
                     )}
                     
-                    {displayData.map((d) => {
-                      const date = new Date(d.date);
-                      const barX = dateScale(date);
-                        const barWidth = dateScale.bandwidth();
-                      const barHeight = Math.max(0, innerHeight - tvlScale(d.tvl));
-                        if (barX === undefined || barHeight < 0) return null;
-                        return (
-                        <Bar key={`bar-${d.date}`} x={barX} y={innerHeight - barHeight} width={barWidth} height={barHeight}
-                          fill={tvlVelocityColors.tvlBar} opacity={tooltip.dataPoint?.date === d.date ? 1 : 0.7} />
-                        );
-                      })}
-                    
-                    <LinePath data={displayData}
+                    {/* Line Chart for Burn Ratio instead of Bar Chart */}
+                    <LinePath
+                      data={displayData}
                       x={(d) => (dateScale(new Date(d.date)) ?? 0) + dateScale.bandwidth() / 2}
-                      y={(d) => velocityScale(d.velocity)}
-                      stroke={tvlVelocityColors.velocityLine} strokeWidth={1.5} curve={curveMonotoneX} />
+                      y={(d) => ratioScale(d.burn_ratio)}
+                      stroke={burnRatioColors.burnRatio}
+                      strokeWidth={2}
+                      curve={curveMonotoneX}
+                    />
                     
-                    <AxisBottom top={innerHeight} scale={dateScale}
+                    {/* Draw zero line */}
+                    <line
+                      x1={0}
+                      x2={innerWidth}
+                      y1={ratioScale(0)}
+                      y2={ratioScale(0)}
+                      stroke={burnRatioColors.axisLines}
+                      strokeWidth={1}
+                      strokeOpacity={0.5}
+                    />
+                    
+                    <AxisBottom 
+                      top={innerHeight} 
+                      scale={dateScale}
                       tickFormat={(date) => {
                         const d = date as Date;
-                        // Custom formatting to exclude year
-                        switch(activeTimeFilter) {
-                          case 'Y': return d.getFullYear().toString();
-                          case 'Q': return `Q${Math.floor(d.getMonth() / 3) + 1}`;
-                          case 'M': return d.toLocaleDateString('en-US', { month: 'short' });
-                          case 'D':
-                          default: return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                        }
+                        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                       }}
-                      stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0}
+                      stroke={burnRatioColors.axisLines} 
+                      strokeWidth={0.5} 
+                      tickStroke="transparent" 
+                      tickLength={0}
                       hideZero={true}
-                      tickLabelProps={(value, index) => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
+                      numTicks={Math.min(5, displayData.length)}
+                      tickLabelProps={() => ({ 
+                        fill: burnRatioColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
                         letterSpacing: '0.05em',
-                        textAnchor: index === 0 ? 'start' : 'middle', 
-                        dy: '0.5em',
-                        dx: index === 0 ? '0.5em' : 0
+                        textAnchor: 'middle', 
+                        dy: '0.5em'
                       })}
-                      numTicks={activeTimeFilter === 'Y' ? data.length : Math.min(5, data.length)} />
+                    />
                     
-                    <AxisLeft scale={tvlScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5} tickStroke="transparent" tickLength={0} numTicks={5}
-                      tickFormat={(value) => formatTvl(Number(value))}
+                    <AxisLeft 
+                      scale={ratioScale} 
+                      stroke={burnRatioColors.axisLines} 
+                      strokeWidth={0.5} 
+                      tickStroke="transparent" 
+                      tickLength={0} 
+                      numTicks={5}
+                      tickFormat={(value) => {
+                        // Format percentage without decimal places for better readability
+                        const valueAsPercent = Number(value) * 100;
+                        return `${Math.round(valueAsPercent)}%`;
+                      }}
                       tickLabelProps={() => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
+                        fill: burnRatioColors.tickLabels, 
                         fontSize: 11, 
                         fontWeight: 300,
                         letterSpacing: '0.05em',
                         textAnchor: 'end', 
                         dx: '-0.6em', 
                         dy: '0.25em' 
-                      })} />
-                    
-                    <AxisRight left={innerWidth} scale={velocityScale} stroke={tvlVelocityColors.axisLines} strokeWidth={0.5}
-                      tickStroke="transparent" tickLength={0} numTicks={5}
-                      tickFormat={(value) => formatVelocity(Number(value))}
-                      tickLabelProps={() => ({ 
-                        fill: tvlVelocityColors.tickLabels, 
-                        fontSize: 11, 
-                        fontWeight: 300,
-                        letterSpacing: '0.05em',
-                        textAnchor: 'start', 
-                        dx: '0.5em', 
-                        dy: '0.25em' 
-                      })} />
+                      })} 
+                    />
                   </Group>
                 </svg>
               );
@@ -671,7 +566,7 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
           </ParentSize>
         </div>
         
-        {/* Brush component - now shown for both main chart and modal */}
+        {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
           <BrushTimeScale 
             data={isModal ? modalData : data}
@@ -683,8 +578,8 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               : () => { setBrushDomain(null); setIsBrushActive(false); }
             }
             getDate={(d) => d.date}
-            getValue={(d) => d.tvl}
-            lineColor={tvlVelocityColors.tvlBar}
+            getValue={(d) => d.burn_ratio}
+            lineColor={burnRatioColors.burnRatio}
             margin={{ top: 5, right: 25, bottom: 10, left: 45 }}
           />
         </div>
@@ -697,11 +592,19 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       {renderChartContent(0, 0)}
       
       {/* Modal */}
-      <Modal isOpen={isModalOpen} onClose={onModalClose} title="TVL and Velocity Trends" subtitle="Tracking value locked and market velocity across the ecosystem">
-        
-        {/* Time filter */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={onModalClose} 
+        title="SOL Burn Ratio" 
+        subtitle="Percentage of SOL burned relative to issuance"
+      >
+        {/* Currency filter - left aligned */}
         <div className="flex items-center justify-start pl-1 py-0 mb-3">
-          <TimeFilterSelector value={modalTimeFilter} onChange={handleModalTimeFilterChange} />
+          <CurrencyFilter 
+            currency={modalCurrency} 
+            onChange={handleModalCurrencyChange}
+            isCompact={true}
+          />
         </div>
         
         {/* Horizontal line */}
@@ -721,12 +624,11 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                 {!modalLoading && modalData.length > 0 ? (
                   <div className="flex flex-col gap-2">
                     {getAvailableChartMetrics(modalData, { 
-                      tvl: tvlVelocityColors.tvlBar, 
-                      velocity: tvlVelocityColors.velocityLine 
+                      burnRatio: burnRatioColors.burnRatio
                     }).map(metric => (
                       <div key={metric.key} className="flex items-start">
                         <div 
-                          className={`w-2.5 h-2.5 mr-2 ${metric.shape === 'circle' ? 'rounded-full' : 'rounded-sm'} mt-0.5`}
+                          className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5"
                           style={{ background: metric.color }}
                         ></div>
                         <span className="text-[11px] text-gray-300">{metric.displayName}</span>
@@ -735,14 +637,9 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    {/* Loading states */}
+                    {/* Loading state */}
                     <div className="flex items-start">
-                      <div className="w-2.5 h-2.5 bg-blue-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
-                      <span className="text-[11px] text-gray-300">Loading...</span>
-                    </div>
-                    
-                    <div className="flex items-start">
-                      <div className="w-2.5 h-2.5 bg-purple-500 mr-2 rounded-full mt-0.5 animate-pulse"></div>
+                      <div className="w-2.5 h-2.5 bg-red-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
                       <span className="text-[11px] text-gray-300">Loading...</span>
                     </div>
                   </div>
@@ -756,4 +653,4 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
   );
 };
 
-export default TvlVelocityChart; 
+export default BurnRatioChart; 

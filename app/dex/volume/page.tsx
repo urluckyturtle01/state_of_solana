@@ -3,7 +3,7 @@
 import { useState } from "react";
 import VolumeHistoryChart from "../../components/charts/VolumeHistoryChart";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
-import TimeFilterSelector from "../../components/charts/TimeFilter";
+import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { VolumeTimeFilter, fetchVolumeHistoryData, formatVolumeDate } from "../../api/dex/volume/volumeHistoryData";
 
 export default function DexVolumePage() {

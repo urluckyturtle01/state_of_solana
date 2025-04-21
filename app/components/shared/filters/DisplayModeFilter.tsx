@@ -21,7 +21,7 @@ const DisplayModeFilter: React.FC<DisplayModeFilterProps> = ({
       {!isCompact && <span className="text-xs text-gray-400 mr-2">View:</span>}
       <div className="flex space-x-1 bg-gray-900/60 rounded-md p-0.5">
         <button
-          className={`text-xs px-2 py-0.5 rounded ${mode === 'absolute' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
+          className={`text-xs px-1.5 py-0.5 rounded ${mode === 'absolute' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
           onClick={() => onChange('absolute')}
           title="Chart View"
         >
@@ -32,7 +32,7 @@ const DisplayModeFilter: React.FC<DisplayModeFilterProps> = ({
           </svg>
         </button>
         <button
-          className={`text-xs px-2 py-0.5 rounded ${mode === 'percent' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
+          className={`text-xs px-1.5 py-0.5 rounded ${mode === 'percent' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
           onClick={() => onChange('percent')}
           title="Percent View"
         >

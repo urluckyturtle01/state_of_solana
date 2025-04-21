@@ -5,7 +5,7 @@ import CostCapacityChart, { costCapacityColors } from "../../components/charts/C
 import TransactionMetricsChart, { transactionMetricsColors } from "../../components/charts/TransactionMetricsChart";
 import { TimeFilter, CurrencyType, fetchCostCapacityData, formatDate, CostCapacityDataPoint } from "../../api/REV/cost-capacity";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
-import TimeFilterSelector from "../../components/charts/TimeFilter";
+import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import CurrencyFilter from "../../components/shared/filters/CurrencyFilter";
 import DisplayModeFilter, { DisplayMode } from "../../components/shared/filters/DisplayModeFilter";
 
@@ -62,7 +62,7 @@ export interface TransactionDataPoint {
 
 export default function CostCapacityPage() {
   // State for Transaction Fees chart
-  const [feeTimeFilter, setFeeTimeFilter] = useState<TimeFilter>('M');
+  const [feeTimeFilter, setFeeTimeFilter] = useState<TimeFilter>('D');
   const [feeCurrencyFilter, setFeeCurrencyFilter] = useState<CurrencyType>('USD');
   const [feeDisplayMode, setFeeDisplayMode] = useState<DisplayMode>('absolute');
   const [chartModalOpen, setChartModalOpen] = useState(false);

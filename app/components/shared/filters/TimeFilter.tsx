@@ -36,7 +36,7 @@ function TimeFilterSelector<T extends string = AllTimeFilters>({
         <button
           key={option.value}
           onClick={() => onChange(option.value as T)}
-          className={`px-0 py-1 text-xs font-medium rounded transition-colors min-w-[30px] ${
+          className={`px-0 py-0.5 text-xs font-medium rounded transition-colors min-w-[25px] ${
             value === option.value
               ? 'bg-gray-800 text-white shadow'
               : 'bg-transparent text-gray-400 hover:text-gray-200'

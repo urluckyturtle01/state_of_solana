@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
 import { scaleLinear, scaleTime } from '@visx/scale';
@@ -36,8 +36,19 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   lineColor,
   margin = { top: 5, right: 25, bottom: 10, left: 45 }
 }) => {
-  // Add a dataKey to force remounting the brush when data changes
-  const dataKey = React.useMemo(() => data.length, [data.length]);
+  // Prevent the initial render from triggering onChange
+  const initialRenderRef = useRef(true);
+  
+  // Track the brush instance to prevent unnecessary updates
+  const brushRef = useRef<any>(null);
+  
+  // Generate a stable ID for this component instance
+  const instanceIdRef = useRef(`brush-${Math.random().toString(36).substring(2, 9)}`);
+  
+  // Create a stable key for the Brush component that only changes when data changes
+  const brushKey = React.useMemo(() => {
+    return `${instanceIdRef.current}-${data.length}`;
+  }, [data.length]);
   
   if (data.length === 0) return null;
   
@@ -89,8 +100,8 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
             range: [0, innerWidth],
           });
           
-          // Initial brush position - default to full range if no specific selection
-          const initialBrushPosition = activeBrushDomain 
+          // Calculate initial brush position
+          const initialBrushPosition = activeBrushDomain
             ? { 
                 start: { x: brushDateScale(activeBrushDomain[0]) }, 
                 end: { x: brushDateScale(activeBrushDomain[1]) } 
@@ -117,10 +128,28 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 idx,
                 value: getValue(d)
               }));
+              
+          // Create a wrapped change handler that prevents the initial render from triggering updates
+          const handleBrushChange = (domain: any) => {
+            if (initialRenderRef.current) {
+              // Skip the first onChange event
+              initialRenderRef.current = false;
+              return;
+            }
+            
+            if (!domain) {
+              onClearBrush();
+              return;
+            }
+            
+            // Use requestAnimationFrame to avoid React update loops
+            window.requestAnimationFrame(() => {
+              onBrushChange(domain);
+            });
+          };
           
           return (
             <svg width={width} height={height}>
-              
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect
@@ -131,25 +160,20 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   fill="transparent"
                 />
                 
-                
                 {/* Line representing the data */}
-
-                
                 <LinePath 
                   data={lineData}
                   x={(d) => indexScale(d.idx)}
                   y={(d) => valueScale(d.value)}
-                  stroke="#53a7fe"
-                  //fill="#53a7fe"
-                  //fillOpacity={0.2}
+                  stroke={lineColor || "#53a7fe"}
                   strokeOpacity={0.3}
                   strokeWidth={1.5}
-                  
                   curve={curveMonotoneX}
                 />
                 
                 <Brush
-                  key={dataKey} // Use dataKey to force remounting
+                  key={brushKey}
+                  ref={brushRef}
                   xScale={brushDateScale}
                   yScale={valueScale}
                   width={innerWidth}
@@ -158,10 +182,11 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   resizeTriggerAreas={['left', 'right']}
                   brushDirection="horizontal"
                   initialBrushPosition={initialBrushPosition}
-                  onChange={onBrushChange}
+                  onChange={handleBrushChange}
                   onClick={onClearBrush}
+                  useWindowMoveEvents={true}
                   selectedBoxStyle={{ 
-                    fill: 'rgba(96, 165, 250, 0)', // Transparent fill
+                    fill: 'rgba(96, 165, 250, 0.1)', // Very light transparent fill
                     stroke: '#374151', // Border color
                     strokeWidth: 0.5,
                     rx: 4,
