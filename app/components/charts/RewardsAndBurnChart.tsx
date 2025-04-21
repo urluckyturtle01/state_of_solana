@@ -592,7 +592,22 @@ const RewardsAndBurnChart: React.FC<RewardsAndBurnChartProps> = ({
                       tickStroke="transparent" 
                       tickLength={0} 
                       numTicks={5}
-                      tickFormat={(value) => formatSolAmount(Number(value), activeCurrency)}
+                      tickFormat={(value) => {
+                        // Convert value to millions
+                        const valueInMillions = Number(value) / 1000000;
+                        
+                        // Format without decimal places for whole millions, otherwise 1 decimal place
+                        const formatted = Number.isInteger(valueInMillions) || Math.abs(valueInMillions) >= 10 
+                          ? Math.round(valueInMillions).toString() 
+                          : valueInMillions.toFixed(1);
+                        
+                        // Return formatted value with M suffix and appropriate currency symbol
+                        if (activeCurrency === 'USD') {
+                          return `$${formatted}M`;
+                        } else {
+                          return `${formatted}M`;
+                        }
+                      }}
                       tickLabelProps={() => ({ 
                         fill: rewardsAndBurnColors.tickLabels, 
                         fontSize: 11, 

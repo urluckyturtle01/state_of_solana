@@ -546,8 +546,7 @@ const BurnRatioChart: React.FC<BurnRatioChartProps> = ({
                       numTicks={5}
                       tickFormat={(value) => {
                         // Format percentage without decimal places for better readability
-                        const valueAsPercent = Number(value) * 100;
-                        return `${Math.round(valueAsPercent)}%`;
+                        return `${Math.round(Number(value))}%`;
                       }}
                       tickLabelProps={() => ({ 
                         fill: burnRatioColors.tickLabels, 
