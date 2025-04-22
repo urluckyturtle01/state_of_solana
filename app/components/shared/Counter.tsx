@@ -98,6 +98,13 @@ export default function Counter({ title, value, trend, icon, variant = "indigo",
   const targetValue = useRef<string>(value);
   const frameRef = useRef<number>(0);
   
+  // For debugging trend value
+  useEffect(() => {
+    if (trend) {
+      console.log(`Counter "${title}" trend value:`, trend.value, 'isLoading:', isLoading);
+    }
+  }, [title, trend, isLoading]);
+  
   useEffect(() => {
     // Don't animate on first render or if value is "Loading..."
     if (value === "Loading..." || value === animatedValue) {
@@ -120,7 +127,7 @@ export default function Counter({ title, value, trend, icon, variant = "indigo",
     setIsAnimating(true);
     
     // Define animation parameters
-    const duration = 1500; // animation duration in ms
+    const duration = 300; // animation duration in ms (reduced from 1500)
     const startTime = performance.now();
     
     // Animation function

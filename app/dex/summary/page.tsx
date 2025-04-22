@@ -9,7 +9,7 @@ import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/dex/summary/chartData";
 import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/dex/summary/velocityByDexData";
 import { getLatestVolumeStats } from "../../api/dex/summary/volumeData";
-import { getLatestTvlStats } from "../../api/dex/summary/tvlData";
+import { getLatestTvlStats } from "../../api/tvlData";
 import { getLatestTradersStats } from "../../api/dex/summary/tradersData";
 
 // Define colors for program types (same as in VelocityByDexChart)
@@ -86,7 +86,7 @@ export default function DexSummaryPage() {
   const [tvlStats, setTvlStats] = useState({
     currentTvl: 0,
     percentChange: 0,
-    isPositive: true
+    isPositive: false
   });
   const [isTvlStatsLoading, setIsTvlStatsLoading] = useState(true);
 
@@ -159,10 +159,30 @@ export default function DexSummaryPage() {
     const fetchTvlStats = async () => {
       setIsTvlStatsLoading(true);
       try {
+        console.log('Fetching TVL stats from new implementation...');
         const stats = await getLatestTvlStats();
-        setTvlStats(stats);
+        console.log('TVL stats received:', stats);
+        
+        if (stats && typeof stats.currentTvl === 'number') {
+          setTvlStats(stats);
+          console.log('TVL percent change:', stats.percentChange);
+        } else {
+          console.error('Invalid TVL stats format:', stats);
+          // Set default values when the data format is invalid
+          setTvlStats({
+            currentTvl: 0,
+            percentChange: 0,
+            isPositive: false
+          });
+        }
       } catch (error) {
         console.error('Error fetching TVL stats:', error);
+        // Set default values when there's an error
+        setTvlStats({
+          currentTvl: 0,
+          percentChange: 0,
+          isPositive: false
+        });
       } finally {
         setIsTvlStatsLoading(false);
       }
@@ -336,7 +356,7 @@ export default function DexSummaryPage() {
         
         <Counter 
           title="Current TVL"
-          value={isTvlStatsLoading ? "0" : formatCurrentTvl(tvlStats.currentTvl)}
+          value={isTvlStatsLoading ? "Loading..." : (tvlStats.currentTvl ? formatCurrentTvl(tvlStats.currentTvl) : "$0.00B")}
           trend={isTvlStatsLoading ? undefined : { 
             value: parseFloat(tvlStats.percentChange.toFixed(1)), 
             label: "vs last day" 
