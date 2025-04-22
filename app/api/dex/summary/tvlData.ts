@@ -3,6 +3,7 @@ interface TvlDataPoint {
   program_type: string;
   tvl: number;
   daily_total_volume: number;
+  daily_total_tvl: number;
 }
 
 interface DailyTvlData {
@@ -39,7 +40,7 @@ export const fetchTvlData = async (): Promise<DailyTvlData[]> => {
       if (!dataByDate.has(date)) {
         dataByDate.set(date, {
           date,
-          totalTvl: row.daily_total_volume,
+          totalTvl: row.daily_total_tvl || row.daily_total_volume,
           programBreakdown: {}
         });
       }
@@ -72,19 +73,35 @@ export const getLatestTvlStats = async () => {
       };
     }
     
-    // Get today's and yesterday's data
-    const today = tvlData[0];
-    const yesterday = tvlData[1];
+    // Get the most recent data point
+    const current = tvlData[0];
+    
+    // Find the previous data point by date
+    const previousDate = new Date(current.date);
+    previousDate.setDate(previousDate.getDate() - 1);
+    
+    // Look for the exact previous date, or the closest one before it
+    let previous = tvlData[1]; // Default to the second data point
+    for (let i = 1; i < tvlData.length; i++) {
+      const dataPoint = tvlData[i];
+      const dataDate = new Date(dataPoint.date);
+      
+      // If we find the exact previous date or an earlier one, use it
+      if (dataDate <= previousDate) {
+        previous = dataPoint;
+        break;
+      }
+    }
     
     // Current TVL in billions
-    const currentTvl = today.totalTvl / 1e9;
+    const currentTvl = current.totalTvl / 1e9;
     
-    // Calculate percentage change
-    const percentChange = ((today.totalTvl - yesterday.totalTvl) / yesterday.totalTvl) * 100;
+    // Calculate percentage change based on the correct previous date's TVL
+    const percentChange = ((current.totalTvl - previous.totalTvl) / previous.totalTvl) * 100;
     
     return {
-      currentTvl,
-      percentChange,
+      currentTvl: parseFloat(currentTvl.toFixed(2)),
+      percentChange: parseFloat(percentChange.toFixed(2)),
       isPositive: percentChange > 0
     };
   } catch (error) {

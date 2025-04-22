@@ -9,7 +9,7 @@ import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/dex/summary/chartData";
 import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/dex/summary/velocityByDexData";
 import { getLatestVolumeStats } from "../../api/dex/summary/volumeData";
-import { getLatestTvlStats } from "../../api/tvlData";
+import { getLatestTvlStats } from "../../api/dex/summary/tvlData";
 import { getLatestTradersStats } from "../../api/dex/summary/tradersData";
 
 // Define colors for program types (same as in VelocityByDexChart)

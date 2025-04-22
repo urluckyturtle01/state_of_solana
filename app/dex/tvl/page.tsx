@@ -288,8 +288,8 @@ export default function DexTvlPage() {
         {/* Content Area - Placeholder for chart */}
         <div className="h-[360px] lg:h-80 flex items-center justify-center">
           <div className="text-gray-500 text-sm">TVL History Chart (Coming Soon)</div>
-        </div>
       </div>
+    </div>
     </>
   );
 } 
