@@ -5,10 +5,11 @@ import { ParentSize } from '@visx/responsive';
 import { Pie } from '@visx/shape';
 import { Group } from '@visx/group';
 import { scaleOrdinal } from '@visx/scale';
-import { VolumeByProgramDataPoint, fetchVolumeByProgramDataWithFallback, formatVolume } from '../../api/dex/volume/volumeByProgramData';
+import { TvlByPoolDataPoint, fetchTvlByPoolDataWithFallback, formatTvl } from '../../api/dex/tvl/tvlByPoolData';
 import Loader from '../shared/Loader';
 import Modal from '../shared/Modal';
 import ChartTooltip from '../shared/ChartTooltip';
+import { DownloadIcon } from '../../components/shared/Icons';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
 
 // Define RefreshIcon component
@@ -31,51 +32,51 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-// Define color palette (same colors as used in the legend)
+// Define color palette
 const colors = [
-  '#a78bfa', // purple - Jupiter
-  '#60a5fa', // blue - Raydium
-  '#9ca3af', // gray - Others
-  '#f97316', // orange - OKX
-  '#34d399', // green - Orca
-  '#f43f5e', // red - Meteora
-  '#facc15', // yellow - Pump Fun
-  '#14b8a6', // teal - SolFi
-  '#8b5cf6', // indigo - Lifinity
-  '#6b7280', // darker gray - Others (Low Volume)
+  '#a78bfa', // purple
+  '#60a5fa', // blue
+  '#34d399', // green
+  '#f97316', // orange
+  '#f43f5e', // red
+  '#facc15', // yellow
+  '#14b8a6', // teal
+  '#8b5cf6', // indigo
+  '#ec4899', // pink
+  '#6b7280', // gray
 ];
 
 // Function to get legends for display
-const getLegendItems = (data: VolumeByProgramDataPoint[], colorScale: (dex: string) => string) => {
+const getLegendItems = (data: TvlByPoolDataPoint[], colorScale: (pool: string) => string) => {
   return data.map(item => ({
-    color: colorScale(item.dex) as string,
-    label: item.dex,
+    color: colorScale(item.pool) as string,
+    label: item.pool,
     value: `${item.percentage.toFixed(1)}%`
   }));
 };
 
-interface VolumeByProgramChartProps {
+interface TvlByPoolChartProps {
   isModalOpen?: boolean;
   onModalClose?: () => void;
 }
 
-const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({ 
+const TvlByPoolChart: React.FC<TvlByPoolChartProps> = ({ 
   isModalOpen = false, 
   onModalClose = () => {} 
 }) => {
   // State for chart data
-  const [data, setData] = useState<VolumeByProgramDataPoint[]>([]);
+  const [data, setData] = useState<TvlByPoolDataPoint[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
   // State for modal
-  const [modalData, setModalData] = useState<VolumeByProgramDataPoint[]>([]);
+  const [modalData, setModalData] = useState<TvlByPoolDataPoint[]>([]);
   const [modalLoading, setModalLoading] = useState<boolean>(true);
   
   // State for tooltip
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
-    data: VolumeByProgramDataPoint | null;
+    data: TvlByPoolDataPoint | null;
     x: number;
     y: number;
   }>({
@@ -90,10 +91,10 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const chartData = await fetchVolumeByProgramDataWithFallback();
+      const chartData = await fetchTvlByPoolDataWithFallback();
       setData(chartData);
     } catch (err) {
-      console.error('Error loading chart data:', err);
+      console.error('Error loading TVL by Pool chart data:', err);
       setError('No data available for this period.');
       setData([]);
     } finally {
@@ -114,7 +115,7 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
         setModalData(data);
         setModalLoading(false);
       } else {
-        fetchVolumeByProgramDataWithFallback()
+        fetchTvlByPoolDataWithFallback()
           .then(chartData => {
             setModalData(chartData);
           })
@@ -129,15 +130,15 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
   }, [isModalOpen, data]);
 
   // Color scale
-  const getColorScale = (chartData: VolumeByProgramDataPoint[]) => {
+  const getColorScale = (chartData: TvlByPoolDataPoint[]) => {
     return scaleOrdinal({
-      domain: chartData.map(d => d.dex),
+      domain: chartData.map(d => d.pool),
       range: colors.slice(0, chartData.length)
     });
   };
 
   // Handle tooltip
-  const handleTooltip = (isVisible: boolean, dataPoint: VolumeByProgramDataPoint | null, event: React.MouseEvent) => {
+  const handleTooltip = (isVisible: boolean, dataPoint: TvlByPoolDataPoint | null, event: React.MouseEvent) => {
     if (isVisible && dataPoint) {
       setTooltip({
         visible: true,
@@ -165,7 +166,7 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
           <div className="text-gray-400/80 text-xs mb-2">{error || 'No data available'}</div>
           <ButtonSecondary onClick={isModal ? () => {
             setModalLoading(true);
-            fetchVolumeByProgramDataWithFallback()
+            fetchTvlByPoolDataWithFallback()
               .then(chartData => {
                 setModalData(chartData);
               })
@@ -191,16 +192,16 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
       <div className="h-full w-full">
         {tooltip.visible && tooltip.data && (
           <ChartTooltip
-            title={tooltip.data.dex}
+            title={tooltip.data.pool}
             items={[
               { 
-                color: colorScale(tooltip.data.dex) as string, 
-                label: 'Volume', 
-                value: formatVolume(tooltip.data.volume), 
+                color: colorScale(tooltip.data.pool) as string, 
+                label: 'TVL', 
+                value: formatTvl(tooltip.data.tvl), 
                 shape: 'square' 
               },
               { 
-                color: colorScale(tooltip.data.dex) as string, 
+                color: colorScale(tooltip.data.pool) as string, 
                 label: 'Share', 
                 value: `${tooltip.data.percentage.toFixed(1)}%`, 
                 shape: 'square' 
@@ -223,7 +224,7 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
                 <Group top={centerY} left={centerX}>
                   <Pie
                     data={chartData}
-                    pieValue={d => d.volume}
+                    pieValue={d => d.tvl}
                     outerRadius={radius}
                     innerRadius={radius * 0.3} // Creates a donut chart
                     cornerRadius={3}
@@ -234,11 +235,11 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
                         const { data: arcData } = arc;
                         const [centroidX, centroidY] = pie.path.centroid(arc);
                         const hasSpaceForLabel = arcData.percentage > 5;
-                        const fillColor = colorScale(arcData.dex) as string;
+                        const fillColor = colorScale(arcData.pool) as string;
                         
                         return (
                           <g 
-                            key={`arc-${arcData.dex}-${index}`}
+                            key={`arc-${arcData.pool}-${index}`}
                             onMouseMove={(e) => handleTooltip(true, arcData, e)}
                             onMouseLeave={() => handleTooltip(false, null, null as any)}
                           >
@@ -297,20 +298,46 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
     return (
       <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto overflow-x-hidden pr-1">
         {chartData.map((item, index) => (
-          <div key={`legend-${item.dex}-${index}`} className="flex items-start">
+          <div key={`legend-${item.pool}-${index}`} className="flex items-start">
             <div 
               className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5 flex-shrink-0"
-              style={{ background: colorScale(item.dex) }}
+              style={{ background: colorScale(item.pool) }}
             ></div>
             <div className="flex flex-col">
-            <span className="text-[11px] text-gray-300 break-words">
-              {item.dex} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
-            </span>
+              <span className="text-[11px] text-gray-300 break-words">
+                {item.pool} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
+              </span>
             </div>
           </div>
         ))}
       </div>
     );
+  };
+
+  // Function to download data as CSV
+  const downloadCSV = (modalData: TvlByPoolDataPoint[]) => {
+    // Create CSV content
+    const headers = ["pool", "tvl", "percentage"];
+    const csvContent = [
+      headers.join(","),
+      ...modalData.map(item => 
+        [
+          item.pool,
+          item.tvl,
+          item.percentage
+        ].join(",")
+      )
+    ].join("\n");
+
+    // Create a blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'tvl_by_pool.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -321,8 +348,8 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
       <Modal 
         isOpen={isModalOpen} 
         onClose={onModalClose} 
-        title="Volume by Program" 
-        subtitle="Breakdown of trading volume by decentralized exchange"
+        title="TVL by Pool" 
+        subtitle="Breakdown of Total Value Locked by liquidity pool"
       >
         <div className="h-[60vh]">
           {/* Chart with legends in modal */}
@@ -334,7 +361,6 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
             
             {/* Legend area - right side */}
             <div className="w-[20%] pl-3">
-              
               <div className="flex flex-col gap-5 pt-1 h-full overflow-hidden">
                 <div className="flex flex-col gap-2 max-h-[58vh] overflow-y-auto pr-1
                   [&::-webkit-scrollbar]:w-1.5 
@@ -354,10 +380,10 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
                       <div key={`legend-${index}`} className="flex items-start">
                         <div 
                           className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5" 
-                          style={{ backgroundColor: getColorScale(modalData)(item.dex) }}
+                          style={{ backgroundColor: getColorScale(modalData)(item.pool) }}
                         />
-                        <span className="text-[11px] text-gray-300 truncate" title={`${item.dex} (${item.percentage.toFixed(1)}%)`}>
-                          {item.dex.length > 10 ? `${item.dex.substring(0, 10)}...` : item.dex} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
+                        <span className="text-[11px] text-gray-300">
+                          {item.pool} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
                         </span>
                       </div>
                     ))
@@ -372,4 +398,4 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
   );
 };
 
-export default VolumeByProgramChart; 
+export default TvlByPoolChart; 

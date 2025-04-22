@@ -419,7 +419,7 @@ const IssuanceChart: React.FC<IssuanceChartProps> = ({
       return (
         <div className="flex flex-col justify-center items-center h-full">
           <div className="text-gray-400/80 text-xs mb-2">{activeError || 'No data available'}</div>
-          <ButtonSecondary onClick={isModal ? fetchModalData : () => fetchData()}>
+          <ButtonSecondary onClick={isModal ? fetchModalData : fetchData}>
             <div className="flex items-center gap-1.5">
               <RefreshIcon className="w-3.5 h-3.5" />
               <span>Refresh</span>

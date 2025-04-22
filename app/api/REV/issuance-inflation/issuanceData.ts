@@ -90,15 +90,14 @@ export async function fetchIssuanceData(currency: CurrencyType): Promise<Issuanc
         throw new Error(`API job failed: ${data.job.error || 'Unknown error'}`);
       }
       else {
-        // Job is still processing - we'll use sample data immediately
-        // and trigger a background process to update when ready
-        console.log('Job is still processing - returning sample data and fetching actual data in background');
+        // Job is still processing - don't use sample data, throw an error
+        console.log('Job is still processing');
         
         // Start background polling for the actual data
         refreshDataInBackground(currency, data.job.id);
         
-        // Return sample data immediately
-        return generateSampleData(currency);
+        // Throw error so UI can show refresh button
+        throw new Error('Data is still processing. Please try again later.');
       }
     }
     
@@ -115,9 +114,8 @@ export async function fetchIssuanceData(currency: CurrencyType): Promise<Issuanc
   } catch (error) {
     console.error('Error fetching issuance data:', error);
     
-    // Fall back to generated data when all else fails
-    console.warn('All API attempts failed, generating sample data');
-    return generateSampleData(currency);
+    // Don't fall back to generated data, let the error be thrown
+    throw error;
   }
 }
 
@@ -132,7 +130,7 @@ async function fetchResultById(queryResultId: string): Promise<IssuanceDataPoint
     const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch results: ${response.status}`);
+      throw new Error(`No data available for this period. ${response.status}`);
     }
     
     const data = await response.json();
@@ -178,32 +176,6 @@ function transformDataPoints(rows: any[]): IssuanceDataPoint[] {
   console.log(`Date range: ${transformedData[0].date} to ${transformedData[transformedData.length-1].date}`);
   
   return transformedData;
-}
-
-// Generate sample data for development/fallback if needed
-function generateSampleData(currency: CurrencyType): IssuanceDataPoint[] {
-  const sampleData: IssuanceDataPoint[] = [];
-  const now = new Date();
-  
-  // Generate 30 days of sample data
-  for (let i = 0; i < 30; i++) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    
-    sampleData.push({
-      date: date.toISOString().split('T')[0],
-      gross_sol_issuance: 1000 + Math.random() * 200,
-      net_sol_issuance: 800 + Math.random() * 150,
-      sol_burn: 200 + Math.random() * 50,
-      staking_reward: 900 + Math.random() * 100,
-      voting_reward: 50 + Math.random() * 20,
-      jito_labs_commission: 30 + Math.random() * 10,
-      burn_ratio: 0.15 + Math.random() * 0.1,
-      block_height: 10000000 + i * 50000
-    });
-  }
-  
-  return sampleData;
 }
 
 // Format functions for display values

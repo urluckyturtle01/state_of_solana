@@ -64,7 +64,7 @@ export const fetchDailyTvlData = async (): Promise<TvlDataPoint[]> => {
 
     if (!rows || rows.length === 0) {
       console.warn('No TVL data rows found in API response');
-      return [];
+      throw new Error('No data returned from API');
     }
 
     // Log a sample row to debug the data format
@@ -110,29 +110,14 @@ export const fetchDailyTvlData = async (): Promise<TvlDataPoint[]> => {
 };
 
 /**
- * Gets preloaded data to avoid API calls during development or if API is down
- */
-export const getPreloadedTvlData = (): TvlDataPoint[] => {
-  // Sample data in case API is unavailable
-  return [
-    { date: '2024-04-18', dailyTotalTvl: 3520000000, percentChange: 2.1 },
-    { date: '2024-04-17', dailyTotalTvl: 3450000000, percentChange: -0.8 },
-    { date: '2024-04-16', dailyTotalTvl: 3480000000, percentChange: 1.5 },
-    { date: '2024-04-15', dailyTotalTvl: 3430000000, percentChange: 3.0 },
-    { date: '2024-04-14', dailyTotalTvl: 3330000000, percentChange: -0.3 },
-    // Add more sample data as needed
-  ];
-};
-
-/**
- * Fetches daily TVL data with fallback to preloaded data if API fails
+ * Fetches TVL data (no fallback)
  */
 export const fetchTvlDataWithFallback = async (): Promise<TvlDataPoint[]> => {
   try {
     return await fetchDailyTvlData();
   } catch (error) {
-    console.warn('Failed to fetch TVL data from API, using preloaded data:', error);
-    return getPreloadedTvlData();
+    console.error('Failed to fetch TVL data from API:', error);
+    throw error;
   }
 };
 
