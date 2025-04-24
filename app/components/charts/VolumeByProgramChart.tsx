@@ -10,6 +10,7 @@ import Loader from '../shared/Loader';
 import Modal from '../shared/Modal';
 import ChartTooltip from '../shared/ChartTooltip';
 import ButtonSecondary from '../shared/buttons/ButtonSecondary';
+import { DownloadIcon } from '../../components/shared/Icons';
 
 // Define RefreshIcon component
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -147,6 +148,32 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
       });
     } else {
       setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  };
+
+  // Function to download CSV data
+  const downloadCSV = (modalData: VolumeByProgramDataPoint[]) => {
+    try {
+      // Create CSV content
+      const headers = ['DEX', 'Volume ($)', 'Share (%)'];
+      const rows = modalData.map(item => (
+        `${item.dex},${item.volume},${item.percentage.toFixed(2)}`
+      ));
+      
+      const csvContent = [headers.join(','), ...rows].join('\n');
+      
+      // Create blob and download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'volume_by_program.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
     }
   };
 
@@ -334,7 +361,6 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
             
             {/* Legend area - right side */}
             <div className="w-[20%] pl-3">
-              
               <div className="flex flex-col gap-5 pt-1 h-full overflow-hidden">
                 <div className="flex flex-col gap-2 max-h-[58vh] overflow-y-auto pr-1
                   [&::-webkit-scrollbar]:w-1.5 
@@ -356,8 +382,8 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
                           className="w-2.5 h-2.5 mr-2 rounded-sm mt-0.5" 
                           style={{ backgroundColor: getColorScale(modalData)(item.dex) }}
                         />
-                        <span className="text-[11px] text-gray-300 truncate" title={`${item.dex} (${item.percentage.toFixed(1)}%)`}>
-                          {item.dex.length > 10 ? `${item.dex.substring(0, 10)}...` : item.dex} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
+                        <span className="text-[11px] text-gray-300">
+                          {item.dex} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
                         </span>
                       </div>
                     ))
@@ -365,6 +391,18 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
                 </div>
               </div>
             </div>
+          </div>
+          
+          {/* Download button */}
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={() => downloadCSV(modalData)}
+              className="flex items-center space-x-1 text-xs bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 px-2 py-1 rounded transition-colors"
+              title="Download CSV Data"
+            >
+              <DownloadIcon className="w-3.5 h-3.5" />
+              <span>Download CSV</span>
+            </button>
           </div>
         </div>
       </Modal>
