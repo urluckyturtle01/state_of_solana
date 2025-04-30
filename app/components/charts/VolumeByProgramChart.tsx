@@ -393,17 +393,7 @@ const VolumeByProgramChart: React.FC<VolumeByProgramChartProps> = ({
             </div>
           </div>
           
-          {/* Download button */}
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={() => downloadCSV(modalData)}
-              className="flex items-center space-x-1 text-xs bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 px-2 py-1 rounded transition-colors"
-              title="Download CSV Data"
-            >
-              <DownloadIcon className="w-3.5 h-3.5" />
-              <span>Download CSV</span>
-            </button>
-          </div>
+          
         </div>
       </Modal>
     </div>
