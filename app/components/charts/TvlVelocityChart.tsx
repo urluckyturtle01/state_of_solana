@@ -132,6 +132,10 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
   // Shared tooltip state
   const [tooltip, setTooltip] = useState({ visible: false, dataPoint: null as TvlVelocityDataPoint | null, left: 0, top: 0 });
 
+  // Add refs for chart containers
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
+  
   // Add refs for throttling
   const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const canUpdateFilteredDataRef = useRef<boolean>(true);
@@ -387,8 +391,13 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     console.log('TvlVelocity - Mouse move event', { isModal, clientX: e.clientX, clientY: e.clientY });
     
-    const rect = e.currentTarget.getBoundingClientRect();
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     const margin = { left: 45 };
     const innerWidth = rect.width - margin.left - 20;
     
@@ -413,17 +422,15 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
       if (!tooltip.visible || tooltip.dataPoint?.date !== dataPoint.date) {
         console.log('TvlVelocity - Setting tooltip data', { 
           dataPoint,
-          left: e.clientX,
-          top: e.clientY,
-          offsetLeft: e.clientX - (isModal ? 50 : 50),
-          offsetTop: e.clientY - (isModal ? 50 : 50)
+          left: mouseX,
+          top: mouseY
         });
         
         setTooltip({
           visible: true,
           dataPoint,
-          left: e.clientX,
-          top: e.clientY
+          left: mouseX,
+          top: mouseY
         });
       }
     }
@@ -542,15 +549,17 @@ const TvlVelocityChart: React.FC<TvlVelocityChartProps> = ({
               { color: tvlVelocityColors.tvlBar, label: 'TVL', value: formatTvl(tooltip.dataPoint.tvl), shape: 'square' },
               { color: tvlVelocityColors.velocityLine, label: 'Velocity', value: formatVelocity(tooltip.dataPoint.velocity), shape: 'circle' }
             ]}
-            top={tooltip.top - (isModal ? 50 : 400)}
-            left={tooltip.left - (isModal ? 50 : 240)}
+            top={tooltip.top}
+            left={tooltip.left}
+            isModal={isModal}
           />
         )}
         
         {/* Main chart */}
-        <div className="h-[85%] w-full overflow-hidden"
+        <div className="h-[85%] w-full overflow-hidden relative"
           onMouseMove={(e) => handleMouseMove(e, isModal)}
           onMouseLeave={handleMouseLeave}
+          ref={isModal ? modalChartRef : chartContainerRef}
         >
           <ParentSize>
             {({ width, height }) => {

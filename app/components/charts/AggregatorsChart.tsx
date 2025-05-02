@@ -40,6 +40,13 @@ export const aggregatorColors: AggregatorColors = {
   'default': '#f97316' // orange
 };
 
+// Define chart colors for consistency with VolumeHistoryChart
+export const aggregatorsChartColors = {
+  grid: '#374151',
+  axisLines: '#374151',
+  tickLabels: '#9ca3af',
+};
+
 // Get the color for a specific aggregator
 const getAggregatorColor = (aggregator: string): string => {
   return aggregatorColors[aggregator] || aggregatorColors.default;
@@ -88,6 +95,10 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
   const canUpdateFilteredDataRef = useRef<boolean>(true);
   const modalThrottleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const canUpdateModalFilteredDataRef = useRef<boolean>(true);
+  
+  // Add refs for chart containers
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
   
   // Tooltip state
   const [tooltip, setTooltip] = useState<{
@@ -408,8 +419,16 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
     chartData: AggregatorsDataPoint[],
     chartAggregators: string[],
     chartDataType: DataType,
-    isPercentMode: boolean
+    isPercentMode: boolean,
+    isModal: boolean = false
   ) => {
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    
     const chartMonths = getUniqueMonths(chartData);
     const totals = calculateTotals(chartData, chartMonths, chartDataType);
     
@@ -437,8 +456,8 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
     
     setTooltip({
       visible: true,
-      x: event.clientX,
-      y: event.clientY,
+      x: mouseX,
+      y: mouseY,
       month,
       items: tooltipItems
     });
@@ -508,20 +527,85 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                     : formatTraders(item.rawValue || item.value)),
                 shape: 'square'
               }))}
-              top={tooltip.y - (isModal ? 50 : 240)}
-              left={tooltip.x - (isModal ? 50 : 240)}
+              top={tooltip.y}
+              left={tooltip.x}
               isModal={isModal}
             />
           )}
           
           {/* Main chart */}
-          <div className="h-[85%] w-full relative">
+          <div className="h-[85%] w-full relative" ref={modalChartRef}
+            onMouseMove={(e) => {
+              const chartEl = modalChartRef.current;
+              if (!chartEl) return;
+              
+              const rect = chartEl.getBoundingClientRect();
+              const mouseX = e.clientX - rect.left;
+              const mouseY = e.clientY - rect.top;
+              
+              // Get chart margins and dimensions
+              const margin = { top: 5, right: 25, bottom: 30, left: 45 };
+              const innerWidth = rect.width - margin.left - margin.right;
+              
+              // Only process if within chart area (not in margins)
+              if (mouseX < margin.left || mouseX > innerWidth + margin.left) return;
+              
+              // Get current data and configuration
+              const currentData = isModalBrushActive ? modalFilteredData : modalData;
+              const currentMonths = getUniqueMonths(currentData);
+              const currentAggregators = getUniqueAggregators(currentData);
+              const totals = calculateTotals(currentData, currentMonths, modalDataType);
+              const isPercentMode = modalDisplayMode === 'percent';
+              
+              // Find the closest month based on x position
+              const monthIndex = Math.min(
+                currentMonths.length - 1,
+                Math.max(0, Math.floor((mouseX - margin.left) / (innerWidth / currentMonths.length)))
+              );
+              
+              if (monthIndex >= 0 && monthIndex < currentMonths.length) {
+                const month = currentMonths[monthIndex];
+                
+                // Get all values for this month
+                const monthData = currentData.filter(d => d.month === month);
+                
+                const tooltipItems = currentAggregators.map(agg => {
+                  const dataPoint = monthData.find(d => d.aggregator === agg);
+                  const itemValue = dataPoint 
+                    ? (modalDataType === 'volume' ? dataPoint.volume : dataPoint.signers) 
+                    : 0;
+                  
+                  let displayValue = itemValue;
+                  if (isPercentMode && totals[month]) {
+                    displayValue = (itemValue / totals[month]) * 100;
+                  }
+                  
+                  return {
+                    aggregator: agg,
+                    value: displayValue,
+                    rawValue: itemValue,
+                    color: getAggregatorColor(agg)
+                  };
+                }).filter(item => item.rawValue > 0) // Only show non-zero values
+                  .sort((a, b) => b.rawValue - a.rawValue); // Sort by raw value, highest first
+                
+                setTooltip({
+                  visible: true,
+                  x: mouseX,
+                  y: mouseY,
+                  month,
+                  items: tooltipItems
+                });
+              }
+            }}
+            onMouseLeave={handleMouseLeave}
+          >
             <ParentSize>
               {({ width, height }) => {
                 if (width < 10 || height < 10) return null;
                 
                 // Chart margins
-                const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+                const margin = { top: 5, right: 25, bottom: 30, left: 45 };
                 const innerWidth = width - margin.left - margin.right;
                 const innerHeight = height - margin.top - margin.bottom;
                 
@@ -571,17 +655,20 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                         scale={yScale}
                         width={innerWidth}
                         height={innerHeight}
-                        stroke="#1f2937"
-                        strokeOpacity={0.2}
+                        stroke={aggregatorsChartColors.grid}
+                        strokeOpacity={0.5}
                         strokeDasharray="2,3"
+                        numTicks={5}
                       />
                       
                       {/* Y axis */}
                       <AxisLeft
                         scale={yScale}
                         hideZero
-                        stroke="#374151"
+                        stroke={aggregatorsChartColors.axisLines}
+                        strokeWidth={0.5}
                         tickStroke="transparent"
+                        tickLength={0}
                         tickFormat={(value) => {
                           const val = value as number;
                           if (isPercentMode) {
@@ -592,10 +679,12 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                             : formatTraders(val);
                         }}
                         tickLabelProps={() => ({
-                          fill: '#6b7280',
+                          fill: aggregatorsChartColors.tickLabels,
                           fontSize: 11,
+                          fontWeight: 300,
+                          letterSpacing: '0.05em',
                           textAnchor: 'end',
-                          dx: '-0.25em',
+                          dx: '-0.6em',
                           dy: '0.25em'
                         })}
                       />
@@ -604,14 +693,20 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                       <AxisBottom
                         top={innerHeight}
                         scale={xScale}
-                        stroke="#374151"
+                        stroke={aggregatorsChartColors.axisLines}
+                        strokeWidth={0.5}
                         tickStroke="transparent"
+                        tickLength={0}
+                        hideZero={true}
                         tickFormat={(month) => formatMonth(month as string)}
-                        tickLabelProps={() => ({
-                          fill: '#6b7280',
+                        tickLabelProps={(month, index) => ({
+                          fill: aggregatorsChartColors.tickLabels,
                           fontSize: 11,
-                          textAnchor: 'middle',
-                          dy: '0.25em'
+                          fontWeight: 300,
+                          letterSpacing: '0.05em',
+                          textAnchor: index === 0 ? 'start' : 'middle',
+                          dy: '0.5em',
+                          dx: index === 0 ? '0.5em' : 0
                         })}
                       />
                       
@@ -629,6 +724,9 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                             barStack.bars.map(bar => {
                               // Get raw value for this segment
                               const rawValue = bar.bar[bar.key as keyof typeof bar.bar] as number;
+                              const isHighlighted = tooltip.visible && 
+                                (tooltip.month === (bar.bar.data as { month: string }).month) && 
+                                tooltip.items.some(item => item.aggregator === bar.key);
                               
                               return (
                                 <rect
@@ -638,8 +736,8 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                                   height={bar.height}
                                   width={bar.width}
                                   fill={bar.color}
-                                  opacity={0.75}
-                                  rx={1}
+                                  opacity={isHighlighted ? 1 : 0.7}
+                                  rx={2}
                                   onMouseMove={(e) => handleMouseMove(
                                     e, 
                                     (bar.bar.data as { month: string }).month, 
@@ -648,7 +746,8 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                                     chartData,
                                     chartAggregators,
                                     chartDataType,
-                                    isPercentMode
+                                    isPercentMode,
+                                    isModal
                                   )}
                                   onMouseLeave={handleMouseLeave}
                                 />
@@ -688,7 +787,7 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
               getDate={(d) => (d as { date: string }).date}
               getValue={(d) => (d as { value: number }).value}
               lineColor={dataType === 'volume' ? "#60a5fa" : "#34d399"}
-              margin={{ top: 5, right: 20, bottom: 10, left: 60 }}
+              margin={{ top: 5, right: 20, bottom: 10, left: 45 }}
             />
           </div>
         </div>
@@ -700,7 +799,72 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
       <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
         {/* Chart area - main section */}
         <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-80 lg:h-auto">
-          <div className="h-full w-full relative">
+          <div className="h-full w-full relative" ref={chartContainerRef}
+            onMouseMove={(e) => {
+              const chartEl = chartContainerRef.current;
+              if (!chartEl) return;
+              
+              const rect = chartEl.getBoundingClientRect();
+              const mouseX = e.clientX - rect.left;
+              const mouseY = e.clientY - rect.top;
+              
+              // Get chart margins and dimensions
+              const margin = { top: 5, right: 25, bottom: 30, left: 45 };
+              const innerWidth = rect.width - margin.left - margin.right;
+              
+              // Only process if within chart area (not in margins)
+              if (mouseX < margin.left || mouseX > innerWidth + margin.left) return;
+              
+              // Get current data and configuration
+              const currentData = isBrushActive ? filteredData : data;
+              const currentMonths = getUniqueMonths(currentData);
+              const currentAggregators = getUniqueAggregators(currentData);
+              const totals = calculateTotals(currentData, currentMonths, dataType);
+              const isPercentMode = displayMode === 'percent';
+              
+              // Find the closest month based on x position
+              const monthIndex = Math.min(
+                currentMonths.length - 1,
+                Math.max(0, Math.floor((mouseX - margin.left) / (innerWidth / currentMonths.length)))
+              );
+              
+              if (monthIndex >= 0 && monthIndex < currentMonths.length) {
+                const month = currentMonths[monthIndex];
+                
+                // Get all values for this month
+                const monthData = currentData.filter(d => d.month === month);
+                
+                const tooltipItems = currentAggregators.map(agg => {
+                  const dataPoint = monthData.find(d => d.aggregator === agg);
+                  const itemValue = dataPoint 
+                    ? (dataType === 'volume' ? dataPoint.volume : dataPoint.signers) 
+                    : 0;
+                  
+                  let displayValue = itemValue;
+                  if (isPercentMode && totals[month]) {
+                    displayValue = (itemValue / totals[month]) * 100;
+                  }
+                  
+                  return {
+                    aggregator: agg,
+                    value: displayValue,
+                    rawValue: itemValue,
+                    color: getAggregatorColor(agg)
+                  };
+                }).filter(item => item.rawValue > 0) // Only show non-zero values
+                  .sort((a, b) => b.rawValue - a.rawValue); // Sort by raw value, highest first
+                
+                setTooltip({
+                  visible: true,
+                  x: mouseX,
+                  y: mouseY,
+                  month,
+                  items: tooltipItems
+                });
+              }
+            }}
+            onMouseLeave={handleMouseLeave}
+          >
             {/* Tooltip */}
             {tooltip.visible && (
               <ChartTooltip
@@ -710,13 +874,13 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                   label: item.aggregator,
                   value: isPercentMode 
                     ? `${item.value.toFixed(1)}%` 
-                    : (chartDataType === 'volume' 
+                    : (dataType === 'volume' 
                       ? formatCurrency(item.rawValue || item.value) 
                       : formatTraders(item.rawValue || item.value)),
                   shape: 'square'
                 }))}
-                top={tooltip.y - 240}
-                left={tooltip.x - 240}
+                top={tooltip.y}
+                left={tooltip.x}
                 isModal={false}
               />
             )}
@@ -745,7 +909,7 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                 getDate={(d) => (d as { date: string }).date}
                 getValue={(d) => (d as { value: number }).value}
                 lineColor={dataType === 'volume' ? "#60a5fa" : "#34d399"}
-                margin={{ top: 5, right: 20, bottom: 10, left: 60 }}
+                margin={{ top: 5, right: 20, bottom: 10, left: 45 }}
               />
             </div>
           </div>
@@ -803,7 +967,7 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
     if (width < 10 || height < 10) return null;
     
     // Chart margins
-    const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+    const margin = { top: 5, right: 25, bottom: 30, left: 45 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     
@@ -853,17 +1017,20 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
             scale={yScale}
             width={innerWidth}
             height={innerHeight}
-            stroke="#1f2937"
-            strokeOpacity={0.2}
+            stroke={aggregatorsChartColors.grid}
+            strokeOpacity={0.5}
             strokeDasharray="2,3"
+            numTicks={5}
           />
           
           {/* Y axis */}
           <AxisLeft
             scale={yScale}
             hideZero
-            stroke="#374151"
+            stroke={aggregatorsChartColors.axisLines}
+            strokeWidth={0.5}
             tickStroke="transparent"
+            tickLength={0}
             tickFormat={(value) => {
               const val = value as number;
               if (isPercentMode) {
@@ -874,10 +1041,12 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                 : formatTraders(val);
             }}
             tickLabelProps={() => ({
-              fill: '#6b7280',
+              fill: aggregatorsChartColors.tickLabels,
               fontSize: 11,
+              fontWeight: 300,
+              letterSpacing: '0.05em',
               textAnchor: 'end',
-              dx: '-0.25em',
+              dx: '-0.6em',
               dy: '0.25em'
             })}
           />
@@ -886,14 +1055,20 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
           <AxisBottom
             top={innerHeight}
             scale={xScale}
-            stroke="#374151"
+            stroke={aggregatorsChartColors.axisLines}
+            strokeWidth={0.5}
             tickStroke="transparent"
+            tickLength={0}
+            hideZero={true}
             tickFormat={(month) => formatMonth(month as string)}
-            tickLabelProps={() => ({
-              fill: '#6b7280',
+            tickLabelProps={(month, index) => ({
+              fill: aggregatorsChartColors.tickLabels,
               fontSize: 11,
-              textAnchor: 'middle',
-              dy: '0.25em'
+              fontWeight: 300,
+              letterSpacing: '0.05em',
+              textAnchor: index === 0 ? 'start' : 'middle',
+              dy: '0.5em',
+              dx: index === 0 ? '0.5em' : 0
             })}
           />
           
@@ -911,6 +1086,9 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                 barStack.bars.map(bar => {
                   // Get raw value for this segment
                   const rawValue = bar.bar[bar.key as keyof typeof bar.bar] as number;
+                  const isHighlighted = tooltip.visible && 
+                    (tooltip.month === (bar.bar.data as { month: string }).month) && 
+                    tooltip.items.some(item => item.aggregator === bar.key);
                   
                   return (
                     <rect
@@ -920,8 +1098,8 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                       height={bar.height}
                       width={bar.width}
                       fill={bar.color}
-                      opacity={0.75}
-                      rx={1}
+                      opacity={isHighlighted ? 1 : 0.7}
+                      rx={2}
                       onMouseMove={(e) => handleMouseMove(
                         e, 
                         (bar.bar.data as { month: string }).month, 
@@ -930,7 +1108,8 @@ const AggregatorsChart: React.FC<AggregatorsChartProps> = ({
                         chartData,
                         chartAggregators,
                         chartDataType,
-                        isPercentMode
+                        isPercentMode,
+                        isModal
                       )}
                       onMouseLeave={handleMouseLeave}
                     />

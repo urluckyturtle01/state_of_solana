@@ -9,6 +9,20 @@ import TvlHistoryChart from "../../components/charts/TvlHistoryChart";
 import { fetchTvlHistoryDataWithFallback, fetchTvlByDexDataWithFallback } from "../../api/dex/tvl/tvlHistoryData";
 import TvlByDexChart from "../../components/charts/TvlByDexChart";
 
+// Define colors for the chart legends
+const colors = [
+  '#a78bfa', // purple
+  '#60a5fa', // blue
+  '#34d399', // green
+  '#f97316', // orange
+  '#f43f5e', // rose
+  '#facc15', // yellow
+  '#14b8a6', // teal
+  '#8b5cf6', // violet
+  '#ec4899', // pink
+  '#6b7280', // gray
+];
+
 // Define a TimeFilter type similar to VolumeTimeFilter
 type TimeFilter = 'W' | 'M' | 'Q' | 'Y';
 
@@ -62,6 +76,38 @@ export default function DexTvlPage() {
     };
 
     fetchTvlByPoolData();
+  }, []);
+
+  // Fetch TVL by DEX data for the legend
+  useEffect(() => {
+    const fetchTvlByDexData = async () => {
+      setIsTvlByDexLoading(true);
+      try {
+        // Fetch the data from the API
+        const data = await fetchTvlByDexDataWithFallback();
+        
+        // Transform the data to include percentage
+        if (data && data.length > 0) {
+          // Calculate total TVL
+          const totalTvl = data.reduce((sum, item) => sum + item.tvl, 0);
+          
+          // Add percentage to each item
+          const dataWithPercentage = data.map(item => ({
+            dex: item.dex,
+            tvl: item.tvl,
+            percentage: (item.tvl / totalTvl) * 100
+          }));
+          
+          setTvlByDexData(dataWithPercentage);
+        }
+      } catch (error) {
+        console.error("Error fetching TVL by DEX data:", error);
+      } finally {
+        setIsTvlByDexLoading(false);
+      }
+    };
+
+    fetchTvlByDexData();
   }, []);
 
   // Function to download TVL data as CSV - currently just a placeholder
@@ -200,22 +246,57 @@ export default function DexTvlPage() {
           </div>
           
           {/* First Divider */}
-          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="h-px bg-gray-900 w-full mb-3"></div>
           
-          
-          
-          {/* Content Area - TVL by Pool Chart */}
-          <div className="h-[360px] lg:h-80">
-            <TvlByPoolChart 
-              isModalOpen={tvlByPoolModalOpen}
-              onModalClose={() => setTvlByPoolModalOpen(false)}
-            />
+          {/* Content Area - Split into columns on desktop, stacked on mobile */}
+          <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
+            {/* Chart Area */}
+            <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-64 lg:h-auto">
+              <TvlByPoolChart 
+                isModalOpen={tvlByPoolModalOpen}
+                onModalClose={() => setTvlByPoolModalOpen(false)}
+              />
+            </div>
+            
+            {/* Legend Area - horizontal on mobile, vertical on desktop with scrolling */}
+            <div className="w-full lg:w-1/4 mt-2 lg:mt-0 lg:pl-3 flex flex-row lg:flex-col">
+              <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 pt-1 pb-0 h-full w-full overflow-hidden">
+                <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 w-full h-full overflow-y-auto
+                  [&::-webkit-scrollbar]:w-1.5 
+                  [&::-webkit-scrollbar-track]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                  {tvlByPoolData.length === 0 ? (
+                    // Loading state
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-purple-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
+                      <span className="text-xs text-gray-300">Loading...</span>
+                    </div>
+                  ) : (
+                    // Dynamically generated legends based on actual data
+                    tvlByPoolData.map((item, index) => (
+                      <div key={`pool-legend-${index}`} className="flex items-start">
+                        <div 
+                          className="w-2 h-2 mr-2 rounded-sm mt-0.5 flex-shrink-0" 
+                          style={{ background: colors[index % colors.length] }}
+                        ></div>
+                        <span className="text-xs text-gray-300 break-words max-w-full">
+                          {item.pool} <span className="text-gray-400">({item.percentage.toFixed(1)}%)</span>
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       
       {/* Row with one full-width chart container */}
-      <div className="mb-4">
+     <div className="mb-4">
         {/* TVL by DEX container */}
         <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-green-900/20 transition-all duration-300">
           <div className="flex justify-between items-center mb-3">
@@ -250,17 +331,52 @@ export default function DexTvlPage() {
           </div>
           
           {/* First Divider */}
-          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="h-px bg-gray-900 w-full mb-3"></div>
           
-       
-          
-          {/* Content Area - TVL by DEX Chart */}
-          <div className="h-[360px] lg:h-80">
-            <TvlByDexChart 
-              timeFilter={timeFilter}
-              isModalOpen={tvlByDexModalOpen}
-              onModalClose={() => setTvlByDexModalOpen(false)}
-            />
+          {/* Content Area - Split into columns on desktop, stacked on mobile */}
+          <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
+            {/* Chart Area */}
+            <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-64 lg:h-auto">
+              <TvlByDexChart 
+                timeFilter={timeFilter}
+                isModalOpen={tvlByDexModalOpen}
+                onModalClose={() => setTvlByDexModalOpen(false)}
+              />
+            </div>
+            
+            {/* Legend Area - horizontal on mobile, vertical on desktop with scrolling */}
+            <div className="w-full lg:w-1/7 mt-2 lg:mt-0 lg:pl-3 flex flex-row lg:flex-col">
+              <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 pt-1 pb-0 h-full w-full overflow-hidden">
+                <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 w-full h-full overflow-y-auto
+                  [&::-webkit-scrollbar]:w-1.5 
+                  [&::-webkit-scrollbar-track]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                  {tvlByDexData.length === 0 ? (
+                    // Loading state
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-green-500 mr-2 rounded-sm mt-0.5 animate-pulse"></div>
+                      <span className="text-xs text-gray-300">Loading...</span>
+                    </div>
+                  ) : (
+                    // Dynamically generated legends based on actual data
+                    tvlByDexData.map((item, index) => (
+                      <div key={`dex-legend-${index}`} className="flex items-start">
+                        <div 
+                          className="w-2 h-2 mr-2 rounded-sm mt-0.5 flex-shrink-0" 
+                          style={{ background: colors[index % colors.length] }}
+                        ></div>
+                        <span className="text-xs text-gray-300 break-words max-w-full">
+                          {item.dex} 
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

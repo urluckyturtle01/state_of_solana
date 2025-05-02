@@ -146,6 +146,7 @@ export default function TvlByDexChart({
   const canUpdateModalFilteredDataRef = useRef<boolean>(true);
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
   
   // Debug element dimensions when rendered
   useEffect(() => {
@@ -543,18 +544,32 @@ export default function TvlByDexChart({
   }, [isModalBrushActive, modalData]);
   
   // Enhanced tooltip handler for hovering over bars
-  const handleBarHover = useCallback((e: React.MouseEvent, date: string, dex: string, tvl: number) => {
+  const handleBarHover = useCallback((e: React.MouseEvent, date: string, dex: string, tvl: number, isModal: boolean = false) => {
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     setTooltip({
       visible: true,
-      x: e.clientX,
-      y: e.clientY,
+      x: mouseX,
+      y: mouseY,
       date,
       items: [{ dex, tvl, color: getDexColor(dex) }]
     });
   }, []);
   
   // Enhanced tooltip handler for hovering over date
-  const handleDateHover = useCallback((e: React.MouseEvent, date: string, currentData: Record<string, Record<string, number>>, dexList: string[]) => {
+  const handleDateHover = useCallback((e: React.MouseEvent, date: string, currentData: Record<string, Record<string, number>>, dexList: string[], isModal: boolean = false) => {
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     const items = dexList
       .map(dex => ({
         dex,
@@ -566,8 +581,8 @@ export default function TvlByDexChart({
     
     setTooltip({
       visible: true,
-      x: e.clientX,
-      y: e.clientY,
+      x: mouseX,
+      y: mouseY,
       date,
       items
     });
@@ -720,7 +735,7 @@ export default function TvlByDexChart({
     });
     
     return (
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col h-full w-full" ref={isModal ? modalChartRef : chartContainerRef}>
         {/* Tooltip */}
         {tooltip.visible && tooltip.items.length > 0 && (
           <ChartTooltip
@@ -731,16 +746,91 @@ export default function TvlByDexChart({
               value: formatCurrency(item.tvl),
               shape: 'square'
             }))}
-            top={tooltip.y - (isModal ? 50 : 240)}
-            left={tooltip.x - (isModal ? 50 : 240)}
+            top={tooltip.y}
+            left={tooltip.x}
             isModal={isModal}
           />
         )}
         
         {/* Main chart */}
         <div 
-          className="h-[85%] w-full overflow-hidden"
+          className="h-[85%] w-full overflow-hidden relative"
           onMouseLeave={handleMouseLeave}
+          onMouseMove={(e) => {
+            // Handle chart-wide hover to show tooltip for all DEXes
+            const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+            if (!chartEl) return;
+            
+            const rect = chartEl.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Get current data based on context
+            const currentData = isModal 
+              ? (isModalBrushActive ? modalFilteredData : modalData) 
+              : (isBrushActive ? filteredData : data);
+              
+            const currentDexes = isModal 
+              ? [...new Set(currentData.map(item => item.dex))].sort()
+              : filteredDexes;
+              
+            const currentAggregatedData = isModal 
+              ? {} // We'll compute this on-the-fly for modal
+              : filteredAggregatedData;
+            
+            const activeDates = isModal 
+              ? [...new Set(currentData.map(item => item.date))].sort()
+              : filteredDates;
+            
+            if (activeDates.length === 0) return;
+            
+            // Calculate the current date based on mouse position
+            const margin = { left: 60, right: 20 };
+            const innerWidth = rect.width - margin.left - margin.right;
+            
+            // Only process if mouse is in chart area
+            if (mouseX < margin.left || mouseX > innerWidth + margin.left) return;
+            
+            // Find the date based on mouse X position
+            const dateIndex = Math.min(
+              activeDates.length - 1,
+              Math.max(0, Math.floor((mouseX - margin.left) / (innerWidth / activeDates.length)))
+            );
+            const currentDate = activeDates[dateIndex];
+            
+            // Prepare per-DEX data for the tooltip
+            let dateAggregatedData: Record<string, number> = {};
+            
+            // For modal data, calculate on-the-fly
+            if (isModal) {
+              currentDexes.forEach(dex => {
+                const dexData = currentData.filter(item => item.dex === dex && item.date === currentDate);
+                dateAggregatedData[dex] = dexData.reduce((sum, item) => sum + item.tvl, 0);
+              });
+            } else {
+              // Use pre-computed aggregated data for main chart
+              dateAggregatedData = filteredAggregatedData[currentDate] || {};
+            }
+            
+            // Create tooltip items for all DEXes at this date point
+            const tooltipItems = currentDexes
+              .map(dex => ({
+                dex,
+                tvl: dateAggregatedData[dex] || 0,
+                color: getDexColor(dex)
+              }))
+              .filter(item => item.tvl > 0)
+              .sort((a, b) => b.tvl - a.tvl);
+            
+            // Update tooltip
+            setTooltip({
+              visible: true,
+              x: mouseX,
+              y: mouseY,
+              date: currentDate,
+              items: tooltipItems
+            });
+          }}
         >
           <ParentSize>
             {({ width, height }) => {
@@ -820,9 +910,19 @@ export default function TvlByDexChart({
                                 e, 
                                 bar.bar.data.date, 
                                 activeDexes[bar.index], 
-                                bar.bar.data[activeDexes[bar.index]]
+                                bar.bar.data[activeDexes[bar.index]], 
+                                isModal
                               )}
-                              onMouseMove={(e) => setTooltip(prev => ({ ...prev, x: e.clientX, y: e.clientY }))}
+                              onMouseMove={(e) => {
+                                const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+                                if (!chartEl) return;
+                                
+                                const rect = chartEl.getBoundingClientRect();
+                                const mouseX = e.clientX - rect.left;
+                                const mouseY = e.clientY - rect.top;
+                                
+                                setTooltip(prev => ({ ...prev, x: mouseX, y: mouseY }));
+                              }}
                             />
                           ))
                         )

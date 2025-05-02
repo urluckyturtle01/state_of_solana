@@ -79,10 +79,12 @@ export default function DexVolumeChart({
     medium: '',
     value: 0,
     left: 0, 
-    top: 0 
+    top: 0,
+    items: [] as { color: string; label: string; value: string; rawValue: number; shape: "circle" | "square" }[]
   });
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
   
   // Fetch data from the API
   const fetchData = useCallback(async () => {
@@ -173,14 +175,22 @@ export default function DexVolumeChart({
   }, [isModalOpen, data, fetchModalData, modalData.length]);
   
   // Enhanced tooltip handler for hovering over bars
-  const handleBarHover = useCallback((e: React.MouseEvent, dataPoint: DexVolumeChartPoint, medium: string, value: number) => {
+  const handleBarHover = useCallback((e: React.MouseEvent, dataPoint: DexVolumeChartPoint, medium: string, value: number, isModal = false) => {
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     setTooltip({
       visible: true,
       dataPoint,
       medium,
       value,
-      left: e.clientX,
-      top: e.clientY
+      left: mouseX,
+      top: mouseY,
+      items: []
     });
   }, []);
   
@@ -237,25 +247,79 @@ export default function DexVolumeChart({
         {tooltip.visible && tooltip.dataPoint && (
           <ChartTooltip
             title={tooltip.dataPoint.dex}
-            items={[
-              {
+            items={
+              // If tooltip has multiple items, show them all
+              tooltip.items && tooltip.items.length > 0 ? tooltip.items :
+              // Otherwise use the single medium/value from original tooltip
+              [{
                 color: mediumColors[tooltip.medium] || '#6b7280',
                 label: tooltip.medium,
                 value: formatVolume(tooltip.value),
                 shape: 'square'
-              }
-            ]}
-            top={tooltip.top - (isModal ? 50 : 240)}
-            left={tooltip.left - (isModal ? 50 : 240)}
+              }]
+            }
+            top={tooltip.top}
+            left={tooltip.left}
             isModal={isModal}
           />
         )}
         
         {/* Main chart */}
         <div 
-          className="h-full w-full overflow-hidden"
+          className="h-full w-full overflow-hidden relative"
           onMouseLeave={handleMouseLeave}
-          ref={chartContainerRef}
+          ref={isModal ? modalChartRef : chartContainerRef}
+          onMouseMove={(e) => {
+            const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+            if (!chartEl) return;
+            
+            const rect = chartEl.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Get chart margins and dimensions
+            const margin = { top: 20, right: 20, bottom: 60, left: 70 };
+            const innerWidth = rect.width - margin.left - margin.right;
+            
+            // Only process if within chart area (not in margins)
+            if (mouseX < margin.left || mouseX > innerWidth + margin.left) return;
+            
+            // Get current data
+            const currentData = isModal ? modalData : data;
+            
+            // Since this is a bar chart with discrete x-values (DEXes), we need to find the closest DEX
+            const dexWidth = innerWidth / currentData.length;
+            const dexIndex = Math.min(
+              currentData.length - 1,
+              Math.max(0, Math.floor((mouseX - margin.left) / dexWidth))
+            );
+            
+            if (dexIndex >= 0 && dexIndex < currentData.length) {
+              const dataPoint = currentData[dexIndex];
+              
+              // Create items for all mediums with non-zero values
+              const tooltipItems = mediumCategories
+                .map(medium => ({
+                  color: mediumColors[medium] || '#6b7280',
+                  label: medium,
+                  value: formatVolume(Number(dataPoint[medium] || 0)),
+                  rawValue: Number(dataPoint[medium] || 0),
+                  shape: "square" as "square"
+                }))
+                .filter(item => item.rawValue > 0) // Only show non-zero values
+                .sort((a, b) => b.rawValue - a.rawValue); // Sort by value, highest first
+              
+              setTooltip({
+                visible: true,
+                dataPoint,
+                medium: '', // Not needed when using items array
+                value: 0,   // Not needed when using items array
+                left: mouseX,
+                top: mouseY,
+                items: tooltipItems
+              });
+            }
+          }}
         >
           <ParentSize>
             {({ width, height }) => {
@@ -362,9 +426,23 @@ export default function DexVolumeChart({
                                 e, 
                                 bar.bar.data, 
                                 mediumCategories[bar.index], 
-                                Number(bar.bar.data[mediumCategories[bar.index]] || 0)
+                                Number(bar.bar.data[mediumCategories[bar.index]] || 0),
+                                isModal
                               )}
-                              onMouseMove={(e) => setTooltip(prev => ({ ...prev, left: e.clientX, top: e.clientY }))}
+                              onMouseMove={(e) => {
+                                const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+                                if (!chartEl) return;
+                                
+                                const rect = chartEl.getBoundingClientRect();
+                                const mouseX = e.clientX - rect.left;
+                                const mouseY = e.clientY - rect.top;
+                                
+                                setTooltip(prev => ({ 
+                                  ...prev, 
+                                  left: mouseX, 
+                                  top: mouseY 
+                                }));
+                              }}
                             />
                           ))
                         )
@@ -384,9 +462,8 @@ export default function DexVolumeChart({
                         fill: dexVolumeChartColors.tickLabels, 
                         fontSize: 10, 
                         textAnchor: 'middle', 
-                        dy: '0.5em',
-                        angle: -45,
-                        verticalAnchor: 'middle'
+                        dy: '1.2em',
+                        verticalAnchor: 'start'
                       })}
                     />
                     

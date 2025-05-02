@@ -95,7 +95,8 @@ export default function TradersCategoryChart({
     category: '',
     value: 0,
     left: 0, 
-    top: 0 
+    top: 0,
+    items: [] as { color: string; label: string; value: string; rawValue: number; shape: "circle" | "square" }[]
   });
   
   // Add refs for throttling
@@ -105,6 +106,7 @@ export default function TradersCategoryChart({
   const canUpdateModalFilteredDataRef = useRef<boolean>(true);
   
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
   
   // Fetch data from the API
   const fetchData = useCallback(async () => {
@@ -364,14 +366,22 @@ export default function TradersCategoryChart({
   }, [isModalOpen, dataType, displayMode, volumeData, signersData, fetchModalData]);
   
   // Enhanced tooltip handler for hovering over bars
-  const handleBarHover = useCallback((e: React.MouseEvent, dataPoint: TradersCategoryChartPoint, category: string, value: number) => {
+  const handleBarHover = useCallback((e: React.MouseEvent, dataPoint: TradersCategoryChartPoint, category: string, value: number, isModal = false) => {
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     setTooltip({
       visible: true,
       dataPoint,
       category,
       value,
-      left: e.clientX,
-      top: e.clientY
+      left: mouseX,
+      top: mouseY,
+      items: []
     });
   }, []);
   
@@ -465,25 +475,82 @@ export default function TradersCategoryChart({
         {tooltip.visible && tooltip.dataPoint && (
           <ChartTooltip
             title={formatMonth(tooltip.dataPoint.date)}
-            items={[
-              {
+            items={
+              // If tooltip has multiple items, show them all
+              tooltip.items ? tooltip.items :
+              // Otherwise use the single category/value from original tooltip
+              [{
                 color: categoryColors[tooltip.category] || '#6b7280',
                 label: tooltip.category,
                 value: activeDataType === 'volume' ? formatVolume(tooltip.value) : formatLargeNumber(tooltip.value),
                 shape: 'square'
-              }
-            ]}
-            top={tooltip.top - (isModal ? 50 : 240)}
-            left={tooltip.left - (isModal ? 50 : 240)}
+              }]
+            }
+            top={tooltip.top}
+            left={tooltip.left}
             isModal={isModal}
           />
         )}
         
         {/* Main chart */}
         <div 
-          className="h-[85%] w-full overflow-hidden"
+          className="h-[85%] w-full overflow-hidden relative"
           onMouseLeave={handleMouseLeave}
-          ref={chartContainerRef}
+          ref={isModal ? modalChartRef : chartContainerRef}
+          onMouseMove={(e) => {
+            const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+            if (!chartEl) return;
+            
+            const rect = chartEl.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Get chart margins and dimensions
+            const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+            const innerWidth = rect.width - margin.left - margin.right;
+            
+            // Only process if within chart area (not in margins)
+            if (mouseX < margin.left || mouseX > innerWidth + margin.left) return;
+            
+            // Get current data based on context
+            const currentData = isModal 
+              ? (isModalBrushActive ? modalFilteredData : modalData) 
+              : (activeDataType === 'volume' ? filteredVolumeData : filteredSignersData);
+              
+            // Find the closest month based on x position
+            const dataIndex = Math.min(
+              currentData.length - 1,
+              Math.max(0, Math.floor((mouseX - margin.left) / (innerWidth / currentData.length)))
+            );
+            
+            if (dataIndex >= 0 && dataIndex < currentData.length) {
+              const dataPoint = currentData[dataIndex];
+              
+              // Create items for all categories with non-zero values
+              const tooltipItems = traderCategories
+                .map(category => ({
+                  color: categoryColors[category] || '#6b7280',
+                  label: category,
+                  value: activeDataType === 'volume' 
+                    ? formatVolume(dataPoint[category] || 0) 
+                    : formatLargeNumber(dataPoint[category] || 0),
+                  rawValue: dataPoint[category] || 0,
+                  shape: "square" as "square"
+                }))
+                .filter(item => item.rawValue > 0) // Only show non-zero values
+                .sort((a, b) => b.rawValue - a.rawValue); // Sort by value, highest first
+              
+              setTooltip({
+                visible: true,
+                dataPoint,
+                category: '', // Not needed when using items array
+                value: 0,     // Not needed when using items array
+                left: mouseX,
+                top: mouseY,
+                items: tooltipItems
+              });
+            }
+          }}
         >
           <ParentSize>
             {({ width, height }) => {
@@ -601,9 +668,23 @@ export default function TradersCategoryChart({
                                 e, 
                                 bar.bar.data, 
                                 traderCategories[bar.index], 
-                                bar.bar.data[traderCategories[bar.index]]
+                                bar.bar.data[traderCategories[bar.index]],
+                                isModal
                               )}
-                              onMouseMove={(e) => setTooltip(prev => ({ ...prev, left: e.clientX, top: e.clientY }))}
+                              onMouseMove={(e) => {
+                                const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+                                if (!chartEl) return;
+                                
+                                const rect = chartEl.getBoundingClientRect();
+                                const mouseX = e.clientX - rect.left;
+                                const mouseY = e.clientY - rect.top;
+                                
+                                setTooltip(prev => ({ 
+                                  ...prev, 
+                                  left: mouseX, 
+                                  top: mouseY 
+                                }));
+                              }}
                             />
                           ))
                         )

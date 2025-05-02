@@ -99,6 +99,10 @@ export default function TradersActivityChart({
     top: 0 
   });
   
+  // Add refs for chart containers
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const modalChartRef = useRef<HTMLDivElement>(null);
+  
   // Add refs for throttling brush updates
   const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const canUpdateFilteredDataRef = useRef<boolean>(true);
@@ -353,8 +357,13 @@ export default function TradersActivityChart({
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     console.log('TradersActivity - Mouse move event', { isModal, clientX: e.clientX, clientY: e.clientY });
     
-    const rect = e.currentTarget.getBoundingClientRect();
+    const chartEl = isModal ? modalChartRef.current : chartContainerRef.current;
+    if (!chartEl) return;
+    
+    const rect = chartEl.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
     const margin = { left: 60 };
     const innerWidth = rect.width - margin.left - 60;
     
@@ -384,15 +393,15 @@ export default function TradersActivityChart({
       if (!tooltip.visible || tooltip.dataPoint?.date !== dataPoint.date) {
         console.log('TradersActivity - Setting tooltip data', { 
           dataPoint,
-          left: e.clientX,
-          top: e.clientY
+          left: mouseX,
+          top: mouseY
         });
         
         setTooltip({
           visible: true,
           dataPoint,
-          left: e.clientX,
-          top: e.clientY
+          left: mouseX,
+          top: mouseY
         });
       }
     }
@@ -534,15 +543,17 @@ export default function TradersActivityChart({
                 shape: 'circle'
               }
             ]}
-            top={tooltip.top - (isModal ? 50 : 400)}
-            left={tooltip.left - (isModal ? 50 : 240)}
+            top={tooltip.top}
+            left={tooltip.left}
+            isModal={isModal}
           />
         )}
         
         {/* Main chart */}
-        <div className="h-[85%] w-full overflow-hidden"
+        <div className="h-[85%] w-full overflow-hidden relative"
           onMouseMove={(e) => handleMouseMove(e, isModal)}
           onMouseLeave={handleMouseLeave}
+          ref={isModal ? modalChartRef : chartContainerRef}
         >
           <ParentSize>
             {({ width, height }) => {
