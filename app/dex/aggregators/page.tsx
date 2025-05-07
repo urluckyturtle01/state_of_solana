@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { ExpandIcon } from '../../components/shared/Icons';
-import AggregatorsChart from '../../components/charts/AggregatorsChart';
-import DexVolumeChart from '../../components/charts/DexVolumeChart';
+import AggregatorsChart from '../../components/charts/DEX/aggregators/AggregatorsChart';
+import DexVolumeChart from '../../components/charts/DEX/aggregators/DexVolumeChart';
 import DataTypeFilter from '../../components/shared/filters/DataTypeFilter';
 import DisplayModeFilter from '../../components/shared/filters/DisplayModeFilter';
 import { DataType } from '../../components/shared/filters/DataTypeFilter';

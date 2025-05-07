@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import VolumeHistoryChart from "../../components/charts/VolumeHistoryChart";
-import VolumeByProgramChart from "../../components/charts/VolumeByProgramChart";
-import MemecoinVolumeChart from "../../components/charts/MemecoinVolumeChart";
+import VolumeHistoryChart from "../../components/charts/DEX/volume/VolumeHistoryChart";
+import VolumeByProgramChart from "../../components/charts/DEX/volume/VolumeByProgramChart";
+import MemecoinVolumeChart from "../../components/charts/DEX/volume/MemecoinVolumeChart";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { VolumeTimeFilter, fetchVolumeHistoryData, formatVolumeDate } from "../../api/dex/volume/volumeHistoryData";

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CostCapacityChart, { costCapacityColors } from "../../components/charts/CostCapacityChart";
-import TransactionMetricsChart, { transactionMetricsColors } from "../../components/charts/TransactionMetricsChart";
+import CostCapacityChart, { costCapacityColors } from "../../components/charts/REV/cost-capacity/CostCapacityChart";
+import TransactionMetricsChart, { transactionMetricsColors } from "../../components/charts/REV/cost-capacity/TransactionMetricsChart";
 import { TimeFilter, CurrencyType, fetchCostCapacityData, formatDate, CostCapacityDataPoint } from "../../api/REV/cost-capacity";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";

@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
-import TvlByPoolChart from "../../components/charts/TvlByPoolChart";
+import TvlByPoolChart from "../../components/charts/DEX/TVL/TvlByPoolChart";
 import { TvlByPoolDataPoint, fetchTvlByPoolDataWithFallback } from "../../api/dex/tvl/tvlByPoolData";
-import TvlHistoryChart from "../../components/charts/TvlHistoryChart";
+import TvlHistoryChart from "../../components/charts/DEX/TVL/TvlHistoryChart";
 import { fetchTvlHistoryDataWithFallback, fetchTvlByDexDataWithFallback } from "../../api/dex/tvl/tvlHistoryData";
-import TvlByDexChart from "../../components/charts/TvlByDexChart";
+import TvlByDexChart from "../../components/charts/DEX/TVL/TvlByDexChart";
 
 // Define colors for the chart legends
 const colors = [

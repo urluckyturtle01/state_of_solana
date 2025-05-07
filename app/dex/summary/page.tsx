@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Counter from "../../components/shared/Counter";
 import { VolumeIcon, TvlIcon, UsersIcon, ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
-import TvlVelocityChart, { getTvlVelocityChartColors } from "../../components/charts/TvlVelocityChart";
-import VelocityByDexChart from "../../components/charts/VelocityByDexChart";
+import TvlVelocityChart, { getTvlVelocityChartColors } from "../../components/charts/DEX/summary/TvlVelocityChart";
+import VelocityByDexChart from "../../components/charts/DEX/summary/VelocityByDexChart";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import { TimeFilter as TVLTimeFilter, fetchTvlVelocityData, TvlVelocityDataPoint } from "../../api/dex/summary/chartData";
 import { fetchVelocityByDexData, getUniqueProgramTypes, getUniqueDates, TimeFilter, VelocityByDexDataPoint } from "../../api/dex/summary/velocityByDexData";

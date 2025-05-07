@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import TradersActivityChart from '../../components/charts/TradersActivityChart';
-import TradersStackedBarChart from '../../components/charts/TradersStackedBarChart';
-import TradersCategoryChart from '../../components/charts/TradersCategoryChart';
+import TradersActivityChart from '../../components/charts/DEX/traders/TradersActivityChart';
+import TradersStackedBarChart from '../../components/charts/DEX/traders/TradersStackedBarChart';
+import TradersCategoryChart from '../../components/charts/DEX/traders/TradersCategoryChart';
 import { ExpandIcon } from '../../components/shared/Icons';
 import DataTypeFilter, { DataType } from '../../components/shared/filters/DataTypeFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
