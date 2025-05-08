@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Counter from "../../components/shared/Counter";
-import { VolumeIcon, TvlIcon, UsersIcon, ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
+import { VolumeIcon, TvlIcon, UsersIcon } from "../../components/shared/Icons";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import Loader from "../../components/shared/Loader";
 import ProtocolRevenueChart from "../../components/charts/protocol-revenue/summary/ProtocolRevenueChart";
@@ -10,6 +10,10 @@ import PlatformRevenueChart from "../../components/charts/protocol-revenue/summa
 import { getLatestProtocolRevenueStats } from "../../api/protocol-revenue/summary/chartData";
 import { TimeFilter } from "../../api/protocol-revenue/summary/chartData";
 import { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
+import ChartCard from "@/app/components/shared/ChartCard";
+import LegendItem from "@/app/components/shared/LegendItem";
+import DisplayModeFilter from "@/app/components/shared/filters/DisplayModeFilter";
+import { platformColors, getPlatformColor, fetchPlatformRevenueData, normalizePlatformName } from "@/app/api/protocol-revenue/summary/platformRevenueData";
 
 // Define colors for charts
 const protocolRevenueColors = {
@@ -17,21 +21,6 @@ const protocolRevenueColors = {
   priority_fee: '#a78bfa', // purple
   jito_total_tips: '#34d399', // green
   vote_fees: '#f97316', // orange
-};
-
-// Helper function to create consistent chart card styles
-const ChartCardStyles = {
-  container: "bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg transition-all duration-300",
-  header: "flex justify-between items-center mb-3",
-  titleContainer: "-mt-1",
-  title: "text-[12px] font-normal text-gray-300 leading-tight mb-0.5",
-  description: "text-gray-500 text-[10px] tracking-wide",
-  buttonContainer: "flex space-x-2",
-  button: "p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors",
-  divider: "h-px bg-gray-900 w-full",
-  filterContainer: "flex items-center gap-3 pl-1 py-2 overflow-x-auto",
-  chartContainer: "h-[400px] min-h-[300px] flex items-center justify-center bg-gray-900/20 rounded-lg",
-  placeholderText: "text-gray-400"
 };
 
 interface SectionProps {
@@ -77,9 +66,16 @@ export default function ProtocolRevenueSummaryPage() {
   });
   const [isUserCountLoading, setIsUserCountLoading] = useState(true);
   
+  // Add state for platforms data
+  const [platformsData, setPlatformsData] = useState<any[]>([]);
+  const [isLoadingPlatforms, setIsLoadingPlatforms] = useState(true);
+  
   // Add state for download button loading
   const [isRevenueDownloading, setIsRevenueDownloading] = useState(false);
   const [isDistributionDownloading, setIsDistributionDownloading] = useState(false);
+
+  // Add state to store platforms from the chart component
+  const [chartPlatforms, setChartPlatforms] = useState<{platform: string, color: string, revenue: number}[]>([]);
 
   // Fetch data for counters
   useEffect(() => {
@@ -130,6 +126,53 @@ export default function ProtocolRevenueSummaryPage() {
     
     fetchStats();
   }, []);
+
+  // Fetch platform data
+  useEffect(() => {
+    const fetchPlatforms = async () => {
+      setIsLoadingPlatforms(true);
+      try {
+        const data = await fetchPlatformRevenueData(timeFilter);
+        setPlatformsData(data);
+      } catch (error) {
+        console.error('Error fetching platform data:', error);
+      } finally {
+        setIsLoadingPlatforms(false);
+      }
+    };
+    
+    fetchPlatforms();
+  }, [timeFilter]);
+
+  // Extract top platforms for legend display - but ensure we always have data for display
+  const topPlatforms = useMemo(() => {
+    if (!platformsData || platformsData.length === 0) {
+      // Return default/fallback data when no platformsData is available
+      return Object.keys(platformColors)
+        .filter(platform => platform !== 'default')
+        .slice(0, 10)
+        .map(platform => ({ 
+          platform, 
+          revenue: 0, 
+          color: platformColors[platform] 
+        }));
+    }
+
+    // Sort platforms by revenue (descending)
+    return platformsData
+      .sort((a, b) => b.protocol_revenue_usd - a.protocol_revenue_usd)
+      .slice(0, 10)
+      .map(platform => ({
+        platform: platform.platform,
+        revenue: platform.protocol_revenue_usd,
+        color: getPlatformColor(platform.platform)
+      }));
+  }, [platformsData]);
+
+  // Log topPlatforms whenever it changes (for debugging)
+  useEffect(() => {
+    console.log('Top platforms:', topPlatforms);
+  }, [topPlatforms]);
 
   // Format functions
   const formatCurrency = (value: number) => {
@@ -191,7 +234,7 @@ export default function ProtocolRevenueSummaryPage() {
     <main className="pb-12">
       <div className="space-y-4">
         {/* Stats Cards Row */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-2 md:grid-cols-2 gap-4">
           {/* Total Protocol Revenue Card */}
           <Counter
             title="Protocol Revenue (Since Jan'24)"
@@ -218,149 +261,111 @@ export default function ProtocolRevenueSummaryPage() {
             } : undefined}
           />
 
-          {/* User Count Card */}
-          <Counter
-            title="Fee Payers"
-            value={formatUserCount(userCountStats.userCount)}
-            icon={<UsersIcon />}
-            variant="emerald"
-            isLoading={isUserCountLoading}
-            trend={!isUserCountLoading ? {
-              value: userCountStats.percentChange,
-              label: "vs previous month"
-            } : undefined}
-          />
+          
         </section>
 
-        {/* Protocol Revenue Chart */}
-        <section className="grid grid-cols-1 gap-4">
-          <div className={ChartCardStyles.container + " hover:shadow-blue-900/20"}>
-            <div className={ChartCardStyles.header}>
-              <div className={ChartCardStyles.titleContainer}>
-                <h2 className={ChartCardStyles.title}>Protocol Revenue vs Solana Revenue</h2>
-                <p className={ChartCardStyles.description}>Comparison of Protocol Revenue and Solana Revenue over time</p>
-              </div>
-              <div className={ChartCardStyles.buttonContainer}>
-                <button 
-                  className={ChartCardStyles.button}
-                  onClick={downloadRevenueCSV}
-                  title="Download CSV"
-                  disabled={isRevenueDownloading}
-                >
-                  {isRevenueDownloading ? (
-                    <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <DownloadIcon className="w-4 h-4" />
-                  )}
-                </button>
-                <button 
-                  className={ChartCardStyles.button}
-                  onClick={() => setProtocolRevenueChartModalOpen(true)}
-                  title="Expand Chart"
-                >
-                  <ExpandIcon className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            
-            {/* First Divider */}
-            <div className={ChartCardStyles.divider}></div>
-            
-            {/* Filters Area */}
-            
-            
-            {/* Second Divider */}
-            
-            
-            {/* Chart Content */}
-            <div className="h-96">
-              <ProtocolRevenueChart 
-                timeFilter={timeFilter} 
-                isModalOpen={protocolRevenueChartModalOpen}
-                onModalClose={() => setProtocolRevenueChartModalOpen(false)}
-                onTimeFilterChange={setTimeFilter}
-              />
-            </div>
-          </div>
-        </section>
-        
-        {/* Additional Charts Section */}
+        {/* Protocol Revenue Charts Section - Both charts in one row */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Revenue Distribution Chart */}
-          <div className={ChartCardStyles.container + " hover:shadow-purple-900/20"}>
-            <div className={ChartCardStyles.header}>
-              <div className={ChartCardStyles.titleContainer}>
-                <h2 className={ChartCardStyles.title}>Revenue Distribution</h2>
-                <p className={ChartCardStyles.description}>Breakdown of protocol revenue by fee type</p>
-              </div>
-              <div className={ChartCardStyles.buttonContainer}>
-                <button 
-                  className={ChartCardStyles.button}
-                  onClick={downloadDistributionCSV}
-                  title="Download CSV"
-                  disabled={isDistributionDownloading}
-                >
-                  {isDistributionDownloading ? (
-                    <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <DownloadIcon className="w-4 h-4" />
-                  )}
-                </button>
-                <button 
-                  className={ChartCardStyles.button}
-                  onClick={() => setDistributionChartModalOpen(true)}
-                  title="Expand Chart"
-                >
-                  <ExpandIcon className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+          {/* Protocol Revenue Chart */}
+          <ChartCard
+            title="Protocol Revenue vs Solana Revenue"
+            description="Comparison of Protocol Revenue and Solana Revenue over time"
+            accentColor="blue"
+            onExpandClick={() => setProtocolRevenueChartModalOpen(true)}
+            onDownloadClick={downloadRevenueCSV}
+            isDownloading={isRevenueDownloading}
+            legendWidth="1/5"
+            className="h-[500px]"
+           
             
-            {/* Divider */}
-            <div className={ChartCardStyles.divider + " mb-3"}></div>
-            
-            {/* Chart Content */}
-            <div className={ChartCardStyles.chartContainer}>
-              <p className={ChartCardStyles.placeholderText}>Revenue distribution chart will be implemented soon</p>
-            </div>
-          </div>
+            legend={
+              <>
+                <LegendItem
+                  label="Protocol Revenue"
+                  color="#60a5fa"
+                  shape="square"
+                />
+                <LegendItem
+                  label="Solana Revenue"
+                  color="#a78bfa"
+                  shape="circle"
+                />
+              </>
+            }
+          >
+            <ProtocolRevenueChart 
+              
+              isModalOpen={protocolRevenueChartModalOpen}
+              onModalClose={() => setProtocolRevenueChartModalOpen(false)}
+              
+            />
+          </ChartCard>
 
           {/* Protocol Revenue by Platform Chart */}
-          <div className={ChartCardStyles.container + " hover:shadow-emerald-900/20"}>
-            <div className={ChartCardStyles.header}>
-              <div className={ChartCardStyles.titleContainer}>
-                <h2 className={ChartCardStyles.title}>Protocol Revenue by Platform</h2>
-                <p className={ChartCardStyles.description}>Breakdown of protocol revenue by platform</p>
-              </div>
-              <div className={ChartCardStyles.buttonContainer}>
-                <button 
-                  className={ChartCardStyles.button}
-                  onClick={() => setPlatformRevenueChartModalOpen(true)}
-                  title="Expand Chart"
-                >
-                  <ExpandIcon className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Divider */}
-            <div className={ChartCardStyles.divider + " mb-3"}></div>
-            
-            {/* Chart Content */}
-            <div className={ChartCardStyles.chartContainer}>
-              <div className="h-full w-full">
-                <PlatformRevenueChart 
-                  timeFilter={timeFilter}
-                  displayMode={displayMode}
-                  isModalOpen={platformRevenueChartModalOpen}
-                  onModalClose={() => setPlatformRevenueChartModalOpen(false)}
-                  onTimeFilterChange={setTimeFilter}
-                  onDisplayModeChange={setDisplayMode}
+          <ChartCard
+            title="Protocol Revenue by Platform"
+            description="Breakdown of protocol revenue by platform"
+            accentColor="green"
+            onExpandClick={() => setPlatformRevenueChartModalOpen(true)}
+            legendWidth="1/5"
+            className="h-[500px]"
+            filterBar={
+              <div className="flex flex-wrap gap-3 items-center">
+                <TimeFilterSelector 
+                  value={timeFilter} 
+                  onChange={(val: TimeFilter) => setTimeFilter(val)}
+                  options={[
+                    { value: 'W', label: 'W' },
+                    { value: 'M', label: 'M' },
+                    { value: 'Q', label: 'Q' },
+                    { value: 'Y', label: 'Y' }
+                  ]}
+                />
+                <DisplayModeFilter 
+                  mode={displayMode}
+                  onChange={(val) => setDisplayMode(val)}
+                  isCompact={true}
                 />
               </div>
-            </div>
-          </div>
+            }
+            legend={
+              <>
+                {/* Always show platforms, with loading state if appropriate */}
+                {isLoadingPlatforms && chartPlatforms.length === 0 ? (
+                  // Loading state
+                  <>
+                    <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
+                    <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
+                    <LegendItem label="Loading..." color="#34d399" isLoading={true} />
+                  </>
+                ) : (
+                  // Use chartPlatforms directly from the PlatformRevenueChart component
+                  chartPlatforms.map(({ platform, color, revenue }) => (
+                    <LegendItem
+                      key={platform}
+                      label={normalizePlatformName(platform)}
+                      color={color}
+                      shape="square"
+                      tooltipText={revenue > 0 ? formatCurrency(revenue) : undefined}
+                    />
+                  ))
+                )}
+              </>
+            }
+          >
+            <PlatformRevenueChart
+              timeFilter={timeFilter}
+              displayMode={displayMode}
+              isModalOpen={platformRevenueChartModalOpen}
+              onModalClose={() => setPlatformRevenueChartModalOpen(false)}
+              onTimeFilterChange={(val: TimeFilter) => setTimeFilter(val)}
+              onDisplayModeChange={(val: DisplayMode) => setDisplayMode(val)}
+              platformsChanged={setChartPlatforms}
+            />
+          </ChartCard>
         </section>
+        
+        
       </div>
     </main>
   );

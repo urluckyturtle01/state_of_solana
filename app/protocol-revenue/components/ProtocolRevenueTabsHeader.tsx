@@ -15,8 +15,8 @@ export default function ProtocolRevenueTabsHeader({ activeTab = "summary" }: Pro
       icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
     },
     { 
-      name: "Distribution", 
-      path: "/protocol-revenue/distribution",
+      name: "Total", 
+      path: "/protocol-revenue/total",
       key: "distribution",
       icon: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
     },

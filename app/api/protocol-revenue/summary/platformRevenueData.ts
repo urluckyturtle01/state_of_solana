@@ -102,7 +102,7 @@ export const fetchPlatformRevenueData = async (timeFilter: TimeFilter): Promise<
 };
 
 // Helper function to normalize platform names
-function normalizePlatformName(name: string): string {
+export function normalizePlatformName(name: string): string {
   if (!name) return 'Unknown';
   
   // Handle specific platform name normalizations

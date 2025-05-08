@@ -348,6 +348,48 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
     };
   }, []); // Empty dependency array runs only on mount/unmount
 
+  // Handle modal time filter change
+  const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
+    setModalTimeFilter(newFilter);
+    if (onTimeFilterChange) {
+      onTimeFilterChange(newFilter);
+    }
+  }, [onTimeFilterChange]);
+
+  // Format the date based on the time filter
+  const formatDate = useCallback((dateStr: string, filter: TimeFilter) => {
+    const date = new Date(dateStr);
+    if (filter === 'W') {
+      return `Week of ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+    } else if (filter === 'M') {
+      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    } else if (filter === 'Q') {
+      const quarter = Math.floor(date.getMonth() / 3) + 1;
+      return `Q${quarter} ${date.getFullYear()}`;
+    } else { // 'Y'
+      return date.getFullYear().toString();
+    }
+  }, []);
+  
+  // Find the closest data point based on mouse x position
+  const getClosestPointFromX = useCallback((
+    currentData: ProtocolRevenueDataPoint[], 
+    mouseX: number, 
+    leftMargin: number, 
+    chartWidth: number
+  ) => {
+    if (currentData.length === 0) return -1;
+    
+    // Calculate approximate index based on mouse position
+    const itemWidth = chartWidth / currentData.length;
+    const index = Math.floor((mouseX - leftMargin) / itemWidth);
+    
+    // Return the closest valid index
+    if (index < 0) return 0;
+    if (index >= currentData.length) return currentData.length - 1;
+    return index;
+  }, []);
+  
   // Create tooltip handler
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
@@ -356,8 +398,10 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
 
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    const margin = { left: 45 };
-    const innerWidth = rect.width - margin.left - 20;
+    
+    // Use the same margin values as in chart rendering
+    const margin = { left: 60, right: 45 };
+    const innerWidth = rect.width - margin.left - margin.right;
     
     if (mouseX < margin.left || mouseX > innerWidth + margin.left) {
       if (tooltip.visible) {
@@ -366,45 +410,40 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
       return;
     }
     
-    // Use the current displayed data based on whether we're in modal or main view
+    // Use current data based on brush state
     const currentData = isModal 
       ? (isModalBrushActive ? modalFilteredData : modalData)
       : (isBrushActive ? filteredData : data);
     
-    if (currentData.length === 0) return;
-    
-    // Find nearest data point
-    const xScale = scaleTime({
-      domain: [
-        // Add some padding (5%) to the start date to prevent bars from being at the origin
-        new Date(new Date(currentData[0].month).getTime() - (new Date(currentData[currentData.length - 1].month).getTime() - new Date(currentData[0].month).getTime()) * 0.05),
-        // Add some padding (5%) to the end date to prevent bars from being cut off at the right edge
-        new Date(new Date(currentData[currentData.length - 1].month).getTime() + (new Date(currentData[currentData.length - 1].month).getTime() - new Date(currentData[0].month).getTime()) * 0.05)
-      ],
-      range: [margin.left, margin.left + innerWidth]
-    });
-    
-    const getDistanceToPoint = (point: ProtocolRevenueDataPoint) => {
-      const pointX = xScale(new Date(point.month));
-      return Math.abs(mouseX - pointX);
-    };
-    
-    // Find closest data point to mouse position
-    const closestPoint = currentData.reduce((closest, current) => {
-      const distanceCurrent = getDistanceToPoint(current);
-      const distanceClosest = getDistanceToPoint(closest);
-      return distanceCurrent < distanceClosest ? current : closest;
-    });
-    
-    if (!tooltip.visible || tooltip.dataPoint?.month !== closestPoint.month) {
-      setTooltip({
-        visible: true,
-        dataPoint: closestPoint,
-        left: mouseX,
-        top: mouseY
-      });
+    if (currentData.length === 0) {
+      return; // Don't show tooltip if no data is available
     }
-  }, [data, filteredData, modalData, modalFilteredData, isBrushActive, isModalBrushActive, tooltip]);
+    
+    // Find the closest data point based on x position
+    const closestIndex = getClosestPointFromX(currentData, mouseX, margin.left, innerWidth);
+    
+    if (closestIndex !== -1) {
+      const closestPoint = currentData[closestIndex];
+      // Check if this is a new data point or if tooltip is not yet visible
+      const isNewDataPoint = !tooltip.dataPoint || tooltip.dataPoint.month !== closestPoint.month;
+      
+      if (!tooltip.visible || isNewDataPoint) {
+        // Full update when showing new data point
+        setTooltip({
+          visible: true,
+          dataPoint: closestPoint,
+          left: mouseX,
+          top: mouseY
+        });
+      } else {
+        // Only update dataPoint without changing position
+        setTooltip(prev => ({
+          ...prev,
+          dataPoint: closestPoint
+        }));
+      }
+    }
+  }, [data, filteredData, modalData, modalFilteredData, isBrushActive, isModalBrushActive, tooltip, getClosestPointFromX]);
   
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
@@ -437,14 +476,6 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
     }
   }, [isModalOpen, modalTimeFilter, fetchModalData]);
   
-  // Handle modal time filter change
-  const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
-    setModalTimeFilter(newFilter);
-    if (onTimeFilterChange) {
-      onTimeFilterChange(newFilter);
-    }
-  }, [onTimeFilterChange]);
-
   // Render chart content
   const renderChartContent = (height: number, width: number, isModal = false) => {
     // Use modal data/filters if in modal mode, otherwise use the main data/filters
@@ -512,7 +543,7 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null; 
               
-              const margin = { top: 20, right: 25, bottom: 30, left: 60 };
+              const margin = { top: 10, right: 45, bottom: 30, left: 60 };
               const innerWidth = width - margin.left - margin.right;
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;

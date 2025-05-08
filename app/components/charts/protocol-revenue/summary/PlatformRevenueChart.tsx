@@ -7,7 +7,16 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Bar } from '@visx/shape';
 import { BarStack } from '@visx/shape';
 import { localPoint } from '@visx/event';
-import { PlatformRevenueDataPoint, TimeFilter, fetchPlatformRevenueData, formatCurrency, formatPercentage, getPlatformColor, platformColors } from '../../../../api/protocol-revenue/summary/platformRevenueData';
+import { 
+  PlatformRevenueDataPoint, 
+  TimeFilter, 
+  fetchPlatformRevenueData, 
+  formatCurrency, 
+  formatPercentage, 
+  getPlatformColor, 
+  platformColors, 
+  normalizePlatformName 
+} from '../../../../api/protocol-revenue/summary/platformRevenueData';
 import Loader from '../../../shared/Loader';
 import ChartTooltip from '../../../shared/ChartTooltip';
 import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
@@ -17,6 +26,7 @@ import DisplayModeFilter, { DisplayMode } from '../../../shared/filters/DisplayM
 import { LegendOrdinal } from '@visx/legend';
 import { Text } from '@visx/text';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
+import LegendItem from '../../../shared/LegendItem';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -54,6 +64,7 @@ interface PlatformRevenueChartProps {
   onModalClose?: () => void;
   onTimeFilterChange?: (filter: TimeFilter) => void;
   onDisplayModeChange?: (mode: DisplayMode) => void;
+  platformsChanged?: (platforms: Array<{platform: string, color: string, revenue: number}>) => void;
 }
 
 // Chart component
@@ -63,7 +74,8 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
   isModalOpen = false, 
   onModalClose = () => {},
   onTimeFilterChange,
-  onDisplayModeChange
+  onDisplayModeChange,
+  platformsChanged
 }) => {
   // Main chart data
   const [rawData, setRawData] = useState<any[]>([]);
@@ -342,7 +354,7 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     }
   }, [modalTimeFilter]);
 
-  // Fetch data on mount and when filters change
+  // Fetch data on mount and when filters change for main chart
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -383,6 +395,8 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
+    
+    // Filtering logic is moved to useEffect
   }, [isBrushActive]);
   
   // Handle modal brush change with throttling
@@ -416,6 +430,8 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
+    
+    // Filtering logic is moved to useEffect
   }, [isModalBrushActive]);
   
   // Apply throttled brush domain to filter data
@@ -542,9 +558,11 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
 
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    const margin = { left: 60 };
-    const innerWidth = rect.width - margin.left - 25;
+    // Use the same margin value as defined in the chart rendering
+    const margin = isModal ? { left: 60, right: 45 } : { left: 55, right: 45 };
+    const innerWidth = rect.width - margin.left - margin.right;
     
+    // Hide tooltip if mouse is outside the chart area
     if (mouseX < margin.left || mouseX > innerWidth + margin.left) {
       if (tooltip.visible) {
         setTooltip(prev => ({ ...prev, visible: false }));
@@ -557,18 +575,40 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
       ? (isModalBrushActive ? modalFilteredData : modalData)
       : (isBrushActive ? filteredData : data);
     
+    if (currentData.length === 0) {
+      return; // Don't show tooltip if no data is available
+    }
+    
     // Find nearest data point
     const index = Math.floor((mouseX - margin.left) / (innerWidth / currentData.length));
     
     if (index >= 0 && index < currentData.length) {
       const dataPoint = currentData[index];
-      if (!tooltip.visible || tooltip.dataPoint?.date !== dataPoint.date) {
-        setTooltip({
-          visible: true,
-          dataPoint,
-          left: mouseX,
-          top: mouseY
-        });
+      // Only update tooltip if we have a valid dataPoint with a date and it's different from the current one
+      const isNewDataPoint = !tooltip.dataPoint || tooltip.dataPoint.date !== dataPoint.date;
+      
+      if (dataPoint && (dataPoint.date || dataPoint.x)) {
+        // If tooltip isn't visible yet, or we're showing a new data point, update position
+        if (!tooltip.visible || isNewDataPoint) {
+          setTooltip({
+            visible: true,
+            dataPoint,
+            left: mouseX,
+            top: mouseY
+          });
+        } else {
+          // If tooltip is already visible for the same data point, only update the dataPoint 
+          // without changing position - this prevents tooltip flicker
+          setTooltip(prev => ({
+            ...prev,
+            dataPoint
+          }));
+        }
+      }
+    } else {
+      // Hide tooltip if index is out of range
+      if (tooltip.visible) {
+        setTooltip(prev => ({ ...prev, visible: false }));
       }
     }
   }, [data, filteredData, modalData, modalFilteredData, isBrushActive, isModalBrushActive, tooltip.visible, tooltip.dataPoint?.date]);
@@ -583,7 +623,7 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
   // Handle modal-related effects
   useEffect(() => {
     if (isModalOpen) {
-      // Set modal filters from main chart
+      // Set modal filters from main chart when first opening
       setModalTimeFilter(timeFilter);
       setModalDisplayMode(_displayMode);
       
@@ -597,22 +637,28 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
       // Force fetch new data for modal to ensure it's updated
       fetchModalData();
     }
-  }, [isModalOpen, timeFilter, _displayMode, data, keys, filteredData, brushDomain, isBrushActive, fetchModalData]);
+  }, [isModalOpen, timeFilter, _displayMode, data, keys, filteredData, brushDomain, isBrushActive]);
   
   // Fetch modal data when time filter changes in modal
+  // Add a reference to track the previous filter to prevent duplicate fetches
+  const prevModalTimeFilterRef = useRef<TimeFilter>(modalTimeFilter);
   useEffect(() => {
-    if (isModalOpen) {
+    // Only fetch when modal is open and the filter has actually changed
+    if (isModalOpen && prevModalTimeFilterRef.current !== modalTimeFilter) {
+      // Update the previous filter reference
+      prevModalTimeFilterRef.current = modalTimeFilter;
+      // Fetch data
       fetchModalData();
     }
   }, [isModalOpen, modalTimeFilter, fetchModalData]);
-  
+
   // Handle modal time filter change
   const handleModalTimeFilterChange = useCallback((newFilter: TimeFilter) => {
+    // Only update the modal time filter locally
     setModalTimeFilter(newFilter);
-    if (onTimeFilterChange) {
-      onTimeFilterChange(newFilter);
-    }
-  }, [onTimeFilterChange]);
+    
+    // Do NOT call parent handler here - let the modal fetch data directly
+  }, []);
 
   // Handle display mode change
   const handleDisplayModeChange = useCallback((newMode: DisplayMode) => {
@@ -625,10 +671,7 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
   // Handle modal display mode change
   const handleModalDisplayModeChange = useCallback((newMode: DisplayMode) => {
     setModalDisplayMode(newMode);
-    if (onDisplayModeChange) {
-      onDisplayModeChange(newMode);
-    }
-  }, [onDisplayModeChange]);
+  }, []);
 
   // Format date for display
   const formatDate = useCallback((date: Date): string => {
@@ -638,38 +681,22 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     });
   }, []);
 
-  // Get platform display name
-  const getPlatformDisplayName = useCallback((platform: string): string => {
-    // Capitalize platform name and handle special cases
-    if (!platform) return "Unknown";
-    
-    // Handle special cases
-    const specialCases: Record<string, string> = {
-      'magiceden': 'Magic Eden',
-      'tensorswap': 'Tensor',
-      'bloxroute': 'Bloxroute',
-      'jupiterdca': 'Jupiter DCA',
-    };
-    
-    const lowercased = platform.toLowerCase();
-    if (specialCases[lowercased]) {
-      return specialCases[lowercased];
-    }
-    
-    // Capitalize first letter 
-    return platform.charAt(0).toUpperCase() + platform.slice(1);
-  }, []);
-
   // Handle mouse over for bar segments
   const handleBarMouseOver = useCallback((event: React.MouseEvent<SVGRectElement>, datum: any, platform: string) => {
     const coords = localPoint(event) || { x: 0, y: 0 };
     
     // Get the platform data and date from the bar
     try {
-      const barData = datum.data;
-      const date = barData.x instanceof Date 
-        ? barData.x.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
-        : barData.date || 'Unknown date';
+      // Add null checks to safely access properties
+      const barData = datum?.data || {};
+      
+      // Safely access date information with fallbacks
+      let dateDisplay = 'Unknown date';
+      if (barData.x && barData.x instanceof Date) {
+        dateDisplay = barData.x.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+      } else if (barData.date) {
+        dateDisplay = barData.date;
+      }
       
       // Create a tooltip showing just this bar's data
       setTooltip({
@@ -683,8 +710,24 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     }
   }, []);
 
+  // After successfully loading data, notify parent of platform data
+  useEffect(() => {
+    if (!loading && keys.length > 0 && platformsChanged) {
+      // Extract top platforms for the parent component
+      const platformsData = keys.slice(0, 10).map(platform => {
+        const revenue = filteredData.reduce((sum, d) => sum + (Number(d[platform]) || 0), 0);
+        return {
+          platform,
+          color: getPlatformColor(platform),
+          revenue
+        };
+      });
+      platformsChanged(platformsData);
+    }
+  }, [loading, keys, filteredData, platformsChanged]);
+
   // Render chart content
-  const renderChartContent = (width: number, height: number, isModal = false) => {
+  const renderChartContent = (height: number, width: number, isModal = false) => {
     // Use modal data/filters if in modal mode, otherwise use the main data/filters
     const activeDisplayMode = isModal ? modalDisplayMode : _displayMode;
     const activeData = isModal ? modalFilteredData : filteredData; // Use filtered data for display
@@ -714,20 +757,40 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
     
     return (
       <div className="flex flex-col h-full">
-        {tooltip.visible && tooltip.dataPoint && (
-          <ChartTooltip
-            title={tooltip.dataPoint.x instanceof Date ? formatDate(tooltip.dataPoint.x) : formatDate(new Date())}
-            items={activeKeys.filter(key => !!tooltip.dataPoint?.[key]).map(key => ({
-              color: getPlatformColor(key),
-              label: getPlatformDisplayName(key),
-              value: formatCurrency(Number(tooltip.dataPoint?.[key]) || 0),
-              shape: 'square'
-            }))}
-            top={tooltip.top}
-            left={tooltip.left}
-            isModal={isModal}
-          />
-        )}
+        {tooltip.visible && tooltip.dataPoint && (() => {
+          // Generate the items list first
+          const tooltipItems = activeKeys
+            .filter(key => !!tooltip.dataPoint?.[key] && Number(tooltip.dataPoint[key]) > 0)
+            .map(key => {
+              const value = Number(tooltip.dataPoint?.[key]) || 0;
+              
+              // For percentage mode, calculate percentage of total
+              let displayValue = value;
+              if (activeDisplayMode === 'percent' && tooltip.dataPoint?.total) {
+                displayValue = (value / tooltip.dataPoint.total) * 100;
+              }
+              
+              return {
+                color: getPlatformColor(key),
+                label: normalizePlatformName(key),
+                value: activeDisplayMode === 'percent' 
+                  ? formatPercentage(displayValue) 
+                  : formatCurrency(value),
+                shape: 'square' as const
+              };
+            });
+            
+          // Only render tooltip if we have items to show
+          return tooltipItems.length > 0 ? (
+            <ChartTooltip
+              title={tooltip.dataPoint.x instanceof Date ? formatDate(tooltip.dataPoint.x) : formatDate(new Date())}
+              items={tooltipItems}
+              top={tooltip.top}
+              left={tooltip.left}
+              isModal={isModal}
+            />
+          ) : null;
+        })()}
         
         {/* Main chart */}
         <div className="h-[85%] w-full overflow-hidden relative"
@@ -739,10 +802,13 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null;
               
-              const margin = { top: 20, right: 25, bottom: 30, left: 60 };
+              const margin = { top: 10, right: 45, bottom: 30, left: 55 };
               const innerWidth = width - margin.left - margin.right;
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;
+              
+              // Determine whether to show percentages or absolute values
+              const isPercentMode = activeDisplayMode === 'percent';
               
               // Create scales
               const xScale = scaleBand<Date>({
@@ -750,23 +816,23 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
                 range: [0, innerWidth],
                 padding: 0.2
               });
-
-              const yMax = Math.max(...activeData.map(d => d.total || 0));
+              
+              // Calculate y-axis max value based on display mode
+              const yMax = isPercentMode 
+                ? 100 // Fixed scale for percentage mode
+                : Math.max(...activeData.map(d => d.total || 0));
               
               const yScale = scaleLinear<number>({
-                domain: [0, yMax * 1.1], // Add 10% padding
+                domain: [0, isPercentMode ? 100 : yMax * 1.1], // Use percentage scale or add 10% padding for absolute
                 range: [innerHeight, 0],
                 nice: true
               });
-
+              
               // Create color scale for platforms
               const colorScale = scaleOrdinal<string, string>({
                 domain: activeKeys,
                 range: activeKeys.map(platform => getPlatformColor(platform))
               });
-              
-              // Determine whether to show percentages or absolute values
-              const isPercentMode = activeDisplayMode === 'percent';
               
               // Generate data for BarStack - convert to expected format
               const stackedData = activeData.map(d => {
@@ -902,19 +968,7 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
 
   return (
     <div className="h-full w-full relative">
-      <div className="h-full w-full">
-        <ParentSize>
-          {({ width, height }) => {
-            console.log("Parent size dimensions:", { width, height });
-            if (width === 0 || height === 0) {
-              return <div className="flex justify-center items-center h-full">
-                <p className="text-gray-400">Resizing chart...</p>
-              </div>;
-            }
-            return renderChartContent(width, height);
-          }}
-        </ParentSize>
-      </div>
+      {renderChartContent(0, 0)}
       
       {/* Modal */}
       <Modal isOpen={isModalOpen} onClose={onModalClose} title="Protocol Revenue by Platform" subtitle="Revenue distribution across platforms in the Solana ecosystem">
@@ -926,9 +980,9 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
               value={modalTimeFilter} 
               onChange={(val) => {
                 handleModalTimeFilterChange(val as TimeFilter);
+                // Remove parent handler call to prevent double loading
               }}
               options={[
-                { value: 'D', label: 'D' },
                 { value: 'W', label: 'W' },
                 { value: 'M', label: 'M' },
                 { value: 'Q', label: 'Q' },
@@ -937,7 +991,10 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
             />
             <DisplayModeFilter 
               mode={modalDisplayMode} 
-              onChange={handleModalDisplayModeChange}
+              onChange={(val) => {
+                handleModalDisplayModeChange(val);
+                // Remove parent handler call to prevent double loading
+              }}
             />
           </div>
         </div>
@@ -945,37 +1002,46 @@ const PlatformRevenueChart: React.FC<PlatformRevenueChartProps> = ({
         {/* Horizontal line */}
         <div className="h-px bg-gray-900 w-full mb-3"></div>
         
-        <div className="h-[60vh]">
+        <div className="h-[70vh]">
           {/* Chart with legends in modal */}
           <div className="flex h-full">
-            {/* Chart area - 90% width */}
-            <div className="w-[90%] h-full pr-3 border-r border-gray-900">
-              <ParentSize>
-                {({ width, height }) => renderChartContent(width, height, true)}
-              </ParentSize>
+            {/* Chart area - 80% width */}
+            <div className="w-[80%] h-full pr-3 border-r border-gray-900">
+              {renderChartContent(0, 0, true)}
             </div>
             
-            {/* Legend area - 10% width */}
-            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
+            {/* Legend area - 20% width */}
+            <div className="w-[20%] h-full pl-3 flex flex-col justify-start items-start">
               <div className="text-[10px] text-gray-400 mb-2">PLATFORMS</div>
-              {modalKeys.slice(0, 20).map((platform: string) => (
-                <div key={platform} className="flex items-center mb-1.5">
-                  <div 
-                    className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                    style={{ backgroundColor: getPlatformColor(platform) }}
-                  ></div>
-                  <span className="text-[11px] text-gray-300">{getPlatformDisplayName(platform)}</span>
-                </div>
-              ))}
-              {modalKeys.length > 20 && (
-                <div className="flex items-center mb-1.5">
-                  <div 
-                    className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                    style={{ backgroundColor: '#888888' }}
-                  ></div>
-                  <span className="text-[11px] text-gray-300">Others</span>
-                </div>
-              )}
+              <div className="flex flex-col gap-1 overflow-y-auto max-h-[500px] pr-1">
+                {modalLoading ? (
+                  // Show loading state
+                  <>
+                    <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
+                    <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
+                    <LegendItem label="Loading..." color="#34d399" isLoading={true} />
+                  </>
+                ) : (
+                  // Show actual platform data - show more platforms in the modal
+                  modalKeys.slice(0, 25).map((platform: string) => (
+                    <LegendItem
+                      key={platform}
+                      label={normalizePlatformName(platform)}
+                      color={getPlatformColor(platform)}
+                      tooltipText={formatCurrency(
+                        modalFilteredData.reduce((sum, d) => sum + (Number(d[platform]) || 0), 0)
+                      )}
+                    />
+                  ))
+                )}
+                {!modalLoading && modalKeys.length > 25 && (
+                  <LegendItem
+                    label="Others"
+                    color="#888888"
+                    shape="square"
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -5,9 +5,10 @@ import { fetchEconomicValueData, EconomicValueDataPoint } from "../../api/REV/to
 import { fetchYearlyEconomicValueData, YearlyEconomicValueDataPoint } from "../../api/REV/total-economic-value/yearlyEconomicValue";
 import CurrencyFilter from "../../components/shared/filters/CurrencyFilter";
 import TimeFilter from "../../components/shared/filters/TimeFilter";
-import { ExpandIcon, DownloadIcon } from "../../components/shared/Icons";
 import Loader from "../../components/shared/Loader";
 import EconomicValueChart, { stackKeys, getValueTypeDisplayName, getValueTypeColor } from "../../components/charts/REV/total-economic-value/EconomicValueChart";
+import ChartCard from "../../components/shared/ChartCard";
+import LegendItem from "../../components/shared/LegendItem";
 
 type TimeView = 'Q' | 'Y';
 type SortDirection = 'asc' | 'desc';
@@ -275,82 +276,38 @@ export default function TotalEconomicValuePage() {
   return (
     <div className="space-y-6">
       {/* Economic Value Chart */}
-      <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
-        <div className="flex justify-between items-center mb-3">
-          <div className="-mt-1">
-            <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">Total Economic Value</h2>
-            <p className="text-gray-500 text-[10px] tracking-wide">Yearly economic value of Solana</p>
-          </div>
-          <div className="flex space-x-2">
-            <button 
-              className="p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors"
-              onClick={downloadCSV}
-              title="Download CSV"
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <DownloadIcon className="w-4 h-4" />
-              )}
-            </button>
-            <button 
-              className="p-1.5 bg-blue-500/10 rounded-md text-blue-400 hover:bg-blue-500/20 transition-colors"
-              onClick={() => setChartModalOpen(true)}
-              title="Expand Chart"
-            >
-              <ExpandIcon className="w-4 h-4" />
-            </button>
-            
-          </div>
-        </div>
-        
-        {/* First Divider */}
-        <div className="h-px bg-gray-900 w-full"></div>
-        
-        {/* Filters Area */}
-        <div className="flex items-center gap-3 pl-1 py-2 overflow-x-auto">
+      <ChartCard
+        title="Total Economic Value"
+        description="Yearly economic value of Solana"
+        accentColor="blue"
+        onExpandClick={() => setChartModalOpen(true)}
+        onDownloadClick={downloadCSV}
+        isDownloading={isDownloading}
+        filterBar={
           <CurrencyFilter
             currency={chartCurrency}
             onChange={(value) => setChartCurrency(value)}
             isCompact={true}
           />
-        </div>
-        
-        {/* Second Divider */}
-        <div className="h-px bg-gray-900 w-full mb-3"></div>
-        
-        {/* Chart with Legend in flex layout */}
-        <div className="flex flex-col lg:flex-row h-[360px] lg:h-80">
-          {/* Chart container */}
-          <div className="flex-grow lg:pr-3 lg:border-r lg:border-gray-900 h-80 lg:h-auto">
-            <EconomicValueChart 
-              currency={chartCurrency} 
-              isModalOpen={chartModalOpen}
-              onModalClose={() => setChartModalOpen(false)}
-              onCurrencyChange={(value) => setChartCurrency(value)}
+        }
+        legend={
+          stackKeys.map((key) => (
+            <LegendItem
+              key={key}
+              label={getValueTypeDisplayName(key)}
+              color={getValueTypeColor(key, chartCurrency)}
+              shape="square"
             />
-          </div>
-          
-          {/* Legend */}
-          <div className="w-full lg:w-1/5 mt-2 lg:mt-0 lg:pl-3 flex flex-row lg:flex-col">
-            <div className="flex flex-row lg:flex-col gap-4 lg:gap-3 pt-1 pb-2 lg:pb-0">
-              <div className="flex flex-row lg:flex-col gap-4 lg:gap-3">
-                {/* Legend items */}
-                {stackKeys.map((key) => (
-                  <div key={key} className="flex items-start">
-                    <div 
-                      className="w-2 h-2 rounded-sm mr-2 mt-0.5" 
-                      style={{ backgroundColor: getValueTypeColor(key, chartCurrency) }}
-                    ></div>
-                    <span className="text-xs text-gray-300">{getValueTypeDisplayName(key)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          ))
+        }
+      >
+        <EconomicValueChart 
+          currency={chartCurrency} 
+          isModalOpen={chartModalOpen}
+          onModalClose={() => setChartModalOpen(false)}
+          onCurrencyChange={(value) => setChartCurrency(value)}
+        />
+      </ChartCard>
 
       {/* Economic Value Table with Time Filter */}
       <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
@@ -369,7 +326,7 @@ export default function TotalEconomicValuePage() {
               {isDownloading ? (
                 <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                <DownloadIcon className="w-4 h-4" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
               )}
             </button>
           </div>
