@@ -323,7 +323,7 @@ export default function CostCapacityPage() {
             {/* Currency filter */}
             <CurrencyFilter 
               currency={feeCurrencyFilter} 
-              onChange={(val) => setFeeCurrencyFilter(val)}
+              onChange={(val) => setFeeCurrencyFilter(val as CurrencyType)}
               isCompact={true}
             />
             

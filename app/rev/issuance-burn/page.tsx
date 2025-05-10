@@ -83,7 +83,7 @@ export default function IssuanceInflationPage() {
           filterBar={
             <CurrencyFilter
               currency={issuanceCurrency}
-              onChange={(value) => setIssuanceCurrency(value)}
+              onChange={(value) => setIssuanceCurrency(value as CurrencyType)}
               isCompact={true}
             />
           }
@@ -116,7 +116,7 @@ export default function IssuanceInflationPage() {
           filterBar={
             <CurrencyFilter
               currency={rewardsCurrency}
-              onChange={(value) => setRewardsCurrency(value)}
+              onChange={(value) => setRewardsCurrency(value as CurrencyType)}
               isCompact={true}
             />
           }
@@ -149,7 +149,7 @@ export default function IssuanceInflationPage() {
           filterBar={
             <CurrencyFilter
               currency={breakdownCurrency}
-              onChange={(value) => setBreakdownCurrency(value)}
+              onChange={(value) => setBreakdownCurrency(value as CurrencyType)}
               isCompact={true}
             />
           }
@@ -180,7 +180,7 @@ export default function IssuanceInflationPage() {
           filterBar={
             <CurrencyFilter
               currency={burnRatioCurrency}
-              onChange={(value) => setBurnRatioCurrency(value)}
+              onChange={(value) => setBurnRatioCurrency(value as CurrencyType)}
               isCompact={true}
             />
           }
@@ -213,7 +213,7 @@ export default function IssuanceInflationPage() {
           filterBar={
             <CurrencyFilter
               currency={solBurnCurrency}
-              onChange={(value) => setSolBurnCurrency(value)}
+              onChange={(value) => setSolBurnCurrency(value as CurrencyType)}
               isCompact={true}
             />
           }

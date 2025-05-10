@@ -467,7 +467,7 @@ export default function EconomicValueChart({
           <div className="flex space-x-4 items-center">
             <CurrencyFilter 
               currency={modalCurrency}
-              onChange={handleModalCurrencyChange}
+              onChange={(val) => handleModalCurrencyChange(val as 'USD' | 'SOL')}
             />
           </div>
         </div>

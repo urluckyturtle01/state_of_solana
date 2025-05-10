@@ -909,8 +909,8 @@ const CostCapacityChart: React.FC<CostCapacityChartProps> = ({
             <CurrencyFilter 
               currency={modalCurrencyFilter} 
               onChange={(val) => {
-                handleModalCurrencyFilterChange(val);
-                if (onCurrencyChange) onCurrencyChange(val);
+                handleModalCurrencyFilterChange(val as CurrencyType);
+                if (onCurrencyChange) onCurrencyChange(val as CurrencyType);
               }}
             />
             <DisplayModeFilter 

@@ -107,7 +107,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
       {/* Filter Bar */}
       {filterBar && (
         <>
-          <div className="flex items-center justify-start pl-1 py-2 overflow-x-auto">
+          <div className="flex items-center justify-start pl-1 py-2 overflow-visible relative">
             {filterBar}
           </div>
           {/* Second Divider after filters */}

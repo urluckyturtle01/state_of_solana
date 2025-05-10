@@ -9,6 +9,7 @@ import Loader from "../../components/shared/Loader";
 import EconomicValueChart, { stackKeys, getValueTypeDisplayName, getValueTypeColor } from "../../components/charts/REV/total-economic-value/EconomicValueChart";
 import ChartCard from "../../components/shared/ChartCard";
 import LegendItem from "../../components/shared/LegendItem";
+import DataTable, { Column } from "../../components/shared/DataTable";
 
 type TimeView = 'Q' | 'Y';
 type SortDirection = 'asc' | 'desc';
@@ -273,6 +274,139 @@ export default function TotalEconomicValuePage() {
     </th>
   );
 
+  // Define yearly table columns
+  const yearlyColumns = useMemo<Column<YearlyEconomicValueDataPoint>[]>(() => [
+    {
+      key: 'year',
+      header: 'Year',
+      sortable: true,
+      align: 'left'
+    },
+    {
+      key: 'base_fee',
+      header: 'Base Fee',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.base_fee_usd, true) : formatNumber(row.base_fee)
+    },
+    {
+      key: 'priority_fee',
+      header: 'Priority Fee',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.priority_fee_usd, true) : formatNumber(row.priority_fee)
+    },
+    {
+      key: 'vote_fees',
+      header: 'Vote Fees',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.vote_fees_usd, true) : formatNumber(row.vote_fees)
+    },
+    {
+      key: 'total_jito_tips',
+      header: 'Jito Tips',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.total_jito_tips_usd, true) : formatNumber(row.total_jito_tips)
+    },
+    {
+      key: 'sol_issuance',
+      header: 'SOL Issuance',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.sol_issuance_usd, true) : formatNumber(row.sol_issuance)
+    },
+    {
+      key: 'real_economic_value',
+      header: 'Real Economic Value',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.real_economic_value_usd, true) : formatNumber(row.real_economic_value)
+    },
+    {
+      key: 'total_economic_value',
+      header: 'Total Economic Value',
+      sortable: true,
+      align: 'right',
+      render: (row) => (
+        <span className="font-medium text-gray-100">
+          {tableCurrency === 'USD' ? formatNumber(row.total_economic_value_usd, true) : formatNumber(row.total_economic_value)}
+        </span>
+      )
+    }
+  ], [tableCurrency]);
+
+  // Define quarterly table columns
+  const quarterlyColumns = useMemo<Column<EconomicValueDataPoint>[]>(() => [
+    {
+      key: 'year',
+      header: 'Year',
+      sortable: true,
+      align: 'left'
+    },
+    {
+      key: 'quarter',
+      header: 'Quarter',
+      sortable: true,
+      align: 'left',
+      render: (row) => `Q${row.quarter}`
+    },
+    {
+      key: 'base_fee',
+      header: 'Base Fee',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.base_fee_usd, true) : formatNumber(row.base_fee)
+    },
+    {
+      key: 'priority_fee',
+      header: 'Priority Fee',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.priority_fee_usd, true) : formatNumber(row.priority_fee)
+    },
+    {
+      key: 'vote_fees',
+      header: 'Vote Fees',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.vote_fees_usd, true) : formatNumber(row.vote_fees)
+    },
+    {
+      key: 'total_jito_tips',
+      header: 'Jito Tips',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.total_jito_tips_usd, true) : formatNumber(row.total_jito_tips)
+    },
+    {
+      key: 'sol_issuance',
+      header: 'SOL Issuance',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.sol_issuance_usd, true) : formatNumber(row.sol_issuance)
+    },
+    {
+      key: 'real_economic_value',
+      header: 'Real Economic Value',
+      sortable: true,
+      align: 'right',
+      render: (row) => tableCurrency === 'USD' ? formatNumber(row.real_economic_value_usd, true) : formatNumber(row.real_economic_value)
+    },
+    {
+      key: 'total_economic_value',
+      header: 'Total Economic Value',
+      sortable: true,
+      align: 'right',
+      render: (row) => (
+        <span className="font-medium text-gray-100">
+          {tableCurrency === 'USD' ? formatNumber(row.total_economic_value_usd, true) : formatNumber(row.total_economic_value)}
+        </span>
+      )
+    }
+  ], [tableCurrency]);
+
   return (
     <div className="space-y-6">
       {/* Economic Value Chart */}
@@ -286,7 +420,7 @@ export default function TotalEconomicValuePage() {
         filterBar={
           <CurrencyFilter
             currency={chartCurrency}
-            onChange={(value) => setChartCurrency(value)}
+            onChange={(value) => setChartCurrency(value as 'USD' | 'SOL')}
             isCompact={true}
           />
         }
@@ -338,7 +472,6 @@ export default function TotalEconomicValuePage() {
         {/* Filters Space */}
         <div className="flex items-center gap-3 pl-1 py-2 overflow-x-auto">
           <div className="flex items-center space-x-3">
-            
             <TimeFilter
               value={timeView}
               onChange={(value) => setTimeView(value as TimeView)}
@@ -347,7 +480,7 @@ export default function TotalEconomicValuePage() {
           </div>
           <CurrencyFilter
             currency={tableCurrency}
-            onChange={(value) => setTableCurrency(value)}
+            onChange={(value) => setTableCurrency(value as 'USD' | 'SOL')}
             isCompact={true}
           />
         </div>
@@ -355,106 +488,29 @@ export default function TotalEconomicValuePage() {
         {/* Second Divider */}
         <div className="h-px bg-gray-900 w-full mb-3"></div>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader size="sm" />
-          </div>
-        ) : activeError ? (
-          <div className="flex justify-center items-center h-64">
-            <p className="text-red-400 text-[12px]">{activeError}</p>
-          </div>
+        {/* DataTable component for displaying data */}
+        {timeView === 'Y' ? (
+          <DataTable
+            columns={yearlyColumns}
+            data={yearlyData}
+            keyExtractor={(row) => row.year.toString()}
+            isLoading={yearlyLoading}
+            error={yearlyError}
+            noDataMessage="No yearly economic value data available"
+            initialSortColumn="year"
+            initialSortDirection="desc"
+          />
         ) : (
-          <div className="overflow-x-auto">
-            {timeView === 'Y' ? (
-              <table className="min-w-full divide-y divide-gray-800">
-                <thead className="bg-gray-900/50">
-                  <tr>
-                    {renderColumnHeader('year', 'Year', 'left')}
-                    {renderColumnHeader('base_fee', 'Base Fee')}
-                    {renderColumnHeader('priority_fee', 'Priority Fee')}
-                    {renderColumnHeader('vote_fees', 'Vote Fees')}
-                    {renderColumnHeader('total_jito_tips', 'Jito Tips')}
-                    {renderColumnHeader('sol_issuance', 'SOL Issuance')}
-                    {renderColumnHeader('real_economic_value', 'Real Economic Value')}
-                    {renderColumnHeader('total_economic_value', 'Total Economic Value')}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-800/50">
-                  {sortedYearlyData.map((row, idx) => (
-                    <tr key={`yearly-${row.year}`} className={idx % 2 === 0 ? 'bg-black/30' : 'bg-gray-900/10'}>
-                      <td className="px-3 py-2 text-[11px] font-medium text-gray-300">{row.year}</td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.base_fee_usd, true) : formatNumber(row.base_fee)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.priority_fee_usd, true) : formatNumber(row.priority_fee)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.vote_fees_usd, true) : formatNumber(row.vote_fees)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.total_jito_tips_usd, true) : formatNumber(row.total_jito_tips)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.sol_issuance_usd, true) : formatNumber(row.sol_issuance)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.real_economic_value_usd, true) : formatNumber(row.real_economic_value)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right font-medium text-gray-100">
-                        {tableCurrency === 'USD' ? formatNumber(row.total_economic_value_usd, true) : formatNumber(row.total_economic_value)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <table className="min-w-full divide-y divide-gray-800">
-                <thead className="bg-gray-900/50">
-                  <tr>
-                    {renderColumnHeader('year', 'Year', 'left')}
-                    {renderColumnHeader('quarter', 'Quarter', 'left')}
-                    {renderColumnHeader('base_fee', 'Base Fee')}
-                    {renderColumnHeader('priority_fee', 'Priority Fee')}
-                    {renderColumnHeader('vote_fees', 'Vote Fees')}
-                    {renderColumnHeader('total_jito_tips', 'Jito Tips')}
-                    {renderColumnHeader('sol_issuance', 'SOL Issuance')}
-                    {renderColumnHeader('real_economic_value', 'Real Economic Value')}
-                    {renderColumnHeader('total_economic_value', 'Total Economic Value')}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-800/50">
-                  {sortedQuarterlyData.map((row, idx) => (
-                    <tr key={`quarterly-${row.year}-${row.quarter}`} className={idx % 2 === 0 ? 'bg-black/30' : 'bg-gray-900/10'}>
-                      <td className="px-3 py-2 text-[11px] font-medium text-gray-300">{row.year}</td>
-                      <td className="px-3 py-2 text-[11px] text-gray-300">Q{row.quarter}</td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.base_fee_usd, true) : formatNumber(row.base_fee)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.priority_fee_usd, true) : formatNumber(row.priority_fee)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.vote_fees_usd, true) : formatNumber(row.vote_fees)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.total_jito_tips_usd, true) : formatNumber(row.total_jito_tips)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.sol_issuance_usd, true) : formatNumber(row.sol_issuance)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right text-gray-300">
-                        {tableCurrency === 'USD' ? formatNumber(row.real_economic_value_usd, true) : formatNumber(row.real_economic_value)}
-                      </td>
-                      <td className="px-3 py-2 text-[11px] text-right font-medium text-gray-100">
-                        {tableCurrency === 'USD' ? formatNumber(row.total_economic_value_usd, true) : formatNumber(row.total_economic_value)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+          <DataTable
+            columns={quarterlyColumns}
+            data={quarterlyData}
+            keyExtractor={(row) => `${row.year}-Q${row.quarter}`}
+            isLoading={quarterlyLoading}
+            error={quarterlyError}
+            noDataMessage="No quarterly economic value data available"
+            initialSortColumn="year"
+            initialSortDirection="desc"
+          />
         )}
       </div>
     </div>

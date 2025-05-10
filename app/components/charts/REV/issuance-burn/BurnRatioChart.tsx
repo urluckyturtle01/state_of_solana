@@ -610,7 +610,7 @@ const BurnRatioChart: React.FC<BurnRatioChartProps> = ({
         <div className="flex items-center justify-start pl-1 py-0 mb-3">
           <CurrencyFilter 
             currency={modalCurrency} 
-            onChange={handleModalCurrencyChange}
+            onChange={(val) => handleModalCurrencyChange(val as CurrencyType)}
             isCompact={true}
           />
         </div>
