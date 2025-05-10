@@ -32,6 +32,12 @@ export default function ProtocolRevenueTabsHeader({ activeTab = "summary" }: Pro
       path: "/protocol-revenue/nft-ecosystem",
       key: "nft-ecosystem",
       icon: "M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm4 0v12m4-12v12m4-12v12"
+    },
+    {
+      name: "DePin",
+      path: "/protocol-revenue/depin",
+      key: "depin",
+      icon: "M12 4v16m8-8H4"
     }
   ];
   
