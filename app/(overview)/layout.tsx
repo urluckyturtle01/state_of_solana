@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Layout from "../components/Layout";
-import OverviewTabsHeader from "@/app/components/shared/OverviewTabsHeader";
+import OverviewTabsHeader from "@/app/(overview)/components/OverviewTabsHeader";
 import { usePathname } from "next/navigation";
 
 interface OverviewLayoutProps {
