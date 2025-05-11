@@ -274,7 +274,7 @@ export default function LiquidityVelocityPage() {
           title="Average P2P Transfer Size" 
           description="Mean value of peer-to-peer transfer size over time"
           accentColor="blue"
-          className="h-[400px]"
+          
           onExpandClick={() => setAvgTransferChartModalOpen(true)}
           filterBar={
             <CurrencyFilter
@@ -298,7 +298,7 @@ export default function LiquidityVelocityPage() {
           title="Median P2P Transfer Size" 
           description="Middle value of peer-to-peer transfer size over time"
           accentColor="orange"
-          className="h-[400px]"
+         
           onExpandClick={() => setMedianTransferChartModalOpen(true)}
           filterBar={
             <CurrencyFilter

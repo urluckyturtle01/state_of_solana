@@ -25,7 +25,7 @@ const LegendItem: React.FC<LegendItemProps> = ({
         className="text-xs text-gray-300 truncate" 
         title={tooltipText || label}
       >
-        {label.length > 12 && !tooltipText ? `${label.substring(0, 12)}...` : label}
+        {label.length > 20 && !tooltipText ? `${label.substring(0, 20)}...` : label}
       </span>
     </div>
   );
