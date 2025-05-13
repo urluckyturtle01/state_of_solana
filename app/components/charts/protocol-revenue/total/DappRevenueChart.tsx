@@ -71,6 +71,8 @@ const dappColors: Record<string, string> = {
 
 // Format currency values more concisely (no decimal places for millions)
 const formatRevenueValue = (value: number): string => {
+  if (value === 0) return '$0';
+  
   if (value >= 1e9) {
     return `$${Math.round(value / 1e9)}B`;
   }
@@ -80,6 +82,12 @@ const formatRevenueValue = (value: number): string => {
   if (value >= 1e3) {
     return `$${Math.round(value / 1e3)}K`;
   }
+  
+  // For very small values that would show as $0, show with decimal places instead
+  if (value < 1 && value > 0) {
+    return `$${value.toFixed(2)}`;
+  }
+  
   return `$${Math.round(value)}`;
 };
 
@@ -628,7 +636,10 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
                       tickFormat={(value) => {
                         // Truncate long segment names
                         const name = value as string;
-                        return name.length > 10 ? `${name.substring(0, 10)}...` : name;
+                        // In modal view, show up to 12 letters, otherwise show only 3 letters
+                        return isModal 
+                          ? (name.length > 12 ? `${name.substring(0, 12)}...` : name)
+                          : (name.length > 3 ? `${name.substring(0, 3)}...` : name);
                       }}
                     />
                     

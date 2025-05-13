@@ -8,7 +8,7 @@ import Loader from "../../components/shared/Loader";
 import ProtocolRevenueChart from "../../components/charts/protocol-revenue/summary/ProtocolRevenueChart";
 import PlatformRevenueStacked from "../../components/charts/protocol-revenue/summary/PlatformRevenueStacked";
 
-import { getLatestProtocolRevenueStats } from "../../api/protocol-revenue/summary/chartData";
+import { getLatestProtocolRevenueStats, prepareProtocolRevenueCSV } from "../../api/protocol-revenue/summary/chartData";
 import { TimeFilter } from "../../api/protocol-revenue/summary/chartData";
 import { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import ChartCard from "@/app/components/shared/ChartCard";
@@ -155,14 +155,38 @@ export default function ProtocolRevenueSummaryPage() {
     setIsRevenueDownloading(true);
     
     try {
-      // Simulate download delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Downloading revenue data as CSV...');
-      // TODO: Implement actual CSV download
+      // Get CSV content using the new function
+      const csvContent = await prepareProtocolRevenueCSV(timeFilter);
       
-      alert('CSV download functionality will be implemented soon.');
+      if (!csvContent) {
+        console.error('No data available for CSV export');
+        alert('No data available for export');
+        return;
+      }
+      
+      // Create a blob with the CSV content
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      // Create a temporary URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `protocol-revenue-${timeFilter.toLowerCase()}.csv`);
+      
+      // Append to the document and trigger click
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('Protocol revenue data downloaded successfully');
     } catch (error) {
       console.error('Error downloading revenue data:', error);
+      alert('Failed to download data. Please try again.');
     } finally {
       setIsRevenueDownloading(false);
     }
@@ -195,10 +219,10 @@ export default function ProtocolRevenueSummaryPage() {
           <Counter
             title="Protocol Revenue (Since Jan'24)"
             value={isTotalProtocolRevenueLoading ? "Loading..." : formatCurrencyValue(totalProtocolRevenueStats.totalRevenue)}
-            trend={isTotalProtocolRevenueLoading ? undefined : {
-              value: Math.abs(totalProtocolRevenueStats.percentChange),
-              label: "vs previous period"
-            }}
+            //trend={isTotalProtocolRevenueLoading ? undefined : {
+              //value: Math.abs(totalProtocolRevenueStats.percentChange),
+              //label: "vs previous month"
+            //}}
             variant="indigo"
             icon={<VolumeIcon />}
             isLoading={isTotalProtocolRevenueLoading}
@@ -208,10 +232,10 @@ export default function ProtocolRevenueSummaryPage() {
           <Counter
             title="Solana Core Revenue"
             value={isTotalSolanaRevenueLoading ? "Loading..." : formatCurrencyValue(totalSolanaRevenueStats.totalRevenue)}
-            trend={isTotalSolanaRevenueLoading ? undefined : {
-              value: Math.abs(totalSolanaRevenueStats.percentChange),
-              label: "vs previous period"
-            }}
+            //trend={isTotalSolanaRevenueLoading ? undefined : {
+              //value: Math.abs(totalSolanaRevenueStats.percentChange),
+              //label: "vs previous month"
+            //}}
             variant="blue"
             icon={<TvlIcon />}
             isLoading={isTotalSolanaRevenueLoading}
@@ -242,12 +266,10 @@ export default function ProtocolRevenueSummaryPage() {
             }
           >
             <ProtocolRevenueChart 
-              timeFilter={timeFilter}
-              displayMode={displayMode}
+              
               isModalOpen={protocolRevenueChartModalOpen}
               onModalClose={() => setProtocolRevenueChartModalOpen(false)}
-              onTimeFilterChange={(val: TimeFilter) => setTimeFilter(val)}
-              onDisplayModeChange={(val: DisplayMode) => setDisplayMode(val)}
+              
             />
           </ChartCard>
           
@@ -270,6 +292,10 @@ export default function ProtocolRevenueSummaryPage() {
                     { value: 'Q', label: 'Q' },
                     { value: 'Y', label: 'Y' }
                   ]}
+                />
+                <DisplayModeFilter 
+                  mode={displayMode} 
+                  onChange={(val: DisplayMode) => setDisplayMode(val)} 
                 />
               </div>
             }
@@ -303,6 +329,8 @@ export default function ProtocolRevenueSummaryPage() {
               onModalClose={() => setPlatformStackedChartModalOpen(false)}
               onTimeFilterChange={(val: TimeFilter) => setTimeFilter(val)}
               platformsChanged={setStackedChartPlatforms}
+              displayMode={displayMode}
+              onDisplayModeChange={setDisplayMode}
             />
           </ChartCard>
           </div>

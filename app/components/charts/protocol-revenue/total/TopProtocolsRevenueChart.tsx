@@ -444,7 +444,11 @@ const TopProtocolsRevenueChart: React.FC<TopProtocolsRevenueChartProps> = ({
                       tickFormat={(platform) => {
                         // Truncate long platform names
                         const name = platform as string;
-                        return name.length > 8 ? `${name.substring(0, 8)}...` : name;
+                        // In main view, show only 3 letters with ellipsis
+                        // In modal view, show up to 8 letters (as was done previously)
+                        return isModal 
+                          ? (name.length > 12 ? `${name.substring(0, 12)}...` : name)
+                          : (name.length > 3 ? `${name.substring(0, 3)}...` : name);
                       }}
                     />
                     

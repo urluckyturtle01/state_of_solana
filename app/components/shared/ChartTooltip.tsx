@@ -49,7 +49,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
       }}
     >
       {/* Title */}
-      <div className="text-gray-200 font-normal pb-1 mb-1 border-b border-gray-800">
+      <div className="text-gray-400 text-[10px] font-normal pb-1 mb-1 border-b border-gray-800">
         {title}
       </div>
       

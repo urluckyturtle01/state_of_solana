@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import ChartCard from "@/app/components/shared/ChartCard";
 import LegendItem from "@/app/components/shared/LegendItem";
 import CumulativeRevenueChart from "@/app/components/charts/protocol-revenue/total/CumulativeRevenueChart";
@@ -11,6 +11,7 @@ import TimeFilterSelector from "@/app/components/shared/filters/TimeFilter";
 import DisplayModeFilter from "@/app/components/shared/filters/DisplayModeFilter";
 import { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import { TimeFilter } from "@/app/api/protocol-revenue/total/revenueBySegmentData";
+import { prepareCumulativeRevenueCSV } from "@/app/api/protocol-revenue/summary/chartData";
 
 // Ensure we only use the valid time filters for our specific component
 type RevenueTimeFilter = 'W' | 'M' | 'Q' | 'Y';
@@ -43,6 +44,8 @@ export default function ProtocolRevenueTotalPage() {
   
   // Loading states
   const [isLoading, setIsLoading] = useState(false);
+  // Add download loading state
+  const [isCumulativeDownloading, setIsCumulativeDownloading] = useState(false);
 
   // Format currency values
   const formatCurrency = (value?: number) => {
@@ -64,6 +67,49 @@ export default function ProtocolRevenueTotalPage() {
     }
   };
 
+  // Add download function for cumulative revenue chart
+  const downloadCumulativeRevenueCSV = async () => {
+    if (isCumulativeDownloading) return;
+    setIsCumulativeDownloading(true);
+    
+    try {
+      // Get CSV content using the new function
+      const csvContent = await prepareCumulativeRevenueCSV(timeFilter as any);
+      
+      if (!csvContent) {
+        console.error('No data available for CSV export');
+        alert('No data available for export');
+        return;
+      }
+      
+      // Create a blob with the CSV content
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      
+      // Create a temporary URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `cumulative-revenue-${timeFilter.toLowerCase()}.csv`);
+      
+      // Append to the document and trigger click
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log('Cumulative revenue data downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading cumulative revenue data:', error);
+      alert('Failed to download data. Please try again.');
+    } finally {
+      setIsCumulativeDownloading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
         
@@ -75,6 +121,8 @@ export default function ProtocolRevenueTotalPage() {
           description="Growth of cumulative protocol revenue and Solana revenue over time"
           accentColor="blue"
           onExpandClick={() => setChart1ModalOpen(true)}
+          onDownloadClick={downloadCumulativeRevenueCSV}
+          isDownloading={isCumulativeDownloading}
           legendWidth="1/4"
           className="h-[500px]"
           legend={
@@ -96,7 +144,7 @@ export default function ProtocolRevenueTotalPage() {
             isModalOpen={chart1ModalOpen}
             onModalClose={() => setChart1ModalOpen(false)}
             onTimeFilterChange={(newFilter) => handleTimeFilterChange(newFilter)}
-            legendsChanged={setCumulativeChartLegends}
+            
           />
         </ChartCard>
 
@@ -178,8 +226,16 @@ export default function ProtocolRevenueTotalPage() {
             displayMode={displayMode}
             isModalOpen={chart3ModalOpen}
             onModalClose={() => setChart3ModalOpen(false)}
-            onTimeFilterChange={(newFilter) => handleTimeFilterChange(newFilter)}
-            legendsChanged={setRevenueBySegmentLegends}
+            onTimeFilterChange={handleTimeFilterChange}
+            segmentsChanged={useCallback((segments: Array<{segment: string, color: string, revenue: number}>) => {
+              // Convert segment data to legend format
+              const legends = segments.map(segment => ({
+                label: segment.segment,
+                color: segment.color,
+                value: segment.revenue
+              }));
+              setRevenueBySegmentLegends(legends);
+            }, [])}
           />
         </ChartCard>
 
