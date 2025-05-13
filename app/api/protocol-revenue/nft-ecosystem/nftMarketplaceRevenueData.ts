@@ -42,7 +42,7 @@ export async function fetchNFTMarketplaceRevenueData(): Promise<NFTMarketplaceRe
     if (!data?.query_result?.data?.rows) {
       throw new Error('Invalid data structure received from API');
     }
-    let rawData: NFTMarketplaceRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
+    const rawData: NFTMarketplaceRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
       month: row.month,
       platform: row.platform,
       protocol_revenue: parseFloat(row.protocol_revenue) || 0

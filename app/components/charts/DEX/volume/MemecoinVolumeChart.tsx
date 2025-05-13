@@ -12,6 +12,7 @@ import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
 import Modal from '../../../shared/Modal';
 import TimeFilterSelector from '../../../shared/filters/TimeFilter';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
+import { colors } from '../../../../utils/chartColors';
 
 // Define RefreshIcon component directly in this file
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
@@ -34,24 +35,32 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
 };
 
 // Memecoin color palette with amber/yellow theme
-const memecoinColors = [
-  '#f59e0b', // amber-500
-  '#fbbf24', // amber-400
-  '#fcd34d', // amber-300
-  '#d97706', // amber-600
-  '#92400e', // amber-800
-  '#78350f', // amber-900
-  '#b45309', // amber-700
-  '#a16207', // yellow-800
-  '#ca8a04', // yellow-600
-  '#eab308', // yellow-500
-  '#facc15', // yellow-400
-  '#fef08a', // yellow-200
-  '#854d0e', // yellow-900
-  '#713f12', // yellow-950
-  '#f97316', // orange-500
-  '#ea580c', // orange-600
-];
+const memecoinColors = colors.slice(0, 17);
+
+// Assign colors to memecoins based on volume values
+const getMemecoinColorMap = (series: { name: string; data: number[] }[]): Record<string, string> => {
+  if (!series || series.length === 0) {
+    return {};
+  }
+  
+  // Calculate total volume for each memecoin
+  const memecoinsWithVolume = series.map(s => ({
+    name: s.name,
+    totalVolume: s.data.reduce((sum, vol) => sum + vol, 0)
+  }));
+  
+  // Sort memecoins by volume (highest first)
+  const sortedMemecoins = [...memecoinsWithVolume]
+    .sort((a, b) => b.totalVolume - a.totalVolume);
+  
+  // Assign colors based on rank (highest volume gets first color)
+  const colorMap: Record<string, string> = {};
+  sortedMemecoins.forEach((memecoin, index) => {
+    colorMap[memecoin.name] = memecoinColors[index % memecoinColors.length];
+  });
+  
+  return colorMap;
+};
 
 // Chart colors for consistent styling
 export const memecoinVolumeColors = {
@@ -610,7 +619,10 @@ const MemecoinVolumeChart: React.FC<MemecoinVolumeChartProps> = ({
 
               const colorScale = scaleOrdinal<string, string>({
                 domain: keys,
-                range: memecoinColors
+                range: keys.map(key => {
+                  const colorMap = getMemecoinColorMap(activeFilteredData.series);
+                  return colorMap[key] || memecoinColors[0];
+                })
               });
 
               return (

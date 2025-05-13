@@ -119,7 +119,7 @@ export const fetchRevenueBySegmentData = async (timeFilter: TimeFilter = 'W'): P
     
     // Generate simple mock data for each time filter
     const today = new Date();
-    let dates: string[] = [];
+    const dates: string[] = [];
     
     if (timeFilter === 'W') {
       // Weekly - last 4 weeks

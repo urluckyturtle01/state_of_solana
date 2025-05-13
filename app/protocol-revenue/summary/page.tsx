@@ -6,14 +6,15 @@ import { VolumeIcon, TvlIcon, UsersIcon } from "../../components/shared/Icons";
 import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import Loader from "../../components/shared/Loader";
 import ProtocolRevenueChart from "../../components/charts/protocol-revenue/summary/ProtocolRevenueChart";
-import PlatformRevenueChart from "../../components/charts/protocol-revenue/summary/PlatformRevenueChart";
+import PlatformRevenueStacked from "../../components/charts/protocol-revenue/summary/PlatformRevenueStacked";
+
 import { getLatestProtocolRevenueStats } from "../../api/protocol-revenue/summary/chartData";
 import { TimeFilter } from "../../api/protocol-revenue/summary/chartData";
 import { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import ChartCard from "@/app/components/shared/ChartCard";
 import LegendItem from "@/app/components/shared/LegendItem";
 import DisplayModeFilter from "@/app/components/shared/filters/DisplayModeFilter";
-import { platformColors, getPlatformColor, fetchPlatformRevenueData, normalizePlatformName } from "@/app/api/protocol-revenue/summary/platformRevenueData";
+import { normalizePlatformName, formatCurrency } from "@/app/api/protocol-revenue/summary/platformRevenueData";
 
 // Define colors for charts
 const protocolRevenueColors = {
@@ -43,6 +44,7 @@ export default function ProtocolRevenueSummaryPage() {
   const [protocolRevenueChartModalOpen, setProtocolRevenueChartModalOpen] = useState(false);
   const [distributionChartModalOpen, setDistributionChartModalOpen] = useState(false);
   const [platformRevenueChartModalOpen, setPlatformRevenueChartModalOpen] = useState(false);
+  const [platformStackedChartModalOpen, setPlatformStackedChartModalOpen] = useState(false);
   
   // State for stats
   const [totalProtocolRevenueStats, setTotalProtocolRevenueStats] = useState({
@@ -76,6 +78,7 @@ export default function ProtocolRevenueSummaryPage() {
 
   // Add state to store platforms from the chart component
   const [chartPlatforms, setChartPlatforms] = useState<{platform: string, color: string, revenue: number}[]>([]);
+  const [stackedChartPlatforms, setStackedChartPlatforms] = useState<{platform: string, color: string, revenue: number}[]>([]);
 
   // Fetch data for counters
   useEffect(() => {
@@ -127,55 +130,8 @@ export default function ProtocolRevenueSummaryPage() {
     fetchStats();
   }, []);
 
-  // Fetch platform data
-  useEffect(() => {
-    const fetchPlatforms = async () => {
-      setIsLoadingPlatforms(true);
-      try {
-        const data = await fetchPlatformRevenueData(timeFilter);
-        setPlatformsData(data);
-      } catch (error) {
-        console.error('Error fetching platform data:', error);
-      } finally {
-        setIsLoadingPlatforms(false);
-      }
-    };
-    
-    fetchPlatforms();
-  }, [timeFilter]);
-
-  // Extract top platforms for legend display - but ensure we always have data for display
-  const topPlatforms = useMemo(() => {
-    if (!platformsData || platformsData.length === 0) {
-      // Return default/fallback data when no platformsData is available
-      return Object.keys(platformColors)
-        .filter(platform => platform !== 'default')
-        .slice(0, 10)
-        .map(platform => ({ 
-          platform, 
-          revenue: 0, 
-          color: platformColors[platform] 
-        }));
-    }
-
-    // Sort platforms by revenue (descending)
-    return platformsData
-      .sort((a, b) => b.protocol_revenue_usd - a.protocol_revenue_usd)
-      .slice(0, 10)
-      .map(platform => ({
-        platform: platform.platform,
-        revenue: platform.protocol_revenue_usd,
-        color: getPlatformColor(platform.platform)
-      }));
-  }, [platformsData]);
-
-  // Log topPlatforms whenever it changes (for debugging)
-  useEffect(() => {
-    console.log('Top platforms:', topPlatforms);
-  }, [topPlatforms]);
-
   // Format functions
-  const formatCurrency = (value: number) => {
+  const formatCurrencyValue = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -238,75 +194,69 @@ export default function ProtocolRevenueSummaryPage() {
           {/* Total Protocol Revenue Card */}
           <Counter
             title="Protocol Revenue (Since Jan'24)"
-            value={formatCurrency(totalProtocolRevenueStats.totalRevenue)}
+            value={isTotalProtocolRevenueLoading ? "Loading..." : formatCurrencyValue(totalProtocolRevenueStats.totalRevenue)}
+            trend={isTotalProtocolRevenueLoading ? undefined : {
+              value: Math.abs(totalProtocolRevenueStats.percentChange),
+              label: "vs previous period"
+            }}
+            variant="indigo"
             icon={<VolumeIcon />}
-            variant="blue"
             isLoading={isTotalProtocolRevenueLoading}
-            trend={!isTotalProtocolRevenueLoading ? {
-              value: totalProtocolRevenueStats.percentChange,
-              label: "vs previous month"
-            } : undefined}
           />
-
+          
           {/* Total Solana Revenue Card */}
           <Counter
-            title="Solana Revenue (Since Jan'24)"
-            value={formatCurrency(totalSolanaRevenueStats.totalRevenue)}
+            title="Solana Core Revenue"
+            value={isTotalSolanaRevenueLoading ? "Loading..." : formatCurrencyValue(totalSolanaRevenueStats.totalRevenue)}
+            trend={isTotalSolanaRevenueLoading ? undefined : {
+              value: Math.abs(totalSolanaRevenueStats.percentChange),
+              label: "vs previous period"
+            }}
+            variant="blue"
             icon={<TvlIcon />}
-            variant="purple"
             isLoading={isTotalSolanaRevenueLoading}
-            trend={!isTotalSolanaRevenueLoading ? {
-              value: totalSolanaRevenueStats.percentChange,
-              label: "vs previous month"
-            } : undefined}
           />
-
-          
         </section>
-
-        {/* Protocol Revenue Charts Section - Both charts in one row */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Protocol Revenue Chart */}
+        
+        {/* Charts Section */}
+        <section className="space-y-4">
+          {/* Protocol Revenue Sources */}
+          <div className="grid grid-cols-2 gap-4">
           <ChartCard
-            title="Protocol Revenue vs Solana Revenue"
-            description="Comparison of Protocol Revenue and Solana Revenue over time"
-            accentColor="blue"
+            title="Protocol Revenue Sources"
+            description="Breakdown of revenue by source (Base Fees, Priority Fees, Jito Tips, Vote Fees)"
+            accentColor="indigo"
             onExpandClick={() => setProtocolRevenueChartModalOpen(true)}
             onDownloadClick={downloadRevenueCSV}
             isDownloading={isRevenueDownloading}
             legendWidth="1/5"
             className="h-[500px]"
-           
             
             legend={
               <>
-                <LegendItem
-                  label="Protocol Revenue"
-                  color="#60a5fa"
-                  shape="square"
-                />
-                <LegendItem
-                  label="Solana Revenue"
-                  color="#a78bfa"
-                  shape="circle"
-                />
+                <LegendItem label="Base Fees" color={protocolRevenueColors.base_fee} />
+                <LegendItem label="Priority Fees" color={protocolRevenueColors.priority_fee} />
+                <LegendItem label="Jito Tips" color={protocolRevenueColors.jito_total_tips} />
+                <LegendItem label="Vote Fees" color={protocolRevenueColors.vote_fees} />
               </>
             }
           >
             <ProtocolRevenueChart 
-              
+              timeFilter={timeFilter}
+              displayMode={displayMode}
               isModalOpen={protocolRevenueChartModalOpen}
               onModalClose={() => setProtocolRevenueChartModalOpen(false)}
-              
+              onTimeFilterChange={(val: TimeFilter) => setTimeFilter(val)}
+              onDisplayModeChange={(val: DisplayMode) => setDisplayMode(val)}
             />
           </ChartCard>
-
-          {/* Protocol Revenue by Platform Chart */}
+          
+          {/* Platform Revenue Chart - Stacked View */}
           <ChartCard
-            title="Protocol Revenue by Platform"
-            description="Breakdown of protocol revenue by platform"
+            title="Platform Revenue Over Time"
+            description="Stacked view of revenue generated by platforms"
             accentColor="green"
-            onExpandClick={() => setPlatformRevenueChartModalOpen(true)}
+            onExpandClick={() => setPlatformStackedChartModalOpen(true)}
             legendWidth="1/5"
             className="h-[500px]"
             filterBar={
@@ -321,17 +271,11 @@ export default function ProtocolRevenueSummaryPage() {
                     { value: 'Y', label: 'Y' }
                   ]}
                 />
-                <DisplayModeFilter 
-                  mode={displayMode}
-                  onChange={(val) => setDisplayMode(val)}
-                  isCompact={true}
-                />
               </div>
             }
             legend={
               <>
-                {/* Always show platforms, with loading state if appropriate */}
-                {isLoadingPlatforms && chartPlatforms.length === 0 ? (
+                {isLoadingPlatforms && stackedChartPlatforms.length === 0 ? (
                   // Loading state
                   <>
                     <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
@@ -339,8 +283,8 @@ export default function ProtocolRevenueSummaryPage() {
                     <LegendItem label="Loading..." color="#34d399" isLoading={true} />
                   </>
                 ) : (
-                  // Use chartPlatforms directly from the PlatformRevenueChart component
-                  chartPlatforms.map(({ platform, color, revenue }) => (
+                  // Show top platforms
+                  stackedChartPlatforms.slice(0, 10).map(({ platform, color, revenue }) => (
                     <LegendItem
                       key={platform}
                       label={normalizePlatformName(platform)}
@@ -353,19 +297,16 @@ export default function ProtocolRevenueSummaryPage() {
               </>
             }
           >
-            <PlatformRevenueChart
+            <PlatformRevenueStacked
               timeFilter={timeFilter}
-              displayMode={displayMode}
-              isModalOpen={platformRevenueChartModalOpen}
-              onModalClose={() => setPlatformRevenueChartModalOpen(false)}
+              isModalOpen={platformStackedChartModalOpen}
+              onModalClose={() => setPlatformStackedChartModalOpen(false)}
               onTimeFilterChange={(val: TimeFilter) => setTimeFilter(val)}
-              onDisplayModeChange={(val: DisplayMode) => setDisplayMode(val)}
-              platformsChanged={setChartPlatforms}
+              platformsChanged={setStackedChartPlatforms}
             />
           </ChartCard>
+          </div>
         </section>
-        
-        
       </div>
     </main>
   );

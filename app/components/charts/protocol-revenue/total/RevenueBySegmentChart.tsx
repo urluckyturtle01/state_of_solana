@@ -78,6 +78,20 @@ const getSegmentDisplayName = (segment: string): string => {
   return segment;
 };
 
+// Format currency values more concisely (no decimal places for millions)
+const formatRevenueValue = (value: number): string => {
+  if (value >= 1e9) {
+    return `$${Math.round(value / 1e9)}B`;
+  }
+  if (value >= 1e6) {
+    return `$${Math.round(value / 1e6)}M`;
+  }
+  if (value >= 1e3) {
+    return `$${Math.round(value / 1e3)}K`;
+  }
+  return `$${Math.round(value)}`;
+};
+
 // Process data for stacked bar chart
 const processDataForBarStack = (data: RevenueBySegmentDataPoint[]) => {
   // Group data by date
@@ -94,6 +108,24 @@ const processDataForBarStack = (data: RevenueBySegmentDataPoint[]) => {
   
   // Convert to array
   return Object.values(groupedByDate);
+};
+
+// Process data for brush component - aggregate revenue by date
+const processDataForBrush = (data: RevenueBySegmentDataPoint[]) => {
+  // Group data by date and sum revenue
+  const revenueByDate = data.reduce<Record<string, number>>((acc, curr) => {
+    if (!acc[curr.block_date]) {
+      acc[curr.block_date] = 0;
+    }
+    acc[curr.block_date] += curr.protocol_revenue;
+    return acc;
+  }, {});
+  
+  // Convert to array of { date, value } objects
+  return Object.entries(revenueByDate).map(([date, value]) => ({
+    date,
+    value
+  }));
 };
 
 // Main chart component
@@ -115,6 +147,12 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
   const [isBrushActive, setIsBrushActive] = useState(false);
   const [brushDomain, setBrushDomain] = useState<[Date, Date] | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
+  
+  // Add refs for throttling
+  const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const canUpdateFilteredDataRef = useRef<boolean>(true);
+  const modalThrottleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const canUpdateModalFilteredDataRef = useRef<boolean>(true);
   
   // State for tooltip
   const [tooltip, setTooltip] = useState({ 
@@ -168,6 +206,9 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
         setFilteredData(revenueData);
         setProcessedData(processed);
         setProcessedFilteredData(processed);
+        
+        // Set brush as active but don't set a specific domain
+        // This will result in the full range being selected
         setIsBrushActive(true);
         setBrushDomain(null);
       }
@@ -215,6 +256,9 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
         setModalFilteredData(revenueData);
         setModalProcessedData(processed);
         setModalProcessedFilteredData(processed);
+        
+        // Set brush as active but don't set a specific domain
+        // This will result in the full range being selected
         setIsModalBrushActive(true);
         setModalBrushDomain(null);
       }
@@ -256,36 +300,31 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
     }
   }, [data, availableSegments, legendsChanged]);
   
-  // Handle brush change
+  // Cleanup throttle timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (throttleTimeoutRef.current) {
+        clearTimeout(throttleTimeoutRef.current);
+      }
+      if (modalThrottleTimeoutRef.current) {
+        clearTimeout(modalThrottleTimeoutRef.current);
+      }
+    };
+  }, []); // Empty dependency array runs only on mount/unmount
+  
+  // Handle brush change with throttling
   const handleBrushChange = useCallback((domain: any) => {
     if (!domain) {
       if (isBrushActive) {
         setBrushDomain(null);
         setIsBrushActive(false);
       }
-      return;
-    }
-    
-    const { x0, x1 } = domain;
-    const startDate = new Date(x0);
-    const endDate = new Date(x1);
-    
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return; // Ignore invalid dates
-    }
-
-    setBrushDomain([startDate, endDate]);
-    if (!isBrushActive) {
-      setIsBrushActive(true);
-    }
-  }, [isBrushActive]);
-  
-  // Handle modal brush change
-  const handleModalBrushChange = useCallback((domain: any) => {
-    if (!domain) {
-      if (isModalBrushActive) {
-        setModalBrushDomain(null);
-        setIsModalBrushActive(false);
+      
+      // Clear any pending throttle timeout
+      if (throttleTimeoutRef.current) {
+        clearTimeout(throttleTimeoutRef.current);
+        throttleTimeoutRef.current = null;
+        canUpdateFilteredDataRef.current = true; // Allow immediate update on clear
       }
       return;
     }
@@ -298,13 +337,52 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
       return; // Ignore invalid dates
     }
 
-    setModalBrushDomain([startDate, endDate]);
+    // Update immediate brush domain for visual feedback
+    const newDomain: [Date, Date] = [startDate, endDate];
+    setBrushDomain(newDomain);
+    if (!isBrushActive) {
+      setIsBrushActive(true);
+    }
+    
+    // Filtering logic is moved to useEffect
+  }, [isBrushActive]);
+  
+  // Handle modal brush change with throttling
+  const handleModalBrushChange = useCallback((domain: any) => {
+    if (!domain) {
+      if (isModalBrushActive) {
+        setModalBrushDomain(null);
+        setIsModalBrushActive(false);
+      }
+      
+      // Clear any pending throttle timeout
+      if (modalThrottleTimeoutRef.current) {
+        clearTimeout(modalThrottleTimeoutRef.current);
+        modalThrottleTimeoutRef.current = null;
+        canUpdateModalFilteredDataRef.current = true; // Allow immediate update on clear
+      }
+      return;
+    }
+    
+    const { x0, x1 } = domain;
+    const startDate = new Date(x0);
+    const endDate = new Date(x1);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return; // Ignore invalid dates
+    }
+
+    // Update immediate brush domain for visual feedback
+    const newDomain: [Date, Date] = [startDate, endDate];
+    setModalBrushDomain(newDomain);
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
+    
+    // Filtering logic is moved to useEffect
   }, [isModalBrushActive]);
   
-  // Apply brush domain to filter data
+  // Apply brush domain to filter data with throttling
   useEffect(() => {
     if (data.length === 0) {
       if (filteredData.length > 0) {
@@ -321,12 +399,18 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
       return;
     }
     
-    // If no brush domain is set or full range is selected, show all data
+    // If no brush domain is set or brush is not active, show all data
     if (!brushDomain || !isBrushActive) {
       if (filteredData.length !== data.length) {
         setFilteredData(data);
         setProcessedFilteredData(processedData);
       }
+      return;
+    }
+
+    // Throttle the actual filtering logic
+    if (!canUpdateFilteredDataRef.current) {
+      // Skip update if throttled
       return;
     }
     
@@ -342,11 +426,24 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
     // Process filtered data for bar stack
     const processedFiltered = processDataForBarStack(filtered);
     
+    // Apply filter and start throttle period
     setFilteredData(filtered.length > 0 ? filtered : data);
     setProcessedFilteredData(processedFiltered.length > 0 ? processedFiltered : processedData);
-  }, [brushDomain, data, isBrushActive, filteredData.length, processedData]);
+    
+    canUpdateFilteredDataRef.current = false; // Prevent updates during throttle period
+
+    // Clear previous timeout just in case
+    if (throttleTimeoutRef.current) {
+      clearTimeout(throttleTimeoutRef.current);
+    }
+
+    // Set timeout to allow updates again after interval
+    throttleTimeoutRef.current = setTimeout(() => {
+      canUpdateFilteredDataRef.current = true;
+    }, 100); // 100ms throttle interval
+  }, [brushDomain, data, processedData, isBrushActive, filteredData.length]);
   
-  // Apply brush domain to filter modal data
+  // Apply brush domain to filter modal data with throttling
   useEffect(() => {
     if (modalData.length === 0) {
       if (modalFilteredData.length > 0) {
@@ -363,12 +460,18 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
       return;
     }
     
-    // If no brush domain is set or full range is selected, show all data
+    // If no brush domain is set or brush is not active, show all data
     if (!modalBrushDomain || !isModalBrushActive) {
       if (modalFilteredData.length !== modalData.length) {
         setModalFilteredData(modalData);
         setModalProcessedFilteredData(modalProcessedData);
       }
+      return;
+    }
+    
+    // Throttle the actual filtering logic
+    if (!canUpdateModalFilteredDataRef.current) {
+      // Skip update if throttled
       return;
     }
     
@@ -384,21 +487,43 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
     // Process filtered data for bar stack
     const processedFiltered = processDataForBarStack(filtered);
     
+    // Apply filter and start throttle period
     setModalFilteredData(filtered.length > 0 ? filtered : modalData);
     setModalProcessedFilteredData(processedFiltered.length > 0 ? processedFiltered : modalProcessedData);
-  }, [modalBrushDomain, modalData, isModalBrushActive, modalFilteredData.length, modalProcessedData]);
+    
+    canUpdateModalFilteredDataRef.current = false; // Prevent updates during throttle period
+
+    // Clear previous timeout just in case
+    if (modalThrottleTimeoutRef.current) {
+      clearTimeout(modalThrottleTimeoutRef.current);
+    }
+
+    // Set timeout to allow updates again after interval
+    modalThrottleTimeoutRef.current = setTimeout(() => {
+      canUpdateModalFilteredDataRef.current = true;
+    }, 100); // 100ms throttle interval
+  }, [modalBrushDomain, modalData, modalProcessedData, isModalBrushActive, modalFilteredData.length]);
   
   // Handle modal-related effects
   useEffect(() => {
     if (isModalOpen) {
+      // Initialize with main chart time filter
       setModalTimeFilter(timeFilter);
+      
+      // Initialize with current main chart data
       setModalData(data);
       setModalFilteredData(filteredData.length > 0 ? filteredData : data);
       setModalProcessedData(processedData);
       setModalProcessedFilteredData(processedFilteredData.length > 0 ? processedFilteredData : processedData);
+      
+      // Initialize brush state
       setModalBrushDomain(brushDomain);
       setIsModalBrushActive(isBrushActive);
+      
+      // Initialize available segments
       setModalAvailableSegments(availableSegments);
+      
+      // Fetch fresh data for modal
       fetchModalData();
     }
   }, [
@@ -421,47 +546,78 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
     }
   }, [onTimeFilterChange]);
   
-  // Handle tooltip hover
-  const handleBarHover = useCallback((event: React.MouseEvent<SVGRectElement>, barData: any, date: string, segment: string) => {
-    // Get coordinates
-    const coords = localPoint(event) || { x: 0, y: 0 };
+  // Handle tooltip hover with improved boundary checking and performance
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+    const containerRef = isModal ? modalChartRef : chartRef;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
     
-    // Create tooltip segments data
-    const segments = availableSegments.map(seg => ({
-      name: seg,
-      value: barData[seg] || 0,
-      color: getSegmentColor(seg)
-    }));
+    // Define consistent margins for proper boundary checking
+    const margin = { left: 45, right: 15 };
+    const innerWidth = rect.width - margin.left - margin.right;
     
-    setTooltip({
-      visible: true,
-      date,
-      segments,
-      left: coords.x,
-      top: coords.y
-    });
-  }, [availableSegments]);
-  
-  // Handle modal tooltip hover
-  const handleModalBarHover = useCallback((event: React.MouseEvent<SVGRectElement>, barData: any, date: string, segment: string) => {
-    // Get coordinates
-    const coords = localPoint(event) || { x: 0, y: 0 };
+    // Hide tooltip if mouse is outside the chart area
+    if (mouseX < margin.left || mouseX > innerWidth + margin.left) {
+      if (tooltip.visible) {
+        setTooltip(prev => ({ ...prev, visible: false }));
+      }
+      return;
+    }
     
-    // Create tooltip segments data
-    const segments = modalAvailableSegments.map(seg => ({
-      name: seg,
-      value: barData[seg] || 0,
-      color: getSegmentColor(seg)
-    }));
+    // Use appropriate data based on context
+    const activeAvailableSegments = isModal ? modalAvailableSegments : availableSegments;
+    const currentData = isModal 
+      ? (isModalBrushActive ? modalProcessedFilteredData : modalProcessedData)
+      : (isBrushActive ? processedFilteredData : processedData);
     
-    setTooltip({
-      visible: true,
-      date,
-      segments,
-      left: coords.x,
-      top: coords.y
-    });
-  }, [modalAvailableSegments]);
+    if (currentData.length === 0) return;
+    
+    // Find the bar/date based on mouse position
+    const barWidth = innerWidth / currentData.length;
+    const barIndex = Math.floor((mouseX - margin.left) / barWidth);
+    
+    if (barIndex >= 0 && barIndex < currentData.length) {
+      const barData = currentData[barIndex];
+      const date = barData.date;
+      
+      // Only update if showing a new date or hiding previous one
+      const isNewDate = !tooltip.visible || tooltip.date !== date;
+      
+      if (isNewDate) {
+        // Create tooltip segments data
+        const segments = activeAvailableSegments
+          .filter(seg => barData[seg] > 0)
+          .map(seg => ({
+            name: seg,
+            value: barData[seg] || 0,
+            color: getSegmentColor(seg)
+          }))
+          .sort((a, b) => b.value - a.value);
+        
+        setTooltip({
+          visible: true,
+          date,
+          segments,
+          left: mouseX,
+          top: mouseY
+        });
+      }
+    } else {
+      // Hide tooltip if index is out of range
+      if (tooltip.visible) {
+        setTooltip(prev => ({ ...prev, visible: false }));
+      }
+    }
+  }, [
+    availableSegments, modalAvailableSegments, 
+    processedData, processedFilteredData, 
+    modalProcessedData, modalProcessedFilteredData,
+    isBrushActive, isModalBrushActive,
+    tooltip.visible, tooltip.date
+  ]);
   
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
@@ -484,7 +640,13 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
     const activeBrushDomain = isModal ? modalBrushDomain : brushDomain;
     const activeIsBrushActive = isModal ? isModalBrushActive : isBrushActive;
     const activeHandleBrushChange = isModal ? handleModalBrushChange : handleBrushChange;
-    const activeHandleBarHover = isModal ? handleModalBarHover : handleBarHover;
+    
+    // Process data for brush to ensure line stays within brush area
+    const activeBrushData = processDataForBrush(activeData);
+    
+    // Define consistent margins for chart and brush to ensure alignment
+    const chartMargin = { top: 10, right: 15, bottom: 30, left: 45 };
+    const brushMargin = { top: 5, right: 15, bottom: 10, left: 45 };
     
     // Show loading state
     if (activeLoading) {
@@ -517,7 +679,7 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
             items={tooltip.segments.map(segment => ({
               color: segment.color,
               label: getSegmentDisplayName(segment.name),
-              value: formatCurrency(segment.value),
+              value: formatRevenueValue(segment.value),
               shape: 'square'
             }))}
             top={tooltip.top}
@@ -529,13 +691,14 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
         {/* Main chart */}
         <div className="h-[85%] w-full overflow-hidden relative"
           ref={isModal ? modalChartRef : chartRef}
+          onMouseMove={(e) => handleMouseMove(e, isModal)}
           onMouseLeave={handleMouseLeave}
         >
           <ParentSize>
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null; 
               
-              const margin = { top: 10, right: 45, bottom: 30, left: 60 };
+              const margin = chartMargin;
               const innerWidth = width - margin.left - margin.right;
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;
@@ -595,29 +758,23 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
                     >
                       {(barStacks) => 
                         barStacks.map((barStack) => 
-                          barStack.bars.map((bar) => (
-                            <rect
-                              key={`bar-stack-${barStack.index}-${bar.index}`}
-                              x={bar.x}
-                              y={bar.y}
-                              height={bar.height}
-                              width={bar.width}
-                              fill={bar.color}
-                              opacity={0.9}
-                              rx={2}
-                              onMouseMove={(event) => {
-                                if (barStack.index >= 0 && barStack.index < displayData.length) {
-                                  activeHandleBarHover(
-                                    event, 
-                                    displayData[barStack.index], 
-                                    displayData[barStack.index].date, 
-                                    bar.key
-                                  );
-                                }
-                              }}
-                              onMouseLeave={handleMouseLeave}
-                            />
-                          ))
+                          barStack.bars.map((bar) => {
+                            // Check if this bar's date matches the tooltip date for highlighting
+                            const isHighlighted = tooltip.visible && tooltip.date === displayData[barStack.index].date;
+                            
+                            return (
+                              <rect
+                                key={`bar-stack-${barStack.index}-${bar.index}`}
+                                x={bar.x}
+                                y={bar.y}
+                                height={bar.height}
+                                width={bar.width}
+                                fill={bar.color}
+                                opacity={isHighlighted ? 1 : 0.75}
+                                rx={2}
+                              />
+                            );
+                          })
                         )
                       }
                     </BarStack>
@@ -661,7 +818,7 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
                       tickStroke="transparent" 
                       tickLength={0} 
                       numTicks={5}
-                      tickFormat={(value) => formatCurrency(value as number)}
+                      tickFormat={(value) => formatRevenueValue(value as number)}
                       tickLabelProps={() => ({ 
                         fill: '#6b7280', 
                         fontSize: 11, 
@@ -682,7 +839,7 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
         {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
           <BrushTimeScale
-            data={activeData}
+            data={activeBrushData}
             isModal={isModal}
             activeBrushDomain={activeBrushDomain}
             onBrushChange={activeHandleBrushChange}
@@ -695,10 +852,10 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
                 setIsBrushActive(false);
               }
             }}
-            getDate={(d) => d.block_date}
-            getValue={(d) => d.protocol_revenue}
+            getDate={(d) => d.date}
+            getValue={(d) => d.value}
             lineColor={segmentColors.DeFi}
-            margin={{ top: 5, right: 45, bottom: 10, left: 60 }}
+            margin={brushMargin}
           />
         </div>
       </div>
@@ -707,25 +864,8 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
   
   return (
     <div className="h-full w-full relative">
-      {/* Add time filter at top right corner */}
-      {!isModalOpen && (
-        <div className="absolute right-0 top-0 z-10">
-          <TimeFilterSelector
-            value={timeFilter}
-            onChange={(val) => {
-              if (onTimeFilterChange) {
-                onTimeFilterChange(val as TimeFilter);
-              }
-            }}
-            options={[
-              { value: 'W', label: 'W' },
-              { value: 'M', label: 'M' },
-              { value: 'Q', label: 'Q' },
-              { value: 'Y', label: 'Y' }
-            ]}
-          />
-        </div>
-      )}
+      
+      
       
       {renderChartContent(0, 0)}
       
@@ -788,7 +928,7 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
                       label={getSegmentDisplayName(segment)}
                       color={getSegmentColor(segment)}
                       shape="square"
-                      tooltipText={formatCurrency(
+                      tooltipText={formatRevenueValue(
                         modalData
                           .filter(d => d.segment === segment)
                           .reduce((sum, d) => sum + d.protocol_revenue, 0)

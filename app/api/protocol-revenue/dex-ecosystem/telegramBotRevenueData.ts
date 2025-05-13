@@ -62,7 +62,7 @@ export async function fetchTelegramBotRevenueData(): Promise<TelegramBotRevenueD
     }
 
     // Extract raw data from API response
-    let rawData: TelegramBotRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
+    const rawData: TelegramBotRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
       month: row.month,
       platform: row.platform,
       protocol_revenue: parseFloat(row.protocol_revenue) || 0

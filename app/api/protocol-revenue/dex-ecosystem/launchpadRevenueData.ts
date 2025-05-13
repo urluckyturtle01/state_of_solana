@@ -53,7 +53,7 @@ export async function fetchLaunchpadRevenueData(): Promise<LaunchpadRevenueDataP
     }
 
     // Extract raw data from API response
-    let rawData: LaunchpadRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
+    const rawData: LaunchpadRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
       month: row.month,
       platform: row.platform,
       protocol_revenue: parseFloat(row.protocol_revenue) || 0

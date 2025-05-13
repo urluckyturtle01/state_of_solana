@@ -54,7 +54,7 @@ export async function fetchTradingAppRevenueData(): Promise<TradingAppRevenueDat
     }
 
     // Extract raw data from API response
-    let rawData: TradingAppRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
+    const rawData: TradingAppRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
       month: row.month,
       platform: row.platform,
       protocol_revenue: parseFloat(row.protocol_revenue) || 0

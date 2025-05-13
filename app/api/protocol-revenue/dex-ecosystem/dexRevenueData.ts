@@ -55,7 +55,7 @@ export async function fetchDexRevenueData(): Promise<DexRevenueDataPoint[]> {
     }
 
     // Extract raw data from API response, keeping original dates (no normalization)
-    let rawData: DexRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
+    const rawData: DexRevenueDataPoint[] = data.query_result.data.rows.map((row: any) => ({
       month: row.month,
       platform: row.platform,
       protocol_revenue: parseFloat(row.protocol_revenue) || 0
@@ -95,11 +95,11 @@ function generateMockData(): Promise<DexRevenueDataPoint[]> {
   const currentDate = new Date();
   
   // Create 12 months of data points (full year view)
-  let startDate = new Date();
+  const startDate = new Date();
   startDate.setMonth(currentDate.getMonth() - 11); // Full year of data
   
   // Create monthly data points
-  let currentMonth = new Date(startDate);
+  const currentMonth = new Date(startDate);
   while (currentMonth <= currentDate) {
     platforms.forEach(platform => {
       // Base revenue that increases over time with some randomness

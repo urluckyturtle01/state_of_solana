@@ -69,6 +69,20 @@ const dappColors: Record<string, string> = {
   'default': '#6b7280',
 };
 
+// Format currency values more concisely (no decimal places for millions)
+const formatRevenueValue = (value: number): string => {
+  if (value >= 1e9) {
+    return `$${Math.round(value / 1e9)}B`;
+  }
+  if (value >= 1e6) {
+    return `$${Math.round(value / 1e6)}M`;
+  }
+  if (value >= 1e3) {
+    return `$${Math.round(value / 1e3)}K`;
+  }
+  return `$${Math.round(value)}`;
+};
+
 // Get color for a dapp with fallback to default
 const getDappColor = (dapp: string): string => {
   return dappColors[dapp] || dappColors.default;
@@ -403,8 +417,8 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
     // Check if we have data to work with
     if (currentData.length === 0) return;
     
-    // Calculate margins
-    const margin = { top: 40, right: 20, bottom: 60, left: 70 };
+    // Calculate margins - use the same margin definition as in the chart
+    const margin = { top: 10, right: 15, bottom: 30, left: 45 };
     const innerWidth = rect.width - margin.left - margin.right;
     
     // Calculate segment width
@@ -493,7 +507,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
             items={tooltip.dapps.map(dapp => ({
               color: dapp.color,
               label: dapp.name,
-              value: formatCurrency(dapp.value),
+              value: formatRevenueValue(dapp.value),
               shape: 'square' as const
             }))}
             top={tooltip.top}
@@ -512,7 +526,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null;
               
-              const margin = { top: 10, right: 45, bottom: 30, left: 60 };
+              const margin = { top: 10, right: 15, bottom: 30, left: 45 };
               const innerWidth = width - margin.left - margin.right;
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;
@@ -627,7 +641,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
                       tickLength={0}
                       hideZero={true}
                       numTicks={5}
-                      tickFormat={(value) => formatCurrency(value as number)}
+                      tickFormat={(value) => formatRevenueValue(value as number)}
                       tickLabelProps={() => ({
                         fill: '#6b7280',
                         fontSize: 11,
@@ -647,33 +661,25 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
         
         {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
-          <ParentSize>
-            {({ width, height }) => {
-              if (width <= 0 || height <= 0) return null;
-              
-              return (
-                <BrushTimeScale
-                  data={allData}
-                  isModal={isModal}
-                  activeBrushDomain={activeBrushDomain}
-                  onBrushChange={activeHandleBrushChange}
-                  onClearBrush={() => {
-                    if (isModal) {
-                      setModalBrushDomain(null);
-                      setIsModalBrushActive(false);
-                    } else {
-                      setBrushDomain(null);
-                      setIsBrushActive(false);
-                    }
-                  }}
-                  getDate={(d) => d.date ? d.date.toISOString() : ''}
-                  getValue={(d) => d.protocol_revenue}
-                  lineColor={dappColors.Photon}
-                  margin={{ top: 5, right: 45, bottom: 10, left: 60 }}
-                />
-              );
+          <BrushTimeScale
+            data={allData}
+            isModal={isModal}
+            activeBrushDomain={activeBrushDomain}
+            onBrushChange={activeHandleBrushChange}
+            onClearBrush={() => {
+              if (isModal) {
+                setModalBrushDomain(null);
+                setIsModalBrushActive(false);
+              } else {
+                setBrushDomain(null);
+                setIsBrushActive(false);
+              }
             }}
-          </ParentSize>
+            getDate={(d) => d.date ? d.date.toISOString() : ''}
+            getValue={(d) => d.protocol_revenue}
+            lineColor={dappColors.Photon}
+            margin={{ top: 5, right: 15, bottom: 10, left: 45 }}
+          />
         </div>
       </div>
     );
@@ -723,7 +729,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
                         label={dapp}
                         color={getDappColor(dapp)}
                         shape="square"
-                        tooltipText={formatCurrency(dappRevenue)}
+                        tooltipText={formatRevenueValue(dappRevenue)}
                       />
                     );
                   })}

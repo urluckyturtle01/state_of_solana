@@ -35,10 +35,37 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-// Colors for medium categories
-const mediumColors: { [key: string]: string } = {
-  "Direct": colors[0], // blue (1st color)
-  "Aggregator": colors[1] // orange (4th color)
+// Medium categories
+const mediumCategories = ['Direct', 'Aggregator'];
+
+// Get colors for medium categories based on volume data
+const getMediumColors = (data: DexVolumeChartPoint[]): { [key: string]: string } => {
+  // Calculate total volume for each medium
+  const volumeByMedium: { [key: string]: number } = {};
+  
+  mediumCategories.forEach(medium => {
+    volumeByMedium[medium] = 0;
+  });
+  
+  // Sum volumes across all DEXs for each medium
+  data.forEach(item => {
+    mediumCategories.forEach(medium => {
+      volumeByMedium[medium] += Number(item[medium] || 0);
+    });
+  });
+  
+  // Sort mediums by total volume
+  const sortedMediums = mediumCategories
+    .map(medium => ({ name: medium, volume: volumeByMedium[medium] }))
+    .sort((a, b) => b.volume - a.volume);
+  
+  // Assign colors based on volume ranking
+  const mediumColors: { [key: string]: string } = {};
+  sortedMediums.forEach((medium, index) => {
+    mediumColors[medium.name] = colors[index % colors.length];
+  });
+  
+  return mediumColors;
 };
 
 // Chart colors for styling
@@ -47,9 +74,6 @@ export const dexVolumeChartColors = {
   axisLines: axisLines,
   tickLabels: tickLabels,
 };
-
-// Medium categories
-const mediumCategories = ['Direct', 'Aggregator'];
 
 interface DexVolumeChartProps {
   displayMode: DisplayMode;
@@ -208,7 +232,7 @@ export default function DexVolumeChart({
       key: medium,
       displayName: medium,
       shape: 'square',
-      color: mediumColors[medium] || tickLabels
+      color: dexVolumeChartColors.tickLabels
     }));
   };
   
@@ -221,6 +245,9 @@ export default function DexVolumeChart({
     const activeError = isModal ? modalError : error;
     const activeDisplayMode = isModal ? modalDisplayMode : displayMode;
     const activeData = isModal ? modalData : data;
+    
+    // Get dynamic medium colors based on the current dataset
+    const mediumColorMap = getMediumColors(activeData);
     
     // Show loading state
     if (activeLoading) {
@@ -253,7 +280,7 @@ export default function DexVolumeChart({
               tooltip.items && tooltip.items.length > 0 ? tooltip.items :
               // Otherwise use the single medium/value from original tooltip
               [{
-                color: mediumColors[tooltip.medium] || tickLabels,
+                color: mediumColorMap[tooltip.medium] || tickLabels,
                 label: tooltip.medium,
                 value: formatVolume(tooltip.value),
                 shape: 'square'
@@ -301,7 +328,7 @@ export default function DexVolumeChart({
               // Create items for all mediums with non-zero values
               const tooltipItems = mediumCategories
                 .map(medium => ({
-                  color: mediumColors[medium] || tickLabels,
+                  color: mediumColorMap[medium] || tickLabels,
                   label: medium,
                   value: formatVolume(Number(dataPoint[medium] || 0)),
                   rawValue: Number(dataPoint[medium] || 0),
@@ -364,7 +391,7 @@ export default function DexVolumeChart({
               
               const colorScale = scaleOrdinal<string, string>({
                 domain: mediumCategories,
-                range: mediumCategories.map(cat => mediumColors[cat] || tickLabels)
+                range: mediumCategories.map(cat => mediumColorMap[cat] || tickLabels)
               });
               
               // Prepare data for BarStack - convert to percentage if needed
@@ -504,6 +531,7 @@ export default function DexVolumeChart({
   // Render the modal content with enhanced UI and filters
   const renderModalContent = () => {
     const categories = getAvailableCategories();
+    const mediumColorMap = getMediumColors(modalData);
     
     return (
       <div className="p-4 w-full h-full">
@@ -543,7 +571,7 @@ export default function DexVolumeChart({
                     <div key={`modal-legend-${index}`} className="flex items-start">
                       <div 
                         className="w-2.5 h-2.5 mr-1.5 rounded-sm mt-0.5"
-                        style={{ background: category.color }}
+                        style={{ background: mediumColorMap[category.displayName] || category.color }}
                       ></div>
                       <span className="text-[11px] text-gray-300">
                         {category.displayName}
@@ -574,6 +602,7 @@ export default function DexVolumeChart({
   // Render legend for main chart view
   const renderLegend = () => {
     const categories = getAvailableCategories();
+    const mediumColorMap = getMediumColors(data);
     
     return (
       <div className="flex flex-wrap gap-2 mt-2">
@@ -581,7 +610,7 @@ export default function DexVolumeChart({
           <div key={`legend-${index}`} className="flex items-center">
             <div 
               className="w-3 h-3 mr-1 rounded-sm" 
-              style={{ background: category.color }}
+              style={{ background: mediumColorMap[category.displayName] || category.color }}
             ></div>
             <span className="text-xs text-gray-300">{category.displayName}</span>
           </div>

@@ -33,6 +33,20 @@ const chartColors = {
   axis: '#374151'
 };
 
+// Format currency values more concisely (no decimal places for millions)
+const formatCurrency = (value: number): string => {
+  if (value >= 1e9) {
+    return `$${Math.round(value / 1e9)}B`;
+  }
+  if (value >= 1e6) {
+    return `$${Math.round(value / 1e6)}M`;
+  }
+  if (value >= 1e3) {
+    return `$${Math.round(value / 1e3)}K`;
+  }
+  return `$${Math.round(value)}`;
+};
+
 // Define RefreshIcon component
 const RefreshIcon = ({ className = "w-4 h-4" }) => {
   return (
@@ -61,6 +75,27 @@ interface CumulativeRevenueChartProps {
   onTimeFilterChange?: (filter: TimeFilter) => void;
   legendsChanged?: (legends: {label: string, color: string, value?: number}[]) => void;
 }
+
+// Process data for brush component - ensure one data point per month
+const processDataForBrush = (data: ProtocolRevenueDataPoint[]) => {
+  if (!data || data.length === 0) return [];
+  
+  // Group data by month to ensure one data point per month
+  const revenueByMonth = data.reduce<Record<string, number>>((acc, curr) => {
+    if (!acc[curr.month]) {
+      acc[curr.month] = 0;
+    }
+    acc[curr.month] += curr.cumulative_protocol_revenue;
+    return acc;
+  }, {});
+  
+  // Convert to array of { month, date, value } objects for the brush
+  return Object.entries(revenueByMonth).map(([month, value]) => ({
+    month,
+    date: new Date(month),
+    value
+  }));
+};
 
 // Main chart component
 const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({ 
@@ -443,6 +478,13 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
       );
     }
     
+    // Define consistent margins for chart and brush to ensure alignment
+    const chartMargin = { top: 10, right: 15, bottom: 30, left: 45 };
+    const brushMargin = { top: 5, right: chartMargin.right, bottom: 10, left: chartMargin.left };
+    
+    // Process data for brush
+    const brushData = processDataForBrush(activeData);
+    
     return (
       <div className="flex flex-col h-full">
         {tooltip.visible && tooltip.dataPoint && (() => {
@@ -451,13 +493,13 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
             {
               color: chartColors.protocolRevenue,
               label: 'Protocol Revenue',
-              value: formatValue(tooltip.dataPoint.cumulative_protocol_revenue),
+              value: formatCurrency(tooltip.dataPoint.cumulative_protocol_revenue),
               shape: 'square' as const
             },
             {
               color: chartColors.solanaRevenue,
               label: 'Solana Revenue',
-              value: formatValue(tooltip.dataPoint.Cumulative_Solana_Rev),
+              value: formatCurrency(tooltip.dataPoint.Cumulative_Solana_Rev),
               shape: 'square' as const
             }
           ];
@@ -483,7 +525,7 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
             {({ width, height }) => {
               if (width <= 0 || height <= 0) return null;
               
-              const margin = { top: 10, right: 45, bottom: 30, left: 60 };
+              const margin = chartMargin;
               const innerWidth = width - margin.left - margin.right;
               const innerHeight = height - margin.top - margin.bottom;
               if (innerWidth <= 0 || innerHeight <= 0) return null;
@@ -586,7 +628,7 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
                       tickStroke="transparent"
                       tickLength={0}
                       numTicks={5}
-                      tickFormat={(value) => formatValue(value as number)}
+                      tickFormat={(value) => formatCurrency(value as number)}
                       tickLabelProps={() => ({ 
                         fill: '#6b7280', 
                         fontSize: 11, 
@@ -633,18 +675,18 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
         {/* Brush component */}
         <div className="h-[15%] w-full mt-1">
           <BrushTimeScale
-            data={isModal ? modalData : data}
+            data={brushData}
             isModal={isModal}
-            activeBrushDomain={isModal ? modalBrushDomain : brushDomain}
-            onBrushChange={isModal ? handleModalBrushChange : handleBrushChange}
+            activeBrushDomain={activeBrushDomain}
+            onBrushChange={activeHandleBrushChange}
             onClearBrush={isModal 
               ? () => { setModalBrushDomain(null); setIsModalBrushActive(false); }
               : () => { setBrushDomain(null); setIsBrushActive(false); }
             }
-            getDate={(d) => d.month}
-            getValue={(d) => d.cumulative_protocol_revenue}
+            getDate={(d) => d.date.toISOString()}
+            getValue={(d) => d.value}
             lineColor={chartColors.protocolRevenue}
-            margin={{ top: 5, right: 25, bottom: 10, left: 60 }}
+            margin={brushMargin}
           />
         </div>
       </div>
