@@ -250,7 +250,7 @@ const generateFallbackData = (timeFilter: TimeFilter): RevenueBySegmentDataPoint
 
 // Function to get color for a segment
 export const getSegmentColor = (segment: string): string => {
-  return segmentColors[segment] || gray; // Default to gray color if segment not found
+  return segmentColors[segment] || colors[9]; // Default to gray color (colors[9]) if segment not found
 };
 
 // Format currency values
