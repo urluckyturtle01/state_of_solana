@@ -85,7 +85,16 @@ export const validateApiEndpoint = async (
     if (parameters && Object.keys(parameters).length > 0) {
       // Format exactly as in the cURL example: {"parameters":{"Date Part":"W"}}
       options.body = JSON.stringify({ parameters });
-      console.log(`Sending API request with exact format:`, options.body);
+      
+      // Log parameters in a more readable format
+      console.log(`API request parameters:`, JSON.stringify(parameters, null, 2));
+      console.log(`Full request body:`, options.body);
+      
+      // Log parameter validation info for debugging
+      const paramKeys = Object.keys(parameters);
+      if (paramKeys.length > 1) {
+        console.log(`Multiple parameters detected (${paramKeys.length}): ${paramKeys.join(', ')}`);
+      }
     }
     
     // Log the API request being made for debugging
@@ -107,9 +116,41 @@ export const validateApiEndpoint = async (
       console.log(`API response status: ${response.status} ${response.statusText}`);
       
       if (!response.ok) {
+        // Try to get error details from the response body
+        let errorDetail = '';
+        let errorJson = null;
+        
+        try {
+          const errorText = await response.text();
+          errorDetail = errorText.length > 0 ? ` Error details: ${errorText}` : '';
+          
+          // Try to parse the error as JSON for more specific handling
+          try {
+            errorJson = JSON.parse(errorText);
+          } catch {
+            // Not JSON, continue with text error
+          }
+          
+          // Check for common parameter errors and provide helpful messages
+          if (errorJson && errorJson.message) {
+            if (errorJson.message.includes('parameter values are incompatible')) {
+              // Extract the parameter name if possible
+              const paramMatch = errorJson.message.match(/parameter values are incompatible.*?: (.+?)($|\})/i);
+              const paramName = paramMatch ? paramMatch[1].trim() : null;
+              
+              if (paramName) {
+                return {
+                  valid: false,
+                  message: `Parameter error: "${paramName}" appears to be incompatible. This might be due to incorrect case sensitivity - ensure the parameter name matches exactly what the API expects (e.g., "currency" vs "Currency").`
+                };
+              }
+            }
+          }
+        } catch (_) { /* Ignore error reading body */ }
+        
         return {
           valid: false,
-          message: `API request failed with status ${response.status}: ${response.statusText}. Check if the URL is correct and accessible.`
+          message: `API request failed with status ${response.status}: ${response.statusText}.${errorDetail} Check if the URL is correct and accessible.`
         };
       }
       
@@ -178,9 +219,14 @@ export const validateApiEndpoint = async (
         };
       }
       
+      // Include parameter info in success message
+      const paramInfo = parameters && Object.keys(parameters).length > 0 
+        ? ` (with ${Object.keys(parameters).length} filter parameters)` 
+        : '';
+      
       return {
         valid: true,
-        message: `API endpoint is valid. Found ${rows.length} rows and ${columns.length} columns.`,
+        message: `API endpoint is valid${paramInfo}. Found ${rows.length} rows and ${columns.length} columns.`,
         data: {
           columns,
           sampleRows: rows.slice(0, 3) // Return first 3 rows as sample

@@ -6,7 +6,7 @@ import LegendItem from "@/app/components/shared/LegendItem";
 import NFTMarketplaceRevenueChart from "@/app/components/charts/protocol-revenue/nft-ecosystem/NFTMarketplaceRevenueChart";
 import { prepareNFTMarketplaceRevenueCSV } from "@/app/api/protocol-revenue/nft-ecosystem/nftMarketplaceRevenueData";
 import { handleCSVDownload } from "@/app/utils/csvDownload";
-import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
+import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
 
 export default function NFTEcosystemPage() {
   const [modalOpen, setModalOpen] = useState(false);

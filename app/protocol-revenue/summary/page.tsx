@@ -7,7 +7,7 @@ import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import Loader from "../../components/shared/Loader";
 import ProtocolRevenueChart from "../../components/charts/protocol-revenue/summary/ProtocolRevenueChart";
 import PlatformRevenueStacked from "../../components/charts/protocol-revenue/summary/PlatformRevenueStacked";
-import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
+import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
 
 import { getLatestProtocolRevenueStats, prepareProtocolRevenueCSV } from "../../api/protocol-revenue/summary/chartData";
 import { TimeFilter } from "../../api/protocol-revenue/summary/chartData";

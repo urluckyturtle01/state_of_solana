@@ -16,7 +16,7 @@ import { prepareTopProtocolsCSV } from "@/app/api/protocol-revenue/total/topProt
 import { prepareRevenueBySegmentCSV } from "@/app/api/protocol-revenue/total/revenueBySegmentData";
 import { prepareDappRevenueCSV } from "@/app/api/protocol-revenue/total/dappRevenueData";
 import { handleCSVDownload } from "@/app/utils/csvDownload";
-import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
+import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
 
 // Ensure we only use the valid time filters for our specific component
 type RevenueTimeFilter = 'W' | 'M' | 'Q' | 'Y';

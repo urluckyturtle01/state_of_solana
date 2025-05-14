@@ -15,7 +15,7 @@ import { prepareLaunchpadRevenueCSV } from "@/app/api/protocol-revenue/dex-ecosy
 import { prepareTradingAppRevenueCSV } from "@/app/api/protocol-revenue/dex-ecosystem/tradingAppRevenueData";
 import { prepareTelegramBotRevenueCSV } from "@/app/api/protocol-revenue/dex-ecosystem/telegramBotRevenueData";
 import { handleCSVDownload } from "@/app/utils/csvDownload";
-import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
+import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
 
 export default function ProtocolRevenueDexEcosystemPage() {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('absolute');

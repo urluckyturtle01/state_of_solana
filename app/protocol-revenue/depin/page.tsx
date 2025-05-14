@@ -6,7 +6,7 @@ import LegendItem from "@/app/components/shared/LegendItem";
 import DePinRevenueChart from "@/app/components/charts/protocol-revenue/depin/DePinRevenueChart";
 import { prepareDePinRevenueCSV } from "@/app/api/protocol-revenue/depin/depinRevenueData";
 import { handleCSVDownload } from "@/app/utils/csvDownload";
-import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
+import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
 
 export default function DePinPage() {
   const [modalOpen, setModalOpen] = useState(false);

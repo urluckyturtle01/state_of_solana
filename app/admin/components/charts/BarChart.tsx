@@ -113,14 +113,18 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   const xKey = typeof xField === 'string' ? xField : xField[0];
   const yKey = typeof yField === 'string' ? yField : yField[0];
   
-  // Determine if we should use stacked bar mode
-  const isStacked = (chartConfig.isStacked || chartConfig.chartType.includes('stacked')) && groupByField;
+  // Determine if we should use stacked bar mode - now checking for multiple y-axis fields as alternative
+  const isStacked = chartConfig.isStacked || chartConfig.chartType.includes('stacked');
   // Determine if we should use multi-series mode (multiple y-axis fields)
   const isMultiSeries = Array.isArray(yField) && yField.length > 1;
+  // Determine if this is a stacked chart with multiple y-axis fields (no groupBy needed)
+  const isStackedMultiSeries = isStacked && isMultiSeries;
 
   // Format value for tooltip
   const formatValue = useCallback((value: number) => {
-    if (value >= 1000000) {
+    if (value >= 1000000000) {
+      return `$${(value / 1000000000).toFixed(2)}B`;
+    } else if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(2)}M`;
     } else if (value >= 1000) {
       return `$${(value / 1000).toFixed(2)}K`;
@@ -133,7 +137,14 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    if (value >= 1000000) {
+    if (value >= 1000000000) {
+      // Format billions with one decimal place
+      const formattedValue = (value / 1000000000).toFixed(1);
+      // Remove trailing zeros and decimal if it's a whole number
+      return formattedValue.endsWith('.0') 
+        ? `${formattedValue.slice(0, -2)}B` 
+        : `${formattedValue}B`;
+    } else if (value >= 1000000) {
       // Only show 1 decimal place for millions
       const formattedValue = (value / 1000000).toFixed(1);
       // Remove trailing zeros and decimal if it's a whole number
@@ -184,8 +195,76 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     // Use external color map if available
     const preferredColorMap = externalColorMap || {};
 
+    // For stacked chart with multiple y-axis fields (no groupBy needed)
+    if (isStackedMultiSeries) {
+      // Get the actual y-axis fields as an array
+      const yFields = Array.isArray(yField) ? yField : [yField];
+      
+      // Create color map for each y-axis field, prioritizing external colors
+      const colorMap: Record<string, string> = {};
+      yFields.forEach((field, i) => {
+        if (preferredColorMap[field]) {
+          colorMap[field] = preferredColorMap[field];
+        } else {
+          colorMap[field] = getColorByIndex(i);
+        }
+      });
+      
+      // Group data by x-axis value
+      const groupedByX = dataToUse.reduce((acc: Record<string, any>, curr) => {
+        const xValue = curr[xKey];
+        if (xValue === undefined || xValue === null) return acc;
+        
+        if (!acc[xValue]) {
+          acc[xValue] = { [xKey]: xValue };
+          // Initialize all y-fields to 0
+          yFields.forEach(field => {
+            acc[xValue][field] = 0;
+          });
+        }
+        
+        // Add each y-field value to the appropriate aggregation
+        yFields.forEach(field => {
+          if (curr[field] !== undefined && curr[field] !== null) {
+            acc[xValue][field] = (acc[xValue][field] || 0) + (Number(curr[field]) || 0);
+          }
+        });
+        
+        return acc;
+      }, {});
+      
+      // Convert back to array and sort by x-axis value
+      let processedData = Object.values(groupedByX);
+      
+      // Sort by X value - check if it's a date field
+      if (processedData.length > 0) {
+        // Detect if data contains dates
+        const isDateField = typeof processedData[0][xKey] === 'string' && 
+          (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+          /^\w+\s\d{4}$/.test(processedData[0][xKey]) || // "Jan 2024" format
+          /^\d{4}$/.test(processedData[0][xKey])); // "2024" format
+        
+        if (isDateField) {
+          // Sort dates chronologically (oldest to newest)
+          processedData.sort((a, b) => {
+            const dateA = new Date(a[xKey]);
+            const dateB = new Date(b[xKey]);
+            return dateA.getTime() - dateB.getTime();
+          });
+        } else {
+          // For non-date strings, sort alphabetically
+          processedData = processedData.sort((a, b) => String(a[xKey]).localeCompare(String(b[xKey])));
+        }
+      }
+      
+      return { 
+        chartData: processedData,
+        keys: yFields,
+        groupColors: colorMap
+      };
+    }
     // For stacked chart with groupBy field
-    if (isStacked && groupByField) {
+    else if (isStacked && groupByField) {
       // Get unique values for the group by field
       // Sort them by revenue to ensure consistent ordering and color assignment
       const groupTotals = dataToUse.reduce((acc: Record<string, number>, curr) => {
@@ -240,9 +319,25 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       // Convert back to array and sort by x-axis value if it's a string
       let processedData = Object.values(groupedByX);
       
-      // Sort by X value if it's a string (often for categories)
-      if (processedData.length > 0 && typeof processedData[0][xKey] === 'string') {
-        processedData = processedData.sort((a, b) => a[xKey].localeCompare(b[xKey]));
+      // Sort by X value - check if it's a date field
+      if (processedData.length > 0) {
+        // Detect if data contains dates
+        const isDateField = typeof processedData[0][xKey] === 'string' && 
+          (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+          /^\w+\s\d{4}$/.test(processedData[0][xKey]) || // "Jan 2024" format
+          /^\d{4}$/.test(processedData[0][xKey])); // "2024" format
+        
+        if (isDateField) {
+          // Sort dates chronologically (oldest to newest)
+          processedData.sort((a, b) => {
+            const dateA = new Date(a[xKey]);
+            const dateB = new Date(b[xKey]);
+            return dateA.getTime() - dateB.getTime();
+          });
+        } else {
+          // For non-date strings, sort alphabetically
+          processedData = processedData.sort((a, b) => String(a[xKey]).localeCompare(String(b[xKey])));
+        }
       }
       
       return { 
@@ -284,6 +379,24 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         });
       });
       
+      // Sort the transformed data if it's date-based
+      if (transformedData.length > 0) {
+        // Detect if data contains dates
+        const isDateField = typeof transformedData[0][xKey] === 'string' && 
+          (transformedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+          /^\w+\s\d{4}$/.test(transformedData[0][xKey]) || // "Jan 2024" format
+          /^\d{4}$/.test(transformedData[0][xKey])); // "2024" format
+        
+        if (isDateField) {
+          // Sort dates chronologically (oldest to newest)
+          transformedData.sort((a, b) => {
+            const dateA = new Date(a[xKey]);
+            const dateB = new Date(b[xKey]);
+            return dateA.getTime() - dateB.getTime();
+          });
+        }
+      }
+      
       return { 
         chartData: transformedData,
         keys: yFields,
@@ -294,24 +407,57 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     else {
       // For regular charts, use basic color scheme
       const colorMap: Record<string, string> = {};
-      // For regular bar charts, we'll color by x-axis value
-      const uniqueXValues = dataToUse
-        .filter(d => d[xKey] !== undefined && d[xKey] !== null)
-        .map(d => String(d[xKey]));
-        
-      uniqueXValues.forEach((xValue, i) => {
-        if (preferredColorMap[xValue]) {
-          colorMap[xValue] = preferredColorMap[xValue];
-        } else {
-          colorMap[xValue] = getColorByIndex(i);
-        }
-      });
       
-      return { 
-        chartData: dataToUse.filter(d => d[xKey] !== undefined && d[xKey] !== null), 
-        keys: [yKey], 
-        groupColors: colorMap
-      };
+      // For regular bar charts, we should use a consistent color
+      // Only use different colors if specifically configured
+      const shouldUseConsistentColor = !chartConfig.useDistinctColors;
+      
+      // Filter data first
+      const filteredData = dataToUse.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+      
+      // Sort by date if applicable
+      if (filteredData.length > 0) {
+        // Detect if data contains dates
+        const isDateField = typeof filteredData[0][xKey] === 'string' && 
+          (filteredData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+           /^\w+\s\d{4}$/.test(filteredData[0][xKey]) || // "Jan 2024" format
+           /^\d{4}$/.test(filteredData[0][xKey])); // "2024" format
+        
+        if (isDateField) {
+          // Sort dates chronologically (oldest to newest)
+          filteredData.sort((a, b) => {
+            const dateA = new Date(a[xKey]);
+            const dateB = new Date(b[xKey]);
+            return dateA.getTime() - dateB.getTime();
+          });
+        }
+      }
+      
+      if (shouldUseConsistentColor) {
+        // Use a single consistent color for all bars
+        return { 
+          chartData: filteredData, 
+          keys: [yKey], 
+          groupColors: { [yKey]: blue } 
+        };
+      } else {
+        // Use different colors for each bar if specifically requested
+        const uniqueXValues = filteredData.map(d => String(d[xKey]));
+          
+        uniqueXValues.forEach((xValue, i) => {
+          if (preferredColorMap[xValue]) {
+            colorMap[xValue] = preferredColorMap[xValue];
+          } else {
+            colorMap[xValue] = getColorByIndex(i);
+          }
+        });
+        
+        return { 
+          chartData: filteredData, 
+          keys: [yKey], 
+          groupColors: colorMap
+        };
+      }
     }
   }, [data, filteredData, isBrushActive, isModalBrushActive, isExpanded, 
        xKey, yKey, groupByField, isStacked, isMultiSeries, yField, externalColorMap]);
@@ -377,8 +523,28 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       // Create tooltip items based on chart type
       let tooltipItems: { label: string, value: string | number, color: string, shape?: 'circle' | 'square' }[] = [];
       
-      if (isStacked && groupByField) {
-        // For stacked charts, show all segments in this bar
+      if (isStackedMultiSeries) {
+        // For stacked multi-series charts, show each y-axis field value
+        tooltipItems = keys
+          .filter(key => dataPoint[key] > 0)
+          .map(key => ({
+            label: key,
+            value: formatValue(dataPoint[key]),
+            color: groupColors[key],
+            shape: 'square' as 'square'
+          }))
+          .sort((a, b) => {
+            // Convert string values back to numbers for sorting
+            const aVal = typeof a.value === 'string' 
+              ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
+              : a.value;
+            const bVal = typeof b.value === 'string' 
+              ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
+              : b.value;
+            return bVal - aVal; // Descending order
+          });
+      } else if (isStacked && groupByField) {
+        // For traditional stacked charts, show all segments in this bar
         tooltipItems = keys
           .filter(key => dataPoint[key] > 0)
           .map(key => ({
@@ -420,7 +586,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         tooltipItems = [{
           label: yKey,
           value: formatValue(dataPoint[yKey]),
-          color: groupColors[xKey],
+          color: groupColors[yKey] || blue,
           shape: 'square' as 'square'
         }];
       }
@@ -800,8 +966,8 @@ const BarChartComponent: React.FC<BarChartProps> = ({
 
   // Update legend items based on the data
   useEffect(() => {
-    if (isStacked && groupByField) {
-      // For stacked charts, create legend from group values
+    if (isStackedMultiSeries || (isStacked && groupByField)) {
+      // For stacked charts, create legend from field values or group values
       // First, use our existing color map or initialize a new one
       const colorMapToUse = externalColorMap || legendColorMap;
       const isNewColorMap = Object.keys(colorMapToUse).length === 0;
@@ -859,8 +1025,11 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       // Store the current items as previous for next update
       prevLegendsRef.current = sortedItems;
       
-      // Update the color map if needed
-      if (JSON.stringify(updatedColorMap) !== JSON.stringify(legendColorMap)) {
+      // Update the color map if needed - only when there's an actual change
+      const currentMapJSON = JSON.stringify(legendColorMap);
+      const updatedMapJSON = JSON.stringify(updatedColorMap);
+      
+      if (currentMapJSON !== updatedMapJSON) {
         setLegendColorMap(updatedColorMap);
       }
       
@@ -906,8 +1075,11 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       // Store the current items as previous for next update
       prevLegendsRef.current = sortedItems;
       
-      // Update the color map if needed
-      if (JSON.stringify(updatedColorMap) !== JSON.stringify(legendColorMap)) {
+      // Update the color map if needed - only when there's an actual change
+      const currentMapJSON = JSON.stringify(legendColorMap);
+      const updatedMapJSON = JSON.stringify(updatedColorMap);
+      
+      if (currentMapJSON !== updatedMapJSON) {
         setLegendColorMap(updatedColorMap);
       }
       
@@ -936,8 +1108,11 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         color: updatedColorMap[yKey] || groupColors[yKey] || blue["500"]
       }];
       
-      // Update the color map if needed
-      if (JSON.stringify(updatedColorMap) !== JSON.stringify(legendColorMap)) {
+      // Update the color map if needed - only when there's an actual change
+      const currentMapJSON = JSON.stringify(legendColorMap);
+      const updatedMapJSON = JSON.stringify(updatedColorMap);
+      
+      if (currentMapJSON !== updatedMapJSON) {
         setLegendColorMap(updatedColorMap);
       }
     }
@@ -1038,8 +1213,8 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       );
       yMax = Math.max(...stackTotals, 1); // Ensure at least 1 to avoid div by zero
     } 
-    else if (isMultiSeries) {
-      // For multi-series, find max of all y values
+    else if (isMultiSeries && !isStacked) {
+      // For multi-series (not stacked), find max of all y values
       yMax = Math.max(...chartData.map(d => Number(d.y_value) || 0), 1);
     } 
     else {
@@ -1065,7 +1240,46 @@ const BarChartComponent: React.FC<BarChartProps> = ({
 
     // Render bars with updated styling
     const renderBars = () => {
-      if (isStacked) {
+      if (isStackedMultiSeries) {
+        return (
+          chartData.map((d, i) => {
+            const x = xScale(d[xKey]) || 0;
+            
+            // Create stack for this data point
+            let barY = innerHeight;
+            const stackedBars: React.ReactNode[] = [];
+            
+            // Generate bars for each key (y-axis field), sorted by value
+            keys
+              .filter(key => d[key] > 0)
+              .sort((a, b) => d[a] - d[b]) // Sort ascending for proper stacking
+              .forEach(key => {
+                const value = d[key] || 0;
+                const barHeight = innerHeight - yScale(value);
+                barY -= barHeight;
+                
+                stackedBars.push(
+                  <Bar
+                    key={`bar-${i}-${key}`}
+                    x={x}
+                    y={barY}
+                    width={xScale.bandwidth()}
+                    height={barHeight}
+                    fill={groupColors[key]}
+                    opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                    rx={2}
+                  />
+                );
+              });
+            
+            return (
+              <Group key={`month-${i}`}>
+                {stackedBars}
+              </Group>
+            );
+          })
+        );
+      } else if (isStacked && groupByField) {
         return (
           chartData.map((d, i) => {
             const x = xScale(d[xKey]) || 0;
@@ -1104,8 +1318,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
             );
           })
         );
-      } 
-      else if (isMultiSeries) {
+      } else if (isMultiSeries) {
         return (
           chartData.map((d, i) => {
             const barWidth = xScale.bandwidth() / keys.length;
@@ -1130,8 +1343,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
             );
           })
         );
-      } 
-      else {
+      } else {
         // Render regular bars
         return (
           chartData.map((d, i) => {
@@ -1140,8 +1352,14 @@ const BarChartComponent: React.FC<BarChartProps> = ({
             const barX = xScale(d[xKey]) || 0;
             const barY = innerHeight - barHeight;
             
-            // Use the color from the color map for this x value
-            const barColor = groupColors[d[xKey]] || getColorByIndex(i % allColorsArray.length);
+            // Use a consistent color for standard bar charts
+            // Only use the x-value based color if chart is configured for distinct colors
+            let barColor;
+            if (chartConfig.useDistinctColors) {
+              barColor = groupColors[d[xKey]] || getColorByIndex(i % allColorsArray.length);
+            } else {
+              barColor = groupColors[yKey] || blue;
+            }
             
             return (
               <Bar

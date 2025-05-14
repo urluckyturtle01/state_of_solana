@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { getChartConfigsByPage } from '../admin/utils';
-import ChartCard from '../components/shared/ChartCard';
-import LegendItem from '../components/shared/LegendItem';
-import { ChartConfig } from '../admin/types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getChartConfigsByPage } from '../utils';
+import ChartCard from '../../components/shared/ChartCard';
+import LegendItem from '../../components/shared/LegendItem';
+import { ChartConfig } from '../types';
 import dynamic from 'next/dynamic';
-import { getColorByIndex } from '../utils/chartColors';
-import { formatNumber } from '../utils/formatters';
-import Modal from '../components/shared/Modal';
-import TimeFilterSelector from '../components/shared/filters/TimeFilter';
-import CurrencyFilter from '../components/shared/filters/CurrencyFilter';
-import DisplayModeFilter, { DisplayMode } from '../components/shared/filters/DisplayModeFilter';
+import { getColorByIndex } from '../../utils/chartColors';
+import { formatNumber } from '../../utils/formatters';
+import Modal from '../../components/shared/Modal';
+import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
+import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
+import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
 
 // Format currency for display
 const formatCurrency = (value: number): string => {
@@ -19,7 +19,7 @@ const formatCurrency = (value: number): string => {
 };
 
 // Dynamic import for the ChartRenderer to avoid SSR issues
-const ChartRenderer = dynamic(() => import('../admin/components/ChartRenderer'), {
+const ChartRenderer = dynamic(() => import('./ChartRenderer'), {
   ssr: false,
 });
 
@@ -106,6 +106,12 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
     console.log(`Filter changed for chart ${chartId}: ${filterType} = ${value}`);
+    
+    // Use a function reference to prevent infinite loops
+    if (filterValues[chartId]?.[filterType] === value) {
+      // Skip update if the value hasn't changed
+      return;
+    }
     
     // Update filter value
     setFilterValues(prev => ({
@@ -511,12 +517,20 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
   };
 
   // Add a function to directly pass chart colors to ChartRenderer
-  const syncLegendColors = (chartId: string, chartColorMap: Record<string, string>) => {
+  const syncLegendColors = useCallback((chartId: string, chartColorMap: Record<string, string>) => {
+    if (!chartColorMap || Object.keys(chartColorMap).length === 0) return;
+    
+    // Compare with existing color map to prevent unnecessary updates
+    const existingColorMap = legendColorMaps[chartId] || {};
+    if (JSON.stringify(existingColorMap) === JSON.stringify(chartColorMap)) {
+      return;
+    }
+    
     setLegendColorMaps(prev => ({
       ...prev,
       [chartId]: chartColorMap
     }));
-  };
+  }, [legendColorMaps]);
 
   if (!isClient) {
     return null; // Return nothing during SSR

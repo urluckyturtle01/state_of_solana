@@ -7,7 +7,19 @@ export const AVAILABLE_PAGES = [
   { id: 'depin', name: 'DePIN', path: '/protocol-revenue/depin' }
 ] as const;
 
-export type AvailablePage = typeof AVAILABLE_PAGES[number]['id'];
+// Page IDs from all menus
+export type AvailablePage = 
+  // Original page IDs
+  | typeof AVAILABLE_PAGES[number]['id']
+  // Overview menu pages
+  | 'dashboard' | 'network-usage' | 'protocol-rev' | 'market-dynamics'
+  // DEX menu pages
+  | 'volume' | 'tvl' | 'traders' | 'aggregators'
+  // REV menu pages
+  | 'overview' | 'cost-capacity' | 'issuance-burn' | 'total-economic-value' | 'breakdown'
+  // Stablecoins menu pages
+  | 'stablecoin-usage' | 'transaction-activity' | 'liquidity-velocity' | 'mint-burn' | 'platform-exchange'
+  // Protocol Revenue menu pages - already included in AVAILABLE_PAGES
 
 // Chart visualization types
 export const CHART_TYPES = [
@@ -32,6 +44,7 @@ export interface ChartConfig {
   apiKey?: string;
   isStacked?: boolean;
   enableCategoricalBrush?: boolean;
+  useDistinctColors?: boolean;
   colorScheme?: string;
   dataMapping: {
     xAxis: string | string[];
@@ -54,6 +67,7 @@ export interface ChartFormData {
   apiKey?: string;
   isStacked?: boolean;
   enableCategoricalBrush?: boolean;
+  useDistinctColors?: boolean;
   colorScheme?: string;
   dataMapping: {
     xAxis: string | string[];

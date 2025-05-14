@@ -12,6 +12,7 @@ interface FormSelectProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   required?: boolean;
+  disabled?: boolean;
   className?: string;
   error?: string;
   helpText?: string;
@@ -24,6 +25,7 @@ export default function FormSelect({
   value,
   onChange,
   required = false,
+  disabled = false,
   className = '',
   error,
   helpText,
@@ -40,7 +42,10 @@ export default function FormSelect({
         value={value}
         onChange={onChange}
         required={required}
-        className={`mt-1 block w-full pl-3 pr-10 py-2 text-base bg-white border ${
+        disabled={disabled}
+        className={`mt-1 block w-full pl-3 pr-10 py-2 text-base ${
+          disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'
+        } border ${
           error ? 'border-red-300' : 'border-gray-300'
         } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
       >

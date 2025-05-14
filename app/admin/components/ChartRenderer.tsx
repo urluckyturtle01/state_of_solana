@@ -52,9 +52,16 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   // Add effect to forward legend colors to parent component
   useEffect(() => {
     if (onColorsGenerated && Object.keys(legendColorMap).length > 0) {
-      onColorsGenerated(legendColorMap);
+      // Check if this is actually a new color map from what we got externally
+      const externalMapStr = JSON.stringify(externalColorMap || {});
+      const currentMapStr = JSON.stringify(legendColorMap);
+      
+      // Only trigger the callback if the maps are different
+      if (externalMapStr !== currentMapStr) {
+        onColorsGenerated(legendColorMap);
+      }
     }
-  }, [legendColorMap, onColorsGenerated]);
+  }, [legendColorMap, onColorsGenerated, externalColorMap]);
 
   // Determine whether to use internal or external filter values
   const filterValues = externalFilterValues || internalFilterValues;
