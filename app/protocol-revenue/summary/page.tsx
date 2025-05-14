@@ -7,6 +7,7 @@ import TimeFilterSelector from "../../components/shared/filters/TimeFilter";
 import Loader from "../../components/shared/Loader";
 import ProtocolRevenueChart from "../../components/charts/protocol-revenue/summary/ProtocolRevenueChart";
 import PlatformRevenueStacked from "../../components/charts/protocol-revenue/summary/PlatformRevenueStacked";
+import DashboardRenderer from "@/app/protocol-revenue/dashboard-renderer";
 
 import { getLatestProtocolRevenueStats, prepareProtocolRevenueCSV } from "../../api/protocol-revenue/summary/chartData";
 import { TimeFilter } from "../../api/protocol-revenue/summary/chartData";
@@ -14,7 +15,8 @@ import { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import ChartCard from "@/app/components/shared/ChartCard";
 import LegendItem from "@/app/components/shared/LegendItem";
 import DisplayModeFilter from "@/app/components/shared/filters/DisplayModeFilter";
-import { normalizePlatformName, formatCurrency } from "@/app/api/protocol-revenue/summary/platformRevenueData";
+import { normalizePlatformName, formatCurrency, preparePlatformRevenueCSV } from "@/app/api/protocol-revenue/summary/platformRevenueData";
+import { handleCSVDownload } from "@/app/utils/csvDownload";
 
 // Define colors for charts
 const protocolRevenueColors = {
@@ -75,6 +77,7 @@ export default function ProtocolRevenueSummaryPage() {
   // Add state for download button loading
   const [isRevenueDownloading, setIsRevenueDownloading] = useState(false);
   const [isDistributionDownloading, setIsDistributionDownloading] = useState(false);
+  const [isPlatformRevenueDownloading, setIsPlatformRevenueDownloading] = useState(false);
 
   // Add state to store platforms from the chart component
   const [chartPlatforms, setChartPlatforms] = useState<{platform: string, color: string, revenue: number}[]>([]);
@@ -149,65 +152,39 @@ export default function ProtocolRevenueSummaryPage() {
     }).format(value);
   };
 
-  // Download functions - to be implemented
+  // Download functions
   const downloadRevenueCSV = async () => {
     if (isRevenueDownloading) return;
-    setIsRevenueDownloading(true);
-    
-    try {
-      // Get CSV content using the new function
-      const csvContent = await prepareProtocolRevenueCSV(timeFilter);
-      
-      if (!csvContent) {
-        console.error('No data available for CSV export');
-        alert('No data available for export');
-        return;
-      }
-      
-      // Create a blob with the CSV content
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      
-      // Create a temporary URL for the blob
-      const url = URL.createObjectURL(blob);
-      
-      // Create a temporary link element
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `protocol-revenue-${timeFilter.toLowerCase()}.csv`);
-      
-      // Append to the document and trigger click
-      document.body.appendChild(link);
-      link.click();
-      
-      // Clean up
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      console.log('Protocol revenue data downloaded successfully');
-    } catch (error) {
-      console.error('Error downloading revenue data:', error);
-      alert('Failed to download data. Please try again.');
-    } finally {
-      setIsRevenueDownloading(false);
-    }
+    await handleCSVDownload(
+      () => prepareProtocolRevenueCSV(timeFilter),
+      `protocol-revenue-${timeFilter.toLowerCase()}.csv`,
+      setIsRevenueDownloading
+    );
   };
   
   const downloadDistributionCSV = async () => {
     if (isDistributionDownloading) return;
-    setIsDistributionDownloading(true);
-    
-    try {
-      // Simulate download delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Downloading distribution data as CSV...');
-      // TODO: Implement actual CSV download
-      
-      alert('CSV download functionality will be implemented soon.');
-    } catch (error) {
-      console.error('Error downloading distribution data:', error);
-    } finally {
-      setIsDistributionDownloading(false);
-    }
+    await handleCSVDownload(
+      async () => {
+        // Simulate download delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('Downloading distribution data as CSV...');
+        // TODO: Implement actual CSV download
+        alert('CSV download functionality will be implemented soon.');
+        return '';
+      },
+      `distribution-data-${timeFilter.toLowerCase()}.csv`,
+      setIsDistributionDownloading
+    );
+  };
+
+  const downloadPlatformRevenueCSV = async () => {
+    if (isPlatformRevenueDownloading) return;
+    await handleCSVDownload(
+      () => preparePlatformRevenueCSV(timeFilter),
+      `platform-revenue-${timeFilter.toLowerCase()}.csv`,
+      setIsPlatformRevenueDownloading
+    );
   };
 
   return (
@@ -279,6 +256,8 @@ export default function ProtocolRevenueSummaryPage() {
             description="Stacked view of revenue generated by platforms"
             accentColor="green"
             onExpandClick={() => setPlatformStackedChartModalOpen(true)}
+            onDownloadClick={downloadPlatformRevenueCSV}
+            isDownloading={isPlatformRevenueDownloading}
             legendWidth="1/5"
             className="h-[500px]"
             filterBar={
@@ -336,6 +315,9 @@ export default function ProtocolRevenueSummaryPage() {
           </div>
         </section>
       </div>
+      
+      {/* dynamic charts from admin section */}
+      <DashboardRenderer pageId="summary" />
     </main>
   );
 } 

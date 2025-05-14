@@ -10,7 +10,7 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { localPoint } from '@visx/event';
 import Loader from '../../../shared/Loader';
 import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
-import Modal from '../../../shared/Modal';
+import Modal, { ScrollableLegend } from '../../../shared/Modal';
 import TimeFilterSelector from '../../../shared/filters/TimeFilter';
 import ChartTooltip from '../../../shared/ChartTooltip';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
@@ -739,19 +739,16 @@ const RevenueBySegmentChart: React.FC<RevenueBySegmentChartProps> = ({
                 {renderChart()}
             </div>
             
-            <div className="flex flex-col gap-1 overflow-y-auto max-h-[500px] pr-1">
-                
-                {keys.slice(0, 10).map((segment) => (
-                  <LegendItem
-                    key={segment}
-                    label={segment}
-                    color={segmentColors[segment] || getSegmentColor(segment)}
-                    shape="square"
-                    tooltipText={formatValue(
-                      filteredData.reduce((sum, d) => sum + (Number(d[segment]) || 0), 0)
-                    )}
+                <div className="flex flex-col gap-1 overflow-y-auto max-h-[500px] pr-1">
+                  <ScrollableLegend
+                    
+                    items={keys.map(segment => ({
+                      id: segment,
+                      label: segment,
+                      color: segmentColors[segment] || getSegmentColor(segment),
+                      
+                    }))}
                   />
-                ))}
             </div>
           </div>
         </div>

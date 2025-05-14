@@ -11,7 +11,7 @@ import { localPoint } from '@visx/event';
 import Loader from "@/app/components/shared/Loader";
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import ChartTooltip from "@/app/components/shared/ChartTooltip";
-import Modal from "@/app/components/shared/Modal";
+import Modal, { ScrollableLegend } from "@/app/components/shared/Modal";
 import LegendItem from "@/app/components/shared/LegendItem";
 import BrushTimeScale from "@/app/components/shared/BrushTimeScale";
 
@@ -652,7 +652,7 @@ const DexRevenueChart: React.FC<DexRevenueChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              <div className="text-[10px] text-gray-400 mb-2">PLATFORMS</div>
+              
               {loading ? (
                 // Show loading state
                 <>
@@ -661,25 +661,23 @@ const DexRevenueChart: React.FC<DexRevenueChartProps> = ({
                   <LegendItem label="Loading..." color="#34d399" isLoading={true} />
                 </>
               ) : (
-                // Create legend items array
-                <div className="flex flex-col gap-1 overflow-y-auto max-h-[500px] pr-1">
-                  {availablePlatforms.map((platform) => {
+                <ScrollableLegend
+                  items={availablePlatforms.map((platform) => {
                     // Calculate total revenue for this platform
                     const platformRevenue = rawData
                       .filter(d => d.platform === platform)
                       .reduce((sum, item) => sum + item.protocol_revenue, 0);
                       
-                    return (
-                      <LegendItem
-                        key={platform}
-                        label={platform}
-                        color={getDexColor(platform)}
-                        shape="square"
-                        tooltipText={formatCurrency(platformRevenue)}
-                      />
-                    );
+                    return {
+                      id: platform,
+                      label: platform,
+                      color: getDexColor(platform),
+                      
+                    };
                   })}
-                </div>
+                  maxHeight={600}
+                  maxItems={28}
+                />
               )}
             </div>
           </div>

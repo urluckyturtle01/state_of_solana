@@ -12,7 +12,7 @@ import { GridRows } from '@visx/grid';
 import Loader from "@/app/components/shared/Loader";
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import ChartTooltip from "@/app/components/shared/ChartTooltip";
-import Modal from "@/app/components/shared/Modal";
+import Modal, { ScrollableLegend } from "@/app/components/shared/Modal";
 import TimeFilterSelector from "@/app/components/shared/filters/TimeFilter";
 import BrushTimeScale from "@/app/components/shared/BrushTimeScale";
 import LegendItem from "@/app/components/shared/LegendItem";
@@ -714,7 +714,7 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              <div className="text-[10px] text-gray-400 mb-2">REVENUE</div>
+              
               {modalLoading ? (
                 // Show loading state
                 <>
@@ -722,25 +722,24 @@ const CumulativeRevenueChart: React.FC<CumulativeRevenueChartProps> = ({
                   <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
                 </>
               ) : (
-                // Create legend items array
-                Object.entries({
-                  'Protocol Revenue': {
-                    color: chartColors.protocolRevenue,
-                    value: modalData.length > 0 ? modalData[modalData.length - 1].cumulative_protocol_revenue : 0
-                  },
-                  'Solana Revenue': {
-                    color: chartColors.solanaRevenue,
-                    value: modalData.length > 0 ? modalData[modalData.length - 1].Cumulative_Solana_Rev : 0
-                  }
-                }).map(([label, { color, value }]) => (
-                  <div key={label} className="flex items-center mb-1.5">
-                    <div 
-                      className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    <span className="text-[11px] text-gray-300">{label}</span>
-                  </div>
-                ))
+                // Use ScrollableLegend component
+                <ScrollableLegend
+                  
+                  items={[
+                    {
+                      id: 'protocol-revenue',
+                      label: 'Protocol Revenue',
+                      color: chartColors.protocolRevenue,
+                     
+                    },
+                    {
+                      id: 'solana-revenue',
+                      label: 'Solana Revenue',
+                      color: chartColors.solanaRevenue,
+                      
+                    }
+                  ]}
+                />
               )}
             </div>
           </div>

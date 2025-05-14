@@ -11,7 +11,7 @@ import { ProtocolRevenueDataPoint, TimeFilter, fetchProtocolRevenueData, formatV
 import Loader from '../../../shared/Loader';
 import ChartTooltip from '../../../shared/ChartTooltip';
 import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
-import Modal from '../../../shared/Modal';
+import Modal, { ScrollableLegend } from '../../../shared/Modal';
 import TimeFilterSelector from '../../../shared/filters/TimeFilter';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
 import { colors, grid, axisLines, tickLabels } from '../../../../utils/chartColors';
@@ -786,21 +786,23 @@ const ProtocolRevenueChart: React.FC<ProtocolRevenueChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              <div className="text-[10px] text-gray-400 mb-2">REVENUE</div>
-              <div className="flex items-center mb-1.5">
-                <div 
-                  className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                  style={{ backgroundColor: protocolRevenueChartColors.protocolRevenue }}
-                ></div>
-                <span className="text-[11px] text-gray-300">Protocol Revenue</span>
-              </div>
-              <div className="flex items-center mb-1.5">
-                <div 
-                  className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                  style={{ backgroundColor: protocolRevenueChartColors.solanaRevenue }}
-                ></div>
-                <span className="text-[11px] text-gray-300">Solana Revenue</span>
-              </div>
+              <ScrollableLegend
+          
+                items={[
+                  {
+                    id: 'protocol-revenue',
+                    label: 'Protocol Revenue',
+                    color: protocolRevenueChartColors.protocolRevenue,
+                    
+                  },
+                  {
+                    id: 'solana-revenue',
+                    label: 'Solana Revenue',
+                    color: protocolRevenueChartColors.solanaRevenue,
+                    
+                  }
+                ]}
+              />
             </div>
           </div>
         </div>

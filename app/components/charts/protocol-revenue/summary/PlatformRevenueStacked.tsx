@@ -10,7 +10,7 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { localPoint } from '@visx/event';
 import Loader from '../../../shared/Loader';
 import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
-import Modal from '../../../shared/Modal';
+import Modal, { ScrollableLegend } from '../../../shared/Modal';
 import TimeFilterSelector from '../../../shared/filters/TimeFilter';
 import ChartTooltip from '../../../shared/ChartTooltip';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
@@ -94,7 +94,7 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
 
     // Otherwise, parse as date and format
     try {
-      const date = new Date(dateString);
+    const date = new Date(dateString);
       
       // Check for invalid date
       if (isNaN(date.getTime())) {
@@ -107,7 +107,7 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
         const quarter = Math.floor(date.getMonth() / 3) + 1;
         return `Q${quarter}`; // Just show quarter, without year
       } else if (timeFilter === 'Y') {
-        return date.getFullYear().toString();
+      return date.getFullYear().toString();
       } else if (timeFilter === 'M') {
         // For monthly view, show only month name
         return date.toLocaleDateString('en-US', { month: 'short' });
@@ -156,7 +156,7 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
       
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     } catch (error) {
-      return dateString;
+    return dateString;
     }
   };
 
@@ -351,18 +351,18 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
     console.log("Colors array:", colors);
     console.log("platformColors mapping:", platformColors);
     
-    fetchData(); 
+    fetchData();
   }, [fetchData]);
   
   // Apply brush filter
   useEffect(() => {
     if (!data.length) return;
-    
+
     if (!brushDomain) {
-      setFilteredData(data);
+        setFilteredData(data);
       return;
     }
-    
+
     const [start, end] = brushDomain;
     const filtered = data.filter(d => {
       const itemDate = new Date(d.date as string).getTime();
@@ -378,7 +378,7 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
       setBrushDomain(null);
       return;
     }
-    
+
     const { x0, x1 } = domain;
     setBrushDomain([new Date(x0), new Date(x1)]);
   }, []);
@@ -807,25 +807,25 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
           subtitle="Stacked view of protocol revenue across platforms by time period"
         >
           <div className="flex pl-1 py-0 mb-3">
-            <TimeFilterSelector
+                <TimeFilterSelector
               value={timeFilter}
               onChange={onTimeFilterChange || (() => {})}
-              options={[
-                { value: 'W', label: 'W' },
-                { value: 'M', label: 'M' },
-                { value: 'Q', label: 'Q' },
-                { value: 'Y', label: 'Y' }
-              ]}
-            />
-            
+                  options={[
+                    { value: 'W', label: 'W' },
+                    { value: 'M', label: 'M' },
+                    { value: 'Q', label: 'Q' },
+                    { value: 'Y', label: 'Y' }
+                  ]}
+                />
+                
               <DisplayModeFilter mode={displayMode} onChange={handleDisplayModeChange} />
+                
+            </div>
             
-          </div>
-          
-          <div className="h-px bg-gray-900 w-full mb-3"></div>
-          
-          <div className="h-[60vh]">
-            <div className="flex h-full">
+            <div className="h-px bg-gray-900 w-full mb-3"></div>
+            
+            <div className="h-[60vh]">
+              <div className="flex h-full">
               <div className="w-[90%] h-full pr-3 border-r border-gray-900 relative">
                 {/* Add the tooltip at this level for the modal view */}
                 {isModalOpen && tooltip.visible && tooltip.dataPoint && (
@@ -866,38 +866,43 @@ const PlatformRevenueStacked: React.FC<PlatformRevenueStackedProps> = ({
                   />
                 )}
                 {renderChart()}
-              </div>
-              
-              <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
+                </div>
                 
-                {keys.slice(0, 10).map((platform) => (
-                  <div key={platform} className="flex items-center mb-1.5">
-                    <div 
-                      className="w-2.5 h-2.5 rounded-sm mr-1.5" 
-                      style={{ 
-                        backgroundColor: (() => {
-                          // Direct match in platformColors
-                          if (platformColors[platform]) {
-                            return platformColors[platform];
-                          }
-                          
-                          // Case-insensitive match
-                          const lowerPlatform = platform.toLowerCase();
-                          const platformKey = Object.keys(platformColors).find(k => 
-                            k.toLowerCase() === lowerPlatform
-                          );
-                          
-                          if (platformKey) {
-                            return platformColors[platformKey];
-                          }
-                          
-                          return getPlatformColor(platform);
-                        })()
-                      }}
-                    ></div>
-                    <span className="text-[11px] text-gray-300">{normalizePlatformName(platform)}</span>
-                  </div>
-                ))}
+                <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
+                <ScrollableLegend
+                  
+                  items={keys.map(platform => {
+                    // Calculate total revenue for this platform
+                    const platformRevenue = filteredData.reduce((sum, d) => 
+                      sum + (Number(d[platform]) || 0), 0);
+                    
+                    // Determine color using the same logic as before
+                    let color;
+                    if (platformColors[platform]) {
+                      color = platformColors[platform];
+                    } else {
+                      const lowerPlatform = platform.toLowerCase();
+                      const platformKey = Object.keys(platformColors).find(k => 
+                        k.toLowerCase() === lowerPlatform
+                      );
+                      
+                      if (platformKey) {
+                        color = platformColors[platformKey];
+                      } else {
+                        color = getPlatformColor(platform);
+                      }
+                    }
+                    
+                    return {
+                      id: platform,
+                      label: normalizePlatformName(platform),
+                      color: color,
+                      
+                    };
+                  })}
+                  maxHeight={600}
+                  maxItems={28}
+                />
               </div>
             </div>
           </div>

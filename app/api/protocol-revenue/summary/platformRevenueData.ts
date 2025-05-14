@@ -135,4 +135,64 @@ export const getPlatformColor = (platform: string): string => {
   
   // Use the hash to pick a color from the array
   return colors[hash % colors.length];
+};
+
+// Add a function to prepare CSV data for platform revenue
+export const preparePlatformRevenueCSV = async (timeFilter: TimeFilter): Promise<string> => {
+  try {
+    // Fetch the platform revenue data using the existing function
+    const data = await fetchPlatformRevenueData(timeFilter);
+    
+    if (!data || data.length === 0) {
+      throw new Error('No platform revenue data available');
+    }
+    
+    // Sort platforms by total revenue (descending)
+    const platformRevenueMap: Record<string, number> = {};
+    data.forEach(item => {
+      if (!platformRevenueMap[item.platform]) {
+        platformRevenueMap[item.platform] = 0;
+      }
+      platformRevenueMap[item.platform] += item.protocol_revenue_usd;
+    });
+    
+    const sortedPlatforms = Object.entries(platformRevenueMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([platform]) => platform);
+    
+    // Sort data by platform (in order of revenue) and date
+    const sortedData = data.sort((a, b) => {
+      // First sort by platform revenue rank
+      const platformIndexA = sortedPlatforms.indexOf(a.platform);
+      const platformIndexB = sortedPlatforms.indexOf(b.platform);
+      
+      if (platformIndexA !== platformIndexB) {
+        return platformIndexA - platformIndexB;
+      }
+      
+      // Then sort by date
+      return new Date(a.block_date).getTime() - new Date(b.block_date).getTime();
+    });
+    
+    // Create CSV headers
+    const headers = ['block_date', 'Platform', 'protocol_revenue_usd'];
+    
+    // Create rows from the raw data in the format shown in the user's example
+    const rows = sortedData.map(item => [
+      item.block_date,
+      item.platform,
+      item.protocol_revenue_usd.toFixed(2)
+    ]);
+    
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    return csvContent;
+  } catch (error) {
+    console.error('Error preparing platform revenue CSV:', error);
+    throw error;
+  }
 }; 

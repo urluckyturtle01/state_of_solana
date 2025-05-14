@@ -10,7 +10,7 @@ import { localPoint } from '@visx/event';
 import Loader from "@/app/components/shared/Loader";
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import ChartTooltip from "@/app/components/shared/ChartTooltip";
-import Modal from "@/app/components/shared/Modal";
+import Modal, { ScrollableLegend } from "@/app/components/shared/Modal";
 import LegendItem from "@/app/components/shared/LegendItem";
 import BrushTimeScale from "@/app/components/shared/BrushTimeScale";
 
@@ -54,18 +54,42 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
 
 // Define dapp colors mapping
 const dappColors: Record<string, string> = {
-  'BullX': '#fb7185',
-  'Photon': '#34d399',
-  'Phantom': '#60a5fa',
-  'Pump Fun': '#a78bfa',
-  'Raydium': '#f97316',
-  'Trojan': '#c084fc',
-  'GMGN': '#94a3b8',
-  'DexScreener': '#7dd3fc',
-  'Maestro': '#86efac',
+  // First image
+  'Photon': '#92efbc',
+  'BullX': '#92efbc',
+  'Trojan': '#9757ff',
+  'bloom trading bot': '#c990ff',
+  'Maestro': '#60a5fa',
+  'Phantom': '#ffc480',
+  'Raydium': '#c990ff',
+  'Axiom': '#7dd3fc',
+  'Pump.Fun AMM': '#9b7b6a',
+  'Orca': '#7dd3fc',
+  'Pump Fun': '#ffc480',
+  'Moonshot': '#92efbc',
+  'makenow.meme': '#9757ff',
+  'GMGN': '#9757ff',
+  'DexScreener': '#fe855f',
+  'Moonshot.money': '#ffb0a0',
+  'bloxroute': '#a7f3a0',
+
+  // Second image
+  'Metaplex': '#9757ff',
+  'Jito': '#fe855f',
+  'magiceden': '#1e1e1e',
+  'tensorswap': '#635985',
+  'Tribe run': '#8cb8c2',
+  'DEXTools': '#9b7b6a',
+  'prerich': '#f9a8d4',
+  'looter': '#4a5569',
+  'Jupiter DCA': '#9b7b6a',
+  'Helium': '#7b5644',
+  'Hivemapper': '#1e1e30',
+  'Helio': '#3d6699',
+  'rainfi': '#dba88f',
+
+  // Legacy colors for backward compatibility
   'Sol Trading Bot': '#fbbf24',
-  'bloxroute': '#fbbf24',
-  'bloom trading bot': '#f43f5e',
   'default': '#6b7280',
 };
 
@@ -205,7 +229,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
         // Get unique dapps from the data
         const uniqueDapps = [...new Set(dataWithDates.map(d => d.dapp))];
         
-        // Sort by total revenue and take top 15 for legends
+        // Sort by total revenue and take top 35 for legends
         const dappTotals = dataWithDates.reduce<Record<string, number>>((acc, curr) => {
           if (!acc[curr.dapp]) {
             acc[curr.dapp] = 0;
@@ -216,7 +240,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
         
         const topDapps = Object.entries(dappTotals)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 15)
+          .slice(0, 35)
           .map(([dapp]) => dapp);
         
         // Set available dapps for the chart
@@ -236,7 +260,7 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
         
         // Update legends if callback provided
         if (legendsChanged) {
-          const legends = topDapps.slice(0, 5).map(dapp => ({
+          const legends = topDapps.map(dapp => ({
             label: dapp,
             color: getDappColor(dapp),
             value: dataWithDates
@@ -717,7 +741,6 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              <div className="text-[10px] text-gray-400 mb-2">DAPPS</div>
               {loading ? (
                 // Show loading state
                 <>
@@ -726,32 +749,25 @@ const DappRevenueChart: React.FC<DappRevenueChartProps> = ({
                   <LegendItem label="Loading..." color="#34d399" isLoading={true} />
                 </>
               ) : (
-                // Create legend items array
-                <div className="flex flex-col gap-1 overflow-y-auto max-h-[500px] pr-1">
-                  {availableDapps.slice(0, 10).map((dapp) => {
+                // Use the new ScrollableLegend component
+                <ScrollableLegend
+                
+                  items={availableDapps.map(dapp => {
                     // Calculate total revenue for this dapp
                     const dappRevenue = data
                       .filter(d => d.dapp === dapp)
                       .reduce((sum, item) => sum + item.protocol_revenue, 0);
+                    
+                    return {
+                      id: dapp,
+                      label: dapp,
+                      color: getDappColor(dapp)
                       
-                    return (
-                      <LegendItem
-                        key={dapp}
-                        label={dapp}
-                        color={getDappColor(dapp)}
-                        shape="square"
-                        tooltipText={formatRevenueValue(dappRevenue)}
-                      />
-                    );
+                    };
                   })}
-                  {availableDapps.length > 10 && (
-                    <LegendItem
-                      label="Others"
-                      color="#888888"
-                      shape="square"
-                    />
-                  )}
-                </div>
+                  maxHeight={600}
+                  maxItems={28}
+                />
               )}
             </div>
           </div>

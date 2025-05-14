@@ -9,7 +9,7 @@ import { FormattedMemecoinVolumeData, MemecoinVolumeTimeFilter, fetchMemecoinVol
 import Loader from '../../../shared/Loader';
 import ChartTooltip from '../../../shared/ChartTooltip';
 import ButtonSecondary from '../../../shared/buttons/ButtonSecondary';
-import Modal from '../../../shared/Modal';
+import Modal, { ScrollableLegend } from '../../../shared/Modal';
 import TimeFilterSelector from '../../../shared/filters/TimeFilter';
 import BrushTimeScale from '../../../shared/BrushTimeScale';
 import { colors } from '../../../../utils/chartColors';
@@ -787,25 +787,14 @@ const MemecoinVolumeChart: React.FC<MemecoinVolumeChartProps> = ({
             {/* Legend area - 10% width with scrollbar */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
               {!modalLoading && modalFilteredData.totalsByToken.length > 0 ? (
-                <div className="flex flex-col gap-2 max-h-[600px] w-[125px] overflow-y-auto
-                  [&::-webkit-scrollbar]:w-1.5 
-                  [&::-webkit-scrollbar-track]:bg-transparent 
-                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                  {modalFilteredData.totalsByToken.map((item, index) => (
-                    <div key={`modal-legend-${index}`} className="flex items-start">
-                      <div 
-                        className="w-2.5 h-2.5 mr-1.5 rounded-sm"
-                        style={{ background: memecoinColors[index % memecoinColors.length] }}
-                      ></div>
-                      <span className="text-[11px] text-gray-300">
-                        {item.token}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                <ScrollableLegend
+                  items={modalFilteredData.totalsByToken.map((item, index) => ({
+                    id: item.token,
+                    color: memecoinColors[index % memecoinColors.length],
+                    label: item.token,
+                    
+                  }))}
+                />
               ) : (
                 <div className="flex flex-col gap-2">
                   {/* Loading states */}

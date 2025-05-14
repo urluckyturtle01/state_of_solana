@@ -293,4 +293,63 @@ export const formatAxisDate = (dateStr: string, timeFilter: TimeFilter): string 
   }
   
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// Function to prepare revenue by segment data for CSV export
+export const prepareRevenueBySegmentCSV = async (timeFilter: TimeFilter): Promise<string> => {
+  try {
+    // Fetch the data from the API
+    const data = await fetchRevenueBySegmentData(timeFilter);
+    
+    if (!data || data.length === 0) {
+      throw new Error('No revenue by segment data available');
+    }
+    
+    // Get all dates and segments
+    const allDates = [...new Set(data.map(item => item.block_date))].sort();
+    const allSegments = [...new Set(data.map(item => item.segment))].sort();
+    
+    // Create a mapping of date -> segment -> revenue
+    const dataMap: Record<string, Record<string, number>> = {};
+    
+    // Initialize the map structure
+    allDates.forEach(date => {
+      dataMap[date] = {};
+      allSegments.forEach(segment => {
+        dataMap[date][segment] = 0;
+      });
+    });
+    
+    // Fill in the data
+    data.forEach(item => {
+      if (dataMap[item.block_date] && item.segment) {
+        dataMap[item.block_date][item.segment] = item.protocol_revenue;
+      }
+    });
+    
+    // Create CSV headers: Date, Segment1, Segment2, ...
+    const headers = ['Date', ...allSegments];
+    
+    // Create rows
+    const rows = allDates.map(date => {
+      const rowData = [date];
+      
+      allSegments.forEach(segment => {
+        rowData.push(dataMap[date][segment].toFixed(2));
+      });
+      
+      return rowData;
+    });
+    
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    return csvContent;
+  } catch (error) {
+    console.error('Error preparing revenue by segment CSV:', error);
+    throw error;
+  }
 }; 
