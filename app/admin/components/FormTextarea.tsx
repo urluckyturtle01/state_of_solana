@@ -41,7 +41,7 @@ export default function FormTextarea({
         required={required}
         className={`mt-1 block w-full px-3 py-2 bg-white border ${
           error ? 'border-red-300' : 'border-gray-300'
-        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-blue-800 sm:text-sm`}
       />
       {helpText && !error && (
         <p className="mt-1 text-sm text-gray-500">{helpText}</p>

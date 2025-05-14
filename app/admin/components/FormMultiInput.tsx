@@ -66,12 +66,12 @@ export default function FormMultiInput({
           {values.map((value, index) => (
             <div 
               key={index} 
-              className="flex items-center bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-md"
+              className="flex items-center bg-indigo-100 text-gray-800 text-sm px-3 py-1 rounded-md"
             >
               <span>{value}</span>
               <button
                 type="button"
-                className="ml-2 text-indigo-500 hover:text-indigo-700 focus:outline-none"
+                className="ml-2 text-indigo-500 hover:text-gray-800 focus:outline-none"
                 onClick={() => removeValue(index)}
               >
                 &times;
@@ -88,7 +88,7 @@ export default function FormMultiInput({
             placeholder={placeholder || `Type and press Enter to add ${label.toLowerCase()}`}
             className={`flex-grow mt-1 block w-full px-3 py-2 bg-white border ${
               error ? 'border-red-300' : 'border-gray-300'
-            } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+            } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-blue-800 sm:text-sm`}
           />
           <button
             type="button"

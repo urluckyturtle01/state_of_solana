@@ -32,9 +32,9 @@ export default function FormSelect({
 }: FormSelectProps) {
   return (
     <div className={`mb-4 ${className}`}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-800 mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-red-600 ml-1">*</span>}
       </label>
       <select
         id={id}
@@ -47,7 +47,7 @@ export default function FormSelect({
           disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'
         } border ${
           error ? 'border-red-300' : 'border-gray-300'
-        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-blue-800 sm:text-sm`}
       >
         <option value="">Select an option</option>
         {options.map((option) => (
@@ -57,7 +57,7 @@ export default function FormSelect({
         ))}
       </select>
       {helpText && !error && (
-        <p className="mt-1 text-sm text-gray-500">{helpText}</p>
+        <p className="mt-1 text-sm text-gray-600">{helpText}</p>
       )}
       {error && (
         <p className="mt-1 text-sm text-red-600">{error}</p>
