@@ -75,9 +75,20 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+    
     const handleClickOutside = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose();
+      // Only close if clicking on the overlay backdrop (outside modal content)
+      // This fixes the issue where clicking inside the modal content causes it to close
+      if (modalRef.current && e.target instanceof Node) {
+        const clickedElement = e.target as HTMLElement;
+        
+        // Check if the clicked element has the backdrop class or is the direct overlay
+        const isBackdrop = clickedElement.classList.contains('modal-backdrop') ||
+                          clickedElement === modalRef.current.parentElement;
+        
+        if (isBackdrop) {
+          onClose();
+        }
       }
     };
 
@@ -96,7 +107,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
 
   // Render into document.body to bypass any parent clipping/stacking contexts
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm modal-backdrop">
       <div
         ref={modalRef}
         className="relative bg-black/80 border border-gray-900 rounded-xl p-4 w-11/12 max-w-7xl flex flex-col shadow-xl"

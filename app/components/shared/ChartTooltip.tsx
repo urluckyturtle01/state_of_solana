@@ -9,6 +9,7 @@ interface TooltipItem {
   label: string;
   value: string | number;
   shape?: ShapeType;
+  axis?: 'left' | 'right';
 }
 
 // Tooltip component props
@@ -38,6 +39,9 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
 }) => {
   // Calculate if tooltip should be positioned right to left (to avoid edge cutoff)
   const shouldFlipX = left > (isModal ? 500 : 250);
+  
+  // Check if we have any axis information (dual-axis chart)
+  const hasDualAxisItems = items.some(item => item.axis);
 
   return (
     <div 
@@ -60,6 +64,13 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
             <div className="flex items-center text-gray-400">
               <LegendShape type={item.shape || 'circle'} color={item.color} />
               <span className="text-gray-400 font-normal ml-2">{item.label}</span>
+              
+              {/* Show axis indicator for dual-axis charts */}
+              {hasDualAxisItems && item.axis && (
+                <span className="ml-1 text-[9px] text-gray-500">
+                  ({item.axis} axis)
+                </span>
+              )}
             </div>
             <span className="text-gray-300 font-normal ml-4">{item.value}</span>
           </div>

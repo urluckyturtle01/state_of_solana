@@ -6,12 +6,18 @@ export function generateChartId(): string {
 }
 
 // Convert form data to chart config
-export function formDataToConfig(formData: ChartFormData): ChartConfig {
+export function formDataToConfig(formData: ChartFormData, isDualAxis?: boolean): ChartConfig {
   const now = new Date().toISOString();
+  
+  // Set chart type to dual-axis if specified
+  let updatedFormData = { ...formData };
+  if (isDualAxis) {
+    updatedFormData.chartType = 'dual-axis';
+  }
   
   return {
     id: generateChartId(),
-    ...formData,
+    ...updatedFormData,
     createdAt: now,
     updatedAt: now,
   };

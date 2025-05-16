@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ChartConfig } from '../types';
-import BarChart from './charts/BarChart';
+import { ChartConfig, YAxisConfig } from '../types';
+//import BarChart from './charts/BarChart';
+import SimpleBarChart from './charts/SimpleBarChart';
+import StackedBarChart from './charts/StackedBarChart';
+import DualAxisChart from './charts/DualAxisChart';
 import Modal from '../../components/shared/Modal';
 //import LineChart from './charts/LineChart';
 // import AreaChart from './charts/AreaChart';
@@ -21,6 +24,11 @@ interface ChartRendererProps {
   colorMap?: Record<string, string>;
   // Add callback to report generated colors back to parent
   onColorsGenerated?: (colorMap: Record<string, string>) => void;
+}
+
+// Add helper function at the top of the file
+function getFieldFromYAxisConfig(field: string | YAxisConfig): string {
+  return typeof field === 'string' ? field : field.field;
 }
 
 const ChartRenderer: React.FC<ChartRendererProps> = ({ 
@@ -374,7 +382,14 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
             // Normalize arrays and strings for processing
             const xAxisFields = Array.isArray(xAxis) ? xAxis : [xAxis];
-            const yAxisFields = Array.isArray(yAxis) ? yAxis : [yAxis];
+            let yAxisFields: string[] = [];
+            
+            // Extract field names from yAxis which could be strings or YAxisConfig objects
+            if (Array.isArray(yAxis)) {
+              yAxisFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+            } else {
+              yAxisFields = [getFieldFromYAxisConfig(yAxis)];
+            }
             
             // Check and normalize fields if needed
             let needsNormalization = false;
@@ -542,13 +557,121 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     
     switch (chartConfig.chartType) {
       case 'bar':
-      case 'stacked-bar':
-        return <BarChart 
-          chartConfig={chartConfig} 
+        // Use SimpleBarChart for simple bar charts (non-stacked)
+        if (!chartConfig.isStacked) {
+          return <SimpleBarChart 
+            chartConfig={{
+              ...chartConfig,
+              onFilterChange: (newFilters) => {
+                // Apply the filter changes
+                Object.entries(newFilters).forEach(([key, value]) => {
+                  handleFilterChange(key, value);
+                });
+              }
+            }} 
+            data={data} 
+            isExpanded={isExpanded} 
+            onCloseExpanded={onCloseExpanded}
+            colorMap={legendColorMap}
+            filterValues={filterValues}
+          />;
+        }
+        // Use StackedBarChart for stacked charts with groupBy field or multiple Y fields
+        if (chartConfig.isStacked && (chartConfig.dataMapping.groupBy || 
+            (Array.isArray(chartConfig.dataMapping.yAxis) && chartConfig.dataMapping.yAxis.length > 1))) {
+          console.log("Using StackedBarChart for stacked mode with multiple Y fields or groupBy");
+          return <StackedBarChart 
+            chartConfig={{
+              ...chartConfig,
+              onFilterChange: (newFilters) => {
+                // Apply the filter changes
+                Object.entries(newFilters).forEach(([key, value]) => {
+                  handleFilterChange(key, value);
+                });
+              }
+            }} 
+            data={data} 
+            isExpanded={isExpanded} 
+            onCloseExpanded={onCloseExpanded}
+            colorMap={legendColorMap}
+            filterValues={filterValues}
+          />;
+        }
+        // Fall through to BarChart for more complex bar charts that don't fit the simple or stacked patterns
+       /* return <BarChart 
+          chartConfig={{
+            ...chartConfig,
+            onFilterChange: (newFilters) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }
+          }} 
           data={data} 
           isExpanded={isExpanded} 
           onCloseExpanded={onCloseExpanded}
           colorMap={legendColorMap}
+          filterValues={filterValues}
+        />; */
+      
+      case 'stacked-bar':
+        // Use StackedBarChart for stacked bar charts with groupBy or multiple Y fields
+        if (chartConfig.dataMapping.groupBy || 
+            (Array.isArray(chartConfig.dataMapping.yAxis) && chartConfig.dataMapping.yAxis.length > 1)) {
+          console.log("Using StackedBarChart for stacked-bar type with groupBy or multiple Y fields");
+          return <StackedBarChart 
+            chartConfig={{
+              ...chartConfig,
+              isStacked: true, // Ensure it's marked as stacked
+              onFilterChange: (newFilters) => {
+                // Apply the filter changes
+                Object.entries(newFilters).forEach(([key, value]) => {
+                  handleFilterChange(key, value);
+                });
+              }
+            }} 
+            data={data} 
+            isExpanded={isExpanded} 
+            onCloseExpanded={onCloseExpanded}
+            colorMap={legendColorMap}
+            filterValues={filterValues}
+          />;
+        }
+        // Fall back to normal BarChart if no groupBy field is defined
+       /* return <BarChart 
+          chartConfig={{
+            ...chartConfig,
+            onFilterChange: (newFilters) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }
+          }} 
+          data={data} 
+          isExpanded={isExpanded} 
+          onCloseExpanded={onCloseExpanded}
+          colorMap={legendColorMap}
+          filterValues={filterValues}
+        />; */
+        
+      case 'dual-axis': // Handle dual-axis with the enhanced BarChart
+        return <DualAxisChart 
+          chartConfig={{
+            ...chartConfig,
+            onFilterChange: (newFilters) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }
+          }} 
+          data={data} 
+          isExpanded={isExpanded} 
+          onCloseExpanded={onCloseExpanded}
+          colorMap={legendColorMap}
+          filterValues={filterValues}
         />;
         
       /* Temporarily commented out until AreaChart is implemented
@@ -575,10 +698,15 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
                 </p>
                 <div className="grid grid-cols-3 gap-2 text-xs text-gray-500">
                   <div className="bg-white p-2 rounded border">
-                    X-Axis: {chartConfig.dataMapping.xAxis}
+                    X-Axis: {typeof chartConfig.dataMapping.xAxis === 'string' ? chartConfig.dataMapping.xAxis : Array.isArray(chartConfig.dataMapping.xAxis) ? chartConfig.dataMapping.xAxis.join(', ') : 'Complex type'}
                   </div>
                   <div className="bg-white p-2 rounded border">
-                    Y-Axis: {chartConfig.dataMapping.yAxis}
+                    Y-Axis: {
+                      typeof chartConfig.dataMapping.yAxis === 'string' ? chartConfig.dataMapping.yAxis : 
+                      Array.isArray(chartConfig.dataMapping.yAxis) ? 
+                        chartConfig.dataMapping.yAxis.map(f => getFieldFromYAxisConfig(f)).join(', ') : 
+                        'Complex type'
+                    }
                   </div>
                   {chartConfig.dataMapping.groupBy && (
                     <div className="bg-white p-2 rounded border">
@@ -597,7 +725,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           </div>
         );
     }
-  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap]);
+  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues]);
 
   if (loading) {
     return (

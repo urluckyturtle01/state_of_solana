@@ -518,8 +518,8 @@ return (
                         fontWeight: 300, 
                         letterSpacing: '0.05em',
                         textAnchor: 'end', 
-                        dx: '-0.6em', 
-                        dy: '0.25em' 
+                        dx: '1em', 
+                        dy: '0.5em' 
                   })}
                 />
               </Group>

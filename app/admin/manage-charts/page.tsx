@@ -7,6 +7,28 @@ import { AVAILABLE_PAGES, ChartConfig } from '../types';
 import ChartRenderer from '../components/ChartRenderer';
 import Button from '../components/Button';
 
+// Add a helper function to format the Y-Axis display value
+const formatYAxisValue = (yAxis: string | string[] | any[]): string => {
+  if (typeof yAxis === 'string') {
+    return yAxis;
+  } 
+  
+  if (Array.isArray(yAxis)) {
+    return yAxis.map((field) => {
+      if (typeof field === 'string') {
+        return field;
+      }
+      // Handle YAxisConfig objects
+      if (field && typeof field === 'object' && 'field' in field) {
+        return field.field;
+      }
+      return 'unknown';
+    }).join(', ');
+  }
+  
+  return 'unknown';
+};
+
 export default function ManageChartsPage() {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [selectedPage, setSelectedPage] = useState<string>('all');
@@ -176,7 +198,7 @@ export default function ManageChartsPage() {
                   </div>
                   <div>
                     <span className="font-medium text-gray-700">Y-Axis:</span>{' '}
-                    <span className="text-gray-900">{chart.dataMapping.yAxis}</span>
+                    <span className="text-gray-900">{formatYAxisValue(chart.dataMapping.yAxis)}</span>
                   </div>
                 </div>
               </div>

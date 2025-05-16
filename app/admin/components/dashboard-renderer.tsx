@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getChartConfigsByPage } from '../utils';
 import ChartCard from '../../components/shared/ChartCard';
 import LegendItem from '../../components/shared/LegendItem';
-import { ChartConfig } from '../types';
+import { ChartConfig, YAxisConfig } from '../types';
 import dynamic from 'next/dynamic';
 import { getColorByIndex } from '../../utils/chartColors';
 import { formatNumber } from '../../utils/formatters';
@@ -12,6 +12,11 @@ import Modal from '../../components/shared/Modal';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
+
+// Helper function to extract field name from YAxisConfig or use string directly
+function getFieldName(field: string | YAxisConfig): string {
+  return typeof field === 'string' ? field : field.field;
+}
 
 // Format currency for display
 const formatCurrency = (value: number): string => {
@@ -307,30 +312,70 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
     // Track new labels to ensure we keep consistent order
     const newLabels: string[] = [];
     
-    // First, we need to determine if this is truly a stacked chart with valid data
+    // First, check if this is a dual-axis chart
+    const isDualAxis = chart.chartType === 'dual-axis' && chart.dualAxisConfig;
+
+    // Define variables needed for stacked chart logic
     const isStackedConfig = chart.chartType.includes('stacked') || chart.isStacked === true;
     const hasGroupByField = !!chart.dataMapping.groupBy;
     const groupField = chart.dataMapping.groupBy || '';
-    
+
     // Check if the groupBy field actually exists in the data
     const groupByFieldExists = data.length > 0 && groupField && data[0][groupField] !== undefined;
-    
+
     // A chart is a valid stacked chart if it's configured as stacked AND has a groupBy field that exists in the data
     const isValidStackedChart = isStackedConfig && hasGroupByField && groupByFieldExists;
-    
-    console.log("Legend generation diagnosis:", {
-      chartId,
-      title: chart.title,
-      isStackedConfig,
-      hasGroupByField,
-      groupField,
-      groupByFieldExists,
-      isValidStackedChart,
-      dataLength: data.length,
-      sampleFields: data.length > 0 ? Object.keys(data[0]).slice(0, 5) : []
-    });
-    
-    if (isValidStackedChart) {
+
+    if (isDualAxis && chart.dualAxisConfig) {
+      console.log("Processing as dual axis chart");
+      
+      // For dual axis charts, create separate legends for left and right axes
+      const leftAxisFields = chart.dualAxisConfig.leftAxisFields;
+      const rightAxisFields = chart.dualAxisConfig.rightAxisFields;
+      
+      // Process all fields from both axes
+      const allFields = [...leftAxisFields, ...rightAxisFields];
+      
+      // Calculate totals for each field for tooltips
+      const fieldTotals: Record<string, number> = {};
+      
+      allFields.forEach(field => {
+        fieldTotals[field] = data.reduce((sum, item) => 
+          sum + (Number(item[field]) || 0), 0);
+        
+        newLabels.push(field);
+        
+        // Assign colors if creating a new color map
+        if (isNewColorMap && !colorMap[field]) {
+          // Left axis fields get blue-ish colors, right axis fields get purple-ish colors
+          const isRightAxis = rightAxisFields.includes(field);
+          const index = isRightAxis 
+            ? rightAxisFields.indexOf(field)
+            : leftAxisFields.indexOf(field);
+          
+          colorMap[field] = isRightAxis 
+            ? getColorByIndex(index + leftAxisFields.length) // Offset to avoid color conflicts
+            : getColorByIndex(index);
+        }
+      });
+      
+      // Create legend items for all fields
+      chartLegends = allFields.map(field => {
+        const isRightAxis = rightAxisFields.includes(field);
+        const fieldName = field.replace(/_/g, ' ')
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        
+        return {
+          label: `${fieldName}`,
+          color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
+          value: fieldTotals[field] || 0
+        };
+      });
+    }
+    // First, we need to determine if this is truly a stacked chart with valid data
+    else if (isValidStackedChart) {
       console.log("Processing as valid stacked chart with group by:", groupField);
       
       // For stacked charts, always use the group by field values for legends
@@ -348,9 +393,17 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
         if (group !== null && group !== undefined) {
           const groupStr = String(group);
           newLabels.push(groupStr);
+          
+          // Get the actual field name if yField is a YAxisConfig
+          const yFieldName = typeof chart.dataMapping.yAxis === 'string' ? 
+            chart.dataMapping.yAxis : 
+            (Array.isArray(chart.dataMapping.yAxis) ? 
+              getFieldName(chart.dataMapping.yAxis[0]) : 
+              getFieldName(chart.dataMapping.yAxis));
+          
           groupTotals[groupStr] = data
             .filter(item => item[groupField] === group)
-            .reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
+            .reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
         }
       });
       console.log("Group totals:", groupTotals);
@@ -389,8 +442,14 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       // Check if this is a date-based chart (typically time series)
       const xField = typeof chart.dataMapping.xAxis === 'string' ? 
         chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
-      const yField = typeof chart.dataMapping.yAxis === 'string' ? 
-        chart.dataMapping.yAxis : chart.dataMapping.yAxis[0];
+      
+      // Get field names from yAxis which could be strings or YAxisConfig objects
+      let yAxisFields: string[] = [];
+      if (Array.isArray(chart.dataMapping.yAxis)) {
+        yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
+      } else {
+        yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+      }
       
       const isDateBased = data.length > 0 && 
         (xField.toLowerCase().includes('date') || 
@@ -406,14 +465,14 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
         if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
           // For multi-series charts, use the y-axis field names as legends
           // Format the field names and assign colors
-          chartLegends = chart.dataMapping.yAxis.map((field, index) => {
+          chartLegends = yAxisFields.map((field, index) => {
             // Calculate the total for this field across all data points
             const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
             
             // Format the field name to be more readable
             const label = field.replace(/_/g, ' ')
               .split(' ')
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
             
             newLabels.push(label);
@@ -431,10 +490,11 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
           });
         } else {
           // For single-series time charts, use a single legend entry with the chart title or y-axis name
-          const total = data.reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
-          const label = yField.replace(/_/g, ' ')
+          const yFieldName = getFieldName(yAxisFields[0]);
+          const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
+          const label = yFieldName.replace(/_/g, ' ')
               .split(' ')
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
           
           newLabels.push(label);
@@ -466,7 +526,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
             return {
               label,
               color: colorMap[label] || getColorByIndex(index),
-              value: Number(item[yField]) || 0
+              value: Number(item[yAxisFields[0]]) || 0
             };
           });
       }
@@ -532,6 +592,57 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
     }));
   }, [legendColorMaps]);
 
+  // Inside the render method, after setting state, we need to prepare charts with filter callbacks
+  // The existing charts array will be updated to include the onFilterChange callback for each chart
+  useEffect(() => {
+    if (charts.length > 0) {
+      // Create a new array with the onFilterChange callback added to each chart
+      const updatedCharts = charts.map(chart => ({
+        ...chart,
+        // Add the onFilterChange callback that will be called when filters change in the modal
+        onFilterChange: (updatedFilters: Record<string, string>) => {
+          console.log(`Filter changed from modal for chart ${chart.id}:`, updatedFilters);
+          
+          // Update our filter state with the new values from the modal
+          setFilterValues(prev => ({
+            ...prev,
+            [chart.id]: {
+              ...prev[chart.id],
+              ...updatedFilters
+            }
+          }));
+          
+          // Fetch updated data with the new filters
+          fetchChartDataWithFilters({
+            ...chart,
+            additionalOptions: {
+              ...chart.additionalOptions,
+              filters: {
+                ...chart.additionalOptions?.filters,
+                // Update active values to match the filters from the modal
+                timeFilter: {
+                  ...chart.additionalOptions?.filters?.timeFilter,
+                  activeValue: updatedFilters.timeFilter || chart.additionalOptions?.filters?.timeFilter?.activeValue
+                },
+                currencyFilter: {
+                  ...chart.additionalOptions?.filters?.currencyFilter,
+                  activeValue: updatedFilters.currencyFilter || chart.additionalOptions?.filters?.currencyFilter?.activeValue
+                },
+                displayModeFilter: {
+                  ...chart.additionalOptions?.filters?.displayModeFilter,
+                  activeValue: updatedFilters.displayMode || chart.additionalOptions?.filters?.displayModeFilter?.activeValue
+                }
+              }
+            }
+          });
+        }
+      }));
+      
+      // Update the charts state with the new callback-enabled charts
+      setCharts(updatedCharts);
+    }
+  }, [charts.length]); // Only run when charts array length changes (initial load)
+
   if (!isClient) {
     return null; // Return nothing during SSR
   }
@@ -590,7 +701,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
           legend={
             <>
               {legends[chart.id] && legends[chart.id].length > 0 ? (
-                <div className="space-y-2 w-full overflow-y-auto max-h-[300px]
+                <div className="space-y-2 w-full overflow-y-auto max-h-[500px]
                   [&::-webkit-scrollbar]:w-1.5 
                   [&::-webkit-scrollbar-track]:bg-transparent 
                   [&::-webkit-scrollbar-thumb]:bg-gray-700/40

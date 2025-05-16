@@ -27,10 +27,29 @@ export const CHART_TYPES = [
   { id: 'line', name: 'Line Chart' },
   { id: 'stacked-bar', name: 'Stacked Bar Chart' },
   { id: 'area', name: 'Area Chart' },
-  { id: 'stacked-area', name: 'Stacked Area Chart' }
+  { id: 'stacked-area', name: 'Stacked Area Chart' },
+  { id: 'dual-axis', name: 'Dual Axis Chart' }
 ] as const;
 
 export type ChartType = typeof CHART_TYPES[number]['id'];
+
+// Y-axis field configuration for mixed charts
+export interface YAxisConfig {
+  field: string;
+  type: 'bar' | 'line';
+  color?: string;
+  // Optional flag for dual-axis charts to indicate right y-axis
+  rightAxis?: boolean;
+}
+
+// Dual axis chart configuration
+export interface DualAxisConfig {
+  leftAxisType: 'bar' | 'line';
+  rightAxisType: 'bar' | 'line';
+  // Mapping for fields on which axis
+  leftAxisFields: string[];
+  rightAxisFields: string[];
+}
 
 // Chart configuration type
 export interface ChartConfig {
@@ -48,12 +67,16 @@ export interface ChartConfig {
   colorScheme?: string;
   dataMapping: {
     xAxis: string | string[];
-    yAxis: string | string[];
+    yAxis: string | string[] | YAxisConfig[];
     groupBy?: string;
   };
   additionalOptions?: Record<string, any>;
+  // For dual-axis charts, specify configuration
+  dualAxisConfig?: DualAxisConfig;
   createdAt: string;
   updatedAt: string;
+  // Callback for filter changes
+  onFilterChange?: (filters: Record<string, string>) => void;
 }
 
 // Form data when creating or editing a chart
@@ -71,8 +94,10 @@ export interface ChartFormData {
   colorScheme?: string;
   dataMapping: {
     xAxis: string | string[];
-    yAxis: string | string[];
+    yAxis: string | string[] | YAxisConfig[];
     groupBy?: string;
   };
   additionalOptions?: Record<string, any>;
+  // For dual-axis charts, specify configuration
+  dualAxisConfig?: DualAxisConfig;
 } 

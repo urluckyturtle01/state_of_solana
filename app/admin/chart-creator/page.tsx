@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType } from '../types';
+import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType, YAxisConfig, DualAxisConfig } from '../types';
 import { formDataToConfig, validateApiEndpoint, saveChartConfig } from '../utils';
 import FormInput from '../components/FormInput';
 import FormSelect from '../components/FormSelect';
@@ -11,6 +11,7 @@ import FormTextarea from '../components/FormTextarea';
 import Button from '../components/Button';
 import Link from 'next/link';
 import FormMultiInput from '../components/FormMultiInput';
+import FormMultiInputWithType from '../components/FormMultiInputWithType';
 
 export default function ChartCreatorPage() {
   const router = useRouter();
@@ -54,6 +55,15 @@ export default function ChartCreatorPage() {
   const [useMultipleFields, setUseMultipleFields] = useState({
     xAxis: false,
     yAxis: false
+  });
+  
+  // Track dual axis configuration
+  const [isDualAxis, setIsDualAxis] = useState(false);
+  const [dualAxisConfig, setDualAxisConfig] = useState<DualAxisConfig>({
+    leftAxisType: 'bar',
+    rightAxisType: 'line',
+    leftAxisFields: [],
+    rightAxisFields: []
   });
   
   // Add state for filter configuration
@@ -298,6 +308,54 @@ export default function ChartCreatorPage() {
     }
   };
   
+  // Add a handler for multi-input fields with chart type
+  const handleMultiInputWithTypeChange = (fieldName: string, values: YAxisConfig[]) => {
+    const [parent, child] = fieldName.split('.');
+    
+    if (parent === 'dataMapping' && child === 'yAxis') {
+      // When in dual-axis mode, we'll update both the dataMapping.yAxis
+      // and the dualAxisConfig arrays based on the rightAxis flag
+      if (isDualAxis) {
+        // Update the dualAxisConfig with the new assignments
+        const leftFields = values.filter(val => !val.rightAxis).map(val => val.field);
+        const rightFields = values.filter(val => val.rightAxis).map(val => val.field);
+        
+        setDualAxisConfig(prev => ({
+          ...prev,
+          leftAxisFields: leftFields,
+          rightAxisFields: rightFields
+        }));
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        dataMapping: {
+          ...prev.dataMapping,
+          [child]: values.length === 1 ? 
+            // If only one field, use the field name as string
+            values[0].field : 
+            // Otherwise use the full YAxisConfig array
+            values
+        }
+      }));
+    }
+    
+    // Mark as touched
+    setTouched(prev => ({
+      ...prev,
+      [fieldName]: true
+    }));
+    
+    // Clear error if exists
+    if (errors[fieldName]) {
+      setErrors(prev => {
+        const updated = { ...prev };
+        delete updated[fieldName];
+        return updated;
+      });
+    }
+  };
+  
   // Toggle between single and multi-input modes
   const toggleMultiInput = (field: 'xAxis' | 'yAxis') => {
     setUseMultipleFields(prev => ({
@@ -309,16 +367,41 @@ export default function ChartCreatorPage() {
     // When switching to single input, keep only the first value if array
     setFormData(prev => {
       const currentValue = prev.dataMapping[field];
-      let newValue: string | string[];
+      let newValue: string | string[] | YAxisConfig[];
       
       if (!useMultipleFields[field]) {
         // Switching to multi-input
-        newValue = typeof currentValue === 'string' && currentValue ? [currentValue] : [];
+        if (field === 'yAxis') {
+          // For Y-axis, create YAxisConfig objects with default chart type = 'bar'
+          if (typeof currentValue === 'string' && currentValue) {
+            newValue = [{ field: currentValue, type: 'bar' }];
+          } else if (Array.isArray(currentValue) && currentValue.length > 0) {
+            // Convert simple string array to YAxisConfig array
+            if (typeof currentValue[0] === 'string') {
+              newValue = (currentValue as string[]).map(field => ({ field, type: 'bar' as const }));
+            } else {
+              // Already in right format
+              newValue = currentValue;
+            }
+          } else {
+            newValue = [];
+          }
+        } else {
+          // For X-axis, just use string array
+          newValue = typeof currentValue === 'string' && currentValue ? [currentValue] : [];
+        }
       } else {
         // Switching to single input
-        newValue = Array.isArray(currentValue) && currentValue.length > 0 
-          ? currentValue[0] 
-          : '';
+        if (Array.isArray(currentValue) && currentValue.length > 0) {
+          if (field === 'yAxis' && typeof currentValue[0] !== 'string') {
+            // Extract field name from YAxisConfig
+            newValue = (currentValue as YAxisConfig[])[0].field;
+          } else {
+            newValue = (currentValue as string[])[0];
+          }
+        } else {
+          newValue = '';
+        }
       }
       
       return {
@@ -396,6 +479,147 @@ export default function ChartCreatorPage() {
         };
       });
     }
+  };
+  
+  // Toggle dual axis mode
+  const toggleDualAxis = () => {
+    // Only allow toggling dual axis when we have multiple y-axis fields
+    if (!useMultipleFields.yAxis) {
+      alert('Please enable multiple y-axis fields first to use dual axis');
+      return;
+    }
+    
+    const newIsDualAxis = !isDualAxis;
+    setIsDualAxis(newIsDualAxis);
+    
+    if (newIsDualAxis) {
+      // Set chart type to dual-axis when enabling
+      setFormData(prev => ({
+        ...prev,
+        chartType: 'dual-axis'
+      }));
+      
+      // Initialize dual axis configuration based on current fields
+      const yAxisFields = Array.isArray(formData.dataMapping.yAxis) 
+        ? formData.dataMapping.yAxis 
+        : formData.dataMapping.yAxis ? [formData.dataMapping.yAxis] : [];
+      
+      // Extract string fields from YAxisConfig if needed
+      const fieldNames = yAxisFields.map(field => 
+        typeof field === 'string' ? field : field.field
+      );
+      
+      // By default, put first field on left axis, rest on right
+      const leftFields = fieldNames.length > 0 ? [fieldNames[0]] : [];
+      const rightFields = fieldNames.length > 1 ? fieldNames.slice(1) : [];
+      
+      setDualAxisConfig({
+        leftAxisType: 'bar',
+        rightAxisType: 'line',
+        leftAxisFields: leftFields,
+        rightAxisFields: rightFields
+      });
+      
+      // Add rightAxis flags to the YAxisConfig objects
+      if (Array.isArray(formData.dataMapping.yAxis) && typeof formData.dataMapping.yAxis[0] !== 'string') {
+        const updatedYAxisConfigs = (formData.dataMapping.yAxis as YAxisConfig[]).map((config, index) => ({
+          ...config,
+          rightAxis: index > 0 // First field on left, rest on right by default
+        }));
+        
+        setFormData(prev => ({
+          ...prev,
+          dataMapping: {
+            ...prev.dataMapping,
+            yAxis: updatedYAxisConfigs
+          }
+        }));
+      }
+    } else {
+      // Reset to standard chart type when disabling
+      setFormData(prev => {
+        // Remove rightAxis flags from YAxisConfig objects when disabling dual axis
+        let updatedYAxis = prev.dataMapping.yAxis;
+        if (Array.isArray(updatedYAxis) && typeof updatedYAxis[0] !== 'string') {
+          updatedYAxis = (updatedYAxis as YAxisConfig[]).map(config => ({
+            field: config.field,
+            type: config.type
+          }));
+        }
+        
+        return {
+          ...prev,
+          chartType: 'bar',
+          dualAxisConfig: undefined,
+          dataMapping: {
+            ...prev.dataMapping,
+            yAxis: updatedYAxis
+          }
+        };
+      });
+    }
+  };
+
+  // Update dual axis configuration
+  const updateDualAxisConfig = (
+    key: keyof DualAxisConfig, 
+    value: string | string[]
+  ) => {
+    setDualAxisConfig(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    
+    // Update form data with the new configuration
+    setFormData(prev => ({
+      ...prev,
+      dualAxisConfig: {
+        ...prev.dualAxisConfig || dualAxisConfig,
+        [key]: value
+      }
+    }));
+  };
+
+  // Move fields between axes
+  const moveFieldBetweenAxes = (field: string, destination: 'left' | 'right') => {
+    setDualAxisConfig(prev => {
+      let newLeftFields = [...prev.leftAxisFields];
+      let newRightFields = [...prev.rightAxisFields];
+      
+      if (destination === 'left') {
+        // Remove from right and add to left
+        newRightFields = newRightFields.filter(f => f !== field);
+        if (!newLeftFields.includes(field)) {
+          newLeftFields.push(field);
+        }
+      } else {
+        // Remove from left and add to right
+        newLeftFields = newLeftFields.filter(f => f !== field);
+        if (!newRightFields.includes(field)) {
+          newRightFields.push(field);
+        }
+      }
+      
+      return {
+        ...prev,
+        leftAxisFields: newLeftFields,
+        rightAxisFields: newRightFields
+      };
+    });
+    
+    // Update form data with the new field configurations
+    setFormData(prev => ({
+      ...prev,
+      dualAxisConfig: {
+        ...prev.dualAxisConfig || dualAxisConfig,
+        leftAxisFields: destination === 'left' 
+          ? [...dualAxisConfig.leftAxisFields.filter(f => f !== field), field]
+          : dualAxisConfig.leftAxisFields.filter(f => f !== field),
+        rightAxisFields: destination === 'right'
+          ? [...dualAxisConfig.rightAxisFields.filter(f => f !== field), field]
+          : dualAxisConfig.rightAxisFields.filter(f => f !== field)
+      }
+    }));
   };
   
   // Validate form fields
@@ -745,8 +969,16 @@ export default function ChartCreatorPage() {
         });
       }
       
+      // If dual axis is enabled, make sure to include the configuration
+      if (isDualAxis) {
+        updatedFormData.dualAxisConfig = dualAxisConfig;
+      } else {
+        // Remove dual axis config if not using it
+        updatedFormData.dualAxisConfig = undefined;
+      }
+      
       // Convert form data to chart config
-      const chartConfig = formDataToConfig(updatedFormData);
+      const chartConfig = await formDataToConfig(updatedFormData, isDualAxis);
       
       // Save to local storage
       saveChartConfig(chartConfig);
@@ -1043,31 +1275,74 @@ export default function ChartCreatorPage() {
           <div className="col-span-2">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-md font-medium text-gray-700">Y-Axis Configuration</h3>
-              <button
-                type="button"
-                onClick={() => toggleMultiInput('yAxis')}
-                className="text-sm text-indigo-600 hover:text-indigo-800"
-              >
-                {useMultipleFields.yAxis ? 'Switch to Single Field' : 'Use Multiple Fields'}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => toggleMultiInput('yAxis')}
+                  className="text-sm text-indigo-600 hover:text-indigo-800"
+                >
+                  {useMultipleFields.yAxis ? 'Switch to Single Field' : 'Use Multiple Fields'}
+                </button>
+                
+                {useMultipleFields.yAxis && (
+                  <button
+                    type="button"
+                    onClick={toggleDualAxis}
+                    className={`text-sm ${isDualAxis ? 'text-blue-600 hover:text-blue-800' : 'text-indigo-600 hover:text-indigo-800'}`}
+                  >
+                    {isDualAxis ? 'Disable Dual Axis' : 'Enable Dual Axis'}
+                  </button>
+                )}
+              </div>
             </div>
             
             {useMultipleFields.yAxis ? (
-              <FormMultiInput
-                id="dataMapping.yAxis"
-                label="Y-Axis Fields"
-                values={Array.isArray(formData.dataMapping.yAxis) ? formData.dataMapping.yAxis : (formData.dataMapping.yAxis ? [formData.dataMapping.yAxis] : [])}
-                onChange={handleMultiInputChange}
-                placeholder="E.g., revenue, volume, count"
-                required
-                error={touched['dataMapping.yAxis'] ? errors['dataMapping.yAxis'] : undefined}
-                helpText={formData.isStacked ? "For stacked charts, each field will become a segment in the stack" : "Field names for the y-axis (add multiple fields for multi-series charts)"}
-              />
+              formData.chartType === 'bar' || formData.chartType === 'line' || formData.chartType === 'dual-axis' ? (
+                // For regular bar/line charts and dual-axis, allow mixed chart types
+                <FormMultiInputWithType
+                  id="dataMapping.yAxis"
+                  label="Y-Axis Fields"
+                  values={Array.isArray(formData.dataMapping.yAxis) && 
+                         typeof formData.dataMapping.yAxis[0] !== 'string' ? 
+                         formData.dataMapping.yAxis as YAxisConfig[] : 
+                         (Array.isArray(formData.dataMapping.yAxis) ? 
+                          (formData.dataMapping.yAxis as string[]).map(field => ({ field, type: 'bar' as const })) : 
+                          (formData.dataMapping.yAxis ? [{ field: formData.dataMapping.yAxis as string, type: 'bar' as const }] : [])
+                         )}
+                  onChange={handleMultiInputWithTypeChange}
+                  placeholder="E.g., revenue, volume, count"
+                  required
+                  error={touched['dataMapping.yAxis'] ? errors['dataMapping.yAxis'] : undefined}
+                  helpText={`${isDualAxis ? 'Use → button to assign fields to right Y-axis. ' : ''}Click the chart icon to toggle between bar and line chart for each field.`}
+                  supportDualAxis={isDualAxis}
+                />
+              ) : (
+                // For other chart types, use regular multi-input without chart type selection
+                <FormMultiInput
+                  id="dataMapping.yAxis"
+                  label="Y-Axis Fields"
+                  values={Array.isArray(formData.dataMapping.yAxis) ? 
+                         (typeof formData.dataMapping.yAxis[0] === 'string' ? 
+                          formData.dataMapping.yAxis as string[] : 
+                          (formData.dataMapping.yAxis as YAxisConfig[]).map(config => config.field)) : 
+                         (formData.dataMapping.yAxis ? [formData.dataMapping.yAxis as string] : [])}
+                  onChange={handleMultiInputChange}
+                  placeholder="E.g., revenue, volume, count"
+                  required
+                  error={touched['dataMapping.yAxis'] ? errors['dataMapping.yAxis'] : undefined}
+                  helpText={formData.isStacked ? "For stacked charts, each field will become a segment in the stack" : "Field names for the y-axis (add multiple fields for multi-series charts)"}
+                />
+              )
             ) : (
               <FormInput
                 id="dataMapping.yAxis"
                 label="Y-Axis Field"
-                value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : (Array.isArray(formData.dataMapping.yAxis) && formData.dataMapping.yAxis.length > 0 ? formData.dataMapping.yAxis[0] : '')}
+                value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : 
+                      (Array.isArray(formData.dataMapping.yAxis) && formData.dataMapping.yAxis.length > 0 ? 
+                       (typeof formData.dataMapping.yAxis[0] === 'string' ? 
+                        formData.dataMapping.yAxis[0] : 
+                        (formData.dataMapping.yAxis[0] as YAxisConfig).field) : 
+                       '')}
                 onChange={handleInputChange}
                 placeholder="E.g., protocol_revenue"
                 required
@@ -1232,6 +1507,53 @@ export default function ChartCreatorPage() {
             className="col-span-2"
             helpText="Optional JSON configuration for advanced options"
           />
+          
+          {/* Add simplified Dual Axis Configuration section if enabled */}
+          {isDualAxis && useMultipleFields.yAxis && (
+            <div className="col-span-2 border-t pt-3 mt-3">
+              <div className="text-md font-medium text-blue-700 mb-2">Dual Axis Configuration</div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Left Y-Axis Type
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    value={dualAxisConfig.leftAxisType}
+                    onChange={(e) => updateDualAxisConfig('leftAxisType', e.target.value as 'bar' | 'line')}
+                  >
+                    <option value="bar">Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                  </select>
+                  <p className="mt-1 text-sm text-gray-600">Chart type for left y-axis fields</p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Right Y-Axis Type
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    value={dualAxisConfig.rightAxisType}
+                    onChange={(e) => updateDualAxisConfig('rightAxisType', e.target.value as 'bar' | 'line')}
+                  >
+                    <option value="bar">Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                  </select>
+                  <p className="mt-1 text-sm text-gray-600">Chart type for right y-axis fields</p>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                <p className="text-sm text-gray-700">
+                  Use the <span className="font-semibold">→</span> buttons on each field above to assign them to the right Y-axis.
+                  Fields shown with <span className="bg-blue-100 px-1 rounded">blue background</span> are on the left axis, and fields with 
+                  <span className="bg-purple-100 px-1 rounded ml-1">purple background</span> are on the right axis.
+                </p>
+              </div>
+            </div>
+          )}
           
           {/* Form Actions */}
           <div className="col-span-2 flex justify-end space-x-4 border-t pt-6 mt-4">
