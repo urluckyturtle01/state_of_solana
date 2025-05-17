@@ -190,10 +190,8 @@ export default function ChartCreatorPage() {
     }));
   };
   
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
+  // Modified handleInputChange to handle string input directly
+  const handleInputChange = (name: string, value: string) => {
     if (name.includes('.')) {
       // Handle nested properties (like dataMapping.xAxis)
       const [parent, child] = name.split('.');
@@ -269,9 +267,7 @@ export default function ChartCreatorPage() {
   };
   
   // Handle checkbox changes
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    
+  const handleCheckboxChange = (name: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       [name]: checked
@@ -380,11 +376,13 @@ export default function ChartCreatorPage() {
           // For Y-axis, create YAxisConfig objects with default chart type = 'bar'
           if (typeof currentValue === 'string' && currentValue) {
             // Initialize with bar type but allow user to toggle
-            newValue = [{ field: currentValue, type: 'bar' }];
+            const unit = prev.dataMapping.yAxisUnit || ''; // Preserve the single field unit
+            newValue = [{ field: currentValue, type: 'bar', unit }];
           } else if (Array.isArray(currentValue) && currentValue.length > 0) {
             // Convert simple string array to YAxisConfig array
             if (typeof currentValue[0] === 'string') {
-              newValue = (currentValue as string[]).map(field => ({ field, type: 'bar' as const }));
+              const unit = prev.dataMapping.yAxisUnit || ''; // Preserve the single field unit
+              newValue = (currentValue as string[]).map(field => ({ field, type: 'bar' as const, unit }));
             } else {
               // Already in right format
               newValue = currentValue;
@@ -396,27 +394,65 @@ export default function ChartCreatorPage() {
           // For X-axis, just use string array
           newValue = typeof currentValue === 'string' && currentValue ? [currentValue] : [];
         }
+        
+        // When switching to multi-input for Y-axis, remove the single field unit
+        if (field === 'yAxis') {
+          return {
+            ...prev,
+            dataMapping: {
+              ...prev.dataMapping,
+              [field]: newValue,
+              // Clear the single-field unit as it's now in YAxisConfig objects
+              yAxisUnit: undefined
+            }
+          };
+        } else {
+          return {
+            ...prev,
+            dataMapping: {
+              ...prev.dataMapping,
+              [field]: newValue
+            }
+          };
+        }
       } else {
         // Switching to single input
         if (Array.isArray(currentValue) && currentValue.length > 0) {
+          // Extract unit if switching from multi to single for Y-axis
+          let unit = undefined;
+          
           if (field === 'yAxis' && typeof currentValue[0] !== 'string') {
             // Extract field name from YAxisConfig
-            newValue = (currentValue as YAxisConfig[])[0].field;
+            const firstConfig = currentValue[0] as YAxisConfig;
+            newValue = firstConfig.field;
+            unit = firstConfig.unit; // Get the unit from the first YAxisConfig
           } else {
             newValue = (currentValue as string[])[0];
+          }
+          
+          // If switching to single field for Y-axis, add the unit if available
+          if (field === 'yAxis' && unit) {
+            return {
+              ...prev,
+              dataMapping: {
+                ...prev.dataMapping,
+                [field]: newValue,
+                yAxisUnit: unit
+              }
+            };
           }
         } else {
           newValue = '';
         }
+        
+        return {
+          ...prev,
+          dataMapping: {
+            ...prev.dataMapping,
+            [field]: newValue
+          }
+        };
       }
-      
-      return {
-        ...prev,
-        dataMapping: {
-          ...prev.dataMapping,
-          [field]: newValue
-        }
-      };
     });
   };
   
@@ -1070,7 +1106,7 @@ export default function ChartCreatorPage() {
             id="title"
             label="Chart Title"
             value={formData.title}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('title', e.target.value)}
             placeholder="E.g., Protocol Revenue by Category"
             required
             error={touched.title ? errors.title : undefined}
@@ -1080,7 +1116,7 @@ export default function ChartCreatorPage() {
             id="subtitle"
             label="Chart Subtitle"
             value={formData.subtitle || ''}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('subtitle', e.target.value)}
             placeholder="E.g., Monthly revenue breakdown by protocol category"
           />
           
@@ -1101,7 +1137,7 @@ export default function ChartCreatorPage() {
             label="Page"
             options={availablePages}
             value={formData.page}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('page', e.target.value)}
             required
             disabled={!selectedMenu}
             error={touched.page ? errors.page : undefined}
@@ -1112,7 +1148,7 @@ export default function ChartCreatorPage() {
             id="section"
             label="Section"
             value={formData.section || ''}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('section', e.target.value)}
             placeholder="E.g., Top Charts"
             helpText="Optional section name for grouping charts"
           />
@@ -1127,7 +1163,7 @@ export default function ChartCreatorPage() {
             label="Chart Type"
             options={CHART_TYPES}
             value={formData.chartType}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('chartType', e.target.value)}
             required
             error={touched.chartType ? errors.chartType : undefined}
           />
@@ -1136,7 +1172,7 @@ export default function ChartCreatorPage() {
             id="colorScheme"
             label="Color Scheme"
             value={formData.colorScheme || 'default'}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('colorScheme', e.target.value)}
             placeholder="E.g., blue,green,purple or default"
             helpText="Comma-separated colors or 'default'"
           />
@@ -1146,11 +1182,11 @@ export default function ChartCreatorPage() {
               id="isStacked"
               label="Is this a stacked chart?"
               checked={formData.isStacked || false}
-              onChange={handleCheckboxChange}
+              onChange={(e) => handleCheckboxChange('isStacked', e.target.checked)}
               helpText={
                 formData.isStacked 
-                  ? "Stacked charts can use either a Group By field OR multiple Y-axis fields"
-                  : "For bar or area charts, enable to stack values"
+                  ? "The chart will display data as stacked"
+                  : "Enable to create a stacked chart"
               }
             />
             
@@ -1177,7 +1213,7 @@ export default function ChartCreatorPage() {
                 id="apiEndpoint"
                 label="API Endpoint"
                 value={formData.apiEndpoint}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange('apiEndpoint', e.target.value)}
                 placeholder="E.g., https://analytics.topledger.xyz/solana/api/queries/12345/results.json"
                 required
                 error={touched.apiEndpoint ? errors.apiEndpoint : undefined}
@@ -1200,7 +1236,7 @@ export default function ChartCreatorPage() {
             id="apiKey"
             label="API Key"
             value={formData.apiKey || ''}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange('apiKey', e.target.value)}
             placeholder="E.g., YourApiKeyHere"
             helpText="Optional API key for authentication"
             className="col-span-2"
@@ -1269,7 +1305,7 @@ export default function ChartCreatorPage() {
                 id="dataMapping.xAxis"
                 label="X-Axis Field"
                 value={typeof formData.dataMapping.xAxis === 'string' ? formData.dataMapping.xAxis : (Array.isArray(formData.dataMapping.xAxis) && formData.dataMapping.xAxis.length > 0 ? formData.dataMapping.xAxis[0] : '')}
-                onChange={handleInputChange}
+                onChange={(e) => handleInputChange('dataMapping.xAxis', e.target.value)}
                 placeholder="E.g., month"
                 required
                 error={touched['dataMapping.xAxis'] ? errors['dataMapping.xAxis'] : undefined}
@@ -1340,21 +1376,40 @@ export default function ChartCreatorPage() {
                 />
               )
             ) : (
-              <FormInput
-                id="dataMapping.yAxis"
-                label="Y-Axis Field"
-                value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : 
-                      (Array.isArray(formData.dataMapping.yAxis) && formData.dataMapping.yAxis.length > 0 ? 
-                       (typeof formData.dataMapping.yAxis[0] === 'string' ? 
-                        formData.dataMapping.yAxis[0] : 
-                        (formData.dataMapping.yAxis[0] as YAxisConfig).field) : 
-                       '')}
-                onChange={handleInputChange}
-                placeholder="E.g., protocol_revenue"
-                required
-                error={touched['dataMapping.yAxis'] ? errors['dataMapping.yAxis'] : undefined}
-                helpText={formData.isStacked ? "For stacked charts with a single Y-axis, you must specify a Group By field below" : "Field name for the y-axis (usually numeric values)"}
-              />
+              <div className="mb-4">
+                <label htmlFor="y-axis-field" className="block text-sm font-medium text-gray-800 mb-1">
+                  Y-Axis Field <span className="text-red-600">*</span>
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    id="y-axis-field"
+                    value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : ''}
+                    onChange={(e) => handleInputChange('dataMapping.yAxis', e.target.value)}
+                    placeholder="Field name for the y-axis"
+                    className="block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+                    required
+                  />
+                  <div className="relative flex items-center">
+                    <input
+                      type="text"
+                      id="y-axis-unit"
+                      value={formData.dataMapping.yAxisUnit || ''}
+                      onChange={(e) => handleInputChange('dataMapping.yAxisUnit', e.target.value)}
+                      placeholder="Unit ($, %, SOL)"
+                      className="w-32 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+                    />
+                  </div>
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  {formData.isStacked 
+                    ? "For stacked charts with a single Y-axis, you must specify a Group By field below" 
+                    : "Field name for the y-axis (usually numeric values)"}
+                </p>
+                {touched['dataMapping.yAxis'] && errors['dataMapping.yAxis'] && (
+                  <p className="mt-1 text-sm text-red-600">{errors['dataMapping.yAxis']}</p>
+                )}
+              </div>
             )}
           </div>
           
@@ -1363,7 +1418,7 @@ export default function ChartCreatorPage() {
               id="dataMapping.groupBy"
               label="Group By Field"
               value={formData.dataMapping.groupBy || ''}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange('dataMapping.groupBy', e.target.value)}
               placeholder="E.g., platform"
               required
               error={touched['dataMapping.groupBy'] ? errors['dataMapping.groupBy'] : undefined}
@@ -1376,7 +1431,7 @@ export default function ChartCreatorPage() {
               id="dataMapping.groupBy"
               label="Group By Field (Optional)"
               value={formData.dataMapping.groupBy || ''}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange('dataMapping.groupBy', e.target.value)}
               placeholder="E.g., platform"
               error={touched['dataMapping.groupBy'] ? errors['dataMapping.groupBy'] : undefined}
               helpText="Optional field to further group data (not required when using multiple Y-axis fields)"
@@ -1392,7 +1447,7 @@ export default function ChartCreatorPage() {
           {/* Time Filter */}
           <div className="col-span-2">
             <FormCheckbox
-              id="enableTimeFilter"
+              id="timeFilter"
               label="Enable Time Filter"
               checked={enableFilters.timeFilter}
               onChange={() => toggleFilter('timeFilter')}
@@ -1425,7 +1480,7 @@ export default function ChartCreatorPage() {
           {/* Display Mode Filter */}
           <div className="col-span-2 mt-4">
             <FormCheckbox
-              id="enableDisplayModeFilter"
+              id="displayModeFilter"
               label="Enable Display Mode Filter"
               checked={enableFilters.displayModeFilter}
               onChange={() => toggleFilter('displayModeFilter')}
@@ -1458,7 +1513,7 @@ export default function ChartCreatorPage() {
           {/* Currency Filter */}
           <div className="col-span-2 mt-4">
             <FormCheckbox
-              id="enableCurrencyFilter"
+              id="currencyFilter"
               label="Enable Currency Filter"
               checked={enableFilters.currencyFilter}
               onChange={() => toggleFilter('currencyFilter')}

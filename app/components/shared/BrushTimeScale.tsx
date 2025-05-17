@@ -26,6 +26,8 @@ export interface BrushTimeScaleProps {
   curveType?: string | null;
   // Stroke width
   strokeWidth?: number;
+  // Filter values - when these change, brush should reset to fully selected mode
+  filterValues?: Record<string, string>;
 }
 
 const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
@@ -40,13 +42,17 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   lineColor,
   margin = { top: 5, right: 25, bottom: 10, left: 45 },
   curveType = "monotoneX",
-  strokeWidth
+  strokeWidth,
+  filterValues
 }) => {
   // Prevent the initial render from triggering onChange
   const initialRenderRef = useRef(true);
   
   // Track the brush instance to prevent unnecessary updates
   const brushRef = useRef<any>(null);
+  
+  // Add a ref to the SVG container so we can find DOM elements more reliably
+  const svgRef = useRef<SVGSVGElement | null>(null);
   
   // Generate a stable ID for this component instance
   const instanceIdRef = useRef(`brush-${Math.random().toString(36).substring(2, 9)}`);
@@ -55,6 +61,72 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   const brushKey = React.useMemo(() => {
     return `${instanceIdRef.current}-${data.length}`;
   }, [data.length]);
+  
+  // Track previous filter values to detect changes
+  const prevFilterValuesRef = useRef<Record<string, string> | undefined>(filterValues);
+
+  // Effect to reset brush when filter values change
+  useEffect(() => {
+    // Skip the initial render
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false;
+      return;
+    }
+
+    // Check if filterValues exist and have changed
+    if (filterValues && prevFilterValuesRef.current) {
+      // Check if any filter values have changed
+      const hasFilterChanged = Object.keys(filterValues).some(key => 
+        filterValues[key] !== prevFilterValuesRef.current?.[key]
+      );
+
+      if (hasFilterChanged) {
+        console.log('Filter changed, resetting brush to show full dataset');
+        
+        // Reset the brush to show the full dataset
+        onClearBrush();
+        
+        // Force visual reset of the brush selection by manipulating the DOM
+        setTimeout(() => {
+          // Use the SVG reference to scope our search to just this component
+          if (svgRef.current) {
+            const selectionRect = svgRef.current.querySelector('.visx-brush-selection');
+            const brushElement = svgRef.current.querySelector('.visx-brush');
+            
+            if (selectionRect && brushElement) {
+              const containerWidth = brushElement.getBoundingClientRect().width;
+              // Reset to full width with slight padding
+              selectionRect.setAttribute('width', String(containerWidth - 4));
+              selectionRect.setAttribute('x', '2');
+              console.log(`Reset brush to width: ${containerWidth - 4}, x: 2`);
+            } else {
+              console.log('Could not find brush elements within SVG');
+            }
+          } else {
+            // Fallback to document-wide search if SVG ref isn't available
+            console.log('Falling back to document-wide search');
+            const allSelections = document.querySelectorAll('.visx-brush-selection');
+            const allBrushes = document.querySelectorAll('.visx-brush');
+            
+            if (allSelections.length > 0 && allBrushes.length > 0) {
+              const selectionRect = allSelections[0];
+              const brushElement = allBrushes[0];
+              
+              const containerWidth = brushElement.getBoundingClientRect().width;
+              selectionRect.setAttribute('width', String(containerWidth - 4));
+              selectionRect.setAttribute('x', '2');
+              console.log(`Reset brush using fallback method: width: ${containerWidth - 4}, x: 2`);
+            } else {
+              console.log('Could not find any brush elements in document');
+            }
+          }
+        }, 50);
+      }
+    }
+
+    // Update ref for next comparison
+    prevFilterValuesRef.current = filterValues;
+  }, [filterValues, onClearBrush]);
   
   // Map curve type string to actual curve function
   const getCurveFunction = useCallback((type: string | null) => {
@@ -186,25 +258,18 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
               
           // Create a wrapped change handler that prevents the initial render from triggering updates
           const handleBrushChange = (domain: any) => {
-            if (initialRenderRef.current) {
-              // Skip the first onChange event
-              initialRenderRef.current = false;
-              return;
-            }
-            
-            if (!domain) {
+            if (domain) {
+              // Use requestAnimationFrame to avoid React update loops
+              window.requestAnimationFrame(() => {
+                onBrushChange(domain);
+              });
+            } else {
               onClearBrush();
-              return;
             }
-            
-            // Use requestAnimationFrame to avoid React update loops
-            window.requestAnimationFrame(() => {
-              onBrushChange(domain);
-            });
           };
           
           return (
-            <svg width={width} height={height}>
+            <svg width={width} height={height} ref={svgRef}>
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect

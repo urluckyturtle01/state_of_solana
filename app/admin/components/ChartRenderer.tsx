@@ -5,6 +5,7 @@ import SimpleBarChart from './charts/SimpleBarChart';
 import StackedBarChart from './charts/StackedBarChart';
 import DualAxisChart from './charts/DualAxisChart';
 import MultiSeriesLineBarChart from './charts/MultiSeriesLineBarChart';
+import PieChart from './charts/PieChart';
 import Modal from '../../components/shared/Modal';
 //import LineChart from './charts/LineChart';
 // import AreaChart from './charts/AreaChart';
@@ -556,6 +557,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       groupBy: chartConfig.dataMapping.groupBy
     });
     
+    // Get the unit from the chart config for use with all chart types
+    const yAxisUnit = getYAxisUnit(chartConfig.dataMapping.yAxis);
+    
     switch (chartConfig.chartType) {
       case 'bar':
         // Check if we should use MultiSeriesLineBarChart (multiple Y fields with mixed line/bar types)
@@ -585,6 +589,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             onCloseExpanded={onCloseExpanded}
             colorMap={legendColorMap}
             filterValues={filterValues}
+            yAxisUnit={yAxisUnit}
           />;
         }
         
@@ -605,6 +610,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             onCloseExpanded={onCloseExpanded}
             colorMap={legendColorMap}
             filterValues={filterValues}
+            yAxisUnit={yAxisUnit}
           />;
         }
         
@@ -627,6 +633,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             onCloseExpanded={onCloseExpanded}
             colorMap={legendColorMap}
             filterValues={filterValues}
+            yAxisUnit={yAxisUnit}
           />;
         }
         
@@ -646,6 +653,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           onCloseExpanded={onCloseExpanded}
           colorMap={legendColorMap}
           filterValues={filterValues}
+          yAxisUnit={yAxisUnit}
         />;
 
       case 'stacked-bar':
@@ -669,6 +677,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             onCloseExpanded={onCloseExpanded}
             colorMap={legendColorMap}
             filterValues={filterValues}
+            yAxisUnit={yAxisUnit}
           />;
         }
         
@@ -688,6 +697,26 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           onCloseExpanded={onCloseExpanded}
           colorMap={legendColorMap}
           filterValues={filterValues}
+          yAxisUnit={yAxisUnit}
+        />;
+        
+      case 'pie':
+        return <PieChart 
+          chartConfig={{
+            ...chartConfig,
+            onFilterChange: (newFilters) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }
+          }} 
+          data={data} 
+          isExpanded={isExpanded} 
+          onCloseExpanded={onCloseExpanded}
+          colorMap={legendColorMap}
+          filterValues={filterValues}
+          yAxisUnit={yAxisUnit}
         />;
         
       /* Temporarily commented out until AreaChart is implemented
@@ -742,6 +771,27 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         );
     }
   }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues]);
+
+  // Implement logic to extract the unit from yAxis when necessary
+  const getYAxisUnit = (yAxis: string | YAxisConfig | (string | YAxisConfig)[]): string | undefined => {
+    // Check if we're using a dataMapping.yAxisUnit field (single field mode)
+    if (chartConfig.dataMapping.yAxisUnit) {
+      return chartConfig.dataMapping.yAxisUnit;
+    }
+    
+    // Otherwise try to get unit from YAxisConfig objects if available
+    if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] !== 'string') {
+      return (yAxis[0] as YAxisConfig).unit;
+    }
+    
+    // Handle single YAxisConfig
+    if (typeof yAxis !== 'string' && !Array.isArray(yAxis)) {
+      return yAxis.unit;
+    }
+    
+    // No unit specified
+    return undefined;
+  };
 
   if (loading) {
     return (

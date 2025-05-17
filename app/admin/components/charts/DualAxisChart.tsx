@@ -48,11 +48,40 @@ interface DualAxisChartProps {
   onCloseExpanded?: () => void;
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
+  yAxisUnit?: string;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
 function getYAxisField(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
+}
+
+// Helper function to get unit from YAxisConfig or use a default
+function getYAxisUnit(field: string | YAxisConfig): string | undefined {
+  return typeof field === 'string' ? undefined : field.unit;
+}
+
+// Format value with appropriate units
+function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
+  // Get the unit symbol (use defaultUnit as fallback)
+  const unitSymbol = unit || defaultUnit || '';
+  const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+  
+  // Format with appropriate scale
+  let formattedValue: string;
+  if (value >= 1000000000) {
+    formattedValue = `${(value / 1000000000).toFixed(2)}B`;
+  } else if (value >= 1000000) {
+    formattedValue = `${(value / 1000000).toFixed(2)}M`;
+  } else if (value >= 1000) {
+    formattedValue = `${(value / 1000).toFixed(2)}K`;
+  } else {
+    formattedValue = value.toFixed(2);
+  }
+  
+  // Return with correct unit placement (or no unit if not specified)
+  if (!unitSymbol) return formattedValue;
+  return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}${unitSymbol}`;
 }
 
 const DualAxisChart: React.FC<DualAxisChartProps> = ({ 
@@ -63,7 +92,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   isExpanded = false,
   onCloseExpanded,
   colorMap: externalColorMap,
-  filterValues
+  filterValues,
+  yAxisUnit
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
@@ -76,13 +106,58 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Filtered data based on brush
   const [filteredData, setFilteredData] = useState<any[]>([]);
 
+  // Helper function to format X-axis tick labels
+  const formatXAxisLabel = useCallback((value: string): string => {
+    // Check if the value is a date format (YYYY-MM-DD or similar)
+    const isDateFormat = /^\d{4}-\d{2}-\d{2}/.test(value) || 
+                        /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
+                        /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value);
+    
+    if (isDateFormat) {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        // Format based on timeFilter
+        if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else if (filterValues?.timeFilter === 'M') {
+          return date.toLocaleDateString('en-US', { month: 'short' });
+        } else if (filterValues?.timeFilter === 'Q') {
+          const quarter = Math.floor(date.getMonth() / 3) + 1;
+          return `Q${quarter}`;
+        } else if (filterValues?.timeFilter === 'Y') {
+          return date.getFullYear().toString();
+        }
+        
+        // Default format if no timeFilter is specified
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    }
+    
+    // For quarter format (Q1, Q2, etc.)
+    if (/^Q[1-4]\s\d{4}$/.test(value)) {
+      return value.substring(0, 2); // Just "Q1", "Q2", etc.
+    }
+    
+    // For month-year format (Jan 2023)
+    if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) {
+      return value.substring(0, 3); // Just "Jan", "Feb", etc.
+    }
+    
+    // Don't shorten other values that are already short
+    if (value.length <= 5) {
+      return value;
+    }
+    
+    // For other longer text, truncate with ellipsis
+    return `${value.substring(0, 3)}...`;
+  }, [filterValues]);
+  
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
     left: number;
     top: number;
     key: string;
-    title?: string;
     items: { label: string, value: string | number, color: string, shape?: 'circle' | 'square' }[];
   }>({
     visible: false,
@@ -171,39 +246,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       }
     }, 100);
   }, []);
-  
-  // Add effect to reset brush when filter values change
-  useEffect(() => {
-    if (filterValues) {
-      // When filter values change, reset brush to show full dataset
-      if (isBrushActive) {
-        console.log('Filter changed, resetting brush to show full dataset');
-        
-        // Force clear the brush visually as well as in state
-        setBrushDomain(null);
-        setIsBrushActive(true); // Keep active but reset domain
-        setFilteredData(data); // Reset to full dataset
-        
-        // Force brush visual reset
-        forceBrushVisualReset();
-        
-        // Try additional resets with delay to ensure it works
-        setTimeout(() => forceBrushVisualReset(), 300);
-      }
-      
-      // Update modal filter values
-      setModalFilterValues(filterValues);
-      
-      // Also reset modal brush if needed
-      if (isModalBrushActive && isExpanded) {
-        setModalBrushDomain(null);
-        setIsModalBrushActive(true);
-        setModalFilteredData(data);
-        forceBrushVisualReset(true);
-        setTimeout(() => forceBrushVisualReset(true), 300);
-      }
-    }
-  }, [filterValues, isBrushActive, isModalBrushActive, isExpanded, data, forceBrushVisualReset]);
   
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -327,37 +369,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Format tooltip title
-  const formatTooltipTitle = useCallback((label: string) => {
-    if (!label) return '';
-    
-    const strLabel = String(label);
-    
-    // Detect if it's a date format
-    if (/^\d{4}-\d{2}-\d{2}/.test(strLabel) || /^\d{2}\/\d{2}\/\d{4}/.test(strLabel)) {
-      const d = new Date(strLabel);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('en-US', { 
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        });
-      }
-    }
-    
-    // For month-year format like "Jan 2023"
-    if (/^[A-Za-z]{3}\s\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    // For year only
-    if (/^\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    return strLabel;
-  }, []);
-  
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = chartRef.current?.getBoundingClientRect();
@@ -426,7 +437,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         })
         .map(field => ({
           label: field,
-          value: formatValue(Number(dataPoint[field]) || 0),
+          value: formatWithUnit(Number(dataPoint[field]) || 0, getYAxisUnit(field), yAxisUnit),
           color: fieldColors[field] || blue,
           shape: 'square' as 'square'
         }));
@@ -445,7 +456,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       setTooltip({
         visible: true,
         key: xValue,
-        title: formatTooltipTitle(xValue),
         items: tooltipItems,
         left: tooltipLeft,
         top: tooltipTop
@@ -458,7 +468,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         top: tooltipTop
       }));
     }
-  }, [data, filteredData, isBrushActive, chartData, fields, xKey, fieldColors, formatValue, tooltip, formatTooltipTitle]);
+  }, [data, filteredData, isBrushActive, chartData, fields, xKey, fieldColors, formatValue, tooltip, getYAxisUnit, yAxisUnit]);
 
   // Utility to determine if a field belongs to the right axis
   const isRightAxisField = useCallback((field: string): boolean => {
@@ -536,7 +546,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         setBrushDomain(null);
         setIsBrushActive(true); // Keep active but reset to full range
         setFilteredData(data); // Show all data
-        forceBrushVisualReset(); // Force visual reset
       }
       return;
     }
@@ -556,7 +565,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
-  }, [isBrushActive, brushData, data, forceBrushVisualReset]);
+  }, [isBrushActive, brushData, data]);
 
   // Update legend items based on chart data
   const updateLegendItems = useCallback(() => {
@@ -598,7 +607,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         setModalBrushDomain(null);
         setIsModalBrushActive(true); // Keep active but reset to full range
         setModalFilteredData(data); // Show all data
-        forceBrushVisualReset(true); // Force visual reset
       }
       return;
     }
@@ -618,7 +626,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
-  }, [isModalBrushActive, brushData, data, forceBrushVisualReset]);
+  }, [isModalBrushActive, brushData, data]);
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
@@ -635,19 +643,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     // Show loading state
     setLoading(true);
     
-    // Reset the modal brush
-    setModalBrushDomain(null);
-    setIsModalBrushActive(true);
-    setModalFilteredData(data);
-    
-    // Force modal brush visual reset with retry logic
-    const retryAttempts = [100, 300, 500]; // Try at different intervals
-    retryAttempts.forEach(delay => {
-      setTimeout(() => {
-        console.log(`Attempting modal brush reset after ${delay}ms`);
-        forceBrushVisualReset(true);
-      }, delay);
-    });
+    // Don't reset the brush when filters change - this will be handled by BrushTimeScale
     
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
@@ -657,8 +653,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     // Hide loading state after a delay
     setTimeout(() => {
       setLoading(false);
-    }, 500); // Longer timeout to accommodate retries
-  }, [modalFilterValues, chartConfig, data, forceBrushVisualReset]);
+    }, 500); // Longer timeout to accommodate redraw
+  }, [modalFilterValues, chartConfig]);
 
   // Handle mouse move for tooltips specifically in modal
   const handleModalMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -749,7 +745,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         })
         .map(field => ({
           label: field,
-          value: formatValue(Number(dataPoint[field]) || 0),
+          value: formatWithUnit(Number(dataPoint[field]) || 0, getYAxisUnit(field), yAxisUnit),
           color: fieldColors[field] || blue,
           shape: shouldRenderAsLine(field) ? 'circle' as 'circle' : 'square' as 'square'
         }));
@@ -768,7 +764,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       setTooltip({
         visible: true,
         key: xValue,
-        title: formatTooltipTitle(xValue),
         items: tooltipItems,
         left: tooltipLeft,
         top: tooltipTop
@@ -783,7 +778,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     }
   }, [
     data, modalFilteredData, isModalBrushActive, fields, xKey, fieldColors, 
-    formatValue, tooltip, formatTooltipTitle, shouldRenderAsLine
+    formatValue, tooltip, shouldRenderAsLine, getYAxisUnit, yAxisUnit
   ]);
 
   // Render content function
@@ -902,11 +897,28 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       lineDataByField[field].sort((a, b) => a.x - b.x);
     });
     
-    // Calculate x-axis tick values
-    const tickInterval = Math.ceil(currentData.length / 8);
-    const xTickValues = currentData
-      .filter((_, i) => i % tickInterval === 0)
-      .map(d => d[xKey]);
+    // Use all X-axis values for tick labels, but limit date ticks to 8 max
+    const xTickValues = (() => {
+      // Check if the data contains dates
+      const isDateData = chartData.length > 0 && 
+        typeof chartData[0][xKey] === 'string' && 
+        (/^\d{4}-\d{2}-\d{2}/.test(chartData[0][xKey]) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(chartData[0][xKey]) ||
+         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
+         /^\d{4}$/.test(chartData[0][xKey]));
+      
+      // For date data, limit to 8 ticks maximum
+      if (isDateData && chartData.length > 8) {
+        const tickInterval = Math.ceil(chartData.length / 8);
+        return chartData
+          .filter((_, i) => i % tickInterval === 0)
+          .map(d => d[xKey]);
+      }
+      
+      // For other data types, show all values
+      return chartData.map(d => d[xKey]);
+    })();
     
     // Use appropriate handlers based on modal state
     const mouseMoveFn = isModal ? handleModalMouseMove : handleMouseMove;
@@ -922,11 +934,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         {/* Tooltip - only show for non-modal version, modal handles its own */}
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
-            title={tooltip.title || String(tooltip.key)}
+            title={String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
             isModal={false}
+            timeFilter={filterValues?.timeFilter}
           />
         )}
         
@@ -995,12 +1008,36 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
               tickLength={0}
               tickValues={xTickValues}
               tickFormat={(value) => {
-                // Format date labels for readability
-                if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                // Format date labels based on timeFilter
+                if (typeof value === 'string') {
+                  // For ISO dates (YYYY-MM-DD)
+                  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+                    const date = new Date(value);
+                    
+                    if (!isNaN(date.getTime())) {
+                      // Format based on timeFilter if available
+                      if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      } else if (filterValues?.timeFilter === 'M') {
+                        return date.toLocaleDateString('en-US', { month: 'short' });
+                      } else if (filterValues?.timeFilter === 'Q') {
+                        const quarter = Math.floor(date.getMonth() / 3) + 1;
+                        return `Q${quarter}`;
+                      } else if (filterValues?.timeFilter === 'Y') {
+                        return date.getFullYear().toString();
+                      }
+                      
+                      // Default format if no timeFilter is specified
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                  }
+                  
+                  // For other date formats, use the helper function
+                  return formatXAxisLabel(value);
                 }
-                return value;
+                
+                // For non-date values, format using our helper function
+                return formatXAxisLabel(String(value));
               }}
               tickLabelProps={() => ({
                 fill: '#6b7280',
@@ -1009,6 +1046,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                 textAnchor: 'middle',
                 dy: '0.5em'
               })}
+              // Ensure first tick doesn't start before origin
+              left={0}
             />
             
             {/* Render bars first (so lines appear on top) */}
@@ -1070,13 +1109,31 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             })}
           </Group>
         </svg>
+        
+        {/* Display tooltip at the container level for modal views */}
+        {tooltip.visible && tooltip.items && (
+          <div className="absolute z-50" style={{ 
+            pointerEvents: 'none',
+            top: tooltip.top,
+            left: tooltip.left
+          }}>
+            <ChartTooltip
+              title={String(tooltip.key)}
+              items={tooltip.items}
+              left={0}
+              top={0}
+              isModal={true}
+              timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
+            />
+          </div>
+        )}
       </div>
     );
   }, [
     chartData, fields, xKey, loading, error, refreshData, 
     handleMouseMove, handleModalMouseMove, handleMouseLeave,
     tooltip, fieldColors, isRightAxisField, shouldRenderAsLine, formatTickValue,
-    isBrushActive, isModalBrushActive, filteredData, modalFilteredData, data
+    isBrushActive, isModalBrushActive, filteredData, modalFilteredData, data, yAxisUnit
   ]);
 
   // Render the chart with brush
@@ -1138,23 +1195,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
               {/* Chart area - 90% width */}
               <div className="w-[90%] h-[90%] pr-3 border-r border-gray-900">
                 <div className="flex flex-col h-full">
-                  {/* Display tooltip at the container level for modal views */}
-                  {tooltip.visible && tooltip.items && (
-                    <div className="absolute z-50" style={{ 
-                      pointerEvents: 'none',
-                      top: tooltip.top,
-                      left: tooltip.left
-                    }}>
-                      <ChartTooltip
-                        title={tooltip.title || String(tooltip.key)}
-                        items={tooltip.items}
-                        left={0}
-                        top={0}
-                        isModal={true}
-                      />
-                    </div>
-                  )}
-                  
                   {/* Main chart - 85% height */}
                   <div className="h-[85%] w-full relative" ref={modalChartRef}>
                     <ParentSize debounceTime={10}>
@@ -1171,21 +1211,21 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                     <div className="h-[15%] w-full mt-2">
                       <BrushTimeScale
                         data={brushData}
-                        activeBrushDomain={modalBrushDomain}
-                        onBrushChange={handleModalBrushChange}
+                        activeBrushDomain={brushDomain}
+                        onBrushChange={handleBrushChange}
                         onClearBrush={() => {
-                          setModalBrushDomain(null);
-                          setIsModalBrushActive(true); // Keep active but reset to full range
-                          setModalFilteredData(data); // Show all data
-                          forceBrushVisualReset(true); // Force visual reset
+                          setBrushDomain(null);
+                          setIsBrushActive(true); // Keep active but reset to full range
+                          setFilteredData(data); // Show all data
                         }}
                         getDate={(d) => d.date}
                         getValue={(d) => d.value}
                         lineColor="#60a5fa"
-                        margin={{ top: 0, right: 25, bottom: 10, left: 30 }}
-                        isModal={true}
+                        margin={{ top: 0, right: 25, bottom: 20, left: 30 }}
+                        isModal={false}
                         curveType="catmullRom"
                         strokeWidth={1.5}
+                        filterValues={filterValues}
                       />
                     </div>
                   ) : (
@@ -1251,7 +1291,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                   setBrushDomain(null);
                   setIsBrushActive(true); // Keep active but reset to full range
                   setFilteredData(data); // Show all data
-                  forceBrushVisualReset(); // Force visual reset
                 }}
                 getDate={(d) => d.date}
                 getValue={(d) => d.value}
@@ -1260,6 +1299,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                 isModal={false}
                 curveType="catmullRom"
                 strokeWidth={1.5}
+                filterValues={filterValues}
               />
             </div>
           ) : (

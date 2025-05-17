@@ -46,6 +46,7 @@ interface StackedBarChartProps {
   onCloseExpanded?: () => void;
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
+  yAxisUnit?: string;
 }
 
 interface DateBrushPoint {
@@ -67,7 +68,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   isExpanded = false,
   onCloseExpanded,
   colorMap: externalColorMap,
-  filterValues
+  filterValues,
+  yAxisUnit
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -91,7 +93,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     left: number;
     top: number;
     key: string;
-    title?: string;
     items: { label: string, value: string | number, color: string, shape?: 'circle' | 'square' }[];
   }>({
     visible: false,
@@ -151,22 +152,32 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, []);
 
   // Format value for tooltip
-  const formatValue = useCallback((value: number) => {
+  const formatValue = useCallback((value: number, unit?: string) => {
     // Add null/undefined check
     if (value === undefined || value === null) {
-      return '$0.00';
+      return '0.00';
     }
     
+    // Get the unit symbol (use component prop as fallback)
+    const unitSymbol = unit || yAxisUnit || '';
+    const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+    
+    // Format with appropriate scale
+    let formattedValue: string;
     if (value >= 1000000000) {
-      return `$${(value / 1000000000).toFixed(2)}B`;
+      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
     } else if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
+      formattedValue = `${(value / 1000000).toFixed(2)}M`;
     } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+      formattedValue = `${(value / 1000).toFixed(2)}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      formattedValue = value.toFixed(2);
     }
-  }, []);
+    
+    // Return with correct unit placement (or no unit if not specified)
+    if (!unitSymbol) return formattedValue;
+    return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}${unitSymbol}`;
+  }, [yAxisUnit]);
 
   // Format y-axis tick value with appropriate units
   const formatTickValue = useCallback((value: number) => {
@@ -196,16 +207,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   useEffect(() => {
     if (filterValues) {
       setModalFilterValues(filterValues);
-      
-      // When filter values change, reset brush to show full dataset
-      if (isBrushActive) {
-        console.log('Filter changed, resetting brush to show full dataset');
-        setBrushDomain(null);
-        
-        setFilteredData([]);
-      }
     }
-  }, [filterValues, isBrushActive]);
+  }, [filterValues]);
 
   // Handle filter changes - notify parent component of filter changes
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -238,19 +241,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // Refresh the chart with the new filter values
       setLoading(true);
       
-      // Reset modal brush when applying filters in expanded mode
-      if (isModalBrushActive) {
-        console.log('Modal filters changed, resetting brush to show full dataset');
-        setModalBrushDomain(null);
-        
-        setModalFilteredData([]);
-      }
+      // Don't reset the brush when filters change - this will be handled by BrushTimeScale
       
       setTimeout(() => {
         setLoading(false);
       }, 500);
     }
-  }, [modalFilterValues, isExpanded, isModalBrushActive]);
+  }, [modalFilterValues, isExpanded]);
 
   // Modify refreshData to only reset when explicitly requested
   const refreshData = useCallback(() => {
@@ -433,37 +430,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     };
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig]);
 
-  // Format tooltip title
-  const formatTooltipTitle = useCallback((label: string) => {
-    if (!label) return '';
-    
-    const strLabel = String(label);
-    
-    // Detect if it's a date format
-    if (/^\d{4}-\d{2}-\d{2}/.test(strLabel) || /^\d{2}\/\d{2}\/\d{4}/.test(strLabel)) {
-      const d = new Date(strLabel);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('en-US', { 
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        });
-      }
-    }
-    
-    // For month-year format like "Jan 2023"
-    if (/^[A-Za-z]{3}\s\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    // For year only
-    if (/^\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    return strLabel;
-  }, []);
-
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
@@ -550,7 +516,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       setTooltip({
         visible: true,
         key: xValue,
-        title: formatTooltipTitle(xValue),
         items: tooltipItems,
         left: tooltipLeft,
         top: tooltipTop
@@ -564,7 +529,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yField, chartConfig, keys, groupColors, 
-      chartData, formatValue, tooltip.visible, tooltip.key, formatTooltipTitle]);
+      chartData, formatValue, tooltip.visible, tooltip.key, tooltip.items]);
 
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
@@ -572,6 +537,52 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       setTooltip(prev => ({ ...prev, visible: false }));
     }
   }, [tooltip.visible]);
+
+  // Helper function to format X-axis tick labels
+  const formatXAxisLabel = (value: string): string => {
+    // Check if the value is a date format (YYYY-MM-DD or similar)
+    const isDateFormat = /^\d{4}-\d{2}-\d{2}/.test(value) || 
+                        /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
+                        /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value);
+    
+    if (isDateFormat) {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        // Format based on timeFilter
+        if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        } else if (filterValues?.timeFilter === 'M') {
+          return date.toLocaleDateString('en-US', { month: 'short' });
+        } else if (filterValues?.timeFilter === 'Q') {
+          const quarter = Math.floor(date.getMonth() / 3) + 1;
+          return `Q${quarter}`;
+        } else if (filterValues?.timeFilter === 'Y') {
+          return date.getFullYear().toString();
+        }
+        
+        // Default format if no timeFilter is specified
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    }
+    
+    // For quarter format (Q1, Q2, etc.)
+    if (/^Q[1-4]\s\d{4}$/.test(value)) {
+      return value.substring(0, 2); // Just "Q1", "Q2", etc.
+    }
+    
+    // For month-year format (Jan 2023)
+    if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) {
+      return value.substring(0, 3); // Just "Jan", "Feb", etc.
+    }
+    
+    // Don't shorten other values that are already short
+    if (value.length <= 5) {
+      return value;
+    }
+    
+    // For other longer text, truncate with ellipsis
+    return `${value.substring(0, 3)}...`;
+  };
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
@@ -631,11 +642,28 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       range: keys.map(key => groupColors[key] || blue)
     });
 
-    // Calculate x-axis tick values with a maximum of 8 ticks
-    const tickInterval = Math.ceil(chartData.length / 8);
-    const xTickValues = chartData
-      .filter((_, i) => i % tickInterval === 0)
-      .map(d => d[xKey]);
+    // Use all X-axis values for tick labels, but limit date ticks to 8 max
+    const xTickValues = (() => {
+      // Check if the data contains dates
+      const isDateData = chartData.length > 0 && 
+        typeof chartData[0][xKey] === 'string' && 
+        (/^\d{4}-\d{2}-\d{2}/.test(chartData[0][xKey]) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(chartData[0][xKey]) ||
+         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
+         /^\d{4}$/.test(chartData[0][xKey]));
+      
+      // For date data, limit to 8 ticks maximum
+      if (isDateData && chartData.length > 8) {
+        const tickInterval = Math.ceil(chartData.length / 8);
+        return chartData
+          .filter((_, i) => i % tickInterval === 0)
+          .map(d => d[xKey]);
+      }
+      
+      // For other data types, show all values
+      return chartData.map(d => d[xKey]);
+    })();
 
     // Render the chart content
     return (
@@ -648,11 +676,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         {/* Tooltip */}
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
-            title={tooltip.title || String(tooltip.key)}
+            title={String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
             isModal={false}
+            timeFilter={filterValues?.timeFilter}
           />
         )}
         
@@ -678,12 +707,36 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               tickLength={0}
               tickValues={xTickValues}
               tickFormat={(value) => {
-                // Format date labels for readability
-                if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                // Format date labels based on timeFilter
+                if (typeof value === 'string') {
+                  // For ISO dates (YYYY-MM-DD)
+                  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+                    const date = new Date(value);
+                    
+                    if (!isNaN(date.getTime())) {
+                      // Format based on timeFilter if available
+                      if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      } else if (filterValues?.timeFilter === 'M') {
+                        return date.toLocaleDateString('en-US', { month: 'short' });
+                      } else if (filterValues?.timeFilter === 'Q') {
+                        const quarter = Math.floor(date.getMonth() / 3) + 1;
+                        return `Q${quarter}`;
+                      } else if (filterValues?.timeFilter === 'Y') {
+                        return date.getFullYear().toString();
+                      }
+                      
+                      // Default format if no timeFilter is specified
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                  }
+                  
+                  // For other date formats, use the helper function
+                  return formatXAxisLabel(value);
                 }
-                return value;
+                
+                // For non-date values, format using our helper function
+                return formatXAxisLabel(String(value));
               }}
               tickLabelProps={() => ({
                 fill: '#6b7280',
@@ -692,6 +745,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 textAnchor: 'middle',
                 dy: '0.5em'
               })}
+              // Ensure first tick doesn't start before origin
+              left={0}
             />
             
             {/* Y-axis */}
@@ -848,7 +903,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
          (d[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
           /^\d{2}\/\d{2}\/\d{4}/.test(d[xKey]) ||
           /^[A-Za-z]{3}\s\d{4}$/.test(d[xKey]) || 
-          /^\d{4}$/.test(d[xKey]))) {
+         /^\d{4}$/.test(d[xKey]))) {
         // This is a date string, parse it
         dateObj = new Date(d[xKey]);
         // Check if the date is valid
@@ -1021,12 +1076,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           isModal={modalView}
           curveType="catmullRom"
           strokeWidth={2}
+          filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
     );
   }, [brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange, 
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
-      setIsBrushActive, setFilteredData, maxValue]);
+      setIsBrushActive, setFilteredData, maxValue, modalFilterValues, filterValues]);
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
@@ -1099,11 +1155,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                     left: tooltip.left
                   }}>
                     <ChartTooltip
-                      title={tooltip.title || String(tooltip.key)}
+                      title={String(tooltip.key)}
                       items={tooltip.items}
                       left={0}
                       top={0}
                       isModal={true}
+                      timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                     />
                   </div>
                 )}

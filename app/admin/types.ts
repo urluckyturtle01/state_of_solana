@@ -24,20 +24,22 @@ export type AvailablePage =
 // Chart visualization types
 export const CHART_TYPES = [
   { id: 'bar', name: 'Bar Chart' },
-  { id: 'line', name: 'Line Chart' },
   { id: 'stacked-bar', name: 'Stacked Bar Chart' },
-  { id: 'area', name: 'Area Chart' },
-  { id: 'stacked-area', name: 'Stacked Area Chart' },
-  { id: 'dual-axis', name: 'Dual Axis Chart' }
+  { id: 'line', name: 'Line Chart' },
+  { id: 'dual-axis', name: 'Dual Axis Chart' },
+  { id: 'pie', name: 'Pie Chart' },
+  // { id: 'area', name: 'Area Chart' },
+  // { id: 'stacked-area', name: 'Stacked Area Chart' },
 ] as const;
 
-export type ChartType = typeof CHART_TYPES[number]['id'];
+export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie';
 
 // Y-axis field configuration for mixed charts
 export interface YAxisConfig {
   field: string;
   type: 'bar' | 'line';
   color?: string;
+  unit?: string; // Optional unit for display purposes (e.g., "$", "%", "SOL")
   // Optional flag for dual-axis charts to indicate right y-axis
   rightAxis?: boolean;
 }
@@ -49,6 +51,14 @@ export interface DualAxisConfig {
   // Mapping for fields on which axis
   leftAxisFields: string[];
   rightAxisFields: string[];
+}
+
+// Filter option configuration
+export interface FilterOption {
+  label?: string;
+  paramName: string;
+  activeValue?: string;
+  options: string[];
 }
 
 // Chart configuration type
@@ -67,10 +77,19 @@ export interface ChartConfig {
   colorScheme?: string;
   dataMapping: {
     xAxis: string | string[];
-    yAxis: string | string[] | YAxisConfig[];
+    yAxis: string | YAxisConfig | (string | YAxisConfig)[];
     groupBy?: string;
+    yAxisUnit?: string; // Unit for display in single Y-axis mode
   };
-  additionalOptions?: Record<string, any>;
+  additionalOptions?: {
+    filters?: {
+      timeFilter?: FilterOption;
+      currencyFilter?: FilterOption;
+      displayModeFilter?: FilterOption;
+      [key: string]: FilterOption | undefined;
+    };
+    colors?: string[];
+  };
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;
   createdAt: string;
@@ -95,6 +114,7 @@ export interface ChartFormData {
   dataMapping: {
     xAxis: string | string[];
     yAxis: string | string[] | YAxisConfig[];
+    yAxisUnit?: string; // For single Y-axis mode
     groupBy?: string;
   };
   additionalOptions?: Record<string, any>;

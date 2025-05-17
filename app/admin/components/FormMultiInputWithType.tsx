@@ -25,9 +25,18 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
   supportDualAxis = false
 }) => {
   const [inputValue, setInputValue] = useState('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [unitValue, setUnitValue] = useState<string>('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const handleUnitChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const newUnit = e.target.value;
+    const newValues = [...values];
+    newValues[index].unit = newUnit;
+    onChange(id, newValues);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,7 +48,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
 
   const addValue = (value: string) => {
     if (value && !values.some(item => item.field === value)) {
-      onChange(id, [...values, { field: value, type: 'bar' }]);
+      onChange(id, [...values, { field: value, type: 'bar', unit: '' }]);
     }
     setInputValue('');
   };
@@ -65,6 +74,19 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
     onChange(id, newValues);
   };
 
+  const startEditUnit = (index: number) => {
+    setEditingIndex(index);
+    setUnitValue(values[index].unit || '');
+  };
+
+  const finishEditUnit = (index: number) => {
+    const newValues = [...values];
+    newValues[index].unit = unitValue;
+    onChange(id, newValues);
+    setEditingIndex(null);
+    setUnitValue('');
+  };
+
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block text-sm font-medium text-gray-800 mb-1">
@@ -75,6 +97,41 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
         {values.map((value, index) => (
           <div key={index} className={`flex items-center rounded-md px-3 py-1 text-blue-800 text-sm ${value.rightAxis ? 'bg-purple-100' : 'bg-blue-100'}`}>
             <span>{value.field}</span>
+            
+            {/* Display unit if set */}
+            {value.unit && editingIndex !== index && (
+              <span className="ml-1 text-xs text-gray-600">[{value.unit}]</span>
+            )}
+            
+            {/* Edit unit inline when editing */}
+            {editingIndex === index ? (
+              <div className="ml-1 flex items-center">
+                <input
+                  type="text"
+                  value={unitValue}
+                  onChange={(e) => setUnitValue(e.target.value)}
+                  className="w-12 h-5 px-1 text-xs rounded border border-blue-300"
+                  placeholder="unit"
+                  onBlur={() => finishEditUnit(index)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      finishEditUnit(index);
+                    }
+                  }}
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="ml-2 text-gray-600 hover:text-blue-800 focus:outline-none"
+                onClick={() => startEditUnit(index)}
+                title={value.unit ? `Edit unit: ${value.unit}` : "Add unit"}
+              >
+                {value.unit ? '✎' : '⊕'}
+              </button>
+            )}
             
             <button
               type="button"

@@ -46,6 +46,7 @@ interface SimpleBarChartProps {
   onCloseExpanded?: () => void;
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
+  yAxisUnit?: string;
 }
 
 interface DateBrushPoint {
@@ -67,7 +68,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   isExpanded = false,
   onCloseExpanded,
   colorMap: externalColorMap,
-  filterValues
+  filterValues,
+  yAxisUnit
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -91,7 +93,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     left: number;
     top: number;
     key: string;
-    title?: string;
     items: { label: string, value: string | number, color: string, shape?: 'circle' | 'square' }[];
   }>({
     visible: false,
@@ -140,21 +141,31 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const yKey = yFields[0];
 
   // Format value for tooltip
-  const formatValue = useCallback((value: number) => {
+  const formatValue = useCallback((value: number, unit?: string) => {
     // Add null/undefined check
     if (value === undefined || value === null) {
-      return '$0.00';
+      return '0.00';
     }
     
+    // Get the unit symbol (don't use a default)
+    const unitSymbol = unit || '';
+    const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+    
+    // Format with appropriate scale
+    let formattedValue: string;
     if (value >= 1000000000) {
-      return `$${(value / 1000000000).toFixed(2)}B`;
+      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
     } else if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
+      formattedValue = `${(value / 1000000).toFixed(2)}M`;
     } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+      formattedValue = `${(value / 1000).toFixed(2)}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      formattedValue = value.toFixed(2);
     }
+    
+    // Return with correct unit placement (or no unit if not specified)
+    if (!unitSymbol) return formattedValue;
+    return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}${unitSymbol}`;
   }, []);
 
   // Format y-axis tick value with appropriate units
@@ -185,57 +196,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   useEffect(() => {
     if (filterValues) {
       setModalFilterValues(filterValues);
-    // When filter values change, reset brush to show full dataset
-    if (isBrushActive) {
-      console.log('Filter changed, resetting brush to show full dataset');
-      setBrushDomain(null);
-      
-      setFilteredData([]);
     }
-  }
-}, [filterValues, isBrushActive]);
-
-  // Handle filter changes - notify parent component of filter changes
-  const handleFilterChange = useCallback((key: string, value: string) => {
-    const updatedFilters = {
-      ...modalFilterValues,
-      [key]: value
-    };
-    
-    // Update local state
-    setModalFilterValues(updatedFilters);
-    
-    // Show loading state
-    setLoading(true);
-    
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
-    }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }, [modalFilterValues, chartConfig]);
-
-  // Apply modal filter values to the chart data
-  useEffect(() => {
-    if (isExpanded && Object.keys(modalFilterValues).length > 0) {
-      console.log('Applying modal filters:', modalFilterValues);
-      // Refresh the chart with the new filter values
-      setLoading(true);
-      if (isModalBrushActive) {
-        console.log('Modal filters changed, resetting brush to show full dataset');
-        setModalBrushDomain(null);
-        
-        setModalFilteredData([]);
-      }
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    }
-  }, [modalFilterValues, isExpanded]);
+  }, [filterValues]);
 
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -401,37 +363,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Format tooltip title
-  const formatTooltipTitle = useCallback((label: string) => {
-    if (!label) return '';
-    
-    const strLabel = String(label);
-    
-    // Detect if it's a date format
-    if (/^\d{4}-\d{2}-\d{2}/.test(strLabel) || /^\d{2}\/\d{2}\/\d{4}/.test(strLabel)) {
-      const d = new Date(strLabel);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('en-US', { 
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        });
-      }
-    }
-    
-    // For month-year format like "Jan 2023"
-    if (/^[A-Za-z]{3}\s\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    // For year only
-    if (/^\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    return strLabel;
-  }, []);
-
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
@@ -510,7 +441,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           })
           .map(field => ({
             label: field,
-            value: formatValue(Number(dataPoint[field]) || 0),
+            value: formatValue(Number(dataPoint[field]) || 0, getYAxisUnit(yField, yAxisUnit)),
             color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
             shape: 'square' as 'square'
           }))
@@ -538,7 +469,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         // For simple bar chart, just show the single value
         tooltipItems = [{
           label: yKey,
-          value: formatValue(dataPoint[yKey]),
+          value: formatValue(dataPoint[yKey], getYAxisUnit(yField, yAxisUnit)),
           color: typeof barColor === 'string' ? barColor : (barColor[dataPoint[xKey]] || blue),
           shape: 'square' as 'square'
         }];
@@ -548,7 +479,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       setTooltip({
         visible: true,
         key: xValue,
-        title: formatTooltipTitle(xValue),
         items: tooltipItems,
         left: tooltipLeft,
         top: tooltipTop
@@ -562,7 +492,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, yKey, yFields, barColor, formatValue, 
-      tooltip.visible, tooltip.key, formatTooltipTitle, isMultiSeries]);
+      tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -863,11 +793,28 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       clamp: true,
     });
 
-    // Calculate x-axis tick values with a maximum of 8 ticks
-    const tickInterval = Math.ceil(chartData.length / 8);
-    const xTickValues = chartData
-      .filter((_, i) => i % tickInterval === 0)
-      .map(d => d[xKey]);
+    // Use all X-axis values for tick labels, but limit date ticks to 8 max
+    const xTickValues = (() => {
+      // Check if the data contains dates
+      const isDateData = chartData.length > 0 && 
+        typeof chartData[0][xKey] === 'string' && 
+        (/^\d{4}-\d{2}-\d{2}/.test(chartData[0][xKey]) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(chartData[0][xKey]) ||
+         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
+         /^\d{4}$/.test(chartData[0][xKey]));
+      
+      // For date data, limit to 8 ticks maximum
+      if (isDateData && chartData.length > 8) {
+        const tickInterval = Math.ceil(chartData.length / 8);
+        return chartData
+          .filter((_, i) => i % tickInterval === 0)
+          .map(d => d[xKey]);
+      }
+      
+      // For other data types, show all values
+      return chartData.map(d => d[xKey]);
+    })();
 
     // Render the chart content
     return (
@@ -880,11 +827,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         {/* Tooltip */}
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
-            title={tooltip.title || String(tooltip.key)}
+            title={String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
             isModal={false}
+            timeFilter={filterValues?.timeFilter}
           />
         )}
         
@@ -911,11 +859,51 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               tickValues={xTickValues}
               tickFormat={(value) => {
                 // Format date labels for readability
-                if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                if (typeof value === 'string') {
+                  // For ISO dates (YYYY-MM-DD)
+                  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+                    const date = new Date(value);
+                    
+                    if (!isNaN(date.getTime())) {
+                      // Format based on timeFilter if available
+                      if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      } else if (filterValues?.timeFilter === 'M') {
+                        return date.toLocaleDateString('en-US', { month: 'short' });
+                      } else if (filterValues?.timeFilter === 'Q') {
+                        const quarter = Math.floor(date.getMonth() / 3) + 1;
+                        return `Q${quarter}`;
+                      } else if (filterValues?.timeFilter === 'Y') {
+                        return date.getFullYear().toString();
+                      }
+                      
+                      // Default format if no timeFilter is specified
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                  }
+                  
+                  // For US dates (MM/DD/YYYY)
+                  if (/^\d{2}\/\d{2}\/\d{4}/.test(value)) {
+                    const date = new Date(value);
+                    if (!isNaN(date.getTime())) {
+                      // Use same formatting logic as above
+                      return formatXAxisLabel(value, filterValues);
+                    }
+                  }
+                  
+                  // For quarterly format (Q1 2023)
+                  if (/^Q[1-4]\s\d{4}$/.test(value)) {
+                    return value.substring(0, 2); // Just "Q1", "Q2", etc.
+                  }
+                  
+                  // For month-year format (Jan 2023)
+                  if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) {
+                    return value.substring(0, 3); // Just "Jan", "Feb", etc.
+                  }
                 }
-                return value;
+                
+                // For non-date values, format using our helper function
+                return formatXAxisLabel(String(value), filterValues);
               }}
               tickLabelProps={() => ({
                 fill: '#6b7280',
@@ -924,6 +912,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                 textAnchor: 'middle',
                 dy: '0.5em'
               })}
+              // Ensure first tick doesn't start before origin
+              left={0}
             />
             
             {/* Y-axis */}
@@ -1013,7 +1003,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         </svg>
       </div>
     );
-  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, loading, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries]);
+  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, loading, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues]);
 
   // Update legend items 
   useEffect(() => {
@@ -1088,12 +1078,37 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           // Use appropriate curve type based on the chart configuration
           curveType={isMultiSeries ? "catmullRom" : (isSimpleChartWithoutFilters ? "linear" : "monotoneX")}
           strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
+          filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
     );
   }, [brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange, 
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
-      setIsBrushActive, setFilteredData, chartData, yKey, filterValues, maxValue, isMultiSeries]);
+      setIsBrushActive, setFilteredData, chartData, yKey, filterValues, maxValue, isMultiSeries, modalFilterValues]);
+
+  // Add back the handleFilterChange function
+  const handleFilterChange = useCallback((key: string, value: string) => {
+    const updatedFilters = {
+      ...modalFilterValues,
+      [key]: value
+    };
+    
+    // Update local state
+    setModalFilterValues(updatedFilters);
+    
+    // Show loading state
+    setLoading(true);
+    
+    // If onFilterChange exists in chartConfig, call it with updated filters
+    if (chartConfig.onFilterChange) {
+      chartConfig.onFilterChange(updatedFilters);
+    }
+    
+    // Hide loading state after a short delay
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }, [modalFilterValues, chartConfig]);
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
@@ -1166,11 +1181,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     left: tooltip.left
                   }}>
                     <ChartTooltip
-                      title={tooltip.title || String(tooltip.key)}
+                      title={String(tooltip.key)}
                       items={tooltip.items}
                       left={0}
                       top={0}
                       isModal={true}
+                      timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                     />
                   </div>
                 )}
@@ -1253,6 +1269,64 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       )}
     </div>
   );
+};
+
+// Helper function to get unit from YAxisConfig or component prop
+function getYAxisUnit(field: string | YAxisConfig | (string | YAxisConfig)[], defaultUnit?: string): string | undefined {
+  if (typeof field === 'string') {
+    return defaultUnit;
+  } else if (Array.isArray(field)) {
+    if (field.length === 0) return defaultUnit;
+    return typeof field[0] === 'string' ? defaultUnit : field[0].unit || defaultUnit;
+  } else {
+    return field.unit || defaultUnit;
+  }
+}
+
+// Helper function to format X-axis tick labels
+const formatXAxisLabel = (value: string, filterValues?: Record<string, string>): string => {
+  // Check if the value is a date format (YYYY-MM-DD or similar)
+  const isDateFormat = /^\d{4}-\d{2}-\d{2}/.test(value) || 
+                       /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
+                       /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value);
+  
+  if (isDateFormat) {
+    const date = new Date(value);
+    if (!isNaN(date.getTime())) {
+      // Format based on timeFilter
+      if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } else if (filterValues?.timeFilter === 'M') {
+        return date.toLocaleDateString('en-US', { month: 'short' });
+      } else if (filterValues?.timeFilter === 'Q') {
+        const quarter = Math.floor(date.getMonth() / 3) + 1;
+        return `Q${quarter}`;
+      } else if (filterValues?.timeFilter === 'Y') {
+        return date.getFullYear().toString();
+      }
+      
+      // Default format if timeFilter is not specified
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  }
+  
+  // For quarter format (Q1, Q2, etc.)
+  if (/^Q[1-4]\s\d{4}$/.test(value)) {
+    return value.substring(0, 2); // Just "Q1", "Q2", etc.
+  }
+  
+  // For month-year format (Jan 2023)
+  if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) {
+    return value.substring(0, 3); // Just "Jan", "Feb", etc.
+  }
+  
+  // Don't shorten other values that are already short
+  if (value.length <= 5) {
+    return value;
+  }
+  
+  // For other longer text, truncate with ellipsis
+  return `${value.substring(0, 3)}...`;
 };
 
 export default React.memo(SimpleBarChart); 

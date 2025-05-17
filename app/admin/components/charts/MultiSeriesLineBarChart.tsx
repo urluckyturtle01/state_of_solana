@@ -48,11 +48,17 @@ interface MultiSeriesLineBarChartProps {
   onCloseExpanded?: () => void;
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
+  yAxisUnit?: string;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
 function getYAxisField(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
+}
+
+// Helper function to get unit from YAxisConfig or use a default
+function getYAxisUnit(field: string | YAxisConfig): string | undefined {
+  return typeof field === 'string' ? undefined : field.unit;
 }
 
 // Helper function to determine if a field should be rendered as a line
@@ -63,6 +69,75 @@ function shouldRenderAsLine(field: string | YAxisConfig): boolean {
   return field.type === 'line';
 }
 
+// Format value with appropriate units
+function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
+  // Get the unit symbol (use defaultUnit as fallback)
+  const unitSymbol = unit || defaultUnit || '';
+  const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+  
+  // Format with appropriate scale
+  let formattedValue: string;
+  if (value >= 1000000000) {
+    formattedValue = `${(value / 1000000000).toFixed(2)}B`;
+  } else if (value >= 1000000) {
+    formattedValue = `${(value / 1000000).toFixed(2)}M`;
+  } else if (value >= 1000) {
+    formattedValue = `${(value / 1000).toFixed(2)}K`;
+  } else {
+    formattedValue = value.toFixed(2);
+  }
+  
+  // Return with correct unit placement (or no unit if not specified)
+  if (!unitSymbol) return formattedValue;
+  return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}${unitSymbol}`;
+}
+
+// Helper function to format X-axis tick labels
+const formatXAxisLabel = (value: string, timeFilter?: string): string => {
+  // Check if the value is a date format (YYYY-MM-DD or similar)
+  const isDateFormat = /^\d{4}-\d{2}-\d{2}/.test(value) || 
+                      /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
+                      /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value);
+  
+  if (isDateFormat) {
+    const date = new Date(value);
+    if (!isNaN(date.getTime())) {
+      // Format based on timeFilter
+      if (timeFilter === 'D' || timeFilter === 'W') {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } else if (timeFilter === 'M') {
+        return date.toLocaleDateString('en-US', { month: 'short' });
+      } else if (timeFilter === 'Q') {
+        const quarter = Math.floor(date.getMonth() / 3) + 1;
+        return `Q${quarter}`;
+      } else if (timeFilter === 'Y') {
+        return date.getFullYear().toString();
+      }
+      
+      // Default date format if timeFilter is not specified
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  }
+  
+  // For quarter format (Q1, Q2, etc.)
+  if (/^Q[1-4]\s\d{4}$/.test(value)) {
+    return value.substring(0, 2); // Just "Q1", "Q2", etc.
+  }
+  
+  // For month-year format (Jan 2023)
+  if (/^[A-Za-z]{3}\s\d{4}$/.test(value)) {
+    return value.substring(0, 3); // Just "Jan", "Feb", etc.
+  }
+  
+  // Don't shorten other values that are already short
+  if (value.length <= 5) {
+    return value;
+  }
+  
+  // For other longer text, truncate with ellipsis
+  return `${value.substring(0, 3)}...`;
+};
+
 const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({ 
   chartConfig, 
   data, 
@@ -71,7 +146,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   isExpanded = false,
   onCloseExpanded,
   colorMap: externalColorMap,
-  filterValues
+  filterValues,
+  yAxisUnit
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -183,24 +259,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }, 100);
   }, []);
   
-  // Add effect to reset brush when filter values change
-  useEffect(() => {
-    if (filterValues) {
-      // When filter values change, reset brush to show full dataset
-      if (isBrushActive) {
-        console.log('Filter changed, resetting brush to show full dataset');
-        
-        // Force clear the brush visually as well as in state
-        setBrushDomain(null);
-        setIsBrushActive(true); // Keep active but reset domain
-        setFilteredData(data); // Reset to full dataset
-        
-        // Force brush visual reset
-        forceBrushVisualReset(false);
-      }
-    }
-  }, [filterValues, isBrushActive, data, forceBrushVisualReset]);
-  
   // Update modal filters when component receives new filter values
   useEffect(() => {
     if (filterValues) {
@@ -235,7 +293,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [isExpanded, brushDomain, isBrushActive, filteredData]);
   
-  // Also update the direct filter change handler to do the same brush visual reset
+  // Update the direct filter change handler to remove the brush visual reset
   useEffect(() => {
     console.log('filterValues changed directly from parent:', filterValues);
     
@@ -267,7 +325,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setModalFilterValues(filterValues);
   }, [JSON.stringify(filterValues), isModalBrushActive, isBrushActive, isExpanded, data, forceBrushVisualReset]);
   
-  // Enhanced function to handle modal filter changes
+  // Update the modal filter change handler
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
     
@@ -282,26 +340,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Show loading state
     setLoading(true);
     
-    // Reset the modal brush when filters change - with special handling for modal
-    if (isExpanded) {
-      console.log('Resetting modal brush due to filter change in modal view');
-      
-      // Reset the brush state
-      setModalBrushDomain(null);
-      setIsModalBrushActive(true);
-      setModalFilteredData(data);
-      
-      // Force modal brush visual reset with retry logic
-      const retryAttempts = [100, 300, 500]; // Try at different intervals
-      
-      retryAttempts.forEach(delay => {
-        setTimeout(() => {
-          console.log(`Attempting modal brush reset after ${delay}ms`);
-          forceBrushVisualReset(true);
-        }, delay);
-      });
-    }
-    
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
@@ -310,68 +348,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Hide loading state after a short delay
     setTimeout(() => {
       setLoading(false);
-    }, 500); // Longer timeout to accommodate the retries
-  }, [modalFilterValues, chartConfig, isExpanded, data, forceBrushVisualReset]);
-  
-  // Handle filter change - especially important to reset the brush
-  const handleFilterChange = useCallback((key: string, value: string) => {
-    // For modal-specific behavior, use the enhanced handler
-    if (isExpanded) {
-      return handleModalFilterChange(key, value);
-    }
-    
-    console.log(`Filter changed: ${key} = ${value}`);
-    
-    const updatedFilters = {
-      ...modalFilterValues,
-      [key]: value
-    };
-    
-    // Update local state
-    setModalFilterValues(updatedFilters);
-    
-    // Show loading state
-    setLoading(true);
-    
-    // Reset the modal brush when filters change
-    if (isModalBrushActive) {
-      console.log('Resetting modal brush due to filter change:', key);
-      setModalBrushDomain(null);
-      setIsModalBrushActive(true); // Keep active but reset domain
-      setModalFilteredData(data); // Reset to full dataset
-      
-      // Force modal brush visual reset
-      forceBrushVisualReset(true);
-    }
-    
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
-    }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }, [modalFilterValues, chartConfig, isModalBrushActive, data, forceBrushVisualReset, isExpanded, handleModalFilterChange]);
+    }, 500); // Longer timeout to accommodate retries
+  }, [modalFilterValues, chartConfig]);
 
   // Format value for tooltip
   const formatValue = useCallback((value: number) => {
-    // Add null/undefined check
-    if (value === undefined || value === null) {
-      return '$0.00';
-    }
-    
-    if (value >= 1000000000) {
-      return `$${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
-    } else {
-      return `$${value.toFixed(2)}`;
-    }
-  }, []);
+    return formatWithUnit(value, yAxisUnit);
+  }, [yAxisUnit]);
 
   // Format y-axis tick value with appropriate units
   const formatTickValue = useCallback((value: number) => {
@@ -395,7 +378,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     } else {
       return value.toFixed(0);
     }
-  }, []);
+  }, [yAxisUnit]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
@@ -485,37 +468,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Format tooltip title
-  const formatTooltipTitle = useCallback((label: string) => {
-    if (!label) return '';
-    
-    const strLabel = String(label);
-    
-    // Detect if it's a date format
-    if (/^\d{4}-\d{2}-\d{2}/.test(strLabel) || /^\d{2}\/\d{2}\/\d{4}/.test(strLabel)) {
-      const d = new Date(strLabel);
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('en-US', { 
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        });
-      }
-    }
-    
-    // For month-year format like "Jan 2023"
-    if (/^[A-Za-z]{3}\s\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    // For year only
-    if (/^\d{4}$/.test(strLabel)) {
-      return strLabel;
-    }
-    
-    return strLabel;
-  }, []);
-  
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
@@ -579,19 +531,31 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           const value = Number(dataPoint[field]);
           return !isNaN(value) && value > 0;
         })
-        .map(field => ({
-          label: field,
-          value: formatValue(Number(dataPoint[field]) || 0),
-          color: fieldColors[field] || blue,
-          // Use different shape for bar vs line
-          shape: fieldTypes[field] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
-        }));
+        .map(field => {
+          // Find the original YAxisConfig for this field to get the unit
+          let fieldUnit = undefined;
+          if (Array.isArray(yField)) {
+            const fieldConfig = yField.find(f => {
+              const fName = typeof f === 'string' ? f : f.field;
+              return fName === field;
+            });
+            fieldUnit = typeof fieldConfig === 'string' ? undefined : fieldConfig?.unit;
+          }
+
+          return {
+            label: field,
+            value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit, yAxisUnit),
+            color: fieldColors[field] || blue,
+            // Use different shape for bar vs line
+            shape: fieldTypes[field] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
+          };
+        });
       
       // If no values found, show placeholder
       if (tooltipItems.length === 0 && fields.length > 0) {
         tooltipItems.push({
           label: fields[0],
-          value: "$0.00",
+          value: formatWithUnit(0, undefined, yAxisUnit),
           color: fieldColors[fields[0]] || blue,
           shape: fieldTypes[fields[0]] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
         });
@@ -601,7 +565,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       setTooltip({
         visible: true,
         key: xValue,
-        title: formatTooltipTitle(xValue),
         items: tooltipItems,
         left: tooltipLeft,
         top: tooltipTop
@@ -614,7 +577,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         top: tooltipTop
       }));
     }
-  }, [chartData, fields, xKey, fieldColors, fieldTypes, formatValue, tooltip, formatTooltipTitle]);
+  }, [chartData, fields, xKey, fieldColors, fieldTypes, formatWithUnit, tooltip, yAxisUnit, yField]);
 
   // Process brush data
   const brushData = useMemo(() => {
@@ -810,11 +773,28 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       lineDataByField[field].sort((a, b) => a.x - b.x);
     });
     
-    // Calculate x-axis tick values
-    const tickInterval = Math.ceil(chartData.length / 8);
-    const xTickValues = chartData
-      .filter((_, i) => i % tickInterval === 0)
-      .map(d => d[xKey]);
+    // Calculate x-axis tick values - limit to 8 for date data
+    const xTickValues = (() => {
+      // Check if the data contains dates
+      const isDateData = chartData.length > 0 && 
+        typeof chartData[0][xKey] === 'string' && 
+        (/^\d{4}-\d{2}-\d{2}/.test(chartData[0][xKey]) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(chartData[0][xKey]) ||
+         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
+         /^\d{4}$/.test(chartData[0][xKey]));
+      
+      // For date data, limit to 8 ticks maximum
+      if (isDateData && chartData.length > 8) {
+        const tickInterval = Math.ceil(chartData.length / 8);
+        return chartData
+          .filter((_, i) => i % tickInterval === 0)
+          .map(d => d[xKey]);
+      }
+      
+      // For other data types, show all values
+      return chartData.map(d => d[xKey]);
+    })();
     
     // Render the chart content
     return (
@@ -827,11 +807,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         {/* Tooltip - only show for non-modal version, modal has its own tooltip container */}
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
-            title={tooltip.title || String(tooltip.key)}
+            title={String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
             isModal={false}
+            timeFilter={filterValues?.timeFilter}
           />
         )}
         
@@ -878,12 +859,36 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               tickLength={0}
               tickValues={xTickValues}
               tickFormat={(value) => {
-                // Format date labels for readability
-                if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-                  const date = new Date(value);
-                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                // Format date labels based on timeFilter
+                if (typeof value === 'string') {
+                  // For ISO dates (YYYY-MM-DD)
+                  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+                    const date = new Date(value);
+                    
+                    if (!isNaN(date.getTime())) {
+                      // Format based on timeFilter if available
+                      if (filterValues?.timeFilter === 'D' || filterValues?.timeFilter === 'W') {
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      } else if (filterValues?.timeFilter === 'M') {
+                        return date.toLocaleDateString('en-US', { month: 'short' });
+                      } else if (filterValues?.timeFilter === 'Q') {
+                        const quarter = Math.floor(date.getMonth() / 3) + 1;
+                        return `Q${quarter}`;
+                      } else if (filterValues?.timeFilter === 'Y') {
+                        return date.getFullYear().toString();
+                      }
+                      
+                      // Default format if no timeFilter is specified
+                      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                  }
+                  
+                  // For other date formats, use the helper function
+                  return formatXAxisLabel(value, filterValues?.timeFilter);
                 }
-                return value;
+                
+                // For non-date values, format using our helper function
+                return formatXAxisLabel(String(value), filterValues?.timeFilter);
               }}
               tickLabelProps={() => ({
                 fill: '#6b7280',
@@ -892,6 +897,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                 textAnchor: 'middle',
                 dy: '0.5em'
               })}
+              // Ensure first tick doesn't start before origin
+              left={0}
             />
             
             {/* Render bars first (so lines appear on top) */}
@@ -987,13 +994,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           isModal={modalView}
           curveType="catmullRom"
           strokeWidth={2}
+          filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
     );
   }, [
     brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange,
     setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain,
-    setIsBrushActive, setFilteredData, data
+    setIsBrushActive, setFilteredData, data, modalFilterValues, filterValues
   ]);
 
   // Render the chart with brush
@@ -1063,11 +1071,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                       left: tooltip.left
                     }}>
                       <ChartTooltip
-                        title={tooltip.title || String(tooltip.key)}
+                        title={String(tooltip.key)}
                         items={tooltip.items}
                         left={0}
                         top={0}
                         isModal={true}
+                        timeFilter={modalFilterValues?.timeFilter}
                       />
                     </div>
                   )}
