@@ -5,8 +5,6 @@ import { GridRows } from '@visx/grid';
 import { scaleBand, scaleLinear } from '@visx/scale';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Bar } from '@visx/shape';
-import { LinePath } from '@visx/shape';
-import { curveCatmullRom, curveLinear, curveMonotoneX } from '@visx/curve';
 import { ChartConfig, YAxisConfig } from '../../types';
 import { blue, getColorByIndex, allColorsArray } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
@@ -75,7 +73,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number, shape: 'square' | 'circle'}>>([]);
+  const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
@@ -124,22 +122,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const getYAxisField = useCallback((field: string | YAxisConfig): string => {
     return typeof field === 'string' ? field : field.field;
   }, []);
-  
-  // Helper function to determine if a field should be rendered as a line
-  const shouldRenderAsLine = useCallback((field: string): boolean => {
-    if (Array.isArray(yField) && yField.length > 0) {
-      // For complex YAxisConfig objects, check type property
-      const fieldConfig = yField.find(f => 
-        typeof f === 'object' && f.field === field
-      ) as YAxisConfig | undefined;
-      
-      if (fieldConfig) {
-        return fieldConfig.type === 'line';
-      }
-    }
-    // Default to bar if not specified
-    return false;
-  }, [yField]);
   
   // Determine if we have multiple Y-axis fields
   const isMultiSeries = useMemo(() => Array.isArray(yField) && yField.length > 1, [yField]);
@@ -886,35 +868,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     const xTickValues = chartData
       .filter((_, i) => i % tickInterval === 0)
       .map(d => d[xKey]);
-      
-    // Create line data for series that should be rendered as lines
-    const lineDataByField: Record<string, Array<{x: number, y: number}>> = {};
-    
-    // Initialize line data structure for fields that should be rendered as lines
-    yFields.forEach(field => {
-      if (shouldRenderAsLine(field)) {
-        lineDataByField[field] = [];
-      }
-    });
-    
-    // Build line points
-    chartData.forEach((d: ChartDataItem) => {
-      // For fields that should be lines, collect coordinates
-      yFields.forEach(field => {
-        if (shouldRenderAsLine(field)) {
-          const x = xScale(d[xKey]) || 0;
-          const centerX = x + (xScale.bandwidth() / 2); // Center of the bar
-          const y = yScale(Number(d[field]) || 0);
-          
-          lineDataByField[field].push({ x: centerX, y });
-        }
-      });
-    });
-    
-    // Sort line data by x position
-    Object.keys(lineDataByField).forEach(field => {
-      lineDataByField[field].sort((a, b) => a.x - b.x);
-    });
 
     // Render the chart content
     return (
@@ -994,32 +947,20 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               })}
             />
             
-            {/* Render bars first (so lines appear on top) */}
+            {/* Render bars */}
             {isMultiSeries ? (
               // For multi-series, render bars side by side
               chartData.map((d: ChartDataItem) => {
                 const x = xScale(d[xKey]) || 0;
-                
-                // Count how many fields will be rendered as bars
-                const barFields = yFields.filter(field => !shouldRenderAsLine(field));
-                const barWidth = barFields.length > 0 
-                  ? xScale.bandwidth() / barFields.length 
-                  : xScale.bandwidth();
+                const barWidth = xScale.bandwidth() / yFields.length; // Divide bar width by number of fields
                 
                 return (
                   <React.Fragment key={`multi-${d[xKey]}`}>
                     {yFields.map((field, i) => {
-                      // Skip if this field should be rendered as a line
-                      if (shouldRenderAsLine(field)) return null;
-                      
                       const value = Number(d[field]) || 0;
                       const barHeight = innerHeight - yScale(value);
-                      
-                      // Find this field's position in the barFields array
-                      const barFieldIndex = barFields.indexOf(field);
-                      
                       // Position each field's bar side by side
-                      const barX = x + (barFieldIndex * barWidth);
+                      const barX = x + (i * barWidth);
                       const barY = innerHeight - barHeight;
                       
                       // Get color for this field
@@ -1068,38 +1009,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                 );
               })
             )}
-            
-            {/* Render lines on top of bars */}
-            {isMultiSeries && Object.keys(lineDataByField).map(field => {
-              const lineData = lineDataByField[field];
-              if (!lineData || lineData.length === 0) return null;
-              
-              // Get color for this field
-              const color = typeof barColor === 'object' ? (barColor[field] || blue) : blue;
-              
-              return (
-                <LinePath
-                  key={`line-${field}`}
-                  data={lineData}
-                  x={d => d.x}
-                  y={d => d.y}
-                  stroke={color}
-                  strokeWidth={2}
-                  curve={curveMonotoneX}
-                />
-              );
-            })}
           </Group>
         </svg>
       </div>
     );
-  }, [
-    chartData, xKey, yKey, yFields, barColor, formatTickValue, loading,
-    error, refreshData, tooltip, handleMouseMove, handleMouseLeave,
-    isMultiSeries, shouldRenderAsLine
-  ]);
+  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, loading, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries]);
 
-  // Update legend items with appropriate shapes
+  // Update legend items 
   useEffect(() => {
     if (chartData.length > 0) {
       if (isMultiSeries) {
@@ -1107,9 +1023,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         const items = yFields.map(field => ({
           id: field,
           label: field,
-          color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
-          // Set square for bars, circle for lines
-          shape: shouldRenderAsLine(field) ? 'circle' as 'circle' : 'square' as 'square'
+          color: typeof barColor === 'string' ? barColor : (barColor[field] || blue)
         }));
         setLegendItems(items);
       } else {
@@ -1117,12 +1031,11 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         setLegendItems([{
           id: yKey,
           label: yKey,
-          color: typeof barColor === 'string' ? barColor : blue,
-          shape: 'square' as 'square'
+          color: typeof barColor === 'string' ? barColor : blue
         }]);
       }
     }
-  }, [chartData, yKey, barColor, isMultiSeries, yFields, shouldRenderAsLine]);
+  }, [chartData, yKey, barColor, isMultiSeries, yFields]);
 
   // Render the brush with proper shape reflecting bar values
   const renderBrushArea = useCallback((modalView = false) => {
@@ -1307,7 +1220,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                       key={item.id} 
                       label={item.label}
                       color={item.color}
-                      shape={item.shape}
+                      shape="square"
                       tooltipText={item.value ? formatValue(item.value) : undefined}
                     />
                   ))}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
-//import BarChart from './charts/BarChart';
+import BarChart from './charts/BarChart';
 import SimpleBarChart from './charts/SimpleBarChart';
 import StackedBarChart from './charts/StackedBarChart';
 import DualAxisChart from './charts/DualAxisChart';
+import MultiSeriesLineBarChart from './charts/MultiSeriesLineBarChart';
 import Modal from '../../components/shared/Modal';
 //import LineChart from './charts/LineChart';
 // import AreaChart from './charts/AreaChart';
@@ -557,6 +558,36 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     
     switch (chartConfig.chartType) {
       case 'bar':
+        // Check if we should use MultiSeriesLineBarChart (multiple Y fields with mixed line/bar types)
+        // OR if we have a single field of type 'line'
+        if ((Array.isArray(chartConfig.dataMapping.yAxis) && 
+            chartConfig.dataMapping.yAxis.length > 0 && 
+            (chartConfig.dataMapping.yAxis.some(field => 
+              typeof field !== 'string' && field.type === 'line') ||
+             // Single field case where the field type is 'line'
+             (chartConfig.dataMapping.yAxis.length === 1 && 
+              typeof chartConfig.dataMapping.yAxis[0] !== 'string' && 
+              chartConfig.dataMapping.yAxis[0].type === 'line')))) {
+          
+          console.log("Using MultiSeriesLineBarChart for mixed bar/line series or single line type");
+          return <MultiSeriesLineBarChart 
+            chartConfig={{
+              ...chartConfig,
+              onFilterChange: (newFilters) => {
+                // Apply the filter changes
+                Object.entries(newFilters).forEach(([key, value]) => {
+                  handleFilterChange(key, value);
+                });
+              }
+            }} 
+            data={data} 
+            isExpanded={isExpanded} 
+            onCloseExpanded={onCloseExpanded}
+            colorMap={legendColorMap}
+            filterValues={filterValues}
+          />;
+        }
+        
         // Use SimpleBarChart for simple bar charts (non-stacked)
         if (!chartConfig.isStacked) {
           return <SimpleBarChart 
@@ -576,6 +607,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             filterValues={filterValues}
           />;
         }
+        
         // Use StackedBarChart for stacked charts with groupBy field or multiple Y fields
         if (chartConfig.isStacked && (chartConfig.dataMapping.groupBy || 
             (Array.isArray(chartConfig.dataMapping.yAxis) && chartConfig.dataMapping.yAxis.length > 1))) {
@@ -597,8 +629,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             filterValues={filterValues}
           />;
         }
-        // Fall through to BarChart for more complex bar charts that don't fit the simple or stacked patterns
-       /* return <BarChart 
+        
+        // Fall back to SimpleBarChart for other bar chart cases
+        return <SimpleBarChart 
           chartConfig={{
             ...chartConfig,
             onFilterChange: (newFilters) => {
@@ -613,8 +646,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           onCloseExpanded={onCloseExpanded}
           colorMap={legendColorMap}
           filterValues={filterValues}
-        />; */
-      
+        />;
+
       case 'stacked-bar':
         // Use StackedBarChart for stacked bar charts with groupBy or multiple Y fields
         if (chartConfig.dataMapping.groupBy || 
@@ -638,23 +671,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             filterValues={filterValues}
           />;
         }
-        // Fall back to normal BarChart if no groupBy field is defined
-       /* return <BarChart 
-          chartConfig={{
-            ...chartConfig,
-            onFilterChange: (newFilters) => {
-              // Apply the filter changes
-              Object.entries(newFilters).forEach(([key, value]) => {
-                handleFilterChange(key, value);
-              });
-            }
-          }} 
-          data={data} 
-          isExpanded={isExpanded} 
-          onCloseExpanded={onCloseExpanded}
-          colorMap={legendColorMap}
-          filterValues={filterValues}
-        />; */
         
       case 'dual-axis': // Handle dual-axis with the enhanced BarChart
         return <DualAxisChart 

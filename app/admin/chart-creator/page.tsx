@@ -312,6 +312,8 @@ export default function ChartCreatorPage() {
   const handleMultiInputWithTypeChange = (fieldName: string, values: YAxisConfig[]) => {
     const [parent, child] = fieldName.split('.');
     
+    console.log('handleMultiInputWithTypeChange called with:', fieldName, values);
+    
     if (parent === 'dataMapping' && child === 'yAxis') {
       // When in dual-axis mode, we'll update both the dataMapping.yAxis
       // and the dualAxisConfig arrays based on the rightAxis flag
@@ -327,17 +329,20 @@ export default function ChartCreatorPage() {
         }));
       }
       
-      setFormData(prev => ({
-        ...prev,
-        dataMapping: {
-          ...prev.dataMapping,
-          [child]: values.length === 1 ? 
-            // If only one field, use the field name as string
-            values[0].field : 
-            // Otherwise use the full YAxisConfig array
-            values
-        }
-      }));
+      setFormData(prev => {
+        // Ensure we're setting a compatible type for yAxis
+        const updatedYAxis = values.length === 1 
+          ? values // Even with one item, keep it as an array to preserve the type info
+          : values;
+        
+        return {
+          ...prev,
+          dataMapping: {
+            ...prev.dataMapping,
+            yAxis: updatedYAxis as any // Use type assertion to satisfy TypeScript
+          }
+        };
+      });
     }
     
     // Mark as touched
@@ -374,6 +379,7 @@ export default function ChartCreatorPage() {
         if (field === 'yAxis') {
           // For Y-axis, create YAxisConfig objects with default chart type = 'bar'
           if (typeof currentValue === 'string' && currentValue) {
+            // Initialize with bar type but allow user to toggle
             newValue = [{ field: currentValue, type: 'bar' }];
           } else if (Array.isArray(currentValue) && currentValue.length > 0) {
             // Convert simple string array to YAxisConfig array
