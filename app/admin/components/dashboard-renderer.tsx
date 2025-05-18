@@ -38,12 +38,21 @@ interface Legend {
   value?: number;
 }
 
+// Add a helper function to check if a chart is a stacked bar chart
+function isStackedBarChart(chart: ChartConfig): boolean {
+  return chart.chartType === 'stacked-bar' || 
+         (chart.chartType === 'bar' && chart.isStacked === true);
+}
+
 export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [expandedCharts, setExpandedCharts] = useState<Record<string, boolean>>({});
   const [downloadingCharts, setDownloadingCharts] = useState<Record<string, boolean>>({});
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
+  
+  // Add state for loading charts
+  const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
   
   // Add state for filter values
   const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
@@ -61,10 +70,12 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       const expandedState: Record<string, boolean> = {};
       const downloadingState: Record<string, boolean> = {};
       const initialFilterValues: Record<string, Record<string, string>> = {};
+      const initialLoadingState: Record<string, boolean> = {};
       
       pageCharts.forEach(chart => {
         expandedState[chart.id] = false;
         downloadingState[chart.id] = false;
+        initialLoadingState[chart.id] = true; // Start with loading state
         
         // Initialize filter values for each chart
         if (chart.additionalOptions?.filters) {
@@ -95,6 +106,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       
       setExpandedCharts(expandedState);
       setDownloadingCharts(downloadingState);
+      setLoadingCharts(initialLoadingState);
       setFilterValues(initialFilterValues);
     } catch (error) {
       console.error(`Error loading charts for page ${pageId}:`, error);
@@ -118,6 +130,12 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       return;
     }
     
+    // Set loading state when filter changes
+    setLoadingCharts(prev => ({
+      ...prev,
+      [chartId]: true
+    }));
+    
     // Update filter value
     setFilterValues(prev => ({
       ...prev,
@@ -133,11 +151,23 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
     
     // Fetch updated data with the new filter
     await fetchChartDataWithFilters(chart);
+    
+    // Reset loading state after fetch
+    setLoadingCharts(prev => ({
+      ...prev,
+      [chartId]: false
+    }));
   };
   
   // Fetch chart data with current filters
   const fetchChartDataWithFilters = async (chart: ChartConfig) => {
     try {
+      // Set loading state
+      setLoadingCharts(prev => ({
+        ...prev,
+        [chart.id]: true
+      }));
+      
       // Get current filter values for this chart
       const chartFilters = filterValues[chart.id] || {};
       
@@ -235,9 +265,22 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       // Update legends
       updateLegends(chart.id, parsedData);
       
+      // Reset loading state
+      setLoadingCharts(prev => ({
+        ...prev,
+        [chart.id]: false
+      }));
+      
       return parsedData;
     } catch (error) {
       console.error('Error fetching chart data:', error);
+      
+      // Reset loading state even on error
+      setLoadingCharts(prev => ({
+        ...prev,
+        [chart.id]: false
+      }));
+      
       return null;
     }
   };
@@ -385,7 +428,10 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
       
       // Calculate total for each group for sorting and tooltips
       const yField = typeof chart.dataMapping.yAxis === 'string' ? 
-        chart.dataMapping.yAxis : chart.dataMapping.yAxis[0];
+        chart.dataMapping.yAxis : 
+        Array.isArray(chart.dataMapping.yAxis) ? 
+          getFieldName(chart.dataMapping.yAxis[0]) : 
+          getFieldName(chart.dataMapping.yAxis);
       
       // Group totals for proper sorting
       const groupTotals: Record<string, number> = {};
@@ -620,18 +666,18 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
               filters: {
                 ...chart.additionalOptions?.filters,
                 // Update active values to match the filters from the modal
-                timeFilter: {
-                  ...chart.additionalOptions?.filters?.timeFilter,
-                  activeValue: updatedFilters.timeFilter || chart.additionalOptions?.filters?.timeFilter?.activeValue
-                },
-                currencyFilter: {
-                  ...chart.additionalOptions?.filters?.currencyFilter,
-                  activeValue: updatedFilters.currencyFilter || chart.additionalOptions?.filters?.currencyFilter?.activeValue
-                },
-                displayModeFilter: {
-                  ...chart.additionalOptions?.filters?.displayModeFilter,
-                  activeValue: updatedFilters.displayMode || chart.additionalOptions?.filters?.displayModeFilter?.activeValue
-                }
+                timeFilter: chart.additionalOptions?.filters?.timeFilter ? {
+                  ...chart.additionalOptions.filters.timeFilter,
+                  activeValue: updatedFilters.timeFilter || chart.additionalOptions.filters.timeFilter.activeValue
+                } : undefined,
+                currencyFilter: chart.additionalOptions?.filters?.currencyFilter ? {
+                  ...chart.additionalOptions.filters.currencyFilter,
+                  activeValue: updatedFilters.currencyFilter || chart.additionalOptions.filters.currencyFilter.activeValue
+                } : undefined,
+                displayModeFilter: chart.additionalOptions?.filters?.displayModeFilter ? {
+                  ...chart.additionalOptions.filters.displayModeFilter,
+                  activeValue: updatedFilters.displayMode || chart.additionalOptions.filters.displayModeFilter.activeValue
+                } : undefined
               }
             }
           });
@@ -662,13 +708,14 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
           onExpandClick={() => toggleChartExpanded(chart.id)}
           onDownloadClick={() => downloadCSV(chart)}
           isDownloading={downloadingCharts[chart.id]}
+          isLoading={loadingCharts[chart.id]}
           legendWidth="1/5"
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={chart.additionalOptions?.filters && (
             <div className="flex flex-wrap gap-3 items-center">
               {/* Time Filter */}
-              {chart.additionalOptions.filters.timeFilter && (
+              {chart.additionalOptions?.filters?.timeFilter && (
                 <TimeFilterSelector
                   value={filterValues[chart.id]?.['timeFilter'] || chart.additionalOptions.filters.timeFilter.options[0]}
                   onChange={(value) => handleFilterChange(chart.id, 'timeFilter', value)}
@@ -680,7 +727,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
               )}
               
               {/* Currency Filter */}
-              {chart.additionalOptions.filters.currencyFilter && (
+              {chart.additionalOptions?.filters?.currencyFilter && (
                 <CurrencyFilter
                   currency={filterValues[chart.id]?.['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.options[0]}
                   options={chart.additionalOptions.filters.currencyFilter.options}
@@ -688,11 +735,11 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
                 />
               )}
               
-              {/* Display Mode Filter */}
-              {chart.additionalOptions.filters.displayModeFilter && (
+              {/* Display Mode Filter - show for stacked bar charts or when explicitly configured */}
+              {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
                 <DisplayModeFilter
-                  mode={filterValues[chart.id]?.['displayModeFilter'] as DisplayMode || chart.additionalOptions.filters.displayModeFilter.options[0] as DisplayMode}
-                  onChange={(value) => handleFilterChange(chart.id, 'displayModeFilter', value)}
+                  mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
+                  onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
                 />
               )}
             </div>
@@ -736,6 +783,12 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
                   }));
                 }
                 updateLegends(chart.id, data);
+                
+                // Set loading to false when data is loaded
+                setLoadingCharts(prev => ({
+                  ...prev,
+                  [chart.id]: false
+                }));
               }}
               isExpanded={expandedCharts[chart.id]}
               onCloseExpanded={() => toggleChartExpanded(chart.id)}
@@ -746,6 +799,8 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
               colorMap={legendColorMaps[chart.id]}
               // Add a callback to receive colors from BarChart
               onColorsGenerated={(colorMap) => syncLegendColors(chart.id, colorMap)}
+              // Pass loading state
+              isLoading={loadingCharts[chart.id]}
             />
           </div>
         </ChartCard>

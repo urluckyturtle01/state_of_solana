@@ -129,12 +129,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
           </button>
         </div>
         <div className="flex-1 relative">
-          {isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-10 rounded-md">
               <Loader size="md" />
             </div>
-          ) : (
-            children
           )}
         </div>
       </div>

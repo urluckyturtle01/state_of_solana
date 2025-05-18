@@ -26,6 +26,8 @@ interface ChartRendererProps {
   colorMap?: Record<string, string>;
   // Add callback to report generated colors back to parent
   onColorsGenerated?: (colorMap: Record<string, string>) => void;
+  // Add loading state prop
+  isLoading?: boolean;
 }
 
 // Add helper function at the top of the file
@@ -41,7 +43,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   onFilterChange,
   filterValues: externalFilterValues,
   colorMap: externalColorMap,
-  onColorsGenerated
+  onColorsGenerated,
+  isLoading = false
 }) => {
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -821,6 +824,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         onClose={onCloseExpanded || (() => {})} 
         title={chartConfig.title}
         subtitle={chartConfig.subtitle}
+        isLoading={isLoading}
       >
         <div className="h-[70vh] w-full overflow-hidden">
           {/* Add filter controls in modal */}

@@ -111,6 +111,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
+  // Add display mode to state
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('absolute');
+
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
@@ -157,6 +160,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return '0.00';
     }
     
+    // Handle percentage mode
+    if (displayMode === 'percent') {
+      return `${value.toFixed(1)}%`;
+    }
+    
     // Get the unit symbol (use component prop as fallback)
     const unitSymbol = unit || yAxisUnit || '';
     const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
@@ -176,10 +184,14 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Return with correct unit placement (or no unit if not specified)
     if (!unitSymbol) return formattedValue;
     return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}${unitSymbol}`;
-  }, [yAxisUnit]);
+  }, [yAxisUnit, displayMode]);
 
   // Format y-axis tick value with appropriate units
   const formatTickValue = useCallback((value: number) => {
+    if (displayMode === 'percent') {
+      return `${value.toFixed(0)}%`;
+    }
+
     if (value === 0) return '0';
     
     if (value >= 1000000000) {
@@ -200,18 +212,27 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     } else {
       return value.toFixed(0);
     }
-  }, []);
+  }, [displayMode]);
 
   // Update modal filters when component receives new filter values
   useEffect(() => {
     if (filterValues) {
       setModalFilterValues(filterValues);
+      // Extract display mode from filter values if available
+      if (filterValues['displayMode']) {
+        setDisplayMode(filterValues['displayMode'] as DisplayMode);
+      }
     }
   }, [filterValues]);
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
+    
+    // Update display mode state if that's what changed
+    if (key === 'displayMode') {
+      setDisplayMode(value as DisplayMode);
+    }
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -235,6 +256,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     console.log(`Filter changed: ${key} = ${value}`);
+    
+    // Update display mode state if that's what changed
+    if (key === 'displayMode') {
+      setDisplayMode(value as DisplayMode);
+    }
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -344,6 +370,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         });
       });
       
+      // For percentage mode, we need to convert values to percentages
+      if (displayMode === 'percent') {
+        Object.keys(groupedData).forEach(xValue => {
+          // Calculate the total for this x value
+          const total = stackKeys.reduce((sum, key) => sum + (groupedData[xValue][key] || 0), 0);
+          if (total > 0) {
+            // Convert each value to percentage
+            stackKeys.forEach(key => {
+              groupedData[xValue][key] = (groupedData[xValue][key] / total) * 100;
+            });
+          }
+        });
+      }
+      
       // Create color map for each y-field
       const colorsByField: Record<string, string> = {};
       stackKeys.forEach((field, i) => {
@@ -392,6 +432,23 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       });
     });
     
+    // For percentage mode, convert values to percentages
+    if (displayMode === 'percent') {
+      Object.keys(groupedData).forEach(xValue => {
+        // Calculate the total for this x value
+        const total = Array.from(allGroups).reduce(
+          (sum, group) => sum + (groupedData[xValue][group] || 0), 0
+        );
+        
+        if (total > 0) {
+          // Convert each value to percentage
+          allGroups.forEach(group => {
+            groupedData[xValue][group] = (groupedData[xValue][group] / total) * 100;
+          });
+        }
+      });
+    }
+    
     // Convert to array
     const uniqueProcessedData = Object.values(groupedData);
     
@@ -410,7 +467,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       keys: stackKeys,
       groupColors: colorsByGroup
     };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode]);
 
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -607,7 +664,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     );
     
     const yScale = scaleLinear<number>({
-      domain: [0, yMax * 1.1], // Add 10% padding
+      domain: [0, displayMode === 'percent' ? 100 : yMax * 1.1], // Use 100 for percent mode
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
@@ -1079,7 +1136,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         <div className="w-full h-[80vh] relative overflow-visible">
           {/* Filters row */}
           <div className="mb-4 flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {/* Time filter */}
               {chartConfig.additionalOptions?.filters?.timeFilter && (
                 <div className="flex items-center">
@@ -1100,19 +1157,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                   currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
                   onChange={(value) => handleFilterChange('currencyFilter', value as string)}
                   options={chartConfig.additionalOptions.filters.currencyFilter.options}
-                
+                  
                 />
               )}
               
-              {/* Display mode filter */}
-              {chartConfig.additionalOptions?.filters?.displayModeFilter && (
-                <div className="flex items-center">
-                  <DisplayModeFilter
-                    mode={(modalFilterValues?.displayMode || chartConfig.additionalOptions.filters.displayModeFilter.activeValue || 'absolute') as DisplayMode}
-                    onChange={(value) => handleFilterChange('displayMode', value)}
-                  />
-                </div>
-              )}
+              {/* Display mode filter - always show this for stacked charts */}
+              <div className="flex items-center">
+                <DisplayModeFilter
+                  mode={displayMode}
+                  onChange={(value) => handleFilterChange('displayMode', value)}
+                />
+              </div>
             </div>
           </div>
           
@@ -1191,6 +1246,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Render normal view with brush
   return (
     <div className="w-full h-full relative">
+     
+      
       <div className="h-[85%] w-full">
         <ParentSize debounceTime={10}>
           {({ width: parentWidth, height: parentHeight }) => 
