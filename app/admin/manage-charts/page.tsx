@@ -43,15 +43,21 @@ export default function ManageChartsPage() {
   // Load charts from local storage when component mounts
   useEffect(() => {
     setIsClient(true);
-    const loadCharts = () => {
+    
+    const loadCharts = async () => {
       try {
-        const allCharts = selectedPage === 'all' 
-          ? getAllChartConfigs() 
-          : getChartConfigsByPage(selectedPage);
+        let allCharts;
+        if (selectedPage === 'all') {
+          allCharts = await getAllChartConfigs();
+        } else {
+          allCharts = await getChartConfigsByPage(selectedPage);
+        }
         
-        setCharts(allCharts);
+        // Ensure we're always setting an array, even if the API returns something else
+        setCharts(Array.isArray(allCharts) ? allCharts : []);
       } catch (error) {
         console.error('Error loading charts:', error);
+        setCharts([]);
       }
     };
     
@@ -59,11 +65,15 @@ export default function ManageChartsPage() {
   }, [selectedPage]);
 
   // Handle chart deletion
-  const handleDeleteChart = (chartId: string) => {
+  const handleDeleteChart = async (chartId: string) => {
     if (window.confirm('Are you sure you want to delete this chart?')) {
       try {
-        deleteChartConfig(chartId);
-        setCharts(prevCharts => prevCharts.filter(chart => chart.id !== chartId));
+        const success = await deleteChartConfig(chartId);
+        if (success) {
+          setCharts(prevCharts => prevCharts.filter(chart => chart.id !== chartId));
+        } else {
+          throw new Error("Failed to delete chart");
+        }
       } catch (error) {
         console.error('Error deleting chart:', error);
         alert(`Failed to delete chart: ${error instanceof Error ? error.message : String(error)}`);

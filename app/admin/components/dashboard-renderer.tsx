@@ -62,55 +62,60 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
 
   useEffect(() => {
     setIsClient(true);
-    try {
-      const pageCharts = getChartConfigsByPage(pageId);
-      setCharts(pageCharts);
-      
-      // Initialize expanded and downloading states for each chart
-      const expandedState: Record<string, boolean> = {};
-      const downloadingState: Record<string, boolean> = {};
-      const initialFilterValues: Record<string, Record<string, string>> = {};
-      const initialLoadingState: Record<string, boolean> = {};
-      
-      pageCharts.forEach(chart => {
-        expandedState[chart.id] = false;
-        downloadingState[chart.id] = false;
-        initialLoadingState[chart.id] = true; // Start with loading state
+    
+    async function loadCharts() {
+      try {
+        const pageCharts = await getChartConfigsByPage(pageId);
+        setCharts(pageCharts);
         
-        // Initialize filter values for each chart
-        if (chart.additionalOptions?.filters) {
-          initialFilterValues[chart.id] = {};
+        // Initialize expanded and downloading states for each chart
+        const expandedState: Record<string, boolean> = {};
+        const downloadingState: Record<string, boolean> = {};
+        const initialFilterValues: Record<string, Record<string, string>> = {};
+        const initialLoadingState: Record<string, boolean> = {};
+        
+        pageCharts.forEach(chart => {
+          expandedState[chart.id] = false;
+          downloadingState[chart.id] = false;
+          initialLoadingState[chart.id] = true; // Start with loading state
           
-          // Set initial time filter
-          if (chart.additionalOptions.filters.timeFilter && 
-              Array.isArray(chart.additionalOptions.filters.timeFilter.options) && 
-              chart.additionalOptions.filters.timeFilter.options.length > 0) {
-            initialFilterValues[chart.id]['timeFilter'] = chart.additionalOptions.filters.timeFilter.options[0];
+          // Initialize filter values for each chart
+          if (chart.additionalOptions?.filters) {
+            initialFilterValues[chart.id] = {};
+            
+            // Set initial time filter
+            if (chart.additionalOptions.filters.timeFilter && 
+                Array.isArray(chart.additionalOptions.filters.timeFilter.options) && 
+                chart.additionalOptions.filters.timeFilter.options.length > 0) {
+              initialFilterValues[chart.id]['timeFilter'] = chart.additionalOptions.filters.timeFilter.options[0];
+            }
+            
+            // Set initial currency filter
+            if (chart.additionalOptions.filters.currencyFilter && 
+                Array.isArray(chart.additionalOptions.filters.currencyFilter.options) && 
+                chart.additionalOptions.filters.currencyFilter.options.length > 0) {
+              initialFilterValues[chart.id]['currencyFilter'] = chart.additionalOptions.filters.currencyFilter.options[0];
+            }
+            
+            // Set initial display mode filter
+            if (chart.additionalOptions.filters.displayModeFilter && 
+                Array.isArray(chart.additionalOptions.filters.displayModeFilter.options) && 
+                chart.additionalOptions.filters.displayModeFilter.options.length > 0) {
+              initialFilterValues[chart.id]['displayModeFilter'] = chart.additionalOptions.filters.displayModeFilter.options[0];
+            }
           }
-          
-          // Set initial currency filter
-          if (chart.additionalOptions.filters.currencyFilter && 
-              Array.isArray(chart.additionalOptions.filters.currencyFilter.options) && 
-              chart.additionalOptions.filters.currencyFilter.options.length > 0) {
-            initialFilterValues[chart.id]['currencyFilter'] = chart.additionalOptions.filters.currencyFilter.options[0];
-          }
-          
-          // Set initial display mode filter
-          if (chart.additionalOptions.filters.displayModeFilter && 
-              Array.isArray(chart.additionalOptions.filters.displayModeFilter.options) && 
-              chart.additionalOptions.filters.displayModeFilter.options.length > 0) {
-            initialFilterValues[chart.id]['displayModeFilter'] = chart.additionalOptions.filters.displayModeFilter.options[0];
-          }
-        }
-      });
-      
-      setExpandedCharts(expandedState);
-      setDownloadingCharts(downloadingState);
-      setLoadingCharts(initialLoadingState);
-      setFilterValues(initialFilterValues);
-    } catch (error) {
-      console.error(`Error loading charts for page ${pageId}:`, error);
+        });
+        
+        setExpandedCharts(expandedState);
+        setDownloadingCharts(downloadingState);
+        setLoadingCharts(initialLoadingState);
+        setFilterValues(initialFilterValues);
+      } catch (error) {
+        console.error(`Error loading charts for page ${pageId}:`, error);
+      }
     }
+    
+    loadCharts();
   }, [pageId]);
 
   const toggleChartExpanded = (chartId: string) => {

@@ -283,46 +283,190 @@ export const validateApiEndpoint = async (
   }
 };
 
-// Save chart config to local storage
-export function saveChartConfig(config: ChartConfig): boolean {
+// Save chart config to database via API
+export async function saveChartConfig(config: ChartConfig): Promise<boolean> {
   try {
-    const storageKey = 'solana-charts';
+    console.log('Saving chart config:', config.title);
     
-    // Get existing configs
-    const existingConfigs = getAllChartConfigs();
-    
-    // Check if we're updating an existing config
-    const existingIndex = existingConfigs.findIndex(c => c.id === config.id);
-    
-    if (existingIndex >= 0) {
-      // Update existing
-      existingConfigs[existingIndex] = config;
-    } else {
-      // Add new
-      existingConfigs.push(config);
+    // Update timestamps
+    config.updatedAt = new Date().toISOString();
+    if (!config.createdAt) {
+      config.createdAt = config.updatedAt;
     }
     
-    // Save to local storage
-    localStorage.setItem(storageKey, JSON.stringify(existingConfigs));
-    return true;
+    // Check storage mode
+    if (process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true') {
+      console.log('Using localStorage to save chart');
+      // Only run in browser
+      if (typeof window === 'undefined') return false;
+      
+      const storageKey = 'solana-charts';
+      
+      // Get existing configs
+      let existingConfigs: ChartConfig[] = [];
+      const storedCharts = localStorage.getItem(storageKey);
+      if (storedCharts) {
+        existingConfigs = JSON.parse(storedCharts) as ChartConfig[];
+      }
+      
+      // Check if we're updating an existing config
+      const existingIndex = existingConfigs.findIndex(c => c.id === config.id);
+      
+      if (existingIndex >= 0) {
+        // Update existing
+        existingConfigs[existingIndex] = config;
+      } else {
+        // Add new
+        existingConfigs.push(config);
+      }
+      
+      // Save to local storage
+      localStorage.setItem(storageKey, JSON.stringify(existingConfigs));
+      console.log('Chart saved to localStorage');
+      return true;
+    } 
+    // Using API mode
+    else {
+      console.log('Using API to save chart');
+      try {
+        // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+        const baseUrl = typeof window !== 'undefined' 
+          ? `${window.location.protocol}//${window.location.host}`
+          : '';
+          
+        const url = `${baseUrl}/api/charts`;
+        console.log(`Sending POST request to ${url}`);
+        
+        // Use safeFetch instead of fetch
+        const response = await safeFetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(config),
+        });
+        
+        if (!response.ok) {
+          let errorMessage = `API Error: ${response.status} - ${response.statusText}`;
+          try {
+            const errorData = await response.json();
+            errorMessage += ` - ${errorData.error || 'Unknown error'}`;
+          } catch (e) {
+            // Ignore JSON parsing error
+          }
+          console.error(errorMessage);
+          
+          // If we have a 500 error, try to save to localStorage as fallback
+          if (response.status >= 500 && typeof window !== 'undefined') {
+            console.warn('API server error, falling back to localStorage for saving chart');
+            const storageKey = 'solana-charts';
+            
+            // Get existing configs from localStorage
+            let existingConfigs: ChartConfig[] = [];
+            const storedCharts = localStorage.getItem(storageKey);
+            if (storedCharts) {
+              existingConfigs = JSON.parse(storedCharts) as ChartConfig[];
+            }
+            
+            // Check if we're updating an existing config
+            const existingIndex = existingConfigs.findIndex(c => c.id === config.id);
+            
+            if (existingIndex >= 0) {
+              // Update existing
+              existingConfigs[existingIndex] = config;
+            } else {
+              // Add new
+              existingConfigs.push(config);
+            }
+            
+            // Save to local storage
+            localStorage.setItem(storageKey, JSON.stringify(existingConfigs));
+            return true;
+          }
+          
+          throw new Error(errorMessage);
+        }
+        
+        const result = await response.json();
+        console.log('Chart saved successfully:', result);
+        return true;
+      } catch (apiError) {
+        console.error('API error when saving chart:', apiError);
+        throw apiError; // Re-throw to be caught by the outer catch
+      }
+    }
   } catch (error) {
     console.error('Error saving chart config:', error);
+    
+    // Alert user about the error
+    if (typeof window !== 'undefined') {
+      alert(`Failed to save chart. Please try again or check the console for details. ${error instanceof Error ? error.message : ''}`);
+    }
+    
     return false;
   }
 }
 
 /**
- * Get all chart configurations from local storage
+ * Get all chart configurations
  */
-export function getAllChartConfigs(): ChartConfig[] {
-  if (typeof window === 'undefined') return [];
-  
+export async function getAllChartConfigs(): Promise<ChartConfig[]> {
   try {
-    const storageKey = 'solana-charts';
-    const storedCharts = localStorage.getItem(storageKey);
-    if (!storedCharts) return [];
-    
-    return JSON.parse(storedCharts) as ChartConfig[];
+    // If running in browser localStorage mode (development)
+    if (process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true') {
+      if (typeof window === 'undefined') return [];
+      
+      const storageKey = 'solana-charts';
+      const storedCharts = localStorage.getItem(storageKey);
+      if (!storedCharts) return [];
+      
+      return JSON.parse(storedCharts) as ChartConfig[];
+    }
+    // Use API endpoint (production)
+    else {
+      try {
+        // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+        const baseUrl = typeof window !== 'undefined' 
+          ? `${window.location.protocol}//${window.location.host}`
+          : '';
+        
+        // Use safeFetch to handle browser extension interference
+        const response = await safeFetch(`${baseUrl}/api/charts`);
+        
+        if (!response.ok) {
+          console.error(`API error: ${response.status} - ${response.statusText}`);
+          
+          // Try to use localStorage as fallback
+          if (typeof window !== 'undefined') {
+            console.warn('Falling back to localStorage for charts');
+            const storageKey = 'solana-charts';
+            const storedCharts = localStorage.getItem(storageKey);
+            if (storedCharts) {
+              return JSON.parse(storedCharts) as ChartConfig[];
+            }
+          }
+          
+          return []; // Return empty array if all else fails
+        }
+        
+        const data = await response.json();
+        return data.charts || [];
+      } catch (error) {
+        console.error('Error calling charts API:', error);
+        
+        // Try to use localStorage as fallback
+        if (typeof window !== 'undefined') {
+          console.warn('Falling back to localStorage for charts due to API error');
+          const storageKey = 'solana-charts';
+          const storedCharts = localStorage.getItem(storageKey);
+          if (storedCharts) {
+            return JSON.parse(storedCharts) as ChartConfig[];
+          }
+        }
+        
+        return []; // Return empty array if all else fails
+      }
+    }
   } catch (error) {
     console.error('Error getting chart configs:', error);
     return [];
@@ -332,28 +476,105 @@ export function getAllChartConfigs(): ChartConfig[] {
 /**
  * Get chart configurations for a specific page
  */
-export function getChartConfigsByPage(pageId: string): ChartConfig[] {
-  const allCharts = getAllChartConfigs();
-  return allCharts.filter(chart => chart.page === pageId);
+export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig[]> {
+  console.log(`Getting charts for page: ${pageId}`);
+  try {
+    // In localStorage mode, we filter them client-side
+    if (process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true') {
+      const allCharts = await getAllChartConfigs();
+      return allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+    } 
+    // In API mode, we can optimize by filtering at the API level
+    else {
+      try {
+        // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+        const baseUrl = typeof window !== 'undefined' 
+          ? `${window.location.protocol}//${window.location.host}`
+          : '';
+          
+        const url = `${baseUrl}/api/charts`;
+        console.log(`Fetching charts from API: ${url}`);
+        
+        // Use the safeFetch helper to handle browser extension interference
+        const response = await safeFetch(url);
+        
+        if (!response.ok) {
+          console.error(`API error: ${response.status} - ${response.statusText}`);
+          // Fall back to localStorage
+          if (typeof window !== 'undefined') {
+            const storageKey = 'solana-charts';
+            const storedCharts = localStorage.getItem(storageKey);
+            if (storedCharts) {
+              const allCharts = JSON.parse(storedCharts) as ChartConfig[];
+              return allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+            }
+          }
+          return [];
+        }
+        
+        const data = await response.json();
+        const allCharts = data.charts || [];
+        return allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+      } catch (error) {
+        console.error('Error fetching charts from API:', error);
+        // Fall back to localStorage
+        if (typeof window !== 'undefined') {
+          const storageKey = 'solana-charts';
+          const storedCharts = localStorage.getItem(storageKey);
+          if (storedCharts) {
+            const allCharts = JSON.parse(storedCharts) as ChartConfig[];
+            return allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+          }
+        }
+        return [];
+      }
+    }
+  } catch (error) {
+    console.error(`Error getting charts for page ${pageId}:`, error);
+    return [];
+  }
 }
 
 // Update an existing chart config
-export function updateChartConfig(updatedConfig: ChartConfig): void {
+export async function updateChartConfig(updatedConfig: ChartConfig): Promise<void> {
   try {
-    const allCharts = getAllChartConfigs();
-    const index = allCharts.findIndex(chart => chart.id === updatedConfig.id);
-    
-    if (index !== -1) {
-      // Update the chart config
-      allCharts[index] = {
-        ...updatedConfig,
-        updatedAt: new Date().toISOString(),
-      };
+    // If running in browser localStorage mode (development)
+    if (process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true') {
+      const allCharts = await getAllChartConfigs();
+      const index = allCharts.findIndex(chart => chart.id === updatedConfig.id);
       
-      // Save back to local storage
-      localStorage.setItem('chartConfigs', JSON.stringify(allCharts));
-    } else {
-      throw new Error(`Chart with ID ${updatedConfig.id} not found`);
+      if (index !== -1) {
+        // Update the chart config
+        allCharts[index] = {
+          ...updatedConfig,
+          updatedAt: new Date().toISOString(),
+        };
+        
+        // Save back to local storage
+        localStorage.setItem('solana-charts', JSON.stringify(allCharts));
+      } else {
+        throw new Error(`Chart with ID ${updatedConfig.id} not found`);
+      }
+    }
+    // Use API endpoint (production)
+    else {
+      // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+      const baseUrl = typeof window !== 'undefined' 
+        ? `${window.location.protocol}//${window.location.host}`
+        : '';
+        
+      // Use safeFetch instead of fetch
+      const response = await safeFetch(`${baseUrl}/api/charts/${updatedConfig.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedConfig),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
     }
   } catch (error) {
     console.error('Error updating chart config:', error);
@@ -364,18 +585,93 @@ export function updateChartConfig(updatedConfig: ChartConfig): void {
 /**
  * Delete a chart configuration by ID
  */
-export function deleteChartConfig(chartId: string): boolean {
-  if (typeof window === 'undefined') return false;
-  
+export async function deleteChartConfig(chartId: string): Promise<boolean> {
   try {
-    const storageKey = 'solana-charts';
-    const allCharts = getAllChartConfigs();
-    const filteredCharts = allCharts.filter(chart => chart.id !== chartId);
-    
-    localStorage.setItem(storageKey, JSON.stringify(filteredCharts));
-    return true;
+    // If running in browser localStorage mode (development)
+    if (process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true') {
+      if (typeof window === 'undefined') return false;
+      
+      const storageKey = 'solana-charts';
+      const allCharts = await getAllChartConfigs();
+      const filteredCharts = allCharts.filter(chart => chart.id !== chartId);
+      
+      localStorage.setItem(storageKey, JSON.stringify(filteredCharts));
+      return true;
+    }
+    // Use API endpoint (production)
+    else {
+      // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+      const baseUrl = typeof window !== 'undefined' 
+        ? `${window.location.protocol}//${window.location.host}`
+        : '';
+      
+      // Use safeFetch instead of fetch
+      const response = await safeFetch(`${baseUrl}/api/charts/${chartId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+      
+      return true;
+    }
   } catch (error) {
     console.error('Error deleting chart config:', error);
     return false;
+  }
+}
+
+/**
+ * Helper function for more resilient API calls that can handle browser extension interference
+ */
+async function safeFetch(url: string, options?: RequestInit): Promise<Response> {
+  try {
+    // First attempt - regular fetch
+    return await fetch(url, options);
+  } catch (error) {
+    console.warn('Initial fetch failed, trying XMLHttpRequest fallback:', error);
+    
+    // If fetch fails, try XMLHttpRequest as fallback
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(options?.method || 'GET', url);
+      
+      // Set headers
+      if (options?.headers) {
+        Object.entries(options.headers).forEach(([key, value]) => {
+          xhr.setRequestHeader(key, value as string);
+        });
+      }
+      
+      xhr.onload = function() {
+        // Create a Response-like object
+        const response = {
+          ok: xhr.status >= 200 && xhr.status < 300,
+          status: xhr.status,
+          statusText: xhr.statusText,
+          headers: new Headers(),
+          text: () => Promise.resolve(xhr.responseText),
+          json: () => Promise.resolve(JSON.parse(xhr.responseText)),
+        } as unknown as Response;
+        
+        resolve(response);
+      };
+      
+      xhr.onerror = function() {
+        reject(new Error('Network error with XMLHttpRequest'));
+      };
+      
+      xhr.ontimeout = function() {
+        reject(new Error('Timeout with XMLHttpRequest'));
+      };
+      
+      // Send with body if provided
+      if (options?.body) {
+        xhr.send(options.body as string);
+      } else {
+        xhr.send();
+      }
+    });
   }
 } 

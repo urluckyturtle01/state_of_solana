@@ -69,7 +69,6 @@ export default function ChartCreatorPage() {
   // Add state for filter configuration
   const [enableFilters, setEnableFilters] = useState({
     timeFilter: false,
-    displayModeFilter: false,
     currencyFilter: false
   });
   
@@ -78,10 +77,6 @@ export default function ChartCreatorPage() {
     timeFilter: {
       options: ['D', 'W', 'M', 'Q', 'Y'],
       paramName: 'Date Part'
-    },
-    displayModeFilter: {
-      options: ['absolute', 'percent'],
-      paramName: 'Display Mode'
     },
     currencyFilter: {
       options: ['USD', 'SOL', 'USDe'],
@@ -279,13 +274,27 @@ export default function ChartCreatorPage() {
     const [parent, child] = fieldName.split('.');
     
     if (parent === 'dataMapping') {
-      setFormData(prev => ({
-        ...prev,
-        dataMapping: {
-          ...prev.dataMapping,
-          [child]: values.length === 1 ? values[0] : values
+      setFormData(prev => {
+        // Create a properly typed update for dataMapping
+        const updatedDataMapping = { ...prev.dataMapping };
+        
+        // Handle x and y axis separately to maintain proper typing
+        if (child === 'xAxis') {
+          // xAxis can only be string or string[]
+          updatedDataMapping.xAxis = values.length === 1 ? values[0] : values;
+        } else if (child === 'yAxis') {
+          // yAxis can be string, string[] or YAxisConfig[]
+          updatedDataMapping.yAxis = values.length === 1 ? values[0] : values;
+        } else if (child === 'groupBy') {
+          // groupBy is a string or undefined
+          updatedDataMapping.groupBy = values.length === 1 ? values[0] : undefined;
         }
-      }));
+        
+        return {
+          ...prev,
+          dataMapping: updatedDataMapping
+        };
+      });
     }
     
     // Mark as touched
@@ -326,17 +335,15 @@ export default function ChartCreatorPage() {
       }
       
       setFormData(prev => {
-        // Ensure we're setting a compatible type for yAxis
-        const updatedYAxis = values.length === 1 
-          ? values // Even with one item, keep it as an array to preserve the type info
-          : values;
+        // Create a properly typed update for dataMapping
+        const updatedDataMapping = { ...prev.dataMapping };
+        
+        // Set the yAxis value ensuring we maintain the correct type
+        updatedDataMapping.yAxis = values;
         
         return {
           ...prev,
-          dataMapping: {
-            ...prev.dataMapping,
-            yAxis: updatedYAxis as any // Use type assertion to satisfy TypeScript
-          }
+          dataMapping: updatedDataMapping
         };
       });
     }
@@ -368,91 +375,94 @@ export default function ChartCreatorPage() {
     // When switching to single input, keep only the first value if array
     setFormData(prev => {
       const currentValue = prev.dataMapping[field];
-      let newValue: string | string[] | YAxisConfig[];
+      
+      // Define a properly typed return value for the dataMapping update
+      let updatedDataMapping = {...prev.dataMapping};
       
       if (!useMultipleFields[field]) {
         // Switching to multi-input
         if (field === 'yAxis') {
           // For Y-axis, create YAxisConfig objects with default chart type = 'bar'
+          let newYValue: YAxisConfig[];
+          
           if (typeof currentValue === 'string' && currentValue) {
             // Initialize with bar type but allow user to toggle
             const unit = prev.dataMapping.yAxisUnit || ''; // Preserve the single field unit
-            newValue = [{ field: currentValue, type: 'bar', unit }];
+            newYValue = [{ field: currentValue, type: 'bar' as const, unit }];
           } else if (Array.isArray(currentValue) && currentValue.length > 0) {
             // Convert simple string array to YAxisConfig array
             if (typeof currentValue[0] === 'string') {
               const unit = prev.dataMapping.yAxisUnit || ''; // Preserve the single field unit
-              newValue = (currentValue as string[]).map(field => ({ field, type: 'bar' as const, unit }));
+              newYValue = (currentValue as string[]).map(field => ({ field, type: 'bar' as const, unit }));
             } else {
               // Already in right format
-              newValue = currentValue;
+              newYValue = currentValue as YAxisConfig[];
             }
           } else {
-            newValue = [];
+            newYValue = [];
           }
-        } else {
-          // For X-axis, just use string array
-          newValue = typeof currentValue === 'string' && currentValue ? [currentValue] : [];
-        }
-        
-        // When switching to multi-input for Y-axis, remove the single field unit
-        if (field === 'yAxis') {
-          return {
-            ...prev,
-            dataMapping: {
-              ...prev.dataMapping,
-              [field]: newValue,
-              // Clear the single-field unit as it's now in YAxisConfig objects
-              yAxisUnit: undefined
-            }
+          
+          // Update dataMapping
+          updatedDataMapping = {
+            ...updatedDataMapping,
+            yAxis: newYValue,
+            yAxisUnit: undefined // Clear the single-field unit
           };
         } else {
-          return {
-            ...prev,
-            dataMapping: {
-              ...prev.dataMapping,
-              [field]: newValue
-            }
+          // For X-axis, just use string array
+          const newXValue: string[] = typeof currentValue === 'string' && currentValue ? [currentValue] : [];
+          updatedDataMapping = {
+            ...updatedDataMapping,
+            xAxis: newXValue
           };
         }
       } else {
         // Switching to single input
-        if (Array.isArray(currentValue) && currentValue.length > 0) {
-          // Extract unit if switching from multi to single for Y-axis
-          let unit = undefined;
+        if (field === 'yAxis') {
+          // Handle Y-axis case
+          let newYValue: string = '';
+          let unit: string | undefined = undefined;
           
-          if (field === 'yAxis' && typeof currentValue[0] !== 'string') {
-            // Extract field name from YAxisConfig
-            const firstConfig = currentValue[0] as YAxisConfig;
-            newValue = firstConfig.field;
-            unit = firstConfig.unit; // Get the unit from the first YAxisConfig
-          } else {
-            newValue = (currentValue as string[])[0];
+          if (Array.isArray(currentValue) && currentValue.length > 0) {
+            const firstItem = currentValue[0];
+            if (typeof firstItem === 'object' && 'field' in firstItem) {
+              // It's a YAxisConfig object
+              const firstConfig = firstItem as YAxisConfig;
+              newYValue = firstConfig.field;
+              unit = firstConfig.unit; // Get the unit from the first YAxisConfig
+            } else if (typeof firstItem === 'string') {
+              // It's a string
+              newYValue = firstItem;
+            }
           }
           
-          // If switching to single field for Y-axis, add the unit if available
-          if (field === 'yAxis' && unit) {
-            return {
-              ...prev,
-              dataMapping: {
-                ...prev.dataMapping,
-                [field]: newValue,
-                yAxisUnit: unit
-              }
-            };
-          }
+          // Update dataMapping
+          updatedDataMapping = {
+            ...updatedDataMapping,
+            yAxis: newYValue,
+            yAxisUnit: unit
+          };
         } else {
-          newValue = '';
-        }
-        
-        return {
-          ...prev,
-          dataMapping: {
-            ...prev.dataMapping,
-            [field]: newValue
+          // Handle X-axis case
+          let newXValue: string = '';
+          
+          if (Array.isArray(currentValue) && currentValue.length > 0) {
+            newXValue = currentValue[0] as string;
           }
-        };
+          
+          // Update dataMapping
+          updatedDataMapping = {
+            ...updatedDataMapping,
+            xAxis: newXValue
+          };
+        }
       }
+      
+      // Return updated form data with the updated dataMapping
+      return {
+        ...prev,
+        dataMapping: updatedDataMapping
+      };
     });
   };
   
@@ -759,10 +769,6 @@ export default function ChartCreatorPage() {
         testParameters[filterParams.currencyFilter.paramName] = filterParams.currencyFilter.options[0];
       }
       
-      if (enableFilters.displayModeFilter && filterParams.displayModeFilter.options.length > 0) {
-        testParameters[filterParams.displayModeFilter.paramName] = filterParams.displayModeFilter.options[0];
-      }
-      
       // Check if we have multiple filters enabled for validation warning
       const enabledFilterCount = Object.values(enableFilters).filter(Boolean).length;
       const hasMultipleFilters = enabledFilterCount > 1;
@@ -845,7 +851,6 @@ export default function ChartCreatorPage() {
       
       if (enableFilters.timeFilter) enabledFilters.push('timeFilter');
       if (enableFilters.currencyFilter) enabledFilters.push('currencyFilter');
-      if (enableFilters.displayModeFilter) enabledFilters.push('displayModeFilter');
       
       // Only proceed if we have multiple filters
       if (enabledFilters.length <= 1) return;
@@ -905,7 +910,6 @@ export default function ChartCreatorPage() {
     const commonConventions = {
       currency: ['currency', 'currencies'],
       datePart: ['date_part', 'datepart', 'date part'],
-      displayMode: ['display_mode', 'displaymode', 'display mode', 'mode']
     };
     
     // Check each enabled filter
@@ -924,15 +928,6 @@ export default function ChartCreatorPage() {
       if (paramName && paramName !== "Date Part" && !commonConventions.datePart.includes(paramName.toLowerCase())) {
         if (commonConventions.datePart.some(conv => conv.toLowerCase() === paramName.toLowerCase())) {
           warnings.push(`"${paramName}" might have incorrect casing. TopLedger API typically uses "Date Part" (with capitals).`);
-        }
-      }
-    }
-    
-    if (enableFilters.displayModeFilter) {
-      const paramName = filterParams.displayModeFilter.paramName;
-      if (paramName && !commonConventions.displayMode.includes(paramName.toLowerCase())) {
-        if (commonConventions.displayMode.some(conv => conv.toLowerCase() === paramName.toLowerCase())) {
-          warnings.push(`"${paramName}" might have incorrect casing. Common format is "display_mode" or just "mode" (all lowercase).`);
         }
       }
     }
@@ -1472,39 +1467,6 @@ export default function ChartCreatorPage() {
                   onChange={(field, values) => handleFilterParamChange('timeFilter', 'options', values)}
                   placeholder="D, W, M, Q, Y"
                   helpText="Available time filter options (D=Day, W=Week, M=Month, Q=Quarter, Y=Year)"
-                />
-              </div>
-            )}
-          </div>
-          
-          {/* Display Mode Filter */}
-          <div className="col-span-2 mt-4">
-            <FormCheckbox
-              id="displayModeFilter"
-              label="Enable Display Mode Filter"
-              checked={enableFilters.displayModeFilter}
-              onChange={() => toggleFilter('displayModeFilter')}
-              helpText="Add a toggle between absolute values and percentage view"
-            />
-            
-            {enableFilters.displayModeFilter && (
-              <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-100">
-                <FormInput
-                  id="displayModeFilterParamName"
-                  label="API Parameter Name"
-                  value={filterParams.displayModeFilter.paramName}
-                  onChange={(e) => handleFilterParamChange('displayModeFilter', 'paramName', e.target.value)}
-                  placeholder="e.g., mode, display_mode, format"
-                  helpText="Parameter name that will be sent to the API (case sensitive - must match exactly)"
-                />
-                
-                <FormMultiInput
-                  id="displayModeFilterOptions"
-                  label="Filter Options"
-                  values={Array.isArray(filterParams.displayModeFilter.options) ? filterParams.displayModeFilter.options : []}
-                  onChange={(field, values) => handleFilterParamChange('displayModeFilter', 'options', values)}
-                  placeholder="absolute, percent"
-                  helpText="Available display mode options (absolute, percent)"
                 />
               </div>
             )}
