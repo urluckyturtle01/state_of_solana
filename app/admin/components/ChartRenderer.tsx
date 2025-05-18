@@ -44,7 +44,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   onColorsGenerated
 }) => {
   const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // Use internal or external filter values based on what's provided
   const [internalFilterValues, setInternalFilterValues] = useState<Record<string, string>>({});
@@ -222,7 +221,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     const signal = controller.signal;
     
     const fetchData = async () => {
-      setLoading(true);
       setError(null);
       
       // Variable to hold our parsed data
@@ -480,11 +478,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             }
           }
         }
-        
-        // Set loading to false if component is still mounted
-        if (!signal.aborted) {
-          setLoading(false);
-        }
       } catch (error) {
         // Only set error if the request wasn't cancelled and component is still mounted
         if (!signal.aborted) {
@@ -523,12 +516,12 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           // Show a warning message but continue with fallback data
           setError(`Using fallback data: ${errorMessage}`);
           console.log('Using fallback data:', parsedData);
+          
+          // Set the data with the fallback
+          if (!signal.aborted) {
+            setData(parsedData);
+          }
         }
-      }
-      
-      // Set loading to false if component is still mounted
-      if (!signal.aborted) {
-        setLoading(false);
       }
     };
     
@@ -537,7 +530,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       fetchData();
     } else {
       setError("No API endpoint provided");
-      setLoading(false);
     }
     
     // Cleanup function to cancel pending requests when component unmounts
@@ -793,20 +785,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     return undefined;
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64 bg-gray-50 rounded-md">
-        <div className="text-center">
-          <svg className="animate-spin h-10 w-10 text-indigo-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p className="text-gray-600">Loading chart data...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="bg-red-50 p-4 rounded-md">
@@ -829,8 +807,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   if (!data.length) {
     return (
-      <div className="bg-yellow-50 p-4 rounded-md">
-        <p className="text-yellow-700">No data available for this chart. API returned empty dataset.</p>
+      <div className=" p-4 rounded-md">
+        <p className="text-gray-800">No data available for this chart. API returned empty dataset.</p>
       </div>
     );
   }

@@ -151,7 +151,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
@@ -337,18 +336,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Show loading state
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
     }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 500); // Longer timeout to accommodate retries
   }, [modalFilterValues, chartConfig]);
 
   // Format value for tooltip
@@ -382,17 +373,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with current filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(filterValues || {});
     }
     
-    setTimeout(() => {
-      setLoading(false);
-      setError(null);
-    }, 300);
+    setError(null);
   }, [filterValues, chartConfig]);
 
   // Extract data for the chart
@@ -696,11 +682,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
   // Render content function
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
-    // Show loading state
-    if (loading) {
-      return <div className="flex justify-center items-center h-full"><Loader size="sm" /></div>;
-    }
-    
     // Show error state or no data
     if (error || chartData.length === 0) {
       return (
@@ -962,7 +943,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       </div>
     );
   }, [
-    chartData, fields, xKey, loading, error, refreshData, handleMouseMove, handleMouseLeave,
+    chartData, fields, xKey, error, refreshData,
+    handleMouseMove, handleMouseLeave,
     tooltip, fieldColors, fieldTypes, formatTickValue, modalChartRef
   ]);
 
@@ -1039,7 +1021,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                     currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
                     onChange={(value) => handleModalFilterChange('currencyFilter', value)}
                     options={chartConfig.additionalOptions.filters.currencyFilter.options}
-                    label="Currency"
+                    
                   />
                 )}
                 
@@ -1103,34 +1085,23 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               
               {/* Legend area - 10% width */}
               <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-                {loading ? (
-                  // Show loading state
-                  <>
-                  <div className="space-y-2">
-                    <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
-                    <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
-                    <LegendItem label="Loading..." color="#34d399" isLoading={true} />
-                  </div>
-                  </>
-                ) : (
-                  // Show legend items
-                  <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
-                    [&::-webkit-scrollbar]:w-1.5 
-                    [&::-webkit-scrollbar-track]:bg-transparent 
-                    [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                    [&::-webkit-scrollbar-thumb]:rounded-full
-                    [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                    scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                    {legendItems.map(item => (
-                      <LegendItem 
-                        key={item.id} 
-                        label={item.label}
-                        color={item.color}
-                        shape={fieldTypes[item.id] === 'line' ? 'circle' : 'square'}
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* Show legend items */}
+                <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
+                  [&::-webkit-scrollbar]:w-1.5 
+                  [&::-webkit-scrollbar-track]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                  {legendItems.map(item => (
+                    <LegendItem 
+                      key={item.id} 
+                      label={item.label}
+                      color={item.color}
+                      shape={fieldTypes[item.id] === 'line' ? 'circle' : 'square'}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

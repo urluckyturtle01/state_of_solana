@@ -73,7 +73,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
@@ -210,8 +209,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [filterValues]);
 
-  // Handle filter changes - notify parent component of filter changes
-  const handleFilterChange = useCallback((key: string, value: string) => {
+  // Enhanced filter change handler for modal
+  const handleModalFilterChange = useCallback((key: string, value: string) => {
+    console.log(`Modal filter changed: ${key} = ${value}`);
+    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
@@ -220,63 +221,44 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Show loading state
-    setLoading(true);
+    // If onFilterChange exists in chartConfig, call it with updated filters
+    if (chartConfig.onFilterChange) {
+      chartConfig.onFilterChange(updatedFilters);
+    }
+  }, [modalFilterValues, chartConfig]);
+  
+  // Handle filter changes - for both modal and normal view
+  const handleFilterChange = useCallback((key: string, value: string) => {
+    // For modal-specific behavior, use the enhanced handler
+    if (isExpanded) {
+      return handleModalFilterChange(key, value);
+    }
+    
+    console.log(`Filter changed: ${key} = ${value}`);
+    
+    const updatedFilters = {
+      ...modalFilterValues,
+      [key]: value
+    };
+    
+    // Update local state
+    setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
     }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, chartConfig, isExpanded, handleModalFilterChange]);
 
-  // Apply modal filter values to the chart data
-  useEffect(() => {
-    if (isExpanded && Object.keys(modalFilterValues).length > 0) {
-      console.log('Applying modal filters:', modalFilterValues);
-      // Refresh the chart with the new filter values
-      setLoading(true);
-      
-      // Don't reset the brush when filters change - this will be handled by BrushTimeScale
-      
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
-    }
-  }, [modalFilterValues, isExpanded]);
-
-  // Modify refreshData to only reset when explicitly requested
+  // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
-    setLoading(true);
-    
-    // Reset brush state when manually refreshing
-    if (isBrushActive) {
-      setBrushDomain(null);
-      setIsBrushActive(false);
-      setFilteredData([]);
-    }
-    
-    // Reset modal brush if active
-    if (isModalBrushActive) {
-      setModalBrushDomain(null);
-      setIsModalBrushActive(false);
-      setModalFilteredData([]);
-    }
-    
     // If onFilterChange exists in chartConfig, call it with current filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(filterValues || {});
     }
     
-    setTimeout(() => {
-      setLoading(false);
-      setError(null);
-    }, 300);
-  }, [filterValues, chartConfig, isBrushActive, isModalBrushActive]);
+    setError(null);
+  }, [filterValues, chartConfig]);
 
   // Process data for the chart - use filtered data when available
   const { chartData, keys, groupColors } = useMemo(() => {
@@ -586,13 +568,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
-    // Show loading state
-    if (loading) {
-      return <div className="flex justify-center items-center h-full"><Loader size="sm" /></div>;
-    }
-    
-    // Show error state with refresh button
-    if (error || chartData.length === 0 || keys.length === 0) {
+    // Show error state or no data
+    if (error || chartData.length === 0 || !keys || keys.length === 0) {
       return (
         <div className="flex flex-col justify-center items-center h-full">
           <div className="text-gray-400/80 text-xs mb-2">{error || 'No data available'}</div>
@@ -811,7 +788,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         </svg>
       </div>
     );
-  }, [chartData, keys, xKey, loading, error, formatTickValue, handleMouseMove, handleMouseLeave, 
+  }, [chartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
       groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items]);
 
   // Update legend items 
@@ -1123,7 +1100,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                   currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
                   onChange={(value) => handleFilterChange('currencyFilter', value as string)}
                   options={chartConfig.additionalOptions.filters.currencyFilter.options}
-                  label="Currency"
+                
                 />
               )}
               
@@ -1187,35 +1164,23 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              {loading ? (
-                // Show loading state
-                <>
-                <div className="space-y-2">
-                  <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
-                  <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
-                  <LegendItem label="Loading..." color="#34d399" isLoading={true} />
-                </div>
-                </>
-              ) : (
-                // Show legend items
-                <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
-                  [&::-webkit-scrollbar]:w-1.5 
-                  [&::-webkit-scrollbar-track]:bg-transparent 
-                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                  {legendItems.map(item => (
-                    <LegendItem 
-                      key={item.id} 
-                      label={item.label}
-                      color={item.color}
-                      shape="square"
-                      tooltipText={item.value ? formatValue(item.value) : undefined}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Show legend items */}
+              <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
+                [&::-webkit-scrollbar]:w-1.5 
+                [&::-webkit-scrollbar-track]:bg-transparent 
+                [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                {legendItems.map(item => (
+                  <LegendItem 
+                    key={item.id} 
+                    label={item.label}
+                    color={item.color}
+                    shape="square"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

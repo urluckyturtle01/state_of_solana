@@ -65,7 +65,6 @@ const PieChart: React.FC<PieChartProps> = ({
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
@@ -170,17 +169,12 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Refresh data placeholder
   const refreshData = useCallback(() => {
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with current filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(filterValues || {});
     }
     
-    setTimeout(() => {
-      setLoading(false);
-      setError(null);
-    }, 300);
+    setError(null);
   }, [filterValues, chartConfig]);
 
   // Handle mouse leave for tooltip
@@ -228,18 +222,10 @@ const PieChart: React.FC<PieChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Show loading state
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
     }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [modalFilterValues, chartConfig]);
   
   // Handle filter changes - for both modal and normal view
@@ -259,18 +245,10 @@ const PieChart: React.FC<PieChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Show loading state
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
     }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
   }, [modalFilterValues, chartConfig, isExpanded, handleModalFilterChange]);
 
   // Handle tooltip display on hovering pie segments
@@ -307,11 +285,6 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
-    // Show loading state
-    if (loading) {
-      return <div className="flex justify-center items-center h-full"><Loader size="sm" /></div>;
-    }
-    
     // Show error state or no data
     if (error || pieData.length === 0) {
       return (
@@ -434,7 +407,7 @@ const PieChart: React.FC<PieChartProps> = ({
       </div>
     );
   }, [
-    pieData, loading, error, refreshData, handleMouseLeave,
+    pieData, error, refreshData, handleMouseLeave,
     tooltip, colorScale, formatValue, yUnit
   ]);
 
@@ -473,7 +446,7 @@ const PieChart: React.FC<PieChartProps> = ({
                     currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
                     onChange={(value) => handleModalFilterChange('currencyFilter', value)}
                     options={chartConfig.additionalOptions.filters.currencyFilter.options}
-                    label="Currency"
+                    
                   />
                 )}
                 
@@ -542,34 +515,23 @@ const PieChart: React.FC<PieChartProps> = ({
               
               {/* Legend area - 20% width */}
               <div className="w-[20%] h-full pl-3 flex flex-col justify-start items-start">
-                {loading ? (
-                  // Show loading state
-                  <>
-                  <div className="space-y-2">
-                    <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
-                    <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
-                    <LegendItem label="Loading..." color="#34d399" isLoading={true} />
-                  </div>
-                  </>
-                ) : (
-                  // Show legend items
-                  <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
-                    [&::-webkit-scrollbar]:w-1.5 
-                    [&::-webkit-scrollbar-track]:bg-transparent 
-                    [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                    [&::-webkit-scrollbar-thumb]:rounded-full
-                    [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                    scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                    {legendItems.map(item => (
-                      <LegendItem 
-                        key={item.id} 
-                        label={`${item.label} (${item.value?.toFixed(1)}%)`}
-                        color={item.color}
-                        shape="square"
-                      />
-                    ))}
-                  </div>
-                )}
+                {/* Show legend items */}
+                <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
+                  [&::-webkit-scrollbar]:w-1.5 
+                  [&::-webkit-scrollbar-track]:bg-transparent 
+                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                  {legendItems.map(item => (
+                    <LegendItem 
+                      key={item.id} 
+                      label={`${item.label} (${item.value?.toFixed(1)}%)`}
+                      color={item.color}
+                      shape="square"
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -73,7 +73,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
@@ -206,17 +205,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with current filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(filterValues || {});
     }
     
-    setTimeout(() => {
-      setLoading(false);
-      setError(null);
-    }, 300);
+    setError(null);
   }, [filterValues, chartConfig]);
 
   // Process data for the chart - use filtered data when available
@@ -742,11 +736,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
-    // Show loading state
-    if (loading) {
-      return <div className="flex justify-center items-center h-full"><Loader size="sm" /></div>;
-    }
-    
     // Show error state with refresh button
     if (error || chartData.length === 0) {
       return (
@@ -1003,7 +992,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         </svg>
       </div>
     );
-  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, loading, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues]);
+  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues]);
 
   // Update legend items 
   useEffect(() => {
@@ -1096,18 +1085,10 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Show loading state
-    setLoading(true);
-    
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (chartConfig.onFilterChange) {
       chartConfig.onFilterChange(updatedFilters);
     }
-    
-    // Hide loading state after a short delay
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
   }, [modalFilterValues, chartConfig]);
 
   // When rendering the chart in expanded mode, use the Modal component
@@ -1149,7 +1130,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                   currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
                   onChange={(value) => handleFilterChange('currencyFilter', value as string)}
                   options={chartConfig.additionalOptions.filters.currencyFilter.options}
-                  label="Currency"
+                 
                 />
               )}
               
@@ -1213,35 +1194,24 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             
             {/* Legend area - 10% width */}
             <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
-              {loading ? (
-                // Show loading state
-                <>
-                <div className="space-y-2">
-                  <LegendItem label="Loading..." color="#60a5fa" isLoading={true} />
-                  <LegendItem label="Loading..." color="#a78bfa" isLoading={true} />
-                  <LegendItem label="Loading..." color="#34d399" isLoading={true} />
-                </div>
-                </>
-              ) : (
-                // Show legend items
-                <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
-                  [&::-webkit-scrollbar]:w-1.5 
-                  [&::-webkit-scrollbar-track]:bg-transparent 
-                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                  {legendItems.map(item => (
-                    <LegendItem 
-                      key={item.id} 
-                      label={item.label}
-                      color={item.color}
-                      shape="square"
-                      tooltipText={item.value ? formatValue(item.value) : undefined}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Show legend items */}
+              <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
+                [&::-webkit-scrollbar]:w-1.5 
+                [&::-webkit-scrollbar-track]:bg-transparent 
+                [&::-webkit-scrollbar-thumb]:bg-gray-700/40
+                [&::-webkit-scrollbar-thumb]:rounded-full
+                [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
+                scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+                {legendItems.map(item => (
+                  <LegendItem 
+                    key={item.id} 
+                    label={item.label}
+                    color={item.color}
+                    shape="square"
+                    tooltipText={item.value ? formatValue(item.value) : undefined}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

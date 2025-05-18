@@ -3,6 +3,7 @@
 
 import React, { useEffect, useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import Loader from './Loader';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ModalProps {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  isLoading?: boolean;
 }
 
 // Interface for ScrollableLegend component
@@ -66,7 +68,7 @@ export const ScrollableLegend: React.FC<ScrollableLegendProps> = ({
   );
 };
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitle }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitle, isLoading = false }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,7 +128,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
             </svg>
           </button>
         </div>
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 relative">
+          {isLoading ? (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader size="md" />
+            </div>
+          ) : (
+            children
+          )}
+        </div>
       </div>
     </div>,
     document.body

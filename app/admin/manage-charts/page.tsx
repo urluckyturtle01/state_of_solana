@@ -8,10 +8,15 @@ import ChartRenderer from '../components/ChartRenderer';
 import Button from '../components/Button';
 
 // Add a helper function to format the Y-Axis display value
-const formatYAxisValue = (yAxis: string | string[] | any[]): string => {
+const formatYAxisValue = (yAxis: string | string[] | any[] | { field: string } | Array<string | { field: string }>): string => {
   if (typeof yAxis === 'string') {
     return yAxis;
   } 
+  
+  // Handle case where it's an object with a field property (YAxisConfig)
+  if (typeof yAxis === 'object' && !Array.isArray(yAxis) && yAxis && 'field' in yAxis) {
+    return yAxis.field;
+  }
   
   if (Array.isArray(yAxis)) {
     return yAxis.map((field) => {
