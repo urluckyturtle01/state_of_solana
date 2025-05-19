@@ -30,6 +30,7 @@ const ChartRenderer = dynamic(() => import('./ChartRenderer'), {
 
 interface DashboardRendererProps {
   pageId: string;
+  overrideCharts?: ChartConfig[]; // Add optional prop to override charts
 }
 
 interface Legend {
@@ -44,7 +45,7 @@ function isStackedBarChart(chart: ChartConfig): boolean {
          (chart.chartType === 'bar' && chart.isStacked === true);
 }
 
-export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
+export default function DashboardRenderer({ pageId, overrideCharts }: DashboardRendererProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [expandedCharts, setExpandedCharts] = useState<Record<string, boolean>>({});
@@ -65,6 +66,57 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
     
     async function loadCharts() {
       try {
+        // If overrideCharts is provided, use it instead of loading from the pageId
+        if (overrideCharts) {
+          setCharts(overrideCharts);
+          
+          // Initialize states for the override charts
+          const expandedState: Record<string, boolean> = {};
+          const downloadingState: Record<string, boolean> = {};
+          const initialFilterValues: Record<string, Record<string, string>> = {};
+          const initialLoadingState: Record<string, boolean> = {};
+          
+          overrideCharts.forEach(chart => {
+            expandedState[chart.id] = false;
+            downloadingState[chart.id] = false;
+            initialLoadingState[chart.id] = true; // Start with loading state
+            
+            // Initialize filter values for each chart
+            if (chart.additionalOptions?.filters) {
+              initialFilterValues[chart.id] = {};
+              
+              // Set initial time filter
+              if (chart.additionalOptions.filters.timeFilter && 
+                  Array.isArray(chart.additionalOptions.filters.timeFilter.options) && 
+                  chart.additionalOptions.filters.timeFilter.options.length > 0) {
+                initialFilterValues[chart.id]['timeFilter'] = chart.additionalOptions.filters.timeFilter.options[0];
+              }
+              
+              // Set initial currency filter
+              if (chart.additionalOptions.filters.currencyFilter && 
+                  Array.isArray(chart.additionalOptions.filters.currencyFilter.options) && 
+                  chart.additionalOptions.filters.currencyFilter.options.length > 0) {
+                initialFilterValues[chart.id]['currencyFilter'] = chart.additionalOptions.filters.currencyFilter.options[0];
+              }
+              
+              // Set initial display mode filter
+              if (chart.additionalOptions.filters.displayModeFilter && 
+                  Array.isArray(chart.additionalOptions.filters.displayModeFilter.options) && 
+                  chart.additionalOptions.filters.displayModeFilter.options.length > 0) {
+                initialFilterValues[chart.id]['displayModeFilter'] = chart.additionalOptions.filters.displayModeFilter.options[0];
+              }
+            }
+          });
+          
+          setExpandedCharts(expandedState);
+          setDownloadingCharts(downloadingState);
+          setLoadingCharts(initialLoadingState);
+          setFilterValues(initialFilterValues);
+          
+          return;
+        }
+      
+        // Default behavior: load charts based on pageId
         const pageCharts = await getChartConfigsByPage(pageId);
         setCharts(pageCharts);
         
@@ -116,7 +168,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
     }
     
     loadCharts();
-  }, [pageId]);
+  }, [pageId, overrideCharts]);
 
   const toggleChartExpanded = (chartId: string) => {
     setExpandedCharts(prev => ({
@@ -1029,7 +1081,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
       {charts.map((chart) => (
         <ChartCard 
           key={chart.id}
@@ -1043,7 +1095,9 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
           legendWidth="1/5"
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
-          filterBar={chart.additionalOptions?.filters && (
+          filterBar={
+            // Show filter bar if there are filters OR if this is a stacked chart
+            (chart.additionalOptions?.filters || isStackedBarChart(chart)) && (
             <div className="flex flex-wrap gap-3 items-center">
               {/* Time Filter */}
               {chart.additionalOptions?.filters?.timeFilter && (
@@ -1066,7 +1120,7 @@ export default function DashboardRenderer({ pageId }: DashboardRendererProps) {
                 />
               )}
               
-              {/* Display Mode Filter - show for stacked bar charts or when explicitly configured */}
+              {/* Display Mode Filter - always show for stacked charts, or when explicitly configured */}
               {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
                 <DisplayModeFilter
                   mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
