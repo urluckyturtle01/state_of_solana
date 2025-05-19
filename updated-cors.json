@@ -1,0 +1,15 @@
+{
+    "CORSRules": [
+      {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
+        "AllowedOrigins": [
+          "https://topledger.github.io",
+          "http://localhost:3000",
+          "https://stateofsolana.vercel.app/"
+        ],
+        "ExposeHeaders": ["ETag"]
+      }
+    ]
+  }
+  
