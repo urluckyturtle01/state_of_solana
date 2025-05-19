@@ -3,14 +3,16 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Server-side rendering with API routes
-  // output: 'export', // Disabled static export to use API routes
   images: {
     unoptimized: true,
   },
-  // Use regular Next.js with server-side rendering
   reactStrictMode: false,
-  
+  // This ensures Vercel properly processes all pages
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
+  // Disable static export to support API routes
+  // Don't change output to 'export' for Vercel deployment with API routes
 };
 
 module.exports = nextConfig;
