@@ -329,11 +329,11 @@ export default function ManageChartsPage() {
                   </div>
                   <div>
                     <span className="font-medium text-gray-700">X-Axis:</span>{' '}
-                    <span className="text-gray-900">{chart.dataMapping.xAxis}</span>
+                    <span className="text-gray-900">{chart.dataMapping?.xAxis || 'N/A'}</span>
                   </div>
                   <div>
                     <span className="font-medium text-gray-700">Y-Axis:</span>{' '}
-                    <span className="text-gray-900">{formatYAxisValue(chart.dataMapping.yAxis)}</span>
+                    <span className="text-gray-900">{chart.dataMapping ? formatYAxisValue(chart.dataMapping.yAxis) : 'N/A'}</span>
                   </div>
                 </div>
               </div>

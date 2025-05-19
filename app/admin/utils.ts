@@ -296,7 +296,6 @@ export async function saveChartConfig(config: ChartConfig): Promise<boolean> {
       config.createdAt = config.updatedAt;
     }
     
-    // Use API to save chart
     // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
     const baseUrl = typeof window !== 'undefined' 
       ? `${window.location.protocol}//${window.location.host}`
@@ -359,7 +358,7 @@ export async function saveChartConfig(config: ChartConfig): Promise<boolean> {
     }
     
     const result = await response.json();
-    console.log('Chart saved successfully:', result);
+    console.log('Chart saved successfully to S3:', result);
     return true;
   } catch (error) {
     console.error('Error saving chart config:', error);
@@ -394,53 +393,59 @@ export async function saveChartConfig(config: ChartConfig): Promise<boolean> {
  * Get all chart configurations
  */
 export async function getAllChartConfigs(): Promise<ChartConfig[]> {
-  try {
-    // Use API endpoint
-    try {
-      // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
-      const baseUrl = typeof window !== 'undefined' 
-        ? `${window.location.protocol}//${window.location.host}`
-        : '';
-      
-      // Use safeFetch to handle browser extension interference
-      const response = await safeFetch(`${baseUrl}/api/charts`);
-      
-      if (!response.ok) {
-        console.error(`API error: ${response.status} - ${response.statusText}`);
-        
-        // Try to use localStorage as fallback
-        if (typeof window !== 'undefined') {
-          console.warn('Falling back to localStorage for charts');
-          const storageKey = 'solana-charts';
-          const storedCharts = localStorage.getItem(storageKey);
-          if (storedCharts) {
-            return JSON.parse(storedCharts) as ChartConfig[];
-          }
-        }
-        
-        return []; // Return empty array if all else fails
-      }
-      
-      const data = await response.json();
-      return data.charts || [];
-    } catch (error) {
-      console.error('Error calling charts API:', error);
-      
-      // Try to use localStorage as fallback
-      if (typeof window !== 'undefined') {
-        console.warn('Falling back to localStorage for charts due to API error');
-        const storageKey = 'solana-charts';
-        const storedCharts = localStorage.getItem(storageKey);
-        if (storedCharts) {
-          return JSON.parse(storedCharts) as ChartConfig[];
-        }
-      }
-      
-      return []; // Return empty array if all else fails
+  // Store for localStorage charts in case we need to merge them
+  let localStorageCharts: ChartConfig[] = [];
+  
+  // Try to get localStorage charts regardless of API success
+  if (typeof window !== 'undefined') {
+    const storageKey = 'solana-charts';
+    const storedCharts = localStorage.getItem(storageKey);
+    if (storedCharts) {
+      localStorageCharts = JSON.parse(storedCharts) as ChartConfig[];
+      console.log('Found charts in localStorage:', localStorageCharts.length);
     }
+  }
+  
+  try {
+    // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+    const baseUrl = typeof window !== 'undefined' 
+      ? `${window.location.protocol}//${window.location.host}`
+      : '';
+    
+    console.log('Fetching charts from API');
+    // Use safeFetch to handle browser extension interference
+    const response = await safeFetch(`${baseUrl}/api/charts`);
+    
+    if (!response.ok) {
+      console.warn(`API error: ${response.status} - ${response.statusText} - Using localStorage charts only`);
+      return localStorageCharts;
+    }
+    
+    const data = await response.json();
+    console.log('Received charts from API:', data.charts?.length || 0);
+    
+    // Combine API charts with localStorage charts
+    // Use a Map to ensure no duplicates by ID
+    const chartsMap = new Map<string, ChartConfig>();
+    
+    // Add API charts first (they take precedence)
+    (data.charts || []).forEach((chart: ChartConfig) => {
+      chartsMap.set(chart.id, chart);
+    });
+    
+    // Add localStorage charts that don't exist in API response
+    localStorageCharts.forEach(chart => {
+      if (!chartsMap.has(chart.id)) {
+        chartsMap.set(chart.id, chart);
+      }
+    });
+    
+    const combinedCharts = Array.from(chartsMap.values());
+    console.log('Combined charts count:', combinedCharts.length);
+    return combinedCharts;
   } catch (error) {
-    console.error('Error getting chart configs:', error);
-    return [];
+    console.warn('Error calling charts API - Using localStorage charts only', error);
+    return localStorageCharts;
   }
 }
 
@@ -471,8 +476,28 @@ export async function updateChartConfig(updatedConfig: ChartConfig): Promise<voi
  */
 export async function deleteChartConfig(chartId: string): Promise<boolean> {
   try {
-    // Use API endpoint
-    // Get proper base URL - use window.location in browser, or fallback to relative path in SSR
+    console.log(`Deleting chart ${chartId}`);
+    
+    // First, remove from localStorage if it exists there
+    let deletedFromLocalStorage = false;
+    if (typeof window !== 'undefined') {
+      const storageKey = 'solana-charts';
+      const storedCharts = localStorage.getItem(storageKey);
+      if (storedCharts) {
+        const existingConfigs = JSON.parse(storedCharts) as ChartConfig[];
+        const initialLength = existingConfigs.length;
+        const updatedConfigs = existingConfigs.filter(c => c.id !== chartId);
+        
+        // Only update localStorage if we actually removed something
+        if (updatedConfigs.length < initialLength) {
+          localStorage.setItem(storageKey, JSON.stringify(updatedConfigs));
+          console.log(`Chart ${chartId} removed from localStorage`);
+          deletedFromLocalStorage = true;
+        }
+      }
+    }
+    
+    // Use API endpoint to delete from S3
     const baseUrl = typeof window !== 'undefined' 
       ? `${window.location.protocol}//${window.location.host}`
       : '';
@@ -482,11 +507,35 @@ export async function deleteChartConfig(chartId: string): Promise<boolean> {
       method: 'DELETE',
     });
     
+    // Handle different API response statuses
     if (!response.ok) {
+      // 404 is fine - it just means the chart wasn't in S3
+      if (response.status === 404) {
+        console.log(`Chart ${chartId} not found in S3 (404) - this is OK if it was only in localStorage`);
+        
+        // If we successfully deleted from localStorage, consider the operation successful
+        if (deletedFromLocalStorage) {
+          return true;
+        }
+        
+        // If not in localStorage either, it truly doesn't exist
+        console.warn(`Chart ${chartId} was not found in localStorage or S3`);
+        return false;
+      }
+      
+      // For other errors, log but don't throw if we already deleted from localStorage
+      console.warn(`API error: ${response.status} - ${response.statusText}`);
+      
+      if (deletedFromLocalStorage) {
+        console.log(`Chart was deleted from localStorage but API deletion failed`);
+        return true;
+      }
+      
+      // If not deleted from localStorage, and API failed, then it's a true error
       throw new Error(`API error: ${response.statusText}`);
     }
     
-    console.log(`Chart ${chartId} deleted successfully`);
+    console.log(`Chart ${chartId} deleted successfully from S3`);
     return true;
   } catch (error) {
     console.error('Error deleting chart:', error);

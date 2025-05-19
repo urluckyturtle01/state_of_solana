@@ -1017,8 +1017,15 @@ export default function ChartCreatorPage() {
       // Convert form data to chart config
       const chartConfig = await formDataToConfig(updatedFormData, isDualAxis);
       
-      // Save to local storage
-      saveChartConfig(chartConfig);
+      // Save chart to S3 via API and wait for completion
+      console.log('Saving chart to S3:', chartConfig);
+      const saveResult = await saveChartConfig(chartConfig);
+      
+      if (!saveResult) {
+        throw new Error('Failed to save chart to S3. Please check the console for details.');
+      }
+      
+      console.log('Chart saved successfully with ID:', chartConfig.id);
       
       // Set success state with chart info
       setSuccessConfig({

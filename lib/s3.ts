@@ -2,19 +2,22 @@ import AWS from 'aws-sdk';
 
 // Configure AWS SDK
 const s3 = new AWS.S3({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: process.env.S3_REGION || 'us-east-1',
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.S3_ACCESS_KEY || '',
+    secretAccessKey: process.env.S3_SECRET_KEY || '',
   },
 });
 
-// S3 bucket name
-const BUCKET_NAME = 'tl-state-of-solana';
+// Get S3 bucket name from environment variables
+const BUCKET_NAME = process.env.S3_BUCKET || 'tl-state-of-solana';
 
 // Save JSON data to S3
 export async function saveToS3(key: string, data: any): Promise<boolean> {
   try {
+    // Debug log - remove or comment out in production
+    console.log(`Saving to S3: bucket=${BUCKET_NAME}, key=${key}, credentials available: ${!!process.env.S3_ACCESS_KEY}`);
+    
     const params = {
       Bucket: BUCKET_NAME,
       Key: key,

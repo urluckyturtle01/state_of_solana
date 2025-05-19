@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { saveToS3, getFromS3, listFromS3 } from '@/lib/s3';
 
-// For Next.js static export compatibility
+// Enable server-side rendering for the API route
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 

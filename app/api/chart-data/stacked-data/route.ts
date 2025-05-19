@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// For Next.js static export compatibility
-export const dynamic = "error";
-// Removed revalidate directive for static export
+// Enable server-side rendering for the API route
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   // Generate sample data for stacked bar chart - platform revenue by segments
