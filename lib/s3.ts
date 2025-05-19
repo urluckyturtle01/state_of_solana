@@ -2,21 +2,27 @@ import AWS from 'aws-sdk';
 
 // Configure AWS SDK
 const s3 = new AWS.S3({
-  region: process.env.S3_REGION || 'us-east-1',
+  region: process.env.AWS_REGION || process.env.S3_REGION || 'us-east-1',
   credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY || '',
-    secretAccessKey: process.env.S3_SECRET_KEY || '',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || process.env.S3_SECRET_KEY || '',
   },
 });
 
 // Get S3 bucket name from environment variables
-const BUCKET_NAME = process.env.S3_BUCKET || 'tl-state-of-solana';
+const BUCKET_NAME = process.env.S3_BUCKET_NAME || process.env.S3_BUCKET || 'tl-state-of-solana';
 
 // Save JSON data to S3
 export async function saveToS3(key: string, data: any): Promise<boolean> {
   try {
+    // Validate that we have credentials before attempting to save
+    if (!process.env.AWS_ACCESS_KEY_ID && !process.env.S3_ACCESS_KEY) {
+      console.error('S3 access key is not configured');
+      return false;
+    }
+    
     // Debug log - remove or comment out in production
-    console.log(`Saving to S3: bucket=${BUCKET_NAME}, key=${key}, credentials available: ${!!process.env.S3_ACCESS_KEY}`);
+    console.log(`Saving to S3: bucket=${BUCKET_NAME}, key=${key}, credentials available: ${!!process.env.AWS_ACCESS_KEY_ID || !!process.env.S3_ACCESS_KEY}`);
     
     const params = {
       Bucket: BUCKET_NAME,
