@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     
     // Only attempt S3 operations if we have credentials
     let s3Status = 'Not tested - missing credentials';
-    let listResult = [];
+    let listResult: string[] = [];
     
     if (envChecks.AWS_ACCESS_KEY_ID && envChecks.AWS_SECRET_ACCESS_KEY) {
       try {
