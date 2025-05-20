@@ -191,7 +191,7 @@ export default function ProtocolRevenueSummaryPage() {
     <main className="pb-12">
       <div className="space-y-4">
         {/* Stats Cards Row */}
-        <section className="grid grid-cols-2 md:grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Total Protocol Revenue Card */}
           <Counter
             title="Protocol Revenue (Since Jan'24)"
@@ -222,7 +222,7 @@ export default function ProtocolRevenueSummaryPage() {
         {/* Charts Section */}
         <section className="space-y-4">
           {/* Protocol Revenue Sources */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ChartCard
             title="Protocol Revenue Sources"
             description="Breakdown of revenue by source (Base Fees, Priority Fees, Jito Tips, Vote Fees)"

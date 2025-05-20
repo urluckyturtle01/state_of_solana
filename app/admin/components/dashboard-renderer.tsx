@@ -1081,7 +1081,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
       {charts.map((chart) => (
         <ChartCard 
           key={chart.id}

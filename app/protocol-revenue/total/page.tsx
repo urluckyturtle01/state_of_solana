@@ -116,7 +116,8 @@ export default function ProtocolRevenueTotalPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="pb-12">
+    <div className="space-y-4">
         
       {/* first row of charts */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -187,6 +188,7 @@ export default function ProtocolRevenueTotalPage() {
         
       {/* second row of charts */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
         {/* Chart 3 - Revenue by Segment */}
         <ChartCard
           title="Revenue by Segment"
@@ -283,9 +285,10 @@ export default function ProtocolRevenueTotalPage() {
           />
         </ChartCard>
       </section>
-
+      </div>
       {/* dynamic charts from admin section */}
       <DashboardRenderer pageId="total" />
-    </div>
+    </main>
+    
   );
 }
