@@ -1081,65 +1081,60 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-      {charts.map((chart) => (
-        <ChartCard 
-          key={chart.id}
-          title={chart.title}
-          description={chart.subtitle}
-          accentColor="blue"
-          onExpandClick={() => toggleChartExpanded(chart.id)}
-          onDownloadClick={() => downloadCSV(chart)}
-          isDownloading={downloadingCharts[chart.id]}
-          isLoading={loadingCharts[chart.id]}
-          legendWidth="1/5"
-          
-          // Add filter bar for regular chart view using ChartRenderer's filter props
-          filterBar={
-            // Show filter bar if there are filters OR if this is a stacked chart
-            (chart.additionalOptions?.filters || isStackedBarChart(chart)) && (
-            <div className="flex flex-wrap gap-3 items-center">
-              {/* Time Filter */}
-              {chart.additionalOptions?.filters?.timeFilter && (
-                <TimeFilterSelector
-                  value={filterValues[chart.id]?.['timeFilter'] || chart.additionalOptions.filters.timeFilter.options[0]}
-                  onChange={(value) => handleFilterChange(chart.id, 'timeFilter', value)}
-                  options={chart.additionalOptions.filters.timeFilter.options.map((value: string) => ({ 
-                    value, 
-                    label: value 
-                  }))}
-                />
-              )}
-              
-              {/* Currency Filter */}
-              {chart.additionalOptions?.filters?.currencyFilter && (
-                <CurrencyFilter
-                  currency={filterValues[chart.id]?.['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.options[0]}
-                  options={chart.additionalOptions.filters.currencyFilter.options}
-                  onChange={(value) => handleFilterChange(chart.id, 'currencyFilter', value)}
-                />
-              )}
-              
-              {/* Display Mode Filter - always show for stacked charts, or when explicitly configured */}
-              {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
-                <DisplayModeFilter
-                  mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
-                  onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
-                />
-              )}
-            </div>
-          )}
-          
-          legend={
-            <>
-              {legends[chart.id] && legends[chart.id].length > 0 ? (
-                <div className="space-y-2 w-full overflow-y-auto max-h-[500px]
-                  [&::-webkit-scrollbar]:w-1.5 
-                  [&::-webkit-scrollbar-track]:bg-transparent 
-                  [&::-webkit-scrollbar-thumb]:bg-gray-700/40
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
-                  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
+    <div className="container mx-auto px-2 sm:px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-4">
+        {charts.map((chart) => (
+          <ChartCard 
+            key={chart.id}
+            title={chart.title}
+            description={chart.subtitle}
+            accentColor="blue"
+            onExpandClick={() => toggleChartExpanded(chart.id)}
+            onDownloadClick={() => downloadCSV(chart)}
+            isDownloading={downloadingCharts[chart.id]}
+            isLoading={loadingCharts[chart.id]}
+            legendWidth={chart.legendWidth || "1/5"}
+            className="h-full"
+            
+            // Add filter bar for regular chart view using ChartRenderer's filter props
+            filterBar={
+              // Show filter bar if there are filters OR if this is a stacked chart
+              (chart.additionalOptions?.filters || isStackedBarChart(chart)) && (
+              <div className="flex flex-wrap gap-2 items-center">
+                {/* Time Filter */}
+                {chart.additionalOptions?.filters?.timeFilter && (
+                  <TimeFilterSelector
+                    value={filterValues[chart.id]?.['timeFilter'] || chart.additionalOptions.filters.timeFilter.options[0]}
+                    onChange={(value) => handleFilterChange(chart.id, 'timeFilter', value)}
+                    options={chart.additionalOptions.filters.timeFilter.options.map((value: string) => ({ 
+                      value, 
+                      label: value 
+                    }))}
+                  />
+                )}
+                
+                {/* Currency Filter */}
+                {chart.additionalOptions?.filters?.currencyFilter && (
+                  <CurrencyFilter
+                    currency={filterValues[chart.id]?.['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.options[0]}
+                    options={chart.additionalOptions.filters.currencyFilter.options}
+                    onChange={(value) => handleFilterChange(chart.id, 'currencyFilter', value)}
+                  />
+                )}
+                
+                {/* Display Mode Filter - always show for stacked charts, or when explicitly configured */}
+                {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
+                  <DisplayModeFilter
+                    mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
+                    onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
+                  />
+                )}
+              </div>
+            )}
+            
+            legend={
+              legends[chart.id] && legends[chart.id].length > 0 ? (
+                <div className="space-y-2 w-full overflow-auto">
                   {legends[chart.id].map(legend => (
                     <LegendItem 
                       key={legend.label}
@@ -1152,11 +1147,9 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
                 </div>
               ) : (
                 <LegendItem label="Loading..." color="#cccccc" isLoading={true} />
-              )}
-            </>
-          }
-        >
-          <div className="h-95">
+              )
+            }
+          >
             <ChartRenderer 
               chartConfig={chart} 
               onDataLoaded={(data: any[]) => {
@@ -1187,9 +1180,9 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
               // Pass loading state
               isLoading={loadingCharts[chart.id]}
             />
-          </div>
-        </ChartCard>
-      ))}
+          </ChartCard>
+        ))}
+      </div>
     </div>
   );
 } 
