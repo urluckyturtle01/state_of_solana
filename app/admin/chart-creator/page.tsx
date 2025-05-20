@@ -1203,38 +1203,38 @@ export default function ChartCreatorPage() {
   
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="border-b border-gray-200 pb-5 mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="border-b border-gray-800 pb-5 mb-8">
+        <h1 className="text-3xl font-bold text-white tracking-tight">
           {isEditMode ? 'Edit Chart' : 'Create Custom Chart'}
         </h1>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-400">
           {isEditMode ? 'Update chart configuration or change data sources' : 'Create a custom chart and add it to the dashboard'}
         </p>
       </div>
       
       {successConfig && (
-        <div className="bg-green-50 p-4 rounded-md mb-6">
+        <div className="bg-green-900/30 border border-green-800 p-4 rounded-md mb-6">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-900">Chart Created Successfully</h3>
-              <div className="mt-2 text-sm text-green-800">
+              <h3 className="text-sm font-medium text-green-400">Chart Created Successfully</h3>
+              <div className="mt-2 text-sm text-green-300">
                 <p>Your chart has been created and added to the selected page.</p>
                 <div className="mt-4 flex space-x-4">
                   <Link 
                     href={availablePages.find(p => p.id === successConfig.page)?.path || '#'}
                     target="_blank"
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-black bg-green-400 hover:bg-green-500 transition-colors"
                   >
                     View on Page
                   </Link>
                   <Link 
                     href="/admin/manage-charts"
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-800 bg-green-100 hover:bg-green-200"
+                    className="inline-flex items-center px-3 py-2 border border-green-600 text-sm font-medium rounded-md text-green-400 bg-transparent hover:bg-green-900/30 transition-colors"
                   >
                     Manage Charts
                   </Link>
@@ -1246,16 +1246,16 @@ export default function ChartCreatorPage() {
       )}
       
       {submitError && (
-        <div className="bg-red-50 p-4 rounded-md mb-6">
+        <div className="bg-red-900/30 border border-red-800 p-4 rounded-md mb-6">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-900">Error</h3>
-              <div className="mt-2 text-sm text-red-800">
+              <h3 className="text-sm font-medium text-red-400">Error</h3>
+              <div className="mt-2 text-sm text-red-300">
                 <p>{submitError}</p>
               </div>
             </div>
@@ -1263,11 +1263,11 @@ export default function ChartCreatorPage() {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-md">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Chart Basic Information */}
           <div className="col-span-2">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Basic Information</h2>
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Basic Information</h2>
           </div>
           
           <FormInput
@@ -1322,8 +1322,8 @@ export default function ChartCreatorPage() {
           />
           
           {/* Chart Type Configuration */}
-          <div className="col-span-2 border-t pt-6 mt-4">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Chart Configuration</h2>
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Chart Configuration</h2>
           </div>
           
           <FormSelect
@@ -1359,10 +1359,10 @@ export default function ChartCreatorPage() {
             />
             
             {formData.isStacked && (
-              <div className="mt-2 p-3 bg-blue-50 rounded-md text-sm">
-                <p className="font-medium text-blue-800">Stacked Chart Configuration</p>
-                <p className="mt-1 text-blue-700">You can create a stacked chart in two ways:</p>
-                <ol className="mt-2 ml-5 list-decimal text-blue-700">
+              <div className="mt-2 p-3 bg-indigo-900/30 rounded-md text-sm border border-indigo-800">
+                <p className="font-medium text-indigo-400">Stacked Chart Configuration</p>
+                <p className="mt-1 text-indigo-300">You can create a stacked chart in two ways:</p>
+                <ol className="mt-2 ml-5 list-decimal text-indigo-300">
                   <li>Use <strong>multiple Y-axis fields</strong> (each field becomes a stack segment)</li>
                   <li>Use a <strong>Group By field</strong> (data is grouped and stacked by this field)</li>
                 </ol>
@@ -1371,8 +1371,8 @@ export default function ChartCreatorPage() {
           </div>
           
           {/* API Configuration */}
-          <div className="col-span-2 border-t pt-6 mt-4">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Data Source</h2>
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Data Source</h2>
           </div>
           
           <div className="col-span-2 flex space-x-4">
@@ -1411,25 +1411,25 @@ export default function ChartCreatorPage() {
           />
           
           {apiValidationResult && (
-            <div className={`col-span-2 p-4 rounded-md ${apiValidationResult.valid ? 'bg-green-50' : 'bg-red-50'}`}>
-              <p className={`text-sm ${apiValidationResult.valid ? 'text-green-700' : 'text-red-700'}`}>
+            <div className={`col-span-2 p-4 rounded-md border ${apiValidationResult.valid ? 'bg-green-900/30 border-green-800 text-green-400' : 'bg-red-900/30 border-red-800 text-red-400'}`}>
+              <p className="text-sm">
                 {apiValidationResult.message}
               </p>
               {apiValidationResult.valid && apiValidationResult.data && (
                 <div className="mt-2">
-                  <p className="text-sm font-medium text-gray-700">Available columns:</p>
-                  <div className="mt-1 text-sm text-gray-500 max-h-32 overflow-y-auto">
+                  <p className="text-sm font-medium text-gray-300">Available columns:</p>
+                  <div className="mt-1 text-sm text-gray-400 max-h-32 overflow-y-auto">
                     {apiValidationResult.data.columns.map((col: string, index: number) => (
-                      <span key={index} className="inline-block bg-gray-100 rounded-md px-2 py-1 mr-2 mb-2">
+                      <span key={index} className="inline-block bg-gray-700 border border-gray-600 rounded-md px-2 py-1 mr-2 mb-2">
                         {col}
                       </span>
                     ))}
                   </div>
                   {apiValidationResult.data.sampleRows && (
                     <>
-                      <p className="text-sm font-medium text-gray-700 mt-2">Sample data:</p>
-                      <div className="mt-1 text-sm text-gray-500 max-h-48 overflow-y-auto">
-                        <pre className="bg-gray-100 p-2 rounded-md text-xs">
+                      <p className="text-sm font-medium text-gray-300 mt-2">Sample data:</p>
+                      <div className="mt-1 text-sm text-gray-400 max-h-48 overflow-y-auto">
+                        <pre className="bg-gray-700 border border-gray-600 p-2 rounded-md text-xs">
                           {JSON.stringify(apiValidationResult.data.sampleRows, null, 2)}
                         </pre>
                       </div>
@@ -1441,17 +1441,17 @@ export default function ChartCreatorPage() {
           )}
           
           {/* Data Mapping */}
-          <div className="col-span-2 border-t pt-6 mt-4">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Data Mapping</h2>
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Data Mapping</h2>
           </div>
           
           <div className="col-span-2">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-md font-medium text-gray-700">X-Axis Configuration</h3>
+              <h3 className="text-md font-medium text-gray-300">X-Axis Configuration</h3>
               <button
                 type="button"
                 onClick={() => toggleMultiInput('xAxis')}
-                className="text-sm text-indigo-600 hover:text-indigo-800"
+                className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
               >
                 {useMultipleFields.xAxis ? 'Switch to Single Field' : 'Use Multiple Fields'}
               </button>
@@ -1484,12 +1484,12 @@ export default function ChartCreatorPage() {
           
           <div className="col-span-2">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-md font-medium text-gray-700">Y-Axis Configuration</h3>
+              <h3 className="text-md font-medium text-gray-300">Y-Axis Configuration</h3>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => toggleMultiInput('yAxis')}
-                  className="text-sm text-indigo-600 hover:text-indigo-800"
+                  className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
                 >
                   {useMultipleFields.yAxis ? 'Switch to Single Field' : 'Use Multiple Fields'}
                 </button>
@@ -1498,7 +1498,7 @@ export default function ChartCreatorPage() {
                   <button
                     type="button"
                     onClick={toggleDualAxis}
-                    className={`text-sm ${isDualAxis ? 'text-blue-600 hover:text-blue-800' : 'text-indigo-600 hover:text-indigo-800'}`}
+                    className={`text-sm ${isDualAxis ? 'text-purple-400 hover:text-purple-300' : 'text-indigo-400 hover:text-indigo-300'} transition-colors`}
                   >
                     {isDualAxis ? 'Disable Dual Axis' : 'Enable Dual Axis'}
                   </button>
@@ -1545,8 +1545,8 @@ export default function ChartCreatorPage() {
               )
             ) : (
               <div className="mb-4">
-                <label htmlFor="y-axis-field" className="block text-sm font-medium text-gray-800 mb-1">
-                  Y-Axis Field <span className="text-red-600">*</span>
+                <label htmlFor="y-axis-field" className="block text-sm font-medium text-gray-300 mb-1">
+                  Y-Axis Field <span className="text-red-400">*</span>
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -1555,7 +1555,7 @@ export default function ChartCreatorPage() {
                     value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : ''}
                     onChange={(e) => handleInputChange('dataMapping.yAxis', e.target.value)}
                     placeholder="Field name for the y-axis"
-                    className="block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+                    className="block w-full rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
                     required
                   />
                   <div className="relative flex items-center">
@@ -1565,17 +1565,17 @@ export default function ChartCreatorPage() {
                       value={formData.dataMapping.yAxisUnit || ''}
                       onChange={(e) => handleInputChange('dataMapping.yAxisUnit', e.target.value)}
                       placeholder="Unit ($, %, SOL)"
-                      className="w-32 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+                      className="w-32 rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
                     />
                   </div>
                 </div>
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-gray-400">
                   {formData.isStacked 
                     ? "For stacked charts with a single Y-axis, you must specify a Group By field below" 
                     : "Field name for the y-axis (usually numeric values)"}
                 </p>
                 {touched['dataMapping.yAxis'] && errors['dataMapping.yAxis'] && (
-                  <p className="mt-1 text-sm text-red-600">{errors['dataMapping.yAxis']}</p>
+                  <p className="mt-1 text-sm text-red-400">{errors['dataMapping.yAxis']}</p>
                 )}
               </div>
             )}
@@ -1607,9 +1607,9 @@ export default function ChartCreatorPage() {
           )}
           
           {/* Filter Configuration Section */}
-          <div className="col-span-2 border-t pt-6 mt-4">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Filter Configuration</h2>
-            <p className="text-sm text-gray-700 mb-4">Enable filters for this chart. These will appear as interactive controls for users.</p>
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Filter Configuration</h2>
+            <p className="text-sm text-gray-400 mb-4">Enable filters for this chart. These will appear as interactive controls for users.</p>
           </div>
           
           {/* Time Filter */}
@@ -1623,7 +1623,7 @@ export default function ChartCreatorPage() {
             />
             
             {enableFilters.timeFilter && (
-              <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-100">
+              <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-800">
                 <FormInput
                   id="timeFilterParamName"
                   label="API Parameter Name"
@@ -1656,7 +1656,7 @@ export default function ChartCreatorPage() {
             />
             
             {enableFilters.currencyFilter && (
-              <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-100">
+              <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-800">
                 <FormInput
                   id="currencyFilterParamName"
                   label="API Parameter Name"
@@ -1679,8 +1679,8 @@ export default function ChartCreatorPage() {
           </div>
           
           {/* Additional Options */}
-          <div className="col-span-2 border-t pt-6 mt-4">
-            <h2 className="text-xl font-semibold text-blue-800 mb-4">Additional Options</h2>
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Additional Options</h2>
           </div>
           
           <FormTextarea
@@ -1706,56 +1706,57 @@ export default function ChartCreatorPage() {
           
           {/* Add simplified Dual Axis Configuration section if enabled */}
           {isDualAxis && useMultipleFields.yAxis && (
-            <div className="col-span-2 border-t pt-3 mt-3">
-              <div className="text-md font-medium text-blue-700 mb-2">Dual Axis Configuration</div>
+            <div className="col-span-2 border-t border-gray-700 pt-3 mt-3">
+              <div className="text-md font-medium text-indigo-400 mb-2">Dual Axis Configuration</div>
               
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Left Y-Axis Type
                   </label>
                   <select
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-200"
                     value={dualAxisConfig.leftAxisType}
                     onChange={(e) => updateDualAxisConfig('leftAxisType', e.target.value as 'bar' | 'line')}
                   >
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                   </select>
-                  <p className="mt-1 text-sm text-gray-600">Chart type for left y-axis fields</p>
+                  <p className="mt-1 text-sm text-gray-400">Chart type for left y-axis fields</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Right Y-Axis Type
                   </label>
                   <select
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-200"
                     value={dualAxisConfig.rightAxisType}
                     onChange={(e) => updateDualAxisConfig('rightAxisType', e.target.value as 'bar' | 'line')}
                   >
                     <option value="bar">Bar Chart</option>
                     <option value="line">Line Chart</option>
                   </select>
-                  <p className="mt-1 text-sm text-gray-600">Chart type for right y-axis fields</p>
+                  <p className="mt-1 text-sm text-gray-400">Chart type for right y-axis fields</p>
                 </div>
               </div>
               
-              <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
-                <p className="text-sm text-gray-700">
+              <div className="bg-gray-700 border border-gray-600 p-3 rounded-md">
+                <p className="text-sm text-gray-300">
                   Use the <span className="font-semibold">→</span> buttons on each field above to assign them to the right Y-axis.
-                  Fields shown with <span className="bg-blue-100 px-1 rounded">blue background</span> are on the left axis, and fields with 
-                  <span className="bg-purple-100 px-1 rounded ml-1">purple background</span> are on the right axis.
+                  Fields shown with <span className="bg-indigo-800/80 px-1 rounded">blue background</span> are on the left axis, and fields with 
+                  <span className="bg-purple-800/80 px-1 rounded ml-1">purple background</span> are on the right axis.
                 </p>
               </div>
             </div>
           )}
           
           {/* Form Actions */}
-          <div className="col-span-2 flex justify-end space-x-4 border-t pt-6 mt-4">
+          <div className="col-span-2 flex justify-end space-x-4 border-t border-gray-700 pt-6 mt-4">
             <Button
               variant="secondary"
               onClick={() => router.push('/admin')}
+              className="bg-gray-700 hover:bg-gray-600 text-gray-300 border border-gray-600"
             >
               Cancel
             </Button>
@@ -1763,6 +1764,7 @@ export default function ChartCreatorPage() {
               type="submit"
               variant="primary"
               isLoading={isSubmitting}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-900/20"
             >
               {isEditMode ? 'Update Chart' : 'Create Chart'}
             </Button>

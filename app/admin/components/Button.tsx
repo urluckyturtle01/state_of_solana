@@ -27,17 +27,17 @@ export default function Button({
   icon,
 }: ButtonProps) {
   const variantClasses = {
-    primary: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    success: 'bg-green-600 hover:bg-green-700 text-white',
-    warning: 'bg-yellow-500 hover:bg-yellow-600 text-white',
+    primary: 'bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-700 shadow-lg shadow-indigo-900/20',
+    secondary: 'bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700 shadow-lg shadow-gray-900/20',
+    danger: 'bg-red-600 hover:bg-red-500 text-white border-red-700 shadow-lg shadow-red-900/20',
+    success: 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-700 shadow-lg shadow-emerald-900/20',
+    warning: 'bg-amber-500 hover:bg-amber-400 text-white border-amber-600 shadow-lg shadow-amber-900/20',
   };
 
   const sizeClasses = {
     sm: 'px-2.5 py-1.5 text-xs',
-    md: 'px-3 py-2 text-sm',
-    lg: 'px-4 py-2 text-base',
+    md: 'px-4 py-2 text-sm',
+    lg: 'px-5 py-2.5 text-base',
   };
 
   return (
@@ -48,8 +48,10 @@ export default function Button({
       className={`
         ${variantClasses[variant]} 
         ${sizeClasses[size]} 
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-        inline-flex justify-center items-center border border-transparent rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+        ${disabled ? 'opacity-40 cursor-not-allowed' : ''}
+        inline-flex justify-center items-center border rounded-lg font-medium 
+        transition-all duration-200 ease-in-out
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-indigo-500
         ${className}
       `}
     >

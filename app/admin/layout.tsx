@@ -25,6 +25,97 @@ export default function AdminLayout({
     }
   }, []);
 
+  // Check for session timeout
+  useEffect(() => {
+    const checkSessionTimeout = () => {
+      const expiresAt = localStorage.getItem('admin_session_expires');
+      
+      if (expiresAt) {
+        const expiryTime = parseInt(expiresAt, 10);
+        
+        // If the session has expired, redirect to login
+        if (Date.now() > expiryTime) {
+          // Clear session data
+          localStorage.removeItem('admin_session_expires');
+          // You might want to clear other session-related items here
+          
+          // Redirect to login page
+          router.push('/auth/login');
+          return;
+        }
+      } else {
+        // If no expiry time is set, get the default timeout
+        const timeout = localStorage.getItem('admin_session_timeout') || '24h';
+        let timeoutMs = 24 * 60 * 60 * 1000; // Default 24 hours
+        
+        switch (timeout) {
+          case '1h':
+            timeoutMs = 1 * 60 * 60 * 1000;
+            break;
+          case '8h':
+            timeoutMs = 8 * 60 * 60 * 1000;
+            break;
+          case '24h':
+            timeoutMs = 24 * 60 * 60 * 1000;
+            break;
+          case '7d':
+            timeoutMs = 7 * 24 * 60 * 60 * 1000;
+            break;
+        }
+        
+        // Set the expiry time
+        const expiresAt = Date.now() + timeoutMs;
+        localStorage.setItem('admin_session_expires', expiresAt.toString());
+      }
+    };
+    
+    // Check on initial load
+    checkSessionTimeout();
+    
+    // Set up periodic check every minute
+    const interval = setInterval(checkSessionTimeout, 60 * 1000);
+    
+    // Reset timeout on user activity
+    const resetTimeout = () => {
+      const timeout = localStorage.getItem('admin_session_timeout') || '24h';
+      let timeoutMs = 24 * 60 * 60 * 1000; // Default 24 hours
+      
+      switch (timeout) {
+        case '1h':
+          timeoutMs = 1 * 60 * 60 * 1000;
+          break;
+        case '8h':
+          timeoutMs = 8 * 60 * 60 * 1000;
+          break;
+        case '24h':
+          timeoutMs = 24 * 60 * 60 * 1000;
+          break;
+        case '7d':
+          timeoutMs = 7 * 24 * 60 * 60 * 1000;
+          break;
+      }
+      
+      // Update the expiry time
+      const expiresAt = Date.now() + timeoutMs;
+      localStorage.setItem('admin_session_expires', expiresAt.toString());
+    };
+    
+    // Listen for user activity
+    window.addEventListener('click', resetTimeout);
+    window.addEventListener('keypress', resetTimeout);
+    window.addEventListener('scroll', resetTimeout);
+    window.addEventListener('mousemove', resetTimeout);
+    
+    // Clean up
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('click', resetTimeout);
+      window.removeEventListener('keypress', resetTimeout);
+      window.removeEventListener('scroll', resetTimeout);
+      window.removeEventListener('mousemove', resetTimeout);
+    };
+  }, [router]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -131,18 +222,28 @@ export default function AdminLayout({
 
   // When authenticated, show admin content with navigation
   return (
-    <div className="bg-gray-200 text-white min-h-screen flex flex-col">
-      <header className="border-b border-gray-300 py-4">
-        <div className="container mx-auto px-4">
+    <div className="bg-gray-950 text-white min-h-screen flex flex-col">
+      <header className="border-b border-gray-800 py-4 bg-gray-900 shadow-md">
+        <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-600">Admin Dashboard</h1>
+            <Link href="/admin" className="flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <h1 className="text-xl font-bold tracking-tight text-white">Solana Analytics</h1>
+            </Link>
             <div className="flex items-center space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-800">
-                Return to Site
+              <Link href="/" className="text-gray-300 hover:text-white transition duration-150">
+                <span className="flex items-center space-x-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  <span>Return to Dashboard</span>
+                </span>
               </Link>
               <button 
                 onClick={handleLogout}
-                className="px-3 py-1 text-sm text-red-600 hover:text-red-700 border border-red-500 hover:border-red-600 rounded-md"
+                className="px-3 py-1.5 text-sm text-red-400 hover:text-red-300 border border-red-800 hover:border-red-700 rounded-md bg-gray-850 hover:bg-gray-800 transition duration-150"
               >
                 Logout
               </button>
@@ -152,12 +253,12 @@ export default function AdminLayout({
             <ul className="flex space-x-6">
               <li>
                 <AdminNavLink href="/admin" exact>
-                  Overview
+                  Dashboard
                 </AdminNavLink>
               </li>
               <li>
                 <AdminNavLink href="/admin/chart-creator">
-                  Chart Creator
+                  Create Chart
                 </AdminNavLink>
               </li>
               <li>
@@ -174,9 +275,14 @@ export default function AdminLayout({
           </nav>
         </div>
       </header>
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto px-6 py-6">
         {children}
       </main>
+      <footer className="border-t border-gray-800 py-4 bg-gray-900">
+        <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
+          Solana Analytics Admin • {new Date().getFullYear()}
+        </div>
+      </footer>
     </div>
   );
 } 

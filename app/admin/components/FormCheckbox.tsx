@@ -32,19 +32,19 @@ export default function FormCheckbox({
             checked={checked}
             onChange={onChange}
             required={required}
-            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 bg-gray-700 border-gray-600 rounded"
           />
         </div>
         <div className="ml-3 text-sm">
-          <label htmlFor={id} className="font-medium text-gray-700">
+          <label htmlFor={id} className="font-medium text-gray-300">
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-red-400 ml-1">*</span>}
           </label>
           {helpText && !error && (
-            <p className="text-gray-500">{helpText}</p>
+            <p className="text-gray-400">{helpText}</p>
           )}
           {error && (
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-400">{error}</p>
           )}
         </div>
       </div>

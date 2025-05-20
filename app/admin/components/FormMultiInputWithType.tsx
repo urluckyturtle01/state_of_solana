@@ -89,18 +89,18 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
 
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-800 mb-1">
-        {label} {required && <span className="text-red-600">*</span>}
+      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
+        {label} {required && <span className="text-red-400">*</span>}
       </label>
       
       <div className="flex flex-wrap gap-2 mb-2">
         {values.map((value, index) => (
-          <div key={index} className={`flex items-center rounded-md px-3 py-1 text-blue-800 text-sm ${value.rightAxis ? 'bg-purple-100' : 'bg-blue-100'}`}>
+          <div key={index} className={`flex items-center rounded-md px-3 py-1 text-gray-200 text-sm ${value.rightAxis ? 'bg-purple-900/50 border border-purple-700' : 'bg-indigo-900/50 border border-indigo-700'}`}>
             <span>{value.field}</span>
             
             {/* Display unit if set */}
             {value.unit && editingIndex !== index && (
-              <span className="ml-1 text-xs text-gray-600">[{value.unit}]</span>
+              <span className="ml-1 text-xs text-gray-400">[{value.unit}]</span>
             )}
             
             {/* Edit unit inline when editing */}
@@ -110,7 +110,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
                   type="text"
                   value={unitValue}
                   onChange={(e) => setUnitValue(e.target.value)}
-                  className="w-12 h-5 px-1 text-xs rounded border border-blue-300"
+                  className="w-12 h-5 px-1 text-xs rounded bg-gray-700 border border-gray-600 text-gray-200"
                   placeholder="unit"
                   onBlur={() => finishEditUnit(index)}
                   onKeyDown={(e) => {
@@ -125,7 +125,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
             ) : (
               <button
                 type="button"
-                className="ml-2 text-gray-600 hover:text-blue-800 focus:outline-none"
+                className="ml-2 text-gray-400 hover:text-white focus:outline-none transition-colors"
                 onClick={() => startEditUnit(index)}
                 title={value.unit ? `Edit unit: ${value.unit}` : "Add unit"}
               >
@@ -135,7 +135,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
             
             <button
               type="button"
-              className="ml-2 text-gray-600 hover:text-blue-800 focus:outline-none"
+              className="ml-2 text-gray-400 hover:text-white focus:outline-none transition-colors"
               onClick={() => toggleChartType(index)}
               title={value.type === 'bar' ? 'Switch to line chart' : 'Switch to bar chart'}
             >
@@ -145,7 +145,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
             {supportDualAxis && (
               <button
                 type="button"
-                className={`ml-2 ${value.rightAxis ? 'text-purple-600 hover:text-purple-800' : 'text-blue-600 hover:text-blue-800'} focus:outline-none`}
+                className={`ml-2 ${value.rightAxis ? 'text-purple-400 hover:text-purple-300' : 'text-indigo-400 hover:text-indigo-300'} focus:outline-none transition-colors`}
                 onClick={() => toggleRightAxis(index)}
                 title={value.rightAxis ? 'Move to left axis' : 'Move to right axis'}
               >
@@ -155,7 +155,7 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
             
             <button
               type="button"
-              className="ml-2 text-gray-600 hover:text-red-600 focus:outline-none"
+              className="ml-2 text-gray-400 hover:text-red-400 focus:outline-none transition-colors"
               onClick={() => removeValue(index)}
               title="Remove field"
             >
@@ -173,32 +173,32 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
           placeholder={placeholder}
-          className={`block w-full rounded-md shadow-sm focus:ring-indigo-500 text-blue-800 focus:border-indigo-500 sm:text-sm border-gray-300 ${
-            error ? 'border-red-300' : ''
+          className={`block w-full rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200 transition-colors ${
+            error ? 'border-red-500' : ''
           }`}
         />
         <button
           type="button"
           onClick={() => addValue(inputValue.trim())}
           disabled={!inputValue.trim()}
-          className="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 shadow-sm transition-colors"
         >
           Add
         </button>
       </div>
       
-      {helpText && <p className="mt-1 text-sm text-gray-600">{helpText}</p>}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {helpText && <p className="mt-1 text-sm text-gray-400">{helpText}</p>}
+      {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
       
       {supportDualAxis && (
         <div className="mt-2 flex gap-4 text-xs">
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-100 rounded-sm mr-1"></div>
-            <span className="text-gray-700">Left axis</span>
+            <div className="w-3 h-3 bg-indigo-900 border border-indigo-700 rounded-sm mr-1"></div>
+            <span className="text-gray-400">Left axis</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-purple-100 rounded-sm mr-1"></div>
-            <span className="text-gray-700">Right axis</span>
+            <div className="w-3 h-3 bg-purple-900 border border-purple-700 rounded-sm mr-1"></div>
+            <span className="text-gray-400">Right axis</span>
           </div>
         </div>
       )}

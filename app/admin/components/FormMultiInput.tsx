@@ -57,21 +57,21 @@ export default function FormMultiInput({
 
   return (
     <div className={`mb-4 ${className}`}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-red-400 ml-1">*</span>}
       </label>
       <div className="mb-2">
         <div className="flex flex-wrap gap-2 mb-2">
           {values.map((value, index) => (
             <div 
               key={index} 
-              className="flex items-center bg-indigo-100 text-gray-800 text-sm px-3 py-1 rounded-md"
+              className="flex items-center bg-indigo-900/50 border border-indigo-700 text-gray-200 text-sm px-3 py-1 rounded-md"
             >
               <span>{value}</span>
               <button
                 type="button"
-                className="ml-2 text-indigo-500 hover:text-gray-800 focus:outline-none"
+                className="ml-2 text-indigo-400 hover:text-white focus:outline-none transition-colors"
                 onClick={() => removeValue(index)}
               >
                 &times;
@@ -86,24 +86,24 @@ export default function FormMultiInput({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={placeholder || `Type and press Enter to add ${label.toLowerCase()}`}
-            className={`flex-grow mt-1 block w-full px-3 py-2 bg-white border ${
-              error ? 'border-red-300' : 'border-gray-300'
-            } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-blue-800 sm:text-sm`}
+            className={`flex-grow mt-1 block w-full px-3 py-2 bg-gray-700 border ${
+              error ? 'border-red-500' : 'border-gray-600'
+            } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-200 sm:text-sm transition-colors`}
           />
           <button
             type="button"
             onClick={addValue}
-            className="ml-2 px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="ml-2 px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition-colors"
           >
             Add
           </button>
         </div>
       </div>
       {helpText && !error && (
-        <p className="mt-1 text-sm text-gray-500">{helpText}</p>
+        <p className="mt-1 text-sm text-gray-400">{helpText}</p>
       )}
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-1 text-sm text-red-400">{error}</p>
       )}
     </div>
   );

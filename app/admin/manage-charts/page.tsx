@@ -180,77 +180,76 @@ export default function ManageChartsPage() {
 
   if (!isClient) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64 bg-gray-900 text-gray-100">
         <div className="text-center">
-          <svg className="animate-spin h-10 w-10 text-indigo-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-10 w-10 text-indigo-400 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="text-gray-600">Loading charts...</p>
+          <p className="text-gray-400">Loading charts...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="border-b border-gray-200 pb-5 mb-4 flex justify-between items-center">
+    <div className="mx-auto min-h-screen text-gray-100 sm:pt-8">
+      <div className="border-b border-gray-800 pb-5 mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manage Charts</h1>
-          <p className="mt-2 text-sm text-gray-500">View, preview, and manage charts you've created</p>
+          <h1 className="text-xl font-medium text-white tracking-tight">Manage Charts</h1>
+          <p className="mt-2 text-sm text-gray-600">View, preview, and manage your analytics visualizations</p>
         </div>
         <Link href="/admin/chart-creator">
-          <Button variant="primary">
+          <Button variant="primary" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
             Create New Chart
           </Button>
         </Link>
       </div>
       
-      {/* Filter by menu */}
-      <div className="flex flex-row gap-4">
-      <div className="mb-4">
+      {/* Filter section */}
+      <div className="flex flex-row gap-4 mb-6">
+        <div className="mb-4">
+          <select
+            id="menuFilter"
+            value={selectedMenu}
+            onChange={handleMenuChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-gray-300 bg-gray-800 rounded-md border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm sm:text-sm"
+          >
+            <option value="">All Menus</option>
+            <option value="overview">Overview</option>
+            <option value="dex">DEX</option>
+            <option value="rev">REV</option>
+            <option value="stablecoins">Stablecoins</option>
+            <option value="protocol-revenue">Protocol Revenue</option>
+          </select>
+        </div>
         
-        <select
-          id="menuFilter"
-          value={selectedMenu}
-          onChange={handleMenuChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-400  rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-gray-500 sm:text-sm"
-        >
-          <option value="">All Menus</option>
-          <option value="overview">Overview</option>
-          <option value="dex">DEX</option>
-          <option value="rev">REV</option>
-          <option value="stablecoins">Stablecoins</option>
-          <option value="protocol-revenue">Protocol Revenue</option>
-        </select>
+        <div className="mb-6">
+          <select
+            id="pageFilter"
+            value={selectedPage}
+            onChange={(e) => setSelectedPage(e.target.value)}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-gray-300 bg-gray-800 rounded-md border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm sm:text-sm"
+            disabled={!selectedMenu && selectedPage !== 'all'}
+          >
+            <option value="all">All Pages</option>
+            {availablePages.map((page) => (
+              <option key={page.id} value={page.id}>
+                {page.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      
-      {/* Filter by page */}
-      <div className="mb-6">
-        <select
-          id="pageFilter"
-          value={selectedPage}
-          onChange={(e) => setSelectedPage(e.target.value)}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-400 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          disabled={!selectedMenu && selectedPage !== 'all'}
-        >
-          <option value="all">All Pages</option>
-          {availablePages.map((page) => (
-            <option key={page.id} value={page.id}>
-              {page.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      </div>
-      {/* Charts list */}
+
+      {/* No charts message */}
       {charts.length === 0 ? (
-        <div className="bg-gray-50 p-8 rounded-lg text-center">
-          <svg className="h-12 w-12 text-gray-400 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-gray-800 border border-gray-700 p-8 rounded-xl text-center shadow-lg">
+          <svg className="h-12 w-12 text-gray-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No charts found</h3>
-          <p className="text-gray-500 mb-4">
+          <h3 className="text-lg font-medium text-white mb-2">No charts found</h3>
+          <p className="text-gray-400 mb-4">
             {selectedMenu === '' && selectedPage === 'all'
               ? "You haven't created any charts yet."
               : selectedMenu !== '' && selectedPage === 'all'
@@ -258,7 +257,7 @@ export default function ManageChartsPage() {
                 : `No charts found for the selected page: ${availablePages.find(p => p.id === selectedPage)?.name || selectedPage}`}
           </p>
           <Link href="/admin/chart-creator">
-            <Button variant="primary">
+            <Button variant="primary" className="bg-indigo-600 hover:bg-indigo-700 text-white">
               Create your first chart
             </Button>
           </Link>
@@ -266,11 +265,11 @@ export default function ManageChartsPage() {
       ) : (
         <div className="space-y-6">
           {charts.map((chart) => (
-            <div key={chart.id} className="bg-white shadow rounded-lg">
-              <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div key={chart.id} className="bg-gray-800 border border-gray-700 shadow-lg rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-gray-700 flex justify-between items-center">
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{chart.title}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="text-lg font-medium text-white">{chart.title}</h3>
+                  <p className="text-sm text-gray-400">
                     {chart.subtitle || 'No subtitle'} • 
                     <span className="ml-1">
                       {(() => {
@@ -287,6 +286,7 @@ export default function ManageChartsPage() {
                     variant="secondary"
                     size="sm"
                     onClick={() => togglePreview(chart.id)}
+                    className="bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600"
                   >
                     {isPreviewOpen[chart.id] ? 'Hide Preview' : 'Show Preview'}
                   </Button>
@@ -294,6 +294,7 @@ export default function ManageChartsPage() {
                     <Button
                       variant="primary"
                       size="sm"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
                     >
                       Edit
                     </Button>
@@ -310,6 +311,7 @@ export default function ManageChartsPage() {
                     <Button
                       variant="primary"
                       size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       View on Page
                     </Button>
@@ -318,6 +320,7 @@ export default function ManageChartsPage() {
                     variant="danger"
                     size="sm"
                     onClick={() => handleDeleteChart(chart.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white"
                   >
                     Delete
                   </Button>
@@ -325,33 +328,32 @@ export default function ManageChartsPage() {
               </div>
               
               {/* Chart details */}
-              <div className="p-4 bg-gray-50 text-sm">
+              <div className="p-4 bg-gray-850 text-sm border-b border-gray-700">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <span className="font-medium text-gray-700">Type:</span>{' '}
-                    <span className="text-gray-900">{chart.chartType}</span>
+                    <span className="font-medium text-gray-400">Type:</span>{' '}
+                    <span className="text-gray-200">{chart.chartType}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Created:</span>{' '}
-                    <span className="text-gray-900">{new Date(chart.createdAt).toLocaleDateString()}</span>
+                    <span className="font-medium text-gray-400">Created:</span>{' '}
+                    <span className="text-gray-200">{new Date(chart.createdAt).toLocaleDateString()}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">X-Axis:</span>{' '}
-                    <span className="text-gray-900">{chart.dataMapping?.xAxis || 'N/A'}</span>
+                    <span className="font-medium text-gray-400">X-Axis:</span>{' '}
+                    <span className="text-gray-200">{chart.dataMapping?.xAxis || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Y-Axis:</span>{' '}
-                    <span className="text-gray-900">{chart.dataMapping ? formatYAxisValue(chart.dataMapping.yAxis) : 'N/A'}</span>
+                    <span className="font-medium text-gray-400">Y-Axis:</span>{' '}
+                    <span className="text-gray-200">{chart.dataMapping ? formatYAxisValue(chart.dataMapping.yAxis) : 'N/A'}</span>
                   </div>
                 </div>
               </div>
               
-              {/* Chart preview using DashboardRenderer */}
+              {/* Chart preview */}
               {isPreviewOpen[chart.id] && (
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-gray-700 bg-gray-800">
                   <div className="h-[500px] overflow-auto">
                     <DashboardRenderer 
-                    
                       pageId="preview" 
                       overrideCharts={[chart]}
                     />

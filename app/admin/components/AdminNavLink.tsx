@@ -23,10 +23,10 @@ export const AdminNavLink: React.FC<AdminNavLinkProps> = ({
   return (
     <Link 
       href={href} 
-      className={`py-2 px-1 transition-colors ${
+      className={`py-2 px-3 font-medium rounded-md transition-all duration-200 ${
         isActive 
-          ? 'text-blue-400 border-b-2 border-blue-400' 
-          : 'text-gray-400 hover:text-gray-600'
+          ? 'text-indigo-400 bg-gray-800 shadow-md' 
+          : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
       }`}
     >
       {children}
