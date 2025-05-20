@@ -925,7 +925,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                   x={d => d.x}
                   y={d => d.y}
                   stroke={fieldColors[field]}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   curve={curveCatmullRom}
                 />
               );

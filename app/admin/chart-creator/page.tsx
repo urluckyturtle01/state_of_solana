@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType, YAxisConfig, DualAxisConfig } from '../types';
-import { formDataToConfig, validateApiEndpoint, saveChartConfig } from '../utils';
+import { formDataToConfig, validateApiEndpoint, saveChartConfig, getAllChartConfigs } from '../utils';
 import FormInput from '../components/FormInput';
 import FormSelect from '../components/FormSelect';
 import FormCheckbox from '../components/FormCheckbox';
@@ -15,6 +15,10 @@ import FormMultiInputWithType from '../components/FormMultiInputWithType';
 
 export default function ChartCreatorPage() {
   const router = useRouter();
+  
+  // State to track if we're in edit mode
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editChartId, setEditChartId] = useState<string | null>(null);
   
   // Form state
   const [formData, setFormData] = useState<ChartFormData>({
@@ -98,6 +102,120 @@ export default function ChartCreatorPage() {
   
   // Available pages based on the selected menu
   const [availablePages, setAvailablePages] = useState<Array<{id: string, name: string, path: string}>>([]);
+  
+  // Check for edit mode and load chart data if needed
+  useEffect(() => {
+    // Access the URL search params to check for editId
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const editId = searchParams.get('editId');
+      
+      if (editId) {
+        console.log(`Loading chart ${editId} for editing`);
+        setIsEditMode(true);
+        setEditChartId(editId);
+        
+        // Load the chart data
+        const loadChartData = async () => {
+          try {
+            const allCharts = await getAllChartConfigs();
+            const chartToEdit = allCharts.find(chart => chart.id === editId);
+            
+            if (chartToEdit) {
+              console.log('Found chart to edit:', chartToEdit);
+              
+              // Set form data from the chart config
+              setFormData({
+                title: chartToEdit.title,
+                subtitle: chartToEdit.subtitle || '',
+                page: chartToEdit.page as any,
+                section: chartToEdit.section || '',
+                chartType: chartToEdit.chartType as any,
+                apiEndpoint: chartToEdit.apiEndpoint,
+                apiKey: chartToEdit.apiKey || '',
+                isStacked: chartToEdit.isStacked || false,
+                colorScheme: chartToEdit.colorScheme || 'default',
+                dataMapping: {
+                  xAxis: chartToEdit.dataMapping.xAxis,
+                  yAxis: typeof chartToEdit.dataMapping.yAxis === 'string' 
+                    ? chartToEdit.dataMapping.yAxis 
+                    : Array.isArray(chartToEdit.dataMapping.yAxis) 
+                      ? (chartToEdit.dataMapping.yAxis as any) // Cast to any to avoid type issues
+                      : [chartToEdit.dataMapping.yAxis as any], // Cast to any to avoid type issues
+                  groupBy: chartToEdit.dataMapping.groupBy || '',
+                }
+              });
+              
+              // Determine which menu this page belongs to
+              for (const menu of MENU_OPTIONS) {
+                const menuPages = availablePages.filter(p => p.id === chartToEdit.page);
+                if (menuPages.length > 0) {
+                  setSelectedMenu(menu.id);
+                  break;
+                }
+              }
+              
+              // Check if it's a dual axis chart
+              if (chartToEdit.chartType === 'dual-axis' && chartToEdit.dualAxisConfig) {
+                setIsDualAxis(true);
+                setDualAxisConfig(chartToEdit.dualAxisConfig);
+              }
+              
+              // Check for multi-field inputs
+              setUseMultipleFields({
+                xAxis: Array.isArray(chartToEdit.dataMapping.xAxis),
+                yAxis: Array.isArray(chartToEdit.dataMapping.yAxis),
+              });
+              
+              // Check for filters
+              if (chartToEdit.additionalOptions?.filters) {
+                const filters = chartToEdit.additionalOptions.filters;
+                
+                // Check if filters exist
+                const hasTimeFilter = filters.timeFilter !== undefined;
+                const hasCurrencyFilter = filters.currencyFilter !== undefined;
+                
+                setEnableFilters({
+                  timeFilter: hasTimeFilter,
+                  currencyFilter: hasCurrencyFilter
+                });
+                
+                if (hasTimeFilter && filters.timeFilter) {
+                  setFilterParams(prev => ({
+                    ...prev,
+                    timeFilter: {
+                      options: filters.timeFilter?.options || ['D', 'W', 'M', 'Q', 'Y'],
+                      paramName: filters.timeFilter?.paramName || 'Date Part'
+                    }
+                  }));
+                }
+                
+                if (hasCurrencyFilter && filters.currencyFilter) {
+                  setFilterParams(prev => ({
+                    ...prev,
+                    currencyFilter: {
+                      options: filters.currencyFilter?.options || ['USD', 'SOL', 'USDe'],
+                      paramName: filters.currencyFilter?.paramName || 'currency'
+                    }
+                  }));
+                }
+              }
+            } else {
+              console.error(`Chart with ID ${editId} not found`);
+              alert(`Chart with ID ${editId} not found`);
+              // Redirect back to manage charts page
+              router.push('/admin/manage-charts');
+            }
+          } catch (error) {
+            console.error('Error loading chart for editing:', error);
+            alert('Failed to load chart data for editing');
+          }
+        };
+        
+        loadChartData();
+      }
+    }
+  }, [router]);
   
   // Update available pages when menu selection changes
   useEffect(() => {
@@ -732,7 +850,7 @@ export default function ChartCreatorPage() {
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
   
   // Handle API validation
@@ -939,101 +1057,145 @@ export default function ChartCreatorPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Set all fields as touched to show all validation errors
-    const allTouched: Record<string, boolean> = {
-      menu: true,
-      ...Object.keys(formData).reduce((acc, key) => {
-        acc[key] = true;
-        return acc;
-      }, {} as Record<string, boolean>)
-    };
+    // Update the submit error state
+    setSubmitError(null);
     
-    // Add specific data mapping fields
-    allTouched['dataMapping.xAxis'] = true;
-    allTouched['dataMapping.yAxis'] = true;
-    allTouched['dataMapping.groupBy'] = true;
-    
-    // Add filter fields as touched
-    Object.entries(enableFilters).forEach(([filterName, isEnabled]) => {
-      if (isEnabled) {
-        allTouched[`${filterName}ParamName`] = true;
-        allTouched[`${filterName}Options`] = true;
-      }
-    });
-    
-    setTouched(allTouched);
-    
-    // Validate the form
-    if (!validateForm()) {
-      setSubmitError('Please fix the errors in the form');
+    // Validate form
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
     
-    // If we have multiple filters enabled but haven't validated combinations, show a warning
-    const enabledFilterCount = Object.values(enableFilters).filter(Boolean).length;
-    if (enabledFilterCount > 1 && apiValidationResult && !apiValidationResult.message?.includes('filter combinations')) {
-      if (!confirm('You have multiple filters enabled but haven\'t validated their combinations. This might cause issues with the API. Do you want to continue anyway?')) {
-        return;
-      }
-    }
-    
     setIsSubmitting(true);
-    setSubmitError(null);
-    setSuccessConfig(null);
     
     try {
-      // Ensure additionalOptions.filters is properly set with all enabled filters
-      const updatedFormData = { ...formData };
+      // Create chart config from form data
+      let chartConfig = formDataToConfig(formData, isDualAxis);
       
-      // Initialize additional options if not already set
-      updatedFormData.additionalOptions = updatedFormData.additionalOptions || {};
-      
-      // Set up filters configuration
-      if (enabledFilterCount > 0) {
-        updatedFormData.additionalOptions = updatedFormData.additionalOptions || {};
-        updatedFormData.additionalOptions.filters = {};
-        
-        Object.entries(enableFilters).forEach(([filterName, isEnabled]) => {
-          if (isEnabled) {
-            const typedFilterName = filterName as keyof typeof filterParams;
-            if (updatedFormData.additionalOptions && updatedFormData.additionalOptions.filters) {
-              updatedFormData.additionalOptions.filters[filterName] = {
-                paramName: filterParams[typedFilterName].paramName,
-                options: filterParams[typedFilterName].options
-              };
-            }
-          }
-        });
+      // If in edit mode, preserve the original chart ID
+      if (isEditMode && editChartId) {
+        const existingChart = (await getAllChartConfigs()).find(c => c.id === editChartId);
+        chartConfig = {
+          ...chartConfig,
+          id: editChartId,
+          // Preserve creation date
+          createdAt: existingChart?.createdAt || chartConfig.createdAt
+        };
       }
       
-      // If dual axis is enabled, make sure to include the configuration
+      // Add dual axis config
       if (isDualAxis) {
-        updatedFormData.dualAxisConfig = dualAxisConfig;
+        chartConfig = {
+          ...chartConfig,
+          chartType: 'dual-axis',
+          dualAxisConfig: dualAxisConfig
+        };
+      }
+      
+      // Add filter configurations
+      if (enableFilters.timeFilter || enableFilters.currencyFilter) {
+        chartConfig = {
+          ...chartConfig,
+          additionalOptions: {
+            ...(chartConfig.additionalOptions || {}),
+            filters: {}
+          }
+        };
+        
+        // Ensure filters object is initialized
+        if (!chartConfig.additionalOptions!.filters) {
+          chartConfig.additionalOptions!.filters = {};
+        }
+        
+        if (enableFilters.timeFilter) {
+          chartConfig.additionalOptions!.filters = {
+            ...chartConfig.additionalOptions!.filters,
+            timeFilter: {
+              paramName: filterParams.timeFilter.paramName,
+              options: filterParams.timeFilter.options
+            }
+          };
+        }
+        
+        if (enableFilters.currencyFilter) {
+          chartConfig.additionalOptions!.filters = {
+            ...chartConfig.additionalOptions!.filters,
+            currencyFilter: {
+              paramName: filterParams.currencyFilter.paramName,
+              options: filterParams.currencyFilter.options
+            }
+          };
+        }
+      }
+      
+      console.log('Saving chart config:', chartConfig);
+      
+      // Send to API
+      const success = await saveChartConfig(chartConfig);
+      
+      if (success) {
+        console.log('Chart saved successfully');
+        
+        setSuccessConfig({
+          id: chartConfig.id,
+          page: chartConfig.page
+        });
+        
+        // Clear form after success
+        if (!isEditMode) {
+          setFormData({
+            title: '',
+            subtitle: '',
+            page: '' as any,
+            section: '',
+            chartType: '' as any,
+            apiEndpoint: '',
+            apiKey: '',
+            isStacked: false,
+            colorScheme: 'default',
+            dataMapping: {
+              xAxis: '',
+              yAxis: '',
+              groupBy: '',
+            }
+          });
+          
+          // Reset form state
+          setErrors({});
+          setTouched({});
+          setApiValidationResult(null);
+          
+          // Reset filter state
+          setEnableFilters({
+            timeFilter: false,
+            currencyFilter: false
+          });
+          
+          // Reset dual axis state
+          setIsDualAxis(false);
+          setDualAxisConfig({
+            leftAxisType: 'bar',
+            rightAxisType: 'line',
+            leftAxisFields: [],
+            rightAxisFields: []
+          });
+          
+          // Reset multi-input state
+          setUseMultipleFields({
+            xAxis: false,
+            yAxis: false
+          });
+        } else {
+          // If in edit mode, redirect back to manage charts page
+          router.push('/admin/manage-charts');
+        }
       } else {
-        // Remove dual axis config if not using it
-        updatedFormData.dualAxisConfig = undefined;
+        setSubmitError('Failed to save chart config. Please try again.');
       }
-      
-      // Convert form data to chart config
-      const chartConfig = await formDataToConfig(updatedFormData, isDualAxis);
-      
-      // Save chart to S3 via API and wait for completion
-      console.log('Saving chart to S3:', chartConfig);
-      const saveResult = await saveChartConfig(chartConfig);
-      
-      if (!saveResult) {
-        throw new Error('Failed to save chart to S3. Please check the console for details.');
-      }
-      
-      console.log('Chart saved successfully with ID:', chartConfig.id);
-      
-      // Set success state with chart info
-      setSuccessConfig({
-        id: chartConfig.id,
-        page: chartConfig.page
-      });
     } catch (error) {
-      setSubmitError(`Error creating chart: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error submitting form:', error);
+      setSubmitError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -1041,9 +1203,13 @@ export default function ChartCreatorPage() {
   
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="border-b border-gray-200 pb-5 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Create New Chart</h1>
-        <p className="mt-2 text-sm text-gray-700">Configure a new chart to add to a page</p>
+      <div className="border-b border-gray-200 pb-5 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          {isEditMode ? 'Edit Chart' : 'Create Custom Chart'}
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
+          {isEditMode ? 'Update chart configuration or change data sources' : 'Create a custom chart and add it to the dashboard'}
+        </p>
       </div>
       
       {successConfig && (
@@ -1598,7 +1764,7 @@ export default function ChartCreatorPage() {
               variant="primary"
               isLoading={isSubmitting}
             >
-              Create Chart
+              {isEditMode ? 'Update Chart' : 'Create Chart'}
             </Button>
           </div>
         </div>

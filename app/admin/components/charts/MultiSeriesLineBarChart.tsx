@@ -836,7 +836,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                 letterSpacing: '0.05em',
                 textAnchor: 'end',
                 dy: '0.33em',
-                dx: '-0.25em'
+                dx: '-0.5em'
               })}
             />
             
@@ -849,6 +849,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               tickStroke="transparent"
               hideAxisLine={false}
               tickLength={0}
+              
               tickValues={xTickValues}
               tickFormat={(value) => {
                 // Format date labels based on timeFilter
@@ -887,7 +888,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                 fontSize: 11,
                 fontWeight: 300,
                 textAnchor: 'middle',
-                dy: '0.5em'
+                dy: '0.5em',
+                dx: '1em'
+               
               })}
               // Ensure first tick doesn't start before origin
               left={0}
@@ -944,7 +947,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                   x={d => d.x}
                   y={d => d.y}
                   stroke={fieldColors[field]}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   curve={curveCatmullRom}
                 />
               );

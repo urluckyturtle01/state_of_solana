@@ -26,6 +26,7 @@ export default function OverviewLayout({ children }: OverviewLayoutProps) {
       <div className="space-y-6">
         <OverviewTabsHeader activeTab={activeTab} />
         {children}
+        
       </div>
     </Layout>
   );

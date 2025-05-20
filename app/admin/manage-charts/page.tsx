@@ -290,6 +290,14 @@ export default function ManageChartsPage() {
                   >
                     {isPreviewOpen[chart.id] ? 'Hide Preview' : 'Show Preview'}
                   </Button>
+                  <Link href={`/admin/chart-creator?editId=${chart.id}`}>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                    >
+                      Edit
+                    </Button>
+                  </Link>
                   <Link 
                     href={(() => {
                       // Find the page path

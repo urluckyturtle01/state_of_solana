@@ -23,6 +23,12 @@ const formatCurrency = (value: number): string => {
   return formatNumber(value);
 };
 
+// Function to truncate text with ellipsis
+const truncateLabel = (label: string, maxLength: number = 10): string => {
+  if (label.length <= maxLength) return label;
+  return label.substring(0, maxLength) + '...';
+};
+
 // Dynamic import for the ChartRenderer to avoid SSR issues
 const ChartRenderer = dynamic(() => import('./ChartRenderer'), {
   ssr: false,
@@ -1137,7 +1143,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
                 legends[chart.id].map(legend => (
                   <LegendItem 
                     key={legend.label}
-                    label={legend.label} 
+                    label={truncateLabel(legend.label)} 
                     color={legend.color} 
                     shape="square"
                     tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
