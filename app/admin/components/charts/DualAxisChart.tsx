@@ -988,7 +988,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
           margin={{ top: 0, right: 25, bottom: 20, left: 30 }}
           isModal={modalView}
           curveType="catmullRom"
-          strokeWidth={1.5}
+          
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>

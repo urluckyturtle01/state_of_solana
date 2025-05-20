@@ -986,7 +986,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           margin={{ top: 0, right: 15, bottom: modalView ? 10 : 20, left: 40 }}
           isModal={modalView}
           curveType="catmullRom"
-          strokeWidth={2}
+          
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>

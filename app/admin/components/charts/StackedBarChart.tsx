@@ -1110,7 +1110,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           curveType="catmullRom"
-          strokeWidth={2}
+          
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>

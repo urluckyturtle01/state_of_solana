@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
-import BarChart from './charts/BarChart';
+
 import SimpleBarChart from './charts/SimpleBarChart';
 import StackedBarChart from './charts/StackedBarChart';
 import DualAxisChart from './charts/DualAxisChart';

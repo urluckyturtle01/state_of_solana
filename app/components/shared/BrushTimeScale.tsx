@@ -313,9 +313,9 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   onClick={onClearBrush}
                   useWindowMoveEvents={true}
                   selectedBoxStyle={{ 
-                    fill: 'rgba(96, 165, 250, 0.1)', // Very light transparent fill
+                    fill: 'rgba(18, 24, 43, 0.3)', // Very light transparent fill
                     stroke: '#374151', // Border color
-                    strokeWidth: 0.5,
+                    strokeWidth: 0.3,
                     rx: 4,
                     ry: 4,
                   }}

@@ -96,8 +96,6 @@ export interface ChartConfig {
   updatedAt: string;
   // Callback for filter changes
   onFilterChange?: (filters: Record<string, string>) => void;
-  // Width of the legend area when rendering the chart
-  legendWidth?: '1/4' | '1/5' | '1/6';
 }
 
 // Form data when creating or editing a chart
