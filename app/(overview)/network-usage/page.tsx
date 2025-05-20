@@ -330,12 +330,11 @@ export default function NetworkUsagePage() {
         
       </ChartCard>
       
-      {/* User-created charts from the chart creator */}
-      <div className="mt-10 border-t pt-8 border-gray-100">
-        <h2 className="text-xl font-semibold mb-4">Additional Network Insights</h2>
-        <p className="text-gray-500 mb-6">Charts created in the Chart Creator for Network Usage</p>
+   
+      
+        
         <DashboardRenderer pageId="network-usage" />
-      </div>
+      
     </div>
   );
 } 
