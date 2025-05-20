@@ -129,7 +129,7 @@ export default function ProtocolRevenueTotalPage() {
           onExpandClick={() => setChart1ModalOpen(true)}
           onDownloadClick={downloadCumulativeRevenueCSV}
           isDownloading={isCumulativeDownloading}
-          legendWidth="1/4"
+          legendWidth="1/5"
           className="h-[500px]"
           legend={
             <>
@@ -162,7 +162,7 @@ export default function ProtocolRevenueTotalPage() {
           onExpandClick={() => setChart2ModalOpen(true)}
           onDownloadClick={downloadTopProtocolsCSV}
           isDownloading={isTopProtocolsDownloading}
-          legendWidth="1/4"
+          legendWidth="1/5"
           className="h-[500px]"
           legend={
             <>
@@ -258,7 +258,7 @@ export default function ProtocolRevenueTotalPage() {
           onExpandClick={() => setChart4ModalOpen(true)}
           onDownloadClick={downloadDappRevenueCSV}
           isDownloading={isDappRevenueDownloading}
-          legendWidth="1/4"
+          legendWidth="1/5"
           className="h-[500px]"
           legend={
             <>
