@@ -13,7 +13,7 @@ interface ChartCardProps {
   isDownloading?: boolean;
   accentColor?: 'blue' | 'purple' | 'green' | 'orange' | 'indigo';
   className?: string;
-  legendWidth?: '1/5' | '1/5' | '1/5';
+  legendWidth?: '1/4' | '1/5' | '1/6';
   isLoading?: boolean;
 }
 
