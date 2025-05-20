@@ -1092,7 +1092,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
           onDownloadClick={() => downloadCSV(chart)}
           isDownloading={downloadingCharts[chart.id]}
           isLoading={loadingCharts[chart.id]}
-          legendWidth="1/4"
+          legendWidth="1/5"
           className="md:h-[500px] h-auto"
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
