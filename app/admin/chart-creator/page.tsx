@@ -205,7 +205,7 @@ export default function ChartCreatorPage() {
               console.error(`Chart with ID ${editId} not found`);
               alert(`Chart with ID ${editId} not found`);
               // Redirect back to manage charts page
-              router.push('/admin/manage-charts');
+              router.push('/admin/manage-dashboard');
             }
           } catch (error) {
             console.error('Error loading chart for editing:', error);
@@ -1194,7 +1194,7 @@ export default function ChartCreatorPage() {
           });
         } else {
           // If in edit mode, redirect back to manage charts page
-          router.push('/admin/manage-charts');
+          router.push('/admin/manage-dashboard');
         }
       } else {
         setSubmitError('Failed to save chart config. Please try again.');
@@ -1239,7 +1239,7 @@ export default function ChartCreatorPage() {
                     View on Page
                   </Link>
                   <Link 
-                    href="/admin/manage-charts"
+                    href="/admin/manage-dashboard"
                     className="inline-flex items-center px-3 py-2 border border-green-600 text-sm font-medium rounded-md text-green-400 bg-transparent hover:bg-green-900/30 transition-colors"
                   >
                     Manage Charts
@@ -1412,7 +1412,7 @@ export default function ChartCreatorPage() {
             value={formData.apiKey || ''}
             onChange={(e) => handleInputChange('apiKey', e.target.value)}
             placeholder="E.g., YourApiKeyHere"
-            helpText="Optional API key for authentication"
+            helpText="Optional API key for authentication. You can include max_age with your API key like: your-api-key&max_age=86400"
             className="col-span-2"
           />
           

@@ -16,7 +16,7 @@ import { prepareTopProtocolsCSV } from "@/app/api/protocol-revenue/total/topProt
 import { prepareRevenueBySegmentCSV } from "@/app/api/protocol-revenue/total/revenueBySegmentData";
 import { prepareDappRevenueCSV } from "@/app/api/protocol-revenue/total/dappRevenueData";
 import { handleCSVDownload } from "@/app/utils/csvDownload";
-import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
+import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 
 // Ensure we only use the valid time filters for our specific component
 type RevenueTimeFilter = 'W' | 'M' | 'Q' | 'Y';
@@ -286,8 +286,8 @@ export default function ProtocolRevenueTotalPage() {
         </ChartCard>
       </section>
       </div>
-      {/* dynamic charts from admin section */}
-      <DashboardRenderer pageId="total" />
+      {/* dynamic charts and counters from admin section */}
+      <EnhancedDashboardRenderer pageId="total" />
     </main>
     
   );

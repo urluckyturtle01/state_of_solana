@@ -1,4 +1,5 @@
 import { ChartConfig, ChartFormData } from './types';
+import { CounterConfig } from './types';
 
 // Generate a unique ID for a new chart
 export function generateChartId(): string {
@@ -75,7 +76,22 @@ export const validateApiEndpoint = async (
     
     // Add API key to URL parameters if provided
     if (apiKey) {
-      apiUrl.searchParams.append('api_key', apiKey);
+      // Check if the apiKey contains max_age parameter
+      const apiKeyValue = apiKey.trim();
+      
+      if (apiKeyValue.includes('&max_age=')) {
+        // Split by &max_age= and add each part separately
+        const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+        if (baseApiKey) {
+          apiUrl.searchParams.append('api_key', baseApiKey.trim());
+        }
+        if (maxAgePart) {
+          apiUrl.searchParams.append('max_age', maxAgePart.trim());
+        }
+      } else {
+        // Just a regular API key
+        apiUrl.searchParams.append('api_key', apiKeyValue);
+      }
     }
     
     // Prepare fetch options
@@ -605,4 +621,120 @@ async function safeFetch(url: string, options?: RequestInit): Promise<Response> 
       }
     });
   }
-} 
+}
+
+/**
+ * Get all counter configs for a specific page
+ * @param pageId ID of the page to get counters for
+ * @returns Promise with array of counter configurations
+ */
+export const getCounterConfigsByPage = async (pageId: string): Promise<CounterConfig[]> => {
+  try {
+    // Check browser localStorage for counter configs
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Filter counters by page
+      return counters.filter(counter => counter.page === pageId);
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('Error getting counters for page:', error);
+    return [];
+  }
+};
+
+/**
+ * Save a counter configuration
+ * @param counterConfig The counter configuration to save
+ * @returns Promise with the saved counter configuration
+ */
+export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<CounterConfig> => {
+  try {
+    // Set createdAt if new counter
+    const now = new Date().toISOString();
+    const counterWithTimestamps = {
+      ...counterConfig,
+      updatedAt: now,
+    };
+    
+    // Check browser localStorage for existing counter configs
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Find the index of the counter if it exists
+      const existingIndex = counters.findIndex(c => c.id === counterConfig.id);
+      
+      if (existingIndex >= 0) {
+        // Update existing counter
+        counters[existingIndex] = counterWithTimestamps;
+      } else {
+        // Add as new counter with createdAt
+        counters.push({
+          ...counterWithTimestamps,
+          createdAt: now
+        });
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('counterConfigs', JSON.stringify(counters));
+      
+      return counterWithTimestamps;
+    }
+    
+    return counterWithTimestamps;
+  } catch (error) {
+    console.error('Error saving counter config:', error);
+    throw new Error('Failed to save counter configuration');
+  }
+};
+
+/**
+ * Delete a counter configuration by ID
+ * @param counterId ID of the counter to delete
+ * @returns Promise indicating success
+ */
+export const deleteCounterConfig = async (counterId: string): Promise<boolean> => {
+  try {
+    // Check browser localStorage for counter configs
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Filter out the counter to delete
+      const filteredCounters = counters.filter(counter => counter.id !== counterId);
+      
+      // Save back to localStorage
+      localStorage.setItem('counterConfigs', JSON.stringify(filteredCounters));
+      
+      return true;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Error deleting counter config:', error);
+    return false;
+  }
+};
+
+/**
+ * Get all counter configurations
+ * @returns Promise with array of all counter configurations
+ */
+export const getAllCounterConfigs = async (): Promise<CounterConfig[]> => {
+  try {
+    // Check browser localStorage for counter configs
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      return storedCounters ? JSON.parse(storedCounters) : [];
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('Error getting all counter configs:', error);
+    return [];
+  }
+}; 

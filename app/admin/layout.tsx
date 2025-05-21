@@ -262,8 +262,13 @@ export default function AdminLayout({
                 </AdminNavLink>
               </li>
               <li>
-                <AdminNavLink href="/admin/manage-charts">
-                  Manage Charts
+                <AdminNavLink href="/admin/create-counter">
+                  Create Counter
+                </AdminNavLink>
+              </li>
+              <li>
+                <AdminNavLink href="/admin/manage-dashboard">
+                  Manage Dashboard
                 </AdminNavLink>
               </li>
               <li>

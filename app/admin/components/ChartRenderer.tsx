@@ -244,7 +244,22 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             apiUrl = new URL(chartConfig.apiEndpoint);
             // Add API key to URL for both GET and POST requests
             if (chartConfig.apiKey) {
-              apiUrl.searchParams.append('api_key', chartConfig.apiKey);
+              // Check if the apiKey contains max_age parameter
+              const apiKeyValue = chartConfig.apiKey.trim();
+              
+              if (apiKeyValue.includes('&max_age=')) {
+                // Split by &max_age= and add each part separately
+                const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+                if (baseApiKey) {
+                  apiUrl.searchParams.append('api_key', baseApiKey.trim());
+                }
+                if (maxAgePart) {
+                  apiUrl.searchParams.append('max_age', maxAgePart.trim());
+                }
+              } else {
+                // Just a regular API key
+                apiUrl.searchParams.append('api_key', apiKeyValue);
+              }
             }
           } catch (error) {
             throw new Error(`Invalid URL: ${chartConfig.apiEndpoint}`);

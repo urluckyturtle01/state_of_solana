@@ -14,6 +14,7 @@ interface CounterProps {
   icon: React.ReactNode;
   variant?: CounterVariant;
   isLoading?: boolean;
+  className?: string;
 }
 
 const variantStyles: Record<CounterVariant, { bg: string, text: string, shadow: string }> = {
@@ -102,7 +103,15 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
   return value.toString();
 };
 
-export default function Counter({ title, value, trend, icon, variant = "indigo", isLoading = false }: CounterProps) {
+export default function Counter({ 
+  title, 
+  value, 
+  trend, 
+  icon, 
+  variant = "indigo", 
+  isLoading = false,
+  className = ""
+}: CounterProps) {
   const styles = variantStyles[variant];
   const [animatedValue, setAnimatedValue] = useState<string>("0");
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
@@ -175,7 +184,7 @@ export default function Counter({ title, value, trend, icon, variant = "indigo",
   }, [value, animatedValue]);
   
   return (
-    <div className={`bg-black/80 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-gray-900 shadow-lg ${styles.shadow} transition-all duration-300 min-h-[90px]`}>
+    <div className={`bg-black/80 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-gray-900 shadow-lg ${styles.shadow} transition-all duration-300 min-h-[90px] ${className}`}>
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xs md:text-sm font-normal text-gray-500">{title}</h2>
         <div className={`p-1 md:p-1.5 ${styles.bg} rounded-md`}>

@@ -92,8 +92,8 @@ export interface ChartConfig {
   };
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   // Callback for filter changes
   onFilterChange?: (filters: Record<string, string>) => void;
 }
@@ -120,4 +120,28 @@ export interface ChartFormData {
   additionalOptions?: Record<string, any>;
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;
+}
+
+// New types for Counter configuration
+export type CounterVariant = "indigo" | "blue" | "purple" | "emerald" | "amber" | "rose";
+
+export interface CounterConfig {
+  id: string;
+  title: string;
+  apiEndpoint: string;
+  apiKey?: string;
+  valueField: string;
+  rowIndex: number;
+  prefix?: string;
+  suffix?: string;
+  variant: CounterVariant;
+  icon: string;
+  page: AvailablePage;
+  width?: number; // 1, 2, or 3 columns (defaults to 1)
+  trendConfig?: {
+    valueField: string;
+    label?: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 } 

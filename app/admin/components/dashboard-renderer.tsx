@@ -174,7 +174,22 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
 const fetchChartData = async (chart: ChartConfig, chartFilters: Record<string, string>) => {
       const url = new URL(chart.apiEndpoint);
       if (chart.apiKey) {
-        url.searchParams.append('api_key', chart.apiKey);
+        // Check if the apiKey contains max_age parameter
+        const apiKeyValue = chart.apiKey.trim();
+        
+        if (apiKeyValue.includes('&max_age=')) {
+          // Split by &max_age= and add each part separately
+          const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+          if (baseApiKey) {
+            url.searchParams.append('api_key', baseApiKey.trim());
+          }
+          if (maxAgePart) {
+            url.searchParams.append('max_age', maxAgePart.trim());
+          }
+        } else {
+          // Just a regular API key
+          url.searchParams.append('api_key', apiKeyValue);
+        }
       }
       
       // Build parameters object for POST request
