@@ -2,7 +2,7 @@ import React from 'react';
 
 interface FormInputProps {
   id: string;
-  label: string;
+  label?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'url';
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -27,10 +27,12 @@ export default function FormInput({
 }: FormInputProps) {
   return (
     <div className={`mb-4 ${className}`}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
-        {label}
-        {required && <span className="text-red-400 ml-1">*</span>}
-      </label>
+      {label && (
+        <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
+          {label}
+          {required && <span className="text-red-400 ml-1">*</span>}
+        </label>
+      )}
       <input
         id={id}
         name={id}

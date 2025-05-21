@@ -1495,14 +1495,14 @@ export default function DashboardRenderer({
     );
   }
 
-  if (charts.length === 0) {
+/*  if (charts.length === 0) {
     // Show a message if no charts are available
     return (
       <div className="w-full min-h-[300px] flex items-center justify-center">
         <p className="text-gray-400">No charts available for this page.</p>
       </div>
     );
-  }
+  }*/
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

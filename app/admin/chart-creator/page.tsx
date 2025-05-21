@@ -1549,25 +1549,24 @@ export default function ChartCreatorPage() {
                   Y-Axis Field <span className="text-red-400">*</span>
                 </label>
                 <div className="flex gap-2">
-                  <input
+                  <FormInput
                     type="text"
                     id="y-axis-field"
                     value={typeof formData.dataMapping.yAxis === 'string' ? formData.dataMapping.yAxis : ''}
                     onChange={(e) => handleInputChange('dataMapping.yAxis', e.target.value)}
                     placeholder="Field name for the y-axis"
-                    className="block w-full rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
+                    className="flex-grow rounded-md border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
                     required
                   />
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      id="y-axis-unit"
-                      value={formData.dataMapping.yAxisUnit || ''}
-                      onChange={(e) => handleInputChange('dataMapping.yAxisUnit', e.target.value)}
-                      placeholder="Unit ($, %, SOL)"
-                      className="w-32 rounded-md bg-gray-700 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
-                    />
-                  </div>
+                  
+                  <FormInput
+                    type="text"
+                    id="y-axis-unit"
+                    value={formData.dataMapping.yAxisUnit || ''}
+                    onChange={(e) => handleInputChange('dataMapping.yAxisUnit', e.target.value)}
+                    placeholder="Unit ($, %, SOL)"
+                    className="rounded-md border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-200"
+                  />
                 </div>
                 <p className="mt-1 text-sm text-gray-400">
                   {formData.isStacked 
