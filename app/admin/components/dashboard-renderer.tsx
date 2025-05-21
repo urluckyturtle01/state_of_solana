@@ -171,36 +171,36 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
 
 // Simplified fetch function to reduce overhead
 const fetchChartData = async (chart: ChartConfig, chartFilters: Record<string, string>) => {
-  const url = new URL(chart.apiEndpoint);
-  if (chart.apiKey) {
-    url.searchParams.append('api_key', chart.apiKey);
-  }
-  
-  // Build parameters object for POST request
-  const parameters: Record<string, any> = {};
-  const filterConfig = chart.additionalOptions?.filters;
-  
-  if (filterConfig) {
+      const url = new URL(chart.apiEndpoint);
+      if (chart.apiKey) {
+        url.searchParams.append('api_key', chart.apiKey);
+      }
+      
+      // Build parameters object for POST request
+      const parameters: Record<string, any> = {};
+      const filterConfig = chart.additionalOptions?.filters;
+      
+      if (filterConfig) {
     // Add all filter parameters
-    if (filterConfig.timeFilter && chartFilters['timeFilter']) {
-      parameters[filterConfig.timeFilter.paramName] = chartFilters['timeFilter'];
-    }
-    
-    if (filterConfig.currencyFilter && chartFilters['currencyFilter']) {
-      parameters[filterConfig.currencyFilter.paramName] = chartFilters['currencyFilter'];
-    }
-    
-    if (filterConfig.displayModeFilter && chartFilters['displayModeFilter']) {
-      parameters[filterConfig.displayModeFilter.paramName] = chartFilters['displayModeFilter'];
-    }
-  }
-  
+        if (filterConfig.timeFilter && chartFilters['timeFilter']) {
+          parameters[filterConfig.timeFilter.paramName] = chartFilters['timeFilter'];
+        }
+        
+        if (filterConfig.currencyFilter && chartFilters['currencyFilter']) {
+          parameters[filterConfig.currencyFilter.paramName] = chartFilters['currencyFilter'];
+        }
+        
+        if (filterConfig.displayModeFilter && chartFilters['displayModeFilter']) {
+          parameters[filterConfig.displayModeFilter.paramName] = chartFilters['displayModeFilter'];
+        }
+      }
+      
   // Set up request options with performance optimizations
-  const hasParameters = Object.keys(parameters).length > 0;
-  const options: RequestInit = {
-    method: hasParameters ? 'POST' : 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+      const hasParameters = Object.keys(parameters).length > 0;
+      const options: RequestInit = {
+        method: hasParameters ? 'POST' : 'GET',
+        headers: {
+          'Content-Type': 'application/json',
       'Accept': 'application/json',
       'X-Priority': 'high'
     },
@@ -210,27 +210,27 @@ const fetchChartData = async (chart: ChartConfig, chartFilters: Record<string, s
     priority: 'high',
     // Use a shorter timeout for faster failure/recovery
     signal: AbortSignal.timeout(2000) // 2 second timeout
-  };
-  
-  // Add body with parameters for POST request
-  if (hasParameters) {
-    options.body = JSON.stringify({ parameters });
+      };
+      
+      // Add body with parameters for POST request
+      if (hasParameters) {
+        options.body = JSON.stringify({ parameters });
   }
   
   // Fetch data from API with optimized options
   try {
     // Use fetch with aggressive timeout
-    const response = await fetch(url.toString(), options);
-    
-    if (!response.ok) {
+      const response = await fetch(url.toString(), options);
+      
+      if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
+      }
+      
+      const result = await response.json();
+      
     // Fast extraction of data with minimal processing
-    let parsedData: any[] = [];
-    
+      let parsedData: any[] = [];
+      
     // Extract data based on API response format with minimal code
     if (result?.query_result?.data?.rows) parsedData = result.query_result.data.rows;
     else if (Array.isArray(result)) parsedData = result;
@@ -640,8 +640,8 @@ export default function DashboardRenderer({
                     ...prev,
                     [chart.id]: false
                   }));
-                });
-              });
+                    });
+                  });
           }, 100); // Small delay for remaining charts
         }
         
@@ -1002,7 +1002,7 @@ export default function DashboardRenderer({
       [chartId]: false
     }));
   };
-  
+
   // Generate legends for a chart based on its data and configuration
   const updateLegends = (chartId: string, data: any[]) => {
     const chart = charts.find(c => c.id === chartId);
@@ -1497,7 +1497,7 @@ export default function DashboardRenderer({
 
 /*  if (charts.length === 0) {
     // Show a message if no charts are available
-    return (
+  return (
       <div className="w-full min-h-[300px] flex items-center justify-center">
         <p className="text-gray-400">No charts available for this page.</p>
       </div>
@@ -1562,13 +1562,13 @@ export default function DashboardRenderer({
             <>
               {legends[chart.id] && legends[chart.id].length > 0 ? (
                 legends[chart.id].map(legend => (
-                  <LegendItem 
-                    key={legend.label}
+                    <LegendItem 
+                      key={legend.label}
                     label={truncateLabel(legend.label)} 
-                    color={legend.color} 
-                    shape="square"
-                    tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
-                  />
+                      color={legend.color} 
+                      shape="square"
+                      tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
+                    />
                 ))
               ) : (
                 <LegendItem label="Loading..." color="#cccccc" isLoading={true} />
