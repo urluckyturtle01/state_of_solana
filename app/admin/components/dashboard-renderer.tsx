@@ -12,6 +12,7 @@ import Modal from '../../components/shared/Modal';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
+import * as htmlToImage from 'html-to-image';
 
 // Helper function to extract field name from YAxisConfig or use string directly
 function getFieldName(field: string | YAxisConfig): string {
@@ -56,6 +57,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
   const [isClient, setIsClient] = useState(false);
   const [expandedCharts, setExpandedCharts] = useState<Record<string, boolean>>({});
   const [downloadingCharts, setDownloadingCharts] = useState<Record<string, boolean>>({});
+  const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
   
   // Add state for loading charts
@@ -79,12 +81,14 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
           // Initialize states for the override charts
           const expandedState: Record<string, boolean> = {};
           const downloadingState: Record<string, boolean> = {};
+          const screenshottingState: Record<string, boolean> = {};
           const initialFilterValues: Record<string, Record<string, string>> = {};
           const initialLoadingState: Record<string, boolean> = {};
           
           overrideCharts.forEach(chart => {
             expandedState[chart.id] = false;
             downloadingState[chart.id] = false;
+            screenshottingState[chart.id] = false;
             initialLoadingState[chart.id] = true; // Start with loading state
             
             // Initialize filter values for each chart
@@ -116,6 +120,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
           
           setExpandedCharts(expandedState);
           setDownloadingCharts(downloadingState);
+          setScreenshottingCharts(screenshottingState);
           setLoadingCharts(initialLoadingState);
           setFilterValues(initialFilterValues);
           
@@ -129,12 +134,14 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
         // Initialize expanded and downloading states for each chart
         const expandedState: Record<string, boolean> = {};
         const downloadingState: Record<string, boolean> = {};
+        const screenshottingState: Record<string, boolean> = {};
         const initialFilterValues: Record<string, Record<string, string>> = {};
         const initialLoadingState: Record<string, boolean> = {};
         
         pageCharts.forEach(chart => {
           expandedState[chart.id] = false;
           downloadingState[chart.id] = false;
+          screenshottingState[chart.id] = false;
           initialLoadingState[chart.id] = true; // Start with loading state
           
           // Initialize filter values for each chart
@@ -166,6 +173,7 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
         
         setExpandedCharts(expandedState);
         setDownloadingCharts(downloadingState);
+        setScreenshottingCharts(screenshottingState);
         setLoadingCharts(initialLoadingState);
         setFilterValues(initialFilterValues);
       } catch (error) {
@@ -183,6 +191,209 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
     }));
   };
 
+  // Handle screenshot capture for chart
+  const captureChartScreenshot = async (chart: ChartConfig) => {
+    try {
+      // Set loading state
+      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: true }));
+      console.log(`Starting screenshot capture for chart: ${chart.id}`);
+
+      // Get the entire card element instead of just the chart container
+      const cardElementId = `chart-card-${chart.id}`;
+      console.log(`Looking for card element with ID: ${cardElementId}`);
+      const cardElement = document.getElementById(cardElementId);
+      
+      if (!cardElement) {
+        console.error(`Card element not found with ID: ${cardElementId}`);
+        // Log all card IDs for debugging
+        const allCardElements = document.querySelectorAll('[id^="chart-card-"]');
+        console.log(`Found ${allCardElements.length} card elements:`, 
+          Array.from(allCardElements).map(el => el.id));
+        
+        throw new Error(`Card element not found with ID: ${cardElementId}`);
+      }
+      
+      console.log(`Found card element, dimensions: ${cardElement.offsetWidth}x${cardElement.offsetHeight}`);
+
+      try {
+        // Create a wrapper with solid background
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'fixed';
+        wrapper.style.top = '0';
+        wrapper.style.left = '0';
+        wrapper.style.width = '100vw';
+        wrapper.style.height = '100vh';
+        wrapper.style.backgroundColor = '#121212';
+        wrapper.style.zIndex = '-9999';
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.padding = '20px';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.overflow = 'hidden';
+        
+        // Clone the element to avoid modifying the original
+        const clone = cardElement.cloneNode(true) as HTMLElement;
+        clone.style.position = 'relative';
+        clone.style.width = `${cardElement.offsetWidth}px`;
+        clone.style.height = `${cardElement.offsetHeight}px`;
+        clone.style.backgroundColor = '#121212';
+        clone.style.color = 'white';
+        clone.style.border = '1px solid #333';
+        clone.style.maxWidth = '100%';
+        clone.style.maxHeight = '100%';
+
+        // Hide the action buttons (camera, download, expand icons)
+        const actionButtons = clone.querySelectorAll('button');
+        actionButtons.forEach(button => {
+          if (button.title === 'Take Screenshot' || button.title === 'Download CSV' || button.title === 'Expand Chart') {
+            button.style.display = 'none';
+          }
+        });
+
+        // Create a watermark with the TopLedger logo
+        const watermark = document.createElement('div');
+        watermark.style.position = 'absolute';
+        watermark.style.top = '50%';
+        watermark.style.left = '50%';
+        watermark.style.transform = 'translate(-50%, -50%)';
+        watermark.style.zIndex = '10';
+        watermark.style.opacity = '0.30';
+        watermark.style.pointerEvents = 'none';
+        
+        // Create the image element for the logo
+        const logo = document.createElement('img');
+        logo.src = 'https://topledger.xyz/assets/images/logo/topledger-full.svg?imwidth=384';
+        logo.style.width = '200px';
+        logo.style.height = 'auto';
+        logo.style.filter = 'brightness(2)'; // Make the logo slightly brighter for visibility
+        
+        // Add the logo to the watermark
+        watermark.appendChild(logo);
+        
+        // Append the clone to the wrapper
+        wrapper.appendChild(clone);
+        
+        // Apply styles to fix transparency issues
+        const fixTransparency = (element: HTMLElement) => {
+          // Force background colors on elements that might be transparent
+          if (element.tagName === 'DIV' || element.tagName === 'SPAN' || element.tagName === 'P') {
+            // Get the computed style
+            const style = window.getComputedStyle(element);
+            
+            // Check if the background is transparent or semi-transparent
+            if (style.backgroundColor === 'transparent' || 
+                style.backgroundColor.includes('rgba') ||
+                style.backgroundColor === 'rgba(0, 0, 0, 0)') {
+              element.style.backgroundColor = '#121212';
+            }
+            
+            // Check text color to ensure contrast
+            if (style.color === 'transparent' ||
+                style.color.includes('rgba') ||
+                style.color === 'rgba(0, 0, 0, 0)') {
+              element.style.color = '#ffffff';  
+            }
+          }
+          
+          // Special handling for SVG elements
+          if (element.tagName === 'svg' || element.tagName === 'SVG') {
+            const svgElement = element as unknown as SVGElement;
+            svgElement.style.backgroundColor = '#121212';
+            // Ensure SVG paths and other elements are visible
+            Array.from(svgElement.querySelectorAll('*')).forEach(node => {
+              if (node instanceof SVGElement) {
+                // Set stroke to ensure visibility
+                if (!node.getAttribute('stroke') || node.getAttribute('stroke') === 'none') {
+                  node.setAttribute('stroke', 'currentColor');
+                }
+                
+                // Set fill if not already set
+                if (!node.getAttribute('fill') || node.getAttribute('fill') === 'none') {
+                  node.setAttribute('fill', 'currentColor');
+                }
+              }
+            });
+          }
+          
+          // Process child elements recursively
+          Array.from(element.children).forEach(child => {
+            if (child instanceof HTMLElement) {
+              fixTransparency(child);
+            }
+          });
+        };
+        
+        // Fix transparency issues in the clone
+        fixTransparency(clone);
+
+        // Add the watermark after fixing transparency issues
+        clone.appendChild(watermark);
+        
+        // Add the wrapper to the DOM temporarily
+        document.body.appendChild(wrapper);
+        
+        console.log('Starting image capture with html-to-image...');
+        
+        try {
+          // Add a short delay to allow the DOM to update and logo to load
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Wait for the logo to load
+          await new Promise((resolve, reject) => {
+            if (logo.complete) {
+              resolve(true);
+            } else {
+              logo.onload = () => resolve(true);
+              logo.onerror = () => {
+                console.error('Logo failed to load');
+                // Continue without logo if it fails to load
+                resolve(false);
+              };
+            }
+          });
+          
+          // Use htmlToImage to capture the clone
+          const dataUrl = await htmlToImage.toJpeg(clone, {
+            quality: 0.95,
+            backgroundColor: '#121212',
+            width: cardElement.offsetWidth,
+            height: cardElement.offsetHeight,
+            style: {
+              backgroundColor: '#121212'
+            },
+            pixelRatio: 2
+          });
+          
+          console.log('Image captured successfully, creating download link');
+          
+          // Create download link
+          const link = document.createElement('a');
+          link.download = `${chart.title.replace(/\s+/g, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.jpg`;
+          link.href = dataUrl;
+          link.click();
+          
+          console.log('Screenshot downloaded successfully');
+        } finally {
+          // Always clean up by removing the wrapper
+          if (document.body.contains(wrapper)) {
+            document.body.removeChild(wrapper);
+          }
+        }
+      } catch (captureError) {
+        console.error('Error during screenshot capture:', captureError);
+        throw captureError;
+      }
+    } catch (error) {
+      console.error('Error capturing screenshot:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to capture screenshot: ${errorMessage}`);
+    } finally {
+      // Clear loading state
+      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: false }));
+    }
+  };
+  
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
     console.log(`Filter changed for chart ${chartId}: ${filterType} = ${value}`);
@@ -1096,10 +1307,13 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
           accentColor="blue"
           onExpandClick={() => toggleChartExpanded(chart.id)}
           onDownloadClick={() => downloadCSV(chart)}
+          onScreenshotClick={() => captureChartScreenshot(chart)}
           isDownloading={downloadingCharts[chart.id]}
+          isScreenshotting={screenshottingCharts[chart.id]}
           isLoading={loadingCharts[chart.id]}
           legendWidth="1/5"
           className="md:h-[500px] h-auto"
+          id={`chart-card-${chart.id}`}
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={
@@ -1155,7 +1369,11 @@ export default function DashboardRenderer({ pageId, overrideCharts }: DashboardR
             </>
           }
         >
-          <div className="h-[310px] md:h-[360px]">
+          <div 
+            className="h-[310px] md:h-[360px] relative" 
+            id={`chart-container-${chart.id}`}
+            data-testid={`chart-container-${chart.id}`}
+          >
             <ChartRenderer 
               chartConfig={chart} 
               onDataLoaded={(data: any[]) => {

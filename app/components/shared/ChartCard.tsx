@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { ExpandIcon, DownloadIcon } from './Icons';
+import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
 import Loader from './Loader';
 
 interface ChartCardProps {
@@ -10,11 +10,14 @@ interface ChartCardProps {
   legend?: ReactNode;
   onExpandClick?: () => void;
   onDownloadClick?: () => void;
+  onScreenshotClick?: () => void;
   isDownloading?: boolean;
+  isScreenshotting?: boolean;
   accentColor?: 'blue' | 'purple' | 'green' | 'orange' | 'indigo';
   className?: string;
   legendWidth?: '1/4' | '1/5' | '1/6';
   isLoading?: boolean;
+  id?: string;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -25,11 +28,14 @@ const ChartCard: React.FC<ChartCardProps> = ({
   legend,
   onExpandClick,
   onDownloadClick,
+  onScreenshotClick,
   isDownloading = false,
+  isScreenshotting = false,
   accentColor = 'blue',
   className = '',
   legendWidth = '1/5',
   isLoading = false,
+  id,
 }) => {
   // Define color variants
   const colorVariants = {
@@ -70,7 +76,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const colors = colorVariants[accentColor];
 
   return (
-    <div className={`bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg ${colors.hover} transition-all duration-300 ${className}`}>
+    <div id={id} className={`bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg ${colors.hover} transition-all duration-300 ${className}`}>
       {/* Header Section with Title and Action Buttons */}
       <div className="flex justify-between items-center mb-3">
         <div className="-mt-1">
@@ -78,6 +84,20 @@ const ChartCard: React.FC<ChartCardProps> = ({
           {description && <p className="text-gray-500 text-[10px] tracking-wide">{description}</p>}
         </div>
         <div className="flex space-x-2">
+          {onScreenshotClick && (
+            <button 
+              className={`p-1.5 ${colors.button} rounded-md transition-colors ${isScreenshotting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={onScreenshotClick}
+              title="Take Screenshot"
+              disabled={isScreenshotting}
+            >
+              {isScreenshotting ? (
+                <Loader size="xs" className="w-4 h-4" />
+              ) : (
+                <CameraIcon className="w-4 h-4" />
+              )}
+            </button>
+          )}
           {onDownloadClick && (
             <button 
               className={`p-1.5 ${colors.button} rounded-md transition-colors ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}

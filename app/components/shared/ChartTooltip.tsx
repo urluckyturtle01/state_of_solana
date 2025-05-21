@@ -205,10 +205,10 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
       {/* Items */}
       <div className="space-y-1">
         {items.map((item, idx) => (
-          <div key={`tooltip-item-${idx}`} className="flex items-center justify-between">
+          <div key={`tooltip-item-${idx}`} className="flex items-center mt-2 justify-between">
             <div className="flex items-center text-gray-400">
               <LegendShape type={item.shape || 'circle'} color={item.color} />
-              <span className="text-gray-400 font-normal ml-2">{item.label}</span>
+              <span className="text-gray-400 text-[10px] font-normal ml-2">{item.label}</span>
               
               {/* Show axis indicator for dual-axis charts */}
               {hasDualAxisItems && item.axis && (
@@ -217,7 +217,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
                 </span>
               )}
             </div>
-            <span className="text-gray-300 font-normal ml-4">
+            <span className="text-gray-300 text-[10px] font-normal ml-4">
               {formatValueWithCurrency(item.value, currencyFilter)}
             </span>
           </div>
