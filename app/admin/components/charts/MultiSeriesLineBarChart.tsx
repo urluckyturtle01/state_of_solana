@@ -195,6 +195,208 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // For type safety, ensure we use string values for indexing
   const xKey = typeof xField === 'string' ? xField : xField[0];
   
+  // Extract data for the chart
+  const { chartData, fields, fieldColors, fieldTypes } = useMemo(() => {
+    // Use appropriate filtered data depending on context
+    const currentData = isExpanded
+      ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
+      : (isBrushActive && filteredData.length > 0 ? filteredData : data);
+    
+    if (!currentData || currentData.length === 0) {
+      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {} };
+    }
+
+    // Use external color map if available
+    const preferredColorMap = externalColorMap || {};
+    
+    // Filter data first to remove any undefined x values
+    const processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+    
+    // Sort by date if applicable
+    if (processedData.length > 0) {
+      // Detect if data contains dates
+      const isDateField = typeof processedData[0][xKey] === 'string' && 
+        (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+        /^\w+\s\d{4}$/.test(processedData[0][xKey]) || 
+        /^\d{4}$/.test(processedData[0][xKey]));
+      
+      if (isDateField) {
+        // Sort dates chronologically (oldest to newest)
+        processedData.sort((a, b) => {
+          const dateA = new Date(a[xKey]);
+          const dateB = new Date(b[xKey]);
+          return dateA.getTime() - dateB.getTime();
+        });
+      }
+    }
+    
+    // Check if groupBy is used
+    const groupByField = chartConfig.dataMapping.groupBy;
+    
+    if (groupByField && groupByField !== '') {
+      // Process data with groupBy
+      const groupedByX: Record<string, any> = {};
+      const uniqueGroups = new Set<string>();
+      
+      // Collect all unique x-values and group values
+      processedData.forEach(item => {
+        const xValue = item[xKey];
+        const groupValue = item[groupByField]?.toString() || 'Unknown';
+        
+        // Store unique groups
+        uniqueGroups.add(groupValue);
+        
+        // Initialize x-value group if needed
+        if (!groupedByX[xValue]) {
+          groupedByX[xValue] = {};
+        }
+        
+        // For single y-field with groupBy, store the value for each group
+        if (typeof yField === 'string') {
+          groupedByX[xValue][groupValue] = Number(item[yField]) || 0;
+        } else if (Array.isArray(yField) && yField.length === 1) {
+          // For array with single y-field
+          const singleField = typeof yField[0] === 'string' ? yField[0] : yField[0].field;
+          groupedByX[xValue][groupValue] = Number(item[singleField]) || 0;
+        } else {
+          // For multiple y-fields with groupBy, store all field values
+          Array.isArray(yField) && yField.forEach(field => {
+            const fieldName = typeof field === 'string' ? field : field.field;
+            if (!groupedByX[xValue][fieldName]) {
+              groupedByX[xValue][fieldName] = {};
+            }
+            groupedByX[xValue][fieldName][groupValue] = Number(item[fieldName]) || 0;
+          });
+        }
+      });
+      
+      // Transform to array format
+      const uniqueGroupsArray = Array.from(uniqueGroups);
+      
+      if (typeof yField === 'string' || (Array.isArray(yField) && yField.length === 1)) {
+        // For single y-field with groupBy, each group becomes a field
+        const resultFields = uniqueGroupsArray;
+        const resultData = Object.entries(groupedByX).map(([xVal, groups]) => {
+          const entry: any = { [xKey]: xVal };
+          uniqueGroupsArray.forEach(group => {
+            entry[group] = (groups as any)[group] || 0;
+          });
+          return entry;
+        });
+        
+        // Determine the field type to use for all groups
+        let originalFieldType: 'bar' | 'line';
+        
+        if (typeof yField === 'string') {
+          // If yField is a string, use the chart's default type (bar)
+          originalFieldType = 'bar';
+        } else if (Array.isArray(yField) && yField.length === 1) {
+          // For a single field in an array, use its specified type
+          const singleField = yField[0];
+          originalFieldType = typeof singleField === 'string' ? 'bar' : singleField.type;
+          
+          // Log the determined type for debugging
+          console.log('GroupBy: Using field type for all groups:', originalFieldType);
+        } else {
+          // Fallback to bar if structure is unexpected
+          originalFieldType = 'bar';
+        }
+        
+        // Apply the same type to all group-based series
+        const resultFieldTypes: Record<string, 'bar' | 'line'> = {};  
+        uniqueGroupsArray.forEach(group => {
+          resultFieldTypes[group] = originalFieldType;
+        });
+        
+        // Assign colors to each field
+        const resultColors: Record<string, string> = {};
+        resultFields.forEach((field, index) => {
+          resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
+        });
+        
+        return { 
+          chartData: resultData,
+          fields: resultFields,
+          fieldColors: resultColors,
+          fieldTypes: resultFieldTypes
+        };
+      } else {
+        // For multiple y-fields with groupBy, combine field and group
+        const combinedFields: string[] = [];
+        const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
+        
+        Array.isArray(yField) && yField.forEach(field => {
+          const fieldName = typeof field === 'string' ? field : field.field;
+          const fieldType = typeof field === 'string' ? 'bar' : field.type;
+          
+          uniqueGroupsArray.forEach(group => {
+            const combinedField = `${fieldName}_${group}`;
+            combinedFields.push(combinedField);
+            resultFieldTypes[combinedField] = fieldType;
+          });
+        });
+        
+        const resultData = Object.entries(groupedByX).map(([xVal, fieldGroups]) => {
+          const entry: any = { [xKey]: xVal };
+          
+          Array.isArray(yField) && yField.forEach(field => {
+            const fieldName = typeof field === 'string' ? field : field.field;
+            
+            uniqueGroupsArray.forEach(group => {
+              const combinedField = `${fieldName}_${group}`;
+              entry[combinedField] = ((fieldGroups as any)[fieldName]?.[group]) || 0;
+            });
+          });
+          
+          return entry;
+        });
+        
+        // Assign colors to each field
+        const resultColors: Record<string, string> = {};
+        combinedFields.forEach((field, index) => {
+          resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
+        });
+        
+        return { 
+          chartData: resultData,
+          fields: combinedFields,
+          fieldColors: resultColors,
+          fieldTypes: resultFieldTypes
+        };
+      }
+    } else {
+      // Standard processing without groupBy
+      let resultFields: string[] = [];
+      const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
+      
+      if (Array.isArray(yField)) {
+        resultFields = yField.map(field => getYAxisField(field));
+        
+        // Create mapping of field types (bar or line)
+        yField.forEach(field => {
+          const fieldName = getYAxisField(field);
+          resultFieldTypes[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
+        });
+      } else {
+        resultFields = [getYAxisField(yField)];
+        resultFieldTypes[getYAxisField(yField)] = typeof yField === 'string' ? 'bar' : (yField as YAxisConfig).type;
+      }
+      
+      // Prepare color mapping for fields
+      const resultColors: Record<string, string> = {};
+      resultFields.forEach((field, index) => {
+        resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
+      });
+      
+      return { 
+        chartData: processedData,
+        fields: resultFields,
+        fieldColors: resultColors,
+        fieldTypes: resultFieldTypes
+      };
+    }
+  }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy]);
+
   // Helper function to force reset the brush visual state
   const forceBrushVisualReset = useCallback((inModal = false) => {
     setTimeout(() => {
@@ -342,6 +544,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [modalFilterValues, chartConfig]);
 
+  // Handle mouse leave for tooltip
+  const handleMouseLeave = useCallback(() => {
+    if (tooltip.visible) {
+      setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  }, [tooltip.visible]);
+
   // Format value for tooltip
   const formatValue = useCallback((value: number) => {
     return formatWithUnit(value);
@@ -380,79 +589,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     setError(null);
   }, [filterValues, chartConfig]);
-
-  // Extract data for the chart
-  const { chartData, fields, fieldColors, fieldTypes } = useMemo(() => {
-    // Use appropriate filtered data depending on context
-    const currentData = isExpanded
-      ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
-      : (isBrushActive && filteredData.length > 0 ? filteredData : data);
-    
-    if (!currentData || currentData.length === 0) {
-      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {} };
-    }
-
-    // Use external color map if available
-    const preferredColorMap = externalColorMap || {};
-    
-    // Filter data first to remove any undefined x values
-    const processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
-    
-    // Sort by date if applicable
-    if (processedData.length > 0) {
-      // Detect if data contains dates
-      const isDateField = typeof processedData[0][xKey] === 'string' && 
-        (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
-        /^\w+\s\d{4}$/.test(processedData[0][xKey]) || 
-        /^\d{4}$/.test(processedData[0][xKey]));
-      
-      if (isDateField) {
-        // Sort dates chronologically (oldest to newest)
-        processedData.sort((a, b) => {
-          const dateA = new Date(a[xKey]);
-          const dateB = new Date(b[xKey]);
-          return dateA.getTime() - dateB.getTime();
-        });
-      }
-    }
-    
-    // Get all field names that should appear in the chart
-    let allFields: string[] = [];
-    let fieldTypesMap: Record<string, 'bar' | 'line'> = {};
-    
-    if (Array.isArray(yField)) {
-      allFields = yField.map(field => getYAxisField(field));
-      
-      // Create mapping of field types (bar or line)
-      yField.forEach(field => {
-        const fieldName = getYAxisField(field);
-        fieldTypesMap[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
-      });
-    } else {
-      allFields = [getYAxisField(yField)];
-      fieldTypesMap[getYAxisField(yField)] = typeof yField === 'string' ? 'bar' : (yField as YAxisConfig).type;
-    }
-    
-    // Prepare color mapping for fields
-    const colorMapping: Record<string, string> = {};
-    allFields.forEach((field, index) => {
-      colorMapping[field] = preferredColorMap[field] || getColorByIndex(index);
-    });
-    
-    return { 
-      chartData: processedData,
-      fields: allFields,
-      fieldColors: colorMapping,
-      fieldTypes: fieldTypesMap
-    };
-  }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData]);
-
-  // Handle mouse leave for tooltip
-  const handleMouseLeave = useCallback(() => {
-    if (tooltip.visible) {
-      setTooltip(prev => ({ ...prev, visible: false }));
-    }
-  }, [tooltip.visible]);
 
   // Handle mouse move for tooltips
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -579,26 +715,192 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    // Filter and ensure x values are valid
-    const processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+    console.log('Creating brush data with', data.length, 'items');
     
-    // Create synthetic dates for brush
+    // Filter and ensure x values are valid
+    let processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+    
+    // Sort by date if applicable
+    if (processedData.length > 0) {
+      // Detect if data contains dates
+      const isDateField = typeof processedData[0][xKey] === 'string' && 
+        (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(processedData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(processedData[0][xKey]) || 
+         /^\d{4}$/.test(processedData[0][xKey]));
+      
+      if (isDateField) {
+        // Sort dates chronologically (oldest to newest)
+        processedData.sort((a, b) => {
+          const dateA = new Date(a[xKey]);
+          const dateB = new Date(b[xKey]);
+          return dateA.getTime() - dateB.getTime();
+        });
+      }
+    }
+    
+    // Create synthetic dates for brush if needed
     const baseDate = new Date();
     baseDate.setHours(0, 0, 0, 0);
     
-    // Get the first field for brush data
-    const firstField = fields.length > 0 ? fields[0] : '';
+    // Check if we're dealing with a chart without filters
+    const isChartWithoutFilters = 
+      !filterValues || Object.keys(filterValues).length === 0;
+      
+    // Check if this chart has groupBy configuration
+    const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
-    // Create date points for the brush
-    return processedData.map((d, i) => {
-      // Try to parse date from x value or use synthetic date
+    // Get the groupByField if available
+    const groupByField = chartConfig.dataMapping.groupBy || '';
+    
+    // For charts with groupBy
+    if (hasGroupBy) {
+      console.log('Processing brush data for chart with groupBy:', groupByField);
+      
+      // Group by x-axis values to prevent duplicates
+      const groupedData: Record<string, any> = {};
+      
+      processedData.forEach(item => {
+        const xValue = String(item[xKey]);
+        
+        if (!groupedData[xValue]) {
+          groupedData[xValue] = { 
+            [xKey]: item[xKey],
+            totalValue: 0 
+          };
+        }
+        
+        // If we have multiple Y fields, sum them for the total
+        if (Array.isArray(yField) && yField.length > 0) {
+          yField.forEach(field => {
+            const fieldName = typeof field === 'string' ? field : field.field;
+            const value = Number(item[fieldName]) || 0;
+            groupedData[xValue].totalValue += value;
+          });
+        } else {
+          // For single Y field
+          const singleField = typeof yField === 'string' ? yField : 
+                              (Array.isArray(yField) && yField.length > 0 ? 
+                                (typeof yField[0] === 'string' ? yField[0] : yField[0].field) : 
+                                '');
+          
+          if (singleField) {
+            const value = Number(item[singleField]) || 0;
+            groupedData[xValue].totalValue += value;
+          }
+        }
+        
+        // Keep the original data for reference
+        if (!groupedData[xValue].originalData) {
+          groupedData[xValue].originalData = [];
+        }
+        groupedData[xValue].originalData.push(item);
+      });
+      
+      // Convert back to array
+      const uniqueData = Object.values(groupedData);
+      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points for groupBy`);
+      
+      // Create brush data points
+      return uniqueData.map((item, i) => {
+        let date;
+        const xValue = item[xKey];
+        
+        // Try to parse date from x value or use synthetic date
+        if (typeof xValue === 'string' && 
+           (xValue.match(/^\d{4}-\d{2}-\d{2}/) || 
+            /^\d{2}\/\d{2}\/\d{4}/.test(xValue) ||
+            /^[A-Za-z]{3}\s\d{4}$/.test(xValue) || 
+            /^\d{4}$/.test(xValue))) {
+          date = new Date(xValue);
+          if (isNaN(date.getTime())) {
+            date = new Date(baseDate);
+            date.setDate(baseDate.getDate() + i);
+          }
+        } else {
+          date = new Date(baseDate);
+          date.setDate(baseDate.getDate() + i);
+        }
+        
+        return {
+          date,
+          value: item.totalValue || 0,
+          idx: i,
+          originalIndex: i,
+          originalData: item
+        };
+      });
+    }
+    
+    // For chart without filters, use more direct approach to ensure continuous line
+    if (isChartWithoutFilters) {
+      console.log('Processing chart without filters');
+      
+      // Group by x-axis values to prevent duplicates
+      const groupedData: Record<string, any> = {};
+      
+      // Get the first field for brush data
+      const firstField = fields.length > 0 ? fields[0] : '';
+      
+      processedData.forEach(item => {
+        const xValue = String(item[xKey]);
+        
+        if (groupedData[xValue]) {
+          // Keep the highest value from the first field
+          if ((Number(item[firstField]) || 0) > (Number(groupedData[xValue][firstField]) || 0)) {
+            groupedData[xValue] = item;
+          }
+        } else {
+          groupedData[xValue] = item;
+        }
+      });
+      
+      // Convert back to array
+      const uniqueData = Object.values(groupedData);
+      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
+      
+      // Create a series of evenly spaced date points for consistency
+      return uniqueData.map((item, i) => {
+        let date;
+        
+        // Try to parse date from x value or use synthetic date
+        if (typeof item[xKey] === 'string' && 
+           (item[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+            /^\d{2}\/\d{2}\/\d{4}/.test(item[xKey]) ||
+            /^[A-Za-z]{3}\s\d{4}$/.test(item[xKey]) || 
+            /^\d{4}$/.test(item[xKey]))) {
+          date = new Date(item[xKey]);
+          if (isNaN(date.getTime())) {
+            date = new Date(baseDate);
+            date.setDate(baseDate.getDate() + i);
+          }
+        } else {
+          date = new Date(baseDate);
+          date.setDate(baseDate.getDate() + i);
+        }
+        
+        return {
+          date,
+          value: Number(item[firstField]) || 0,
+          idx: i,
+          originalIndex: i,
+          originalData: item
+        };
+      });
+    }
+    
+    // Standard processing for charts with filters
+    // Create data points for the brush line that reflects values
+    return processedData.map((item, i) => {
       let date;
-      if (typeof d[xKey] === 'string' && 
-         (d[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
-          /^\d{2}\/\d{2}\/\d{4}/.test(d[xKey]) ||
-          /^[A-Za-z]{3}\s\d{4}$/.test(d[xKey]) || 
-          /^\d{4}$/.test(d[xKey]))) {
-        date = new Date(d[xKey]);
+      
+      // Try to parse date from x value or use synthetic date
+      if (typeof item[xKey] === 'string' && 
+         (item[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+          /^\d{2}\/\d{2}\/\d{4}/.test(item[xKey]) ||
+          /^[A-Za-z]{3}\s\d{4}$/.test(item[xKey]) || 
+          /^\d{4}$/.test(item[xKey]))) {
+        date = new Date(item[xKey]);
         if (isNaN(date.getTime())) {
           date = new Date(baseDate);
           date.setDate(baseDate.getDate() + i);
@@ -608,69 +910,147 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         date.setDate(baseDate.getDate() + i);
       }
       
+      // For first field, handle null/undefined values
+      let value = 0;
+      if (fields.length > 0) {
+        value = Number(item[fields[0]]) || 0;
+      }
+      
       return {
         date,
-        value: Number(d[firstField]) || 0,
-        originalData: d
+        value,
+        idx: i,
+        originalIndex: i,
+        originalData: item
       };
     });
-  }, [data, xKey, fields]);
+  }, [data, xKey, fields, filterValues, chartConfig.dataMapping.groupBy, yField]);
 
   // Handle brush change
   const handleBrushChange = useCallback((domain: any) => {
     if (!domain) {
       if (isBrushActive) {
         setBrushDomain(null);
-       
-        setFilteredData([]);
+        setIsBrushActive(false);
+        setFilteredData([]); // Reset filtered data
       }
       return;
     }
     
     const { x0, x1 } = domain;
+    console.log('Brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update brush domain
     setBrushDomain([new Date(x0), new Date(x1)]);
     
-    // Filter data based on brush selection
-    const selectedItems = brushData
-      .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
-      .map(item => item.originalData);
+    // We need to handle filtering differently for groupBy charts since data structure is different
+    const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
+    
+    if (hasGroupBy) {
+      // For groupBy, we need to filter the original data by x value
+      // We'll create a set of x values that fall within the brush range
+      const selectedBrushXValues = new Set<string | null>();
       
-    setFilteredData(selectedItems);
+      brushData
+        .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
+        .forEach(item => {
+          // Get the x value from the original data
+          if (item.originalData) {
+            const xValue = item.originalData[xKey];
+            if (xValue !== undefined && xValue !== null) {
+              selectedBrushXValues.add(String(xValue));
+            }
+          }
+        });
+      
+      console.log('Selected x values in brush range:', selectedBrushXValues.size);
+      
+      // Now filter the original data to only include items with x values in our set
+      const filteredItems = data.filter(item => {
+        const itemXValue = String(item[xKey]);
+        return selectedBrushXValues.has(itemXValue);
+      });
+      
+      console.log('Filtered data for groupBy chart:', filteredItems.length);
+      setFilteredData(filteredItems);
+    } else {
+      // Standard filtering for non-groupBy charts
+      const selectedBrushItems = brushData
+        .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
+        .map(item => item.originalData)
+        .filter(item => item !== null);
+        
+      console.log('Filtered data after brush:', selectedBrushItems.length);
+      setFilteredData(selectedBrushItems);
+    }
     
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
-  }, [isBrushActive, brushData]);
+  }, [isBrushActive, brushData, chartConfig.dataMapping.groupBy, data, xKey]);
   
   // Handle modal brush change
   const handleModalBrushChange = useCallback((domain: any) => {
     if (!domain) {
       if (isModalBrushActive) {
         setModalBrushDomain(null);
-       
-        setModalFilteredData([]);
+        setIsModalBrushActive(false);
+        setModalFilteredData([]); // Reset modal filtered data
       }
       return;
     }
     
     const { x0, x1 } = domain;
+    console.log('Modal brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update modal brush domain
     setModalBrushDomain([new Date(x0), new Date(x1)]);
     
-    // Filter data based on brush selection
-    const selectedItems = brushData
-      .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
-      .map(item => item.originalData);
+    // We need to handle filtering differently for groupBy charts since data structure is different
+    const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
+    
+    if (hasGroupBy) {
+      // For groupBy, we need to filter the original data by x value
+      // We'll create a set of x values that fall within the brush range
+      const selectedBrushXValues = new Set<string | null>();
       
-    setModalFilteredData(selectedItems);
+      brushData
+        .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
+        .forEach(item => {
+          // Get the x value from the original data
+          if (item.originalData) {
+            const xValue = item.originalData[xKey];
+            if (xValue !== undefined && xValue !== null) {
+              selectedBrushXValues.add(String(xValue));
+            }
+          }
+        });
+      
+      console.log('Selected x values in modal brush range:', selectedBrushXValues.size);
+      
+      // Now filter the original data to only include items with x values in our set
+      const filteredItems = data.filter(item => {
+        const itemXValue = String(item[xKey]);
+        return selectedBrushXValues.has(itemXValue);
+      });
+      
+      console.log('Filtered modal data for groupBy chart:', filteredItems.length);
+      setModalFilteredData(filteredItems);
+    } else {
+      // Standard filtering for non-groupBy charts
+      const selectedBrushItems = brushData
+        .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
+        .map(item => item.originalData)
+        .filter(item => item !== null);
+      
+      console.log('Filtered data after modal brush:', selectedBrushItems.length);
+      setModalFilteredData(selectedBrushItems);
+    }
     
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
-  }, [isModalBrushActive, brushData]);
+  }, [isModalBrushActive, brushData, chartConfig.dataMapping.groupBy, data, xKey]);
 
   // Update legend items when chart data changes
   useEffect(() => {
@@ -962,9 +1342,22 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     tooltip, fieldColors, fieldTypes, formatTickValue, modalChartRef
   ]);
 
-  // Render the brush with proper shape reflecting bar values
+  // Render the brush with proper shape reflecting data values
   const renderBrushArea = useCallback((modalView = false) => {
     if (!brushData || brushData.length === 0) return null;
+    
+    // For chart without filters, we need to customize the brush path
+    const isChartWithoutFilters = 
+      !filterValues || Object.keys(filterValues).length === 0;
+    
+    // Check if this chart has groupBy configuration
+    const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
+    
+    // Calculate padding to prevent line from extending beyond brush area
+    const padding = isChartWithoutFilters ? -0.5 : 0;
+    
+    // Calculate max value for brush scaling
+    const maxBrushValue = Math.max(...brushData.map(d => d.value || 0), 1);
     
     return (
       <div className="h-[15%] w-full mt-2">
@@ -975,21 +1368,39 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           onClearBrush={() => {
             if (modalView) {
               setModalBrushDomain(null);
-              setIsModalBrushActive(true); // Keep active but reset domain
-              setModalFilteredData(data); // Reset to full dataset
+              setIsModalBrushActive(false);
+              setModalFilteredData([]); // Reset to full dataset
             } else {
               setBrushDomain(null);
-              setIsBrushActive(true); // Keep active but reset domain
-              setFilteredData(data); // Reset to full dataset
+              setIsBrushActive(false);
+              setFilteredData([]); // Reset to full dataset
             }
           }}
           getDate={(d) => d.date}
-          getValue={(d) => d.value}
-          lineColor="#60a5fa"
-          margin={{ top: 0, right: 15, bottom: modalView ? 10 : 20, left: 40 }}
+          getValue={(d) => {
+            // Ensure we have a valid value that's visible
+            const val = d.value || 0;
+            
+            // For grouped data, ensure line doesn't touch the base
+            if (hasGroupBy) {
+              // Make sure values are visible even if they're small
+              return Math.max(val, maxBrushValue * 0.05);
+            }
+            
+            // For charts without filters or non-grouped charts
+            if (isChartWithoutFilters) {
+              // For simple charts, ensure the line is visible
+              return Math.max(val, maxBrushValue * 0.05);
+            }
+            
+            // Standard value handling for regular charts
+            return Math.max(val, maxBrushValue * 0.05);
+          }}
+          lineColor={hasGroupBy ? "#60a5fa" : (isChartWithoutFilters ? "#3b82f6" : "#60a5fa")} // Brighter blue for simple charts
+          margin={{ top: 0, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
-          curveType="catmullRom"
-          
+          curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
+          strokeWidth={hasGroupBy ? 2 : 1.5}
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
@@ -997,7 +1408,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   }, [
     brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange,
     setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain,
-    setIsBrushActive, setFilteredData, data, modalFilterValues, filterValues
+    setIsBrushActive, setFilteredData, chartConfig.dataMapping.groupBy, filterValues, modalFilterValues
   ]);
 
   // Render the chart with brush

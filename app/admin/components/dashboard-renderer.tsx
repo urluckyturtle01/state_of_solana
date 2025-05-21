@@ -46,6 +46,7 @@ interface Legend {
   label: string;
   color: string;
   value?: number;
+  shape?: 'circle' | 'square';
 }
 
 // Increase cache duration to 30 minutes for better performance
@@ -1003,6 +1004,30 @@ export default function DashboardRenderer({
     }));
   };
 
+  // Add function to determine if a field is rendered as a line
+  const isLineType = (chart: ChartConfig, fieldName: string): boolean => {
+    if (!chart || !chart.dataMapping || !chart.dataMapping.yAxis) return false;
+    
+    // For MultiSeriesLineBarChart, check YAxisConfig
+    if (chart.chartType === 'bar' || chart.chartType === 'line') {
+      const yAxis = chart.dataMapping.yAxis;
+      
+      if (Array.isArray(yAxis)) {
+        // Find the matching field in the array
+        const field = yAxis.find(f => typeof f === 'string' ? f === fieldName : f.field === fieldName);
+        
+        // Check if it's a YAxisConfig with type='line'
+        return typeof field !== 'string' && field?.type === 'line';
+      } else if (typeof yAxis !== 'string') {
+        // Single YAxisConfig
+        return yAxis.field === fieldName && yAxis.type === 'line';
+      }
+    }
+    
+    // Default to false (bar charts, etc)
+    return chart.chartType === 'line';
+  };
+
   // Generate legends for a chart based on its data and configuration
   const updateLegends = (chartId: string, data: any[]) => {
     const chart = charts.find(c => c.id === chartId);
@@ -1023,7 +1048,7 @@ export default function DashboardRenderer({
     const isNewColorMap = Object.keys(colorMap).length === 0;
     
     // Different legend generation based on chart type
-    let chartLegends: Legend[] = [];
+    let chartLegends: (Legend & { shape?: 'circle' | 'square' })[] = [];
     // Track new labels to ensure we keep consistent order
     const newLabels: string[] = [];
     
@@ -1040,6 +1065,11 @@ export default function DashboardRenderer({
 
     // A chart is a valid stacked chart if it's configured as stacked AND has a groupBy field that exists in the data
     const isValidStackedChart = isStackedConfig && hasGroupByField && groupByFieldExists;
+    
+    // Check if we have a groupBy field with regular bar/line chart (not stacked)
+    // This is important for MultiSeriesLineBarChart with groupBy
+    const hasGroupByWithRegularChart = !isStackedConfig && hasGroupByField && groupByFieldExists && 
+                                      (chart.chartType === 'bar' || chart.chartType === 'line');
 
     if (isDualAxis && chart.dualAxisConfig) {
       console.log("Processing as dual axis chart");
@@ -1085,15 +1115,18 @@ export default function DashboardRenderer({
         return {
           label: `${fieldName}`,
           color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
-          value: fieldTotals[field] || 0
+          value: fieldTotals[field] || 0,
+          // Determine shape based on axis (typically lines for right axis)
+          shape: isRightAxis ? 'circle' : 'square'
         };
       });
     }
     // First, we need to determine if this is truly a stacked chart with valid data
-    else if (isValidStackedChart) {
-      console.log("Processing as valid stacked chart with group by:", groupField);
+    // OR a regular chart with groupBy - both need to display the group items in legends
+    else if (isValidStackedChart || hasGroupByWithRegularChart) {
+      console.log("Processing as chart with group by:", groupField);
       
-      // For stacked charts, always use the group by field values for legends
+      // Always use the group by field values for legends when groupBy is present
       // Get unique groups from the data
       const uniqueGroups = Array.from(new Set(data.map(item => item[groupField])));
       console.log("Unique groups found:", uniqueGroups);
@@ -1142,6 +1175,13 @@ export default function DashboardRenderer({
         });
       }
       
+      // Check if we should show line shape for some groups (for MultiSeriesLineBarChart with groupBy)
+      const shouldUseLineShape = !isStackedConfig && 
+        Array.isArray(chart.dataMapping.yAxis) && 
+        chart.dataMapping.yAxis.length === 1 && 
+        typeof chart.dataMapping.yAxis[0] !== 'string' && 
+        chart.dataMapping.yAxis[0].type === 'line';
+      
       // Now create legend items using the color map
       chartLegends = uniqueGroups
         .filter(group => group !== null && group !== undefined)
@@ -1150,7 +1190,9 @@ export default function DashboardRenderer({
           return {
             label: groupStr,
             color: colorMap[groupStr] || getColorByIndex(Object.keys(colorMap).length),
-            value: groupTotals[groupStr] || 0
+            value: groupTotals[groupStr] || 0,
+            // Use circle shape for line type displays, determined by parent chart config
+            shape: shouldUseLineShape ? 'circle' : 'square'
           };
         });
     }
@@ -1203,7 +1245,9 @@ export default function DashboardRenderer({
         return {
           label,
           color: colorMap[label] || getColorByIndex(index),
-          value
+          value,
+          // Pie charts always use square/block shape
+          shape: 'square'
         };
       });
       
@@ -1255,10 +1299,14 @@ export default function DashboardRenderer({
               colorMap[label] = getColorByIndex(index);
             }
             
+            // Determine if this field should be rendered as a line
+            const isLine = isLineType(chart, field);
+            
             return {
               label,
               color: colorMap[label] || getColorByIndex(index),
-              value: total
+              value: total,
+              shape: isLine ? 'circle' : 'square'
             };
           });
         } else {
@@ -1277,10 +1325,14 @@ export default function DashboardRenderer({
             colorMap[label] = getColorByIndex(0);
           }
           
+          // Determine if this field should be rendered as a line
+          const isLine = isLineType(chart, yFieldName);
+          
           chartLegends = [{
             label,
             color: colorMap[label] || getColorByIndex(0),
-            value: total
+            value: total,
+            shape: isLine ? 'circle' : 'square'
           }];
         }
       } else {
@@ -1299,7 +1351,9 @@ export default function DashboardRenderer({
             return {
               label,
               color: colorMap[label] || getColorByIndex(index),
-              value: Number(item[yAxisFields[0]]) || 0
+              value: Number(item[yAxisFields[0]]) || 0,
+              // Bar chart series are always squares
+              shape: chart.chartType === 'line' ? 'circle' : 'square'
             };
           });
       }
@@ -1564,9 +1618,9 @@ export default function DashboardRenderer({
                 legends[chart.id].map(legend => (
                     <LegendItem 
                       key={legend.label}
-                    label={truncateLabel(legend.label)} 
+                      label={truncateLabel(legend.label)} 
                       color={legend.color} 
-                      shape="square"
+                      shape={legend.shape || 'square'}
                       tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
                     />
                 ))

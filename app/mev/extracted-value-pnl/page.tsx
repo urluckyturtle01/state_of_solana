@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function StablecoinLiquidityVelocityPage() {
+export default function MevExtractedValuePnlPage() {
   return (
     <div className="space-y-6">
       <Suspense fallback={<ChartLoading />}>
         <DashboardRenderer 
-          pageId="liquidity-velocity" 
+          pageId="mev-extracted-value-pnl" 
           enableCaching={true}
         />
       </Suspense>

@@ -96,6 +96,7 @@ export default function ChartCreatorPage() {
     { id: 'overview', name: 'Overview', icon: 'home' },
     { id: 'dex', name: 'DEX', icon: 'chart-bar' },
     { id: 'rev', name: 'REV', icon: 'currency-dollar' },
+    { id: 'mev', name: 'MEV', icon: 'currency-dollar' },
     { id: 'stablecoins', name: 'Stablecoins', icon: 'coin' },
     { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' }
   ];
@@ -250,6 +251,11 @@ export default function ChartCreatorPage() {
           { id: 'issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
           { id: 'total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' },
           { id: 'breakdown', name: 'Breakdown', path: '/rev/breakdown' }
+        ]);
+        break;
+      case 'mev':
+        setAvailablePages([
+          { id: 'summary', name: 'Summary', path: '/mev/summary' }
         ]);
         break;
       case 'stablecoins':
@@ -1580,30 +1586,16 @@ export default function ChartCreatorPage() {
             )}
           </div>
           
-          {formData.isStacked && !useMultipleFields.yAxis && (
-            <FormInput
-              id="dataMapping.groupBy"
-              label="Group By Field"
-              value={formData.dataMapping.groupBy || ''}
-              onChange={(e) => handleInputChange('dataMapping.groupBy', e.target.value)}
-              placeholder="E.g., platform"
-              required
-              error={touched['dataMapping.groupBy'] ? errors['dataMapping.groupBy'] : undefined}
-              helpText="Field to group data by (required for stacked charts with a single Y-axis field)"
-            />
-          )}
-          
-          {formData.isStacked && useMultipleFields.yAxis && (
-            <FormInput
-              id="dataMapping.groupBy"
-              label="Group By Field (Optional)"
-              value={formData.dataMapping.groupBy || ''}
-              onChange={(e) => handleInputChange('dataMapping.groupBy', e.target.value)}
-              placeholder="E.g., platform"
-              error={touched['dataMapping.groupBy'] ? errors['dataMapping.groupBy'] : undefined}
-              helpText="Optional field to further group data (not required when using multiple Y-axis fields)"
-            />
-          )}
+          {/* Remove the conditional for stacked charts and always show the GroupBy field */}
+          <FormInput
+            id="dataMapping.groupBy"
+            label="Group By Field"
+            value={formData.dataMapping.groupBy || ''}
+            onChange={(e) => handleInputChange('dataMapping.groupBy', e.target.value)}
+            placeholder="E.g., platform, category, chain"
+            error={touched['dataMapping.groupBy'] ? errors['dataMapping.groupBy'] : undefined}
+            helpText={formData.isStacked ? "Field to group data by (useful for stacked charts to create segments)" : "Optional field to group and segment your data"}
+          />
           
           {/* Filter Configuration Section */}
           <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
