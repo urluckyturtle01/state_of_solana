@@ -42,7 +42,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Main content - adjusted for mobile/desktop */}
-      <main className={`flex-1 ${isMobile ? 'mt-14 p-4' : 'ml-48 p-8'} bg-gradient-to-br from-black to-gray-950 overflow-auto w-full`}>
+      <main className={`flex-1 ${isMobile ? 'mt-18 p-4' : 'ml-48 p-8'} bg-gradient-to-br from-black to-gray-950 overflow-auto w-full`}>
         <div className="w-full mx-auto">
           {children}
         </div>

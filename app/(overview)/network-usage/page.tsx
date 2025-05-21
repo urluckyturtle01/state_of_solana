@@ -1,10 +1,24 @@
 "use client";
+import React, { Suspense } from 'react';
 import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
+import Loader from "@/app/components/shared/Loader";
+
+// Create a loading component for Suspense fallback
+const ChartLoading = () => (
+  <div className="w-full h-[500px] flex items-center justify-center">
+    <Loader size="md" />
+  </div>
+);
 
 export default function NetworkUsagePage() {
   return (
     <div className="space-y-6">
-      <DashboardRenderer pageId="network-usage" />
+      <Suspense fallback={<ChartLoading />}>
+        <DashboardRenderer 
+          pageId="network-usage" 
+          enableCaching={true}
+        />
+      </Suspense>
     </div>
   );
 } 
