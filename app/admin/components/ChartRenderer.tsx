@@ -819,13 +819,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     );
   }
 
-  if (!data.length) {
-    return (
-      <div className=" p-4 rounded-md">
-        <p className="text-gray-800">No data available for this chart. API returned empty dataset.</p>
-      </div>
-    );
-  }
+  
 
   // Render expanded modal view if isExpanded is true
   if (isExpanded) {

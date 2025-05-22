@@ -52,6 +52,9 @@ const CounterForm: React.FC<CounterFormProps> = ({
   const [testLoading, setTestLoading] = useState<boolean>(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
+  // Add state for auto-calculating trend
+  const [autoCalculateTrend, setAutoCalculateTrend] = useState<boolean>(false);
+
   // Determine initial menu based on page when form loads with initialData
   useEffect(() => {
     if (initialData?.page) {
@@ -169,6 +172,8 @@ const CounterForm: React.FC<CounterFormProps> = ({
         trendConfig: initialData.trendConfig,
       });
       setShowTrendConfig(!!initialData.trendConfig);
+      // Set autoCalculateTrend to false when initialData changes
+      setAutoCalculateTrend(false);
     }
   }, [initialData]);
 
@@ -230,6 +235,34 @@ const CounterForm: React.FC<CounterFormProps> = ({
       setFormData(prevData => ({
         ...prevData,
         trendConfig: undefined,
+      }));
+      // Reset auto-calculate when hiding trend config
+      setAutoCalculateTrend(false);
+    }
+  };
+
+  // Toggle auto-calculate trend
+  const toggleAutoCalculateTrend = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setAutoCalculateTrend(checked);
+    
+    if (checked) {
+      // When auto-calculate is enabled, set valueField to 'auto'
+      setFormData(prevData => ({
+        ...prevData,
+        trendConfig: {
+          ...prevData.trendConfig!,
+          valueField: 'auto_calculate',
+        },
+      }));
+    } else {
+      // When auto-calculate is disabled, reset valueField
+      setFormData(prevData => ({
+        ...prevData,
+        trendConfig: {
+          ...prevData.trendConfig!,
+          valueField: '',
+        },
       }));
     }
   };
@@ -321,6 +354,25 @@ const CounterForm: React.FC<CounterFormProps> = ({
     try {
       // Save counter config
       const savedConfig = await saveCounterConfig(formData);
+      
+      // Clear any caches for this page to ensure counter appears
+      if (typeof window !== 'undefined' && formData.page) {
+        try {
+          // Clear localStorage cache for this page
+          localStorage.removeItem(`counters_page_${formData.page}`);
+          console.log(`Cleared localStorage cache for page ${formData.page}`);
+          
+          // Also clear session storage if it exists
+          sessionStorage.removeItem(`counters_page_${formData.page}`);
+          
+          // Force browser to reload data by setting a flag
+          localStorage.setItem('counters_need_refresh', 'true');
+          localStorage.setItem('counters_refreshed_page', formData.page);
+          localStorage.setItem('counters_refresh_time', Date.now().toString());
+        } catch (e) {
+          console.warn('Error clearing cache:', e);
+        }
+      }
       
       // Call onSubmit callback if provided
       if (onSubmit) {
@@ -598,36 +650,58 @@ const CounterForm: React.FC<CounterFormProps> = ({
           </div>
           
           {showTrendConfig && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-6 pt-2">
-              <div>
-                <label htmlFor="trendValueField" className="block text-sm font-medium text-gray-400">
-                  Trend Value Field
-                </label>
+            <div className="grid grid-cols-1 gap-4 ml-6 pt-2">
+              {/* Auto calculate option */}
+              <div className="flex items-center mb-2">
                 <input
-                  type="text"
-                  id="trendValueField"
-                  name="valueField"
-                  value={formData.trendConfig?.valueField || ''}
-                  onChange={handleTrendConfigChange}
-                  className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="percent_change"
-                  required={showTrendConfig}
+                  type="checkbox"
+                  id="autoCalculateTrend"
+                  checked={autoCalculateTrend}
+                  onChange={toggleAutoCalculateTrend}
+                  className="mr-2 h-4 w-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500"
                 />
+                <label htmlFor="autoCalculateTrend" className="text-sm font-medium text-gray-400">
+                  Auto calculate trend from previous value
+                </label>
               </div>
               
-              <div>
-                <label htmlFor="trendLabel" className="block text-sm font-medium text-gray-400">
-                  Trend Label
-                </label>
-                <input
-                  type="text"
-                  id="trendLabel"
-                  name="label"
-                  value={formData.trendConfig?.label || 'vs. previous period'}
-                  onChange={handleTrendConfigChange}
-                  className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="vs. previous period"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="trendValueField" className="block text-sm font-medium text-gray-400">
+                    Trend Value Field
+                  </label>
+                  <input
+                    type="text"
+                    id="trendValueField"
+                    name="valueField"
+                    value={autoCalculateTrend ? 'auto_calculate' : formData.trendConfig?.valueField || ''}
+                    onChange={handleTrendConfigChange}
+                    className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder={autoCalculateTrend ? "Auto calculated" : "percent_change"}
+                    required={showTrendConfig && !autoCalculateTrend}
+                    disabled={autoCalculateTrend}
+                  />
+                  {autoCalculateTrend && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Trend will be automatically calculated from previous values in the data
+                    </p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="trendLabel" className="block text-sm font-medium text-gray-400">
+                    Trend Label
+                  </label>
+                  <input
+                    type="text"
+                    id="trendLabel"
+                    name="label"
+                    value={formData.trendConfig?.label || 'vs. previous period'}
+                    onChange={handleTrendConfigChange}
+                    className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="vs. previous period"
+                  />
+                </div>
               </div>
             </div>
           )}

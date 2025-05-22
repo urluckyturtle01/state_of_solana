@@ -1,5 +1,6 @@
 import { ChartConfig, ChartFormData } from './types';
 import { CounterConfig } from './types';
+import { TableConfig } from './types';
 
 // Generate a unique ID for a new chart
 export function generateChartId(): string {
@@ -624,14 +625,130 @@ async function safeFetch(url: string, options?: RequestInit): Promise<Response> 
 }
 
 /**
- * Get all counter configs for a specific page
+ * Get all counter configurations for a specific page
  * @param pageId ID of the page to get counters for
  * @returns Promise with array of counter configurations
  */
 export const getCounterConfigsByPage = async (pageId: string): Promise<CounterConfig[]> => {
   try {
-    // Check browser localStorage for counter configs
+    // Use performance monitoring
+    const startTime = performance.now();
+    
+    // Check if we need to force a refresh (flag set by CounterForm)
+    const needsRefresh = typeof window !== 'undefined' && localStorage.getItem('counters_need_refresh') === 'true';
+    const refreshedPage = typeof window !== 'undefined' && localStorage.getItem('counters_refreshed_page');
+    
+    // Initialize local cache variable
+    let localCachedCounters: CounterConfig[] = [];
+    
+    // Skip cache if we need a refresh for this specific page
+    if (needsRefresh && refreshedPage === pageId) {
+      console.log(`Force refreshing counters for page ${pageId} due to new counter creation`);
+    } else {
+      // Check local storage cache first for instant display
+      if (typeof window !== 'undefined') {
+        try {
+          const localCache = localStorage.getItem(`counters_page_${pageId}`);
+          if (localCache) {
+            const cachedData = JSON.parse(localCache);
+            if (cachedData.expires > Date.now()) {
+              console.log(`Using local cache for counters on page ${pageId}`);
+              localCachedCounters = cachedData.counters;
+              
+              // If we're not forcing a refresh, return the cached data
+              if (!needsRefresh) {
+                return localCachedCounters;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Error reading from local cache:', e);
+        }
+      }
+    }
+    
+    // Use the optimized API endpoint with caching enabled
+    const response = await fetch(`/api/counters?page=${encodeURIComponent(pageId)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Priority': 'high',
+      },
+      // Skip cache completely if refreshing
+      cache: needsRefresh ? 'no-store' : 'force-cache',
+      next: { revalidate: 30 } // Revalidate every 30 seconds
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      const fetchTime = performance.now() - startTime;
+      console.log(`Retrieved ${result.counters.length} counters for page ${pageId} from API (${fetchTime.toFixed(2)}ms) - Source: ${result.source || 'unknown'}`);
+      
+      // Clear refresh flags if this was the page that needed refreshing
+      if (needsRefresh && refreshedPage === pageId) {
+        try {
+          localStorage.removeItem('counters_need_refresh');
+          localStorage.removeItem('counters_refreshed_page');
+          localStorage.removeItem('counters_refresh_time');
+          console.log(`Cleared refresh flags after successfully retrieving counters for ${pageId}`);
+        } catch (e) {
+          console.warn('Error clearing refresh flags:', e);
+        }
+      }
+      
+      // Update local storage cache for next time
+      if (typeof window !== 'undefined' && result.counters.length > 0) {
+        try {
+          localStorage.setItem(`counters_page_${pageId}`, JSON.stringify({
+            counters: result.counters,
+            expires: Date.now() + (60 * 1000), // 1-minute cache
+            timestamp: Date.now()
+          }));
+        } catch (e) {
+          console.warn('Error writing to local cache:', e);
+        }
+      }
+      
+      return result.counters || [];
+    }
+    
+    console.warn('API request failed, using local cache or localStorage');
+    
+    // Use our local cache if API fails but we have cached data
+    if (localCachedCounters.length > 0) {
+      console.log(`Using ${localCachedCounters.length} counters from local cache as fallback`);
+      return localCachedCounters;
+    }
+    
+    // Fall back to localStorage if API fails and no local cache
     if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Filter counters by page
+      const pageCounters = counters.filter(counter => counter.page === pageId);
+      console.log(`Using ${pageCounters.length} counters from localStorage as last resort`);
+      return pageCounters;
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('Error getting counters for page:', error);
+    
+    // Try our local cache first if we have it
+    if (typeof window !== 'undefined') {
+      try {
+        const localCache = localStorage.getItem(`counters_page_${pageId}`);
+        if (localCache) {
+          const cachedData = JSON.parse(localCache);
+          console.log(`Using local cache due to error`);
+          return cachedData.counters || [];
+        }
+      } catch (e) {
+        console.warn('Error reading from local cache:', e);
+      }
+      
+      // Fall back to legacy localStorage as last resort
       const storedCounters = localStorage.getItem('counterConfigs');
       const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
       
@@ -640,14 +757,11 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
     }
     
     return [];
-  } catch (error) {
-    console.error('Error getting counters for page:', error);
-    return [];
   }
 };
 
 /**
- * Save a counter configuration
+ * Save a counter configuration to S3 and localStorage as backup
  * @param counterConfig The counter configuration to save
  * @returns Promise with the saved counter configuration
  */
@@ -659,8 +773,29 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
       ...counterConfig,
       updatedAt: now,
     };
+
+    // If this is a new counter (no createdAt), set it now
+    if (!counterConfig.createdAt) {
+      counterWithTimestamps.createdAt = now;
+    }
     
-    // Check browser localStorage for existing counter configs
+    // First try to save to the API (S3)
+    const response = await fetch('/api/counters', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(counterWithTimestamps),
+    });
+
+    if (!response.ok) {
+      console.warn('API save failed, falling back to localStorage');
+      throw new Error('API save failed');
+    }
+
+    console.log(`Counter saved to S3 successfully: ${counterConfig.id}`);
+    
+    // Also save to localStorage as backup (and for offline support)
     if (typeof window !== 'undefined') {
       const storedCounters = localStorage.getItem('counterConfigs');
       const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
@@ -672,11 +807,43 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
         // Update existing counter
         counters[existingIndex] = counterWithTimestamps;
       } else {
-        // Add as new counter with createdAt
-        counters.push({
-          ...counterWithTimestamps,
-          createdAt: now
-        });
+        // Add as new counter
+        counters.push(counterWithTimestamps);
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('counterConfigs', JSON.stringify(counters));
+    }
+    
+    return counterWithTimestamps;
+  } catch (error) {
+    console.error('Error saving counter config:', error);
+    
+    // Fall back to localStorage only if API call fails
+    if (typeof window !== 'undefined') {
+      const now = new Date().toISOString();
+      const counterWithTimestamps = {
+        ...counterConfig,
+        updatedAt: now,
+      };
+
+      // If this is a new counter (no createdAt), set it now
+      if (!counterConfig.createdAt) {
+        counterWithTimestamps.createdAt = now;
+      }
+      
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Find the index of the counter if it exists
+      const existingIndex = counters.findIndex(c => c.id === counterConfig.id);
+      
+      if (existingIndex >= 0) {
+        // Update existing counter
+        counters[existingIndex] = counterWithTimestamps;
+      } else {
+        // Add as new counter
+        counters.push(counterWithTimestamps);
       }
       
       // Save to localStorage
@@ -685,9 +852,6 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
       return counterWithTimestamps;
     }
     
-    return counterWithTimestamps;
-  } catch (error) {
-    console.error('Error saving counter config:', error);
     throw new Error('Failed to save counter configuration');
   }
 };
@@ -699,7 +863,38 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
  */
 export const deleteCounterConfig = async (counterId: string): Promise<boolean> => {
   try {
-    // Check browser localStorage for counter configs
+    // First try to delete from the API (S3)
+    const response = await fetch(`/api/counters?id=${encodeURIComponent(counterId)}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('API delete failed, falling back to localStorage');
+      throw new Error('API delete failed');
+    }
+
+    console.log(`Counter deleted from S3 successfully: ${counterId}`);
+    
+    // Also delete from localStorage
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
+      
+      // Filter out the counter to delete
+      const filteredCounters = counters.filter(counter => counter.id !== counterId);
+      
+      // Save back to localStorage
+      localStorage.setItem('counterConfigs', JSON.stringify(filteredCounters));
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting counter config:', error);
+    
+    // Fall back to localStorage only if API call fails
     if (typeof window !== 'undefined') {
       const storedCounters = localStorage.getItem('counterConfigs');
       const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
@@ -714,9 +909,6 @@ export const deleteCounterConfig = async (counterId: string): Promise<boolean> =
     }
     
     return false;
-  } catch (error) {
-    console.error('Error deleting counter config:', error);
-    return false;
   }
 };
 
@@ -726,7 +918,22 @@ export const deleteCounterConfig = async (counterId: string): Promise<boolean> =
  */
 export const getAllCounterConfigs = async (): Promise<CounterConfig[]> => {
   try {
-    // Check browser localStorage for counter configs
+    // First try to get counters from the API (S3)
+    const response = await fetch('/api/counters', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log(`Retrieved ${result.counters.length} counters from S3`);
+      return result.counters || [];
+    }
+    
+    console.warn('API request failed, falling back to localStorage');
+    // Fall back to localStorage if API fails
     if (typeof window !== 'undefined') {
       const storedCounters = localStorage.getItem('counterConfigs');
       return storedCounters ? JSON.parse(storedCounters) : [];
@@ -735,6 +942,247 @@ export const getAllCounterConfigs = async (): Promise<CounterConfig[]> => {
     return [];
   } catch (error) {
     console.error('Error getting all counter configs:', error);
+    
+    // Fall back to localStorage if API call throws an error
+    if (typeof window !== 'undefined') {
+      const storedCounters = localStorage.getItem('counterConfigs');
+      return storedCounters ? JSON.parse(storedCounters) : [];
+    }
+    
     return [];
+  }
+};
+
+/**
+ * Save a table configuration to S3 and localStorage as backup
+ * @param tableConfig The table configuration to save
+ * @returns Promise with the saved table configuration
+ */
+export const saveTableConfig = async (tableConfig: TableConfig): Promise<TableConfig> => {
+  try {
+    // Set createdAt if new table
+    const now = new Date().toISOString();
+    const tableWithTimestamps = {
+      ...tableConfig,
+      updatedAt: now,
+    };
+
+    // If this is a new table (no createdAt), set it now
+    if (!tableConfig.createdAt) {
+      tableWithTimestamps.createdAt = now;
+    }
+    
+    // First try to save to the API (S3)
+    const response = await fetch('/api/tables', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tableWithTimestamps),
+    });
+
+    if (!response.ok) {
+      console.warn('API save failed, falling back to localStorage');
+      throw new Error('API save failed');
+    }
+
+    console.log(`Table saved to S3 successfully: ${tableConfig.id}`);
+    
+    // Also save to localStorage as backup (and for offline support)
+    if (typeof window !== 'undefined') {
+      const storedTables = localStorage.getItem('tableConfigs');
+      const tables: TableConfig[] = storedTables ? JSON.parse(storedTables) : [];
+      
+      // Find the index of the table if it exists
+      const existingIndex = tables.findIndex(t => t.id === tableConfig.id);
+      
+      if (existingIndex >= 0) {
+        // Update existing table
+        tables[existingIndex] = tableWithTimestamps;
+      } else {
+        // Add as new table
+        tables.push(tableWithTimestamps);
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('tableConfigs', JSON.stringify(tables));
+    }
+    
+    return tableWithTimestamps;
+  } catch (error) {
+    console.error('Error saving table config:', error);
+    
+    // Fall back to localStorage only if API call fails
+    if (typeof window !== 'undefined') {
+      const now = new Date().toISOString();
+      const tableWithTimestamps = {
+        ...tableConfig,
+        updatedAt: now,
+      };
+
+      // If this is a new table (no createdAt), set it now
+      if (!tableConfig.createdAt) {
+        tableWithTimestamps.createdAt = now;
+      }
+      
+      const storedTables = localStorage.getItem('tableConfigs');
+      const tables: TableConfig[] = storedTables ? JSON.parse(storedTables) : [];
+      
+      // Find the index of the table if it exists
+      const existingIndex = tables.findIndex(t => t.id === tableConfig.id);
+      
+      if (existingIndex >= 0) {
+        // Update existing table
+        tables[existingIndex] = tableWithTimestamps;
+      } else {
+        // Add as new table
+        tables.push(tableWithTimestamps);
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('tableConfigs', JSON.stringify(tables));
+      
+      return tableWithTimestamps;
+    }
+    
+    throw new Error('Failed to save table configuration');
+  }
+};
+
+/**
+ * Delete a table configuration
+ * @param tableId The ID of the table to delete
+ * @returns Promise indicating success/failure
+ */
+export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
+  try {
+    const response = await fetch(`/api/tables/${tableId}`, {
+      method: 'DELETE',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to delete table: ${response.statusText}`);
+    }
+    
+    // Clear caches to ensure we don't show deleted tables
+    if (typeof window !== 'undefined') {
+      // Clear all tables cache
+      localStorage.removeItem('all_tables');
+      
+      // Clear page-specific caches
+      // We need to clear all page caches since we don't know which page the table belonged to
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('tables_page_')) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`Error deleting table ${tableId}:`, error);
+    return false;
+  }
+};
+
+/**
+ * Get all table configurations
+ * @returns Promise with an array of table configurations
+ */
+export const getAllTableConfigs = async (): Promise<TableConfig[]> => {
+  try {
+    // First try to get from localStorage
+    if (typeof window !== 'undefined') {
+      const storedTables = localStorage.getItem('all_tables');
+      if (storedTables) {
+        try {
+          const parsedTables = JSON.parse(storedTables);
+          return Array.isArray(parsedTables) ? parsedTables : [];
+        } catch (e) {
+          console.error('Error parsing stored tables:', e);
+        }
+      }
+    }
+    
+    // If not in localStorage, fetch from API
+    const response = await fetch('/api/tables');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch tables: ${response.statusText}`);
+    }
+    
+    const tables = await response.json();
+    
+    // Store in localStorage for future use
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('all_tables', JSON.stringify(tables));
+    }
+    
+    return tables;
+  } catch (error) {
+    console.error('Error fetching table configs:', error);
+    // Return an empty array as fallback
+    return [];
+  }
+};
+
+/**
+ * Get table configurations for a specific page
+ * @param pageId The page ID to filter by
+ * @returns Promise with an array of table configurations for the specified page
+ */
+export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig[]> => {
+  try {
+    console.log(`[DEBUG] Fetching tables for page ${pageId}`);
+    
+    // First try to get from localStorage
+    if (typeof window !== 'undefined') {
+      const key = `tables_page_${pageId}`;
+      const storedTables = localStorage.getItem(key);
+      if (storedTables) {
+        try {
+          console.log(`[DEBUG] Found tables in localStorage for page ${pageId}`);
+          const parsedTables = JSON.parse(storedTables);
+          return Array.isArray(parsedTables) ? parsedTables : [];
+        } catch (e) {
+          console.error('Error parsing stored tables:', e);
+        }
+      } else {
+        console.log(`[DEBUG] No tables found in localStorage for page ${pageId}`);
+      }
+    }
+    
+    // If not in localStorage, fetch from API
+    console.log(`[DEBUG] Fetching tables from API for page ${pageId}`);
+    const response = await fetch(`/api/tables?page=${pageId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch tables: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    const tables = result.tables || [];
+    console.log(`[DEBUG] API returned ${tables.length} tables for page ${pageId}`);
+    
+    // Store in localStorage for future use
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`tables_page_${pageId}`, JSON.stringify(tables));
+      console.log(`[DEBUG] Saved ${tables.length} tables to localStorage for page ${pageId}`);
+    }
+    
+    return tables;
+  } catch (error) {
+    console.error(`Error fetching tables for page ${pageId}:`, error);
+    
+    // Try to get all tables and filter
+    try {
+      console.log(`[DEBUG] Trying fallback: fetching all tables and filtering for page ${pageId}`);
+      const allTables = await getAllTableConfigs();
+      const pageTables = allTables.filter(table => table.page === pageId);
+      console.log(`[DEBUG] Fallback found ${pageTables.length} tables for page ${pageId}`);
+      return pageTables;
+    } catch (e) {
+      console.error('Error filtering all tables:', e);
+      return [];
+    }
   }
 }; 

@@ -1501,11 +1501,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                   </div>
                   
                   {/* Brush component - 15% height */}
-                  {brushData.length > 0 ? renderBrushArea(true) : (
-                    <div className="h-[15%] w-full flex items-center justify-center text-gray-500 text-sm">
-                      No brush data available
-                    </div>
-                  )}
+                  {brushData.length > 0 ? renderBrushArea(true) : (null)}
                 </div>
               </div>
               
@@ -1545,11 +1541,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             </ParentSize>
           </div>
           
-          {brushData.length > 0 ? renderBrushArea(false) : (
-            <div className="h-[15%] w-full flex items-center justify-center text-gray-500 text-sm">
-              No brush data available
-            </div>
-          )}
+          {brushData.length > 0 ? renderBrushArea(false) : (null)}
         </div>
       )}
     </>

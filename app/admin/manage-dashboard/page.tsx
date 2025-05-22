@@ -8,9 +8,12 @@ import {
   getChartConfigsByPage,
   getAllCounterConfigs,
   deleteCounterConfig,
-  getCounterConfigsByPage
+  getCounterConfigsByPage,
+  getAllTableConfigs,
+  deleteTableConfig,
+  getTableConfigsByPage
 } from '../utils';
-import { AVAILABLE_PAGES, ChartConfig, CounterConfig } from '../types';
+import { AVAILABLE_PAGES, ChartConfig, CounterConfig, TableConfig } from '../types';
 import Button from '../components/Button';
 import dynamic from 'next/dynamic';
 
@@ -20,6 +23,10 @@ const DashboardRenderer = dynamic(() => import('../components/dashboard-renderer
 });
 
 const CounterRenderer = dynamic(() => import('../components/CounterRenderer'), {
+  ssr: false,
+});
+
+const TableRenderer = dynamic(() => import('../components/TableRenderer'), {
   ssr: false,
 });
 
@@ -51,9 +58,10 @@ const formatYAxisValue = (yAxis: string | string[] | any[] | { field: string } |
 };
 
 export default function ManageDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'charts' | 'counters'>('charts');
+  const [activeTab, setActiveTab] = useState<'charts' | 'counters' | 'tables'>('charts');
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [counters, setCounters] = useState<CounterConfig[]>([]);
+  const [tables, setTables] = useState<TableConfig[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<string>('');
   const [selectedPage, setSelectedPage] = useState<string>('all');
   const [availablePages, setAvailablePages] = useState<Array<{id: string, name: string, path: string}>>([]);
@@ -148,8 +156,7 @@ export default function ManageDashboardPage() {
           
           // Ensure we're always setting an array, even if the API returns something else
           setCharts(Array.isArray(allCharts) ? allCharts : []);
-        } else {
-          // Load counters with the same filtering logic
+        } else if (activeTab === 'counters') {
           let allCounters;
           if (selectedPage === 'all' && !selectedMenu) {
             // All counters from all menus
@@ -168,13 +175,35 @@ export default function ManageDashboardPage() {
           
           // Ensure we're always setting an array
           setCounters(Array.isArray(allCounters) ? allCounters : []);
+        } else {
+          // Load tables with the same filtering logic
+          let allTables;
+          if (selectedPage === 'all' && !selectedMenu) {
+            // All tables from all menus
+            allTables = await getAllTableConfigs();
+          } else if (selectedPage === 'all' && selectedMenu) {
+            // All tables from selected menu
+            const menuTables = await getAllTableConfigs();
+            allTables = menuTables.filter(table => {
+              // Check if table page matches any page in the selected menu
+              return availablePages.some(page => page.id === table.page);
+            });
+          } else {
+            // Specific page tables
+            allTables = await getTableConfigsByPage(selectedPage);
+          }
+          
+          // Ensure we're always setting an array
+          setTables(Array.isArray(allTables) ? allTables : []);
         }
       } catch (error) {
         console.error(`Error loading ${activeTab}:`, error);
         if (activeTab === 'charts') {
           setCharts([]);
-        } else {
+        } else if (activeTab === 'counters') {
           setCounters([]);
+        } else {
+          setTables([]);
         }
       }
     };
@@ -183,8 +212,8 @@ export default function ManageDashboardPage() {
   }, [activeTab, selectedMenu, selectedPage, availablePages]);
 
   // Handle item deletion
-  const handleDeleteItem = async (id: string, type: 'chart' | 'counter') => {
-    const itemType = type === 'chart' ? 'chart' : 'counter';
+  const handleDeleteItem = async (id: string, type: 'chart' | 'counter' | 'table') => {
+    const itemType = type === 'chart' ? 'chart' : type === 'counter' ? 'counter' : 'table';
     if (window.confirm(`Are you sure you want to delete this ${itemType}?`)) {
       try {
         let success;
@@ -193,10 +222,15 @@ export default function ManageDashboardPage() {
           if (success) {
             setCharts(prev => prev.filter(chart => chart.id !== id));
           }
-        } else {
+        } else if (type === 'counter') {
           success = await deleteCounterConfig(id);
           if (success) {
             setCounters(prev => prev.filter(counter => counter.id !== id));
+          }
+        } else {
+          success = await deleteTableConfig(id);
+          if (success) {
+            setTables(prev => prev.filter(table => table.id !== id));
           }
         }
         
@@ -252,15 +286,19 @@ export default function ManageDashboardPage() {
           <p className="mt-2 text-sm text-gray-600">View, preview, and manage your analytics visualizations and counters</p>
         </div>
         <div className="flex space-x-3">
-          <Link href={activeTab === 'charts' ? "/admin/chart-creator" : "/admin/create-counter"}>
+          <Link href={activeTab === 'charts' 
+              ? "/admin/chart-creator" 
+              : activeTab === 'counters' 
+                ? "/admin/create-counter" 
+                : "/admin/table-creator"}>
             <Button variant="primary">
-              Create {activeTab === 'charts' ? 'Chart' : 'Counter'}
+              Create {activeTab === 'charts' ? 'Chart' : activeTab === 'counters' ? 'Counter' : 'Table'}
             </Button>
           </Link>
         </div>
       </div>
       
-      {/* Tabs for switching between charts and counters */}
+      {/* Tabs for switching between charts, counters, and tables */}
       <div className="border-b border-gray-800 mb-6">
         <div className="flex -mb-px">
           <button
@@ -275,12 +313,18 @@ export default function ManageDashboardPage() {
           >
             Counters
           </button>
+          <button
+            className={`pb-3 px-4 text-sm font-medium ${activeTab === 'tables' ? 'text-purple-400 border-b-2 border-purple-400' : 'text-gray-400 hover:text-gray-300'}`}
+            onClick={() => setActiveTab('tables')}
+          >
+            Tables
+          </button>
         </div>
       </div>
       
       {/* Filtering controls */}
       <div className="mb-6 p-4 bg-gray-800/40 rounded-lg border border-gray-800">
-        <h2 className="text-sm font-medium text-gray-300 mb-3">Filter {activeTab === 'charts' ? 'Charts' : 'Counters'}</h2>
+        <h2 className="text-sm font-medium text-gray-300 mb-3">Filter {activeTab === 'charts' ? 'Charts' : activeTab === 'counters' ? 'Counters' : 'Tables'}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="menuFilter" className="block text-xs text-gray-500 mb-1">Menu</label>
@@ -318,7 +362,7 @@ export default function ManageDashboardPage() {
         </div>
       </div>
       
-      {/* Display charts or counters based on active tab */}
+      {/* Display charts, counters, or tables based on active tab */}
       {activeTab === 'charts' ? (
         // Charts list
         <div className="space-y-4">
@@ -405,7 +449,7 @@ export default function ManageDashboardPage() {
             </div>
           )}
         </div>
-      ) : (
+      ) : activeTab === 'counters' ? (
         // Counters list
         <div className="space-y-4">
           {counters.length === 0 ? (
@@ -484,6 +528,84 @@ export default function ManageDashboardPage() {
                       <h4 className="text-sm font-medium text-gray-400 mb-3">Preview</h4>
                       <div className="bg-gray-900 rounded-md p-4">
                         <CounterRenderer counterConfig={counter} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        // Tables list
+        <div className="space-y-4">
+          {tables.length === 0 ? (
+            <div className="text-center p-8 bg-gray-800/30 rounded-lg border border-gray-800">
+              <p className="text-gray-400">No tables found matching the selected criteria.</p>
+              <Link href="/admin/table-creator">
+                <button className="mt-4 text-sm text-purple-400 hover:text-purple-300">
+                  Create your first table
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              {tables.map((table) => (
+                <div key={table.id} className="bg-gray-800/40 rounded-lg overflow-hidden border border-gray-800 transition-all">
+                  <div className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-medium text-white">{table.title}</h3>
+                        {table.description && (
+                          <p className="mt-1 text-sm text-gray-400">{table.description}</p>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => togglePreview(table.id)}
+                          className="text-sm text-gray-400 hover:text-gray-300"
+                        >
+                          {isPreviewOpen[table.id] ? 'Hide Preview' : 'Preview'}
+                        </button>
+                        <Link href={`/admin/table-creator?editId=${table.id}`}>
+                          <button className="text-sm text-purple-400 hover:text-purple-300">
+                            Edit
+                          </button>
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteItem(table.id, 'table')}
+                          className="text-sm text-red-400 hover:text-red-300"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="font-medium text-gray-400">Page:</span>{' '}
+                        <span className="text-gray-200">{table.page}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-400">Created:</span>{' '}
+                        <span className="text-gray-200">{table.createdAt ? new Date(table.createdAt).toLocaleDateString() : 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-400">API:</span>{' '}
+                        <span className="text-gray-200 truncate">{table.apiEndpoint}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-400">Columns:</span>{' '}
+                        <span className="text-gray-200">{table.columns?.length || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {isPreviewOpen[table.id] && (
+                    <div className="border-t border-gray-700 p-4">
+                      <h4 className="text-sm font-medium text-gray-400 mb-3">Preview</h4>
+                      <div className="bg-gray-900 rounded-md p-4">
+                        <TableRenderer tableConfig={table} />
                       </div>
                     </div>
                   )}

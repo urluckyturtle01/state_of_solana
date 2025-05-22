@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { CounterConfig, CounterVariant } from '../types';
+import { CounterConfig } from '../types';
 import Counter from '../../components/shared/Counter';
 
 // Define SVG icons for different counter types
@@ -109,6 +109,471 @@ interface CounterRendererProps {
   isLoading?: boolean;
 }
 
+// Add a global cache for counter data
+const COUNTER_DATA_CACHE: Record<string, {
+  data: any;
+  rawResponse: any;
+  timestamp: number;
+  expiresIn: number; // expiration time in ms
+}> = {};
+
+// Increase default cache duration to 1 hour
+const CACHE_DURATION = 60 * 60 * 1000;
+
+// Track active requests to prevent duplicate concurrent requests
+const ACTIVE_REQUESTS: Record<string, Promise<{ 
+  value: number; 
+  previousValue?: number; 
+  error?: string; 
+  rawResponse?: any 
+}>> = {};
+
+// Modified fetchData function with caching
+const fetchCounterData = async (
+  apiEndpoint: string,
+  apiKey?: string
+): Promise<{ value: number; previousValue?: number; error?: string; rawResponse?: any }> => {
+  try {
+    // Create a cache key from the endpoint and API key
+    const cacheKey = `${apiEndpoint}-${apiKey || ''}`;
+    
+    // Check if we have cached data that isn't expired
+    if (COUNTER_DATA_CACHE[cacheKey]) {
+      const cachedItem = COUNTER_DATA_CACHE[cacheKey];
+      const now = Date.now();
+      
+      // Use cached data if not expired
+      if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+        console.log(`Using cached data for counter with endpoint: ${apiEndpoint}`);
+        return {
+          ...cachedItem.data,
+          rawResponse: cachedItem.rawResponse
+        };
+      }
+    }
+    
+    // Check if this request is already in progress
+    if (cacheKey in ACTIVE_REQUESTS) {
+      console.log(`Request already in progress for ${apiEndpoint}, reusing promise`);
+      return ACTIVE_REQUESTS[cacheKey];
+    }
+    
+    // If no valid cache or active request, fetch fresh data
+    const url = new URL(apiEndpoint);
+    
+    // Add API key if provided
+    if (apiKey) {
+      // Check if the apiKey contains max_age parameter
+      const apiKeyValue = apiKey.trim();
+      
+      if (apiKeyValue.includes('&max_age=')) {
+        // Split by &max_age= and add each part separately
+        const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+        if (baseApiKey) {
+          url.searchParams.append('api_key', baseApiKey.trim());
+        }
+        if (maxAgePart) {
+          url.searchParams.append('max_age', maxAgePart.trim());
+        }
+      } else {
+        // Just a regular API key
+        url.searchParams.append('api_key', apiKeyValue);
+      }
+    }
+    
+    console.log(`Fetching data from: ${url.toString()}`);
+    const startTime = performance.now();
+    
+    // Create the fetch promise and store it in ACTIVE_REQUESTS
+    const fetchPromise = (async () => {
+      try {
+        const response = await fetch(url.toString(), { cache: 'no-store' });
+        const endTime = performance.now();
+        console.log(`Fetch completed in ${(endTime - startTime).toFixed(2)}ms`);
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Process the data based on the available format
+        // Extract rows depending on the API response format
+        let rows = [];
+        if (data?.query_result?.data?.rows) {
+          rows = data.query_result.data.rows;
+        } else if (Array.isArray(data)) {
+          rows = data;
+        } else if (data?.data && Array.isArray(data.data)) {
+          rows = data.data;
+        } else if (data?.rows && Array.isArray(data.rows)) {
+          rows = data.rows;
+        } else if (data?.results && Array.isArray(data.results)) {
+          rows = data.results;
+        } else if (data?.error) {
+          throw new Error(`API returned an error: ${data.error}`);
+        } else {
+          console.error('Unrecognized API response structure:', data);
+          throw new Error('API response does not have a recognized structure');
+        }
+        
+        // Use the first row from the API response and access the value using the valueField
+        if (rows.length === 0) {
+          throw new Error('API returned no data');
+        }
+        
+        // Get the row at the specified index (default to first row if not specified)
+        const rowIndex = 0; // We'll use the actual index from counterConfig when calling this function
+        const row = rows[rowIndex];
+        
+        const result = {
+          value: 0,
+          previousValue: undefined as number | undefined,
+        };
+        
+        // We'll extract the actual values when using this in the component
+        // This is just placeholder data to complete the function
+        if (row) {
+          // Default to first numeric property in the row if not specified
+          const numericKeys = Object.keys(row).filter(key => typeof row[key] === 'number');
+          if (numericKeys.length > 0) {
+            result.value = row[numericKeys[0]];
+          }
+        }
+        
+        // Store in cache for future use
+        COUNTER_DATA_CACHE[cacheKey] = {
+          data: result,
+          rawResponse: data,
+          timestamp: Date.now(),
+          expiresIn: CACHE_DURATION
+        };
+        
+        return {
+          ...result,
+          rawResponse: data
+        };
+      } finally {
+        // Clear the active request once it's completed (whether successful or failed)
+        delete ACTIVE_REQUESTS[cacheKey];
+      }
+    })();
+    
+    // Store the promise to reuse for concurrent requests
+    ACTIVE_REQUESTS[cacheKey] = fetchPromise;
+    
+    return fetchPromise;
+  } catch (error) {
+    console.error('Error fetching counter data:', error);
+    
+    // Try to use cached data as fallback if available, even if expired
+    const cacheKey = `${apiEndpoint}-${apiKey || ''}`;
+    if (COUNTER_DATA_CACHE[cacheKey]) {
+      console.log(`Using expired cached data as fallback for counter: ${apiEndpoint}`);
+      return {
+        ...COUNTER_DATA_CACHE[cacheKey].data,
+        rawResponse: COUNTER_DATA_CACHE[cacheKey].rawResponse
+      };
+    }
+    
+    return {
+      value: 0,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+};
+
+// Add a prefetch mechanism for common counter endpoints
+// This will start loading data even before components mount
+export const prefetchCounterData = (apiEndpoint: string, apiKey?: string) => {
+  if (!apiEndpoint) return;
+  
+  // Create a cache key
+  const cacheKey = `${apiEndpoint}-${apiKey || ''}`;
+  
+  // Only prefetch if not already in cache or active requests
+  if (!(cacheKey in COUNTER_DATA_CACHE) && !(cacheKey in ACTIVE_REQUESTS)) {
+    console.log(`Prefetching data for: ${apiEndpoint}`);
+    // Start the fetch but don't await it - just store the promise
+    fetchCounterData(apiEndpoint, apiKey).catch(err => {
+      console.error(`Error prefetching counter data: ${err.message}`);
+    });
+  }
+};
+
+// Fetch and process counter data with specific field mapping
+const fetchAndProcessCounter = async (counterConfig: CounterConfig): Promise<{
+  value: number;
+  previousValue?: number;
+  error?: string;
+}> => {
+  console.log("Processing counter with config:", {
+    title: counterConfig.title,
+    hasTrendConfig: !!counterConfig.trendConfig,
+    trendValueField: counterConfig.trendConfig?.valueField,
+    isAutoCalculate: counterConfig.trendConfig?.valueField === 'auto_calculate'
+  });
+  
+  try {
+    // Fast path: Check if data is already in cache to avoid unnecessary processing
+    const cacheKey = `${counterConfig.apiEndpoint}-${counterConfig.apiKey || ''}`;
+    const cachedItem = COUNTER_DATA_CACHE[cacheKey];
+    
+    if (cachedItem) {
+      const now = Date.now();
+      if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+        console.log(`Using cached processed data for counter: ${counterConfig.title}`);
+        
+        // Process the cached data directly to get value and trend
+        return processCounterData(counterConfig, cachedItem.rawResponse);
+      }
+    }
+    
+    // Get raw data from cache or initial fetch
+    const fetchResult = await fetchCounterData(counterConfig.apiEndpoint, counterConfig.apiKey);
+    
+    // If we already have an error, return it
+    if (fetchResult.error) {
+      return fetchResult;
+    }
+    
+    // Process the data
+    return processCounterData(counterConfig, fetchResult.rawResponse);
+  } catch (error) {
+    console.error('Error processing counter data:', error);
+    return {
+      value: 0,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+};
+
+// Separate function to process counter data
+const processCounterData = (counterConfig: CounterConfig, result: any): {
+  value: number;
+  previousValue?: number;
+  error?: string;
+} => {
+  try {
+    // Extract data based on API response format
+    let rows: any[] = [];
+    if (result?.query_result?.data?.rows) {
+      rows = result.query_result.data.rows;
+    } else if (Array.isArray(result)) {
+      rows = result;
+    } else if (result?.data && Array.isArray(result.data)) {
+      rows = result.data;
+    } else if (result?.rows && Array.isArray(result.rows)) {
+      rows = result.rows;
+    } else if (result?.results && Array.isArray(result.results)) {
+      rows = result.results;
+    } else {
+      throw new Error('API response does not have a recognized structure');
+    }
+    
+    if (rows.length === 0) {
+      throw new Error('No data returned from API');
+    }
+    
+    // Get the row at the specified index (default to first row if out of bounds)
+    const rowIndex = Math.min(counterConfig.rowIndex || 0, rows.length - 1);
+    const row = rows[rowIndex];
+    
+    if (!row) {
+      throw new Error(`No data found at row index ${counterConfig.rowIndex}`);
+    }
+    
+    // Extract specified value field
+    const rawValue = row[counterConfig.valueField];
+    if (rawValue === undefined || rawValue === null) {
+      throw new Error(`Field "${counterConfig.valueField}" not found in response data`);
+    }
+    
+    // Convert value to number or default to 0 if it's not a valid number
+    const value = Number(rawValue);
+    const numericValue = isNaN(value) ? 0 : value;
+    
+    // Extract trend value if configured
+    let previousValue: number | undefined = undefined;
+    if (counterConfig.trendConfig) {
+      // Handle auto-calculated trend
+      if (counterConfig.trendConfig.valueField === 'auto_calculate') {
+        console.log("Auto-calculating trend value from data");
+        // Try to find a previous data point to calculate trend
+        if (rows.length > 1) {
+          // Attempt to determine if there's a date field we can use for sorting
+          let dateField = null;
+          const possibleDateFields = ['date', 'timestamp', 'time', 'period', 'day', 'created_at', 'updated_at', 'createdAt', 'updatedAt'];
+          
+          // Check if any of the common date field names exist in the data
+          for (const field of possibleDateFields) {
+            if (row[field] !== undefined) {
+              dateField = field;
+              break;
+            }
+          }
+          
+          if (dateField) {
+            // Sort by date field to find previous entry
+            const sortedRows = [...rows].sort((a, b) => {
+              // Convert to date objects for comparison
+              const dateA = new Date(a[dateField]);
+              const dateB = new Date(b[dateField]);
+              return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+            });
+            
+            // Find current row index in sorted array
+            const currentIndex = sortedRows.findIndex(r => r[dateField] === row[dateField]);
+            if (currentIndex !== -1 && currentIndex + 1 < sortedRows.length) {
+              // Get previous row based on date
+              const previousRow = sortedRows[currentIndex + 1];
+              const previousValue = Number(previousRow[counterConfig.valueField]);
+              const currentValue = numericValue;
+              
+              // Calculate percentage change
+              if (!isNaN(previousValue) && previousValue !== 0) {
+                const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
+                console.log("Auto-calculated trend:", {
+                  currentValue, 
+                  previousValue, 
+                  percentChange,
+                  currentDate: row[dateField],
+                  previousDate: previousRow[dateField]
+                });
+                return {
+                  value: numericValue,
+                  previousValue: percentChange
+                };
+              }
+            }
+          } else {
+            // If no date field found, use row index as fallback
+            // Get previous row (be careful of the rowIndex)
+            if (rowIndex > 0 && rowIndex < rows.length) {
+              const previousRow = rows[rowIndex - 1];
+              const previousValue = Number(previousRow[counterConfig.valueField]);
+              const currentValue = numericValue;
+              
+              // Calculate percentage change
+              if (!isNaN(previousValue) && previousValue !== 0) {
+                const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
+                console.log("Auto-calculated trend using row index:", {
+                  currentValue, 
+                  previousValue, 
+                  percentChange,
+                  currentIndex: rowIndex,
+                  previousIndex: rowIndex - 1
+                });
+                return {
+                  value: numericValue,
+                  previousValue: percentChange
+                };
+              }
+            } else if (rows.length >= 2) {
+              // If the specified row is first or out of bounds, try to use adjacent rows if available
+              const currentRowIndex = Math.min(rowIndex, rows.length - 1);
+              // Use the next row as previous if we're at the first row
+              const previousRowIndex = (currentRowIndex === 0) ? 1 : Math.max(0, currentRowIndex - 1);
+              
+              const currentRow = rows[currentRowIndex];
+              const previousRow = rows[previousRowIndex];
+              
+              const currentValue = Number(currentRow[counterConfig.valueField]);
+              const previousValue = Number(previousRow[counterConfig.valueField]);
+              
+              // Calculate percentage change
+              if (!isNaN(previousValue) && previousValue !== 0 && !isNaN(currentValue)) {
+                const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
+                console.log("Auto-calculated trend using alternative rows:", {
+                  currentValue, 
+                  previousValue, 
+                  percentChange,
+                  currentIndex: currentRowIndex,
+                  previousIndex: previousRowIndex
+                });
+                return {
+                  value: numericValue,
+                  previousValue: percentChange
+                };
+              }
+            }
+            
+            // If we still couldn't calculate a trend, use a simple fallback
+            // comparing the first two rows in the data
+            if (rows.length >= 2 && rows[0] && rows[1]) {
+              // Use the configured row index if valid, otherwise default to first row
+              const currentRowIndex = counterConfig.rowIndex !== undefined && 
+                                     counterConfig.rowIndex >= 0 && 
+                                     counterConfig.rowIndex < rows.length 
+                                     ? counterConfig.rowIndex : 0;
+              
+              // Try to get previous index, but if current is 0, use index 1 as "previous"
+              const previousRowIndex = currentRowIndex === 0 ? 1 : currentRowIndex - 1;
+              
+              const currentValue = Number(rows[currentRowIndex][counterConfig.valueField]);
+              const previousValue = Number(rows[previousRowIndex][counterConfig.valueField]);
+              
+              if (!isNaN(currentValue) && !isNaN(previousValue) && previousValue !== 0) {
+                const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
+                console.log("Auto-calculated trend using rowIndex-based fallback:", {
+                  currentValue,
+                  previousValue,
+                  percentChange,
+                  currentRowIndex,
+                  previousRowIndex
+                });
+                return {
+                  value: numericValue,
+                  previousValue: percentChange
+                };
+              }
+            }
+          }
+        }
+        
+        console.log("Unable to auto-calculate trend - insufficient data");
+        // If we couldn't calculate the trend, return without trend value
+        return {
+          value: numericValue,
+          previousValue: undefined
+        };
+      } else if (counterConfig.trendConfig.valueField) {
+        // Use the specified trend field
+        const trendRawValue = row[counterConfig.trendConfig.valueField];
+        if (trendRawValue !== undefined && trendRawValue !== null) {
+          const parsedTrend = Number(trendRawValue);
+          // Only set previousValue if it's a valid number
+          if (!isNaN(parsedTrend)) {
+            previousValue = parsedTrend;
+          }
+        }
+      }
+    }
+    
+    return {
+      value: numericValue,
+      previousValue
+    };
+  } catch (error) {
+    console.error('Error processing counter data:', error);
+    return {
+      value: 0,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+};
+
+// Add function to check if a counter is recently created (last 5 minutes)
+const isRecentlyCreated = (counter: CounterConfig): boolean => {
+  if (!counter.createdAt) return false;
+  
+  const createdTime = new Date(counter.createdAt).getTime();
+  const currentTime = Date.now();
+  const fiveMinutesInMs = 5 * 60 * 1000;
+  
+  return (currentTime - createdTime) < fiveMinutesInMs;
+};
+
 const CounterRenderer: React.FC<CounterRendererProps> = ({ 
   counterConfig,
   isLoading = false
@@ -116,6 +581,43 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
   const [value, setValue] = useState<string>("Loading...");
   const [trend, setTrend] = useState<{ value: number; label: string } | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
+  const [loadState, setLoadState] = useState<'loading' | 'success' | 'error'>('loading');
+
+  // Clear cache for newly created counters to ensure they're displayed
+  useEffect(() => {
+    if (isRecentlyCreated(counterConfig)) {
+      console.log(`Detected newly created counter (${counterConfig.title}), clearing cache`);
+      
+      // Clear localStorage cache for this page
+      if (typeof window !== 'undefined' && counterConfig.page) {
+        try {
+          localStorage.removeItem(`counters_page_${counterConfig.page}`);
+          console.log(`Cleared localStorage cache for page ${counterConfig.page}`);
+        } catch (e) {
+          console.warn('Error clearing localStorage cache:', e);
+        }
+      }
+      
+      // Clear in-memory cache for this endpoint
+      const cacheKey = `${counterConfig.apiEndpoint}-${counterConfig.apiKey || ''}`;
+      if (cacheKey in COUNTER_DATA_CACHE) {
+        delete COUNTER_DATA_CACHE[cacheKey];
+        console.log(`Cleared in-memory cache for endpoint ${counterConfig.apiEndpoint}`);
+      }
+      
+      // Remove from active requests if present
+      if (cacheKey in ACTIVE_REQUESTS) {
+        delete ACTIVE_REQUESTS[cacheKey];
+      }
+    }
+  }, [counterConfig]);
+
+  // Start prefetching data as soon as component renders
+  useEffect(() => {
+    if (!isLoading && counterConfig.apiEndpoint) {
+      prefetchCounterData(counterConfig.apiEndpoint, counterConfig.apiKey);
+    }
+  }, [counterConfig.apiEndpoint, counterConfig.apiKey, isLoading]);
 
   // Get icon based on icon name in config
   const getIcon = () => {
@@ -128,93 +630,34 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
 
   // Fetch data from API when component mounts
   useEffect(() => {
-    const fetchData = async () => {
+    let isMounted = true;
+    const loadCounterData = async () => {
       if (isLoading) return;
 
       try {
-        // Create URL with API key if provided
-        let apiUrl;
-        try {
-          apiUrl = new URL(counterConfig.apiEndpoint);
-          
-          if (counterConfig.apiKey) {
-            const apiKeyValue = counterConfig.apiKey.trim();
-            
-            // Check if the apiKey contains max_age parameter
-            if (apiKeyValue.includes('&max_age=')) {
-              // Split by &max_age= and add each part separately
-              const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
-              if (baseApiKey) {
-                apiUrl.searchParams.append('api_key', baseApiKey.trim());
-              }
-              if (maxAgePart) {
-                apiUrl.searchParams.append('max_age', maxAgePart.trim());
-              }
-            } else {
-              // Just a regular API key
-              apiUrl.searchParams.append('api_key', apiKeyValue);
-            }
-          }
-        } catch (error) {
-          throw new Error(`Invalid URL: ${counterConfig.apiEndpoint}`);
-        }
+        setLoadState('loading');
+        
+        // Fetch data using our specialized function
+        const startTime = performance.now();
+        const result = await fetchAndProcessCounter(counterConfig);
+        const endTime = performance.now();
+        
+        console.log(`Counter ${counterConfig.title} data processed in ${(endTime - startTime).toFixed(2)}ms`);
 
-        // Fetch data
-        const response = await fetch(apiUrl.toString());
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
-        }
+        // If component was unmounted during the async operation, don't update state
+        if (!isMounted) return;
 
-        const result = await response.json();
-
-        // Extract data based on API response format
-        let data: any[] = [];
-        if (result?.query_result?.data?.rows) {
-          data = result.query_result.data.rows;
-        } else if (Array.isArray(result)) {
-          data = result;
-        } else if (result?.data && Array.isArray(result.data)) {
-          data = result.data;
-        } else if (result?.rows && Array.isArray(result.rows)) {
-          data = result.rows;
-        } else if (result?.results && Array.isArray(result.results)) {
-          data = result.results;
-        } else {
-          throw new Error('API response does not have a recognized structure');
-        }
-
-        if (data.length === 0) {
-          throw new Error('No data returned from API');
-        }
-
-        // Get the row at the specified index (default to first row if out of bounds)
-        const rowIndex = Math.min(counterConfig.rowIndex || 0, data.length - 1);
-        const row = data[rowIndex];
-
-        if (!row) {
-          throw new Error(`No data found at row index ${counterConfig.rowIndex}`);
-        }
-
-        // Extract value
-        const rawValue = row[counterConfig.valueField];
-        if (rawValue === undefined || rawValue === null) {
-          throw new Error(`Field "${counterConfig.valueField}" not found in response data`);
+        // Check for errors
+        if (result.error) {
+          throw new Error(result.error);
         }
 
         // Format value with prefix and suffix
-        let formattedValue = String(rawValue);
-        
-        // Debug logging
-        console.log('Counter data before formatting:', {
-          title: counterConfig.title,
-          rawValue,
-          prefix: counterConfig.prefix,
-          suffix: counterConfig.suffix
-        });
+        let formattedValue = String(result.value);
         
         // Format number if it's a numeric value
-        if (!isNaN(Number(rawValue))) {
-          const num = Number(rawValue);
+        if (!isNaN(Number(result.value))) {
+          const num = Number(result.value);
           
           // Check if prefix indicates currency
           const isCurrency = counterConfig.prefix === '$' || counterConfig.prefix === '€' || counterConfig.prefix === '£';
@@ -251,33 +694,42 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
           console.log('Adding suffix:', counterConfig.suffix);
           formattedValue = `${formattedValue} ${counterConfig.suffix}`;
         }
-        
-        // Debug logging
-        console.log('Counter data after formatting:', {
-          title: counterConfig.title,
-          formattedValue
-        });
 
         setValue(formattedValue);
+        setLoadState('success');
 
-        // Extract trend if configured
-        if (counterConfig.trendConfig) {
-          const trendValue = Number(row[counterConfig.trendConfig.valueField]);
-          if (!isNaN(trendValue)) {
-            setTrend({
-              value: trendValue,
-              label: counterConfig.trendConfig.label || 'vs. previous period'
-            });
-          }
+        // Set trend if available - improve logging here
+        if (counterConfig.trendConfig && result.previousValue !== undefined) {
+          console.log(`Setting trend for ${counterConfig.title}:`, {
+            value: result.previousValue,
+            label: counterConfig.trendConfig.label || 'vs. previous period',
+            isAutoCalculate: counterConfig.trendConfig.valueField === 'auto_calculate'
+          });
+          setTrend({
+            value: parseFloat(result.previousValue.toFixed(1)), // Format to 1 decimal place
+            label: counterConfig.trendConfig.label || 'vs. previous period'
+          });
+        } else if (counterConfig.trendConfig) {
+          console.log(`No trend value available for ${counterConfig.title} despite trendConfig:`, {
+            trendConfig: counterConfig.trendConfig,
+            previousValue: result.previousValue
+          });
         }
       } catch (error) {
-        console.error('Error fetching counter data:', error);
+        if (!isMounted) return;
+        console.error('Error loading counter data:', error);
         setError(`Error: ${error instanceof Error ? error.message : String(error)}`);
         setValue("Error");
+        setLoadState('error');
       }
     };
 
-    fetchData();
+    loadCounterData();
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false;
+    };
   }, [
     counterConfig.apiEndpoint,
     counterConfig.apiKey,
@@ -305,7 +757,7 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
       trend={trend}
       icon={getIcon()}
       variant={counterConfig.variant || "blue"}
-      isLoading={isLoading}
+      isLoading={isLoading || loadState === 'loading'}
       className={counterConfig.width && counterConfig.width > 1 ? "h-full" : ""}
     />
   );

@@ -144,4 +144,46 @@ export interface CounterConfig {
   };
   createdAt?: string;
   updatedAt?: string;
+}
+
+// Table display types
+export type TableVariant = "simple" | "striped" | "bordered" | "compact";
+
+// Column configuration for tables
+export interface TableColumnConfig {
+  field: string;       // The data field in the API response
+  header: string;      // Display name for the column header
+  width?: string;      // Optional width (e.g., "100px", "10%")
+  format?: {
+    type: "text" | "number" | "currency" | "percentage" | "date";
+    decimals?: number; // For number/currency/percentage
+    prefix?: string;   // For currency ($, €, etc.) or any prefix
+    suffix?: string;   // For percentage (%) or any suffix
+    dateFormat?: string; // For dates
+  };
+  sortable?: boolean;  // Whether the column is sortable
+  filterable?: boolean; // Whether the column can be filtered
+  hidden?: boolean;    // Whether the column is hidden by default
+}
+
+// Table configuration type
+export interface TableConfig {
+  id: string;
+  title: string;
+  description?: string;
+  page: AvailablePage;
+  apiEndpoint: string;
+  apiKey?: string;
+  columns: TableColumnConfig[];
+  defaultSortColumn?: string;
+  defaultSortDirection?: "asc" | "desc";
+  rowsPerPage?: number;
+  enablePagination?: boolean;
+  enableSearch?: boolean;
+  enableRowSelection?: boolean;
+  variant: TableVariant;
+  width?: number; // 1, 2, or 3 columns (defaults to 3 for full width)
+  refreshInterval?: number; // Auto-refresh interval in seconds
+  createdAt?: string;
+  updatedAt?: string;
 } 

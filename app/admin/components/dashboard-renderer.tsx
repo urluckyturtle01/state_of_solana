@@ -66,12 +66,9 @@ const PAGE_CONFIG_CACHE: Record<string, {
   expiresIn: number;
 }> = {};
 
-// Lazily load the ChartRenderer component with dynamic import and prefetch
+// Lazily load the ChartRenderer component with dynamic import
 const MemoizedChartRenderer = React.memo(dynamic(() => import('./ChartRenderer'), {
   ssr: false,
-  loading: () => <div className="w-full h-full flex items-center justify-center">
-    <div className="w-5 h-5 bg-blue-400/20 rounded-full animate-pulse"></div>
-  </div>
 }));
 
 // Optimization: preload charts by pageId for faster subsequent loads
@@ -117,7 +114,7 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
 };
 
 // Batch fetch function for more efficient API calls
-const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<string, Record<string, string>>) => {
+const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<string, Record<string, string>>, enableCaching: boolean) => {
   // Create an array of promises for all charts
   const fetchPromises = charts.map(chart => {
     const chartFilters = filterValues[chart.id] || {};
@@ -139,7 +136,7 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
     }
     
     // Fetch from API if not in cache
-    return fetchChartData(chart, chartFilters)
+    return fetchChartData(chart, chartFilters, enableCaching)
       .then(data => ({
         chartId: chart.id,
         data,
@@ -171,82 +168,152 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
 };
 
 // Simplified fetch function to reduce overhead
-const fetchChartData = async (chart: ChartConfig, chartFilters: Record<string, string>) => {
-      const url = new URL(chart.apiEndpoint);
-      if (chart.apiKey) {
-        // Check if the apiKey contains max_age parameter
-        const apiKeyValue = chart.apiKey.trim();
-        
-        if (apiKeyValue.includes('&max_age=')) {
-          // Split by &max_age= and add each part separately
-          const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
-          if (baseApiKey) {
-            url.searchParams.append('api_key', baseApiKey.trim());
-          }
-          if (maxAgePart) {
-            url.searchParams.append('max_age', maxAgePart.trim());
-          }
-        } else {
-          // Just a regular API key
-          url.searchParams.append('api_key', apiKeyValue);
+const fetchChartData = async (
+  chart: ChartConfig, 
+  chartFilters: Record<string, string>,
+  cacheEnabled: boolean = true
+) => {
+  // First try to get from localStorage for instant rendering
+  if (typeof window !== 'undefined' && cacheEnabled) {
+    try {
+      const cacheKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+      const cachedData = localStorage.getItem(cacheKey);
+      
+      if (cachedData) {
+        const parsedCache = JSON.parse(cachedData);
+        if (parsedCache.expires > Date.now()) {
+          console.log(`Using localStorage cache for chart ${chart.id}`);
+          
+          // Update memory cache too
+          CHART_DATA_CACHE[`${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`] = {
+            data: parsedCache.data,
+            timestamp: parsedCache.timestamp,
+            expiresIn: parsedCache.expires - parsedCache.timestamp
+          };
+          
+          // Refresh in background after returning cached data
+          setTimeout(() => {
+            fetchFromApi(chart, chartFilters, cacheKey, cacheEnabled).catch(console.error);
+          }, 100);
+          
+          return parsedCache.data;
         }
       }
-      
-      // Build parameters object for POST request
-      const parameters: Record<string, any> = {};
-      const filterConfig = chart.additionalOptions?.filters;
-      
-      if (filterConfig) {
-    // Add all filter parameters
-        if (filterConfig.timeFilter && chartFilters['timeFilter']) {
-          parameters[filterConfig.timeFilter.paramName] = chartFilters['timeFilter'];
-        }
-        
-        if (filterConfig.currencyFilter && chartFilters['currencyFilter']) {
-          parameters[filterConfig.currencyFilter.paramName] = chartFilters['currencyFilter'];
-        }
-        
-        if (filterConfig.displayModeFilter && chartFilters['displayModeFilter']) {
-          parameters[filterConfig.displayModeFilter.paramName] = chartFilters['displayModeFilter'];
-        }
-      }
-      
-  // Set up request options with performance optimizations
-      const hasParameters = Object.keys(parameters).length > 0;
-      const options: RequestInit = {
-        method: hasParameters ? 'POST' : 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'X-Priority': 'high'
-    },
-    // More aggressive caching strategy
-    cache: 'force-cache',
-    // Reduce priority of non-critical resources
-    priority: 'high',
-    // Use a shorter timeout for faster failure/recovery
-    signal: AbortSignal.timeout(2000) // 2 second timeout
-      };
-      
-      // Add body with parameters for POST request
-      if (hasParameters) {
-        options.body = JSON.stringify({ parameters });
+    } catch (e) {
+      console.warn('Error reading from localStorage:', e);
+      // Continue to API fetch on error
+    }
   }
   
-  // Fetch data from API with optimized options
-  try {
-    // Use fetch with aggressive timeout
-      const response = await fetch(url.toString(), options);
+  // Not in localStorage, try memory cache
+  const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+  if (CHART_DATA_CACHE[memoryCacheKey] && cacheEnabled) {
+    const cachedItem = CHART_DATA_CACHE[memoryCacheKey];
+    const now = Date.now();
+    
+    if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+      console.log(`Using memory cache for chart ${chart.id}`);
       
-      if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      // Refresh in background after returning cached data
+      setTimeout(() => {
+        fetchFromApi(chart, chartFilters, memoryCacheKey, cacheEnabled).catch(console.error);
+      }, 500);
+      
+      return cachedItem.data;
+    }
+  }
+  
+  // No valid cache, fetch from API
+  return fetchFromApi(chart, chartFilters, memoryCacheKey, cacheEnabled);
+};
+
+// Extract API fetch logic to reuse in background refresh
+const fetchFromApi = async (
+  chart: ChartConfig, 
+  chartFilters: Record<string, string>, 
+  cacheKey: string,
+  cacheEnabled: boolean = true
+): Promise<any[]> => {
+  // Use performance monitoring
+  const startTime = performance.now();
+  
+  try {
+    const url = new URL(chart.apiEndpoint);
+    if (chart.apiKey) {
+      // Check if the apiKey contains max_age parameter
+      const apiKeyValue = chart.apiKey.trim();
+      
+      if (apiKeyValue.includes('&max_age=')) {
+        // Split by &max_age= and add each part separately
+        const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+        if (baseApiKey) {
+          url.searchParams.append('api_key', baseApiKey.trim());
+        }
+        if (maxAgePart) {
+          url.searchParams.append('max_age', maxAgePart.trim());
+        }
+      } else {
+        // Just a regular API key
+        url.searchParams.append('api_key', apiKeyValue);
+      }
+    }
+    
+    // Build parameters object for POST request
+    const parameters: Record<string, any> = {};
+    const filterConfig = chart.additionalOptions?.filters;
+    
+    if (filterConfig) {
+      // Add all filter parameters
+      if (filterConfig.timeFilter && chartFilters['timeFilter']) {
+        parameters[filterConfig.timeFilter.paramName] = chartFilters['timeFilter'];
       }
       
-      const result = await response.json();
+      if (filterConfig.currencyFilter && chartFilters['currencyFilter']) {
+        parameters[filterConfig.currencyFilter.paramName] = chartFilters['currencyFilter'];
+      }
       
+      if (filterConfig.displayModeFilter && chartFilters['displayModeFilter']) {
+        parameters[filterConfig.displayModeFilter.paramName] = chartFilters['displayModeFilter'];
+      }
+    }
+    
+    // Set up request options with performance optimizations
+    const hasParameters = Object.keys(parameters).length > 0;
+    const options: RequestInit = {
+      method: hasParameters ? 'POST' : 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Priority': 'high'
+      },
+      // More aggressive caching strategy
+      cache: 'force-cache',
+      // Reduce priority of non-critical resources
+      priority: 'high',
+      // Use a shorter timeout for faster failure/recovery
+      signal: AbortSignal.timeout(5000) // 5-second timeout (increased from 2s)
+    };
+    
+    // Add body with parameters for POST request
+    if (hasParameters) {
+      options.body = JSON.stringify({ parameters });
+    }
+    
+    // Fetch data from API with optimized options
+    console.log(`Fetching chart data from API: ${url.toString()}`);
+    const response = await fetch(url.toString(), options);
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    const fetchTime = performance.now() - startTime;
+    console.log(`Fetched chart data in ${fetchTime.toFixed(2)}ms`);
+    
     // Fast extraction of data with minimal processing
-      let parsedData: any[] = [];
-      
+    let parsedData: any[] = [];
+    
     // Extract data based on API response format with minimal code
     if (result?.query_result?.data?.rows) parsedData = result.query_result.data.rows;
     else if (Array.isArray(result)) parsedData = result;
@@ -259,25 +326,64 @@ const fetchChartData = async (chart: ChartConfig, chartFilters: Record<string, s
       throw new Error('Unrecognized API response');
     }
     
-    // Cache the data
-    const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
-    CHART_DATA_CACHE[cacheKey] = {
+    // Cache the data in memory
+    const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+    const cacheExpiry = CACHE_DURATION;
+    
+    CHART_DATA_CACHE[memoryCacheKey] = {
       data: parsedData,
       timestamp: Date.now(),
-      expiresIn: CACHE_DURATION
+      expiresIn: cacheExpiry
     };
+    
+    // Cache in localStorage for persistence across page refreshes
+    if (typeof window !== 'undefined' && cacheEnabled) {
+      try {
+        const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+        localStorage.setItem(localStorageKey, JSON.stringify({
+          data: parsedData,
+          timestamp: Date.now(),
+          expires: Date.now() + cacheExpiry,
+          apiUrl: url.toString()
+        }));
+      } catch (e) {
+        console.warn('Error caching to localStorage:', e);
+      }
+    }
     
     return parsedData;
   } catch (error) {
-    // Always check cache as fallback on fetch error
-    const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
-    if (CHART_DATA_CACHE[cacheKey]) {
-      console.log(`Using cached data as fallback for chart ${chart.id}`);
-      return CHART_DATA_CACHE[cacheKey].data;
+    const fetchTime = performance.now() - startTime;
+    console.error(`Error fetching chart data (${fetchTime.toFixed(2)}ms):`, error);
+    
+    // Always check both caches as fallback on fetch error
+    
+    // Try memory cache first
+    const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+    if (CHART_DATA_CACHE[memoryCacheKey]) {
+      console.log(`Using memory cache as fallback for chart ${chart.id}`);
+      return CHART_DATA_CACHE[memoryCacheKey].data;
     }
     
-    // Rethrow if no cache available
-    throw error;
+    // Try localStorage as last resort
+    if (typeof window !== 'undefined') {
+      try {
+        const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+        const cachedData = localStorage.getItem(localStorageKey);
+        
+        if (cachedData) {
+          const parsedCache = JSON.parse(cachedData);
+          console.log(`Using localStorage as emergency fallback for chart ${chart.id}`);
+          return parsedCache.data;
+        }
+      } catch (e) {
+        console.warn('Error reading from localStorage:', e);
+      }
+    }
+    
+    // If all caches fail, return empty array instead of throwing
+    console.warn(`No cache available for chart ${chart.id}, returning empty data`);
+    return [];
   }
 };
 
@@ -310,31 +416,26 @@ const SessionStorageCache = {
   }
 };
 
-// Optimize loading perception with skeleton loader
-const SkeletonChart = () => (
-  <div className="animate-pulse w-full h-[310px] md:h-[360px] rounded-lg overflow-hidden opacity-70 bg-gradient-to-br from-gray-900/50 to-gray-800/80 flex flex-col p-4">
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex-1 flex items-center justify-center">
-        <div className="relative w-14 h-14">
-          <div className="absolute inset-0 border-t-2 border-r-2 border-blue-400/30 rounded-full animate-spin"></div>
-          <div className="absolute inset-4 border-b-2 border-l-2 border-purple-400/50 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"></div>
-        </div>
-      </div>
-      <div className="h-5 bg-gray-700/50 rounded w-3/4 mx-auto"></div>
-      <div className="h-4 bg-gray-700/40 rounded w-1/2 mx-auto"></div>
-    </div>
+// Simple loading indicator for better performance
+const SimpleLoadingSpinner = () => (
+  <div className="flex justify-center items-center h-64 w-full">
+    <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
   </div>
 );
 
-// Fast UI rendering to improve loading perception
-const ChartCardSkeleton = () => (
-  <div className="md:h-[500px] h-auto bg-gray-900/20 backdrop-blur-md border border-gray-800/50 rounded-lg overflow-hidden">
+// ChartCard with optimized loading
+interface OptimizedChartCardProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+const OptimizedChartCard: React.FC<OptimizedChartCardProps> = ({ title, children }) => (
+  <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800/50 rounded-lg overflow-hidden">
     <div className="px-6 py-4 border-b border-gray-800/50">
-      <div className="h-6 bg-gray-700/50 rounded w-2/3"></div>
-      <div className="h-4 bg-gray-700/30 rounded w-1/2 mt-2"></div>
+      <h3 className="text-gray-200">{title}</h3>
     </div>
     <div className="p-4">
-      <SkeletonChart />
+      {children}
     </div>
   </div>
 );
@@ -364,6 +465,15 @@ export default function DashboardRenderer({
   
   // Use ref to track if component is mounted to avoid memory leaks
   const isMounted = useRef(true);
+  
+  // Create wrapper functions with access to enableCaching prop
+  const wrappedFetchChartData = useCallback((chart: ChartConfig, chartFilters: Record<string, string>) => {
+    return fetchChartData(chart, chartFilters, enableCaching);
+  }, [enableCaching]);
+  
+  const wrappedBatchFetchChartData = useCallback((charts: ChartConfig[], filters: Record<string, Record<string, string>>) => {
+    return batchFetchChartData(charts, filters, enableCaching);
+  }, [enableCaching]);
   
   // Helper function to convert data to CSV format
   const convertDataToCsv = (data: any[], chart: ChartConfig, timeFilter?: string, displayMode?: string): string => {
@@ -494,14 +604,13 @@ export default function DashboardRenderer({
   // Load charts and data on mount
   useEffect(() => {
     setIsClient(true);
-    setIsPageLoading(true);
     
-    // Start showing content almost immediately, don't wait for data
+    // Show content much faster
     setTimeout(() => {
       if (isMounted.current) {
         setIsPageLoading(false);
       }
-    }, 80); // Short timeout to allow React to process state updates
+    }, 5); // Almost instant display
 
     async function loadCharts() {
       try {
@@ -557,110 +666,46 @@ export default function DashboardRenderer({
         setLoadingCharts(initialLoadingState);
         setFilterValues(initialFilterValues);
         
-        // Split chart loading into two groups - visible and below-fold
-        const priorityCharts = loadedCharts.slice(0, 2); // First visible charts (likely in viewport)
-        const remainingCharts = loadedCharts.slice(2);   // Below-fold charts (load later)
-        
-        // Load priority charts immediately
-        if (priorityCharts.length > 0) {
-          batchFetchChartData(priorityCharts, initialFilterValues)
-            .then(results => {
-              if (!isMounted.current) return;
-              
-              // Process all results at once
-              const newChartData: Record<string, any[]> = {};
-              
-              results.forEach(result => {
-                newChartData[result.chartId] = result.data;
-                
-                // Update loading state for each chart
-                setLoadingCharts(prev => ({
-                  ...prev,
-                  [result.chartId]: false
-                }));
-              });
-              
-              // Update chart data all at once
-              setChartData(prev => ({
-                ...prev,
-                ...newChartData
-              }));
-              
-              // Update legends after a small delay to allow rendering to complete
-              setTimeout(() => {
-                if (isMounted.current) {
-                  results.forEach(result => {
-                    updateLegends(result.chartId, result.data);
-                  });
-                }
-              }, 0);
-            })
-            .catch(error => {
-              console.error('Error fetching priority chart data:', error);
-              if (!isMounted.current) return;
-              
-              // Reset loading states for priority charts
-              priorityCharts.forEach(chart => {
-                setLoadingCharts(prev => ({
-                  ...prev,
-                  [chart.id]: false
-                }));
-              });
-            });
-        }
-        
-        // Load remaining charts with a small delay to prioritize visible content
-        if (remainingCharts.length > 0) {
-          setTimeout(() => {
+        // Load all charts at once
+        wrappedBatchFetchChartData(loadedCharts, initialFilterValues)
+          .then(results => {
             if (!isMounted.current) return;
             
-            batchFetchChartData(remainingCharts, initialFilterValues)
-              .then(results => {
-                if (!isMounted.current) return;
-                
-                // Process all results at once
-                const newChartData: Record<string, any[]> = {};
-                
-                results.forEach(result => {
-                  newChartData[result.chartId] = result.data;
-                  
-                  // Update loading state for each chart
-                  setLoadingCharts(prev => ({
-                    ...prev,
-                    [result.chartId]: false
-                  }));
-                });
-                
-                // Update chart data all at once
-                setChartData(prev => ({
-                  ...prev,
-                  ...newChartData
-                }));
-                
-                // Update legends after a small delay
-                setTimeout(() => {
-                  if (isMounted.current) {
-                    results.forEach(result => {
-                      updateLegends(result.chartId, result.data);
-                    });
-                  }
-                }, 0);
-              })
-              .catch(error => {
-                console.error('Error fetching remaining chart data:', error);
-                if (!isMounted.current) return;
-                
-                // Reset loading states for remaining charts
-                remainingCharts.forEach(chart => {
-                  setLoadingCharts(prev => ({
-                    ...prev,
-                    [chart.id]: false
-                  }));
-                    });
-                  });
-          }, 100); // Small delay for remaining charts
-        }
-        
+            // Process all results at once
+            const newChartData: Record<string, any[]> = {};
+            
+            results.forEach(result => {
+              newChartData[result.chartId] = result.data;
+              
+              // Update loading state for each chart
+              setLoadingCharts(prev => ({
+                ...prev,
+                [result.chartId]: false
+              }));
+            });
+            
+            // Update chart data all at once
+            setChartData(prev => ({
+              ...prev,
+              ...newChartData
+            }));
+            
+            // Update legends immediately
+            results.forEach(result => {
+              updateLegends(result.chartId, result.data);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching chart data:', error);
+            if (!isMounted.current) return;
+            
+            // Reset loading states for all charts
+            const resetLoadingState: Record<string, boolean> = {};
+            loadedCharts.forEach(chart => {
+              resetLoadingState[chart.id] = false;
+            });
+            setLoadingCharts(resetLoadingState);
+          });
       } catch (error) {
         console.error(`Error loading charts for page ${pageId}:`, error);
         if (isMounted.current) {
@@ -670,28 +715,10 @@ export default function DashboardRenderer({
     }
     
     loadCharts();
-
-    // Preload other commonly accessed pages in the background
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        // Common dashboards to preload
-        const otherDashboards = ['transactions', 'accounts', 'economics'];
-        // Only preload others, not the current one
-        const dashboardsToPreload = otherDashboards.filter(id => id !== pageId);
-        
-        dashboardsToPreload.forEach((dashboardId, index) => {
-          // Stagger preloading to avoid resource contention
-          setTimeout(() => {
-            preloadChartConfigs(dashboardId).catch(err => 
-              console.log(`Background prefetch for ${dashboardId} failed silently`, err));
-          }, index * 1000); // 1 second between each preload
-        });
-      }, 2000); // Start preloading 2 seconds after page load
-    }
-  }, [pageId, overrideCharts, initializeCharts]);
+  }, [pageId, overrideCharts, initializeCharts, enableCaching]);
 
   // Simplified fetchChartDataWithFilters for individual chart updates
-  const fetchChartDataWithFilters = async (chart: ChartConfig, skipLoadingState = false) => {
+  const fetchChartDataWithFilters = useCallback(async (chart: ChartConfig, skipLoadingState = false) => {
     try {
       if (!skipLoadingState && isMounted.current) {
         setLoadingCharts(prev => ({
@@ -703,8 +730,9 @@ export default function DashboardRenderer({
       const chartFilters = filterValues[chart.id] || {};
       const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
       
-      // Check cache if enabled
-      if (enableCaching && CHART_DATA_CACHE[cacheKey]) {
+      // Use wrappedFetchChartData which has access to enableCaching
+      // First check cache
+      if (CHART_DATA_CACHE[cacheKey] && enableCaching) {
         const cachedItem = CHART_DATA_CACHE[cacheKey];
         const now = Date.now();
         
@@ -731,8 +759,8 @@ export default function DashboardRenderer({
         }
       }
       
-      // Fetch fresh data
-      const data = await fetchChartData(chart, chartFilters);
+      // Fetch fresh data using wrapper function with enableCaching
+      const data = await wrappedFetchChartData(chart, chartFilters);
       
       // Skip updates if component unmounted
       if (!isMounted.current) return data;
@@ -768,7 +796,7 @@ export default function DashboardRenderer({
       
       return null;
     }
-  };
+  }, [enableCaching, filterValues, isMounted, setChartData, setLoadingCharts, wrappedFetchChartData, CHART_DATA_CACHE]);
 
   const toggleChartExpanded = (chartId: string) => {
     setExpandedCharts(prev => ({
@@ -1552,26 +1580,9 @@ export default function DashboardRenderer({
   }
 
   if (isPageLoading) {
-    // Return skeleton UI instead of spinner for faster perceived performance
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <ChartCardSkeleton />
-        <ChartCardSkeleton />
-        {/* Add more skeleton cards to match common layouts */}
-        <ChartCardSkeleton />
-        <ChartCardSkeleton />
-      </div>
-    );
+    // Return nothing instead of spinner
+    return null;
   }
-
-/*  if (charts.length === 0) {
-    // Show a message if no charts are available
-  return (
-      <div className="w-full min-h-[300px] flex items-center justify-center">
-        <p className="text-gray-400">No charts available for this page.</p>
-      </div>
-    );
-  }*/
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -1586,7 +1597,7 @@ export default function DashboardRenderer({
           onScreenshotClick={() => captureChartScreenshot(chart)}
           isDownloading={downloadingCharts[chart.id]}
           isScreenshotting={screenshottingCharts[chart.id]}
-          isLoading={loadingCharts[chart.id]}
+          isLoading={false}
           legendWidth="1/5"
           className="md:h-[500px] h-auto"
           id={`chart-card-${chart.id}`}
@@ -1639,9 +1650,7 @@ export default function DashboardRenderer({
                       tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
                     />
                 ))
-              ) : (
-                <LegendItem label="Loading..." color="#cccccc" isLoading={true} />
-              )}
+              ) : null}
             </>
           }
         >
@@ -1678,7 +1687,7 @@ export default function DashboardRenderer({
               // Add a callback to receive colors from BarChart
               onColorsGenerated={(colorMap) => syncLegendColors(chart.id, colorMap)}
               // Pass loading state
-              isLoading={loadingCharts[chart.id]}
+              isLoading={false}
             />
           </div>
         </ChartCard>

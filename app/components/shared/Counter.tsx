@@ -81,11 +81,11 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
   }
   // If target ends with T, format as trillion
   else if (targetValue.includes('T')) {
-    return `$${(value / 1000000).toFixed(2)}T`;
+    return `$${(value / 1000000).toFixed(1)}T`;
   }
   // If target ends with B, format as billion
   else if (targetValue.includes('B')) {
-    return `$${(value / 1000).toFixed(2)}B`;
+    return `$${(value / 1000).toFixed(1)}B`;
   }
   // If target ends with M, format as million
   else if (targetValue.includes('M')) {
@@ -97,10 +97,11 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
   }
   // For plain integers (no commas in original)
   else if (!isNaN(Number(targetValue))) {
-    return Math.round(value).toString();
+    // Use toFixed(1) instead of Math.round for consistency
+    return value.toFixed(1);
   }
-  // Default format
-  return value.toString();
+  // Default format - also use one decimal place
+  return value.toFixed(1);
 };
 
 export default function Counter({ 
@@ -217,7 +218,7 @@ export default function Counter({
                   } 
                 />
               </svg>
-              {Math.abs(trend.value)}%
+              {Math.abs(trend.value).toFixed(1)}%
             </span>
             <span className="text-gray-500 ml-1 md:ml-1.5">{trend.label}</span>
           </div>

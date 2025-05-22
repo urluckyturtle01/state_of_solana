@@ -1076,11 +1076,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                 {/* Brush component - 15% height */}
                 {brushData.length > 0 ? (
                   renderBrushArea(true)
-                ) : (
-                  <div className="h-[15%] w-full flex items-center justify-center text-gray-500 text-sm">
-                    No brush data available
-                  </div>
-                )}
+                ) : (null)}
               </div>
             </div>
             
@@ -1125,11 +1121,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       
       {brushData.length > 0 ? (
         renderBrushArea(false)
-      ) : (
-        <div className="h-[15%] w-full mt-2 flex items-center justify-center text-gray-500 text-sm">
-          No brush data available
-        </div>
-      )}
+      ) : (null)}
     </div>
   );
 };

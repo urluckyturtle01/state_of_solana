@@ -4,6 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AdminNavLink } from './components/AdminNavLink';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the CacheRefresher component (no SSR)
+const CacheRefresher = dynamic(() => import('./components/CacheRefresher'), {
+  ssr: false,
+});
 
 export default function AdminLayout({
   children,
@@ -223,6 +229,8 @@ export default function AdminLayout({
   // When authenticated, show admin content with navigation
   return (
     <div className="bg-gray-950 text-white min-h-screen flex flex-col">
+      <CacheRefresher />
+      
       <header className="border-b border-gray-800 py-4 bg-gray-900 shadow-md">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
@@ -264,6 +272,11 @@ export default function AdminLayout({
               <li>
                 <AdminNavLink href="/admin/create-counter">
                   Create Counter
+                </AdminNavLink>
+              </li>
+              <li>
+                <AdminNavLink href="/admin/table-creator">
+                  Create Table
                 </AdminNavLink>
               </li>
               <li>
