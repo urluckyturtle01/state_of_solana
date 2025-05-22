@@ -255,7 +255,9 @@ export default function ChartCreatorPage() {
         break;
       case 'mev':
         setAvailablePages([
-          { id: 'summary', name: 'Summary', path: '/mev/summary' }
+          { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
+          { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
+          { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' }
         ]);
         break;
       case 'stablecoins':

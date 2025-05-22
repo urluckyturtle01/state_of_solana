@@ -637,12 +637,17 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
     // Check if we need to force a refresh (flag set by CounterForm)
     const needsRefresh = typeof window !== 'undefined' && localStorage.getItem('counters_need_refresh') === 'true';
     const refreshedPage = typeof window !== 'undefined' && localStorage.getItem('counters_refreshed_page');
+    const refreshTime = typeof window !== 'undefined' ? parseInt(localStorage.getItem('counters_refresh_time') || '0', 10) : 0;
+    const cacheMaxAge = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const shouldForceRefresh = needsRefresh && 
+                              refreshedPage === pageId && 
+                              (refreshTime > Date.now() - cacheMaxAge);
     
     // Initialize local cache variable
     let localCachedCounters: CounterConfig[] = [];
     
     // Skip cache if we need a refresh for this specific page
-    if (needsRefresh && refreshedPage === pageId) {
+    if (shouldForceRefresh) {
       console.log(`Force refreshing counters for page ${pageId} due to new counter creation`);
     } else {
       // Check local storage cache first for instant display
@@ -652,13 +657,19 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
           if (localCache) {
             const cachedData = JSON.parse(localCache);
             if (cachedData.expires > Date.now()) {
-              console.log(`Using local cache for counters on page ${pageId}`);
+              console.log(`Using local cache for counters on page ${pageId}, expires in ${Math.round((cachedData.expires - Date.now()) / 1000)}s`);
               localCachedCounters = cachedData.counters;
               
               // If we're not forcing a refresh, return the cached data
-              if (!needsRefresh) {
+              if (!shouldForceRefresh) {
+                // Add performance timing
+                const endTime = performance.now();
+                console.log(`Loaded ${localCachedCounters.length} counters from cache in ${Math.round(endTime - startTime)}ms`);
+                
                 return localCachedCounters;
               }
+            } else {
+              console.log(`Cache for counters on page ${pageId} has expired`);
             }
           }
         } catch (e) {
@@ -667,52 +678,75 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
       }
     }
     
-    // Use the optimized API endpoint with caching enabled
-    const response = await fetch(`/api/counters?page=${encodeURIComponent(pageId)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Priority': 'high',
-      },
-      // Skip cache completely if refreshing
-      cache: needsRefresh ? 'no-store' : 'force-cache',
-      next: { revalidate: 30 } // Revalidate every 30 seconds
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-      const fetchTime = performance.now() - startTime;
-      console.log(`Retrieved ${result.counters.length} counters for page ${pageId} from API (${fetchTime.toFixed(2)}ms) - Source: ${result.source || 'unknown'}`);
+    // Try to get counters from the API
+    try {
+      console.log(`Fetching counters for page ${pageId} from API`);
       
-      // Clear refresh flags if this was the page that needed refreshing
-      if (needsRefresh && refreshedPage === pageId) {
+      // Include cache-busting parameter when forcing refresh
+      const cacheBuster = shouldForceRefresh ? `&_t=${Date.now()}` : '';
+      
+      // Make the API request with retry
+      const MAX_RETRIES = 2;
+      let apiResponse = null;
+      let retries = 0;
+      
+      while (retries <= MAX_RETRIES) {
         try {
-          localStorage.removeItem('counters_need_refresh');
-          localStorage.removeItem('counters_refreshed_page');
-          localStorage.removeItem('counters_refresh_time');
-          console.log(`Cleared refresh flags after successfully retrieving counters for ${pageId}`);
-        } catch (e) {
-          console.warn('Error clearing refresh flags:', e);
+          const response = await fetch(`/api/counters?page=${encodeURIComponent(pageId)}${cacheBuster}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': shouldForceRefresh ? 'no-cache' : 'default',
+            },
+          });
+          
+          if (response.ok) {
+            apiResponse = await response.json();
+            break; // Exit loop on success
+          } else {
+            console.warn(`API request failed (attempt ${retries + 1}/${MAX_RETRIES + 1}):`, response.status, response.statusText);
+          }
+        } catch (fetchError) {
+          console.error(`API fetch error (attempt ${retries + 1}/${MAX_RETRIES + 1}):`, fetchError);
+        }
+        
+        retries++;
+        if (retries <= MAX_RETRIES) {
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 500 * Math.pow(2, retries - 1)));
         }
       }
       
-      // Update local storage cache for next time
-      if (typeof window !== 'undefined' && result.counters.length > 0) {
-        try {
+      // If we got a response, process it
+      if (apiResponse && apiResponse.counters) {
+        console.log(`Loaded ${apiResponse.counters.length} counters from API for page ${pageId}`);
+        
+        // Cache the response if we have counters
+        if (typeof window !== 'undefined' && apiResponse.counters.length > 0) {
+          const cacheExpiry = Date.now() + (30 * 60 * 1000); // 30 minutes cache
           localStorage.setItem(`counters_page_${pageId}`, JSON.stringify({
-            counters: result.counters,
-            expires: Date.now() + (60 * 1000), // 1-minute cache
-            timestamp: Date.now()
+            counters: apiResponse.counters,
+            expires: cacheExpiry,
+            fetchTime: Date.now(),
           }));
-        } catch (e) {
-          console.warn('Error writing to local cache:', e);
+          console.log(`Cached ${apiResponse.counters.length} counters for page ${pageId}, expires in 30min`);
+          
+          // If this was a forced refresh, clear the flag
+          if (shouldForceRefresh && refreshedPage === pageId) {
+            localStorage.setItem('counters_need_refresh', 'false');
+            console.log('Cleared counters refresh flag after successful refresh');
+          }
         }
+        
+        // Add performance timing
+        const endTime = performance.now();
+        console.log(`Loaded ${apiResponse.counters.length} counters from API in ${Math.round(endTime - startTime)}ms`);
+        
+        return apiResponse.counters;
       }
-      
-      return result.counters || [];
+    } catch (apiError) {
+      console.error('Error fetching counters from API:', apiError);
     }
-    
-    console.warn('API request failed, using local cache or localStorage');
     
     // Use our local cache if API fails but we have cached data
     if (localCachedCounters.length > 0) {
@@ -722,15 +756,37 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
     
     // Fall back to localStorage if API fails and no local cache
     if (typeof window !== 'undefined') {
-      const storedCounters = localStorage.getItem('counterConfigs');
-      const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
-      
-      // Filter counters by page
-      const pageCounters = counters.filter(counter => counter.page === pageId);
-      console.log(`Using ${pageCounters.length} counters from localStorage as last resort`);
-      return pageCounters;
+      try {
+        // Try all_counters first (might have been fetched by dashboard manager)
+        const allCountersStr = localStorage.getItem('all_counters');
+        if (allCountersStr) {
+          const allCountersData = JSON.parse(allCountersStr);
+          const allCounters = Array.isArray(allCountersData) ? allCountersData : (allCountersData.counters || []);
+          
+          // Filter counters by page
+          const pageCounters = allCounters.filter((counter: CounterConfig) => counter.page === pageId);
+          if (pageCounters.length > 0) {
+            console.log(`Using ${pageCounters.length} counters from all_counters as fallback`);
+            return pageCounters;
+          }
+        }
+        
+        // Then try counterConfigs
+        const storedCounters = localStorage.getItem('counterConfigs');
+        if (storedCounters) {
+          const counters: CounterConfig[] = JSON.parse(storedCounters);
+          
+          // Filter counters by page
+          const pageCounters = counters.filter(counter => counter.page === pageId);
+          console.log(`Using ${pageCounters.length} counters from localStorage counterConfigs as last resort`);
+          return pageCounters;
+        }
+      } catch (e) {
+        console.error('Error reading from localStorage:', e);
+      }
     }
     
+    console.log(`No counters found for page ${pageId}`);
     return [];
   } catch (error) {
     console.error('Error getting counters for page:', error);
@@ -767,6 +823,13 @@ export const getCounterConfigsByPage = async (pageId: string): Promise<CounterCo
  */
 export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<CounterConfig> => {
   try {
+    // Handle legacy summary pages by checking if this is one of the prefixed pages
+    const pageId = counterConfig.page;
+    const compatibilityPageId = pageId === 'protocol-revenue-summary' || 
+                               pageId === 'dex-summary' || 
+                               pageId === 'mev-summary' 
+                               ? 'summary' : null;
+    
     // Set createdAt if new counter
     const now = new Date().toISOString();
     const counterWithTimestamps = {
@@ -789,7 +852,7 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
     });
 
     if (!response.ok) {
-      console.warn('API save failed, falling back to localStorage');
+      console.warn(`API save failed with status ${response.status}:`, await response.text());
       throw new Error('API save failed');
     }
 
@@ -797,6 +860,7 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
     
     // Also save to localStorage as backup (and for offline support)
     if (typeof window !== 'undefined') {
+      // Update the main counters storage
       const storedCounters = localStorage.getItem('counterConfigs');
       const counters: CounterConfig[] = storedCounters ? JSON.parse(storedCounters) : [];
       
@@ -813,7 +877,67 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
       
       // Save to localStorage
       localStorage.setItem('counterConfigs', JSON.stringify(counters));
+      
+      // Clear all page-specific caches to ensure counter appears
+      const keys = Object.keys(localStorage);
+      for (const key of keys) {
+        if (key.startsWith('counters_page_')) {
+          console.log(`Clearing cache for ${key}`);
+          localStorage.removeItem(key);
+        }
+      }
+      
+      // Also clear session storage caches if any
+      if (typeof sessionStorage !== 'undefined') {
+        const sessionKeys = Object.keys(sessionStorage);
+        for (const key of sessionKeys) {
+          if (key.startsWith('counters_page_')) {
+            console.log(`Clearing session cache for ${key}`);
+            sessionStorage.removeItem(key);
+          }
+        }
+      }
+      
+      // Set flags to force refresh
+      localStorage.setItem('counters_need_refresh', 'true');
+      localStorage.setItem('counters_refreshed_page', pageId);
+      localStorage.setItem('counters_refresh_time', Date.now().toString());
+      
+      // If this is a prefixed page, also set a flag for the 'summary' compatibility page
+      if (compatibilityPageId) {
+        localStorage.setItem('counters_compat_page', compatibilityPageId);
+      }
+      
+      // Update all_counters if it exists
+      try {
+        const allCountersStr = localStorage.getItem('all_counters');
+        if (allCountersStr) {
+          const allCountersData = JSON.parse(allCountersStr);
+          let allCounters = Array.isArray(allCountersData) ? allCountersData : (allCountersData.counters || []);
+          
+          // Remove existing counter if present
+          allCounters = allCounters.filter((c: CounterConfig) => c.id !== counterConfig.id);
+          
+          // Add the updated counter
+          allCounters.push(counterWithTimestamps);
+          
+          // Save back
+          if (Array.isArray(allCountersData)) {
+            localStorage.setItem('all_counters', JSON.stringify(allCounters));
+          } else {
+            localStorage.setItem('all_counters', JSON.stringify({
+              ...allCountersData,
+              counters: allCounters
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn('Error updating all_counters:', e);
+      }
     }
+    
+    // Add a small delay before returning to allow API processing time
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     return counterWithTimestamps;
   } catch (error) {
@@ -848,6 +972,19 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
       
       // Save to localStorage
       localStorage.setItem('counterConfigs', JSON.stringify(counters));
+      
+      // Clear relevant page cache to force refresh
+      if (counterConfig.page) {
+        localStorage.removeItem(`counters_page_${counterConfig.page}`);
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem(`counters_page_${counterConfig.page}`);
+        }
+        
+        // Set flags to force refresh
+        localStorage.setItem('counters_need_refresh', 'true');
+        localStorage.setItem('counters_refreshed_page', counterConfig.page);
+        localStorage.setItem('counters_refresh_time', Date.now().toString());
+      }
       
       return counterWithTimestamps;
     }

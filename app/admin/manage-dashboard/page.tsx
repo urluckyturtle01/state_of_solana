@@ -103,6 +103,14 @@ export default function ManageDashboardPage() {
           { id: 'breakdown', name: 'Breakdown', path: '/rev/breakdown' }
         ]);
         break;
+        case 'mev':
+        setAvailablePages([
+          { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
+          { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
+          { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' },
+          
+        ]);
+        break;
       case 'stablecoins':
         setAvailablePages([
           { id: 'stablecoin-usage', name: 'Stablecoin Usage', path: '/stablecoins/stablecoin-usage' },

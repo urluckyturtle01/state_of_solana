@@ -2,6 +2,7 @@
 export const AVAILABLE_PAGES = [
   { id: 'total', name: 'Total Revenue', path: '/protocol-revenue/total' },
   { id: 'summary', name: 'Revenue Summary', path: '/protocol-revenue/summary' },
+  { id: 'protocol-revenue-summary', name: 'Revenue Summary', path: '/protocol-revenue/summary' },
   { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
   { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
   { id: 'depin', name: 'DePIN', path: '/protocol-revenue/depin' }
@@ -14,12 +15,15 @@ export type AvailablePage =
   // Overview menu pages
   | 'dashboard' | 'network-usage' | 'protocol-rev' | 'market-dynamics'
   // DEX menu pages
-  | 'volume' | 'tvl' | 'traders' | 'aggregators'
+  | 'volume' | 'tvl' | 'traders' | 'aggregators' | 'dex-summary'
   // REV menu pages
   | 'overview' | 'cost-capacity' | 'issuance-burn' | 'total-economic-value' | 'breakdown'
+  // MEV menu pages
+  | 'dex-token-hotspots' | 'extracted-value-pnl' | 'mev-summary'
   // Stablecoins menu pages
   | 'stablecoin-usage' | 'transaction-activity' | 'liquidity-velocity' | 'mint-burn' | 'platform-exchange'
   // Protocol Revenue menu pages - already included in AVAILABLE_PAGES
+  | 'protocol-revenue-summary';
 
 // Chart visualization types
 export const CHART_TYPES = [

@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function MevExtractedValuePnlPage() {
+export default function MevDexTokenHotspotsPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="extracted-value-pnl" 
+          pageId="dex-token-hotspots" 
           enableCaching={true}
         />
       </Suspense>

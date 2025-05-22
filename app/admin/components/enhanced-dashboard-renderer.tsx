@@ -48,6 +48,81 @@ const PAGE_TABLES_CACHE: Record<string, {
 
 // Preload counter configurations for a page
 const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Promise<CounterConfig[]> => {
+  // Map page IDs for backward compatibility 
+  const compatPageId = (() => {
+    // For legacy 'summary' page, determine which section we're in
+    if (pageId === 'summary') {
+      const path = typeof window !== 'undefined' ? window.location.pathname : '';
+      if (path.includes('/protocol-revenue/')) {
+        return 'protocol-revenue-summary';
+      } else if (path.includes('/dex/')) {
+        return 'dex-summary';
+      } else if (path.includes('/mev/')) {
+        return 'mev-summary';
+      }
+    }
+    
+    // Check if we should also try to load from the legacy 'summary' page
+    // This handles the case where we're using a new prefixed page ID but there are
+    // existing counters with the old 'summary' ID
+    if (typeof window !== 'undefined' && 
+        (pageId === 'protocol-revenue-summary' || pageId === 'dex-summary' || pageId === 'mev-summary')) {
+      const compatPage = localStorage.getItem('counters_compat_page');
+      if (compatPage === 'summary') {
+        console.log(`Found compatibility flag for 'summary', will load both ${pageId} and summary counters`);
+        
+        // Load summary counters in the background and merge them
+        setTimeout(() => {
+          getCounterConfigsByPage('summary').then(legacyCounters => {
+            if (legacyCounters.length > 0) {
+              console.log(`Found ${legacyCounters.length} legacy counters with 'summary' ID, adding to cache`);
+              // Add to cache
+              if (PAGE_COUNTERS_CACHE[pageId]) {
+                const existingCache = PAGE_COUNTERS_CACHE[pageId];
+                // Filter out any duplicates by ID
+                const newCounters = legacyCounters.filter(
+                  legacyCounter => !existingCache.counters.some(
+                    existingCounter => existingCounter.id === legacyCounter.id
+                  )
+                );
+                
+                if (newCounters.length > 0) {
+                  PAGE_COUNTERS_CACHE[pageId] = {
+                    ...existingCache,
+                    counters: [...existingCache.counters, ...newCounters]
+                  };
+                  console.log(`Added ${newCounters.length} unique legacy counters to cache`);
+                }
+              }
+            }
+          }).catch(err => console.error('Error loading legacy counters:', err));
+        }, 500);
+      }
+    }
+    
+    return pageId;
+  })();
+
+  // Check if we need to force a refresh from localStorage flag
+  if (typeof window !== 'undefined') {
+    const needsRefresh = localStorage.getItem('counters_need_refresh') === 'true';
+    const refreshedPage = localStorage.getItem('counters_refreshed_page');
+    const refreshTime = parseInt(localStorage.getItem('counters_refresh_time') || '0', 10);
+    
+    // If localStorage indicates we need a refresh for this page, enable forceRefresh
+    if ((needsRefresh && (refreshedPage === pageId || refreshedPage === compatPageId))) {
+      console.log(`Force refreshing counter configs for page ${pageId} due to localStorage flag`);
+      forceRefresh = true;
+      
+      // Check if the flag is too old (more than 5 minutes)
+      const now = Date.now();
+      if (now - refreshTime > 5 * 60 * 1000) {
+        // Clear the flag since it's too old
+        localStorage.setItem('counters_need_refresh', 'false');
+      }
+    }
+  }
+  
   // Force refresh will skip cache check and fetch fresh data
   if (!forceRefresh) {
     // Check if we have cached counters for this page
@@ -63,17 +138,74 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
     }
   } else {
     console.log(`Force refreshing counter configs for page ${pageId}`);
+    
+    // If we're doing a force refresh, clear in-memory cache too
+    delete PAGE_COUNTERS_CACHE[pageId];
+    // Clear cache for compatibility ID too if different
+    if (compatPageId !== pageId) {
+      delete PAGE_COUNTERS_CACHE[compatPageId];
+    }
   }
   
   try {
-    // Fetch counters for the page
-    const counters = await getCounterConfigsByPage(pageId);
+    // Add a cache-busting query parameter when forcing refresh
+    const cacheBuster = forceRefresh ? `?_t=${Date.now()}` : '';
+    
+    // Fetch counters for the page with retry mechanism
+    let counters: CounterConfig[] = [];
+    let retryCount = 0;
+    const maxRetries = 2;
+    
+    while (retryCount <= maxRetries) {
+      try {
+        // Fetch with the compatibility page ID
+        counters = await getCounterConfigsByPage(compatPageId);
+        
+        // If using compatibility ID and we got no results, try with the original ID as fallback
+        if (counters.length === 0 && compatPageId !== pageId) {
+          console.log(`No counters found with compatibility ID ${compatPageId}, trying original ID ${pageId}`);
+          counters = await getCounterConfigsByPage(pageId);
+        }
+        
+        if (counters.length > 0 || retryCount === maxRetries) {
+          break;
+        }
+        retryCount++;
+        console.log(`No counters found on attempt ${retryCount}, retrying...`);
+        await new Promise(resolve => setTimeout(resolve, 500)); // Small delay before retry
+      } catch (error) {
+        console.error(`Error fetching counters on attempt ${retryCount}:`, error);
+        retryCount++;
+        if (retryCount > maxRetries) break;
+        await new Promise(resolve => setTimeout(resolve, 500)); // Small delay before retry
+      }
+    }
+    
+    // Log what we found
+    if (counters.length > 0) {
+      console.log(`Found ${counters.length} counters for page ${compatPageId !== pageId ? compatPageId + ' (compatibility ID)' : pageId}`);
+    } else {
+      console.warn(`No counters found for page ${pageId} after ${retryCount} attempts`);
+    }
     
     // If we're doing a force refresh, clear localStorage cache too
     if (forceRefresh && typeof window !== 'undefined') {
       try {
         localStorage.removeItem(`counters_page_${pageId}`);
         console.log(`Cleared localStorage cache for page ${pageId}`);
+        
+        // Also clear cache for compatibility ID if different
+        if (compatPageId !== pageId) {
+          localStorage.removeItem(`counters_page_${compatPageId}`);
+          console.log(`Cleared localStorage cache for compatibility page ${compatPageId}`);
+        }
+        
+        // Also clear the refresh flag if it was for this page
+        const refreshedPage = localStorage.getItem('counters_refreshed_page');
+        if (refreshedPage === pageId || refreshedPage === compatPageId) {
+          localStorage.setItem('counters_need_refresh', 'false');
+          console.log('Cleared counters refresh flag after manual refresh');
+        }
       } catch (e) {
         console.warn('Error clearing localStorage cache:', e);
       }
@@ -265,7 +397,7 @@ export default function EnhancedDashboardRenderer({
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-0 mt-0">
         {counters.map((counter) => (
           <div 
             key={counter.id} 
@@ -296,7 +428,7 @@ export default function EnhancedDashboardRenderer({
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4 mb-4">
         {tables.map((table) => (
           <div 
             key={table.id} 
@@ -317,8 +449,7 @@ export default function EnhancedDashboardRenderer({
       {/* Render counters at the top */}
       {renderCounters()}
       
-      {/* Render tables below counters */}
-      {renderTables()}
+      
       
       {/* Render charts below tables */}
       <DashboardRenderer
@@ -326,6 +457,8 @@ export default function EnhancedDashboardRenderer({
         overrideCharts={overrideCharts}
         enableCaching={enableCaching}
       />
+      {/* Render tables below counters */}
+      {renderTables()}
       
       {/* Show error if any */}
       {error && (

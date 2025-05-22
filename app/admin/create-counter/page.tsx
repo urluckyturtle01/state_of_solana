@@ -18,6 +18,7 @@ export default function CreateCounterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Check for edit mode and load counter data if needed
   useEffect(() => {
@@ -30,25 +31,114 @@ export default function CreateCounterPage() {
         console.log(`Loading counter ${editId} for editing`);
         setIsEditMode(true);
         setEditCounterId(editId);
+        setIsLoading(true);
         
-        // Load the counter data from localStorage
-        try {
-          const countersString = localStorage.getItem('counterConfigs');
-          if (countersString) {
-            const counters = JSON.parse(countersString) as CounterConfig[];
-            const counterToEdit = counters.find(counter => counter.id === editId);
+        // Try different approaches to fetch the counter data
+        const fetchCounterData = async () => {
+          try {
+            // First approach: Direct API call to get a specific counter
+            console.log(`Fetching counter ${editId} from API`);
+            
+            // Try to fetch the counter directly by ID
+            const specificCounterResponse = await fetch(`/api/counters/${editId}`);
+            if (specificCounterResponse.ok) {
+              const counterData = await specificCounterResponse.json();
+              console.log('Found counter to edit (API):', counterData);
+              setInitialData(counterData);
+              setIsLoading(false);
+              return;
+            }
+            
+            console.log(`Counter not found via direct API, trying all counters endpoint`);
+            
+            // Get all counters and filter by ID
+            const allCountersResponse = await fetch(`/api/counters`);
+            if (!allCountersResponse.ok) {
+              throw new Error(`Failed to fetch counters: ${allCountersResponse.statusText}`);
+            }
+            
+            const allCountersData = await allCountersResponse.json();
+            const counters = allCountersData.counters || [];
+            const counterToEdit = counters.find((counter: CounterConfig) => counter.id === editId);
             
             if (counterToEdit) {
-              console.log('Found counter to edit:', counterToEdit);
+              console.log('Found counter to edit (all counters API):', counterToEdit);
               setInitialData(counterToEdit);
-            } else {
+              setIsLoading(false);
+              return;
+            }
+            
+            throw new Error('Counter not found in API response');
+          } catch (apiError) {
+            console.error('Error loading counter from API:', apiError);
+            
+            // Fallback to localStorage if API fails
+            try {
+              // Try all_counters
+              const countersString = localStorage.getItem('all_counters');
+              if (countersString) {
+                const countersData = JSON.parse(countersString);
+                const counters = countersData.counters || countersData;
+                const counterToEdit = counters.find((counter: CounterConfig) => counter.id === editId);
+                
+                if (counterToEdit) {
+                  console.log('Found counter to edit (localStorage all_counters):', counterToEdit);
+                  setInitialData(counterToEdit);
+                  setIsLoading(false);
+                  return;
+                }
+              }
+              
+              // Try counterConfigs
+              const configsString = localStorage.getItem('counterConfigs');
+              if (configsString) {
+                const configs = JSON.parse(configsString);
+                const counterToEdit = configs.find((counter: CounterConfig) => counter.id === editId);
+                
+                if (counterToEdit) {
+                  console.log('Found counter to edit (localStorage counterConfigs):', counterToEdit);
+                  setInitialData(counterToEdit);
+                  setIsLoading(false);
+                  return;
+                }
+              }
+              
+              // Try page-specific caches
+              const keys = Object.keys(localStorage);
+              for (const key of keys) {
+                if (key.startsWith('counters_page_')) {
+                  const pageCountersString = localStorage.getItem(key);
+                  if (pageCountersString) {
+                    try {
+                      const pageCountersData = JSON.parse(pageCountersString);
+                      const pageCounters = pageCountersData.counters || [];
+                      const counterToEdit = pageCounters.find((counter: CounterConfig) => counter.id === editId);
+                      
+                      if (counterToEdit) {
+                        console.log(`Found counter to edit in ${key}:`, counterToEdit);
+                        setInitialData(counterToEdit);
+                        setIsLoading(false);
+                        return;
+                      }
+                    } catch (e) {
+                      console.error(`Error parsing ${key}:`, e);
+                    }
+                  }
+                }
+              }
+              
+              // If we get here, we couldn't find the counter
               setSubmitError(`Counter with ID ${editId} not found.`);
+              setIsLoading(false);
+            } catch (storageError) {
+              console.error('Error loading counter data from localStorage:', storageError);
+              setSubmitError('Failed to load counter data from storage.');
+              setIsLoading(false);
             }
           }
-        } catch (error) {
-          console.error('Error loading counter data:', error);
-          setSubmitError('Failed to load counter data from storage.');
-        }
+        };
+        
+        fetchCounterData();
       }
     }
   }, []);
@@ -104,7 +194,12 @@ export default function CreateCounterPage() {
         </div>
       )}
       
-      {submitSuccess ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <p className="ml-3 text-gray-400">Loading counter data...</p>
+        </div>
+      ) : submitSuccess ? (
         <div className="mb-6 p-4 bg-green-900/30 border border-green-800/50 rounded-md">
           <p className="text-green-400">
             Counter successfully {isEditMode ? 'updated' : 'created'}! Redirecting...

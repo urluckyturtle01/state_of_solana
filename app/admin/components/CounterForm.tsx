@@ -67,19 +67,19 @@ const CounterForm: React.FC<CounterFormProps> = ({
             found = ['dashboard', 'network-usage', 'protocol-rev', 'market-dynamics'].includes(initialData.page);
             break;
           case 'dex':
-            found = ['summary', 'volume', 'tvl', 'traders', 'aggregators'].includes(initialData.page);
+            found = ['volume', 'tvl', 'traders', 'aggregators', 'dex-summary'].includes(initialData.page);
             break;
           case 'rev':
             found = ['overview', 'cost-capacity', 'issuance-burn', 'total-economic-value', 'breakdown'].includes(initialData.page);
             break;
           case 'mev':
-            found = ['summary'].includes(initialData.page);
+            found = ['dex-token-hotspots', 'extracted-value-pnl', 'mev-summary'].includes(initialData.page);
             break;
           case 'stablecoins':
             found = ['stablecoin-usage', 'transaction-activity', 'liquidity-velocity', 'mint-burn', 'platform-exchange', 'tvl'].includes(initialData.page);
             break;
           case 'protocol-revenue':
-            found = ['summary', 'total', 'dex-ecosystem', 'nft-ecosystem', 'depin'].includes(initialData.page);
+            found = ['total', 'dex-ecosystem', 'nft-ecosystem', 'depin', 'protocol-revenue-summary', 'summary'].includes(initialData.page);
             break;
         }
         
@@ -107,7 +107,7 @@ const CounterForm: React.FC<CounterFormProps> = ({
           break;
         case 'dex':
           setAvailablePages([
-            { id: 'summary', name: 'Summary', path: '/dex/summary' },
+            { id: 'dex-summary', name: 'Summary', path: '/dex/summary' },
             { id: 'volume', name: 'Volume', path: '/dex/volume' },
             { id: 'tvl', name: 'TVL', path: '/dex/tvl' },
             { id: 'traders', name: 'Traders', path: '/dex/traders' },
@@ -125,7 +125,9 @@ const CounterForm: React.FC<CounterFormProps> = ({
           break;
         case 'mev':
           setAvailablePages([
-            { id: 'summary', name: 'Summary', path: '/mev/summary' }
+            { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
+            { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
+            { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' }
           ]);
           break;
         case 'stablecoins':
@@ -140,7 +142,7 @@ const CounterForm: React.FC<CounterFormProps> = ({
           break;
         case 'protocol-revenue':
           setAvailablePages([
-            { id: 'summary', name: 'Summary', path: '/protocol-revenue/summary' },
+            { id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
             { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
             { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
             { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
@@ -300,6 +302,8 @@ const CounterForm: React.FC<CounterFormProps> = ({
         throw new Error(`Invalid URL: ${formData.apiEndpoint}`);
       }
 
+      console.log('Testing API endpoint:', apiUrl.toString());
+
       // Fetch data
       const response = await fetch(apiUrl.toString());
       if (!response.ok) {
@@ -307,37 +311,185 @@ const CounterForm: React.FC<CounterFormProps> = ({
       }
 
       const result = await response.json();
+      
+      // Log the response for debugging
+      console.log('API Response:', result);
 
-      // Check if data exists and has the expected format
+      // Advanced data extraction logic to handle various API structures
       let data: any[] = [];
-      if (Array.isArray(result)) {
-        data = result;
-      } else if (result.data && Array.isArray(result.data)) {
-        data = result.data;
-      } else if (result.results && Array.isArray(result.results)) {
-        data = result.results;
-      } else if (result.rows && Array.isArray(result.rows)) {
-        data = result.rows;
-      } else {
-        throw new Error('Unexpected API response format. Expected an array or object with data/results/rows property.');
+      let foundData = false;
+      
+      // Helper function to recursively search for array data
+      const findArrayData = (obj: any, maxDepth = 3, currentDepth = 0): any[] | null => {
+        // Stop recursion if we've gone too deep
+        if (currentDepth > maxDepth) return null;
+        
+        // If it's an array with items, return it
+        if (Array.isArray(obj) && obj.length > 0) {
+          // Check if array items are objects
+          if (typeof obj[0] === 'object' && obj[0] !== null) {
+            return obj;
+          }
+        }
+        
+        // If it's an object, search its properties
+        if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+          // Check common array property names first
+          const commonArrayProps = ['data', 'results', 'rows', 'items', 'values', 'records', 'content'];
+          for (const prop of commonArrayProps) {
+            if (obj[prop] && Array.isArray(obj[prop]) && obj[prop].length > 0) {
+              // Again check if array items are objects
+              if (typeof obj[prop][0] === 'object' && obj[prop][0] !== null) {
+                return obj[prop];
+              }
+            }
+          }
+          
+          // Recursively search nested objects
+          for (const key in obj) {
+            if (obj[key] && typeof obj[key] === 'object') {
+              const found = findArrayData(obj[key], maxDepth, currentDepth + 1);
+              if (found) return found;
+            }
+          }
+        }
+        
+        return null;
+      };
+      
+      // First try with our recursive function
+      const foundArray = findArrayData(result);
+      if (foundArray) {
+        data = foundArray;
+        foundData = true;
+        console.log('Found array data through recursive search:', data);
+      }
+      
+      // If recursive search didn't find anything, try the original explicit checks
+      if (!foundData) {
+        if (Array.isArray(result)) {
+          data = result;
+          foundData = true;
+          console.log('Found data in array format');
+        } else if (result.data && Array.isArray(result.data)) {
+          data = result.data;
+          foundData = true;
+          console.log('Found data in result.data array');
+        } else if (result.results && Array.isArray(result.results)) {
+          data = result.results;
+          foundData = true;
+          console.log('Found data in result.results array');
+        } else if (result.rows && Array.isArray(result.rows)) {
+          data = result.rows;
+          foundData = true;
+          console.log('Found data in result.rows array');
+        } else if (result.query_result && result.query_result.data && Array.isArray(result.query_result.data.rows)) {
+          // Redash format
+          data = result.query_result.data.rows;
+          foundData = true;
+          console.log('Found data in Redash format');
+        } else if (typeof result === 'object' && result !== null) {
+          // When all else fails, try to use the result object directly
+          // This is useful for APIs that return a simple object with values
+          // Common for single-value metrics APIs
+          
+          // If the object has numeric properties that could be values
+          const hasNumericValues = Object.values(result).some(val => 
+            typeof val === 'number' || 
+            (typeof val === 'string' && !isNaN(parseFloat(val as string)))
+          );
+          
+          if (hasNumericValues) {
+            data = [result];
+            foundData = true;
+            console.log('Using result object directly as single-row data - contains numeric values');
+          } else {
+            // Last resort: convert the entire response to a single row object
+            data = [result];
+            foundData = true;
+            console.log('Using result object directly as single-row data - fallback approach');
+          }
+        }
+      }
+      
+      if (!foundData) {
+        console.error('Unexpected API response format:', result);
+        throw new Error('Unexpected API response format. The API did not return data in a recognized format. Please check the console for details.');
       }
 
       if (data.length === 0) {
         throw new Error('API returned no data');
       }
 
-      // Check if the field exists in the data
-      const row = data[Math.min(formData.rowIndex, data.length - 1)];
-      if (!row[formData.valueField]) {
-        throw new Error(`Field "${formData.valueField}" not found in data`);
+      // Get the row specified by rowIndex (or the first row if not specified)
+      const rowIndex = formData.rowIndex || 0;
+      const row = data[Math.min(rowIndex, data.length - 1)];
+      
+      console.log('Selected row:', row);
+      
+      // Show all available fields to help user
+      const availableFields = Object.keys(row);
+      console.log('Available fields:', availableFields);
+      
+      // Check if the specified field exists
+      if (formData.valueField && !row.hasOwnProperty(formData.valueField)) {
+        // Try a case-insensitive match for better user experience
+        const fieldLower = formData.valueField.toLowerCase();
+        const matchingField = availableFields.find(f => f.toLowerCase() === fieldLower);
+        
+        if (matchingField) {
+          // Found a case-insensitive match, suggest it to the user
+          setTestResult({
+            success: false,
+            message: `Field "${formData.valueField}" not found exactly, but found similar field "${matchingField}". Please use the exact field name.`,
+          });
+          return;
+        }
+        
+        // Suggest fields that might be similar or contain similar substrings
+        const possiblyRelated = availableFields.filter(f => 
+          f.toLowerCase().includes(fieldLower) || 
+          fieldLower.includes(f.toLowerCase())
+        );
+        
+        let fieldSuggestion = '';
+        if (possiblyRelated.length > 0) {
+          fieldSuggestion = `\n\nSimilar fields: ${possiblyRelated.join(', ')}`;
+        }
+        
+        if (availableFields.length > 0) {
+          fieldSuggestion += `\n\nAll available fields: ${availableFields.join(', ')}`;
+        }
+        
+        throw new Error(`Field "${formData.valueField}" not found in data.${fieldSuggestion}`);
       }
 
-      // Success
+      // If no field is specified yet, just show success with field list
+      if (!formData.valueField) {
+        setTestResult({
+          success: true,
+          message: `API connection successful. Please select a field from: ${availableFields.join(', ')}`,
+        });
+        return;
+      }
+
+      // Success with the value
+      const value = row[formData.valueField];
+      let displayValue = value;
+      
+      // Format the display value based on type for better readability
+      if (typeof value === 'number') {
+        displayValue = value.toLocaleString();
+      } else if (typeof value === 'object' && value !== null) {
+        displayValue = JSON.stringify(value);
+      }
+      
       setTestResult({
         success: true,
-        message: `Value found: ${row[formData.valueField]}`,
+        message: `Value found: ${displayValue} (${typeof value})`,
       });
     } catch (error) {
+      console.error('API test error:', error);
       setTestResult({
         success: false,
         message: error instanceof Error ? error.message : String(error),
