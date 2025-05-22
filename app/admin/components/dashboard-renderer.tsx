@@ -871,23 +871,53 @@ export default function DashboardRenderer({
         watermark.style.top = '50%';
         watermark.style.left = '50%';
         watermark.style.transform = 'translate(-50%, -50%)';
-        watermark.style.zIndex = '10';
-        watermark.style.opacity = '0.30';
+        watermark.style.zIndex = '1000';
+        watermark.style.opacity = '0.28';
         watermark.style.pointerEvents = 'none';
-        
+        watermark.style.display = 'flex';
+        watermark.style.flexDirection = 'column';
+        watermark.style.alignItems = 'center';
+        watermark.style.justifyContent = 'center';
+
         // Create the image element for the logo
         const logo = document.createElement('img');
-        logo.src = 'https://topledger.xyz/assets/images/logo/topledger-full.svg?imwidth=384';
-        logo.style.width = '200px';
+        logo.src = '/topledger-full 1.svg';
+        logo.style.fill = 'white';
+        logo.style.width = '100px';
         logo.style.height = 'auto';
         logo.style.filter = 'brightness(2)'; // Make the logo slightly brighter for visibility
-        
+
         // Add the logo to the watermark
         watermark.appendChild(logo);
-        
+
+        // Create text element for source attribution in top right corner
+        const sourceText = document.createElement('div');
+        sourceText.textContent = 'Source : Top Ledger';
+        sourceText.style.position = 'absolute';
+        sourceText.style.top = '18px';
+        sourceText.style.right = '20px';
+        //sourceText.style.transform = 'translateX(-50%)';
+        sourceText.style.color = '#4ade80'; // Bright green color
+        sourceText.style.fontSize = '10px';
+        sourceText.style.fontFamily = 'Arial, sans-serif';
+        sourceText.style.padding = '4px 8px';
+        sourceText.style.border = '0.5px solidrgb(43, 99, 64)';
+        sourceText.style.borderRadius = '2px';
+        sourceText.style.background = 'rgba(26, 255, 83, 0.08)';
+        sourceText.style.textAlign = 'center';
+        sourceText.style.zIndex = '1001'; // Higher than the watermark to ensure visibility
+        sourceText.style.letterSpacing = '1px';
+        sourceText.style.fontWeight = '300';
+
         // Append the clone to the wrapper
         wrapper.appendChild(clone);
-        
+
+        // Add the watermark to the clone
+        clone.appendChild(watermark);
+
+        // Add the source text directly to the clone (not inside the watermark)
+        clone.appendChild(sourceText);
+
         // Apply styles to fix transparency issues
         const fixTransparency = (element: HTMLElement) => {
           // Force background colors on elements that might be transparent
