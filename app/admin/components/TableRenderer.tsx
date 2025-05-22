@@ -68,61 +68,9 @@ const TableRenderer: React.FC<TableRendererProps> = ({
 
   // Format cell value based on column configuration
   const formatCellValue = (value: any, column: TableConfig['columns'][0]) => {
+    // This function is no longer used as we're handling everything in the column render functions
+    // Keeping this as a stub in case it's called elsewhere in the code
     if (value === null || value === undefined) return '-';
-    
-    // Apply formatting if configured
-    if (column.format) {
-      switch (column.format.type) {
-        case 'number':
-          const num = Number(value);
-          if (isNaN(num)) return value;
-          return num.toLocaleString('en-US', { 
-            minimumFractionDigits: column.format.decimals || 0,
-            maximumFractionDigits: column.format.decimals || 0
-          });
-          
-        case 'currency':
-          const currency = Number(value);
-          if (isNaN(currency)) return value;
-          const prefix = column.format.prefix || '$';
-          return `${prefix}${currency.toLocaleString('en-US', { 
-            minimumFractionDigits: column.format.decimals || 2,
-            maximumFractionDigits: column.format.decimals || 2
-          })}`;
-          
-        case 'percentage':
-          const percentage = Number(value);
-          if (isNaN(percentage)) return value;
-          return `${percentage.toLocaleString('en-US', { 
-            minimumFractionDigits: column.format.decimals || 1,
-            maximumFractionDigits: column.format.decimals || 1
-          })}${column.format.suffix || '%'}`;
-          
-        case 'date':
-          try {
-            const date = new Date(value);
-            if (isNaN(date.getTime())) return value;
-            if (column.format.dateFormat) {
-              // Simple date formatting implementation - could be extended
-              const options: Intl.DateTimeFormatOptions = { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
-              };
-              return date.toLocaleDateString('en-US', options);
-            }
-            return date.toLocaleDateString();
-          } catch (e) {
-            return value;
-          }
-          
-        default:
-          // Text or unsupported format type
-          return value;
-      }
-    }
-    
-    // Default display
     return value;
   };
 
@@ -306,7 +254,97 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       sortable: column.sortable !== false,
       align: column.format?.type === 'number' || column.format?.type === 'currency' ? 'right' : 'left',
       width: column.width,
-      format: column.format
+      format: column.format,
+      // Add custom render function for all columns to handle HTML content
+      render: (row) => {
+        const value = row[column.field];
+        
+        // Handle null/undefined values
+        if (value === null || value === undefined) return '-';
+        
+        // Check if the value is a string containing an HTML anchor tag
+        if (typeof value === 'string' && (value.includes('<a href=') || value.includes('&lt;a href='))) {
+          // Decode HTML entities if needed
+          const decodedValue = value.replace(/&lt;/g, '<')
+                                   .replace(/&gt;/g, '>')
+                                   .replace(/&quot;/g, '"')
+                                   .replace(/&amp;/g, '&');
+          
+          try {
+            // Extract href URL and link text using regex
+            const hrefRegex = /<a\s+href=["'](.*?)["'].*?>(.*?)<\/a>/i;
+            const match = decodedValue.match(hrefRegex);
+            
+            if (match && match.length >= 3) {
+              const url = match[1];
+              const text = match[2];
+              
+              // Return a properly styled React link element
+              return (
+                <a 
+                  href={url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 hover:underline"
+                >
+                  {text}
+                </a>
+              );
+            }
+          } catch (e) {
+            console.error('Error parsing HTML in table cell:', e);
+          }
+        }
+        
+        // For all other values, use the standard formatter
+        if (column.format) {
+          switch (column.format.type) {
+            case 'number':
+              const num = Number(value);
+              if (isNaN(num)) return value;
+              return num.toLocaleString('en-US', { 
+                minimumFractionDigits: column.format.decimals || 0,
+                maximumFractionDigits: column.format.decimals || 0
+              });
+              
+            case 'currency':
+              const currency = Number(value);
+              if (isNaN(currency)) return value;
+              const prefix = column.format.prefix || '$';
+              return `${prefix}${currency.toLocaleString('en-US', { 
+                minimumFractionDigits: column.format.decimals || 2,
+                maximumFractionDigits: column.format.decimals || 2
+              })}`;
+              
+            case 'percentage':
+              const percentage = Number(value);
+              if (isNaN(percentage)) return value;
+              return `${percentage.toLocaleString('en-US', { 
+                minimumFractionDigits: column.format.decimals || 1,
+                maximumFractionDigits: column.format.decimals || 1
+              })}${column.format.suffix || '%'}`;
+              
+            case 'date':
+              try {
+                const date = new Date(value);
+                if (isNaN(date.getTime())) return value;
+                if (column.format.dateFormat) {
+                  const options: Intl.DateTimeFormatOptions = { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  };
+                  return date.toLocaleDateString('en-US', options);
+                }
+                return date.toLocaleDateString();
+              } catch (e) {
+                return value;
+              }
+          }
+        }
+        
+        return value;
+      }
     }));
   }, [visibleColumns]);
 
