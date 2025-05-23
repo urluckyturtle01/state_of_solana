@@ -1322,4 +1322,211 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
       return [];
     }
   }
-}; 
+};
+
+// Function to generate menu structure
+export async function generateMenuStructure(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]) {
+  try {
+    // Generate file structure (without actually creating files)
+    const fileStructure = generateMenuFileStructure(menuId, menuName, description, pages);
+    
+    return {
+      success: true,
+      message: `Successfully generated menu structure for ${menuName}`,
+      fileStructure
+    };
+  } catch (error) {
+    console.error('Error generating menu structure:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error creating menu structure'
+    };
+  }
+}
+
+// Function to generate the file structure
+function generateMenuFileStructure(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]) {
+  const fileStructure = [];
+  const capitalizedMenuId = capitalizeFirstLetter(menuId);
+  
+  // Layout file
+  fileStructure.push({
+    path: `/app/${menuId}/layout.tsx`,
+    content: generateLayoutFile(menuId, menuName)
+  });
+  
+  // Root page file
+  fileStructure.push({
+    path: `/app/${menuId}/page.tsx`,
+    content: generateRootPageFile(menuId)
+  });
+  
+  // Tabs header component
+  fileStructure.push({
+    path: `/app/${menuId}/components/${capitalizedMenuId}TabsHeader.tsx`,
+    content: generateTabsHeaderFile(menuId, menuName, description, pages)
+  });
+  
+  // Page files
+  for (const page of pages) {
+    fileStructure.push({
+      path: `/app/${menuId}/${page.id}/page.tsx`,
+      content: generatePageFile(menuId, page.id)
+    });
+  }
+  
+  // MenuPages config update instructions
+  fileStructure.push({
+    path: `/app/admin/config/menuPages.update.ts`,
+    content: generateMenuPagesUpdateInstructions(menuId, menuName, pages)
+  });
+  
+  return fileStructure;
+}
+
+// Helper function to capitalize first letter
+function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Function to generate layout.tsx file content
+function generateLayoutFile(menuId: string, menuName: string): string {
+  const capitalizedMenuId = capitalizeFirstLetter(menuId);
+  
+  return `"use client";
+
+import { ReactNode } from "react";
+import Layout from "../components/Layout";
+import ${capitalizedMenuId}TabsHeader from "./components/${capitalizedMenuId}TabsHeader";
+import { usePathname } from "next/navigation";
+
+interface ${capitalizedMenuId}LayoutProps {
+  children: ReactNode;
+}
+
+export default function ${capitalizedMenuId}Layout({ children }: ${capitalizedMenuId}LayoutProps) {
+  const pathname = usePathname();
+  
+  // Extract the active tab from pathname
+  const pathSegments = pathname.split('/');
+  const activeTab = pathname.split('/')[2] || 'summary';
+  
+  return (
+    <Layout>
+      <div className="space-y-6">
+        <${capitalizedMenuId}TabsHeader activeTab={activeTab} />
+        {children}
+      </div>
+    </Layout>
+  );
+}`;
+}
+
+// Function to generate root page.tsx file content
+function generateRootPageFile(menuId: string): string {
+  const capitalizedMenuId = capitalizeFirstLetter(menuId);
+  
+  return `"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function ${capitalizedMenuId}IndexPage() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.replace("/${menuId}/summary");
+  }, [router]);
+  
+  return (
+    <div className="flex justify-center items-center h-screen bg-black text-gray-400">
+      Redirecting to ${capitalizedMenuId} Summary...
+    </div>
+  );
+}`;
+}
+
+// Function to generate tabs header component
+function generateTabsHeaderFile(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]): string {
+  const capitalizedMenuId = capitalizeFirstLetter(menuId);
+  
+  // Generate tabs array content
+  const tabsContent = pages.map(page => {
+    return `    { 
+      name: "${page.name}", 
+      path: "/${menuId}/${page.id}",
+      key: "${page.id}",
+      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+    }`;
+  }).join(',\n');
+  
+  return `"use client";
+
+import TabsNavigation, { Tab } from "@/app/components/shared/TabsNavigation";
+
+interface ${capitalizedMenuId}TabsHeaderProps {
+  activeTab?: string;
+}
+
+export default function ${capitalizedMenuId}TabsHeader({ activeTab = "summary" }: ${capitalizedMenuId}TabsHeaderProps) {
+  const tabs: Tab[] = [
+${tabsContent}
+  ];
+  
+  return (
+    <TabsNavigation 
+      tabs={tabs} 
+      activeTab={activeTab}
+      title="${menuName}"
+      description="${description}"
+      showDivider={true}
+    />
+  );
+}`;
+}
+
+// Function to generate page file content
+function generatePageFile(menuId: string, pageId: string): string {
+  const capitalizedMenuId = capitalizeFirstLetter(menuId);
+  const capitalizedPageId = pageId.split('-').map(capitalizeFirstLetter).join('');
+  
+  return `"use client";
+import React, { Suspense } from 'react';
+import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
+import Loader from "@/app/components/shared/Loader";
+
+// Create a loading component for Suspense fallback
+const ChartLoading = () => (
+  <div className="w-full h-[500px] flex items-center justify-center">
+    <Loader size="md" />
+  </div>
+);
+
+export default function ${capitalizedMenuId}${capitalizedPageId}Page() {
+  return (
+    <div className="space-y-6">
+      <Suspense fallback={<ChartLoading />}>
+        <EnhancedDashboardRenderer 
+          pageId="${menuId}-${pageId}" 
+          enableCaching={true}
+        />
+      </Suspense>
+    </div>
+  );
+}`;
+}
+
+// Add this function to generate update instructions for menuPages.ts
+function generateMenuPagesUpdateInstructions(menuId: string, menuName: string, pages: { id: string, name: string }[]): string {
+  const pagesArrayContent = pages.map(page => {
+    return `    { id: '${page.id}', name: '${page.name}', path: '/${menuId}/${page.id}' }`;
+  }).join(',\n');
+  
+  return `// Add to MENU_OPTIONS array in app/admin/config/menuPages.ts:
+{ id: '${menuId}', name: '${menuName}', icon: 'home' },
+
+// Add to MENU_PAGES object in app/admin/config/menuPages.ts:
+${menuId}: [
+${pagesArrayContent}
+],`;
+} 

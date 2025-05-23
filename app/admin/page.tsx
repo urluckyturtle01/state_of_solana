@@ -45,6 +45,30 @@ export default function AdminDashboard() {
               </svg>
             }
           />
+          
+          <ActionCard 
+            title="Create Menu Section" 
+            description="Add new menu sections and generate folder structure" 
+            link="/admin/menu-creator"
+            accentColor="purple"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+            }
+          />
+          
+          <ActionCard 
+            title="Manage Menus" 
+            description="Edit, delete, or organize menu sections and pages" 
+            link="/admin/menu-manager"
+            accentColor="amber"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+            }
+          />
         </div>
       </div>
     </div>
@@ -55,58 +79,40 @@ interface ActionCardProps {
   title: string;
   description: string;
   link: string;
+  accentColor: string;
   icon: React.ReactNode;
-  accentColor: 'blue' | 'purple' | 'green' | 'orange' | 'indigo';
 }
 
-function ActionCard({ title, description, link, icon, accentColor }: ActionCardProps) {
-  // Define color variants to match ChartCard
-  const colorVariants = {
-    blue: {
-      hover: 'hover:shadow-blue-900/20',
-      button: 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20',
-      border: 'border-blue-500/20',
-      icon: 'text-blue-400',
-    },
-    purple: {
-      hover: 'hover:shadow-purple-900/20',
-      button: 'bg-purple-500/10 text-purple-400 hover:bg-purple-500/20',
-      border: 'border-purple-500/20',
-      icon: 'text-purple-400',
-    },
-    green: {
-      hover: 'hover:shadow-green-900/20',
-      button: 'bg-green-500/10 text-green-400 hover:bg-green-500/20',
-      border: 'border-green-500/20',
-      icon: 'text-green-400',
-    },
-    orange: {
-      hover: 'hover:shadow-orange-900/20',
-      button: 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20',
-      border: 'border-orange-500/20',
-      icon: 'text-orange-400',
-    },
-    indigo: {
-      hover: 'hover:shadow-indigo-900/20',
-      button: 'bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20',
-      border: 'border-indigo-500/20',
-      icon: 'text-indigo-400',
-    },
+function ActionCard({ title, description, link, accentColor, icon }: ActionCardProps) {
+  const accentColorMap: Record<string, string> = {
+    indigo: 'from-indigo-500 to-purple-500',
+    green: 'from-green-500 to-emerald-500',
+    blue: 'from-blue-500 to-cyan-500',
+    purple: 'from-purple-500 to-pink-500',
+    amber: 'from-amber-500 to-orange-500',
   };
-
-  const colors = colorVariants[accentColor];
-
+  
+  const gradientClass = accentColorMap[accentColor] || 'from-indigo-500 to-purple-500';
+  
   return (
     <Link href={link}>
-      <div className={`bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg ${colors.hover} transition-all duration-300 h-full flex flex-col`}>
-        <div className={`mb-4 ${colors.icon}`}>{icon}</div>
-        <h3 className="text-lg font-medium text-white">{title}</h3>
-        <p className="mt-2 text-sm text-gray-400">{description}</p>
-        <div className={`mt-auto pt-4 ${colors.button.split(' ')[1]} text-sm font-medium flex items-center rounded-md py-2 px-3 self-start transition-colors`}>
-          <span>Launch</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
+      <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 transition-transform hover:scale-105 cursor-pointer h-full flex flex-col relative overflow-hidden group">
+        <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${gradientClass} rounded-full filter blur-2xl opacity-20 -mr-10 -mt-10 transition-opacity group-hover:opacity-30`} />
+        
+        <div className="relative z-10">
+          <div className={`text-${accentColor}-400 mb-4`}>
+            {icon}
+          </div>
+          
+          <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
+          <p className="text-gray-400 text-sm">{description}</p>
+          
+          <div className="mt-6 text-sm font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+            <span>Get Started</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
         </div>
       </div>
     </Link>

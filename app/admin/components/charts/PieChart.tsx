@@ -196,12 +196,33 @@ const PieChart: React.FC<PieChartProps> = ({
     }
   }, [filterValues]);
 
+  // Helper function to format field names for display
+  const formatFieldName = (fieldName: string): string => {
+    if (!fieldName) return '';
+    
+    // Convert snake_case or kebab-case to space-separated
+    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+    
+    // Always capitalize the first letter of the entire string
+    if (spaceSeparated.length === 0) return '';
+    
+    // Split into words and capitalize each word
+    return spaceSeparated
+      .split(' ')
+      .map(word => {
+        if (word.length === 0) return '';
+        // Capitalize first letter, lowercase the rest
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
+
   // Update legend items when pie data changes
   useEffect(() => {
     if (pieData.length > 0) {
       const newLegendItems = pieData.map(item => ({
         id: item.label,
-        label: item.label,
+        label: formatFieldName(item.label),
         color: colorScale(item.label) as string,
         value: item.percentage
       }));
@@ -268,21 +289,6 @@ const PieChart: React.FC<PieChartProps> = ({
     });
   }, []);
 
-  // Helper function to format axis labels
-  const formatXAxisLabel = (value: string): string => {
-    // Check if the value is a date format (YYYY-MM-DD or similar)
-    const isDateFormat = /^\d{4}-\d{2}-\d{2}/.test(value) || 
-                        /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
-                        /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value);
-    
-    // Don't shorten date formats, but shorten other values
-    if (!isDateFormat && value.length > 3) {
-      return `${value.substring(0, 3)}...`;
-    }
-    
-    return value;
-  };
-
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
@@ -320,7 +326,7 @@ const PieChart: React.FC<PieChartProps> = ({
         {/* Tooltip - only show for non-modal version, modal has its own tooltip container */}
         {tooltip.visible && tooltip.data && !isModal && (
           <ChartTooltip
-            title={tooltip.data.label}
+            title={formatFieldName(tooltip.data.label)}
             items={[
               {
                 label: 'Value',
@@ -479,7 +485,7 @@ const PieChart: React.FC<PieChartProps> = ({
                       left: tooltip.left
                     }}>
                       <ChartTooltip
-                        title={tooltip.data.label}
+                        title={formatFieldName(tooltip.data.label)}
                         items={[
                           {
                             label: 'Value',

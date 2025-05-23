@@ -5,12 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
-  { name: "Overview", path: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+{ name: "Overview", path: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { name: "DEX", path: "/dex", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
   { name: "REV", path: "/rev", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { name: "Stablecoins", path: "/stablecoins", icon: "M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" },
   { name: "MEV", path: "/mev", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
-  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
+  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },,,,,
 ];
 
 export default function Sidebar() {
@@ -40,23 +40,23 @@ export default function Sidebar() {
             // Check for exact paths first to avoid conflicts
             let isActive = false;
             
-            if (item.path === '/protocol-revenue' && pathname?.startsWith('/protocol-revenue')) {
+            if (item && item.path === '/protocol-revenue' && pathname?.startsWith('/protocol-revenue')) {
               isActive = true;
-            } else if (item.path === '/' && (
+            } else if (item && item.path === '/' && (
               pathname === '/' || 
               pathname?.startsWith('/market-dynamics') || 
               pathname?.startsWith('/network-usage') || 
               pathname?.startsWith('/dashboard')
             )) {
               isActive = true;
-            } else if (item.path !== '/' && pathname?.startsWith(item.path) && item.path !== '/protocol-revenue') {
+            } else if (item && item.path !== '/' && pathname?.startsWith(item.path) && item.path !== '/protocol-revenue') {
               isActive = true;
             }
               
             return (
-              <li key={item.name}>
+              <li key={item?.name || 'unnamed'}>
                 <Link 
-                  href={item.path} 
+                  href={item?.path || '/'} 
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
                     isActive 
                       ? 'text-white bg-gray-900/70' 
@@ -71,9 +71,9 @@ export default function Sidebar() {
                     stroke="currentColor" 
                     strokeWidth={1.5}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                    <path strokeLinecap="round" strokeLinejoin="round" d={item?.icon || ''} />
                   </svg>
-                  <span className="text-sm font-medium">{item.name}</span>
+                  <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
                 </Link>
               </li>
             );

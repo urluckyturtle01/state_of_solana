@@ -138,6 +138,27 @@ const formatXAxisLabel = (value: string, timeFilter?: string): string => {
   return `${value.substring(0, 3)}...`;
 };
 
+// Helper function to format field names for display
+const formatFieldName = (fieldName: string): string => {
+  if (!fieldName) return '';
+  
+  // Convert snake_case or kebab-case to space-separated
+  const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+  
+  // Always capitalize the first letter of the entire string
+  if (spaceSeparated.length === 0) return '';
+  
+  // Split into words and capitalize each word
+  return spaceSeparated
+    .split(' ')
+    .map(word => {
+      if (word.length === 0) return '';
+      // Capitalize first letter, lowercase the rest
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+};
+
 const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({ 
   chartConfig, 
   data, 
@@ -665,7 +686,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
 
           return {
-            label: field,
+            label: formatFieldName(field),
             value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit),
             color: fieldColors[field] || blue,
             // Use different shape for bar vs line
@@ -686,7 +707,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         }
         
         tooltipItems.push({
-          label: fields[0],
+          label: formatFieldName(fields[0]),
           value: formatWithUnit(0, firstFieldUnit),
           color: fieldColors[fields[0]] || blue,
           shape: fieldTypes[fields[0]] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
@@ -1057,7 +1078,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     if (chartData.length > 0 && fields.length > 0) {
       const newLegendItems = fields.map(field => ({
         id: field,
-        label: field,
+        label: formatFieldName(field),
         color: fieldColors[field] || blue
       }));
       

@@ -434,7 +434,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             return !isNaN(value) && value > 0;
           })
           .map(field => ({
-            label: field,
+            label: formatFieldName(field),
             value: formatValue(Number(dataPoint[field]) || 0, getYAxisUnit(yField, yAxisUnit)),
             color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
             shape: 'square' as 'square'
@@ -453,7 +453,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         // If no items passed the filter, show the first field with a 0 value
         if (tooltipItems.length === 0 && yFields.length > 0) {
           tooltipItems = [{
-            label: yFields[0],
+            label: formatFieldName(yFields[0]),
             value: '$0.00',
             color: typeof barColor === 'string' ? barColor : (barColor[yFields[0]] || blue),
             shape: 'square' as 'square'
@@ -462,7 +462,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       } else {
         // For simple bar chart, just show the single value
         tooltipItems = [{
-          label: yKey,
+          label: formatFieldName(yKey),
           value: formatValue(dataPoint[yKey], getYAxisUnit(yField, yAxisUnit)),
           color: typeof barColor === 'string' ? barColor : (barColor[dataPoint[xKey]] || blue),
           shape: 'square' as 'square'
@@ -1002,7 +1002,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         // For multi-series, create a legend item for each y-field
         const items = yFields.map(field => ({
           id: field,
-          label: field,
+          label: formatFieldName(field),
           color: typeof barColor === 'string' ? barColor : (barColor[field] || blue)
         }));
         setLegendItems(items);
@@ -1010,7 +1010,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         // Single y-field
         setLegendItems([{
           id: yKey,
-          label: yKey,
+          label: formatFieldName(yKey),
           color: typeof barColor === 'string' ? barColor : blue
         }]);
       }
@@ -1021,13 +1021,16 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const renderBrushArea = useCallback((modalView = false) => {
     if (!brushData || brushData.length === 0) return null;
     
-    // For simple chart without filters, we need to customize the brush path
+    // For chart without filters, we need to customize the brush path
     const isSimpleChartWithoutFilters = 
       !filterValues || Object.keys(filterValues).length === 0;
     
     // Calculate padding to prevent line from extending beyond brush area
     // Add a small negative padding to keep the line just inside the brush bounds
     const padding = isSimpleChartWithoutFilters ? -0.5 : 0;
+    
+    // Calculate max value for brush scaling
+    const maxBrushValue = Math.max(...brushData.map(d => d.value || 0), 1);
     
     return (
       <div className="h-[18%] w-full mt-2">
@@ -1048,25 +1051,19 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           }}
           getDate={(d) => d.date}
           getValue={(d) => {
-            // For simple charts without filters, ensure we reflect the bar heights
-            if (isSimpleChartWithoutFilters) {
-              const idx = d.originalIndex;
-              if (chartData[idx]) {
-                // Use actual value from chart data for better visual representation
-                const val = Number(chartData[idx][yKey]) || 0;
-                
-                // Ensure the line doesn't touch the base by applying a minimum value
-                // This makes the line more visible even for small values
-                return Math.max(val, maxValue * 0.05);
-              }
-            }
-            return d.value;
+            // For simple charts without filters, ensure we have a visible line
+            // that doesn't change shape during brushing
+            const val = d.value || 0;
+            
+            // Ensure the line doesn't touch the base by applying a minimum value
+            // This makes the line more visible even for small values
+            return Math.max(val, maxBrushValue * 0.05);
           }}
           lineColor={isSimpleChartWithoutFilters ? "#3b82f6" : "#60a5fa"} // Brighter blue for simple charts
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           // Use appropriate curve type based on the chart configuration
-          curveType={isMultiSeries ? "catmullRom" : (isSimpleChartWithoutFilters ? "linear" : "monotoneX")}
+          curveType={isMultiSeries ? "catmullRom" : "linear"}
           strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
@@ -1074,7 +1071,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     );
   }, [brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange, 
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
-      setIsBrushActive, setFilteredData, chartData, yKey, filterValues, maxValue, isMultiSeries, modalFilterValues]);
+      setIsBrushActive, setFilteredData, isMultiSeries, filterValues, modalFilterValues]);
 
   // Add back the handleFilterChange function
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -1091,6 +1088,27 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       chartConfig.onFilterChange(updatedFilters);
     }
   }, [modalFilterValues, chartConfig]);
+
+  // Helper function to format field names for display
+  const formatFieldName = (fieldName: string): string => {
+    if (!fieldName) return '';
+    
+    // Convert snake_case or kebab-case to space-separated
+    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+    
+    // Always capitalize the first letter of the entire string
+    if (spaceSeparated.length === 0) return '';
+    
+    // Split into words and capitalize each word
+    return spaceSeparated
+      .split(' ')
+      .map(word => {
+        if (word.length === 0) return '';
+        // Capitalize first letter, lowercase the rest
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
@@ -1157,7 +1175,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               <div className="flex flex-col h-full">
                 {/* Display tooltip at the container level for modal views */}
                 {tooltip.visible && tooltip.items && (
-                  <div className="absolute z-50" style={{ 
+                  <div className="relative h-full w-full" style={{ 
                     pointerEvents: 'none',
                     top: tooltip.top,
                     left: tooltip.left

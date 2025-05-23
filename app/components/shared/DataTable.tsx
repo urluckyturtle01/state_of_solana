@@ -277,7 +277,7 @@ export default function DataTable<T>({
   const renderColumnHeader = (column: Column<T>) => (
     <th 
       key={column.key}
-      className={`text-${column.align || 'left'} text-[10px] font-medium text-gray-400 uppercase tracking-wider px-3 py-2 ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''}`}
+      className={`text-${column.align || 'left'} text-[9px] font-medium text-gray-400 uppercase tracking-wider px-3 py-2 whitespace-nowrap ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''}`}
       onClick={() => column.sortable && handleSort(column)}
       style={{ width: column.width || 'auto' }}
     >
@@ -347,7 +347,7 @@ export default function DataTable<T>({
                 {columns.map(column => (
                   <td 
                     key={`${keyExtractor(row)}-${column.key}`} 
-                    className={`${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
+                    className={`text-[12px] ${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
                       variant === 'bordered' ? 'border-x border-gray-700' : ''
                     }`}
                   >
@@ -454,7 +454,7 @@ export default function DataTable<T>({
             </div>
           </div>
         </div>
-      )}
+      )} 
     </div>
   );
 } 

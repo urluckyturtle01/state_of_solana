@@ -538,7 +538,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       const tooltipItems = keys
         .filter(key => Number(dataPoint[key]) > 0) // Only include groups/fields with values
         .map(key => ({
-          label: key,
+          label: formatFieldName(key),
           value: formatValue(Number(dataPoint[key]) || 0),
           color: groupColors[key] || blue,
           shape: 'square' as 'square'
@@ -849,12 +849,33 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, [chartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
       groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items]);
 
+  // Helper function to format field names for display
+  const formatFieldName = (fieldName: string): string => {
+    if (!fieldName) return '';
+    
+    // Convert snake_case or kebab-case to space-separated
+    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+    
+    // Always capitalize the first letter of the entire string
+    if (spaceSeparated.length === 0) return '';
+    
+    // Split into words and capitalize each word
+    return spaceSeparated
+      .split(' ')
+      .map(word => {
+        if (word.length === 0) return '';
+        // Capitalize first letter, lowercase the rest
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
+
   // Update legend items 
   useEffect(() => {
     if (chartData.length > 0 && keys.length > 0) {
       const newLegendItems = keys.map(key => ({
         id: key,
-        label: key,
+        label: formatFieldName(key),
         color: groupColors[key] || blue
       }));
       

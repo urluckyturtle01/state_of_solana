@@ -5,16 +5,7 @@ import { CounterConfig, CounterVariant, AVAILABLE_PAGES } from '../types';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
 import { saveCounterConfig } from '../utils';
-
-// Define menu options like in chart-creator/page.tsx
-const MENU_OPTIONS = [
-  { id: 'overview', name: 'Overview', icon: 'home' },
-  { id: 'dex', name: 'DEX', icon: 'chart-bar' },
-  { id: 'rev', name: 'REV', icon: 'currency-dollar' },
-  { id: 'mev', name: 'MEV', icon: 'currency-dollar' },
-  { id: 'stablecoins', name: 'Stablecoins', icon: 'coin' },
-  { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' }
-];
+import { MENU_OPTIONS, MENU_PAGES, getPagesForMenu, findMenuForPage } from '../config/menuPages';
 
 interface CounterFormProps {
   initialData?: CounterConfig;
@@ -58,100 +49,22 @@ const CounterForm: React.FC<CounterFormProps> = ({
   // Determine initial menu based on page when form loads with initialData
   useEffect(() => {
     if (initialData?.page) {
-      // Find which menu contains this page
-      for (const menu of MENU_OPTIONS) {
-        let found = false;
-        
-        switch (menu.id) {
-          case 'overview':
-            found = ['dashboard', 'network-usage', 'protocol-rev', 'market-dynamics'].includes(initialData.page);
-            break;
-          case 'dex':
-            found = ['volume', 'tvl', 'traders', 'aggregators', 'dex-summary'].includes(initialData.page);
-            break;
-          case 'rev':
-            found = ['overview', 'cost-capacity', 'issuance-burn', 'total-economic-value', 'breakdown'].includes(initialData.page);
-            break;
-          case 'mev':
-            found = ['dex-token-hotspots', 'extracted-value-pnl', 'mev-summary'].includes(initialData.page);
-            break;
-          case 'stablecoins':
-            found = ['stablecoin-usage', 'transaction-activity', 'liquidity-velocity', 'mint-burn', 'platform-exchange', 'tvl'].includes(initialData.page);
-            break;
-          case 'protocol-revenue':
-            found = ['total', 'dex-ecosystem', 'nft-ecosystem', 'depin', 'protocol-revenue-summary', 'summary'].includes(initialData.page);
-            break;
-        }
-        
-        if (found) {
-          setSelectedMenu(menu.id);
-          break;
-        }
+      // Find which menu contains this page using the helper function
+      const menuId = findMenuForPage(initialData.page);
+      if (menuId) {
+        setSelectedMenu(menuId);
       }
     }
   }, [initialData]);
 
   // Update available pages when component mounts or when selectedMenu changes
   useEffect(() => {
-    // Only update availablePages if we have a selectedMenu (set by the above effect)
+    // Only update availablePages if we have a selectedMenu
     if (selectedMenu) {
-      // Define pages for each menu - same logic as in the original useEffect
-      switch (selectedMenu) {
-        case 'overview':
-          setAvailablePages([
-            { id: 'dashboard', name: 'User Activity', path: '/dashboard' },
-            { id: 'network-usage', name: 'Network Usage', path: '/network-usage' },
-            { id: 'protocol-rev', name: 'Protocol Revenue', path: '/protocol-rev' },
-            { id: 'market-dynamics', name: 'Market Dynamics', path: '/market-dynamics' }
-          ]);
-          break;
-        case 'dex':
-          setAvailablePages([
-            { id: 'dex-summary', name: 'Summary', path: '/dex/summary' },
-            { id: 'volume', name: 'Volume', path: '/dex/volume' },
-            { id: 'tvl', name: 'TVL', path: '/dex/tvl' },
-            { id: 'traders', name: 'Traders', path: '/dex/traders' },
-            { id: 'aggregators', name: 'DEX Aggregators', path: '/dex/aggregators' }
-          ]);
-          break;
-        case 'rev':
-          setAvailablePages([
-            { id: 'overview', name: 'Summary', path: '/rev' },
-            { id: 'cost-capacity', name: 'Cost & Capacity', path: '/rev/cost-capacity' },
-            { id: 'issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
-            { id: 'total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' },
-            { id: 'breakdown', name: 'Breakdown', path: '/rev/breakdown' }
-          ]);
-          break;
-        case 'mev':
-          setAvailablePages([
-            { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
-            { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
-            { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' }
-          ]);
-          break;
-        case 'stablecoins':
-          setAvailablePages([
-            { id: 'stablecoin-usage', name: 'Stablecoin Usage', path: '/stablecoins/stablecoin-usage' },
-            { id: 'transaction-activity', name: 'Transaction Activity', path: '/stablecoins/transaction-activity' },
-            { id: 'liquidity-velocity', name: 'Liquidity Velocity', path: '/stablecoins/liquidity-velocity' },
-            { id: 'mint-burn', name: 'Mint & Burn', path: '/stablecoins/mint-burn' },
-            { id: 'platform-exchange', name: 'Platform & Exchange', path: '/stablecoins/platform-exchange' },
-            { id: 'tvl', name: 'TVL', path: '/stablecoins/tvl' }
-          ]);
-          break;
-        case 'protocol-revenue':
-          setAvailablePages([
-            { id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
-            { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
-            { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-            { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
-            { id: 'depin', name: 'DePin', path: '/protocol-revenue/depin' }
-          ]);
-          break;
-        default:
-          setAvailablePages([]);
-      }
+      // Get pages for the selected menu using the helper function
+      setAvailablePages(getPagesForMenu(selectedMenu));
+    } else {
+      setAvailablePages([]);
     }
   }, [selectedMenu]); // Dependency only on selectedMenu, not initialData
 

@@ -84,6 +84,27 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
   return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}\u00A0${unitSymbol}`;
 }
 
+// Helper function to format field names for display
+const formatFieldName = (fieldName: string): string => {
+  if (!fieldName) return '';
+  
+  // Convert snake_case or kebab-case to space-separated
+  const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+  
+  // Always capitalize the first letter of the entire string
+  if (spaceSeparated.length === 0) return '';
+  
+  // Split into words and capitalize each word
+  return spaceSeparated
+    .split(' ')
+    .map(word => {
+      if (word.length === 0) return '';
+      // Capitalize first letter, lowercase the rest
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+};
+
 const DualAxisChart: React.FC<DualAxisChartProps> = ({ 
   chartConfig, 
   data, 
@@ -406,7 +427,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
           );
           
           return {
-            label: field,
+            label: formatFieldName(field),
             value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit),
             color: fieldColors[field] || blue,
             shape: shouldRenderAsLine(field) ? 'circle' as 'circle' : 'square' as 'square'
@@ -422,7 +443,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         );
         
         tooltipItems.push({
-          label: fields[0],
+          label: formatFieldName(fields[0]),
           value: formatWithUnit(0, firstFieldUnit),
           color: fieldColors[fields[0]] || blue,
           shape: shouldRenderAsLine(fields[0]) ? 'circle' as 'circle' : 'square' as 'square'
@@ -578,7 +599,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     if (fields.length > 0) {
       const items = fields.map(field => ({
         id: field,
-        label: field,
+        label: formatFieldName(field),
         color: fieldColors[field] || blue
       }));
       setLegendItems(items);
