@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { CurrencyType } from '../../../api/REV/cost-capacity';
+
+// Define CurrencyType locally instead of importing it
+export type CurrencyType = 'USD' | 'SOL';
 
 interface CurrencyFilterProps {
   currency: string | CurrencyType;

@@ -15,7 +15,7 @@ export default function RevLayout({ children }: RevLayoutProps) {
   // Extract the active tab from pathname
   // /rev -> overview, /rev/by-protocol -> by-protocol, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "overview";
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "cost-capacity";
   
   return (
     <Layout>

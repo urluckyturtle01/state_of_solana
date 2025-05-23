@@ -48,11 +48,9 @@ overview: [
     { id: 'aggregators', name: 'DEX Aggregators', path: '/dex/aggregators' }
   ],
   rev: [
-    { id: 'overview', name: 'Summary', path: '/rev' },
-    { id: 'cost-capacity', name: 'Cost & Capacity', path: '/rev/cost-capacity' },
-    { id: 'issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
-    { id: 'total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' },
-    { id: 'breakdown', name: 'Breakdown', path: '/rev/breakdown' }
+    { id: 'rev-cost-capacity', name: 'Cost & Capacity', path: '/rev/cost-capacity' },
+    { id: 'rev-issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
+    { id: 'rev-total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' }
   ],
   mev: [
     { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },

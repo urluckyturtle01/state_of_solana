@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense } from 'react';
-import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
+import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import Loader from "@/app/components/shared/Loader";
 
 // Create a loading component for Suspense fallback
@@ -10,11 +10,11 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function TransactionActivityPage() {
+export default function StablecoinTransactionActivityPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
-        <DashboardRenderer 
+        <EnhancedDashboardRenderer 
           pageId="transaction-activity" 
           enableCaching={true}
         />

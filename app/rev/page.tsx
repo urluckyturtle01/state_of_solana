@@ -1,14 +1,22 @@
 "use client";
 
+
+
+
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function RevPage() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.replace("/rev/cost-capacity");
+  }, [router]);
+  
   return (
-    <div className="space-y-6">
-      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
-        <h2 className="text-xl font-semibold text-gray-200 mb-4">Revenue Overview</h2>
-        <div className="h-80 flex items-center justify-center bg-gray-900/50 rounded-lg">
-          <p className="text-gray-400">Revenue metrics will appear here</p>
-        </div>
-      </div>
+    <div className="flex justify-center items-center h-screen bg-black text-gray-400">
+      Redirecting to Cost & Capacity...
     </div>
   );
 } 
