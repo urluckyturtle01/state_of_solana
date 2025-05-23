@@ -14,6 +14,7 @@ import {
   getTableConfigsByPage
 } from '../utils';
 import { AVAILABLE_PAGES, ChartConfig, CounterConfig, TableConfig } from '../types';
+import { MENU_OPTIONS, MENU_PAGES } from '../config/menuPages';
 import Button from '../components/Button';
 import dynamic from 'next/dynamic';
 import BatchCleanupButton from '../components/BatchCleanupButton';
@@ -76,64 +77,9 @@ export default function ManageDashboardPage() {
       return;
     }
     
-    // Define pages for each menu
-    switch (selectedMenu) {
-      case 'overview':
-        setAvailablePages([
-          { id: 'dashboard', name: 'User Activity', path: '/dashboard' },
-          { id: 'network-usage', name: 'Network Usage', path: '/network-usage' },
-          { id: 'protocol-rev', name: 'Protocol Revenue', path: '/protocol-rev' },
-          { id: 'market-dynamics', name: 'Market Dynamics', path: '/market-dynamics' }
-        ]);
-        break;
-      case 'dex':
-        setAvailablePages([
-          { id: 'summary', name: 'Summary', path: '/dex/summary' },
-          { id: 'volume', name: 'Volume', path: '/dex/volume' },
-          { id: 'tvl', name: 'TVL', path: '/dex/tvl' },
-          { id: 'traders', name: 'Traders', path: '/dex/traders' },
-          { id: 'aggregators', name: 'DEX Aggregators', path: '/dex/aggregators' }
-        ]);
-        break;
-      case 'rev':
-        setAvailablePages([
-          { id: 'overview', name: 'Summary', path: '/rev' },
-          { id: 'cost-capacity', name: 'Cost & Capacity', path: '/rev/cost-capacity' },
-          { id: 'issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
-          { id: 'total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' },
-          { id: 'breakdown', name: 'Breakdown', path: '/rev/breakdown' }
-        ]);
-        break;
-        case 'mev':
-        setAvailablePages([
-          { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
-          { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
-          { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' },
-          
-        ]);
-        break;
-      case 'stablecoins':
-        setAvailablePages([
-          { id: 'stablecoin-usage', name: 'Stablecoin Usage', path: '/stablecoins/stablecoin-usage' },
-          { id: 'transaction-activity', name: 'Transaction Activity', path: '/stablecoins/transaction-activity' },
-          { id: 'liquidity-velocity', name: 'Liquidity Velocity', path: '/stablecoins/liquidity-velocity' },
-          { id: 'mint-burn', name: 'Mint & Burn', path: '/stablecoins/mint-burn' },
-          { id: 'platform-exchange', name: 'Platform & Exchange', path: '/stablecoins/platform-exchange' },
-          { id: 'tvl', name: 'TVL', path: '/stablecoins/tvl' }
-        ]);
-        break;
-      case 'protocol-revenue':
-        setAvailablePages([
-          { id: 'summary', name: 'Summary', path: '/protocol-revenue/summary' },
-          { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
-          { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-          { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
-          { id: 'depin', name: 'DePin', path: '/protocol-revenue/depin' }
-        ]);
-        break;
-      default:
-        setAvailablePages([]);
-    }
+    // Get pages from menuPages.ts configuration
+    const menuPages = MENU_PAGES[selectedMenu] || [];
+    setAvailablePages(menuPages);
     
     // Reset the page selection when menu changes
     setSelectedPage('all');
@@ -345,12 +291,9 @@ export default function ManageDashboardPage() {
               onChange={handleMenuChange}
             >
               <option value="">All Menus</option>
-              <option value="overview">Overview</option>
-              <option value="dex">DEX</option>
-              <option value="rev">REV</option>
-              <option value="stablecoins">Stablecoins</option>
-              <option value="protocol-revenue">Protocol Revenue</option>
-              <option value="mev">MEV</option>
+              {MENU_OPTIONS.map(menu => (
+                <option key={menu.id} value={menu.id}>{menu.name}</option>
+              ))}
             </select>
           </div>
           
