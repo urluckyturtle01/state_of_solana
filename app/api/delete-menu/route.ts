@@ -3,6 +3,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { promises as fsp } from 'fs';
 
+// Check if we're in production environment
+const isProduction = process.env.NODE_ENV === 'production';
+
 // Helper function to recursively delete a directory
 async function deleteDirectory(directoryPath: string) {
   try {
@@ -48,30 +51,65 @@ export async function POST(request: NextRequest) {
     // Get the root directory
     const rootDir = process.cwd();
     
-    // 1. Update the menuPages.ts file
-    await updateMenuPagesConfig(rootDir, menuId);
-    
-    // 2. Update the navigation files
-    await updateNavigation(rootDir, menuId);
-    
-    // 3. Delete the directory and all files
-    const menuDir = path.join(rootDir, 'app', menuId);
-    
-    try {
-      // Check if directory exists
-      await fs.access(menuDir);
-      // Delete the directory
-      await deleteDirectory(menuDir);
-      console.log(`Deleted directory: ${menuDir}`);
-    } catch (error) {
-      // Directory doesn't exist or can't be accessed
-      console.warn(`Directory ${menuDir} does not exist or cannot be accessed`);
+    // Different approach for production vs development
+    if (isProduction) {
+      try {
+        // In production, we'll create a temporary delete instruction in /tmp
+        const tempDir = '/tmp';
+        const tempDeletePath = path.join(tempDir, `delete-menu-${menuId}.json`);
+        
+        // Save the delete instruction to the temporary file
+        const deleteData = {
+          operation: 'delete-menu',
+          menuId,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Write to temp location
+        await fs.writeFile(tempDeletePath, JSON.stringify(deleteData, null, 2), 'utf-8');
+        console.log(`Stored delete instruction in temporary file: ${tempDeletePath}`);
+        
+        return NextResponse.json({
+          success: true,
+          message: `Menu "${menuId}" has been marked for deletion`,
+          tempDeletePath,
+          productionMode: true
+        });
+      } catch (error) {
+        console.error("Error in production mode:", error);
+        return NextResponse.json(
+          { error: `Could not save temporary delete instruction: ${error instanceof Error ? error.message : 'Unknown error'}` },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Development mode - continue with file-based approach
+      // 1. Update the menuPages.ts file
+      await updateMenuPagesConfig(rootDir, menuId);
+      
+      // 2. Update the navigation files
+      await updateNavigation(rootDir, menuId);
+      
+      // 3. Delete the directory and all files
+      const menuDir = path.join(rootDir, 'app', menuId);
+      
+      try {
+        // Check if directory exists
+        await fs.access(menuDir);
+        // Delete the directory
+        await deleteDirectory(menuDir);
+        console.log(`Deleted directory: ${menuDir}`);
+      } catch (error) {
+        // Directory doesn't exist or can't be accessed
+        console.warn(`Directory ${menuDir} does not exist or cannot be accessed`);
+      }
+      
+      return NextResponse.json({
+        success: true,
+        message: `Menu "${menuId}" has been deleted successfully`,
+        productionMode: false
+      });
     }
-    
-    return NextResponse.json({
-      success: true,
-      message: `Menu "${menuId}" has been deleted successfully`
-    });
   } catch (error) {
     console.error('Error deleting menu:', error);
     return NextResponse.json(

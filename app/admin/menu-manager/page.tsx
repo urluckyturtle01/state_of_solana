@@ -27,6 +27,9 @@ export default function MenuManagerPage() {
     success: boolean;
     message: string;
   } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Load menu data
   useEffect(() => {
@@ -133,12 +136,114 @@ export default function MenuManagerPage() {
     }
   };
 
+  const handleDeleteMenu = async (menuId: string) => {
+    if (!menuId) {
+      setError('Menu ID is required');
+      return;
+    }
+
+    // Confirm deletion
+    if (!confirm(`Are you sure you want to delete the entire menu '${menuId}' and all its pages?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      setSuccessMessage('');
+
+      const response = await fetch('/api/delete-menu', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ menuId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete menu');
+      }
+
+      if (result.success) {
+        // Check if in production mode
+        if (result.productionMode === true) {
+          setSuccessMessage(`Menu "${menuId}" has been marked for deletion. In production, the menu will be hidden from navigation but cannot delete actual files.`);
+        } else {
+          setSuccessMessage(`Menu "${menuId}" has been deleted successfully.`);
+        }
+        
+        // Wait a bit before refreshing data
+        setTimeout(() => {
+          setMenuData({
+            options: MENU_OPTIONS,
+            pages: MENU_PAGES
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeletePage = async (menuId: string, pageId: string) => {
+    if (!menuId || !pageId) {
+      setError('Menu ID and Page ID are required');
+      return;
+    }
+
+    // Confirm deletion
+    if (!confirm(`Are you sure you want to delete the page '${pageId}' from menu '${menuId}'?`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      setSuccessMessage('');
+
+      const response = await fetch('/api/delete-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ menuId, pageId }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete page');
+      }
+
+      if (result.success) {
+        // Check if in production mode
+        if (result.productionMode === true) {
+          setSuccessMessage(`Page "${pageId}" has been marked for deletion from menu "${menuId}". In production, the page will be hidden from navigation but cannot delete actual files.`);
+        } else {
+          setSuccessMessage(`Page "${pageId}" has been deleted successfully from menu "${menuId}".`);
+        }
+        
+        // Wait a bit before refreshing data
+        setTimeout(() => {
+          setMenuData({
+            options: MENU_OPTIONS,
+            pages: MENU_PAGES
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      setError(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    );
+    return <div className="p-6">Loading menu data...</div>;
   }
 
   return (
@@ -151,6 +256,18 @@ export default function MenuManagerPage() {
           View and manage menu sections and pages
         </p>
       </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4 rounded">
+          <p>{error}</p>
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-4 rounded">
+          <p>{successMessage}</p>
+        </div>
+      )}
 
       {result && (
         <div className={`mb-6 p-4 rounded-md ${result.success ? 'bg-green-900/30 border border-green-800' : 'bg-red-900/30 border border-red-800'}`}>

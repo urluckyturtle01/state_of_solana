@@ -379,19 +379,35 @@ ${pagesArrayContent}
         throw new Error(menuUpdateData.error || 'Failed to update menu configuration');
       }
       
-      setResult({
-        success: true,
-        message: `Menu structure for "${menuInfo.name}" has been created successfully. The configuration has been updated.`
-      });
+      // Check if we're in production mode
+      const isProduction = menuUpdateData.productionMode === true;
       
-      console.log('Menu configuration updated successfully');
-      
-      // Redirect to the new menu page after a short delay
-      setTimeout(() => {
-        // Get the first page ID, or default to 'summary' if no pages exist
-        const firstPageId = pages.length > 0 ? pages[0].id : 'summary';
-        router.push(`/${menuInfo.id}/${firstPageId}`);
-      }, 3000);
+      if (isProduction) {
+        setResult({
+          success: true,
+          message: `Menu "${menuInfo.name}" has been configured successfully in production mode. Note: In production, the server cannot create the actual files, but the menu will appear in navigation.`
+        });
+        
+        // In production, we'll just redirect to the admin dashboard after a delay
+        setTimeout(() => {
+          router.push('/admin');
+        }, 5000);
+      } else {
+        // Development mode - proceed normally
+        setResult({
+          success: true,
+          message: `Menu structure for "${menuInfo.name}" has been created successfully. The configuration has been updated.`
+        });
+        
+        console.log('Menu configuration updated successfully');
+        
+        // Redirect to the new menu page after a short delay
+        setTimeout(() => {
+          // Get the first page ID, or default to 'summary' if no pages exist
+          const firstPageId = pages.length > 0 ? pages[0].id : 'summary';
+          router.push(`/${menuInfo.id}/${firstPageId}`);
+        }, 3000);
+      }
     } catch (error) {
       console.error("Error creating menu:", error);
       setResult({

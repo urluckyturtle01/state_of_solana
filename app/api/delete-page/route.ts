@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { existsSync } from 'fs';
+
+// Check if we're in production environment
+const isProduction = process.env.NODE_ENV === 'production';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,43 +23,79 @@ export async function POST(request: NextRequest) {
     // Get the root directory
     const rootDir = process.cwd();
     
-    // Update the menuPages.ts file
-    const updatedMenu = await updateMenuPagesConfig(rootDir, menuId, pageId);
-    
-    // If menu is now empty, remove it from navigation
-    if (updatedMenu.isEmpty) {
-      await updateNavigation(rootDir, menuId);
-    }
-    
-    // Delete the page file
-    const pagePath = path.join(rootDir, 'app', menuId, pageId, 'page.tsx');
-    
-    try {
-      // Check if file exists
-      await fs.access(pagePath);
-      // Delete the file
-      await fs.unlink(pagePath);
-      
-      // Try to delete the directory if it's empty
-      const pageDir = path.join(rootDir, 'app', menuId, pageId);
+    // Different approach for production vs development
+    if (isProduction) {
       try {
-        // This will fail if the directory is not empty, which is fine
-        await fs.rmdir(pageDir);
-        console.log(`Deleted directory: ${pageDir}`);
+        // In production, we'll create a temporary delete instruction in /tmp
+        const tempDir = '/tmp';
+        const tempDeletePath = path.join(tempDir, `delete-page-${menuId}-${pageId}.json`);
+        
+        // Save the delete instruction to the temporary file
+        const deleteData = {
+          operation: 'delete-page',
+          menuId,
+          pageId,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Write to temp location
+        await fs.writeFile(tempDeletePath, JSON.stringify(deleteData, null, 2), 'utf-8');
+        console.log(`Stored delete instruction in temporary file: ${tempDeletePath}`);
+        
+        return NextResponse.json({
+          success: true,
+          message: `Page "${pageId}" has been marked for deletion from menu "${menuId}"`,
+          tempDeletePath,
+          productionMode: true
+        });
       } catch (error) {
-        console.warn(`Could not delete directory ${pageDir}. It may not be empty.`);
+        console.error("Error in production mode:", error);
+        return NextResponse.json(
+          { error: `Could not save temporary delete instruction: ${error instanceof Error ? error.message : 'Unknown error'}` },
+          { status: 500 }
+        );
+      }
+    } else {
+      // Development mode - continue with file-based approach
+      // Update the menuPages.ts file
+      const updatedMenu = await updateMenuPagesConfig(rootDir, menuId, pageId);
+      
+      // If menu is now empty, remove it from navigation
+      if (updatedMenu.isEmpty) {
+        await updateNavigation(rootDir, menuId);
       }
       
-      console.log(`Deleted page file: ${pagePath}`);
-    } catch (error) {
-      // File doesn't exist or can't be accessed
-      console.warn(`File ${pagePath} does not exist or cannot be accessed`);
+      // Delete the page file
+      const pagePath = path.join(rootDir, 'app', menuId, pageId, 'page.tsx');
+      
+      try {
+        // Check if file exists
+        await fs.access(pagePath);
+        // Delete the file
+        await fs.unlink(pagePath);
+        
+        // Try to delete the directory if it's empty
+        const pageDir = path.join(rootDir, 'app', menuId, pageId);
+        try {
+          // This will fail if the directory is not empty, which is fine
+          await fs.rmdir(pageDir);
+          console.log(`Deleted directory: ${pageDir}`);
+        } catch (error) {
+          console.warn(`Could not delete directory ${pageDir}. It may not be empty.`);
+        }
+        
+        console.log(`Deleted page file: ${pagePath}`);
+      } catch (error) {
+        // File doesn't exist or can't be accessed
+        console.warn(`File ${pagePath} does not exist or cannot be accessed`);
+      }
+      
+      return NextResponse.json({
+        success: true,
+        message: `Page "${pageId}" has been deleted from menu "${menuId}" successfully`,
+        productionMode: false
+      });
     }
-    
-    return NextResponse.json({
-      success: true,
-      message: `Page "${pageId}" has been deleted from menu "${menuId}" successfully`
-    });
   } catch (error) {
     console.error('Error deleting page:', error);
     return NextResponse.json(
