@@ -1,20 +1,5 @@
 "use client";
 
-/*export default function StablecoinsPage() {
-  return (
-    <div className="space-y-6">
-      <div className="bg-black/80 backdrop-blur-sm p-6 rounded-xl border border-gray-900 shadow-lg">
-        <h2 className="text-xl font-semibold text-gray-200 mb-4">Stablecoins Overview</h2>
-        <div className="h-80 flex items-center justify-center bg-gray-900/50 rounded-lg">
-          <p className="text-gray-400">Stablecoin metrics will appear here</p>
-        </div>
-      </div>
-    </div>
-  );
-} */
-
-
-
 
 
 import { useEffect } from "react";
@@ -28,8 +13,21 @@ export default function StablecoinsPage() {
   }, [router]);
   
   return (
-    <div className="flex justify-center items-center h-screen bg-black text-gray-400">
-      Redirecting to DEX Summary...
+    <div className="flex justify-center items-center h-[550px] bg-black text-gray-400">
+      
+      <div className="relative w-16 h-16">
+        {/* Outer spinning ring */}
+        <div className="absolute inset-0 border-t-2 border-r-2 border-blue-400/60 rounded-full animate-spin"></div>
+        
+        {/* Middle spinning ring - reverse direction */}
+        <div className="absolute inset-2 border-b-2 border-l-2 border-purple-400/80 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"></div>
+        
+        {/* Inner pulse */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+        </div>
+      </div>
+    
     </div>
   );
 } 

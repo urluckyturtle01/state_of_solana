@@ -3,7 +3,7 @@
 
 import React, { useEffect, useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
-import Loader from './Loader';
+import PrettyLoader from './PrettyLoader';
 
 interface ModalProps {
   isOpen: boolean;
@@ -132,7 +132,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
           {children}
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-10 rounded-md">
-              <Loader size="md" />
+              <PrettyLoader size="sm" />
             </div>
           )}
         </div>

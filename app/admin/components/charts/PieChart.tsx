@@ -7,7 +7,7 @@ import { ChartConfig } from '../../types';
 import { getColorByIndex, colors, blue } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
-import Loader from "@/app/components/shared/Loader";
+import PrettyLoader from "@/app/components/shared/PrettyLoader";
 import Modal from '@/app/components/shared/Modal';
 import LegendItem from "@/app/components/shared/LegendItem";
 import TimeFilterSelector from '@/app/components/shared/filters/TimeFilter';
@@ -292,16 +292,25 @@ const PieChart: React.FC<PieChartProps> = ({
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
-    if (error || pieData.length === 0) {
+    if (error) {
       return (
         <div className="flex flex-col justify-center items-center h-full">
-          <div className="text-gray-400/80 text-xs mb-2">{error || 'No data available'}</div>
+          <div className="text-gray-400/80 text-xs mb-2">{error}</div>
           <ButtonSecondary onClick={refreshData}>
             <div className="flex items-center gap-1.5">
               <RefreshIcon className="w-3.5 h-3.5" />
               <span>Refresh</span>
             </div>
           </ButtonSecondary>
+        </div>
+      );
+    }
+    
+    // Show loader when no data is available yet
+    if (pieData.length === 0) {
+      return (
+        <div className="flex justify-center items-center h-full">
+          <PrettyLoader size="sm" />
         </div>
       );
     }

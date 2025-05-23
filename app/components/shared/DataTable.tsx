@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useState, useMemo } from 'react';
-import Loader from './Loader';
+import PrettyLoader from './PrettyLoader';
 
 // Column definition
 export interface Column<T> {
@@ -300,7 +300,7 @@ export default function DataTable<T>({
   if (isLoading) {
     return loadingComponent || (
       <div className="flex justify-center items-center h-64">
-        <Loader size="sm" />
+        <PrettyLoader size="sm" />
       </div>
     );
   }

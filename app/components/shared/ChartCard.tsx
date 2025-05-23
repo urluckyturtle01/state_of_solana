@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
-import Loader from './Loader';
+import PrettyLoader from './PrettyLoader';
+import Loader from './Loader'
 
 interface ChartCardProps {
   title: string;
@@ -106,7 +107,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
               disabled={isDownloading}
             >
               {isDownloading ? (
-                <Loader size="xs" className="w-4 h-4" />
+                <Loader size="sm" />
               ) : (
                 <DownloadIcon className="w-4 h-4" />
               )}
@@ -144,7 +145,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
         <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-80 lg:h-auto relative`}>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10 rounded-md">
-              <Loader size="md" />
+              
             </div>
           )}
           {children}
