@@ -67,13 +67,10 @@ overview: [
     { id: 'platform-exchange', name: 'Platform & Exchange', path: '/stablecoins/platform-exchange' },
     { id: 'tvl', name: 'TVL', path: '/stablecoins/tvl' }
   ],
-  'protocol-revenue': [
-    { id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
+  "protocol-revenue": [{ id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
     { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
     { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
-    { id: 'depin', name: 'DePin', path: '/protocol-revenue/depin' }
-  ]
+    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' }]
 };
 
 // Helper function to get pages for a specific menu

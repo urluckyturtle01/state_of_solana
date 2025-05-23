@@ -70,20 +70,34 @@ async function updateMenuPagesConfig(rootDir: string, menuId: string, pageId: st
   const configPath = path.join(rootDir, 'app/admin/config/menuPages.ts');
   let content = await fs.readFile(configPath, 'utf-8');
   
-  // Extract existing pages for the menu
-  const menuPagesRegex = new RegExp(`["']${menuId}["']:\\s*\\[(.*?)\\]`, 's');
+  // First extract full file structure
+  const menuOptionsRegex = /export const MENU_OPTIONS: MenuItem\[\] = \[([\s\S]*?)\];/;
+  const menuPagesRegex = /export const MENU_PAGES: Record<string, MenuPage\[\]> = \{([\s\S]*?)\};/;
+  
+  const menuOptionsMatch = content.match(menuOptionsRegex);
   const menuPagesMatch = content.match(menuPagesRegex);
   
-  if (!menuPagesMatch) {
+  if (!menuOptionsMatch || !menuPagesMatch) {
+    throw new Error('Could not parse the menu configuration file');
+  }
+  
+  // Get menu options content - we'll leave this unchanged when deleting a page
+  const menuOptions = menuOptionsMatch[1].trim();
+  
+  // Extract existing pages for the specific menu
+  const specificMenuRegex = new RegExp(`["']${menuId}["']:\\s*\\[(.*?)\\]`, 's');
+  const specificMenuMatch = menuPagesMatch[1].match(specificMenuRegex);
+  
+  if (!specificMenuMatch) {
     throw new Error(`Could not find pages for menu "${menuId}"`);
   }
   
-  // Remove the page from the array - handle both single-line and multi-line formats
+  // Remove the specific page from the array - handle both single-line and multi-line formats
   const pageRegex = new RegExp(
     `(\\s*\\{[^{]*?id:\\s*["']${pageId}["'][^}]*?\\},?)|(\\s*\\{\\s*id:\\s*["']${pageId}["'][\\s\\S]*?\\},?)`,
     'g'
   );
-  let pagesContent = menuPagesMatch[1].replace(pageRegex, '');
+  let pagesContent = specificMenuMatch[1].replace(pageRegex, '');
   
   // Remove consecutive commas that might be left after deletion
   pagesContent = pagesContent.replace(/,\s*,/g, ',');
@@ -94,29 +108,54 @@ async function updateMenuPagesConfig(rootDir: string, menuId: string, pageId: st
     pagesContent = pagesContent.slice(0, -1).trim();
   }
   
-  // Check for orphaned pages - pages not in any specific menu structure
-  // First update the current menu's pages
-  if (pagesContent.trim() === '') {
-    // Menu has no more pages, keep an empty array
-    content = content.replace(menuPagesRegex, `"${menuId}": []`);
-  } else {
-    content = content.replace(menuPagesRegex, `"${menuId}": [${pagesContent}]`);
+  // Get the full MENU_PAGES content
+  let menuPages = menuPagesMatch[1];
+  
+  // Now replace only the specific menu's pages section
+  // First, get the entire entry including the commas
+  const fullMenuEntryRegex = new RegExp(`(,?\\s*["']${menuId}["']:\\s*\\[[\\s\\S]*?\\]\\s*,?)`, 'g');
+  const fullMenuEntryMatch = menuPages.match(fullMenuEntryRegex);
+  
+  if (!fullMenuEntryMatch) {
+    throw new Error(`Could not find complete menu entry for "${menuId}"`);
   }
   
-  // Now search for orphaned pages
-  const orphanedPageRegex = new RegExp(
-    `(\\s*\\{[^{]*?id:\\s*["']${pageId}["'][^}]*?\\},?)|(\\s*\\{\\s*id:\\s*["']${pageId}["'][\\s\\S]*?\\},?)`,
-    'g'
+  let replacement;
+  if (pagesContent.trim() === '') {
+    // Menu has no more pages, keep an empty array
+    replacement = `"${menuId}": []`;
+  } else {
+    // Replace with the updated content
+    replacement = `"${menuId}": [${pagesContent}]`;
+  }
+  
+  // Preserve commas correctly
+  const menuEntry = fullMenuEntryMatch[0];
+  let newMenuEntry;
+  
+  if (menuEntry.startsWith(',')) {
+    // If it starts with a comma, it's not the first entry
+    newMenuEntry = `,\n  ${replacement}`;
+  } else if (menuEntry.endsWith(',')) {
+    // If it ends with a comma, it's not the last entry
+    newMenuEntry = `\n  ${replacement},`;
+  } else {
+    // If it's both the first and last entry (only entry)
+    newMenuEntry = `\n  ${replacement}`;
+  }
+  
+  // Replace the entry with proper commas preserved
+  menuPages = menuPages.replace(fullMenuEntryRegex, newMenuEntry);
+  
+  // Ensure proper formatting and no duplicate commas
+  menuPages = menuPages.replace(/,\s*,/g, ',');
+  menuPages = menuPages.replace(/,\s*}/g, '\n}');
+  
+  // Generate updated complete content
+  let updatedContent = content.replace(
+    menuPagesRegex,
+    `export const MENU_PAGES: Record<string, MenuPage[]> = {${menuPages}};`
   );
-  
-  // Replace any remaining orphaned pages outside of valid menu structures
-  content = content.replace(orphanedPageRegex, '');
-  
-  // Remove any double commas that might have been created
-  content = content.replace(/,\s*,/g, ',');
-  
-  // Cleanup: ensure there are no empty arrays with trailing commas
-  content = content.replace(/\[\s*\],/g, '[]');
   
   // Reload the helper functions part if it was removed or duplicated
   const helperFunctions = `
@@ -136,16 +175,16 @@ export function findMenuForPage(pageId: string): string | null {
 }`;
   
   // Check if helper functions are missing
-  if (!content.includes('export function getPagesForMenu')) {
+  if (!updatedContent.includes('export function getPagesForMenu')) {
     // Add the helper functions at the end
-    content = content.replace(/};(\s*)$/, `};\n${helperFunctions}`);
+    updatedContent = updatedContent.replace(/};(\s*)$/, `};\n${helperFunctions}`);
   }
   
-  // Clean up any trailing commas before closing braces
-  content = content.replace(/,(\s*)\}/g, '\n}');
-  content = content.replace(/,(\s*)];/g, '\n];');
+  // Final clean-up to ensure commas between entries but not trailing commas
+  updatedContent = updatedContent.replace(/}\s*,\s*};/g, '}\n};');
+  updatedContent = updatedContent.replace(/(\["'][\w-]+["']:\s*\[[^\]]*\])\s*(?!,|\s*})/g, '$1,');
   
-  await fs.writeFile(configPath, content, 'utf-8');
+  await fs.writeFile(configPath, updatedContent, 'utf-8');
   console.log(`Updated menuPages.ts - removed page ${pageId} from menu ${menuId}`);
   
   // Return if the menu is now empty (no pages left)

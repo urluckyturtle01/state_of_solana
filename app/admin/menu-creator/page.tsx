@@ -358,107 +358,40 @@ ${pagesArrayContent}
     setResult(null);
     
     try {
-      // Generate file structure
-      const filesConfig = generateMenuStructure();
-      console.log(`Generated ${filesConfig.length} files for the menu structure`);
-      
-      // Save files directly to server
-      const savePromises = filesConfig.map(async (file) => {
-        try {
-          console.log(`Saving file: ${file.path}`);
-          const response = await fetch('/api/save-file', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              path: file.path,
-              content: file.content
-            }),
-          });
-          
-          const responseData = await response.json();
-          
-          if (!response.ok) {
-            console.error(`Failed to save file ${file.path}:`, responseData);
-            throw new Error(`Failed to save file ${file.path}: ${responseData.error || response.statusText}`);
-          }
-          
-          console.log(`Successfully saved file: ${file.path}`);
-          return { path: file.path, success: true };
-        } catch (error) {
-          console.error(`Error saving file ${file.path}:`, error);
-          return { path: file.path, success: false, error };
-        }
+      console.log("Updating menu configuration...");
+      const menuUpdateResponse = await fetch('/api/update-menu-config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          menuId: menuInfo.id,
+          menuName: menuInfo.name,
+          menuIcon: menuInfo.icon,
+          menuDescription: menuInfo.description,
+          pages: pages
+        }),
       });
       
-      // Wait for all file saves to complete
-      const results = await Promise.all(savePromises);
+      const menuUpdateData = await menuUpdateResponse.json();
       
-      // Check if all files were saved successfully
-      const failedFiles = results.filter(r => !r.success);
-      
-      if (failedFiles.length === 0) {
-        setResult({
-          success: true,
-          message: `Menu structure for "${menuInfo.name}" has been created successfully. All files have been saved to the app directory.`
-        });
-        
-        // Update menuPages.ts with new menu information
-        try {
-          console.log("Updating menu configuration...");
-          const menuUpdateResponse = await fetch('/api/update-menu-config', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              menuId: menuInfo.id,
-              menuName: menuInfo.name,
-              menuIcon: menuInfo.icon,
-              pages: pages
-            }),
-          });
-          
-          const menuUpdateData = await menuUpdateResponse.json();
-          
-          if (!menuUpdateResponse.ok) {
-            console.warn('Menu configuration not updated automatically:', menuUpdateData);
-          } else {
-            console.log('Menu configuration updated successfully');
-          }
-        } catch (configError) {
-          console.error('Error updating menu configuration:', configError);
-        }
-        
-        // Redirect to the new menu page after a short delay
-        setTimeout(() => {
-          // Get the first page ID, or default to 'summary' if no pages exist
-          const firstPageId = pages.length > 0 ? pages[0].id : 'summary';
-          router.push(`/${menuInfo.id}/${firstPageId}`);
-        }, 3000);
-      } else {
-        console.error("Failed files:", failedFiles);
-        // Even if some files failed, we can still update the menu config
-        try {
-          await fetch('/api/update-menu-config', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              menuId: menuInfo.id,
-              menuName: menuInfo.name,
-              menuIcon: menuInfo.icon,
-              pages: pages
-            }),
-          });
-        } catch (e) {
-          console.error("Failed to update menu config as a fallback:", e);
-        }
-        
-        throw new Error(`Failed to save ${failedFiles.length} files: ${failedFiles.map(f => f.path).join(', ')}`);
+      if (!menuUpdateResponse.ok) {
+        throw new Error(menuUpdateData.error || 'Failed to update menu configuration');
       }
+      
+      setResult({
+        success: true,
+        message: `Menu structure for "${menuInfo.name}" has been created successfully. The configuration has been updated.`
+      });
+      
+      console.log('Menu configuration updated successfully');
+      
+      // Redirect to the new menu page after a short delay
+      setTimeout(() => {
+        // Get the first page ID, or default to 'summary' if no pages exist
+        const firstPageId = pages.length > 0 ? pages[0].id : 'summary';
+        router.push(`/${menuInfo.id}/${firstPageId}`);
+      }, 3000);
     } catch (error) {
       console.error("Error creating menu:", error);
       setResult({
