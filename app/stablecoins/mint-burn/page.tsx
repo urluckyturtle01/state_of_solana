@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function StablecoinLiquidityVelocityPage() {
+export default function StablecoinMintBurnPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="liquidity-velocity" 
+          pageId="mint-burn" 
           enableCaching={true}
         />
       </Suspense>
