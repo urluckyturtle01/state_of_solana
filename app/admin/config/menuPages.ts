@@ -70,7 +70,8 @@ overview: [
   "protocol-revenue": [{ id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
     { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
     { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' }]
+    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
+    { id: 'depin', name: 'Depin', path: '/protocol-revenue/depin' }]
 };
 
 // Helper function to get pages for a specific menu

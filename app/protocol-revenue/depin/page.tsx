@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function ProtocolRevenueSummaryPage() {
+export default function ProtocolRevenueDepinPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="protocol-revenue-summary" 
+          pageId="depin" 
           enableCaching={true}
         />
       </Suspense>

@@ -1193,18 +1193,30 @@ export const saveTableConfig = async (tableConfig: TableConfig): Promise<TableCo
  */
 export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
   try {
-    const response = await fetch(`/api/tables/${tableId}`, {
-      method: 'DELETE',
-    });
+    console.log(`Deleting table ${tableId}`);
     
-    if (!response.ok) {
-      throw new Error(`Failed to delete table: ${response.statusText}`);
-    }
-    
-    // Clear caches to ensure we don't show deleted tables
+    // First, remove from localStorage if it exists there
+    let deletedFromLocalStorage = false;
     if (typeof window !== 'undefined') {
       // Clear all tables cache
-      localStorage.removeItem('all_tables');
+      const allTablesKey = 'all_tables';
+      const storedTables = localStorage.getItem(allTablesKey);
+      if (storedTables) {
+        try {
+          const existingConfigs = JSON.parse(storedTables) as TableConfig[];
+          const initialLength = existingConfigs.length;
+          const updatedConfigs = existingConfigs.filter(t => t.id !== tableId);
+          
+          // Only update localStorage if we actually removed something
+          if (updatedConfigs.length < initialLength) {
+            localStorage.setItem(allTablesKey, JSON.stringify(updatedConfigs));
+            console.log(`Table ${tableId} removed from localStorage`);
+            deletedFromLocalStorage = true;
+          }
+        } catch (e) {
+          console.error('Error parsing stored tables:', e);
+        }
+      }
       
       // Clear page-specific caches
       // We need to clear all page caches since we don't know which page the table belonged to
@@ -1216,9 +1228,58 @@ export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
       });
     }
     
+    // Use API endpoint to delete from S3
+    const baseUrl = typeof window !== 'undefined' 
+      ? `${window.location.protocol}//${window.location.host}`
+      : '';
+      
+    // Use safeFetch instead of fetch with the correct endpoint format
+    const response = await safeFetch(`${baseUrl}/api/tables?id=${tableId}`, {
+      method: 'DELETE',
+    });
+    
+    // Handle different API response statuses
+    if (!response.ok) {
+      // 404 is fine - it just means the table wasn't in S3
+      if (response.status === 404) {
+        console.log(`Table ${tableId} not found in S3 (404) - this is OK if it was only in localStorage`);
+        
+        // If we successfully deleted from localStorage, consider the operation successful
+        if (deletedFromLocalStorage) {
+          return true;
+        }
+        
+        // If not in localStorage either, it truly doesn't exist
+        console.warn(`Table ${tableId} was not found in localStorage or S3`);
+        return false;
+      }
+      
+      // For other errors, log but don't throw if we already deleted from localStorage
+      console.warn(`API error: ${response.status} - ${response.statusText}`);
+      
+      if (deletedFromLocalStorage) {
+        console.log(`Table was deleted from localStorage but API deletion failed`);
+        return true;
+      }
+      
+      // If not deleted from localStorage, and API failed, then it's a true error
+      throw new Error(`API error: ${response.statusText}`);
+    }
+    
+    console.log(`Table ${tableId} deleted successfully from S3`);
     return true;
   } catch (error) {
-    console.error(`Error deleting table ${tableId}:`, error);
+    console.error('Error deleting table:', error);
+    
+    // Alert user about the error
+    if (typeof window !== 'undefined') {
+      let errorMessage = 'Failed to delete table.';
+      if (error instanceof Error) {
+        errorMessage += ' ' + error.message;
+      }
+      alert(errorMessage);
+    }
+    
     return false;
   }
 };
@@ -1327,8 +1388,25 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
 // Function to generate menu structure
 export async function generateMenuStructure(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]) {
   try {
-    // Generate file structure (without actually creating files)
-    const fileStructure = generateMenuFileStructure(menuId, menuName, description, pages);
+    // Create a simple file structure description without actually generating files
+    const fileStructure = [
+      {
+        path: `app/${menuId}/layout.tsx`,
+        description: 'Layout file for the menu section'
+      },
+      {
+        path: `app/${menuId}/page.tsx`,
+        description: 'Root page that redirects to the first page'
+      },
+      {
+        path: `app/${menuId}/components/${menuId.charAt(0).toUpperCase() + menuId.slice(1)}TabsHeader.tsx`,
+        description: 'Navigation component for the menu section'
+      },
+      ...pages.map(page => ({
+        path: `app/${menuId}/${page.id}/page.tsx`,
+        description: `Page component for ${page.name}`
+      }))
+    ];
     
     return {
       success: true,
@@ -1343,190 +1421,3 @@ export async function generateMenuStructure(menuId: string, menuName: string, de
     };
   }
 }
-
-// Function to generate the file structure
-function generateMenuFileStructure(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]) {
-  const fileStructure = [];
-  const capitalizedMenuId = capitalizeFirstLetter(menuId);
-  
-  // Layout file
-  fileStructure.push({
-    path: `/app/${menuId}/layout.tsx`,
-    content: generateLayoutFile(menuId, menuName)
-  });
-  
-  // Root page file
-  fileStructure.push({
-    path: `/app/${menuId}/page.tsx`,
-    content: generateRootPageFile(menuId)
-  });
-  
-  // Tabs header component
-  fileStructure.push({
-    path: `/app/${menuId}/components/${capitalizedMenuId}TabsHeader.tsx`,
-    content: generateTabsHeaderFile(menuId, menuName, description, pages)
-  });
-  
-  // Page files
-  for (const page of pages) {
-    fileStructure.push({
-      path: `/app/${menuId}/${page.id}/page.tsx`,
-      content: generatePageFile(menuId, page.id)
-    });
-  }
-  
-  // MenuPages config update instructions
-  fileStructure.push({
-    path: `/app/admin/config/menuPages.update.ts`,
-    content: generateMenuPagesUpdateInstructions(menuId, menuName, pages)
-  });
-  
-  return fileStructure;
-}
-
-// Helper function to capitalize first letter
-function capitalizeFirstLetter(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-// Function to generate layout.tsx file content
-function generateLayoutFile(menuId: string, menuName: string): string {
-  const capitalizedMenuId = capitalizeFirstLetter(menuId);
-  
-  return `"use client";
-
-import { ReactNode } from "react";
-import Layout from "../components/Layout";
-import ${capitalizedMenuId}TabsHeader from "./components/${capitalizedMenuId}TabsHeader";
-import { usePathname } from "next/navigation";
-
-interface ${capitalizedMenuId}LayoutProps {
-  children: ReactNode;
-}
-
-export default function ${capitalizedMenuId}Layout({ children }: ${capitalizedMenuId}LayoutProps) {
-  const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'summary';
-  
-  return (
-    <Layout>
-      <div className="space-y-6">
-        <${capitalizedMenuId}TabsHeader activeTab={activeTab} />
-        {children}
-      </div>
-    </Layout>
-  );
-}`;
-}
-
-// Function to generate root page.tsx file content
-function generateRootPageFile(menuId: string): string {
-  const capitalizedMenuId = capitalizeFirstLetter(menuId);
-  
-  return `"use client";
-
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-export default function ${capitalizedMenuId}IndexPage() {
-  const router = useRouter();
-  
-  useEffect(() => {
-    router.replace("/${menuId}/summary");
-  }, [router]);
-  
-  return (
-    <div className="flex justify-center items-center h-screen bg-black text-gray-400">
-      Redirecting to ${capitalizedMenuId} Summary...
-    </div>
-  );
-}`;
-}
-
-// Function to generate tabs header component
-function generateTabsHeaderFile(menuId: string, menuName: string, description: string, pages: { id: string, name: string }[]): string {
-  const capitalizedMenuId = capitalizeFirstLetter(menuId);
-  
-  // Generate tabs array content
-  const tabsContent = pages.map(page => {
-    return `    { 
-      name: "${page.name}", 
-      path: "/${menuId}/${page.id}",
-      key: "${page.id}",
-      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-    }`;
-  }).join(',\n');
-  
-  return `"use client";
-
-import TabsNavigation, { Tab } from "@/app/components/shared/TabsNavigation";
-
-interface ${capitalizedMenuId}TabsHeaderProps {
-  activeTab?: string;
-}
-
-export default function ${capitalizedMenuId}TabsHeader({ activeTab = "summary" }: ${capitalizedMenuId}TabsHeaderProps) {
-  const tabs: Tab[] = [
-${tabsContent}
-  ];
-  
-  return (
-    <TabsNavigation 
-      tabs={tabs} 
-      activeTab={activeTab}
-      title="${menuName}"
-      description="${description}"
-      showDivider={true}
-    />
-  );
-}`;
-}
-
-// Function to generate page file content
-function generatePageFile(menuId: string, pageId: string): string {
-  const capitalizedMenuId = capitalizeFirstLetter(menuId);
-  const capitalizedPageId = pageId.split('-').map(capitalizeFirstLetter).join('');
-  
-  return `"use client";
-import React, { Suspense } from 'react';
-import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
-import Loader from "@/app/components/shared/Loader";
-
-// Create a loading component for Suspense fallback
-const ChartLoading = () => (
-  <div className="w-full h-[500px] flex items-center justify-center">
-    <Loader size="md" />
-  </div>
-);
-
-export default function ${capitalizedMenuId}${capitalizedPageId}Page() {
-  return (
-    <div className="space-y-6">
-      <Suspense fallback={<ChartLoading />}>
-        <EnhancedDashboardRenderer 
-          pageId="${menuId}-${pageId}" 
-          enableCaching={true}
-        />
-      </Suspense>
-    </div>
-  );
-}`;
-}
-
-// Add this function to generate update instructions for menuPages.ts
-function generateMenuPagesUpdateInstructions(menuId: string, menuName: string, pages: { id: string, name: string }[]): string {
-  const pagesArrayContent = pages.map(page => {
-    return `    { id: '${page.id}', name: '${page.name}', path: '/${menuId}/${page.id}' }`;
-  }).join(',\n');
-  
-  return `// Add to MENU_OPTIONS array in app/admin/config/menuPages.ts:
-{ id: '${menuId}', name: '${menuName}', icon: 'home' },
-
-// Add to MENU_PAGES object in app/admin/config/menuPages.ts:
-${menuId}: [
-${pagesArrayContent}
-],`;
-} 
