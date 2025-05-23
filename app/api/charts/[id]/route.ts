@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ChartConfig } from '@/app/admin/types';
-import { getFromS3, saveToS3, deleteFromS3 } from '@/lib/s3';
+import { 
+  getFromS3, 
+  saveToS3, 
+  deleteFromS3, 
+  getChartPageIndex,
+  saveChartPageIndex,
+  getChartsBatch,
+  saveChartsBatch
+} from '@/lib/s3';
 
 // Enable ISR for this API route - cache for 30 seconds
 export const dynamic = 'force-dynamic';
@@ -203,6 +211,9 @@ export async function DELETE(
       );
     }
     
+    // Store the page ID for batch/index updates
+    const pageId = existingChart.page;
+    
     // Delete from S3
     const deleteStart = startTimer();
     const deleteResult = await deleteFromS3(`charts/${chartId}.json`);
@@ -218,6 +229,42 @@ export async function DELETE(
     
     // Remove from memory cache
     delete CHART_CACHE[chartId];
+    
+    // Update batch files and indexes in the background
+    setTimeout(async () => {
+      try {
+        if (pageId) {
+          console.log(`Updating batch files and indexes for page ${pageId} after chart deletion`);
+          
+          // Update page index - remove this chart ID
+          const existingIds = await getChartPageIndex(pageId) || [];
+          if (existingIds.includes(chartId)) {
+            await saveChartPageIndex(
+              pageId, 
+              existingIds.filter(id => id !== chartId)
+            );
+            console.log(`Removed chart ${chartId} from page index for ${pageId}`);
+          }
+          
+          // Update batch file - remove this chart
+          const pageCharts = await getChartsBatch(pageId) || [];
+          if (pageCharts.length > 0) {
+            const updatedCharts = pageCharts.filter((chart: ChartConfig) => chart.id !== chartId);
+            
+            if (updatedCharts.length > 0) {
+              await saveChartsBatch(pageId, updatedCharts);
+              console.log(`Updated batch file for page ${pageId} - removed chart ${chartId}`);
+            } else {
+              // If no charts left, delete the batch file
+              await deleteFromS3(`charts/batches/page_${pageId}.json`);
+              console.log(`Deleted empty batch file for page ${pageId}`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error updating batch files after chart deletion:`, error);
+      }
+    }, 0);
     
     endTimer(overallStart, "Total DELETE request time");
     return NextResponse.json({ 
