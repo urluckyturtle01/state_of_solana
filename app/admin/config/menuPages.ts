@@ -29,12 +29,7 @@ export const MENU_OPTIONS: MenuItem[] = [
   { id: 'rev', name: 'REV', icon: 'currency-dollar' },
   { id: 'mev', name: 'MEV', icon: 'currency-dollar' },
   { id: 'stablecoins', name: 'Stablecoins', icon: 'coin' },
-  { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' },
-  {
-    id: "hello",
-    name: "hello",
-    icon: "home"
-  }
+  { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' }
 ];
 
 // Define page configurations for each menu
@@ -75,14 +70,7 @@ overview: [
   "protocol-revenue": [{ id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
     { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
     { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' }],
-  "hello": [
-    {
-      id: "hbhb",
-      name: "hbhb",
-      path: "/hello/hbhb"
-    }
-  ]
+    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' }]
 };
 
 // Helper function to get pages for a specific menu
