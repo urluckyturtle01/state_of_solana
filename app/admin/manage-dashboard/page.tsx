@@ -16,6 +16,7 @@ import {
 import { AVAILABLE_PAGES, ChartConfig, CounterConfig, TableConfig } from '../types';
 import Button from '../components/Button';
 import dynamic from 'next/dynamic';
+import BatchCleanupButton from '../components/BatchCleanupButton';
 
 // Dynamic imports to avoid SSR issues
 const DashboardRenderer = dynamic(() => import('../components/dashboard-renderer'), {
@@ -294,6 +295,7 @@ export default function ManageDashboardPage() {
           <p className="mt-2 text-sm text-gray-600">View, preview, and manage your analytics visualizations and counters</p>
         </div>
         <div className="flex space-x-3">
+          <BatchCleanupButton />
           <Link href={activeTab === 'charts' 
               ? "/admin/chart-creator" 
               : activeTab === 'counters' 

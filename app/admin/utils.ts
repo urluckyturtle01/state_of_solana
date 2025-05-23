@@ -1203,18 +1203,38 @@ export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
       const storedTables = localStorage.getItem(allTablesKey);
       if (storedTables) {
         try {
-          const existingConfigs = JSON.parse(storedTables) as TableConfig[];
-          const initialLength = existingConfigs.length;
-          const updatedConfigs = existingConfigs.filter(t => t.id !== tableId);
+          const parsedData = JSON.parse(storedTables);
           
-          // Only update localStorage if we actually removed something
-          if (updatedConfigs.length < initialLength) {
-            localStorage.setItem(allTablesKey, JSON.stringify(updatedConfigs));
-            console.log(`Table ${tableId} removed from localStorage`);
+          // Handle different possible formats of stored data
+          let existingConfigs: TableConfig[] = [];
+          
+          if (Array.isArray(parsedData)) {
+            existingConfigs = parsedData;
+          } else if (parsedData && typeof parsedData === 'object' && 'tables' in parsedData && Array.isArray(parsedData.tables)) {
+            existingConfigs = parsedData.tables;
+          } else {
+            console.warn('Stored tables data is not in expected format:', parsedData);
+            // Still mark as deleted from localStorage to avoid errors
             deletedFromLocalStorage = true;
+            // Remove the invalid data
+            localStorage.removeItem(allTablesKey);
+          }
+          
+          if (Array.isArray(existingConfigs)) {
+            const initialLength = existingConfigs.length;
+            const updatedConfigs = existingConfigs.filter(t => t.id !== tableId);
+            
+            // Only update localStorage if we actually removed something
+            if (updatedConfigs.length < initialLength) {
+              localStorage.setItem(allTablesKey, JSON.stringify(updatedConfigs));
+              console.log(`Table ${tableId} removed from localStorage`);
+              deletedFromLocalStorage = true;
+            }
           }
         } catch (e) {
           console.error('Error parsing stored tables:', e);
+          // Remove potentially corrupted data
+          localStorage.removeItem(allTablesKey);
         }
       }
       
@@ -1229,12 +1249,7 @@ export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
     }
     
     // Use API endpoint to delete from S3
-    const baseUrl = typeof window !== 'undefined' 
-      ? `${window.location.protocol}//${window.location.host}`
-      : '';
-      
-    // Use safeFetch instead of fetch with the correct endpoint format
-    const response = await safeFetch(`${baseUrl}/api/tables?id=${tableId}`, {
+    const response = await fetch(`/api/tables/${tableId}`, {
       method: 'DELETE',
     });
     
