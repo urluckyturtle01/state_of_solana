@@ -188,9 +188,40 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   // Format the title based on timeFilter if provided
   const formattedTitle = formatTooltipTitle(title, timeFilter);
 
+  // Helper function to convert formatted values to raw numbers
+  const parseValueWithUnits = (value: string | number): number => {
+    if (typeof value === 'number') return value;
+    
+    // Extract the numeric part and any suffix
+    const matches = value.replace(/,/g, '').match(/^[^\d]*([0-9.]+)([KMBT])?/i);
+    if (!matches) return 0;
+    
+    const numericPart = parseFloat(matches[1]);
+    if (isNaN(numericPart)) return 0;
+    
+    const unitSuffix = matches[2]?.toUpperCase();
+    
+    // Apply multiplier based on suffix
+    if (unitSuffix === 'K') return numericPart * 1000;
+    if (unitSuffix === 'M') return numericPart * 1000000;
+    if (unitSuffix === 'B') return numericPart * 1000000000;
+    if (unitSuffix === 'T') return numericPart * 1000000000000;
+    
+    return numericPart;
+  };
+  
+  // Sort items by value in descending order
+  const sortedItems = [...items].sort((a, b) => {
+    const valueA = parseValueWithUnits(a.value);
+    const valueB = parseValueWithUnits(b.value);
+    
+    // Sort descending (higher values first)
+    return valueB - valueA;
+  });
+
   return (
     <div 
-      className="absolute z-10 pointer-events-none bg-gray-900/95 shadow-lg border border-gray-800 rounded-md p-2 text-xs min-w-[120px]"
+      className="absolute z-10 pointer-events-none bg-gray-900/95 shadow-lg border border-gray-800 rounded-md p-2 text-xs min-w-[180px] w-auto whitespace-nowrap"
       style={{
         top: `${top}px`,
         left: shouldFlipX ? `${left - 160}px` : `${left + 10}px`,
@@ -204,8 +235,8 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
       
       {/* Items */}
       <div className="space-y-1">
-        {items.map((item, idx) => (
-          <div key={`tooltip-item-${idx}`} className="flex items-center mt-2 justify-between">
+        {sortedItems.map((item, idx) => (
+          <div key={`tooltip-item-${idx}`} className="flex items-center mt-2 justify-between whitespace-nowrap">
             <div className="flex items-center text-gray-400">
               <LegendShape type={item.shape || 'circle'} color={item.color} />
               <span className="text-gray-400 text-[10px] font-normal ml-2">{item.label}</span>
@@ -217,7 +248,12 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
                 </span>
               )}
             </div>
-            <span className="text-gray-300 text-[10px] font-normal ml-4">
+            
+            {/* Value with color matching the data point */}
+            <span 
+              className="text-gray-200 font-medium ml-4"
+             
+            >
               {formatValueWithCurrency(item.value, currencyFilter)}
             </span>
           </div>

@@ -220,12 +220,16 @@ const PieChart: React.FC<PieChartProps> = ({
   // Update legend items when pie data changes
   useEffect(() => {
     if (pieData.length > 0) {
-      const newLegendItems = pieData.map(item => ({
-        id: item.label,
-        label: formatFieldName(item.label),
-        color: colorScale(item.label) as string,
-        value: item.percentage
-      }));
+      // PieData is already sorted in the useMemo, but let's sort again by value
+      const newLegendItems = pieData
+        .map(item => ({
+          id: item.label,
+          label: formatFieldName(item.label),
+          color: colorScale(item.label) as string,
+          value: item.value,
+          percentage: item.percentage
+        }))
+        .sort((a, b) => b.value - a.value);
       
       setLegendItems(newLegendItems);
     }

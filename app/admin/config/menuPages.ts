@@ -62,7 +62,7 @@ overview: [
     { id: 'transaction-activity', name: 'Transaction Activity', path: '/stablecoins/transaction-activity' },
     { id: 'liquidity-velocity', name: 'Liquidity Velocity', path: '/stablecoins/liquidity-velocity' },
     { id: 'mint-burn', name: 'Mint & Burn', path: '/stablecoins/mint-burn' },
-    { id: 'stablecoins-platform-exchange', name: 'Platform & Exchange', path: '/stablecoins/platform-exchange' },
+    { id: 'cexs', name: 'CEXs', path: '/stablecoins/cexs' },
     { id: 'stablecoins-tvl', name: 'TVL', path: '/stablecoins/tvl' }
   ],
   "protocol-revenue": [{ id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },

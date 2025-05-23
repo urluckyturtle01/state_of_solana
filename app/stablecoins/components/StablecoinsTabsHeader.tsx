@@ -33,9 +33,9 @@ export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }
       icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
     },
     { 
-      name: "Platform & Exchange", 
-      path: "/stablecoins/platform-exchange",
-      key: "platform-exchange",
+      name: "CEXs", 
+      path: "/stablecoins/cexs",
+      key: "cexs",
       icon: "M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
     },
     { 

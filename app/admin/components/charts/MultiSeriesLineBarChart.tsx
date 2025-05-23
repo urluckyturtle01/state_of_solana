@@ -1076,11 +1076,22 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Update legend items when chart data changes
   useEffect(() => {
     if (chartData.length > 0 && fields.length > 0) {
-      const newLegendItems = fields.map(field => ({
-        id: field,
-        label: formatFieldName(field),
-        color: fieldColors[field] || blue
-      }));
+      // Calculate total value for each field across all data points
+      const fieldTotals: Record<string, number> = {};
+      
+      fields.forEach(field => {
+        fieldTotals[field] = chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0);
+      });
+      
+      // Create and sort legend items by total value (descending)
+      const newLegendItems = fields
+        .map(field => ({
+          id: field,
+          label: formatFieldName(field),
+          color: fieldColors[field] || blue,
+          value: fieldTotals[field]
+        }))
+        .sort((a, b) => b.value - a.value);
       
       setLegendItems(newLegendItems);
     }

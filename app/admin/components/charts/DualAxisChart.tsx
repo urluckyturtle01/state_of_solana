@@ -597,14 +597,26 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Update legend items based on chart data
   const updateLegendItems = useCallback(() => {
     if (fields.length > 0) {
-      const items = fields.map(field => ({
-        id: field,
-        label: formatFieldName(field),
-        color: fieldColors[field] || blue
-      }));
+      // Calculate total value for each field across all data points
+      const fieldTotals: Record<string, number> = {};
+      
+      fields.forEach(field => {
+        fieldTotals[field] = chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0);
+      });
+      
+      // Create and sort legend items by total value (descending)
+      const items = fields
+        .map(field => ({
+          id: field,
+          label: formatFieldName(field),
+          color: fieldColors[field] || blue,
+          value: fieldTotals[field]
+        }))
+        .sort((a, b) => b.value - a.value);
+      
       setLegendItems(items);
     }
-  }, [fields, fieldColors]);
+  }, [fields, fieldColors, chartData]);
   
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
@@ -962,25 +974,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             })}
           </Group>
         </svg>
-        
-        {/* Display tooltip at the container level for modal views */}
-        {tooltip.visible && tooltip.items && isModal && (
-          <div className="absolute z-50" style={{ 
-            pointerEvents: 'none',
-            top: tooltip.top,
-            left: tooltip.left
-          }}>
-            <ChartTooltip
-              title={String(tooltip.key)}
-              items={tooltip.items}
-              left={0}
-              top={0}
-              isModal={true}
-              timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
-              currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
-            />
-          </div>
-        )}
       </div>
     );
   }, [
@@ -1102,6 +1095,25 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                     }
                   </ParentSize>
                 </div>
+                
+                {/* Display tooltip at the container level for modal views */}
+                {tooltip.visible && tooltip.items && (
+                  <div className="absolute z-50" style={{ 
+                    pointerEvents: 'none',
+                    top: tooltip.top,
+                    left: tooltip.left
+                  }}>
+                    <ChartTooltip
+                      title={String(tooltip.key)}
+                      items={tooltip.items}
+                      left={0}
+                      top={0}
+                      isModal={true}
+                      timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
+                      currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                    />
+                  </div>
+                )}
                 
                 {/* Brush component - 15% height */}
                 {brushData.length > 0 ? (

@@ -26,7 +26,7 @@ const formatCurrency = (value: number): string => {
 };
 
 // Function to truncate text with ellipsis
-const truncateLabel = (label: string, maxLength: number = 10): string => {
+const truncateLabel = (label: string, maxLength: number = 15): string => {
   if (label.length <= maxLength) return label;
   return label.substring(0, maxLength) + '...';
 };
@@ -1190,9 +1190,9 @@ export default function DashboardRenderer({
           color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
           value: fieldTotals[field] || 0,
           // Determine shape based on axis (typically lines for right axis)
-          shape: isRightAxis ? 'circle' : 'square'
+          shape: isRightAxis ? 'circle' as const : 'square' as const
         };
-      });
+      }).sort((a, b) => b.value - a.value); // Sort by value in descending order
     }
     // First, we need to determine if this is truly a stacked chart with valid data
     // OR a regular chart with groupBy - both need to display the group items in legends
@@ -1265,9 +1265,10 @@ export default function DashboardRenderer({
             color: colorMap[groupStr] || getColorByIndex(Object.keys(colorMap).length),
             value: groupTotals[groupStr] || 0,
             // Use circle shape for line type displays, determined by parent chart config
-            shape: shouldUseLineShape ? 'circle' : 'square'
+            shape: shouldUseLineShape ? 'circle' as const : 'square' as const
           };
-        });
+        })
+        .sort((a, b) => b.value - a.value); // Sort by value in descending order
     }
     // Handle pie charts
     else if (chart.chartType === 'pie') {
@@ -1320,7 +1321,7 @@ export default function DashboardRenderer({
           color: colorMap[label] || getColorByIndex(index),
           value,
           // Pie charts always use square/block shape
-          shape: 'square'
+          shape: 'square' as const
         };
       });
       
@@ -1379,7 +1380,7 @@ export default function DashboardRenderer({
               label,
               color: colorMap[label] || getColorByIndex(index),
               value: total,
-              shape: isLine ? 'circle' : 'square'
+              shape: isLine ? 'circle' as const : 'square' as const
             };
           });
         } else {
@@ -1405,7 +1406,7 @@ export default function DashboardRenderer({
             label,
             color: colorMap[label] || getColorByIndex(0),
             value: total,
-            shape: isLine ? 'circle' : 'square'
+            shape: isLine ? 'circle' as const : 'square' as const
           }];
         }
       } else {
@@ -1426,7 +1427,7 @@ export default function DashboardRenderer({
               color: colorMap[label] || getColorByIndex(index),
               value: Number(item[yAxisFields[0]]) || 0,
               // Bar chart series are always squares
-              shape: chart.chartType === 'line' ? 'circle' : 'square'
+              shape: chart.chartType === 'line' ? 'circle' as const : 'square' as const
             };
           });
       }

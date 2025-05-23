@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function StablecoinPlatformExchangePage() {
+export default function StablecoinCEXsPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="stablecoins-platform-exchange" 
+          pageId="cexs" 
           enableCaching={true}
         />
       </Suspense>

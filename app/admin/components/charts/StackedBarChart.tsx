@@ -882,11 +882,22 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Update legend items 
   useEffect(() => {
     if (chartData.length > 0 && keys.length > 0) {
-      const newLegendItems = keys.map(key => ({
-        id: key,
-        label: formatFieldName(key),
-        color: groupColors[key] || blue
-      }));
+      // Calculate total value for each key across all data points
+      const keyTotals: Record<string, number> = {};
+      
+      keys.forEach(key => {
+        keyTotals[key] = chartData.reduce((sum, d) => sum + (Number(d[key]) || 0), 0);
+      });
+      
+      // Create and sort legend items by total value (descending)
+      const newLegendItems = keys
+        .map(key => ({
+          id: key,
+          label: formatFieldName(key),
+          color: groupColors[key] || blue,
+          value: keyTotals[key]
+        }))
+        .sort((a, b) => b.value - a.value);
       
       setLegendItems(newLegendItems);
     }

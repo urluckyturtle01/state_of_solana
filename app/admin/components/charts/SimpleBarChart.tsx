@@ -1008,19 +1008,32 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   useEffect(() => {
     if (chartData.length > 0) {
       if (isMultiSeries) {
-        // For multi-series, create a legend item for each y-field
-        const items = yFields.map(field => ({
-          id: field,
-          label: formatFieldName(field),
-          color: typeof barColor === 'string' ? barColor : (barColor[field] || blue)
-        }));
+        // For multi-series, create a legend item for each y-field and calculate total values for sorting
+        const fieldTotals: Record<string, number> = {};
+        
+        // Calculate total value for each field across all data points
+        yFields.forEach(field => {
+          fieldTotals[field] = chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0);
+        });
+        
+        // Create and sort legend items by value (descending)
+        const items = yFields
+          .map(field => ({
+            id: field,
+            label: formatFieldName(field),
+            color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
+            value: fieldTotals[field]
+          }))
+          .sort((a, b) => b.value - a.value);
+        
         setLegendItems(items);
       } else {
-        // Single y-field
+        // Single y-field - can't really sort a single item
         setLegendItems([{
           id: yKey,
           label: formatFieldName(yKey),
-          color: typeof barColor === 'string' ? barColor : blue
+          color: typeof barColor === 'string' ? barColor : blue,
+          value: chartData.reduce((sum, d) => sum + (Number(d[yKey]) || 0), 0)
         }]);
       }
     }
