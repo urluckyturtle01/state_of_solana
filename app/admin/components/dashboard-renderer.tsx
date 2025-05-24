@@ -1327,6 +1327,104 @@ export default function DashboardRenderer({
       
       console.log(`Generated ${chartLegends.length} legend items for pie chart`);
     }
+    // Handle area and stacked-area charts
+    else if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
+      console.log("Processing as area chart");
+      
+      // Check if this is a date-based chart (typically time series)
+      const xField = typeof chart.dataMapping.xAxis === 'string' ? 
+        chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
+      
+      // Get field names from yAxis which could be strings or YAxisConfig objects
+      let yAxisFields: string[] = [];
+      if (Array.isArray(chart.dataMapping.yAxis)) {
+        yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
+      } else {
+        yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+      }
+      
+      const isDateBased = data.length > 0 && 
+        (xField.toLowerCase().includes('date') || 
+         xField.toLowerCase().includes('time') || 
+         typeof data[0][xField] === 'string' && 
+         data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
+      
+      if (isDateBased) {
+        // For date-based area charts, use series names or y-axis field names
+        
+        // Check if we have multiple y-axis fields (multi-series)
+        if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
+          // For multi-series area charts, use the y-axis field names as legends
+          chartLegends = yAxisFields.map((field, index) => {
+            // Calculate the total for this field across all data points
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            
+            // Format the field name to be more readable
+            const label = field.replace(/_/g, ' ')
+              .split(' ')
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            
+            newLabels.push(label);
+            
+            // Use consistent color from our map, or generate a new one if needed
+            if (!colorMap[label] && isNewColorMap) {
+              colorMap[label] = getColorByIndex(index);
+            }
+            
+            return {
+              label,
+              color: colorMap[label] || getColorByIndex(index),
+              value: total,
+              shape: 'square' as const // Area charts use square shapes
+            };
+          });
+        } else {
+          // For single-series area charts, use a single legend entry with the y-axis name
+          const yFieldName = getFieldName(yAxisFields[0]);
+          const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
+          const label = yFieldName.replace(/_/g, ' ')
+              .split(' ')
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+          
+          newLabels.push(label);
+          
+          // Use consistent color from our map, or generate a new one if needed
+          if (!colorMap[label] && isNewColorMap) {
+            colorMap[label] = getColorByIndex(0);
+          }
+          
+          chartLegends = [{
+            label,
+            color: colorMap[label] || getColorByIndex(0),
+            value: total,
+            shape: 'square' as const // Area charts use square shapes
+          }];
+        }
+      } else {
+        // For non-date based area charts, use data points as legend entries
+        chartLegends = data
+          .map((item, index) => {
+            const label = String(item[xField]);
+            newLabels.push(label);
+            
+            // Use consistent color from our map, or generate a new one if needed
+            if (!colorMap[label] && isNewColorMap) {
+              colorMap[label] = getColorByIndex(index);
+            }
+            
+            return {
+              label,
+              color: colorMap[label] || getColorByIndex(index),
+              value: Number(item[yAxisFields[0]]) || 0,
+              shape: 'square' as const // Area charts use square shapes
+            };
+          });
+      }
+      
+      console.log(`Generated ${chartLegends.length} legend items for area chart`);
+    }
     // Then handle regular bar/line charts
     else if (chart.chartType === 'bar' || chart.chartType === 'line') {
       console.log("Processing as regular bar/line chart");
@@ -1500,7 +1598,61 @@ export default function DashboardRenderer({
       ...prev,
       [chartId]: chartColorMap
     }));
-  }, [legendColorMaps, charts]);
+    
+    // Also generate legends using the received color map and current chart data
+    const currentData = chartData[chartId];
+    if (chart && currentData && currentData.length > 0) {
+      console.log(`Generating legends for ${chart.chartType} chart ${chartId} with received colors`);
+      
+      // Create legends based on the color map received from the chart
+      const chartLegends: (Legend & { shape?: 'circle' | 'square' })[] = Object.entries(chartColorMap).map(([label, color]) => {
+        // Calculate total value for this legend item
+        let value = 0;
+        
+        // For area charts, try to calculate the total value
+        if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
+          // Get the y-axis field name
+          const yField = typeof chart.dataMapping.yAxis === 'string' ? 
+            chart.dataMapping.yAxis : 
+            Array.isArray(chart.dataMapping.yAxis) ? 
+              getFieldName(chart.dataMapping.yAxis[0]) : 
+              getFieldName(chart.dataMapping.yAxis);
+          
+          // If this is a multi-series chart, the label might be a field name
+          if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
+            // Convert label back to field name (reverse the formatting)
+            const fieldName = label.toLowerCase().replace(/\s+/g, '_');
+            value = currentData.reduce((sum, item) => sum + (Number(item[fieldName]) || 0), 0);
+          } else {
+            // Single series - use the y-axis field
+            value = currentData.reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
+          }
+        }
+        
+        return {
+          label,
+          color,
+          value: value || 0,
+          shape: 'square' as const // Area charts use square shapes
+        };
+      });
+      
+      // Sort by value (highest first)
+      chartLegends.sort((a, b) => {
+        const aValue = a.value ?? 0;
+        const bValue = b.value ?? 0;
+        return bValue - aValue;
+      });
+      
+      console.log(`Generated ${chartLegends.length} legend items from color map:`, chartLegends);
+      
+      // Update legends state
+      setLegends(prev => ({
+        ...prev,
+        [chartId]: chartLegends
+      }));
+    }
+  }, [legendColorMaps, charts, chartData]);
 
   // Inside the render method, after setting state, we need to prepare charts with filter callbacks
   // The existing charts array will be updated to include the onFilterChange callback for each chart

@@ -6,6 +6,7 @@ import StackedBarChart from './charts/StackedBarChart';
 import DualAxisChart from './charts/DualAxisChart';
 import MultiSeriesLineBarChart from './charts/MultiSeriesLineBarChart';
 import PieChart from './charts/PieChart';
+import SimpleAreaChart from './charts/SimpleAreaChart';
 import Modal from '../../components/shared/Modal';
 //import LineChart from './charts/LineChart';
 // import AreaChart from './charts/AreaChart';
@@ -727,6 +728,28 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           colorMap={legendColorMap}
           filterValues={filterValues}
           yAxisUnit={yAxisUnit}
+        />;
+        
+      case 'area':
+      case 'stacked-area':
+        return <SimpleAreaChart 
+          chartConfig={{
+            ...chartConfig,
+            isStacked: chartConfig.chartType === 'stacked-area',
+            onFilterChange: (newFilters) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }
+          }} 
+          data={data} 
+          isExpanded={isExpanded} 
+          onCloseExpanded={onCloseExpanded}
+          colorMap={legendColorMap}
+          filterValues={filterValues}
+          yAxisUnit={yAxisUnit}
+          onColorsGenerated={(colorMap) => setLegendColorMap(colorMap)}
         />;
         
       /* Temporarily commented out until AreaChart is implemented

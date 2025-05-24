@@ -32,8 +32,8 @@ export const CHART_TYPES = [
   { id: 'line', name: 'Line Chart' },
   { id: 'dual-axis', name: 'Dual Axis Chart' },
   { id: 'pie', name: 'Pie Chart' },
-  // { id: 'area', name: 'Area Chart' },
-  // { id: 'stacked-area', name: 'Stacked Area Chart' },
+  { id: 'area', name: 'Area Chart' },
+  { id: 'stacked-area', name: 'Stacked Area Chart' },
 ] as const;
 
 export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie';
