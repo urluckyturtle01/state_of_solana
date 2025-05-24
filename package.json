@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://topledger.github.io/state_of_solana",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node show-ip.js && next dev --hostname 0.0.0.0",
     
     "build": "node build.js",
     "start": "next start",

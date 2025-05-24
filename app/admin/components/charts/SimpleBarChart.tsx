@@ -357,15 +357,20 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Handle mouse move for tooltips
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+  // Handle mouse/touch events for tooltips
+  const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    // Get the correct coordinates based on event type
+    const isTouchEvent = 'touches' in e;
+    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+    
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Get mouse position - use client coordinates for consistency
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    // Get position relative to chart container
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     // Use current data based on brush state
     const currentData = isModal 
@@ -487,6 +492,20 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, yKey, yFields, barColor, formatValue, 
       tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit]);
+      
+  // For backward compatibility
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  // Explicit handler for touch events
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -819,6 +838,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       <div 
         className="relative w-full h-full" 
         onMouseMove={(e) => handleMouseMove(e, isModal)}
+        onTouchStart={(e) => handleTouchStart(e, isModal)}
+        onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
         ref={isModal ? modalChartRef : chartRef}
       >

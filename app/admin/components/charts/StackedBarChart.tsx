@@ -469,15 +469,27 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     };
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode]);
 
-  // Handle mouse move for tooltips
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+  // Handle mouse leave for tooltip
+  const handleMouseLeave = useCallback(() => {
+    if (tooltip.visible) {
+      setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  }, [tooltip.visible]);
+
+  // Handle interaction (mouse or touch) for tooltips
+  const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    // Get the correct coordinates based on event type
+    const isTouchEvent = 'touches' in e;
+    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+    
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Get mouse position - use client coordinates for consistency
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    // Get position relative to chart container
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     // Use current data based on brush state
     const currentData = isModal 
@@ -525,31 +537,45 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
     const xValue = dataPoint[xKey];
     
-    // Calculate tooltip position - always follow mouse in both normal and modal views
+    // Calculate tooltip position
     const tooltipLeft = mouseX;
     const tooltipTop = Math.max(mouseY - 10, 10);
     
     // Only update if showing a new x-value or hiding previous one
     if (!tooltip.visible || tooltip.key !== xValue) {
-      // Check if we're using multi-y-field stacking (each y-field is a stack key)
-      const isMultiYFieldsStacked = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked;
-      
-      // Create tooltip items for all non-zero values in the stack
+      // For stacked bar, we show all keys (stack segments)
       const tooltipItems = keys
-        .filter(key => Number(dataPoint[key]) > 0) // Only include groups/fields with values
+        .filter(key => {
+          // Only include keys with non-zero values
+          const value = Number(dataPoint[key]);
+          return !isNaN(value) && value > 0;
+        })
         .map(key => ({
           label: formatFieldName(key),
-          value: formatValue(Number(dataPoint[key]) || 0),
+          value: formatValue(Number(dataPoint[key]) || 0, yAxisUnit),
           color: groupColors[key] || blue,
           shape: 'square' as 'square'
-        }));
+        }))
+        .sort((a, b) => {
+          // Sort by value (descending)
+          const aVal = typeof a.value === 'string' 
+            ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
+            : a.value;
+          const bVal = typeof b.value === 'string' 
+            ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
+            : b.value;
+          return bVal - aVal;
+        });
       
-      // Sort tooltip items by value (descending)
-      tooltipItems.sort((a, b) => {
-        const aVal = typeof a.value === 'number' ? a.value : Number(String(a.value).replace(/[^0-9.-]+/g, ''));
-        const bVal = typeof b.value === 'number' ? b.value : Number(String(b.value).replace(/[^0-9.-]+/g, ''));
-        return bVal - aVal;
-      });
+      // If no items passed the filter, show the first key with a 0 value
+      if (tooltipItems.length === 0 && keys.length > 0) {
+        tooltipItems.push({
+          label: formatFieldName(keys[0]),
+          value: formatValue(0, yAxisUnit),
+          color: groupColors[keys[0]] || blue,
+          shape: 'square' as 'square'
+        });
+      }
       
       // Update the tooltip
       setTooltip({
@@ -567,15 +593,22 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         top: tooltipTop
       }));
     }
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yField, chartConfig, keys, groupColors, 
-      chartData, formatValue, tooltip.visible, tooltip.key, tooltip.items]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, keys, groupColors, formatValue, 
+      tooltip.visible, tooltip.key, yAxisUnit]);
 
-  // Handle mouse leave
-  const handleMouseLeave = useCallback(() => {
-    if (tooltip.visible) {
-      setTooltip(prev => ({ ...prev, visible: false }));
-    }
-  }, [tooltip.visible]);
+  // For backward compatibility
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  // Explicit handler for touch events
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
 
   // Helper function to format X-axis tick labels
   const formatXAxisLabel = (value: string): string => {
@@ -713,6 +746,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       <div 
         className="relative w-full h-full" 
         onMouseMove={(e) => handleMouseMove(e, isModal)}
+        onTouchStart={(e) => handleTouchStart(e, isModal)}
+        onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
         ref={isModal ? modalChartRef : chartRef}
       >

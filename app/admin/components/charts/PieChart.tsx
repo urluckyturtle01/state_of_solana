@@ -293,6 +293,27 @@ const PieChart: React.FC<PieChartProps> = ({
     });
   }, []);
 
+  // Handle touch interaction for pie segments
+  const handleTouch = useCallback((e: React.TouchEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
+    // Prevent default touch behavior (scrolling, zooming)
+    e.preventDefault();
+    
+    const containerRef = e.currentTarget.closest('.chart-container');
+    if (!containerRef) return;
+    
+    const rect = containerRef.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    setTooltip({
+      visible: true,
+      data: dataPoint,
+      left: x,
+      top: y
+    });
+  }, []);
+
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
@@ -387,6 +408,23 @@ const PieChart: React.FC<PieChartProps> = ({
                         
                         const x = e.clientX - containerRect.left;
                         const y = e.clientY - containerRect.top;
+                        
+                        setTooltip({
+                          visible: true,
+                          data: dataPoint,
+                          left: x,
+                          top: y
+                        });
+                      }}
+                      onTouchStart={(e) => {
+                        e.preventDefault(); // Prevent default touch behavior
+                        
+                        const containerRect = e.currentTarget.closest('svg')?.getBoundingClientRect();
+                        if (!containerRect) return;
+                        
+                        const touch = e.touches[0];
+                        const x = touch.clientX - containerRect.left;
+                        const y = touch.clientY - containerRect.top;
                         
                         setTooltip({
                           visible: true,

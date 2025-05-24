@@ -572,54 +572,20 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Format value for tooltip
-  const formatValue = useCallback((value: number) => {
-    return formatWithUnit(value);
-  }, []);
-
-  // Format y-axis tick value with appropriate units
-  const formatTickValue = useCallback((value: number) => {
-    if (value === 0) return '0';
+  // Handle interaction (mouse or touch) for tooltips
+  const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    // Get the correct coordinates based on event type
+    const isTouchEvent = 'touches' in e;
+    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
     
-    if (value >= 1000000000) {
-      const formattedValue = (value / 1000000000).toFixed(1);
-      return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}B` 
-        : `${formattedValue}B`;
-    } else if (value >= 1000000) {
-      const formattedValue = (value / 1000000).toFixed(1);
-      return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}M` 
-        : `${formattedValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
-      return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
-    } else {
-      return value.toFixed(0);
-    }
-  }, []);
-
-  // Placeholder for refresh data functionality
-  const refreshData = useCallback(() => {
-    // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
-    }
-    
-    setError(null);
-  }, [filterValues, chartConfig]);
-
-  // Handle mouse move for tooltips
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Get mouse position - use client coordinates for consistency
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    // Get position relative to chart container
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     // Calculate available chart space
     const margin = { top: 10, right: 15, bottom: 30, left: 40 };
@@ -731,6 +697,59 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       }));
     }
   }, [chartData, fields, xKey, fieldColors, fieldTypes, formatWithUnit, tooltip, yField]);
+
+  // For backward compatibility
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  // Explicit handler for touch events
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  // Format value for tooltip
+  const formatValue = useCallback((value: number) => {
+    return formatWithUnit(value);
+  }, []);
+
+  // Format y-axis tick value with appropriate units
+  const formatTickValue = useCallback((value: number) => {
+    if (value === 0) return '0';
+    
+    if (value >= 1000000000) {
+      const formattedValue = (value / 1000000000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${formattedValue.slice(0, -2)}B` 
+        : `${formattedValue}B`;
+    } else if (value >= 1000000) {
+      const formattedValue = (value / 1000000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${formattedValue.slice(0, -2)}M` 
+        : `${formattedValue}M`;
+    } else if (value >= 1000) {
+      const formattedValue = (value / 1000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${formattedValue.slice(0, -2)}K` 
+        : `${formattedValue}K`;
+    } else {
+      return value.toFixed(0);
+    }
+  }, []);
+
+  // Placeholder for refresh data functionality
+  const refreshData = useCallback(() => {
+    // If onFilterChange exists in chartConfig, call it with current filters
+    if (chartConfig.onFilterChange) {
+      chartConfig.onFilterChange(filterValues || {});
+    }
+    
+    setError(null);
+  }, [filterValues, chartConfig]);
 
   // Process brush data
   const brushData = useMemo(() => {
@@ -1213,6 +1232,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       <div 
         className="relative w-full h-full" 
         onMouseMove={(e) => handleMouseMove(e, isModal)}
+        onTouchStart={(e) => handleTouchStart(e, isModal)}
+        onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
         ref={isModal ? modalChartRef : chartRef}
       >

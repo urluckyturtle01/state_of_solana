@@ -348,15 +348,20 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       chartConfig.dualAxisConfig.leftAxisType === 'line';
   }, [chartConfig.dualAxisConfig, yField, isRightAxisField]);
   
-  // Handle mouse move for tooltips
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+  // Handle interaction (mouse or touch) for tooltips
+  const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    // Get the correct coordinates based on event type
+    const isTouchEvent = 'touches' in e;
+    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+    
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Get mouse position - use client coordinates for consistency
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    // Get position relative to chart container
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
     
     // Use current data based on brush state
     const currentData = isModal 
@@ -468,6 +473,20 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, fields, xKey, yField, 
       fieldColors, formatValue, tooltip.visible, tooltip.key, tooltip.items, shouldRenderAsLine, getYAxisUnit]);
+
+  // For backward compatibility
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  // Explicit handler for touch events
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
+    handleInteraction(e, isModal);
+  }, [handleInteraction]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -792,6 +811,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       <div 
         className="relative w-full h-full" 
         onMouseMove={mouseMoveFn}
+        onTouchStart={(e) => handleTouchStart(e, isModal)}
+        onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
         ref={isModal ? modalChartRef : chartRef}
       >
