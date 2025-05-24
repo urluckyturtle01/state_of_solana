@@ -209,6 +209,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return formattedValue.endsWith('.0') 
         ? `${formattedValue.slice(0, -2)}K` 
         : `${formattedValue}K`;
+    } else if (value < 1) {
+      // For values between 0 and 1, show decimal places
+      return value.toFixed(1);
     } else {
       return value.toFixed(0);
     }
@@ -718,7 +721,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       range: keys.map(key => groupColors[key] || blue)
     });
 
-    // Use all X-axis values for tick labels, but limit date ticks to 8 max
+    // Calculate x-axis tick values - limit to 8 for date data, 5 for mobile
     const xTickValues = (() => {
       // Check if the data contains dates
       const isDateData = chartData.length > 0 && 
@@ -729,15 +732,27 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
          /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
          /^\d{4}$/.test(chartData[0][xKey]));
       
-      // For date data, limit to 8 ticks maximum
-      if (isDateData && chartData.length > 8) {
-        const tickInterval = Math.ceil(chartData.length / 8);
+      // Detect mobile screen size
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const maxTicks = isMobile ? 5 : 8;
+      
+      // For date data, limit ticks based on screen size
+      if (isDateData && chartData.length > maxTicks) {
+        const tickInterval = Math.ceil(chartData.length / maxTicks);
         return chartData
           .filter((_, i) => i % tickInterval === 0)
           .map(d => d[xKey]);
       }
       
-      // For other data types, show all values
+      // For other data types on mobile, also limit to 5 ticks
+      if (isMobile && chartData.length > 5) {
+        const tickInterval = Math.ceil(chartData.length / 5);
+        return chartData
+          .filter((_, i) => i % tickInterval === 0)
+          .map(d => d[xKey]);
+      }
+      
+      // For other data types on desktop, show all values
       return chartData.map(d => d[xKey]);
     })();
 

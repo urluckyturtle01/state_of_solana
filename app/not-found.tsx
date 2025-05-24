@@ -4,53 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  opacity: number;
-}
-
 export default function NotFound() {
   const router = useRouter();
-  const [particles, setParticles] = useState<Particle[]>([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; type: string }>>([]);
 
-  // Initialize particles
-  useEffect(() => {
-    const initialParticles: Particle[] = [];
-    for (let i = 0; i < 50; i++) {
-      initialParticles.push({
-        id: i,
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.5 + 0.2,
-      });
-    }
-    setParticles(initialParticles);
-  }, []);
-
-  // Animate particles
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setParticles(prev => prev.map(particle => ({
-        ...particle,
-        x: (particle.x + particle.vx + window.innerWidth) % window.innerWidth,
-        y: (particle.y + particle.vy + window.innerHeight) % window.innerHeight,
-      })));
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Track mouse position
+  // Track mouse position for subtle interactive effects
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -68,93 +28,281 @@ export default function NotFound() {
     }
   };
 
+  const createRipple = (e: React.MouseEvent) => {
+    // Get click position relative to the viewport
+    const x = e.clientX;
+    const y = e.clientY;
+    const id = Date.now();
+    
+    // Random analytics-themed ripple types
+    const rippleTypes = ['chart', 'data', 'metric', 'pulse'];
+    const type = rippleTypes[Math.floor(Math.random() * rippleTypes.length)];
+    
+    setRipples(prev => [...prev, { id, x, y, type }]);
+    
+    setTimeout(() => {
+      setRipples(prev => prev.filter(ripple => ripple.id !== id));
+    }, 2500);
+  };
+
+  const getRippleStyle = (type: string) => {
+    switch (type) {
+      case 'chart':
+        return {
+          border: '3px solid rgba(70, 130, 180, 0.6)',
+          background: 'radial-gradient(circle, rgba(70, 130, 180, 0.1) 0%, transparent 70%)',
+        };
+      case 'data':
+        return {
+          border: '2px solid rgba(34, 197, 94, 0.5)',
+          background: 'radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 70%)',
+        };
+      case 'metric':
+        return {
+          border: '3px solid rgba(168, 85, 247, 0.5)',
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%)',
+        };
+      case 'pulse':
+        return {
+          border: '2px solid rgba(59, 130, 246, 0.6)',
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%)',
+        };
+      default:
+        return {
+          border: '2px solid rgba(70, 130, 180, 0.4)',
+          background: 'transparent',
+        };
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 relative overflow-hidden flex items-center justify-center">
-      {/* Animated Background Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {particles.map(particle => (
+    <div 
+      className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black relative overflow-hidden flex items-center justify-center cursor-pointer"
+      onClick={createRipple}
+    >
+      {/* Enhanced Analytics-themed Ripple effects */}
+      {ripples.map((ripple) => (
+        <div key={ripple.id} className="fixed pointer-events-none z-30">
+          {/* Main ripple circle */}
           <div
-            key={particle.id}
-            className="absolute rounded-full bg-blue-400"
+            className="absolute rounded-full animate-ping"
             style={{
-              left: particle.x,
-              top: particle.y,
-              width: particle.size,
-              height: particle.size,
-              opacity: particle.opacity,
-              transform: `translate(-50%, -50%)`,
-              boxShadow: `0 0 ${particle.size * 2}px rgba(59, 130, 246, 0.3)`,
+              left: ripple.x - 60,
+              top: ripple.y - 60,
+              width: '120px',
+              height: '120px',
+              animationDuration: '2.5s',
+              ...getRippleStyle(ripple.type)
             }}
           />
-        ))}
-      </div>
+          
+          {/* Secondary ripple */}
+          <div
+            className="absolute rounded-full animate-ping"
+            style={{
+              left: ripple.x - 40,
+              top: ripple.y - 40,
+              width: '80px',
+              height: '80px',
+              animationDuration: '2s',
+              animationDelay: '0.3s',
+              border: `2px solid ${ripple.type === 'chart' ? 'rgba(70, 130, 180, 0.4)' : 
+                                   ripple.type === 'data' ? 'rgba(34, 197, 94, 0.3)' :
+                                   ripple.type === 'metric' ? 'rgba(168, 85, 247, 0.3)' :
+                                   'rgba(59, 130, 246, 0.4)'}`,
+            }}
+          />
 
-      {/* Floating Geometric Shapes */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-16 h-16 border-2 border-purple-400/30 rotate-45 animate-pulse" />
-        <div className="absolute top-40 right-32 w-12 h-12 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full animate-bounce" />
-        <div className="absolute bottom-32 left-40 w-8 h-8 border border-teal-400/40 transform rotate-12 animate-spin" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-20 right-20 w-20 h-20 border-2 border-green-400/20 rounded-full animate-pulse" />
-      </div>
+          {/* Data point center */}
+          <div
+            className="absolute rounded-full animate-pulse"
+            style={{
+              left: ripple.x - 6,
+              top: ripple.y - 6,
+              width: '12px',
+              height: '12px',
+              background: ripple.type === 'chart' ? '#4682b4' : 
+                         ripple.type === 'data' ? '#22c55e' :
+                         ripple.type === 'metric' ? '#a855f7' :
+                         '#3b82f6',
+              animationDuration: '1s',
+              boxShadow: `0 0 20px ${ripple.type === 'chart' ? 'rgba(70, 130, 180, 0.6)' : 
+                                    ripple.type === 'data' ? 'rgba(34, 197, 94, 0.6)' :
+                                    ripple.type === 'metric' ? 'rgba(168, 85, 247, 0.6)' :
+                                    'rgba(59, 130, 246, 0.6)'}`
+            }}
+          />
 
-      {/* Mouse Follower */}
-      <div
-        className="fixed pointer-events-none z-10 w-8 h-8 border-2 border-blue-400/50 rounded-full transition-all duration-300 ease-out"
+          {/* Analytics-themed floating elements */}
+          {ripple.type === 'chart' && (
+            <>
+              <div
+                className="absolute animate-bounce"
+                style={{
+                  left: ripple.x - 25,
+                  top: ripple.y - 35,
+                  animationDuration: '2s',
+                  animationDelay: '0.5s'
+                }}
+              >
+                <div className="w-2 h-6 bg-blue-400/60 rounded-sm"></div>
+              </div>
+              <div
+                className="absolute animate-bounce"
+                style={{
+                  left: ripple.x - 15,
+                  top: ripple.y - 30,
+                  animationDuration: '2s',
+                  animationDelay: '0.7s'
+                }}
+              >
+                <div className="w-2 h-4 bg-blue-400/60 rounded-sm"></div>
+              </div>
+              <div
+                className="absolute animate-bounce"
+                style={{
+                  left: ripple.x - 5,
+                  top: ripple.y - 40,
+                  animationDuration: '2s',
+                  animationDelay: '0.9s'
+                }}
+              >
+                <div className="w-2 h-8 bg-blue-400/60 rounded-sm"></div>
+              </div>
+            </>
+          )}
+
+          {ripple.type === 'data' && (
+            <>
+              <div
+                className="absolute text-green-400/70 text-xs font-mono animate-fade-in-out"
+                style={{
+                  left: ripple.x - 20,
+                  top: ripple.y - 45,
+                  animationDuration: '2s'
+                }}
+              >
+                +24.5%
+              </div>
+              <div
+                className="absolute text-green-400/50 text-xs font-mono animate-fade-in-out"
+                style={{
+                  left: ripple.x + 10,
+                  top: ripple.y - 35,
+                  animationDuration: '2s',
+                  animationDelay: '0.5s'
+                }}
+              >
+                1.2M
+              </div>
+            </>
+          )}
+
+          {ripple.type === 'metric' && (
+            <div
+              className="absolute animate-spin"
+              style={{
+                left: ripple.x - 15,
+                top: ripple.y - 15,
+                animationDuration: '3s'
+              }}
+            >
+              <svg width="30" height="30" viewBox="0 0 30 30" className="text-purple-400/60">
+                <circle cx="15" cy="15" r="12" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="8 4" />
+              </svg>
+            </div>
+          )}
+
+          {ripple.type === 'pulse' && (
+            <>
+              <div
+                className="absolute w-1 h-1 bg-blue-400 rounded-full animate-ping"
+                style={{
+                  left: ripple.x - 30,
+                  top: ripple.y - 20,
+                  animationDelay: '0.2s'
+                }}
+              />
+              <div
+                className="absolute w-1 h-1 bg-blue-400 rounded-full animate-ping"
+                style={{
+                  left: ripple.x + 25,
+                  top: ripple.y - 15,
+                  animationDelay: '0.4s'
+                }}
+              />
+              <div
+                className="absolute w-1 h-1 bg-blue-400 rounded-full animate-ping"
+                style={{
+                  left: ripple.x - 10,
+                  top: ripple.y + 30,
+                  animationDelay: '0.6s'
+                }}
+              />
+            </>
+          )}
+        </div>
+      ))}
+
+      {/* Subtle background grid */}
+      <div 
+        className="absolute inset-0 opacity-[0.02]"
         style={{
-          left: mousePosition.x - 16,
-          top: mousePosition.y - 16,
+          backgroundImage: `
+            linear-gradient(rgba(70, 130, 180, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(70, 130, 180, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }}
+      />
+
+      {/* Subtle floating orbs */}
+      <div className="absolute top-20 left-20 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl animate-pulse" />
+      <div className="absolute bottom-32 right-32 w-40 h-40 bg-purple-500/3 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-teal-500/4 rounded-full blur-xl animate-pulse" style={{ animationDelay: '4s' }} />
+
+      {/* Subtle mouse follower */}
+      <div
+        className="fixed pointer-events-none z-10 w-6 h-6 border border-blue-400/20 rounded-full transition-all duration-500 ease-out"
+        style={{
+          left: mousePosition.x - 12,
+          top: mousePosition.y - 12,
           transform: `scale(${isHovering ? 1.5 : 1})`,
-          borderColor: isHovering ? 'rgba(34, 197, 94, 0.8)' : 'rgba(59, 130, 246, 0.5)',
+          borderColor: isHovering ? 'rgba(70, 130, 180, 0.4)' : 'rgba(70, 130, 180, 0.2)',
         }}
       />
 
       {/* Main Content */}
-      <div className="relative z-20 text-center px-6 max-w-4xl mx-auto">
-        {/* Animated 404 */}
-        <div className="relative mb-8">
-          <h1 className="text-[6rem] md:text-[6rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-teal-400 leading-none select-none">
-            
-          </h1>
-          <div className="absolute inset-0 text-[12rem] md:text-[16rem] font-black text-blue-400/10 leading-none animate-pulse">
+      <div className="relative z-20 text-center px-6 max-w-2xl mx-auto pointer-events-none">
+        {/* Clean 404 Typography */}
+        <div className="mb-8">
+          <h1 className="text-8xl md:text-9xl font-light text-gray-200 leading-none tracking-wider mb-4">
             404
-          </div>
-        </div>
-
-        {/* Glitch Effect Text */}
-        <div className="relative mb-8">
-          <h2 className="text-4xl md:text-4xl font-medium text-white mb-4 relative">
-            <span className="relative z-10">Page Not Found</span>
-            <span className="absolute inset-0 text-red-500 animate-pulse opacity-30 transform translate-x-1">
-              Page Not Found
-            </span>
-            <span className="absolute inset-0 text-blue-500 animate-pulse opacity-20 transform -translate-x-1">
-              Page Not Found
-            </span>
+          </h1>
+          <div className="w-16 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent mx-auto mb-6"></div>
+          <h2 className="text-xl md:text-2xl font-light text-gray-400 mb-2">
+            Data Not Found
           </h2>
+          <p className="text-sm text-gray-500 leading-relaxed max-w-md mx-auto">
+            The analytics page you're looking for doesn't exist in our dataset.
+          </p>
         </div>
 
-        {/* Description */}
-        <p className="text-xl md:text-xl text-gray-300 mb-12 leading-relaxed">
-          Oops! Looks like you've ventured into the{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 font-semibold">
-            digital void
-          </span>
-          .<br />
-          The page you're looking for doesn't exist in this dimension.
-        </p>
-
-        {/* Interactive Buttons */}
-        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+        {/* Interactive Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 pointer-events-auto">
           <button
-            onClick={handleGoBack}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleGoBack();
+            }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
+            className="group relative px-6 py-3 bg-gray-900/50 border border-gray-800 text-gray-300 font-medium rounded-lg overflow-hidden transition-all duration-300 hover:border-blue-400/50 hover:text-white hover:bg-gray-900/70 backdrop-blur-sm"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="relative flex items-center gap-2">
-              <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <svg className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Go Back
             </div>
@@ -164,54 +312,47 @@ export default function NotFound() {
             href="/"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            className="group relative px-8 py-4 border-2 border-teal-400 text-teal-400 font-semibold rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:text-black"
+            onClick={(e) => e.stopPropagation()}
+            className="group relative px-6 py-3 border border-blue-400/30 text-blue-400 font-medium rounded-lg overflow-hidden transition-all duration-300 hover:border-blue-400/60 hover:text-white hover:bg-blue-500/10 backdrop-blur-sm"
           >
-            <div className="absolute inset-0 bg-teal-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            <div className="absolute inset-0 bg-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="relative flex items-center gap-2">
-              <svg className="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              Home
+              Dashboard
             </div>
           </Link>
         </div>
 
-        {/* Fun Interactive Element */}
-        <div className="mt-16">
-          <p className="text-gray-400 text-sm mb-4">
-            Try clicking around to create some magic ✨
+        {/* Interactive Hint */}
+        <div className="relative">
+          <p className="text-xs text-gray-600 mb-4">
+            Click anywhere to generate analytics visualizations
           </p>
-          <div 
-            className="inline-block cursor-pointer"
-            onClick={(e) => {
-              // Create ripple effect
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              
-              const ripple = document.createElement('div');
-              ripple.className = 'absolute rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-50 animate-ping pointer-events-none';
-              ripple.style.left = x + 'px';
-              ripple.style.top = y + 'px';
-              ripple.style.width = '20px';
-              ripple.style.height = '20px';
-              ripple.style.transform = 'translate(-50%, -50%)';
-              
-              e.currentTarget.appendChild(ripple);
-              setTimeout(() => ripple.remove(), 1000);
-            }}
-          >
-            <div className="text-6xl animate-bounce hover:animate-spin transition-all duration-300 cursor-pointer select-none">
-              🚀
+          <div className="flex items-center justify-center">
+            <div className="w-8 h-8 text-gray-600 transition-colors duration-300">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Ambient Glow Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      {/* Subtle corner accents */}
+      <div className="absolute top-0 left-0 w-32 h-32 border-l border-t border-gray-800/30" />
+      <div className="absolute bottom-0 right-0 w-32 h-32 border-r border-b border-gray-800/30" />
+
+      <style jsx>{`
+        @keyframes fade-in-out {
+          0%, 100% { opacity: 0; transform: translateY(10px); }
+          50% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-out {
+          animation: fade-in-out 2s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 } 
