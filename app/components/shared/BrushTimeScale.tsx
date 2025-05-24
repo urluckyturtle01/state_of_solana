@@ -65,6 +65,97 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   // Track previous filter values to detect changes
   const prevFilterValuesRef = useRef<Record<string, string> | undefined>(filterValues);
 
+  // Add state to track touch events
+  const [touchEnabled, setTouchEnabled] = useState<boolean>(false);
+
+  // Detect touch support when component mounts
+  useEffect(() => {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setTouchEnabled(isTouchDevice);
+  }, []);
+
+  // Add touch event handlers to the svg element
+  useEffect(() => {
+    if (!touchEnabled || !svgRef.current) return;
+
+    const svg = svgRef.current;
+    
+    // Handle touch start
+    const handleTouchStart = (e: TouchEvent) => {
+      // Prevent scrolling while interacting with the brush
+      e.preventDefault();
+      
+      // Find the brush element in the SVG
+      const brushElement = svg.querySelector('.visx-brush');
+      if (brushElement && e.touches.length > 0) {
+        // Convert touch to mouse event
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent('mousedown', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        
+        // Dispatch the event to simulate mouse down
+        brushElement.dispatchEvent(mouseEvent);
+      }
+    };
+
+    // Handle touch move to help with brush dragging
+    const handleTouchMove = (e: TouchEvent) => {
+      // Prevent the default behavior (scrolling, zooming, etc)
+      e.preventDefault();
+      
+      // Find the brush element in the SVG
+      const brushElement = svg.querySelector('.visx-brush');
+      if (brushElement && e.touches.length > 0) {
+        // Convert touch to mouse event for visx Brush
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent('mousemove', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        
+        // Dispatch the event to simulate mouse movement
+        brushElement.dispatchEvent(mouseEvent);
+      }
+    };
+    
+    // Handle touch end
+    const handleTouchEnd = (e: TouchEvent) => {
+      // Find the brush element in the SVG
+      const brushElement = svg.querySelector('.visx-brush');
+      if (brushElement) {
+        // Create a mouseup event
+        const mouseEvent = new MouseEvent('mouseup', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        
+        // Dispatch the event to simulate mouse up
+        brushElement.dispatchEvent(mouseEvent);
+      }
+    };
+
+    // Add event listeners
+    svg.addEventListener('touchstart', handleTouchStart, { passive: false });
+    svg.addEventListener('touchmove', handleTouchMove, { passive: false });
+    svg.addEventListener('touchend', handleTouchEnd);
+    
+    // Clean up
+    return () => {
+      svg.removeEventListener('touchstart', handleTouchStart);
+      svg.removeEventListener('touchmove', handleTouchMove);
+      svg.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [touchEnabled]);
+
   // Effect to reset brush when filter values change
   useEffect(() => {
     // Skip the initial render
@@ -305,7 +396,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   yScale={valueScale}
                   width={innerWidth}
                   height={innerHeight}
-                  handleSize={8}
+                  handleSize={touchEnabled ? 16 : 8} // Larger handle for touch devices
                   resizeTriggerAreas={['left', 'right']}
                   brushDirection="horizontal"
                   initialBrushPosition={initialBrushPosition}
@@ -315,7 +406,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   selectedBoxStyle={{ 
                     fill: 'rgba(18, 24, 43, 0.5)', // Very light transparent fill
                     stroke: '#374151', // Border color
-                    strokeWidth: 0.4,
+                    strokeWidth: touchEnabled ? 1 : 0.4, // Thicker stroke for touch devices
                     rx: 4,
                     ry: 4,
                   }}
