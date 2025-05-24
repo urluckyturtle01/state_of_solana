@@ -5,6 +5,8 @@ import { TableConfig } from '../types';
 import DataTable, { Column } from '@/app/components/shared/DataTable';
 import { ExpandIcon, DownloadIcon } from '@/app/components/shared/Icons';
 import Loader from '@/app/components/shared/Loader';
+import TimeFilter from '@/app/components/shared/filters/TimeFilter';
+import CurrencyFilter from '@/app/components/shared/filters/CurrencyFilter';
 
 interface TableRendererProps {
   tableConfig: TableConfig;
@@ -28,6 +30,27 @@ const TableRenderer: React.FC<TableRendererProps> = ({
   const [retryCount, setRetryCount] = useState<number>(0);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
+
+  // Filter states
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+
+  // Initialize filter states from table config
+  useEffect(() => {
+    if (tableConfig.additionalOptions?.filters) {
+      const initialFilters: Record<string, string> = {};
+      const filters = tableConfig.additionalOptions.filters;
+      
+      if (filters.timeFilter?.activeValue) {
+        initialFilters[filters.timeFilter.paramName] = filters.timeFilter.activeValue;
+      }
+      
+      if (filters.currencyFilter?.activeValue) {
+        initialFilters[filters.currencyFilter.paramName] = filters.currencyFilter.activeValue;
+      }
+      
+      setActiveFilters(initialFilters);
+    }
+  }, [tableConfig.additionalOptions?.filters]);
 
   // Calculate visible columns (exclude hidden ones)
   const visibleColumns = useMemo(() => {
@@ -110,8 +133,37 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         }
       }
       
+      // Prepare request options
+      let requestOptions: RequestInit = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      };
+      
+      // Check if this is a parameterized query (contains /queries/ in the URL)
+      const isParameterizedQuery = url.pathname.includes('/queries/');
+      
+      if (isParameterizedQuery && Object.keys(activeFilters).length > 0) {
+        // For parameterized queries, send parameters in the request body via POST
+        requestOptions.method = 'POST';
+        requestOptions.body = JSON.stringify({
+          parameters: activeFilters
+        });
+      } else {
+        // For regular APIs, add filter parameters to the URL
+        Object.entries(activeFilters).forEach(([key, value]) => {
+          if (value) {
+            url.searchParams.append(key, value);
+          }
+        });
+      }
+      
       // Log the actual URL being fetched for debugging
       console.log('Fetching data from URL:', url.toString());
+      if (requestOptions.body) {
+        console.log('Request body:', requestOptions.body);
+      }
       
       // Add timeout for the fetch request
       const controller = new AbortController();
@@ -119,12 +171,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       
       try {
         const response = await fetch(url.toString(), {
-          // No need for Authorization header as we're using URL params
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          // Prevent caching issues
-          cache: 'no-store',
+          ...requestOptions,
           signal: controller.signal
         });
         
@@ -136,9 +183,26 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         
         const result = await response.json();
         
-        // Extract data based on API response format
+        // Handle different response formats
         let rows: any[] = [];
-        if (result?.query_result?.data?.rows) {
+        
+        // Check if this is a job response (for parameterized queries)
+        if (result?.job) {
+          if (result.job.status === 4 && result.job.error) {
+            throw new Error(`Query error: ${result.job.error}`);
+          } else if (result.job.status === 3) {
+            // Job completed successfully, get the result
+            if (result.job.query_result?.data?.rows) {
+              rows = result.job.query_result.data.rows;
+            } else {
+              throw new Error('Query completed but no data found');
+            }
+          } else {
+            throw new Error(`Query is still running (status: ${result.job.status}). Please try again in a moment.`);
+          }
+        }
+        // Standard response formats
+        else if (result?.query_result?.data?.rows) {
           rows = result.query_result.data.rows;
         } else if (Array.isArray(result)) {
           rows = result;
@@ -148,6 +212,8 @@ const TableRenderer: React.FC<TableRendererProps> = ({
           rows = result.rows;
         } else if (result?.results && Array.isArray(result.results)) {
           rows = result.results;
+        } else if (result?.message === "No cached result found for this query.") {
+          throw new Error('No cached result found. The query may need to be executed first or may require parameters.');
         } else {
           throw new Error('API response does not have a recognized structure');
         }
@@ -175,7 +241,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       setError(error instanceof Error ? error.message : String(error));
       setLoading(false);
     }
-  }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading]);
+  }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading, activeFilters]);
 
   // Function to handle manual retry
   const handleRetry = useCallback(() => {
@@ -430,6 +496,45 @@ const TableRenderer: React.FC<TableRendererProps> = ({
             </div>
           </div>
           {/* Second Divider after search */}
+          <div className="h-px bg-gray-900 w-full"></div>
+        </>
+      )}
+      
+      {/* Filter Bar */}
+      {tableConfig.additionalOptions?.filters && (
+        <>
+          <div className="flex items-center justify-start pl-0 py-2 overflow-visible relative gap-4">
+            {tableConfig.additionalOptions.filters.timeFilter && (
+              <TimeFilter
+                value={activeFilters[tableConfig.additionalOptions.filters.timeFilter.paramName] || tableConfig.additionalOptions.filters.timeFilter.activeValue || tableConfig.additionalOptions.filters.timeFilter.options[0]}
+                onChange={(value) => {
+                  setActiveFilters(prev => ({
+                    ...prev,
+                    [tableConfig.additionalOptions!.filters!.timeFilter!.paramName]: value
+                  }));
+                }}
+                options={tableConfig.additionalOptions.filters.timeFilter.options.map(option => ({
+                  value: option,
+                  label: option
+                }))}
+              />
+            )}
+            
+            {tableConfig.additionalOptions.filters.currencyFilter && (
+              <CurrencyFilter
+                currency={activeFilters[tableConfig.additionalOptions.filters.currencyFilter.paramName] || tableConfig.additionalOptions.filters.currencyFilter.activeValue || tableConfig.additionalOptions.filters.currencyFilter.options[0]}
+                onChange={(value) => {
+                  setActiveFilters(prev => ({
+                    ...prev,
+                    [tableConfig.additionalOptions!.filters!.currencyFilter!.paramName]: value
+                  }));
+                }}
+                options={tableConfig.additionalOptions.filters.currencyFilter.options}
+                label={tableConfig.additionalOptions.filters.currencyFilter.label}
+              />
+            )}
+          </div>
+          {/* Divider after filters */}
           <div className="h-px bg-gray-900 w-full"></div>
         </>
       )}

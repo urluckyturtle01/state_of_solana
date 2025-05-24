@@ -188,6 +188,13 @@ export interface TableConfig {
   variant: TableVariant;
   width?: number; // 1, 2, or 3 columns (defaults to 3 for full width)
   refreshInterval?: number; // Auto-refresh interval in seconds
+  additionalOptions?: {
+    filters?: {
+      timeFilter?: FilterOption;
+      currencyFilter?: FilterOption;
+      [key: string]: FilterOption | undefined;
+    };
+  };
   createdAt?: string;
   updatedAt?: string;
 } 

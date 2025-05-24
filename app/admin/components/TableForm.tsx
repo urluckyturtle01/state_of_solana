@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 import { saveTableConfig } from '../utils';
 import Button from './Button';
 import { MENU_OPTIONS, MENU_PAGES, getPagesForMenu, findMenuForPage } from '../config/menuPages';
+import FormMultiInput from './FormMultiInput';
 
 interface TableFormProps {
   initialData?: TableConfig;
@@ -37,6 +38,7 @@ const TableForm: React.FC<TableFormProps> = ({
     page: initialData?.page || 'dashboard',
     width: initialData?.width || 3, // Default to full width
     refreshInterval: initialData?.refreshInterval || 0,
+    additionalOptions: initialData?.additionalOptions || {},
   });
 
   // Add state for menu selection
@@ -60,6 +62,56 @@ const TableForm: React.FC<TableFormProps> = ({
     filterable: false,
     hidden: false
   });
+
+  // Add state for filter configuration
+  const [enableFilters, setEnableFilters] = useState({
+    timeFilter: false,
+    currencyFilter: false
+  });
+  
+  // Add state for filter parameters
+  const [filterParams, setFilterParams] = useState({
+    timeFilter: {
+      options: ['D', 'W', 'M', 'Q', 'Y'],
+      paramName: 'Date Part'
+    },
+    currencyFilter: {
+      options: ['USD', 'SOL', 'USDe'],
+      paramName: 'currency'
+    }
+  });
+
+  // Initialize filter states from existing data
+  useEffect(() => {
+    if (initialData?.additionalOptions?.filters) {
+      const filters = initialData.additionalOptions.filters;
+      setEnableFilters({
+        timeFilter: !!filters.timeFilter,
+        currencyFilter: !!filters.currencyFilter
+      });
+      
+      // Update filter params if they exist
+      if (filters.timeFilter && filters.timeFilter.options && filters.timeFilter.paramName) {
+        setFilterParams(prev => ({
+          ...prev,
+          timeFilter: {
+            options: filters.timeFilter!.options,
+            paramName: filters.timeFilter!.paramName
+          }
+        }));
+      }
+      
+      if (filters.currencyFilter && filters.currencyFilter.options && filters.currencyFilter.paramName) {
+        setFilterParams(prev => ({
+          ...prev,
+          currencyFilter: {
+            options: filters.currencyFilter!.options,
+            paramName: filters.currencyFilter!.paramName
+          }
+        }));
+      }
+    }
+  }, [initialData]);
 
   // Determine initial menu based on page when form loads with initialData
   useEffect(() => {
@@ -243,20 +295,54 @@ const TableForm: React.FC<TableFormProps> = ({
         }
       }
       
+      // Prepare request options
+      let requestOptions: RequestInit = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      };
+      
+      // Check if this is a parameterized query (contains /queries/ in the URL)
+      const isParameterizedQuery = url.pathname.includes('/queries/');
+      
+      // Create test parameters from enabled filters
+      const testParameters: Record<string, any> = {};
+      
+      if (enableFilters.timeFilter && filterParams.timeFilter.options.length > 0) {
+        testParameters[filterParams.timeFilter.paramName] = filterParams.timeFilter.options[0];
+      }
+      
+      if (enableFilters.currencyFilter && filterParams.currencyFilter.options.length > 0) {
+        testParameters[filterParams.currencyFilter.paramName] = filterParams.currencyFilter.options[0];
+      }
+      
+      if (isParameterizedQuery && Object.keys(testParameters).length > 0) {
+        // For parameterized queries, send parameters in the request body via POST
+        requestOptions.method = 'POST';
+        requestOptions.body = JSON.stringify({
+          parameters: testParameters
+        });
+      } else if (Object.keys(testParameters).length > 0) {
+        // For regular APIs, add filter parameters to the URL
+        Object.entries(testParameters).forEach(([key, value]) => {
+          if (value) {
+            url.searchParams.append(key, value);
+          }
+        });
+      }
+      
       console.log('Testing API endpoint:', url.toString());
+      if (requestOptions.body) {
+        console.log('Request body:', requestOptions.body);
+      }
       
       // Add timeout for the fetch request
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 15000); // 15 second timeout
       
       // Fetch the data
-      const response = await fetch(url.toString(), {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-        signal: controller.signal
-      });
+      const response = await fetch(url.toString(), requestOptions);
       
       clearTimeout(timeout);
       
@@ -266,10 +352,26 @@ const TableForm: React.FC<TableFormProps> = ({
       
       const data = await response.json();
       
-      // Process the data based on the available format
-      // Extract rows depending on the API response format
+      // Handle different response formats
       let rows = [];
-      if (data?.query_result?.data?.rows) {
+      
+      // Check if this is a job response (for parameterized queries)
+      if (data?.job) {
+        if (data.job.status === 4 && data.job.error) {
+          throw new Error(`Query error: ${data.job.error}`);
+        } else if (data.job.status === 3) {
+          // Job completed successfully, get the result
+          if (data.job.query_result?.data?.rows) {
+            rows = data.job.query_result.data.rows;
+          } else {
+            throw new Error('Query completed but no data found');
+          }
+        } else {
+          throw new Error(`Query is still running (status: ${data.job.status}). Please try again in a moment.`);
+        }
+      }
+      // Standard response formats
+      else if (data?.query_result?.data?.rows) {
         rows = data.query_result.data.rows;
       } else if (Array.isArray(data)) {
         rows = data;
@@ -279,6 +381,8 @@ const TableForm: React.FC<TableFormProps> = ({
         rows = data.rows;
       } else if (data?.results && Array.isArray(data.results)) {
         rows = data.results;
+      } else if (data?.message === "No cached result found for this query.") {
+        throw new Error('No cached result found. The query may need to be executed first or may require parameters.');
       } else if (data?.error) {
         throw new Error(`API returned an error: ${data.error}`);
       } else {
@@ -971,6 +1075,202 @@ const TableForm: React.FC<TableFormProps> = ({
                 Enable Row Selection
               </label>
             </div>
+          </div>
+          
+          {/* Filter Configuration */}
+          <div className="mt-6 space-y-4">
+            <h4 className="text-sm font-medium text-gray-300">Filter Configuration</h4>
+            
+            <div className="flex flex-wrap gap-6">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="enableTimeFilter"
+                  checked={enableFilters.timeFilter}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setEnableFilters(prev => ({ ...prev, timeFilter: checked }));
+                    
+                    // Update formData with filter configuration
+                    setFormData(prev => ({
+                      ...prev,
+                      additionalOptions: {
+                        ...prev.additionalOptions,
+                        filters: {
+                          ...prev.additionalOptions?.filters,
+                          timeFilter: checked ? {
+                            label: 'Time Period',
+                            paramName: filterParams.timeFilter.paramName,
+                            options: filterParams.timeFilter.options,
+                            activeValue: filterParams.timeFilter.options[0]
+                          } : undefined
+                        }
+                      }
+                    }));
+                  }}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
+                />
+                <label htmlFor="enableTimeFilter" className="ml-2 block text-sm text-gray-400">
+                  Enable Time Filter
+                </label>
+              </div>
+              
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="enableCurrencyFilter"
+                  checked={enableFilters.currencyFilter}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setEnableFilters(prev => ({ ...prev, currencyFilter: checked }));
+                    
+                    // Update formData with filter configuration
+                    setFormData(prev => ({
+                      ...prev,
+                      additionalOptions: {
+                        ...prev.additionalOptions,
+                        filters: {
+                          ...prev.additionalOptions?.filters,
+                          currencyFilter: checked ? {
+                            label: 'Currency',
+                            paramName: filterParams.currencyFilter.paramName,
+                            options: filterParams.currencyFilter.options,
+                            activeValue: filterParams.currencyFilter.options[0]
+                          } : undefined
+                        }
+                      }
+                    }));
+                  }}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
+                />
+                <label htmlFor="enableCurrencyFilter" className="ml-2 block text-sm text-gray-400">
+                  Enable Currency Filter
+                </label>
+              </div>
+            </div>
+            
+            {/* Filter Parameter Configuration */}
+            {(enableFilters.timeFilter || enableFilters.currencyFilter) && (
+              <div className="mt-4 p-4 bg-gray-800 rounded-md border border-gray-700">
+                <h5 className="text-sm font-medium text-gray-300 mb-3">Filter Parameters</h5>
+                
+                {enableFilters.timeFilter && (
+                  <div className="mb-4">
+                    <h6 className="text-xs font-medium text-gray-400 mb-2">Time Filter</h6>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Parameter Name</label>
+                        <input
+                          type="text"
+                          value={filterParams.timeFilter.paramName}
+                          onChange={(e) => setFilterParams(prev => ({
+                            ...prev,
+                            timeFilter: { ...prev.timeFilter, paramName: e.target.value }
+                          }))}
+                          className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300"
+                          placeholder="Date Part"
+                        />
+                      </div>
+                      <div>
+                        <FormMultiInput
+                          id="timeFilterOptions"
+                          label="Filter Options"
+                          values={filterParams.timeFilter.options}
+                          onChange={(fieldName, values) => {
+                            setFilterParams(prev => ({
+                              ...prev,
+                              timeFilter: { 
+                                ...prev.timeFilter, 
+                                options: values
+                              }
+                            }));
+                            
+                            // Update formData immediately
+                            if (enableFilters.timeFilter) {
+                              setFormData(prev => ({
+                                ...prev,
+                                additionalOptions: {
+                                  ...prev.additionalOptions,
+                                  filters: {
+                                    ...prev.additionalOptions?.filters,
+                                    timeFilter: {
+                                      label: 'Time Period',
+                                      paramName: filterParams.timeFilter.paramName,
+                                      options: values,
+                                      activeValue: values[0] || ''
+                                    }
+                                  }
+                                }
+                              }));
+                            }
+                          }}
+                          placeholder="D, W, M, Q, Y"
+                          helpText="Add time filter options (D=Day, W=Week, M=Month, Q=Quarter, Y=Year)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {enableFilters.currencyFilter && (
+                  <div>
+                    <h6 className="text-xs font-medium text-gray-400 mb-2">Currency Filter</h6>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Parameter Name</label>
+                        <input
+                          type="text"
+                          value={filterParams.currencyFilter.paramName}
+                          onChange={(e) => setFilterParams(prev => ({
+                            ...prev,
+                            currencyFilter: { ...prev.currencyFilter, paramName: e.target.value }
+                          }))}
+                          className="w-full px-2 py-1 text-sm bg-gray-700 border border-gray-600 rounded text-gray-300"
+                          placeholder="currency"
+                        />
+                      </div>
+                      <div>
+                        <FormMultiInput
+                          id="currencyFilterOptions"
+                          label="Filter Options"
+                          values={filterParams.currencyFilter.options}
+                          onChange={(fieldName, values) => {
+                            setFilterParams(prev => ({
+                              ...prev,
+                              currencyFilter: { 
+                                ...prev.currencyFilter, 
+                                options: values
+                              }
+                            }));
+                            
+                            // Update formData immediately
+                            if (enableFilters.currencyFilter) {
+                              setFormData(prev => ({
+                                ...prev,
+                                additionalOptions: {
+                                  ...prev.additionalOptions,
+                                  filters: {
+                                    ...prev.additionalOptions?.filters,
+                                    currencyFilter: {
+                                      label: 'Currency',
+                                      paramName: filterParams.currencyFilter.paramName,
+                                      options: values,
+                                      activeValue: values[0] || ''
+                                    }
+                                  }
+                                }
+                              }));
+                            }
+                          }}
+                          placeholder="USD, SOL, USDe"
+                          helpText="Add currency filter options"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         
