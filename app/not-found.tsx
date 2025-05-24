@@ -276,15 +276,15 @@ export default function NotFound() {
       <div className="relative z-20 text-center px-6 max-w-2xl mx-auto pointer-events-none">
         {/* Clean 404 Typography */}
         <div className="mb-8">
-          <h1 className="text-8xl md:text-9xl font-light text-gray-200 leading-none tracking-wider mb-4">
+          <h1 className="text-7xl md:text-8xl font-light text-gray-300 leading-none tracking-wider mb-4">
             404
           </h1>
           <div className="w-16 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent mx-auto mb-6"></div>
           <h2 className="text-xl md:text-2xl font-light text-gray-400 mb-2">
-            Data Not Found
+          Not here. Not now.
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed max-w-md mx-auto">
-            The analytics page you're looking for doesn't exist in our dataset.
+          But don’t worry, we’ve got better pages to explore.
           </p>
         </div>
 
@@ -326,18 +326,7 @@ export default function NotFound() {
         </div>
 
         {/* Interactive Hint */}
-        <div className="relative">
-          <p className="text-xs text-gray-600 mb-4">
-            Click anywhere to generate analytics visualizations
-          </p>
-          <div className="flex items-center justify-center">
-            <div className="w-8 h-8 text-gray-600 transition-colors duration-300">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-          </div>
-        </div>
+        
       </div>
 
       {/* Subtle corner accents */}

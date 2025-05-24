@@ -467,74 +467,73 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       {/* First Divider */}
       <div className="h-px bg-gray-900 w-full"></div>
       
-      {/* Search Bar (similar to filter bar in ChartCard) */}
-      {tableConfig.enableSearch && (
+      {/* Search Bar and Filters - Combined in one row */}
+      {(tableConfig.enableSearch || tableConfig.additionalOptions?.filters) && (
         <>
-          <div className="flex items-center justify-start pl-0 py-2 overflow-visible relative">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-6 pr-4 py-1.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-60"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3.5 w-3.5 absolute left-2 top-2 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          <div className="flex items-center pl-0 py-2 overflow-visible relative gap-3">
+            {/* Search Bar */}
+            {tableConfig.enableSearch && (
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-6 pr-4 py-1.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-60"
                 />
-              </svg>
-            </div>
-          </div>
-          {/* Second Divider after search */}
-          <div className="h-px bg-gray-900 w-full"></div>
-        </>
-      )}
-      
-      {/* Filter Bar */}
-      {tableConfig.additionalOptions?.filters && (
-        <>
-          <div className="flex items-center justify-start pl-0 py-2 overflow-visible relative gap-4">
-            {tableConfig.additionalOptions.filters.timeFilter && (
-              <TimeFilter
-                value={activeFilters[tableConfig.additionalOptions.filters.timeFilter.paramName] || tableConfig.additionalOptions.filters.timeFilter.activeValue || tableConfig.additionalOptions.filters.timeFilter.options[0]}
-                onChange={(value) => {
-                  setActiveFilters(prev => ({
-                    ...prev,
-                    [tableConfig.additionalOptions!.filters!.timeFilter!.paramName]: value
-                  }));
-                }}
-                options={tableConfig.additionalOptions.filters.timeFilter.options.map(option => ({
-                  value: option,
-                  label: option
-                }))}
-              />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 absolute left-2 top-2 text-gray-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
             )}
             
-            {tableConfig.additionalOptions.filters.currencyFilter && (
-              <CurrencyFilter
-                currency={activeFilters[tableConfig.additionalOptions.filters.currencyFilter.paramName] || tableConfig.additionalOptions.filters.currencyFilter.activeValue || tableConfig.additionalOptions.filters.currencyFilter.options[0]}
-                onChange={(value) => {
-                  setActiveFilters(prev => ({
-                    ...prev,
-                    [tableConfig.additionalOptions!.filters!.currencyFilter!.paramName]: value
-                  }));
-                }}
-                options={tableConfig.additionalOptions.filters.currencyFilter.options}
-                label={tableConfig.additionalOptions.filters.currencyFilter.label}
-              />
+            {/* Filters */}
+            {tableConfig.additionalOptions?.filters && (
+              <div className="flex items-center gap-4">
+                {tableConfig.additionalOptions.filters.timeFilter && (
+                  <TimeFilter
+                    value={activeFilters[tableConfig.additionalOptions.filters.timeFilter.paramName] || tableConfig.additionalOptions.filters.timeFilter.activeValue || tableConfig.additionalOptions.filters.timeFilter.options[0]}
+                    onChange={(value) => {
+                      setActiveFilters(prev => ({
+                        ...prev,
+                        [tableConfig.additionalOptions!.filters!.timeFilter!.paramName]: value
+                      }));
+                    }}
+                    options={tableConfig.additionalOptions.filters.timeFilter.options.map(option => ({
+                      value: option,
+                      label: option
+                    }))}
+                  />
+                )}
+                
+                {tableConfig.additionalOptions.filters.currencyFilter && (
+                  <CurrencyFilter
+                    currency={activeFilters[tableConfig.additionalOptions.filters.currencyFilter.paramName] || tableConfig.additionalOptions.filters.currencyFilter.activeValue || tableConfig.additionalOptions.filters.currencyFilter.options[0]}
+                    onChange={(value) => {
+                      setActiveFilters(prev => ({
+                        ...prev,
+                        [tableConfig.additionalOptions!.filters!.currencyFilter!.paramName]: value
+                      }));
+                    }}
+                    options={tableConfig.additionalOptions.filters.currencyFilter.options}
+                    label={tableConfig.additionalOptions.filters.currencyFilter.label}
+                  />
+                )}
+              </div>
             )}
           </div>
-          {/* Divider after filters */}
+          {/* Divider after search and filters */}
           <div className="h-px bg-gray-900 w-full"></div>
         </>
       )}
