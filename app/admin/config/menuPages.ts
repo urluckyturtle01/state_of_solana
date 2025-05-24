@@ -34,6 +34,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "compute-units",
     name: "Compute Units",
     icon: "chart-bar"
+  },
+  {
+    id: "wrapped-btc",
+    name: "Wrapped BTC",
+    icon: "currency-dollar"
   }
 ];
 
@@ -90,6 +95,28 @@ overview: [
       id: "cu-overspending",
       name: "CU Overspending",
       path: "/compute-units/cu-overspending"
+    }
+  ],
+  "wrapped-btc": [
+    {
+      id: "holders-supply",
+      name: "Holders & Supply",
+      path: "/wrapped-btc/holders-supply"
+    },
+    {
+      id: "btc-tvl",
+      name: "TVL",
+      path: "/wrapped-btc/btc-tvl"
+    },
+    {
+      id: "transfers",
+      name: "Transfers",
+      path: "/wrapped-btc/transfers"
+    },
+    {
+      id: "dex-activity",
+      name: "DEX Activity",
+      path: "/wrapped-btc/dex-activity"
     }
   ]
 };
