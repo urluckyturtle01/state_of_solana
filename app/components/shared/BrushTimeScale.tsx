@@ -93,6 +93,9 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   // Add a ref to the SVG container so we can find DOM elements more reliably
   const svgRef = useRef<SVGSVGElement | null>(null);
   
+  // Add a ref to the component container to scope DOM queries
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  
   // Add a ref to store the current innerWidth for use in DOM manipulations
   const innerWidthRef = useRef<number>(0);
   
@@ -184,7 +187,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   if (data.length === 0) return null;
   
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full" ref={containerRef}>
       <ParentSize>
         {({ width, height }) => {
           if (width <= 0 || height <= 0) return null;
@@ -308,12 +311,15 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
           // Custom render function for the brush handles
           const renderBrushHandle = ({ x, y, height: handleHeight }: { x: number; y: number; height: number }) => {
             return (
-              <BrushHandle x={x} height={innerHeight} />
+              <BrushHandle 
+                x={x} 
+                height={innerHeight} 
+              />
             );
           };
           
           return (
-            <svg width={width} height={height} ref={svgRef}>
+            <svg width={width} height={height} ref={svgRef} data-instance-id={instanceIdRef.current}>
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect

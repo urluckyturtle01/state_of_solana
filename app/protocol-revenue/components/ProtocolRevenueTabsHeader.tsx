@@ -46,7 +46,7 @@ export default function ProtocolRevenueTabsHeader({ activeTab = "summary" }: Pro
       tabs={tabs} 
       activeTab={activeTab}
       title="Protocol Revenue"
-      description="Protocol revenue statistics for the Solana blockchain"
+      description="Revenue insights fueling growth on the Solana blockchain"
       showDivider={true}
     />
   );

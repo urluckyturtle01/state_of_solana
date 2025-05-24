@@ -34,7 +34,7 @@ export default function MevTabsHeader({ activeTab = "overview" }: MevTabsHeaderP
       tabs={tabs} 
       activeTab={activeTab}
       title="MEV"
-      description="Revenue metrics and analytics for Solana"
+      description="Uncovering MEV profits and patterns on Solana"
       showDivider={true}
     />
   );

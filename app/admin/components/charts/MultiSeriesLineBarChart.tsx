@@ -77,14 +77,17 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
   
   // Format with appropriate scale
   let formattedValue: string;
-  if (value >= 1000000000) {
-    formattedValue = `${(value / 1000000000).toFixed(2)}B`;
-  } else if (value >= 1000000) {
-    formattedValue = `${(value / 1000000).toFixed(2)}M`;
-  } else if (value >= 1000) {
-    formattedValue = `${(value / 1000).toFixed(2)}K`;
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? '-' : '';
+  
+  if (absValue >= 1000000000) {
+    formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+  } else if (absValue >= 1000000) {
+    formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
+  } else if (absValue >= 1000) {
+    formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
   } else {
-    formattedValue = value.toFixed(2);
+    formattedValue = `${sign}${absValue.toFixed(2)}`;
   }
   
   // Return with correct unit placement (or no unit if not specified)
@@ -421,16 +424,21 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Helper function to force reset the brush visual state
   const forceBrushVisualReset = useCallback((inModal = false) => {
     setTimeout(() => {
-      let container: Document | Element = document;
+      // Find the specific chart container to scope our DOM operations
+      const chartContainer = inModal ? modalChartRef.current : chartRef.current;
+      if (!chartContainer) return;
       
-      // For modal, only look within the modal container
+      // For modal, look within the modal container
+      let container: Element = chartContainer;
       if (inModal) {
-        const modalContainer = document.querySelector('.modal-backdrop');
-        if (!modalContainer) return;
-        container = modalContainer;
-        console.log('Modal container found for brush reset:', modalContainer);
+        const modalContainer = chartContainer.closest('.modal-backdrop');
+        if (modalContainer) {
+          container = modalContainer;
+          console.log('Modal container found for brush reset:', modalContainer);
+        }
       }
       
+      // Query only within this specific container
       const brushElements = container.querySelectorAll('.visx-brush-selection');
       console.log(`Found ${brushElements.length} brush elements in ${inModal ? 'modal' : 'main'} view`);
       
@@ -455,31 +463,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
         });
       }
-      
-      // Additional attempt for modal - sometimes the brush elements are in an iframe or portal
-      if (inModal) {
-        // Try to find brush-related elements using more reliable selectors
-        const svgElements = container.querySelectorAll('svg');
-        svgElements.forEach(svg => {
-          const brushElements = svg.querySelectorAll('.visx-brush-selection');
-          if (brushElements.length > 0) {
-            console.log(`Found ${brushElements.length} brush elements in a specific SVG`);
-            brushElements.forEach(el => {
-              if (el instanceof SVGRectElement) {
-                const brushGroup = svg.querySelector('.visx-brush');
-                if (brushGroup) {
-                  const brushWidth = brushGroup.getBoundingClientRect().width;
-                  el.setAttribute('width', String(brushWidth - 4));
-                  el.setAttribute('x', '2');
-                  console.log(`Reset specific SVG brush to width: ${brushWidth - 4}, x: 2`);
-                }
-              }
-            });
-          }
-        });
-      }
     }, 100);
-  }, []);
+  }, [chartRef, modalChartRef]);
   
   // Update modal filters when component receives new filter values
   useEffect(() => {
@@ -636,9 +621,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // For all fields, show their values
       const tooltipItems = fields
         .filter(field => {
-          // Only include fields with non-zero values
+          // Include all non-zero values (both positive and negative)
           const value = Number(dataPoint[field]);
-          return !isNaN(value) && value > 0;
+          return !isNaN(value) && value !== 0;
         })
         .map(field => {
           // Find the original YAxisConfig for this field to get the unit
@@ -721,23 +706,26 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    if (value >= 1000000000) {
-      const formattedValue = (value / 1000000000).toFixed(1);
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}B` 
-        : `${formattedValue}B`;
-    } else if (value >= 1000000) {
-      const formattedValue = (value / 1000000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}B` 
+        : `${sign}${formattedValue}B`;
+    } else if (absValue >= 1000000) {
+      const formattedValue = (absValue / 1000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}M` 
-        : `${formattedValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}M` 
+        : `${sign}${formattedValue}M`;
+    } else if (absValue >= 1000) {
+      const formattedValue = (absValue / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
+        ? `${sign}${formattedValue.slice(0, -2)}K` 
+        : `${sign}${formattedValue}K`;
     } else {
-      return value.toFixed(0);
+      return `${sign}${absValue.toFixed(0)}`;
     }
   }, []);
 
@@ -1169,8 +1157,16 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       1
     );
     
+    // Calculate min value for y-axis to handle negative values
+    const yMin = Math.min(
+      ...chartData.flatMap(d => 
+        fields.map(field => Number(d[field]) || 0)
+      ),
+      0
+    );
+    
     const yScale = scaleLinear<number>({
-      domain: [0, yMax * 1.1], // Add 10% padding
+      domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
@@ -1261,6 +1257,19 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               strokeDasharray="2,3"
             />
             
+            {/* Zero line with special styling when we have negative values */}
+            {yMin < 0 && (
+              <line
+                x1={0}
+                y1={yScale(0)}
+                x2={innerWidth}
+                y2={yScale(0)}
+                stroke="#374151"
+                strokeWidth={1}
+                strokeOpacity={0.8}
+              />
+            )}
+            
             {/* Y-axis */}
             <AxisLeft
               scale={yScale}
@@ -1338,7 +1347,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               left={0}
             />
             
-            {/* Render bars first (so lines appear on top) */}
+            {/* Render bars */}
             {chartData.map((d, i) => (
               <React.Fragment key={`bars-${i}`}>
                 {fields.map((field, fieldIndex) => {
@@ -1354,9 +1363,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                   
                   // Calculate bar dimensions
                   const value = Number(d[field]) || 0;
-                  const barHeight = innerHeight - yScale(value);
+                  
+                  // For positive values, the bar starts at the value position and extends down to zero
+                  // For negative values, the bar starts at zero and extends down to the value position
+                  const barHeight = Math.abs(yScale(0) - yScale(value));
                   const barX = (xScale(d[xKey]) || 0) + (barFieldIndex * barWidth);
-                  const barY = innerHeight - barHeight;
+                  
+                  // For positive values, the bar's y position is at the value's y coordinate
+                  // For negative values, the bar's y position is at the zero line
+                  const barY = value >= 0 ? yScale(value) : yScale(0);
                   
                   return (
                     <Bar
@@ -1415,11 +1430,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Check if this chart has groupBy configuration
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
-    // Calculate padding to prevent line from extending beyond brush area
-    const padding = isChartWithoutFilters ? -0.5 : 0;
+    // Add a small negative padding to keep the line just inside the brush bounds
+    const padding = -0.5;
     
-    // Calculate max value for brush scaling
-    const maxBrushValue = Math.max(...brushData.map(d => d.value || 0), 1);
+    // Calculate max value for brush scaling - ensure it's always positive for the line
+    const maxBrushValue = Math.max(...brushData.map(d => Math.abs(d.value || 0)), 1);
     
     return (
       <div className="h-[15%] w-full mt-2">
@@ -1440,22 +1455,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }}
           getDate={(d) => d.date}
           getValue={(d) => {
-            // Ensure we have a valid value that's visible
-            const val = d.value || 0;
+            // For brush line, we always want a positive value to show activity
+            // For data with negative values, use absolute values for the brush line
+            const val = Math.abs(d.value || 0);
             
-            // For grouped data, ensure line doesn't touch the base
-            if (hasGroupBy) {
-              // Make sure values are visible even if they're small
-              return Math.max(val, maxBrushValue * 0.05);
-            }
-            
-            // For charts without filters or non-grouped charts
-            if (isChartWithoutFilters) {
-              // For simple charts, ensure the line is visible
-              return Math.max(val, maxBrushValue * 0.05);
-            }
-            
-            // Standard value handling for regular charts
+            // Make sure values are visible even if they're small
             return Math.max(val, maxBrushValue * 0.05);
           }}
           lineColor={hasGroupBy ? "#60a5fa" : (isChartWithoutFilters ? "#3b82f6" : "#60a5fa")} // Brighter blue for simple charts
@@ -1464,6 +1468,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
           strokeWidth={hasGroupBy ? 2 : 1.5}
           filterValues={modalView ? modalFilterValues : filterValues}
+          key={`brush-${modalView ? 'modal' : 'main'}-${JSON.stringify(modalView ? modalFilterValues : filterValues)}`} // Add key to force re-render when filters change
         />
       </div>
     );

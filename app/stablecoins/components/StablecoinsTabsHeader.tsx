@@ -51,7 +51,7 @@ export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }
       tabs={tabs} 
       activeTab={activeTab}
       title="Stablecoins"
-      description="Stablecoin metrics and statistics on Solana"
+      description="Stablecoin usage, flows and performance on Solana"
       showDivider={true}
     />
   );
