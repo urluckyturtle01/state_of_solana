@@ -39,6 +39,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "wrapped-btc",
     name: "Wrapped BTC",
     icon: "currency-dollar"
+  },
+  {
+    id: "raydium",
+    name: "Raydium",
+    icon: "chart-bar"
   }
 ];
 
@@ -117,6 +122,13 @@ overview: [
       id: "dex-activity",
       name: "DEX Activity",
       path: "/wrapped-btc/dex-activity"
+    }
+  ],
+  "raydium": [
+    {
+      id: "raydium-overview",
+      name: "Overview",
+      path: "/projects/raydium/overview"
     }
   ]
 };

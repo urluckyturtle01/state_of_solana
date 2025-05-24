@@ -11,6 +11,9 @@ const menuItems = [
   { name: "REV", path: "/rev", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { name: "Stablecoins", path: "/stablecoins", icon: "M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" },
   { name: "MEV", path: "/mev", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
+  { name: "Compute Units", path: "/compute-units", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
+  { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
   { 
     name: "Projects", 
     path: "/projects", 
@@ -25,38 +28,41 @@ const menuItems = [
       { 
         name: "Metaplex", 
         path: "/projects/metaplex",
-        logo: "https://www.metaplex.com/favicon.ico"
+        logo: "https://www.metaplex.com/favicon.ico",
+        status: "soon"
       },
       { 
         name: "Squads", 
         path: "/projects/squads",
-        logo: "https://squads.xyz/favicon.ico"
+        logo: "https://squads.xyz/favicon.ico",
+        status: "soon"
       },
       { 
         name: "Orca", 
         path: "/projects/orca",
-        logo: "https://www.orca.so/favicon.ico"
+        logo: "https://www.orca.so/favicon.ico",
+        status: "soon"
       },
       { 
         name: "Jupiter", 
         path: "/projects/jupiter",
-        logo: "https://jup.ag/favicon.ico"
+        logo: "https://jup.ag/favicon.ico",
+        status: "soon"
       },
       { 
         name: "Pump Fun", 
         path: "/projects/pump-fun",
-        logo: "https://pump.fun/favicon.ico"
+        logo: "https://pump.fun/favicon.ico",
+        status: "soon"
       },
       { 
         name: "Helium", 
         path: "/projects/helium",
-        logo: "https://www.helium.com/favicon.ico"
+        logo: "https://www.helium.com/favicon.ico",
+        status: "soon"
       }
     ]
-  },
-  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
-  { name: "Compute Units", path: "/compute-units", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
-  { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }
+  }
 ];
 
 export default function Sidebar() {
@@ -154,33 +160,51 @@ export default function Sidebar() {
                     
                     {/* Dropdown submenu */}
                     {openDropdown === item.name && item.subItems && (
-                      <ul className="mt-2 ml-8 space-y-1.5 border-l border-gray-800 pl-3">
+                      <ul className="mt-2 ml-5 space-y-1.5 border-l border-gray-800 pl-3">
                         {item.subItems.map((subItem) => {
                           const isSubActive = pathname?.startsWith(subItem.path);
                           
                           return (
                             <li key={subItem.name}>
-                              <Link 
-                                href={subItem.path} 
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
-                                  isSubActive 
-                                    ? 'text-white bg-gray-800/60' 
-                                    : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
-                                }`}
-                              >
-                                {subItem.logo && (
-                                  <div className="relative w-4 h-4 flex-shrink-0">
-                                    <Image
-                                      src={subItem.logo}
-                                      alt={`${subItem.name} logo`}
-                                      fill
-                                      className="object-contain rounded-sm"
-                                      sizes="16px"
-                                    />
-                                  </div>
-                                )}
-                                <span>{subItem.name}</span>
-                              </Link>
+                              {subItem.status === "soon" ? (
+                                <div className={`flex items-center gap-2 px-1 py-1.5 rounded-md text-sm transition-all duration-200 text-gray-500 cursor-not-allowed`}>
+                                  {subItem.logo && (
+                                    <div className="relative w-4 h-4 flex-shrink-0 opacity-50">
+                                      <Image
+                                        src={subItem.logo}
+                                        alt={`${subItem.name} logo`}
+                                        fill
+                                        className="object-contain rounded-sm"
+                                        sizes="16px"
+                                      />
+                                    </div>
+                                  )}
+                                  <span className="flex-1">{subItem.name}</span>
+                                  <span className="text-[10px] text-[#00b781] opacity-60 font-medium"></span>
+                                </div>
+                              ) : (
+                                <Link 
+                                  href={subItem.path} 
+                                  className={`flex items-center gap-2 px-1 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                                    isSubActive 
+                                      ? 'text-white bg-gray-800/60' 
+                                      : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
+                                  }`}
+                                >
+                                  {subItem.logo && (
+                                    <div className="relative w-4 h-4 flex-shrink-0">
+                                      <Image
+                                        src={subItem.logo}
+                                        alt={`${subItem.name} logo`}
+                                        fill
+                                        className="object-contain rounded-sm"
+                                        sizes="16px"
+                                      />
+                                    </div>
+                                  )}
+                                  <span className="flex-1">{subItem.name}</span>
+                                </Link>
+                              )}
                             </li>
                           );
                         })}
