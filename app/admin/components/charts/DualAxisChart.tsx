@@ -259,6 +259,41 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     }
   }, []);
 
+  // Format right y-axis tick value with higher scale units (0.1M instead of 100K)
+  const formatRightAxisTickValue = useCallback((value: number) => {
+    if (value === 0) return '0';
+    
+    if (value >= 1000000000000) {
+      // Use T for trillions
+      const formattedValue = (value / 1000000000000).toFixed(2);
+      // Remove trailing zeros after decimal
+      const cleanValue = parseFloat(formattedValue).toString();
+      return `${cleanValue}T`;
+    } else if (value >= 100000000) {
+      // Use B for values >= 100M (show as 0.1B instead of 100M)
+      const formattedValue = (value / 1000000000).toFixed(2);
+      // Remove trailing zeros after decimal
+      const cleanValue = parseFloat(formattedValue).toString();
+      return `${cleanValue}B`;
+    } else if (value >= 100000) {
+      // Use M for values >= 100K (show as 0.1M instead of 100K)
+      const formattedValue = (value / 1000000).toFixed(2);
+      // Remove trailing zeros after decimal
+      const cleanValue = parseFloat(formattedValue).toString();
+      return `${cleanValue}M`;
+    } else if (value >= 1000) {
+      const formattedValue = (value / 1000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${formattedValue.slice(0, -2)}K` 
+        : `${formattedValue}K`;
+    } else if (value < 1) {
+      // For values between 0 and 1, show decimal places
+      return value.toFixed(1);
+    } else {
+      return value.toFixed(0);
+    }
+  }, []);
+
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
@@ -375,7 +410,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     if (currentData.length === 0) return;
     
     // Calculate available chart space for dual-axis chart
-    const margin = { top: 10, right: 25, bottom: 30, left: 40 };
+    const margin = { top: 10, right: 28, bottom: 30, left: 40 };
     const innerWidth = rect.width - margin.left - margin.right;
     
     // Adjust mouseX to account for margin
@@ -688,7 +723,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     }
     
     // Define margins for chart
-    const margin = { top: 10, right: 25, bottom: 30, left: 40 };
+    const margin = { top: 10, right: 28, bottom: 30, left: 40 };
     const innerWidth = chartWidth - margin.left - margin.right;
     const innerHeight = chartHeight - margin.top - margin.bottom;
     
@@ -886,7 +921,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
               tickLength={0}
               hideZero={false}
               numTicks={5}
-              tickFormat={(value) => formatTickValue(Number(value))}
+              tickFormat={(value) => formatRightAxisTickValue(Number(value))}
               tickLabelProps={() => ({
                 fill: '#6b7280',
                 fontSize: 11,
@@ -1017,7 +1052,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     handleMouseMove, handleMouseLeave,
     tooltip, fieldColors, isRightAxisField, shouldRenderAsLine, formatTickValue, formatXAxisLabel,
     isBrushActive, isModalBrushActive, filteredData, modalFilteredData, data, yAxisUnit, 
-    filterValues, modalFilterValues
+    filterValues, modalFilterValues, formatRightAxisTickValue
   ]);
 
   // Render the brush with time scale
@@ -1044,7 +1079,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
           getDate={(d) => d.date}
           getValue={(d) => d.value}
           lineColor="#60a5fa"
-          margin={{ top: 0, right: 25, bottom: 20, left: 30 }}
+          margin={{ top: 0, right: 28, bottom: 20, left: 30 }}
           isModal={modalView}
           curveType="catmullRom"
           
