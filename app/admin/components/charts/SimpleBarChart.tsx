@@ -152,14 +152,17 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     
     // Format with appropriate scale
     let formattedValue: string;
-    if (value >= 1000000000) {
-      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      formattedValue = `${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      formattedValue = `${(value / 1000).toFixed(2)}K`;
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+    } else if (absValue >= 1000000) {
+      formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
+    } else if (absValue >= 1000) {
+      formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
     } else {
-      formattedValue = value.toFixed(2);
+      formattedValue = `${sign}${absValue.toFixed(2)}`;
     }
     
     // Return with correct unit placement (or no unit if not specified)
@@ -171,23 +174,26 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    if (value >= 1000000000) {
-      const formattedValue = (value / 1000000000).toFixed(1);
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}B` 
-        : `${formattedValue}B`;
-    } else if (value >= 1000000) {
-      const formattedValue = (value / 1000000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}B` 
+        : `${sign}${formattedValue}B`;
+    } else if (absValue >= 1000000) {
+      const formattedValue = (absValue / 1000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}M` 
-        : `${formattedValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}M` 
+        : `${sign}${formattedValue}M`;
+    } else if (absValue >= 1000) {
+      const formattedValue = (absValue / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
+        ? `${sign}${formattedValue.slice(0, -2)}K` 
+        : `${sign}${formattedValue}K`;
     } else {
-      return value.toFixed(0);
+      return `${sign}${absValue.toFixed(0)}`;
     }
   }, []);
 
@@ -436,7 +442,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         tooltipItems = yFields
           .filter(field => {
             const value = Number(dataPoint[field]);
-            return !isNaN(value) && value > 0;
+            return !isNaN(value) && value !== 0;
           })
           .map(field => ({
             label: formatFieldName(field),
@@ -445,13 +451,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             shape: 'square' as 'square'
           }))
           .sort((a, b) => {
-            // Sort by value (descending)
+            // Sort by absolute value (descending) to show larger values first
             const aVal = typeof a.value === 'string' 
-              ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
-              : a.value;
+              ? Math.abs(parseFloat(a.value.replace(/[^0-9.-]+/g, '')))
+              : Math.abs(Number(a.value));
             const bVal = typeof b.value === 'string' 
-              ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
-              : b.value;
+              ? Math.abs(parseFloat(b.value.replace(/[^0-9.-]+/g, '')))
+              : Math.abs(Number(b.value));
             return bVal - aVal;
           });
         
@@ -803,8 +809,18 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         )
       : Math.max(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 1);
     
+    // Calculate the min value for the y-axis to handle negative values
+    const yMin = isMultiSeries
+      ? Math.min(
+          ...chartData.flatMap(d => 
+            yFields.map(field => Number(d[field]) || 0)
+          ),
+          0
+        )
+      : Math.min(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 0);
+    
     const yScale = scaleLinear<number>({
-      domain: [0, yMax * 1.1], // Add 10% padding
+      domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
@@ -866,6 +882,19 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               strokeOpacity={0.5}
               strokeDasharray="2,3"
             />
+            
+            {/* Zero line with special styling when we have negative values */}
+            {yMin < 0 && (
+              <line
+                x1={0}
+                y1={yScale(0)}
+                x2={innerWidth}
+                y2={yScale(0)}
+                stroke="#374151"
+                strokeWidth={1}
+                strokeOpacity={0.8}
+              />
+            )}
             
             {/* X-axis */}
             <AxisBottom
@@ -968,10 +997,14 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                   <React.Fragment key={`multi-${d[xKey]}`}>
                     {yFields.map((field, i) => {
                       const value = Number(d[field]) || 0;
-                      const barHeight = innerHeight - yScale(value);
+                      // For positive values, the bar starts at the value position and extends down to zero
+                      // For negative values, the bar starts at zero and extends down to the value position
+                      const barHeight = Math.abs(yScale(0) - yScale(value));
                       // Position each field's bar side by side
                       const barX = x + (i * barWidth);
-                      const barY = innerHeight - barHeight;
+                      // For positive values, the bar's y position is at the value's y coordinate
+                      // For negative values, the bar's y position is at the zero line
+                      const barY = value >= 0 ? yScale(value) : yScale(0);
                       
                       // Get color for this field
                       const color = typeof barColor === 'object' ? (barColor[field] || blue) : barColor;
@@ -997,8 +1030,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               chartData.map((d: ChartDataItem, i: number) => {
                 const barX = xScale(d[xKey]) || 0;
                 const barWidth = xScale.bandwidth();
-                const barHeight = innerHeight - yScale(Number(d[yKey]) || 0);
-                const barY = innerHeight - barHeight;
+                const value = Number(d[yKey]) || 0;
+                // For positive values, the bar starts at the value position and extends down to zero
+                // For negative values, the bar starts at zero and extends down to the value position
+                const barHeight = Math.abs(yScale(0) - yScale(value));
+                // For positive values, the bar's y position is at the value's y coordinate
+                // For negative values, the bar's y position is at the zero line
+                const barY = value >= 0 ? yScale(value) : yScale(0);
                 
                 // Determine bar color based on config
                 const color = typeof barColor === 'string' 
@@ -1097,16 +1135,18 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             // For simple charts without filters, ensure we have a visible line
             // that doesn't change shape during brushing
             const val = d.value || 0;
+            const absVal = Math.abs(val);
             
+            // For brush visualization, we always show a positive value to create a visible line
             // Ensure the line doesn't touch the base by applying a minimum value
             // This makes the line more visible even for small values
-            return Math.max(val, maxBrushValue * 0.05);
+            return Math.max(absVal, maxBrushValue * 0.05);
           }}
           lineColor={isSimpleChartWithoutFilters ? "#3b82f6" : "#60a5fa"} // Brighter blue for simple charts
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
-          // Use appropriate curve type based on the chart configuration
-          curveType={isMultiSeries ? "catmullRom" : "linear"}
+          // Use smoother curve type to avoid sharp corners
+          curveType={isMultiSeries ? "monotoneX" : "monotoneX"}
           strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
