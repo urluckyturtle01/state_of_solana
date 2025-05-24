@@ -479,11 +479,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-6 pr-4 py-1.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-60"
+                  className="pl-6 pr-4 py-0.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-60"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5 absolute left-2 top-2 text-gray-500"
+                  className="h-3 w-3 absolute left-2 top-2 text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -500,7 +500,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
             
             {/* Filters */}
             {tableConfig.additionalOptions?.filters && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {tableConfig.additionalOptions.filters.timeFilter && (
                   <TimeFilter
                     value={activeFilters[tableConfig.additionalOptions.filters.timeFilter.paramName] || tableConfig.additionalOptions.filters.timeFilter.activeValue || tableConfig.additionalOptions.filters.timeFilter.options[0]}
