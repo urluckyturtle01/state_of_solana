@@ -125,11 +125,27 @@ overview: [
     }
   ],
   "raydium": [
+    
     {
-      id: "raydium-overview",
-      name: "Overview",
-      path: "/projects/raydium/overview"
-    }
+      id: "raydium-financials",
+      name: "Financials",
+      path: "/projects/raydium/financials"
+    },
+    {
+      id: "raydium-traction",
+      name: "Traction",
+      path: "/projects/raydium/traction"
+    },
+    {
+      id: "raydium-protocol-token",
+      name: "Protocol Token",
+      path: "/projects/raydium/protocol-token"
+    },
+    {
+      id: "raydium-competetive-landscape",
+      name: "Competetive Landscape",
+      path: "/projects/raydium/competetive-landscape"
+    } 
   ]
 };
 

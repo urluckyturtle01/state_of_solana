@@ -8,7 +8,7 @@ export default function RaydiumPage() {
   
   useEffect(() => {
     // Redirect to overview page
-    router.replace("/projects/raydium/overview");
+    router.replace("/projects/raydium/financials");
   }, [router]);
   
   // Show loading spinner while redirecting

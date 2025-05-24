@@ -11,12 +11,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function RaydiumOverviewPage() {
+export default function RaydiumProtocolTokenPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="raydium-overview" 
+          pageId="raydium-protocol-token" 
           enableCaching={true}
         />
       </Suspense>
