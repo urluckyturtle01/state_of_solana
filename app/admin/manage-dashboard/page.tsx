@@ -91,12 +91,15 @@ export default function ManageDashboardPage() {
     
     const loadData = async () => {
       try {
+        console.log(`[LOAD DATA] Loading ${activeTab} with filters - selectedMenu: '${selectedMenu}', selectedPage: '${selectedPage}'`);
+        
         // Load charts or counters based on active tab
         if (activeTab === 'charts') {
           let allCharts;
           if (selectedPage === 'all' && !selectedMenu) {
             // All charts from all menus
             allCharts = await getAllChartConfigs();
+            console.log(`[LOAD DATA] Loaded ${allCharts?.length || 0} charts from all menus`);
           } else if (selectedPage === 'all' && selectedMenu) {
             // All charts from selected menu
             const menuCharts = await getAllChartConfigs();
@@ -104,9 +107,11 @@ export default function ManageDashboardPage() {
               // Check if chart page matches any page in the selected menu
               return availablePages.some(page => page.id === chart.page);
             });
+            console.log(`[LOAD DATA] Loaded ${allCharts?.length || 0} charts for menu: ${selectedMenu}`);
           } else {
             // Specific page charts
             allCharts = await getChartConfigsByPage(selectedPage);
+            console.log(`[LOAD DATA] Loaded ${allCharts?.length || 0} charts for page: ${selectedPage}`);
           }
           
           // Ensure we're always setting an array, even if the API returns something else
@@ -116,6 +121,7 @@ export default function ManageDashboardPage() {
           if (selectedPage === 'all' && !selectedMenu) {
             // All counters from all menus
             allCounters = await getAllCounterConfigs();
+            console.log(`[LOAD DATA] Loaded ${allCounters?.length || 0} counters from all menus`);
           } else if (selectedPage === 'all' && selectedMenu) {
             // All counters from selected menu
             const menuCounters = await getAllCounterConfigs();
@@ -123,9 +129,11 @@ export default function ManageDashboardPage() {
               // Check if counter page matches any page in the selected menu
               return availablePages.some(page => page.id === counter.page);
             });
+            console.log(`[LOAD DATA] Loaded ${allCounters?.length || 0} counters for menu: ${selectedMenu}`);
           } else {
             // Specific page counters
             allCounters = await getCounterConfigsByPage(selectedPage);
+            console.log(`[LOAD DATA] Loaded ${allCounters?.length || 0} counters for page: ${selectedPage}`);
           }
           
           // Ensure we're always setting an array
@@ -134,22 +142,56 @@ export default function ManageDashboardPage() {
           // Load tables with the same filtering logic
           let allTables;
           if (selectedPage === 'all' && !selectedMenu) {
-            // All tables from all menus
+            // All tables from all menus - no filtering required
             allTables = await getAllTableConfigs();
+            console.log(`[LOAD DATA] Loaded ${allTables?.length || 0} tables from all menus`);
+            // Inspect the table objects to ensure they have page properties
+            if (Array.isArray(allTables) && allTables.length > 0) {
+              console.log('[TABLE INSPECTION] Sample table structure:', {
+                id: allTables[0].id,
+                title: allTables[0].title,
+                page: allTables[0].page,
+                hasPage: 'page' in allTables[0]
+              });
+            }
           } else if (selectedPage === 'all' && selectedMenu) {
             // All tables from selected menu
             const menuTables = await getAllTableConfigs();
+            console.log(`[LOAD DATA] Fetched ${menuTables?.length || 0} total tables for filtering by menu: ${selectedMenu}`);
+            
+            // Debug log the page property of each table
+            if (Array.isArray(menuTables) && menuTables.length > 0) {
+              console.log('[TABLE PAGES] Available pages:', availablePages.map(p => p.id));
+              console.log('[TABLE PAGES] Table pages:', menuTables.map(t => ({ id: t.id, page: t.page })));
+            }
+            
+            // Special case: if no tables have a page that matches, show all tables for this menu
+            // This fallback ensures tables are always visible when "All pages" is selected
             allTables = menuTables.filter(table => {
               // Check if table page matches any page in the selected menu
-              return availablePages.some(page => page.id === table.page);
+              const matches = availablePages.some(page => page.id === table.page);
+              // Debug each filter operation
+              console.log(`[FILTER] Table ${table.id} (page: ${table.page}) matches menu ${selectedMenu}: ${matches}`);
+              return matches;
             });
+            
+            // If no tables matched after filtering, show all tables as fallback
+            if (allTables.length === 0 && menuTables.length > 0) {
+              console.log('[FALLBACK] No tables matched menu pages, showing all tables');
+              allTables = menuTables;
+            }
+            
+            console.log(`[LOAD DATA] After filtering, loaded ${allTables?.length || 0} tables for menu: ${selectedMenu}`);
+            console.log(`[LOAD DATA] Available pages for menu ${selectedMenu}:`, availablePages.map(p => p.id).join(', '));
           } else {
             // Specific page tables
             allTables = await getTableConfigsByPage(selectedPage);
+            console.log(`[LOAD DATA] Loaded ${allTables?.length || 0} tables for page: ${selectedPage}`);
           }
           
           // Ensure we're always setting an array
           setTables(Array.isArray(allTables) ? allTables : []);
+          console.log(`[LOAD DATA] Final tables state set with ${Array.isArray(allTables) ? allTables.length : 0} items`);
         }
       } catch (error) {
         console.error(`Error loading ${activeTab}:`, error);

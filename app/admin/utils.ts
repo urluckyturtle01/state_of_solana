@@ -1299,36 +1299,64 @@ export const deleteTableConfig = async (tableId: string): Promise<boolean> => {
   }
 };
 
+// Helper function to normalize table objects
+const normalizeTableConfig = (table: any): TableConfig => {
+  // If the table doesn't have a page property or it's null/undefined, set it to a default
+  if (!table.page) {
+    console.log(`[NORMALIZE] Table ${table.id || 'unknown'} missing page property, setting to default`);
+    table.page = 'dashboard'; // Default to dashboard as a fallback
+  }
+  
+  return table as TableConfig;
+};
+
 /**
  * Get all table configurations
  * @returns Promise with an array of table configurations
  */
 export const getAllTableConfigs = async (): Promise<TableConfig[]> => {
   try {
+    console.log('[DEBUG] Fetching all table configurations');
+    
     // First try to get from localStorage
     if (typeof window !== 'undefined') {
       const storedTables = localStorage.getItem('all_tables');
       if (storedTables) {
         try {
           const parsedTables = JSON.parse(storedTables);
-          return Array.isArray(parsedTables) ? parsedTables : [];
+          console.log(`[DEBUG] Found ${Array.isArray(parsedTables) ? parsedTables.length : 0} tables in localStorage`);
+          
+          if (Array.isArray(parsedTables) && parsedTables.length > 0) {
+            // Normalize tables to ensure they have valid page properties
+            return parsedTables.map(normalizeTableConfig);
+          } else {
+            console.log('[DEBUG] No valid tables found in localStorage, fetching from API');
+          }
         } catch (e) {
           console.error('Error parsing stored tables:', e);
         }
+      } else {
+        console.log('[DEBUG] No tables found in localStorage, fetching from API');
       }
     }
     
     // If not in localStorage, fetch from API
+    console.log('[DEBUG] Fetching all tables from API');
     const response = await fetch('/api/tables');
     if (!response.ok) {
       throw new Error(`Failed to fetch tables: ${response.statusText}`);
     }
     
-    const tables = await response.json();
+    const result = await response.json();
+    const rawTables = Array.isArray(result) ? result : Array.isArray(result.tables) ? result.tables : [];
+    // Normalize tables to ensure they have valid page properties
+    const tables = rawTables.map(normalizeTableConfig);
+    console.log(`[DEBUG] API returned ${tables.length} tables`);
     
     // Store in localStorage for future use
     if (typeof window !== 'undefined') {
       localStorage.setItem('all_tables', JSON.stringify(tables));
+      console.log(`[DEBUG] Saved ${tables.length} tables to localStorage`);
     }
     
     return tables;
@@ -1356,7 +1384,12 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
         try {
           console.log(`[DEBUG] Found tables in localStorage for page ${pageId}`);
           const parsedTables = JSON.parse(storedTables);
-          return Array.isArray(parsedTables) ? parsedTables : [];
+          if (Array.isArray(parsedTables) && parsedTables.length > 0) {
+            // Normalize tables to ensure they have valid page properties
+            return parsedTables.map(normalizeTableConfig);
+          } else {
+            console.log(`[DEBUG] No valid tables found in localStorage for page ${pageId}, fetching from API`);
+          }
         } catch (e) {
           console.error('Error parsing stored tables:', e);
         }
@@ -1373,7 +1406,9 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     }
     
     const result = await response.json();
-    const tables = result.tables || [];
+    const rawTables = Array.isArray(result) ? result : Array.isArray(result.tables) ? result.tables : [];
+    // Normalize tables to ensure they have valid page properties
+    const tables = rawTables.map(normalizeTableConfig);
     console.log(`[DEBUG] API returned ${tables.length} tables for page ${pageId}`);
     
     // Store in localStorage for future use
