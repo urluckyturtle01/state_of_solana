@@ -479,7 +479,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-6 pr-4 py-0.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-60"
+                  className="pl-6 pr-4 py-0.5 rounded-md border border-gray-900 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-gray-900/50 w-35 md:w-60 lg:w-60"
                 />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -84,7 +84,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
           <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">{title}</h2>
           {description && <p className="text-gray-500 text-[10px] tracking-wide">{description}</p>}
         </div>
-        <div className="flex space-x-2">
+        <div className="flex justify-end space-x-2 -mr-2 md:mr-0">
           {onScreenshotClick && (
             <button 
               className={`p-1.5 ${colors.button} rounded-md transition-colors ${isScreenshotting ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -115,7 +115,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
           )}
           {onExpandClick && (
             <button 
-              className={`p-1.5 ${colors.button} rounded-md transition-colors`}
+              className={`p-1.5 ${colors.button} rounded-md transition-colors hidden md:block`}
               onClick={onExpandClick}
               title="Expand Chart"
             >
