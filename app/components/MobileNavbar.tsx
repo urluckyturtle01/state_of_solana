@@ -53,13 +53,13 @@ const menuItems = [
       { 
         name: "Pump Fun", 
         path: "/projects/pump-fun",
-        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
+        logo: "https://pump.fun/favicon.ico",
         status: "soon"
       },
       { 
         name: "Helium", 
         path: "/projects/helium",
-        logo: "https://www.helium.com/favicon.ico",
+        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
         status: "soon"
       }
     ]
