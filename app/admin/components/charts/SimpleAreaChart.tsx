@@ -103,6 +103,9 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
+  // Add ref to track if colors have been generated to prevent infinite loops
+  const colorsGeneratedRef = useRef<boolean>(false);
+  
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
   const [brushDomain, setBrushDomain] = useState<[Date, Date] | null>(null);
@@ -1179,12 +1182,18 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
         }]);
       }
       
-      // Communicate colors to dashboard renderer
-      if (onColorsGenerated && Object.keys(colorMap).length > 0) {
+      // Communicate colors to dashboard renderer only once per data change
+      if (onColorsGenerated && Object.keys(colorMap).length > 0 && !colorsGeneratedRef.current) {
         onColorsGenerated(colorMap);
+        colorsGeneratedRef.current = true;
       }
     }
-  }, [chartData, yKey, areaColor, gradientColors, isMultiSeries, yFields, onColorsGenerated]);
+  }, [chartData, yKey, isMultiSeries, yFields]);
+
+  // Reset colors generated flag when data changes
+  useEffect(() => {
+    colorsGeneratedRef.current = false;
+  }, [data]);
 
   // Render the brush with proper shape reflecting area values
   const renderBrushArea = useCallback((modalView = false) => {
