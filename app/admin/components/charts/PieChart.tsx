@@ -179,8 +179,17 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
-    setTooltip(prev => ({ ...prev, visible: false }));
-  }, []);
+    if (tooltip.visible) {
+      setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  }, [tooltip.visible]);
+
+  // Handle touch end to close tooltip when user stops touching
+  const handleTouchEnd = useCallback(() => {
+    if (tooltip.visible) {
+      setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  }, [tooltip.visible]);
 
   // Helper function to calculate safe tooltip position for mobile
   const calculateSafeTooltipPosition = (
@@ -420,6 +429,7 @@ const PieChart: React.FC<PieChartProps> = ({
       <div 
         className="relative w-full h-full chart-container" 
         onMouseLeave={handleMouseLeave}
+        onTouchEnd={handleTouchEnd}
         ref={isModal ? modalChartRef : chartRef}
       >
         {/* Tooltip - only show for non-modal version, modal has its own tooltip container */}
@@ -485,8 +495,7 @@ const PieChart: React.FC<PieChartProps> = ({
                         });
                       }}
                       onTouchStart={(e) => {
-                        e.preventDefault(); // Prevent default touch behavior
-                        
+                        // Only prevent default if we're actually within the pie segment
                         const containerRect = e.currentTarget.closest('svg')?.getBoundingClientRect();
                         if (!containerRect) return;
                         
@@ -494,16 +503,31 @@ const PieChart: React.FC<PieChartProps> = ({
                         const x = touch.clientX - containerRect.left;
                         const y = touch.clientY - containerRect.top;
                         
-                        // Calculate safe position for mobile
-                        const safePosition = calculateSafeTooltipPosition(x, y, containerRect);
+                        // Check if touch is within reasonable bounds of the pie chart
+                        const centerX = containerRect.width / 2;
+                        const centerY = containerRect.height / 2;
+                        const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                        const maxRadius = Math.min(containerRect.width, containerRect.height) / 2;
                         
-                        setTooltip({
-                          visible: true,
-                          data: dataPoint,
-                          left: safePosition.left,
-                          top: safePosition.top
-                        });
+                        // Only prevent default and show tooltip if touch is within pie area
+                        if (distance <= maxRadius) {
+                          e.preventDefault(); // Prevent default only for touches within pie area
+                          
+                          // Calculate safe position for mobile
+                          const safePosition = calculateSafeTooltipPosition(x, y, containerRect);
+                          
+                          setTooltip({
+                            visible: true,
+                            data: dataPoint,
+                            left: safePosition.left,
+                            top: safePosition.top
+                          });
+                        }
                       }}
+                      onTouchMove={(e) => {
+                        // Handle touch move if needed
+                      }}
+                      onTouchEnd={handleTouchEnd}
                       onMouseLeave={() => setTooltip(prev => ({ ...prev, visible: false }))}
                     >
                       <path
@@ -597,41 +621,10 @@ const PieChart: React.FC<PieChartProps> = ({
             {/* Chart with legends */}
             <div className="flex h-full">
               {/* Chart area - 90% width */}
-              <div className="w-[80%] h-[90%] pr-3 border-r border-gray-900">
+              <div className="w-full lg:w-[90%] h-[90%] lg:pr-3 lg:border-r lg:border-gray-900">
                 <div className="flex flex-col h-full">
-                  {/* Display tooltip at the container level for modal views */}
-                  {tooltip.visible && tooltip.data && (
-                    <div className="absolute z-50" style={{ 
-                      pointerEvents: 'none',
-                      top: tooltip.top,
-                      left: tooltip.left
-                    }}>
-                      <ChartTooltip
-                        title={formatFieldName(tooltip.data.label)}
-                        items={[
-                          {
-                            label: 'Value',
-                            value: formatValue(tooltip.data.value, yUnit),
-                            color: colorScale(tooltip.data.label) as string,
-                            shape: 'square'
-                          },
-                          {
-                            label: 'Percentage',
-                            value: `${tooltip.data.percentage.toFixed(1)}%`,
-                            color: colorScale(tooltip.data.label) as string,
-                            shape: 'square'
-                          }
-                        ]}
-                        left={0}
-                        top={0}
-                        isModal={true}
-                        currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Main chart */}
-                  <div className="h-full w-full relative">
+                  {/* Main chart - 100% height for pie chart */}
+                  <div className="h-full w-full relative chart-container">
                     <ParentSize debounceTime={10}>
                       {({ width: parentWidth, height: parentHeight }) => 
                         parentWidth > 0 && parentHeight > 0 
@@ -640,11 +633,43 @@ const PieChart: React.FC<PieChartProps> = ({
                       }
                     </ParentSize>
                   </div>
+                  
+                  {/* Display tooltip at the container level for modal views */}
+                  {tooltip.visible && tooltip.data && (
+                    <div
+                      className="absolute bg-gray-800 text-white p-2 rounded shadow-lg z-50 pointer-events-none"
+                      style={{
+                        left: `${tooltip.left}px`,
+                        top: `${tooltip.top}px`,
+                        transform: 'translate(-50%, -100%)',
+                      }}
+                    >
+                      <div className="font-semibold">{tooltip.data.label}</div>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{
+                            backgroundColor: colorScale(tooltip.data.label) as string,
+                          }}
+                        />
+                        <span>Value: {formatValue(tooltip.data.value, yUnit)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{
+                            backgroundColor: colorScale(tooltip.data.label) as string,
+                          }}
+                        />
+                        <span>Percentage: {tooltip.data.percentage.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               
-              {/* Legend area - 20% width */}
-              <div className="w-[20%] h-full pl-3 flex flex-col justify-start items-start">
+              {/* Legend area - 10% width */}
+              <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start hidden lg:flex">
                 {/* Show legend items */}
                 <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
                   [&::-webkit-scrollbar]:w-1.5 

@@ -79,11 +79,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
     };
     
     document.addEventListener('keydown', handleEscape);
-    document.body.style.overflow = 'hidden';
+    // Don't block body scrolling - let page scroll naturally
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
 
@@ -91,10 +90,19 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
 
   // Render into document.body to bypass any parent clipping/stacking contexts
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm modal-backdrop">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm modal-backdrop"
+      onClick={(e) => {
+        // Close modal when clicking backdrop
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
       <div
         ref={modalRef}
-        className="relative bg-black/80 border border-gray-900 rounded-xl p-4 w-11/12 max-w-7xl flex flex-col shadow-xl"
+        className="relative bg-black/80 border border-gray-900 rounded-xl p-4 w-11/12 max-w-7xl flex flex-col shadow-xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-900">
           <div>
@@ -120,8 +128,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title, subtitl
                 fillRule="evenodd"
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414
                    1.414L11.414 10l4.293 4.293a1 1 0 01-1.414
-                   1.414L10 11.414l-4.293 4.293a1 1
-                   0 01-1.414-1.414L8.586 10 4.293 5.707a1
+                   1.414L10 11.414l-4.293 4.293a1
+                   1 0 01-1.414-1.414L8.586 10 4.293 5.707a1
                    1 0 010-1.414z"
                 clipRule="evenodd"
               />

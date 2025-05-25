@@ -30,7 +30,7 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-black w-full overflow-hidden">
+    <div className={`flex flex-col md:flex-row min-h-screen bg-black w-full ${isMobile ? '' : 'overflow-hidden'}`}>
       {/* Desktop sidebar - hidden on mobile */}
       <div className="hidden md:block">
         <Sidebar />

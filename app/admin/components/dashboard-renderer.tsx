@@ -430,7 +430,7 @@ interface OptimizedChartCardProps {
 }
 
 const OptimizedChartCard: React.FC<OptimizedChartCardProps> = ({ title, children }) => (
-  <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800/50 rounded-lg overflow-hidden">
+  <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800/50 rounded-lg">
     <div className="px-6 py-4 border-b border-gray-800/50">
       <h3 className="text-gray-200">{title}</h3>
     </div>

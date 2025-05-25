@@ -366,6 +366,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
+  // Handle touch end to close tooltip when user stops touching
+  const handleTouchEnd = useCallback(() => {
+    if (tooltip.visible) {
+      setTooltip(prev => ({ ...prev, visible: false }));
+    }
+  }, [tooltip.visible]);
+
   // Helper function to calculate safe tooltip position for mobile
   const calculateSafeTooltipPosition = (
     mouseX: number, 
@@ -567,14 +574,39 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     handleInteraction(e, isModal);
   }, [handleInteraction]);
 
-  // Explicit handler for touch events
+  // Optimized touch handlers that don't interfere with page scrolling
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    handleInteraction(e, isModal);
-  }, [handleInteraction]);
+    // Only prevent default if we're actually going to show a tooltip
+    // This allows normal page scrolling to continue
+    const containerRef = isModal ? modalChartRef : chartRef;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const touch = e.touches[0];
+    const mouseX = touch.clientX - rect.left;
+    const mouseY = touch.clientY - rect.top;
+    
+    // Calculate available chart space
+    const margin = { top: 10, right: 15, bottom: 30, left: 40 };
+    const innerWidth = rect.width - margin.left - margin.right;
+    const adjustedMouseX = mouseX - margin.left;
+    
+    // Only handle touch if it's within the chart area
+    if (adjustedMouseX >= 0 && adjustedMouseX <= innerWidth && chartData.length > 0) {
+      // Only prevent default for touches within the chart area
+      e.preventDefault();
+      handleInteraction(e, isModal);
+    }
+  }, [handleInteraction, chartData.length]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    handleInteraction(e, isModal);
-  }, [handleInteraction]);
+    // Only handle if tooltip is already visible (user is interacting with chart)
+    if (tooltip.visible) {
+      e.preventDefault(); // Prevent scrolling only when actively showing tooltip
+      handleInteraction(e, isModal);
+    }
+    // Otherwise, allow normal page scrolling
+  }, [handleInteraction, tooltip.visible]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -927,11 +959,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     // Render the chart content
     return (
       <div 
-        className="relative w-full h-full" 
+        className="relative w-full h-full touch-pan-y" 
+        style={{ touchAction: 'pan-y' }}
         onMouseMove={(e) => handleMouseMove(e, isModal)}
         onTouchStart={(e) => handleTouchStart(e, isModal)}
         onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
+        onTouchEnd={handleTouchEnd}
         ref={isModal ? modalChartRef : chartRef}
       >
         {/* Tooltip */}
@@ -1329,11 +1363,22 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           {/* Chart with legends */}
           <div className="flex h-full">
             {/* Chart area - 90% width */}
-            <div className="w-[90%] h-[90%] pr-3 border-r border-gray-900">
+            <div className="w-full lg:w-[90%] h-[90%] lg:pr-3 lg:border-r lg:border-gray-900">
               <div className="flex flex-col h-full">
+                {/* Main chart - 85% height */}
+                <div className="h-[85%] w-full relative" ref={modalChartRef}>
+                  <ParentSize debounceTime={10}>
+                    {({ width: parentWidth, height: parentHeight }) => 
+                      parentWidth > 0 && parentHeight > 0 
+                        ? renderChartContent(parentWidth, parentHeight, true)
+                        : null
+                    }
+                  </ParentSize>
+                </div>
+                
                 {/* Display tooltip at the container level for modal views */}
                 {tooltip.visible && tooltip.items && (
-                  <div className="relative h-full w-full" style={{ 
+                  <div className="absolute z-50" style={{ 
                     pointerEvents: 'none',
                     top: tooltip.top,
                     left: tooltip.left
@@ -1350,24 +1395,15 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                   </div>
                 )}
                 
-                {/* Main chart - 85% height */}
-                <div className="h-[85%] w-full relative">
-                  <ParentSize debounceTime={10}>
-                    {({ width: parentWidth, height: parentHeight }) => 
-                      parentWidth > 0 && parentHeight > 0 
-                        ? renderChartContent(parentWidth, parentHeight, true)
-                        : null
-                    }
-                  </ParentSize>
-                </div>
-                
                 {/* Brush component - 15% height */}
-                {brushData.length > 0 ? renderBrushArea(true) : (null)}
+                {brushData.length > 0 ? (
+                  renderBrushArea(true)
+                ) : (null)}
               </div>
             </div>
             
             {/* Legend area - 10% width */}
-            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
+            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start hidden lg:flex">
               {/* Show legend items */}
               <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
                 [&::-webkit-scrollbar]:w-1.5 

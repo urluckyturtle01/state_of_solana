@@ -854,7 +854,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         subtitle={chartConfig.subtitle}
         isLoading={isLoading}
       >
-        <div className="h-[70vh] w-full overflow-hidden">
+        <div className="h-[70vh] w-full relative">
           {/* Add filter controls in modal */}
           {chartConfig.additionalOptions?.filters && (
             <div className="flex flex-wrap gap-3 items-center mb-4 px-2">
@@ -889,8 +889,10 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             </div>
           )}
           
-          {/* Pass consistent color mappings in props to BarChart */}
-          {renderChart()}
+          {/* Chart container with proper containment */}
+          <div className="h-full w-full">
+            {renderChart()}
+          </div>
         </div>
       </Modal>
     );

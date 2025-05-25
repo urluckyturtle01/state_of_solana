@@ -43,3 +43,98 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #4a4a4a;
 }
+
+/* Mobile scrollbar hiding - Maximum specificity to override all scrollbar styles */
+@media (max-width: 767px) {
+  /* Universal scrollbar hiding for mobile */
+  * {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  
+  *::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-thumb,
+  *::-webkit-scrollbar-corner {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  
+  /* Target main element with all possible class combinations */
+  main,
+  main.overflow-auto,
+  main.overflow-y-auto,
+  main.overflow-x-auto,
+  main[class*="overflow"] {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Override all webkit scrollbar styles on main */
+  main::-webkit-scrollbar,
+  main.overflow-auto::-webkit-scrollbar,
+  main.overflow-y-auto::-webkit-scrollbar,
+  main.overflow-x-auto::-webkit-scrollbar,
+  main[class*="overflow"]::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  
+  /* Override Tailwind arbitrary value scrollbars on main */
+  main::-webkit-scrollbar-track,
+  main::-webkit-scrollbar-thumb,
+  main::-webkit-scrollbar-corner {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  
+  /* Global mobile scrollbar hiding for any element that might interfere */
+  body,
+  html {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  
+  body::-webkit-scrollbar,
+  html::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
+/* Utility classes for scrollbar hiding */
+.hide-scrollbar-mobile {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hide-scrollbar-mobile::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}

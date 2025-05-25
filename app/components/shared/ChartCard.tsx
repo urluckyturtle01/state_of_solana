@@ -142,7 +142,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
       {/* Content Area - Split into columns on desktop, stacked on mobile */}
       <div className="flex flex-col lg:flex-row mt-3 h-[360px] lg:h-[380px]">
         {/* Chart Area */}
-        <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-80 lg:h-auto relative`}>
+        <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-80 lg:h-auto relative`} style={{ contain: 'layout style' }}>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10 rounded-md">
               
@@ -153,16 +153,18 @@ const ChartCard: React.FC<ChartCardProps> = ({
         
         {/* Legend Area - Only render if legend is provided */}
         {legend && (
-          <div className={`w-full h-[348px] ${legendWidthClasses[legendWidth]} mt-2 lg:mt-0 lg:pl-4 flex flex-row lg:flex-col`}>
-            <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 pt-1 pb-0 h-full w-full overflow-hidden">
-              <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 w-full h-full overflow-y-auto overflow-x-auto lg:overflow-x-hidden
+          <div className={`${legendWidthClasses[legendWidth]} mt-2 lg:mt-0 lg:pl-4 flex flex-col`}>
+            <div className="flex-1 min-h-0">
+              <div className="h-full overflow-y-auto
                 [&::-webkit-scrollbar]:w-1.5 
                 [&::-webkit-scrollbar-track]:bg-transparent 
                 [&::-webkit-scrollbar-thumb]:bg-gray-700/40
                 [&::-webkit-scrollbar-thumb]:rounded-full
                 [&::-webkit-scrollbar-thumb]:hover:bg-gray-600/60
                 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700/40">
-                {legend}
+                <div className="flex flex-row lg:flex-col gap-2 lg:gap-2 pt-1 pb-0">
+                  {legend}
+                </div>
               </div>
             </div>
           </div>
