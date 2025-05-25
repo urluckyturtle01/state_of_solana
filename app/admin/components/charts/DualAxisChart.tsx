@@ -348,10 +348,24 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       allFields = [getYAxisField(yField)];
     }
     
-    // Prepare color mapping for fields
+    // Separate fields by axis for sequential color assignment
+    const leftAxisFields = allFields.filter(field => !chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
+    const rightAxisFields = allFields.filter(field => chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
+    
+    // Prepare color mapping for fields with axis-based sequential assignment
     const colorMapping: Record<string, string> = {};
-    allFields.forEach((field, index) => {
-      colorMapping[field] = preferredColorMap[field] || getColorByIndex(index);
+    let colorIndex = 0;
+    
+    // Assign colors to left axis fields first (colors 0, 1, 2, ...)
+    leftAxisFields.forEach((field) => {
+      colorMapping[field] = preferredColorMap[field] || getColorByIndex(colorIndex);
+      colorIndex++;
+    });
+    
+    // Then assign colors to right axis fields (continuing the sequence)
+    rightAxisFields.forEach((field) => {
+      colorMapping[field] = preferredColorMap[field] || getColorByIndex(colorIndex);
+      colorIndex++;
     });
     
     return { 
@@ -1016,7 +1030,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                       height={barHeight}
                       fill={fieldColors[field]}
                       opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                      rx={2}
+                      rx={0}
                     />
                   );
                 })}

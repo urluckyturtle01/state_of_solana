@@ -5,31 +5,31 @@
 
 // Define a sequential list of 25 colors that all charts will use in order
 export const colors = [
-  '#60a5fa', // blue - primary/first color
-  '#a78bfa', // purple - secondary/second color
-  '#34d399', // green - tertiary/third color
-  '#f97316', // orange - fourth color
-  '#f43f5e', // red - fifth color
-  '#facc15', // yellow - sixth color
-  '#10b981', // teal - seventh color
-  '#8b5cf6', // dark purple - eighth color
-  '#ec4899', // pink - ninth color
-  '#6b7280', // gray - tenth color
-  '#3b82f6', // blue (darker) - eleventh color
-  '#059669', // green (darker) - twelfth color
-  '#93c5fd', // blue (lighter) - thirteenth color
-  '#c4b5fd', // purple (lighter) - fourteenth color
-  '#fb923c', // orange (lighter) - fifteenth color
-  '#f87171', // red (lighter) - sixteenth color
-  '#fcd34d', // yellow (lighter) - seventeenth color
-  '#64748b', // slate - eighteenth color
-  '#0ea5e9', // sky blue - nineteenth color
-  '#1e40af', // indigo - twentieth color
-  '#4f46e5', // violet - twenty-first color
-  '#7c3aed', // violet (darker) - twenty-second color
-  '#be123c', // rose (darker) - twenty-third color
-  '#0891b2', // cyan - twenty-fourth color
-  '#ea580c', // orange (darker) - twenty-fifth color
+  '#00BFFF', // Sky Depth
+  '#1E90FF', // Dazzling Blue
+  '#40E0D0', // Tropical Turquoise
+  '#4169E1', // Royal Azure
+  '#32CD32', // Vivid Green
+  '#7FFF00', // Electric Chartreuse
+  '#ADFF2F', // Lime Zest
+  '#FFD700', // Golden Yellow
+  '#FF9F68', // Sunset Peach
+  '#FF6B6B', // Warm Coral
+  '#FF1493', // Punchy Pink
+  '#FF69B4', // Bubblegum
+  '#FF00FF', // Neon Magenta
+  '#BA55D3', // Orchid Bloom
+  '#9370DB', // Lavender Mist
+  '#6A5ACD', // Deep Periwinkle
+  '#DA70D6', // Dusty Orchid
+  '#AFEEEE', // Soft Cyan
+  '#87CEEB', // Airy Blue
+  '#98FB98', // Pastel Mint
+  '#00FA9A', // Mint Spring
+  '#EEE8AA', // Pale Gold
+  '#FFDAB9', // Peach Cream
+  '#FFA07A', // Salmon Glow
+  '#9ACD32', // Olive Bright
 ];
 
 // Named exports for the first 10 colors for semantic use

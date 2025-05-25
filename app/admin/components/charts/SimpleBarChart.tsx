@@ -1033,7 +1033,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                           height={barHeight}
                           fill={color}
                           opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                          rx={2}
+                          rx={0}
                         />
                       );
                     })}
@@ -1067,7 +1067,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     height={barHeight}
                     fill={color}
                     opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                    rx={2}
+                    rx={0}
                   />
                 );
               })

@@ -890,7 +890,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                       height={barHeight}
                       fill={groupColors[key]}
                       opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                      rx={2}
+                      rx={0}
                     />
                   );
                 });
