@@ -53,7 +53,7 @@ const menuItems = [
       { 
         name: "Pump Fun", 
         path: "/projects/pump-fun",
-        logo: "https://pump.fun/favicon.ico",
+        logo: "https://pump.fun/logo.png",
         status: "soon"
       },
       { 
