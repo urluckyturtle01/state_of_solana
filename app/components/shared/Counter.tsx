@@ -92,7 +92,7 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
     return `${value.toFixed(1)}M`;
   }
   // If target ends with K, format as thousand
-  else if (targetValue.includes('K ')) {
+  else if (targetValue.includes('K')) {
     return `${value.toFixed(1)}K`;
   }
   // For percentages
