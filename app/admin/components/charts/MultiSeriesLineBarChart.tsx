@@ -557,6 +557,67 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
+  // Helper function to calculate safe tooltip position for mobile
+  const calculateSafeTooltipPosition = (
+    mouseX: number, 
+    mouseY: number, 
+    containerRect: DOMRect,
+    tooltipEstimatedWidth = 200, // Estimated tooltip width
+    tooltipEstimatedHeight = 100 // Estimated tooltip height
+  ) => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const isMobile = viewportWidth < 768;
+    
+    if (!isMobile) {
+      // Desktop: use original positioning
+      return {
+        left: mouseX,
+        top: Math.max(mouseY - 10, 10)
+      };
+    }
+    
+    // Mobile: calculate safe position
+    const absoluteX = containerRect.left + mouseX;
+    const absoluteY = containerRect.top + mouseY;
+    
+    let safeLeft = mouseX;
+    let safeTop = mouseY - 10;
+    
+    // Check right boundary
+    if (absoluteX + tooltipEstimatedWidth > viewportWidth) {
+      safeLeft = mouseX - tooltipEstimatedWidth;
+      // Ensure it doesn't go off the left edge
+      if (containerRect.left + safeLeft < 0) {
+        safeLeft = 10 - containerRect.left;
+      }
+    }
+    
+    // Check left boundary
+    if (absoluteX < tooltipEstimatedWidth / 2) {
+      safeLeft = 10;
+    }
+    
+    // Check top boundary
+    if (absoluteY - tooltipEstimatedHeight < 0) {
+      safeTop = mouseY + 20; // Position below cursor
+    }
+    
+    // Check bottom boundary
+    if (absoluteY + tooltipEstimatedHeight > viewportHeight) {
+      safeTop = mouseY - tooltipEstimatedHeight - 10;
+      // Ensure it doesn't go above the top
+      if (containerRect.top + safeTop < 0) {
+        safeTop = 10 - containerRect.top;
+      }
+    }
+    
+    return {
+      left: Math.max(safeLeft, 0),
+      top: Math.max(safeTop, 0)
+    };
+  };
+
   // Handle interaction (mouse or touch) for tooltips
   const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
     // Get the correct coordinates based on event type
@@ -612,9 +673,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
     const xValue = dataPoint[xKey];
     
-    // Calculate tooltip position
-    const tooltipLeft = mouseX;
-    const tooltipTop = Math.max(mouseY - 10, 10);
+    // Calculate safe tooltip position for mobile
+    const safePosition = calculateSafeTooltipPosition(mouseX, mouseY, rect);
     
     // Only update if showing a new x-value or hiding previous one
     if (!tooltip.visible || tooltip.key !== xValue) {
@@ -670,15 +730,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         visible: true,
         key: xValue,
         items: tooltipItems,
-        left: tooltipLeft,
-        top: tooltipTop
+        left: safePosition.left,
+        top: safePosition.top
       });
     } else {
       // If tooltip content isn't changing, just update position
       setTooltip(prev => ({
         ...prev,
-        left: tooltipLeft,
-        top: tooltipTop
+        left: safePosition.left,
+        top: safePosition.top
       }));
     }
   }, [chartData, fields, xKey, fieldColors, fieldTypes, formatWithUnit, tooltip, yField]);

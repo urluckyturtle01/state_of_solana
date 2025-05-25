@@ -179,10 +179,113 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
-    if (tooltip.visible) {
-      setTooltip(prev => ({ ...prev, visible: false }));
+    setTooltip(prev => ({ ...prev, visible: false }));
+  }, []);
+
+  // Helper function to calculate safe tooltip position for mobile
+  const calculateSafeTooltipPosition = (
+    mouseX: number, 
+    mouseY: number, 
+    containerRect: DOMRect,
+    tooltipEstimatedWidth = 200, // Estimated tooltip width
+    tooltipEstimatedHeight = 100 // Estimated tooltip height
+  ) => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const isMobile = viewportWidth < 768;
+    
+    if (!isMobile) {
+      // Desktop: use original positioning
+      return {
+        left: mouseX,
+        top: mouseY
+      };
     }
-  }, [tooltip.visible]);
+    
+    // Mobile: calculate safe position
+    const absoluteX = containerRect.left + mouseX;
+    const absoluteY = containerRect.top + mouseY;
+    
+    let safeLeft = mouseX;
+    let safeTop = mouseY;
+    
+    // Check right boundary
+    if (absoluteX + tooltipEstimatedWidth > viewportWidth) {
+      safeLeft = mouseX - tooltipEstimatedWidth;
+      // Ensure it doesn't go off the left edge
+      if (containerRect.left + safeLeft < 0) {
+        safeLeft = 10 - containerRect.left;
+      }
+    }
+    
+    // Check left boundary
+    if (absoluteX < tooltipEstimatedWidth / 2) {
+      safeLeft = 10;
+    }
+    
+    // Check top boundary
+    if (absoluteY - tooltipEstimatedHeight < 0) {
+      safeTop = mouseY + 20; // Position below cursor
+    }
+    
+    // Check bottom boundary
+    if (absoluteY + tooltipEstimatedHeight > viewportHeight) {
+      safeTop = mouseY - tooltipEstimatedHeight - 10;
+      // Ensure it doesn't go above the top
+      if (containerRect.top + safeTop < 0) {
+        safeTop = 10 - containerRect.top;
+      }
+    }
+    
+    return {
+      left: Math.max(safeLeft, 0),
+      top: Math.max(safeTop, 0)
+    };
+  };
+
+  // Handle mouse interaction for pie segments
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
+    const containerRef = e.currentTarget.closest('.chart-container');
+    if (!containerRef) return;
+    
+    const rect = containerRef.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Calculate safe position for mobile
+    const safePosition = calculateSafeTooltipPosition(x, y, rect);
+    
+    setTooltip({
+      visible: true,
+      data: dataPoint,
+      left: safePosition.left,
+      top: safePosition.top
+    });
+  }, []);
+
+  // Handle touch interaction for pie segments
+  const handleTouch = useCallback((e: React.TouchEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
+    // Prevent default touch behavior (scrolling, zooming)
+    e.preventDefault();
+    
+    const containerRef = e.currentTarget.closest('.chart-container');
+    if (!containerRef) return;
+    
+    const rect = containerRef.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    // Calculate safe position for mobile
+    const safePosition = calculateSafeTooltipPosition(x, y, rect);
+    
+    setTooltip({
+      visible: true,
+      data: dataPoint,
+      left: safePosition.left,
+      top: safePosition.top
+    });
+  }, []);
 
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -275,44 +378,6 @@ const PieChart: React.FC<PieChartProps> = ({
       chartConfig.onFilterChange(updatedFilters);
     }
   }, [modalFilterValues, chartConfig, isExpanded, handleModalFilterChange]);
-
-  // Handle tooltip display on hovering pie segments
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
-    const containerRef = e.currentTarget.closest('.chart-container');
-    if (!containerRef) return;
-    
-    const rect = containerRef.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    setTooltip({
-      visible: true,
-      data: dataPoint,
-      left: x,
-      top: y
-    });
-  }, []);
-
-  // Handle touch interaction for pie segments
-  const handleTouch = useCallback((e: React.TouchEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
-    // Prevent default touch behavior (scrolling, zooming)
-    e.preventDefault();
-    
-    const containerRef = e.currentTarget.closest('.chart-container');
-    if (!containerRef) return;
-    
-    const rect = containerRef.getBoundingClientRect();
-    const touch = e.touches[0];
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    
-    setTooltip({
-      visible: true,
-      data: dataPoint,
-      left: x,
-      top: y
-    });
-  }, []);
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
@@ -409,11 +474,14 @@ const PieChart: React.FC<PieChartProps> = ({
                         const x = e.clientX - containerRect.left;
                         const y = e.clientY - containerRect.top;
                         
+                        // Calculate safe position for mobile
+                        const safePosition = calculateSafeTooltipPosition(x, y, containerRect);
+                        
                         setTooltip({
                           visible: true,
                           data: dataPoint,
-                          left: x,
-                          top: y
+                          left: safePosition.left,
+                          top: safePosition.top
                         });
                       }}
                       onTouchStart={(e) => {
@@ -426,11 +494,14 @@ const PieChart: React.FC<PieChartProps> = ({
                         const x = touch.clientX - containerRect.left;
                         const y = touch.clientY - containerRect.top;
                         
+                        // Calculate safe position for mobile
+                        const safePosition = calculateSafeTooltipPosition(x, y, containerRect);
+                        
                         setTooltip({
                           visible: true,
                           data: dataPoint,
-                          left: x,
-                          top: y
+                          left: safePosition.left,
+                          top: safePosition.top
                         });
                       }}
                       onMouseLeave={() => setTooltip(prev => ({ ...prev, visible: false }))}
