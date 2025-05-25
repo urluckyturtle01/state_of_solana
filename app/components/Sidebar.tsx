@@ -8,12 +8,12 @@ import { useState } from "react";
 const menuItems = [
 { name: "Overview", path: "/", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { name: "DEX", path: "/dex", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
-  { name: "REV", path: "/rev", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { name: "Stablecoins", path: "/stablecoins", icon: "M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { name: "MEV", path: "/mev", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
-  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
-  { name: "Compute Units", path: "/compute-units", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
-  { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { name: "REV", path: "/rev", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+  { name: "Stablecoins", path: "/stablecoins", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { name: "MEV", path: "/mev", icon: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" },
+  { name: "Protocol Revenue", path: "/protocol-revenue", icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" },
+  { name: "Compute Units", path: "/compute-units", icon: "M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" },
+  { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M16.56 11.57C17.15 10.88 17.5 9.98 17.5 9C17.5 7.14 16.23 5.57 14.5 5.13V3H12.5V5H10.5V3H8.5V5H5.5V7H7.5V17H5.5V19H8.5V21H10.5V19H12.5V21H14.5V19C16.71 19 18.5 17.21 18.5 15C18.5 13.55 17.72 12.27 16.56 11.57ZM9.5 7H13.5C14.6 7 15.5 7.9 15.5 9C15.5 10.1 14.6 11 13.5 11H9.5V7ZM14.5 17H9.5V13H14.5C15.6 13 16.5 13.9 16.5 15C16.5 16.1 15.6 17 14.5 17Z" },
   { 
     name: "Projects", 
     path: "/projects", 
@@ -28,13 +28,13 @@ const menuItems = [
       { 
         name: "Metaplex", 
         path: "/projects/metaplex",
-        logo: "https://www.metaplex.com/favicon.ico",
+        logo: "https://www.metaplex.com/images/favicon.png",
         status: "soon"
       },
       { 
         name: "Squads", 
         path: "/projects/squads",
-        logo: "https://squads.xyz/favicon.ico",
+        logo: "https://framerusercontent.com/images/pBwgF4du4byUGDzFtqxnLoQwZqU.png",
         status: "soon"
       },
       { 
@@ -52,13 +52,13 @@ const menuItems = [
       { 
         name: "Pump Fun", 
         path: "/projects/pump-fun",
-        logo: "https://pump.fun/favicon.ico",
+        logo: "https://pump.fun/logo.png",
         status: "soon"
       },
       { 
         name: "Helium", 
         path: "/projects/helium",
-        logo: "https://www.helium.com/favicon.ico",
+        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
         status: "soon"
       }
     ]
@@ -136,12 +136,16 @@ export default function Sidebar() {
                         <svg 
                           xmlns="http://www.w3.org/2000/svg" 
                           className="h-5 w-5 min-w-5" 
-                          fill="none" 
+                          fill={item?.name === "Wrapped BTC" ? "currentColor" : "none"}
                           viewBox="0 0 24 24" 
-                          stroke="currentColor" 
+                          stroke={item?.name === "Wrapped BTC" ? "none" : "currentColor"}
                           strokeWidth={1.5}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" d={item?.icon || ''} />
+                          <path 
+                            strokeLinecap={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                            strokeLinejoin={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                            d={item?.icon || ''} 
+                          />
                         </svg>
                         <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
                       </div>
@@ -224,12 +228,16 @@ export default function Sidebar() {
                     <svg 
                       xmlns="http://www.w3.org/2000/svg" 
                       className="h-5 w-5 min-w-5" 
-                      fill="none" 
+                      fill={item?.name === "Wrapped BTC" ? "currentColor" : "none"}
                       viewBox="0 0 24 24" 
-                      stroke="currentColor" 
+                      stroke={item?.name === "Wrapped BTC" ? "none" : "currentColor"}
                       strokeWidth={1.5}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d={item?.icon || ''} />
+                      <path 
+                        strokeLinecap={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                        strokeLinejoin={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                        d={item?.icon || ''} 
+                      />
                     </svg>
                     <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
                   </Link>

@@ -29,13 +29,13 @@ const menuItems = [
       { 
         name: "Metaplex", 
         path: "/projects/metaplex",
-        logo: "https://www.metaplex.com/favicon.ico",
+        logo: "https://www.metaplex.com/images/favicon.png",
         status: "soon"
       },
       { 
         name: "Squads", 
         path: "/projects/squads",
-        logo: "https://squads.xyz/favicon.ico",
+        logo: "https://framerusercontent.com/images/pBwgF4du4byUGDzFtqxnLoQwZqU.png",
         status: "soon"
       },
       { 
@@ -53,7 +53,7 @@ const menuItems = [
       { 
         name: "Pump Fun", 
         path: "/projects/pump-fun",
-        logo: "https://pump.fun/favicon.ico",
+        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
         status: "soon"
       },
       { 
