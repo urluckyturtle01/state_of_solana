@@ -6,33 +6,51 @@ import { Brush } from '@visx/brush';
 import { LinePath } from '@visx/shape';
 import { curveMonotoneX, curveLinear, curveStep, curveBasis, curveCardinal, curveCatmullRom } from '@visx/curve';
 
-
-
 // Define a constant for the handle color
-
 const axisColor = '#374151';
 
-// Custom brush handle component
+// Mobile detection utility
+const isMobile = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < 768 || 'ontouchstart' in window;
+};
+
+// Custom brush handle component with enhanced mobile support
 const BrushHandle = ({ 
   x, 
   height
 }: { 
   x: number; 
   height: number;
-  isBrushActive?: boolean; // Keeping this param for backward compatibility but not using it
+  isBrushActive?: boolean;
 }) => {
-  const pathWidth = 8;
-  const pathHeight = 15;
+  const pathWidth = 8; // Keep consistent size
+  const pathHeight = 15; // Keep consistent size
   
   return (
     <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
+      {/* Invisible larger touch target for mobile only */}
+      {isMobile() && (
+        <rect
+          x={-12}
+          y={-8}
+          width={24}
+          height={31}
+          fill="transparent"
+          style={{ cursor: 'ew-resize' }}
+        />
+      )}
       <path
-      className=" stroke-[#374151] cursor-ew-resize"
+        className="stroke-[#374151] cursor-ew-resize"
         fill=""
         d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
-        //stroke='#374151'
         strokeWidth="0.7"
-       
+        style={{ 
+          touchAction: 'none',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none'
+        }}
       />
     </Group>
   );
@@ -111,6 +129,64 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   // Track the last filter change counter value that affected positioning
   const lastFilterChangeRef = useRef(0);
 
+  // Mobile touch handling state
+  const [isTouching, setIsTouching] = useState(false);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  // Mobile touch event handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!isMobile()) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const touch = e.touches[0];
+    if (touch) {
+      setIsTouching(true);
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isMobile() || !isTouching) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+  }, [isTouching]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!isMobile()) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsTouching(false);
+    touchStartRef.current = null;
+  }, []);
+
+  // Prevent default touch behaviors on the container
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !isMobile()) return;
+
+    const preventDefaultTouch = (e: TouchEvent) => {
+      // Allow scrolling on the page but prevent default on brush interactions
+      if (e.target && (e.target as Element).closest('[data-brush-container]')) {
+        e.preventDefault();
+      }
+    };
+
+    container.addEventListener('touchstart', preventDefaultTouch, { passive: false });
+    container.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+    container.addEventListener('touchend', preventDefaultTouch, { passive: false });
+
+    return () => {
+      container.removeEventListener('touchstart', preventDefaultTouch);
+      container.removeEventListener('touchmove', preventDefaultTouch);
+      container.removeEventListener('touchend', preventDefaultTouch);
+    };
+  }, []);
+
   // Effect to reset brush when filter values change
   useEffect(() => {
     // Skip the initial render
@@ -187,7 +263,21 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   if (data.length === 0) return null;
   
   return (
-    <div className="h-full w-full" ref={containerRef}>
+    <div 
+      className="h-full w-full" 
+      ref={containerRef}
+      data-brush-container
+      style={{
+        touchAction: isMobile() ? 'pan-y' : 'auto',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitTapHighlightColor: 'transparent'
+      }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <ParentSize>
         {({ width, height }) => {
           if (width <= 0 || height <= 0) return null;
@@ -260,8 +350,8 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 end: { x: brushDateScale(activeBrushDomain[1]) } 
               }
             : { 
-                start: { x: 0 }, 
-                end: { x: innerWidth } 
+                start: { x: 0 },           // ← Minimum position
+                end: { x: innerWidth }     // ← Maximum position (full width)
               };
           
           // Update our ref to the current filter change count
@@ -319,7 +409,18 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
           };
           
           return (
-            <svg width={width} height={height} ref={svgRef} data-instance-id={instanceIdRef.current}>
+            <svg 
+              width={width} 
+              height={height} 
+              ref={svgRef} 
+              data-instance-id={instanceIdRef.current}
+              style={{
+                touchAction: 'none',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                WebkitTouchCallout: 'none'
+              }}
+            >
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect
@@ -328,6 +429,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   width={innerWidth}
                   height={innerHeight}
                   fill="transparent"
+                  style={{ touchAction: 'none' }}
                 />
                 
                 {/* Line representing the data */}
@@ -361,10 +463,10 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   initialBrushPosition={initialBrushPosition}
                   onChange={handleBrushChange}
                   onClick={onClearBrush}
-                  useWindowMoveEvents={true}
+                  useWindowMoveEvents={!isMobile()}
                   selectedBoxStyle={{ 
-                    fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
-                    stroke: '#374151', // Border color
+                    fill: 'rgba(18, 24, 43, 0.2)',
+                    stroke: '#374151',
                     strokeWidth: 0.4,
                     rx: 4,
                     ry: 4,
