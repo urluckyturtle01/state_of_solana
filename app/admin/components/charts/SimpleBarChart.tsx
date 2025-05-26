@@ -9,7 +9,7 @@ import { ChartConfig, YAxisConfig } from '../../types';
 import { blue, getColorByIndex, allColorsArray } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
-import PrettyLoader from "@/app/components/shared/PrettyLoader";
+import Loader from "@/app/components/shared/Loader";
 import LegendItem from "@/app/components/shared/LegendItem";
 import BrushTimeScale from "@/app/components/shared/BrushTimeScale";
 import Modal from '@/app/components/shared/Modal';
@@ -152,17 +152,14 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     
     // Format with appropriate scale
     let formattedValue: string;
-    const absValue = Math.abs(value);
-    const sign = value < 0 ? '-' : '';
-    
-    if (absValue >= 1000000000) {
-      formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
-    } else if (absValue >= 1000000) {
-      formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
-    } else if (absValue >= 1000) {
-      formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
+    if (value >= 1000000000) {
+      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
+    } else if (value >= 1000000) {
+      formattedValue = `${(value / 1000000).toFixed(2)}M`;
+    } else if (value >= 1000) {
+      formattedValue = `${(value / 1000).toFixed(2)}K`;
     } else {
-      formattedValue = `${sign}${absValue.toFixed(2)}`;
+      formattedValue = value.toFixed(2);
     }
     
     // Return with correct unit placement (or no unit if not specified)
@@ -174,29 +171,23 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    const absValue = Math.abs(value);
-    const sign = value < 0 ? '-' : '';
-    
-    if (absValue >= 1000000000) {
-      const formattedValue = (absValue / 1000000000).toFixed(1);
+    if (value >= 1000000000) {
+      const formattedValue = (value / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${sign}${formattedValue.slice(0, -2)}B` 
-        : `${sign}${formattedValue}B`;
-    } else if (absValue >= 1000000) {
-      const formattedValue = (absValue / 1000000).toFixed(1);
+        ? `${formattedValue.slice(0, -2)}B` 
+        : `${formattedValue}B`;
+    } else if (value >= 1000000) {
+      const formattedValue = (value / 1000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${sign}${formattedValue.slice(0, -2)}M` 
-        : `${sign}${formattedValue}M`;
-    } else if (absValue >= 1000) {
-      const formattedValue = (absValue / 1000).toFixed(1);
+        ? `${formattedValue.slice(0, -2)}M` 
+        : `${formattedValue}M`;
+    } else if (value >= 1000) {
+      const formattedValue = (value / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${sign}${formattedValue.slice(0, -2)}K` 
-        : `${sign}${formattedValue}K`;
-    } else if (absValue < 1) {
-      // For values between 0 and 1, show decimal places
-      return `${sign}${absValue.toFixed(1)}`;
+        ? `${formattedValue.slice(0, -2)}K` 
+        : `${formattedValue}K`;
     } else {
-      return `${sign}${absValue.toFixed(0)}`;
+      return value.toFixed(0);
     }
   }, []);
 
@@ -359,95 +350,22 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, externalColorMap, isExpanded]);
 
-  // Handle mouse leave for tooltip
+  // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
     if (tooltip.visible) {
       setTooltip(prev => ({ ...prev, visible: false }));
     }
   }, [tooltip.visible]);
 
-  // Handle touch end to close tooltip when user stops touching
-  const handleTouchEnd = useCallback(() => {
-    if (tooltip.visible) {
-      setTooltip(prev => ({ ...prev, visible: false }));
-    }
-  }, [tooltip.visible]);
-
-  // Helper function to calculate safe tooltip position for mobile
-  const calculateSafeTooltipPosition = (
-    mouseX: number, 
-    mouseY: number, 
-    containerRect: DOMRect,
-    tooltipEstimatedWidth = 200, // Estimated tooltip width
-    tooltipEstimatedHeight = 100 // Estimated tooltip height
-  ) => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const isMobile = viewportWidth < 768;
-    
-    if (!isMobile) {
-      // Desktop: use original positioning
-      return {
-        left: mouseX,
-        top: Math.max(mouseY - 10, 10)
-      };
-    }
-    
-    // Mobile: calculate safe position
-    const absoluteX = containerRect.left + mouseX;
-    const absoluteY = containerRect.top + mouseY;
-    
-    let safeLeft = mouseX;
-    let safeTop = mouseY - 10;
-    
-    // Check right boundary
-    if (absoluteX + tooltipEstimatedWidth > viewportWidth) {
-      safeLeft = mouseX - tooltipEstimatedWidth;
-      // Ensure it doesn't go off the left edge
-      if (containerRect.left + safeLeft < 0) {
-        safeLeft = 10 - containerRect.left;
-      }
-    }
-    
-    // Check left boundary
-    if (absoluteX < tooltipEstimatedWidth / 2) {
-      safeLeft = 10;
-    }
-    
-    // Check top boundary
-    if (absoluteY - tooltipEstimatedHeight < 0) {
-      safeTop = mouseY + 20; // Position below cursor
-    }
-    
-    // Check bottom boundary
-    if (absoluteY + tooltipEstimatedHeight > viewportHeight) {
-      safeTop = mouseY - tooltipEstimatedHeight - 10;
-      // Ensure it doesn't go above the top
-      if (containerRect.top + safeTop < 0) {
-        safeTop = 10 - containerRect.top;
-      }
-    }
-    
-    return {
-      left: Math.max(safeLeft, 0),
-      top: Math.max(safeTop, 0)
-    };
-  };
-
-  // Handle interaction (mouse or touch) for tooltips
-  const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    // Get the correct coordinates based on event type
-    const isTouchEvent = 'touches' in e;
-    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-    
+  // Handle mouse move for tooltips
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    // Get position relative to chart container
-    const mouseX = clientX - rect.left;
-    const mouseY = clientY - rect.top;
+    // Get mouse position - use client coordinates for consistency
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
     
     // Use current data based on brush state
     const currentData = isModal 
@@ -500,8 +418,9 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
     const xValue = dataPoint[xKey];
     
-    // Calculate safe tooltip position for mobile
-    const safePosition = calculateSafeTooltipPosition(mouseX, mouseY, rect);
+    // Calculate tooltip position - always follow mouse in both normal and modal views
+    const tooltipLeft = mouseX;
+    const tooltipTop = Math.max(mouseY - 10, 10);
     
     // Only update if showing a new x-value or hiding previous one
     if (!tooltip.visible || tooltip.key !== xValue) {
@@ -512,29 +431,29 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         tooltipItems = yFields
           .filter(field => {
             const value = Number(dataPoint[field]);
-            return !isNaN(value) && value !== 0;
+            return !isNaN(value) && value > 0;
           })
           .map(field => ({
-            label: formatFieldName(field),
+            label: field,
             value: formatValue(Number(dataPoint[field]) || 0, getYAxisUnit(yField, yAxisUnit)),
             color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
             shape: 'square' as 'square'
           }))
           .sort((a, b) => {
-            // Sort by absolute value (descending) to show larger values first
+            // Sort by value (descending)
             const aVal = typeof a.value === 'string' 
-              ? Math.abs(parseFloat(a.value.replace(/[^0-9.-]+/g, '')))
-              : Math.abs(Number(a.value));
+              ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
+              : a.value;
             const bVal = typeof b.value === 'string' 
-              ? Math.abs(parseFloat(b.value.replace(/[^0-9.-]+/g, '')))
-              : Math.abs(Number(b.value));
+              ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
+              : b.value;
             return bVal - aVal;
           });
         
         // If no items passed the filter, show the first field with a 0 value
         if (tooltipItems.length === 0 && yFields.length > 0) {
           tooltipItems = [{
-            label: formatFieldName(yFields[0]),
+            label: yFields[0],
             value: '$0.00',
             color: typeof barColor === 'string' ? barColor : (barColor[yFields[0]] || blue),
             shape: 'square' as 'square'
@@ -543,7 +462,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       } else {
         // For simple bar chart, just show the single value
         tooltipItems = [{
-          label: formatFieldName(yKey),
+          label: yKey,
           value: formatValue(dataPoint[yKey], getYAxisUnit(yField, yAxisUnit)),
           color: typeof barColor === 'string' ? barColor : (barColor[dataPoint[xKey]] || blue),
           shape: 'square' as 'square'
@@ -555,58 +474,19 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         visible: true,
         key: xValue,
         items: tooltipItems,
-        left: safePosition.left,
-        top: safePosition.top
+        left: tooltipLeft,
+        top: tooltipTop
       });
     } else {
       // If tooltip content isn't changing, just update position
       setTooltip(prev => ({
         ...prev,
-        left: safePosition.left,
-        top: safePosition.top
+        left: tooltipLeft,
+        top: tooltipTop
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, yKey, yFields, barColor, formatValue, 
       tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit]);
-      
-  // For backward compatibility
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
-    handleInteraction(e, isModal);
-  }, [handleInteraction]);
-
-  // Optimized touch handlers that don't interfere with page scrolling
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    // Only prevent default if we're actually going to show a tooltip
-    // This allows normal page scrolling to continue
-    const containerRef = isModal ? modalChartRef : chartRef;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const touch = e.touches[0];
-    const mouseX = touch.clientX - rect.left;
-    const mouseY = touch.clientY - rect.top;
-    
-    // Calculate available chart space
-    const margin = { top: 10, right: 15, bottom: 30, left: 40 };
-    const innerWidth = rect.width - margin.left - margin.right;
-    const adjustedMouseX = mouseX - margin.left;
-    
-    // Only handle touch if it's within the chart area
-    if (adjustedMouseX >= 0 && adjustedMouseX <= innerWidth && chartData.length > 0) {
-      // Only prevent default for touches within the chart area
-      e.preventDefault();
-      handleInteraction(e, isModal);
-    }
-  }, [handleInteraction, chartData.length]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    // Only handle if tooltip is already visible (user is interacting with chart)
-    if (tooltip.visible) {
-      e.preventDefault(); // Prevent scrolling only when actively showing tooltip
-      handleInteraction(e, isModal);
-    }
-    // Otherwise, allow normal page scrolling
-  }, [handleInteraction, tooltip.visible]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -857,25 +737,16 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state with refresh button
-    if (error) {
+    if (error || chartData.length === 0) {
       return (
         <div className="flex flex-col justify-center items-center h-full">
-          <div className="text-gray-400/80 text-xs mb-2">{error}</div>
+          <div className="text-gray-400/80 text-xs mb-2">{error || 'No data available'}</div>
           <ButtonSecondary onClick={refreshData}>
             <div className="flex items-center gap-1.5">
               <RefreshIcon className="w-3.5 h-3.5" />
               <span>Refresh</span>
             </div>
           </ButtonSecondary>
-        </div>
-      );
-    }
-    
-    // Show loader when no data is available yet
-    if (chartData.length === 0) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <PrettyLoader size="sm" />
         </div>
       );
     }
@@ -904,24 +775,14 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         )
       : Math.max(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 1);
     
-    // Calculate the min value for the y-axis to handle negative values
-    const yMin = isMultiSeries
-      ? Math.min(
-          ...chartData.flatMap(d => 
-            yFields.map(field => Number(d[field]) || 0)
-          ),
-          0
-        )
-      : Math.min(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 0);
-    
     const yScale = scaleLinear<number>({
-      domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
+      domain: [0, yMax * 1.1], // Add 10% padding
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
     });
 
-    // Calculate x-axis tick values - limit to 8 for date data, 5 for mobile
+    // Use all X-axis values for tick labels, but limit date ticks to 8 max
     const xTickValues = (() => {
       // Check if the data contains dates
       const isDateData = chartData.length > 0 && 
@@ -932,40 +793,24 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
          /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
          /^\d{4}$/.test(chartData[0][xKey]));
       
-      // Detect mobile screen size
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const maxTicks = isMobile ? 5 : 8;
-      
-      // For date data, limit ticks based on screen size
-      if (isDateData && chartData.length > maxTicks) {
-        const tickInterval = Math.ceil(chartData.length / maxTicks);
+      // For date data, limit to 8 ticks maximum
+      if (isDateData && chartData.length > 8) {
+        const tickInterval = Math.ceil(chartData.length / 8);
         return chartData
           .filter((_, i) => i % tickInterval === 0)
           .map(d => d[xKey]);
       }
       
-      // For other data types on mobile, also limit to 5 ticks
-      if (isMobile && chartData.length > 5) {
-        const tickInterval = Math.ceil(chartData.length / 5);
-        return chartData
-          .filter((_, i) => i % tickInterval === 0)
-          .map(d => d[xKey]);
-      }
-      
-      // For other data types on desktop, show all values
+      // For other data types, show all values
       return chartData.map(d => d[xKey]);
     })();
 
     // Render the chart content
     return (
       <div 
-        className="relative w-full h-full touch-pan-y" 
-        style={{ touchAction: 'pan-y' }}
+        className="relative w-full h-full" 
         onMouseMove={(e) => handleMouseMove(e, isModal)}
-        onTouchStart={(e) => handleTouchStart(e, isModal)}
-        onTouchMove={(e) => handleTouchMove(e, isModal)}
         onMouseLeave={handleMouseLeave}
-        onTouchEnd={handleTouchEnd}
         ref={isModal ? modalChartRef : chartRef}
       >
         {/* Tooltip */}
@@ -991,19 +836,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               strokeOpacity={0.5}
               strokeDasharray="2,3"
             />
-            
-            {/* Zero line with special styling when we have negative values */}
-            {yMin < 0 && (
-              <line
-                x1={0}
-                y1={yScale(0)}
-                x2={innerWidth}
-                y2={yScale(0)}
-                stroke="#374151"
-                strokeWidth={1}
-                strokeOpacity={0.8}
-              />
-            )}
             
             {/* X-axis */}
             <AxisBottom
@@ -1106,14 +938,10 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                   <React.Fragment key={`multi-${d[xKey]}`}>
                     {yFields.map((field, i) => {
                       const value = Number(d[field]) || 0;
-                      // For positive values, the bar starts at the value position and extends down to zero
-                      // For negative values, the bar starts at zero and extends down to the value position
-                      const barHeight = Math.abs(yScale(0) - yScale(value));
+                      const barHeight = innerHeight - yScale(value);
                       // Position each field's bar side by side
                       const barX = x + (i * barWidth);
-                      // For positive values, the bar's y position is at the value's y coordinate
-                      // For negative values, the bar's y position is at the zero line
-                      const barY = value >= 0 ? yScale(value) : yScale(0);
+                      const barY = innerHeight - barHeight;
                       
                       // Get color for this field
                       const color = typeof barColor === 'object' ? (barColor[field] || blue) : barColor;
@@ -1127,7 +955,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                           height={barHeight}
                           fill={color}
                           opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                          rx={0}
+                          rx={2}
                         />
                       );
                     })}
@@ -1139,13 +967,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               chartData.map((d: ChartDataItem, i: number) => {
                 const barX = xScale(d[xKey]) || 0;
                 const barWidth = xScale.bandwidth();
-                const value = Number(d[yKey]) || 0;
-                // For positive values, the bar starts at the value position and extends down to zero
-                // For negative values, the bar starts at zero and extends down to the value position
-                const barHeight = Math.abs(yScale(0) - yScale(value));
-                // For positive values, the bar's y position is at the value's y coordinate
-                // For negative values, the bar's y position is at the zero line
-                const barY = value >= 0 ? yScale(value) : yScale(0);
+                const barHeight = innerHeight - yScale(Number(d[yKey]) || 0);
+                const barY = innerHeight - barHeight;
                 
                 // Determine bar color based on config
                 const color = typeof barColor === 'string' 
@@ -1161,7 +984,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     height={barHeight}
                     fill={color}
                     opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                    rx={0}
+                    rx={2}
                   />
                 );
               })
@@ -1176,32 +999,19 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   useEffect(() => {
     if (chartData.length > 0) {
       if (isMultiSeries) {
-        // For multi-series, create a legend item for each y-field and calculate total values for sorting
-        const fieldTotals: Record<string, number> = {};
-        
-        // Calculate total value for each field across all data points
-        yFields.forEach(field => {
-          fieldTotals[field] = chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0);
-        });
-        
-        // Create and sort legend items by value (descending)
-        const items = yFields
-          .map(field => ({
-            id: field,
-            label: formatFieldName(field),
-            color: typeof barColor === 'string' ? barColor : (barColor[field] || blue),
-            value: fieldTotals[field]
-          }))
-          .sort((a, b) => b.value - a.value);
-        
+        // For multi-series, create a legend item for each y-field
+        const items = yFields.map(field => ({
+          id: field,
+          label: field,
+          color: typeof barColor === 'string' ? barColor : (barColor[field] || blue)
+        }));
         setLegendItems(items);
       } else {
-        // Single y-field - can't really sort a single item
+        // Single y-field
         setLegendItems([{
           id: yKey,
-          label: formatFieldName(yKey),
-          color: typeof barColor === 'string' ? barColor : blue,
-          value: chartData.reduce((sum, d) => sum + (Number(d[yKey]) || 0), 0)
+          label: yKey,
+          color: typeof barColor === 'string' ? barColor : blue
         }]);
       }
     }
@@ -1211,16 +1021,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const renderBrushArea = useCallback((modalView = false) => {
     if (!brushData || brushData.length === 0) return null;
     
-    // For chart without filters, we need to customize the brush path
+    // For simple chart without filters, we need to customize the brush path
     const isSimpleChartWithoutFilters = 
       !filterValues || Object.keys(filterValues).length === 0;
     
     // Calculate padding to prevent line from extending beyond brush area
     // Add a small negative padding to keep the line just inside the brush bounds
     const padding = isSimpleChartWithoutFilters ? -0.5 : 0;
-    
-    // Calculate max value for brush scaling
-    const maxBrushValue = Math.max(...brushData.map(d => d.value || 0), 1);
     
     return (
       <div className="h-[18%] w-full mt-2">
@@ -1241,21 +1048,25 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           }}
           getDate={(d) => d.date}
           getValue={(d) => {
-            // For simple charts without filters, ensure we have a visible line
-            // that doesn't change shape during brushing
-            const val = d.value || 0;
-            const absVal = Math.abs(val);
-            
-            // For brush visualization, we always show a positive value to create a visible line
-            // Ensure the line doesn't touch the base by applying a minimum value
-            // This makes the line more visible even for small values
-            return Math.max(absVal, maxBrushValue * 0.05);
+            // For simple charts without filters, ensure we reflect the bar heights
+            if (isSimpleChartWithoutFilters) {
+              const idx = d.originalIndex;
+              if (chartData[idx]) {
+                // Use actual value from chart data for better visual representation
+                const val = Number(chartData[idx][yKey]) || 0;
+                
+                // Ensure the line doesn't touch the base by applying a minimum value
+                // This makes the line more visible even for small values
+                return Math.max(val, maxValue * 0.05);
+              }
+            }
+            return d.value;
           }}
           lineColor={isSimpleChartWithoutFilters ? "#3b82f6" : "#60a5fa"} // Brighter blue for simple charts
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
-          // Use smoother curve type to avoid sharp corners
-          curveType={isMultiSeries ? "monotoneX" : "monotoneX"}
+          // Use appropriate curve type based on the chart configuration
+          curveType={isMultiSeries ? "catmullRom" : (isSimpleChartWithoutFilters ? "linear" : "monotoneX")}
           strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
@@ -1263,7 +1074,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     );
   }, [brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange, 
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
-      setIsBrushActive, setFilteredData, isMultiSeries, filterValues, modalFilterValues]);
+      setIsBrushActive, setFilteredData, chartData, yKey, filterValues, maxValue, isMultiSeries, modalFilterValues]);
 
   // Add back the handleFilterChange function
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -1280,27 +1091,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       chartConfig.onFilterChange(updatedFilters);
     }
   }, [modalFilterValues, chartConfig]);
-
-  // Helper function to format field names for display
-  const formatFieldName = (fieldName: string): string => {
-    if (!fieldName) return '';
-    
-    // Convert snake_case or kebab-case to space-separated
-    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
-    
-    // Always capitalize the first letter of the entire string
-    if (spaceSeparated.length === 0) return '';
-    
-    // Split into words and capitalize each word
-    return spaceSeparated
-      .split(' ')
-      .map(word => {
-        if (word.length === 0) return '';
-        // Capitalize first letter, lowercase the rest
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(' ');
-  };
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
@@ -1363,19 +1153,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           {/* Chart with legends */}
           <div className="flex h-full">
             {/* Chart area - 90% width */}
-            <div className="w-full lg:w-[90%] h-[90%] lg:pr-3 lg:border-r lg:border-gray-900">
+            <div className="w-[90%] h-[90%] pr-3 border-r border-gray-900">
               <div className="flex flex-col h-full">
-                {/* Main chart - 85% height */}
-                <div className="h-[85%] w-full relative" ref={modalChartRef}>
-                  <ParentSize debounceTime={10}>
-                    {({ width: parentWidth, height: parentHeight }) => 
-                      parentWidth > 0 && parentHeight > 0 
-                        ? renderChartContent(parentWidth, parentHeight, true)
-                        : null
-                    }
-                  </ParentSize>
-                </div>
-                
                 {/* Display tooltip at the container level for modal views */}
                 {tooltip.visible && tooltip.items && (
                   <div className="absolute z-50" style={{ 
@@ -1395,15 +1174,28 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                   </div>
                 )}
                 
+                {/* Main chart - 85% height */}
+                <div className="h-[85%] w-full relative">
+                  <ParentSize debounceTime={10}>
+                    {({ width: parentWidth, height: parentHeight }) => 
+                      parentWidth > 0 && parentHeight > 0 
+                        ? renderChartContent(parentWidth, parentHeight, true)
+                        : null
+                    }
+                  </ParentSize>
+                </div>
+                
                 {/* Brush component - 15% height */}
-                {brushData.length > 0 ? (
-                  renderBrushArea(true)
-                ) : (null)}
+                {brushData.length > 0 ? renderBrushArea(true) : (
+                  <div className="h-[15%] w-full flex items-center justify-center text-gray-500 text-sm">
+                    No brush data available
+                  </div>
+                )}
               </div>
             </div>
             
             {/* Legend area - 10% width */}
-            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start hidden lg:flex">
+            <div className="w-[10%] h-full pl-3 flex flex-col justify-start items-start">
               {/* Show legend items */}
               <div className="space-y-2 w-full overflow-y-auto max-h-[600px]
                 [&::-webkit-scrollbar]:w-1.5 
@@ -1442,7 +1234,11 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         </ParentSize>
       </div>
       
-      {brushData.length > 0 ? renderBrushArea(false) : (null)}
+      {brushData.length > 0 ? renderBrushArea(false) : (
+        <div className="h-[15%] w-full mt-2 flex items-center justify-center text-gray-500 text-sm">
+          No brush data available
+        </div>
+      )}
     </div>
   );
 };

@@ -12,7 +12,7 @@ export default function ComputeUnitsTabsHeader({ activeTab = "transaction-bytes"
       name: "Transaction Bytes", 
       path: "/compute-units/transaction-bytes",
       key: "transaction-bytes",
-      icon: "M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"
+      icon: "M4 6h16v12H4V6zm2 3h2v2H6V9zm5 0h2v2h-2V9zm5 0h2v2h-2V9zM6 14h2v2H6v-2zm5 0h2v2h-2v-2zm5 0h2v2h-2v-2z"
     },
     { 
       name: "Compute Units", 

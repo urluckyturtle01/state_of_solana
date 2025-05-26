@@ -18,7 +18,7 @@ export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }
       name: "Transfers", 
       path: "/stablecoins/transaction-activity",
       key: "transaction-activity",
-      icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+      icon: "M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3"
     },
     { 
       name: "Velocity", 
@@ -36,7 +36,7 @@ export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }
       name: "CEXs", 
       path: "/stablecoins/cexs",
       key: "cexs",
-      icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      icon: "M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4m-8 4h3m10 0h3M12 4v3m0 10v3m4.5-13.5l-2 2m-5 5l-2 2m9 0l-2-2m-5-5l-2-2"
     },
     { 
       name: "TVL", 
