@@ -312,11 +312,8 @@ const PieChart: React.FC<PieChartProps> = ({
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
     
-    // Convert snake_case or kebab-case to space-separated
-    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
-    
-    // Always capitalize the first letter of the entire string
-    if (spaceSeparated.length === 0) return '';
+    // Convert only snake_case to space-separated, preserve dashes
+    const spaceSeparated = fieldName.replace(/_/g, ' ');
     
     // Split into words and capitalize each word
     return spaceSeparated
@@ -641,34 +638,27 @@ const PieChart: React.FC<PieChartProps> = ({
                   
                   {/* Display tooltip at the container level for modal views */}
                   {tooltip.visible && tooltip.data && (
-                    <div
-                      className="absolute bg-gray-800 text-white p-2 rounded shadow-lg z-50 pointer-events-none"
-                      style={{
-                        left: `${tooltip.left}px`,
-                        top: `${tooltip.top}px`,
-                        transform: 'translate(-50%, -100%)',
-                      }}
-                    >
-                      <div className="font-semibold">{tooltip.data.label}</div>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{
-                            backgroundColor: colorScale(tooltip.data.label) as string,
-                          }}
-                        />
-                        <span>Value: {formatValue(tooltip.data.value, yUnit)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{
-                            backgroundColor: colorScale(tooltip.data.label) as string,
-                          }}
-                        />
-                        <span>Percentage: {tooltip.data.percentage.toFixed(1)}%</span>
-                      </div>
-                    </div>
+                    <ChartTooltip
+                      title={formatFieldName(tooltip.data.label)}
+                      items={[
+                        {
+                          label: 'Value',
+                          value: formatValue(tooltip.data.value, yUnit),
+                          color: colorScale(tooltip.data.label) as string,
+                          shape: 'square'
+                        },
+                        {
+                          label: 'Percentage',
+                          value: `${tooltip.data.percentage.toFixed(1)}%`,
+                          color: colorScale(tooltip.data.label) as string,
+                          shape: 'square'
+                        }
+                      ]}
+                      left={tooltip.left}
+                      top={tooltip.top}
+                      isModal={true}
+                      currencyFilter={filterValues?.currencyFilter}
+                    />
                   )}
                 </div>
               </div>
