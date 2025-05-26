@@ -140,7 +140,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
       )}
       
       {/* Content Area - Split into columns on desktop, stacked on mobile */}
-      <div className="flex flex-col lg:flex-row mt-3 h-[280px] lg:h-[380px]">
+      <div className="flex flex-col lg:flex-row mt-3 h-[290px] md:h-[380px] lg:h-[380px]">
         {/* Chart Area */}
         <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-64 lg:h-auto relative`} style={{ contain: 'layout style' }}>
           {isLoading && (
@@ -149,11 +149,15 @@ const ChartCard: React.FC<ChartCardProps> = ({
             </div>
           )}
           {children}
+          
         </div>
-        
+       
         {/* Legend Area - Only render if legend is provided */}
         {legend && (
+          
           <div className={`${legendWidthClasses[legendWidth]} mt-2 lg:mt-0 lg:pl-4 flex flex-col`}>
+          
+            <div className="h-px bg-gray-900 w-full lg:hidden md:hidden mb-2"></div>
             <div className="flex-1 min-h-0">
               <div className="h-full overflow-y-auto
                 [&::-webkit-scrollbar]:w-1.5 
