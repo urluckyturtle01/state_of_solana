@@ -52,7 +52,7 @@ export const MENU_PAGES: Record<string, MenuPage[]> = {
 overview: [
     { id: 'dashboard', name: 'User Activity', path: '/dashboard' },
     { id: 'network-usage', name: 'Network Usage', path: '/network-usage' },
-    { id: 'protocol-rev', name: 'Protocol Revenue', path: '/protocol-rev' },
+    
     { id: 'market-dynamics', name: 'Market Dynamics', path: '/market-dynamics' }
   ],
   dex: [
