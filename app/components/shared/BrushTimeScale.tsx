@@ -360,47 +360,47 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 {/* Only render line and brush on non-mobile devices */}
                 {!isMobile && (
                   <>
-                    {/* Line representing the data */}
-                    <LinePath 
-                      data={lineData}
-                      x={(d) => indexScale(d.idx)}
-                      y={(d) => {
-                        // Ensure we have valid values
-                        const val = d.value;
-                        if (val === undefined || val === null || isNaN(val)) {
-                          return valueScale(0);
-                        }
-                        return valueScale(val);
-                      }}
-                      stroke={lineColor || "#53a7fe"}
-                      strokeOpacity={0.3}
-                      strokeWidth={strokeWidth || 1.5}
-                      curve={curveFunction}
-                    />
-                    
-                    <Brush
-                      key={brushKey}
-                      ref={brushRef}
-                      xScale={brushDateScale}
-                      yScale={valueScale}
-                      width={innerWidth}
-                      height={innerHeight}
-                      handleSize={8}
-                      resizeTriggerAreas={['left', 'right']}
-                      brushDirection="horizontal"
-                      initialBrushPosition={initialBrushPosition}
-                      onChange={handleBrushChange}
-                      onClick={onClearBrush}
-                      useWindowMoveEvents={true}
-                      selectedBoxStyle={{ 
-                        fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
-                        stroke: '#374151', // Border color
-                        strokeWidth: 0.4,
-                        rx: 4,
-                        ry: 4,
-                      }}
-                      renderBrushHandle={renderBrushHandle}
-                    />
+                {/* Line representing the data */}
+                <LinePath 
+                  data={lineData}
+                  x={(d) => indexScale(d.idx)}
+                  y={(d) => {
+                    // Ensure we have valid values
+                    const val = d.value;
+                    if (val === undefined || val === null || isNaN(val)) {
+                      return valueScale(0);
+                    }
+                    return valueScale(val);
+                  }}
+                  stroke={lineColor || "#53a7fe"}
+                  strokeOpacity={0.3}
+                  strokeWidth={strokeWidth || 1.5}
+                  curve={curveFunction}
+                />
+                
+                <Brush
+                  key={brushKey}
+                  ref={brushRef}
+                  xScale={brushDateScale}
+                  yScale={valueScale}
+                  width={innerWidth}
+                  height={innerHeight}
+                  handleSize={8}
+                  resizeTriggerAreas={['left', 'right']}
+                  brushDirection="horizontal"
+                  initialBrushPosition={initialBrushPosition}
+                  onChange={handleBrushChange}
+                  onClick={onClearBrush}
+                  useWindowMoveEvents={true}
+                  selectedBoxStyle={{ 
+                    fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
+                    stroke: '#374151', // Border color
+                    strokeWidth: 0.4,
+                    rx: 4,
+                    ry: 4,
+                  }}
+                  renderBrushHandle={renderBrushHandle}
+                />
                   </>
                 )}
               </Group>

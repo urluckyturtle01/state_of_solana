@@ -669,11 +669,14 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
             formattedValue = num.toFixed(1);
           } else if (isCurrency || num >= 1000) {
             // For currencies and large numbers, use compact notation
-            if (num >= 1000000000) {
+            if (num >= 1000000000000) {
+              formattedValue = `${(num / 1000000000000).toFixed(1)}T`;
+            } else if (num >= 1000000000) {
               formattedValue = `${(num / 1000000000).toFixed(1)}B`;
             } else if (num >= 1000000) {
               formattedValue = `${(num / 1000000).toFixed(1)}M`;
             } else if (num >= 1000) {
+            
               formattedValue = `${(num / 1000).toFixed(1)}K`;
             } else {
               // For smaller numbers

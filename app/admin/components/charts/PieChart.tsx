@@ -424,6 +424,11 @@ const PieChart: React.FC<PieChartProps> = ({
     // Define pie dimensions
     const radius = Math.min(innerWidth, innerHeight) / 2.5;
     
+    // Check if mobile device
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    // Adjust top position based on device type
+    const topPosition = isMobile ? chartHeight / 2.5 : chartHeight / 2;
+    
     // Render the chart content
     return (
       <div 
@@ -458,7 +463,7 @@ const PieChart: React.FC<PieChartProps> = ({
         )}
         
         <svg width={chartWidth} height={chartHeight}>
-          <Group left={chartWidth / 2} top={chartHeight / 2}>
+          <Group left={chartWidth / 2} top={topPosition}>
             <Pie
               data={pieData}
               pieValue={d => d.value}
