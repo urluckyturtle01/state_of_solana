@@ -6,17 +6,20 @@ import { Brush } from '@visx/brush';
 import { LinePath } from '@visx/shape';
 import { curveMonotoneX, curveLinear, curveStep, curveBasis, curveCardinal, curveCatmullRom } from '@visx/curve';
 
+
+
 // Define a constant for the handle color
+
 const axisColor = '#374151';
 
-// Simple brush handle component
+// Custom brush handle component
 const BrushHandle = ({ 
   x, 
   height
 }: { 
   x: number; 
   height: number;
-  isBrushActive?: boolean;
+  isBrushActive?: boolean; // Keeping this param for backward compatibility but not using it
 }) => {
   const pathWidth = 8;
   const pathHeight = 15;
@@ -24,16 +27,12 @@ const BrushHandle = ({
   return (
     <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
       <path
-        className="stroke-[#374151] cursor-ew-resize"
+      className=" stroke-[#374151] cursor-ew-resize"
         fill=""
         d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+        //stroke='#374151'
         strokeWidth="0.7"
-        style={{ 
-          touchAction: 'none',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          WebkitTouchCallout: 'none'
-        }}
+       
       />
     </Group>
   );
@@ -85,13 +84,81 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   strokeWidth,
   filterValues
 }) => {
-  // Simple refs for basic functionality
+  // Prevent the initial render from triggering onChange
+  const initialRenderRef = useRef(true);
+  
+  // Track the brush instance to prevent unnecessary updates
   const brushRef = useRef<any>(null);
+  
+  // Add a ref to the SVG container so we can find DOM elements more reliably
   const svgRef = useRef<SVGSVGElement | null>(null);
+  
+  // Add a ref to the component container to scope DOM queries
   const containerRef = useRef<HTMLDivElement | null>(null);
+  
+  // Add a ref to store the current innerWidth for use in DOM manipulations
+  const innerWidthRef = useRef<number>(0);
+  
+  // Generate a stable ID for this component instance
+  const instanceIdRef = useRef(`brush-${Math.random().toString(36).substring(2, 9)}`);
+  
+  // Track previous filter values to detect changes
+  const prevFilterValuesRef = useRef<Record<string, string> | undefined>(filterValues);
+  
+  // Track if filters have changed
+  const [filterChangeCount, setFilterChangeCount] = useState(0);
+  
+  // Track the last filter change counter value that affected positioning
+  const lastFilterChangeRef = useRef(0);
 
+  // Effect to reset brush when filter values change
+  useEffect(() => {
+    // Skip the initial render
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false;
+      return;
+    }
+
+    // Check if filterValues exist and have changed
+    if (filterValues && prevFilterValuesRef.current) {
+      // Check if any filter values have changed
+      const hasFilterChanged = Object.keys(filterValues).some(key => 
+        filterValues[key] !== prevFilterValuesRef.current?.[key]
+      );
+
+      if (hasFilterChanged) {
+        console.log('Filter changed, resetting brush to show full dataset');
+        
+        // Reset the brush to show the full dataset
+        onClearBrush();
+        
+        // Increment filter change counter to force brush remount
+        setFilterChangeCount(prev => prev + 1);
+      }
+    }
+
+    // Update ref for next comparison
+    prevFilterValuesRef.current = filterValues;
+  }, [filterValues, onClearBrush]);
+  
+  // Create a key that changes when filters change to force brush remount
+  const brushKey = React.useMemo(() => {
+    return `${instanceIdRef.current}-${data.length}-${filterChangeCount}`;
+  }, [data.length, filterChangeCount]);
+  
+  // Effect to update lastFilterChangeRef when activeBrushDomain changes directly
+  // This handles the case where a filter change happens but then a new domain is explicitly set
+  useEffect(() => {
+    if (activeBrushDomain) {
+      // Update the ref to the current filter change count to sync them
+      // This will ensure that a new activeBrushDomain is respected even after filter changes
+      lastFilterChangeRef.current = filterChangeCount;
+    }
+  }, [activeBrushDomain, filterChangeCount]);
+  
   // Map curve type string to actual curve function
   const getCurveFunction = useCallback((type: string | null) => {
+    // Always return a valid curve function
     if (type === null) return curveLinear;
     
     switch (type) {
@@ -108,7 +175,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
       case 'catmullRom':
         return curveCatmullRom;
       default:
-        return curveMonotoneX;
+        return curveMonotoneX; // Default
     }
   }, []);
   
@@ -116,41 +183,11 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   const curveFunction = React.useMemo(() => {
     return getCurveFunction(curveType);
   }, [curveType, getCurveFunction]);
-
-  // Simple brush handle renderer
-  const renderBrushHandle = useCallback(({ x, y, height: handleHeight }: { x: number; y: number; height: number }) => {
-    return (
-      <BrushHandle 
-        x={x} 
-        height={handleHeight} 
-      />
-    );
-  }, []);
-
-  // Simple change handler
-  const handleBrushChange = useCallback((domain: any) => {
-    if (domain) {
-      onBrushChange(domain);
-    } else {
-      onClearBrush();
-    }
-  }, [onBrushChange, onClearBrush]);
-
+  
   if (data.length === 0) return null;
   
   return (
-    <div 
-      className="h-full w-full" 
-      ref={containerRef}
-      data-brush-container
-      style={{
-        touchAction: 'auto',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        WebkitTouchCallout: 'none',
-        WebkitTapHighlightColor: 'transparent'
-      }}
-    >
+    <div className="h-full w-full" ref={containerRef}>
       <ParentSize>
         {({ width, height }) => {
           if (width <= 0 || height <= 0) return null;
@@ -158,6 +195,9 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
           const innerWidth = width - margin.left - margin.right;
           const innerHeight = height - margin.top - margin.bottom;
           if (innerWidth <= 0 || innerHeight <= 0) return null;
+          
+          // Store the current innerWidth in the ref for use outside this scope
+          innerWidthRef.current = innerWidth;
           
           // Handle unique dates if provided
           const uniqueDates = getUniqueDates 
@@ -208,15 +248,24 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
           });
           
           // Calculate initial brush position
-          const initialBrushPosition = activeBrushDomain
+          // If we have an active domain AND either:
+          // 1. The filter hasn't changed since our last check, OR
+          // 2. We have a newly specified domain that we should respect
+          const shouldUseActiveDomain = activeBrushDomain && 
+            (filterChangeCount === lastFilterChangeRef.current || lastFilterChangeRef.current === 0);
+          
+          const initialBrushPosition = shouldUseActiveDomain
             ? { 
                 start: { x: brushDateScale(activeBrushDomain[0]) }, 
                 end: { x: brushDateScale(activeBrushDomain[1]) } 
               }
             : { 
-                start: { x: 0 },
-                end: { x: innerWidth }
+                start: { x: 0 }, 
+                end: { x: innerWidth } 
               };
+          
+          // Update our ref to the current filter change count
+          lastFilterChangeRef.current = filterChangeCount;
           
           // If getUniqueDates is provided, we need to create line data by dates
           const lineData = getUniqueDates 
@@ -247,18 +296,30 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 };
               });
               
+          // Create a wrapped change handler that prevents the initial render from triggering updates
+          const handleBrushChange = (domain: any) => {
+            if (domain) {
+              // Use requestAnimationFrame to avoid React update loops
+              window.requestAnimationFrame(() => {
+                onBrushChange(domain);
+              });
+            } else {
+              onClearBrush();
+            }
+          };
+          
+          // Custom render function for the brush handles
+          const renderBrushHandle = ({ x, y, height: handleHeight }: { x: number; y: number; height: number }) => {
+            return (
+              <BrushHandle 
+                x={x} 
+                height={innerHeight} 
+              />
+            );
+          };
+          
           return (
-            <svg 
-              width={width} 
-              height={height} 
-              ref={svgRef} 
-              style={{
-                touchAction: 'none',
-                userSelect: 'none',
-                WebkitUserSelect: 'none',
-                WebkitTouchCallout: 'none'
-              }}
-            >
+            <svg width={width} height={height} ref={svgRef} data-instance-id={instanceIdRef.current}>
               <Group left={margin.left} top={margin.top}>
                 {/* Background rectangle to ensure brush is visible when empty */}
                 <rect
@@ -267,7 +328,6 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   width={innerWidth}
                   height={innerHeight}
                   fill="transparent"
-                  style={{ touchAction: 'none' }}
                 />
                 
                 {/* Line representing the data */}
@@ -289,6 +349,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 />
                 
                 <Brush
+                  key={brushKey}
                   ref={brushRef}
                   xScale={brushDateScale}
                   yScale={valueScale}
@@ -302,8 +363,8 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   onClick={onClearBrush}
                   useWindowMoveEvents={true}
                   selectedBoxStyle={{ 
-                    fill: 'rgba(18, 24, 43, 0.2)',
-                    stroke: '#374151',
+                    fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
+                    stroke: '#374151', // Border color
                     strokeWidth: 0.4,
                     rx: 4,
                     ry: 4,
