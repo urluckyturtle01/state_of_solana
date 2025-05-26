@@ -22,7 +22,7 @@ const LegendItem: React.FC<LegendItemProps> = ({
         style={{ background: color }}
       ></div>
       <span 
-        className="text-[11px] text-gray-400 lg:text-gray-300 md:text-gray-300 truncate" 
+        className="text-[11px] text-gray-400 lg:text-gray-200 md:text-gray-300 truncate" 
         title={tooltipText || label}
       >
         {label.length > 15 && !tooltipText ? `${label.substring(0, 15)}...` : label}
@@ -30,5 +30,6 @@ const LegendItem: React.FC<LegendItemProps> = ({
     </div>
   );
 };
+ 
 
 export default LegendItem; 
