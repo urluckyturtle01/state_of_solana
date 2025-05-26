@@ -29,46 +29,32 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Top Ledger Research',
-    description: 'Real-time analytics and insights for the Solana ecosystem',
+    description: 'Real-time analytics and metrics dashboard for the Solana blockchain',
     type: 'website',
     url: 'https://topledger.xyz',
     siteName: 'Top Ledger Research',
     images: [
       {
-        url: 'https://topledger.xyz/api/og',
+        url: '/twittercard.jpg',
         width: 1200,
         height: 630,
-        alt: 'Top Ledger Research Dashboard',
-        type: 'image/png',
+        alt: 'Top Ledger Research'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Top Ledger Research',
-    description: 'Real-time analytics and insights for the Solana ecosystem',
+    description: 'Real-time analytics and metrics dashboard for the Solana blockchain',
     creator: '@TopLedger_xyz',
-    images: {
-      url: 'https://topledger.xyz/api/og',
-      alt: 'Top Ledger Research - Analytics Dashboard'
-    }
+    images: ['/twittercard.jpg']
   },
   metadataBase: new URL('https://topledger.xyz'),
-  keywords: ['Solana', 'Blockchain Analytics', 'DeFi Research', 'Crypto Metrics', 'Top Ledger', 'Web3 Analytics'],
-  authors: [{ name: 'Top Ledger Research' }],
-  creator: 'Top Ledger Research',
-  publisher: 'Top Ledger',
   robots: {
     index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
+    follow: true
   },
-  themeColor: '#000000'
+  keywords: ['Solana', 'Blockchain', 'Analytics', 'Metrics', 'Dashboard', 'DeFi', 'Cryptocurrency']
 };
 
 export default function RootLayout({
