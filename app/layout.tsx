@@ -46,10 +46,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Top Ledger Research',
     description: 'Real-time analytics and metrics dashboard for the Solana blockchain',
-    creator: '@TopLedger_xyz',
+    site: 'https://research.topledger.xyz',
     images: ['https://topledger.xyz/twittercard.jpg']
   },
-  metadataBase: new URL('https://topledger.xyz'),
+  metadataBase: new URL('https://research.topledger.xyz'),
   robots: {
     index: true,
     follow: true
