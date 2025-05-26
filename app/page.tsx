@@ -27,7 +27,7 @@ export default function RootPage() {
       
       {/* Text below loader */}
       <p className="mt-8 text-gray-400 text-sm font-light tracking-wider animate-pulse">
-        STATE OF SOLANA
+        Top Ledger Research...
       </p>
     </div>
   );
