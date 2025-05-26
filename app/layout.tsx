@@ -20,7 +20,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "State of Solana",
-  description: "Dashboard for Solana blockchain metrics"
+  description: "Dashboard for Solana blockchain metrics",
+  icons: {
+    icon: [
+      { url: '/favicon.ico', type: 'image/x-icon' },
+      { url: 'https://topledger.xyz/favicon.svg', type: 'image/svg+xml' }
+    ],
+  }
 };
 
 export default function RootLayout({
