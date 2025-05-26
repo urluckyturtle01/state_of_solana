@@ -250,7 +250,27 @@ export default function Sidebar() {
       </nav>
       
       <div className="p-3 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50">
-        <span className="cursor-pointer" onClick={() => window.open("https://topledger.xyz", "_blank")}>Top Ledger © {new Date().getFullYear()}</span>
+        <div className="relative group">
+          <span 
+            className="cursor-pointer transition-all duration-200 hover:text-emerald-400" 
+            onClick={() => window.open("https://topledger.xyz", "_blank")}
+          >
+            Top Ledger © {new Date().getFullYear()}
+          </span>
+          
+          {/* Creative hover popup */}
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:translate-y-0 translate-y-2">
+            <div className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-medium whitespace-nowrap relative">
+              Visit Top Ledger
+              {/* Arrow pointing down */}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-emerald-500"></div>
+              
+              {/* Sparkle animations */}
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-ping opacity-75"></div>
+              <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
