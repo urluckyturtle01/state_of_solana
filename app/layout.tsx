@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     title: 'Top Ledger Research',
     description: 'Real-time analytics and metrics dashboard for the Solana blockchain',
     type: 'website',
-    url: 'https://topledger.xyz',
+    url: 'https://research.topledger.xyz',
     siteName: 'Top Ledger Research',
     images: [
       {
-        url: 'https://topledger.xyz/twittercard.jpg',
+        url: 'https://research.topledger.xyz/twittercard.jpg',
         width: 1200,
         height: 630,
         alt: 'Top Ledger Research'
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Top Ledger Research',
     description: 'Real-time analytics and metrics dashboard for the Solana blockchain',
     site: 'https://research.topledger.xyz',
-    images: ['https://topledger.xyz/twittercard.jpg']
+    images: ['https://research.topledger.xyz/twittercard.jpg']
   },
   metadataBase: new URL('https://research.topledger.xyz'),
   robots: {
