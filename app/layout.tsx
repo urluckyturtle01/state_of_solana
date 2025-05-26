@@ -19,14 +19,56 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "State of Solana",
-  description: "Dashboard for Solana blockchain metrics",
+  title: "Top Ledger Research",
+  description: "Top Ledger Research",
   icons: {
     icon: [
       { url: '/favicon.ico', type: 'image/x-icon' },
       { url: 'https://topledger.xyz/favicon.svg', type: 'image/svg+xml' }
     ],
-  }
+  },
+  openGraph: {
+    title: 'Top Ledger Research',
+    description: 'Real-time analytics and insights for the Solana ecosystem',
+    type: 'website',
+    url: 'https://topledger.xyz',
+    siteName: 'Top Ledger Research',
+    images: [
+      {
+        url: 'https://topledger.xyz/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Top Ledger Research Dashboard',
+        type: 'image/png',
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Top Ledger Research',
+    description: 'Real-time analytics and insights for the Solana ecosystem',
+    creator: '@TopLedger_xyz',
+    images: {
+      url: 'https://topledger.xyz/api/og',
+      alt: 'Top Ledger Research - Analytics Dashboard'
+    }
+  },
+  metadataBase: new URL('https://topledger.xyz'),
+  keywords: ['Solana', 'Blockchain Analytics', 'DeFi Research', 'Crypto Metrics', 'Top Ledger', 'Web3 Analytics'],
+  authors: [{ name: 'Top Ledger Research' }],
+  creator: 'Top Ledger Research',
+  publisher: 'Top Ledger',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  themeColor: '#000000'
 };
 
 export default function RootLayout({
