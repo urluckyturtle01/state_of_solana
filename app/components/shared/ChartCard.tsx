@@ -140,9 +140,9 @@ const ChartCard: React.FC<ChartCardProps> = ({
       )}
       
       {/* Content Area - Split into columns on desktop, stacked on mobile */}
-      <div className="flex flex-col lg:flex-row mt-3 h-[360px] lg:h-[380px]">
+      <div className="flex flex-col lg:flex-row mt-3 h-[280px] lg:h-[380px]">
         {/* Chart Area */}
-        <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-80 lg:h-auto relative`} style={{ contain: 'layout style' }}>
+        <div className={`flex-grow ${legend ? 'lg:pr-4 lg:border-r lg:border-gray-900' : ''} h-64 lg:h-auto relative`} style={{ contain: 'layout style' }}>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10 rounded-md">
               

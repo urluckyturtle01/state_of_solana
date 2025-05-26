@@ -111,6 +111,33 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
   // Track the last filter change counter value that affected positioning
   const lastFilterChangeRef = useRef(0);
 
+  // Add mobile detection state
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Effect to detect mobile devices
+  useEffect(() => {
+    const checkIsMobile = () => {
+      const mediaQuery = window.matchMedia('(max-width: 768px)');
+      setIsMobile(mediaQuery.matches);
+    };
+
+    // Check on initial load
+    checkIsMobile();
+
+    // Add listener for screen size changes
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+
+    // Cleanup
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
   // Effect to reset brush when filter values change
   useEffect(() => {
     // Skip the initial render
@@ -330,47 +357,52 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   fill="transparent"
                 />
                 
-                {/* Line representing the data */}
-                <LinePath 
-                  data={lineData}
-                  x={(d) => indexScale(d.idx)}
-                  y={(d) => {
-                    // Ensure we have valid values
-                    const val = d.value;
-                    if (val === undefined || val === null || isNaN(val)) {
-                      return valueScale(0);
-                    }
-                    return valueScale(val);
-                  }}
-                  stroke={lineColor || "#53a7fe"}
-                  strokeOpacity={0.3}
-                  strokeWidth={strokeWidth || 1.5}
-                  curve={curveFunction}
-                />
-                
-                <Brush
-                  key={brushKey}
-                  ref={brushRef}
-                  xScale={brushDateScale}
-                  yScale={valueScale}
-                  width={innerWidth}
-                  height={innerHeight}
-                  handleSize={8}
-                  resizeTriggerAreas={['left', 'right']}
-                  brushDirection="horizontal"
-                  initialBrushPosition={initialBrushPosition}
-                  onChange={handleBrushChange}
-                  onClick={onClearBrush}
-                  useWindowMoveEvents={true}
-                  selectedBoxStyle={{ 
-                    fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
-                    stroke: '#374151', // Border color
-                    strokeWidth: 0.4,
-                    rx: 4,
-                    ry: 4,
-                  }}
-                  renderBrushHandle={renderBrushHandle}
-                />
+                {/* Only render line and brush on non-mobile devices */}
+                {!isMobile && (
+                  <>
+                    {/* Line representing the data */}
+                    <LinePath 
+                      data={lineData}
+                      x={(d) => indexScale(d.idx)}
+                      y={(d) => {
+                        // Ensure we have valid values
+                        const val = d.value;
+                        if (val === undefined || val === null || isNaN(val)) {
+                          return valueScale(0);
+                        }
+                        return valueScale(val);
+                      }}
+                      stroke={lineColor || "#53a7fe"}
+                      strokeOpacity={0.3}
+                      strokeWidth={strokeWidth || 1.5}
+                      curve={curveFunction}
+                    />
+                    
+                    <Brush
+                      key={brushKey}
+                      ref={brushRef}
+                      xScale={brushDateScale}
+                      yScale={valueScale}
+                      width={innerWidth}
+                      height={innerHeight}
+                      handleSize={8}
+                      resizeTriggerAreas={['left', 'right']}
+                      brushDirection="horizontal"
+                      initialBrushPosition={initialBrushPosition}
+                      onChange={handleBrushChange}
+                      onClick={onClearBrush}
+                      useWindowMoveEvents={true}
+                      selectedBoxStyle={{ 
+                        fill: 'rgba(18, 24, 43, 0.2)', // Very light transparent fill
+                        stroke: '#374151', // Border color
+                        strokeWidth: 0.4,
+                        rx: 4,
+                        ry: 4,
+                      }}
+                      renderBrushHandle={renderBrushHandle}
+                    />
+                  </>
+                )}
               </Group>
             </svg>
           );
