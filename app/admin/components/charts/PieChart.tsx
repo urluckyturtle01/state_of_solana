@@ -274,8 +274,7 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Handle touch interaction for pie segments
   const handleTouch = useCallback((e: React.TouchEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
-    // Prevent default touch behavior (scrolling, zooming)
-    e.preventDefault();
+    // Note: Cannot preventDefault in touch handlers due to passive event listeners
     
     const containerRef = e.currentTarget.closest('.chart-container');
     if (!containerRef) return;
@@ -511,10 +510,8 @@ const PieChart: React.FC<PieChartProps> = ({
                         const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
                         const maxRadius = Math.min(containerRect.width, containerRect.height) / 2;
                         
-                        // Only prevent default and show tooltip if touch is within pie area
+                        // Only show tooltip if touch is within pie area
                         if (distance <= maxRadius) {
-                          e.preventDefault(); // Prevent default only for touches within pie area
-                          
                           // Calculate safe position for mobile
                           const safePosition = calculateSafeTooltipPosition(x, y, containerRect);
                           

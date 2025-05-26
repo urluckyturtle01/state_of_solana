@@ -757,8 +757,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
   // Optimized touch handlers that don't interfere with page scrolling
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    // Only prevent default if we're actually going to show a tooltip
-    // This allows normal page scrolling to continue
+    // Handle touch interaction without preventing default to allow normal scrolling
     const containerRef = isModal ? modalChartRef : chartRef;
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -774,8 +773,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Only handle touch if it's within the chart area
     if (adjustedMouseX >= 0 && adjustedMouseX <= innerWidth && chartData.length > 0) {
-      // Only prevent default for touches within the chart area
-      e.preventDefault();
+      // Note: Cannot preventDefault in touch handlers due to passive event listeners
       handleInteraction(e, isModal);
     }
   }, [handleInteraction, chartData.length]);
@@ -783,7 +781,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
     // Only handle if tooltip is already visible (user is interacting with chart)
     if (tooltip.visible) {
-      e.preventDefault(); // Prevent scrolling only when actively showing tooltip
+      // Note: Cannot preventDefault in touch move handler due to passive event listeners
       handleInteraction(e, isModal);
     }
     // Otherwise, allow normal page scrolling
