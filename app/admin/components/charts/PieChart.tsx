@@ -464,7 +464,7 @@ const PieChart: React.FC<PieChartProps> = ({
               pieValue={d => d.value}
               outerRadius={radius}
               innerRadius={radius * 0.6} // Creates a donut chart with 60% inner radius
-              cornerRadius={3}
+              cornerRadius={1}
               padAngle={0.005}
             >
               {pie => {
@@ -539,7 +539,7 @@ const PieChart: React.FC<PieChartProps> = ({
                       />
                       {hasSpaceForLabel && (
                         <text
-                          fill="white"
+                          fill="black"
                           x={centroidX}
                           y={centroidY}
                           dy=".33em"
