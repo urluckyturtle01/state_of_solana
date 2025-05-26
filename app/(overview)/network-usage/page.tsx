@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense } from 'react';
-import DashboardRenderer from "@/app/admin/components/dashboard-renderer";
+import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
 
 // Create a loading component for Suspense fallback
@@ -14,7 +14,7 @@ export default function NetworkUsagePage() {
   return (
     <div className="space-y-6">
       <Suspense fallback={<ChartLoading />}>
-        <DashboardRenderer 
+        <EnhancedDashboardRenderer 
           pageId="network-usage" 
           enableCaching={true}
         />

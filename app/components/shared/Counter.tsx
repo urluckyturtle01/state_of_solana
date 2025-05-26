@@ -50,6 +50,13 @@ const variantStyles: Record<CounterVariant, { bg: string, text: string, shadow: 
   }
 };
 
+// Helper function to extract suffix from a value string
+const extractSuffix = (value: string): string => {
+  // Match any non-numeric, non-comma suffix after the last number
+  const match = value.match(/[\d,]+([^\d,]+)$/);
+  return match ? match[1].trim() : '';
+};
+
 // Helper function to parse numeric values from formatted strings like "$1.95T" or "$950B" or "1,364"
 const parseNumericValue = (value: string): number => {
   if (!value) return 0;
@@ -58,11 +65,11 @@ const parseNumericValue = (value: string): number => {
   const cleanValue = value.replace(/,/g, '');
   
   // Extract numeric part and multiplier (B, M, T)
-  const match = cleanValue.match(/\$?([\d.]+)([BMT])?/);
+  const match = cleanValue.match(/([^\d]*)?([\d.]+)\s*([BMT])?\s*(SOL)?/);
   if (!match) return 0;
   
-  const number = parseFloat(match[1]);
-  const multiplier = match[2];
+  const number = parseFloat(match[2]);
+  const multiplier = match[3];
   
   // Return raw numeric value in a consistent scale
   switch(multiplier) {
@@ -75,37 +82,56 @@ const parseNumericValue = (value: string): number => {
 
 // Format numbers based on their value range
 const formatAnimatedValue = (value: number, targetValue: string): string => {
+  // Check if the target value contains SOL and extract prefix
+  const isSOL = targetValue.includes('SOL');
+  const prefixMatch = targetValue.match(/^([^\d]*)/);
+  const prefix = prefixMatch ? prefixMatch[1] : '';
+  let formattedValue: string;
+
   // If target has commas and no currency symbol, format as integer with commas
   if (targetValue.includes(',') && !targetValue.includes('$')) {
-    return Math.round(value).toLocaleString('en-US');
+    formattedValue = Math.round(value).toLocaleString('en-US');
   }
   // If target ends with T, format as trillion
   else if (targetValue.includes('T')) {
-    return `$${(value / 1000000).toFixed(1)}T`;
+    formattedValue = `${(value / 1000000).toFixed(1)}T`;
   }
   // If target ends with B, format as billion
   else if (targetValue.includes('B')) {
-    return `$${(value / 1000).toFixed(1)}B`;
+    formattedValue = `${(value / 1000).toFixed(1)}B`;
   }
-  // If target ends with M, format as million
-  else if (targetValue.includes('M')) {
-    return `${value.toFixed(1)}M`;
+  // If target ends with M or is SOL value in millions
+  else if (targetValue.includes('M') || (isSOL && value >= 1)) {
+    formattedValue = `${value.toFixed(1)}M`;
   }
   // If target ends with K, format as thousand
   else if (targetValue.includes('K')) {
-    return `${value.toFixed(1)}K`;
+    formattedValue = `${value.toFixed(1)}K`;
   }
   // For percentages
   else if (targetValue.includes('%')) {
-    return `${value.toFixed(1)}%`;
+    formattedValue = `${value.toFixed(1)}%`;
   }
   // For plain integers (no commas in original)
   else if (!isNaN(Number(targetValue))) {
-    // Use toFixed(1) instead of Math.round for consistency
-    return value.toFixed(1);
+    formattedValue = value.toFixed(1);
   }
   // Default format - also use one decimal place
-  return value.toFixed(1);
+  else {
+    formattedValue = value.toFixed(1);
+  }
+
+  // Add prefix if it exists
+  if (prefix) {
+    formattedValue = `${prefix}${formattedValue}`;
+  }
+
+  // Add SOL suffix if present in target value
+  if (isSOL) {
+    formattedValue = `${formattedValue} SOL`;
+  }
+
+  return formattedValue;
 };
 
 export default function Counter({ 

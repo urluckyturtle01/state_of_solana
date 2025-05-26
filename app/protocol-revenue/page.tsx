@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Loader from "../components/shared/Loader";
+
 
 export default function ProtocolRevenueRedirectPage() {
   const router = useRouter();
