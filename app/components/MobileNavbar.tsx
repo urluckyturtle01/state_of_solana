@@ -296,7 +296,7 @@ export default function MobileNavbar() {
           
           {/* Footer */}
           <div className="absolute bottom-0 left-0 right-0 p-4 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50">
-            <span>State of Solana © {new Date().getFullYear()}</span>
+            <span className="cursor-pointer" onClick={() => window.open("https://topledger.xyz", "_blank")}>Top Ledger © {new Date().getFullYear()}</span>
           </div>
         </div>
       </div>
