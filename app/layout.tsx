@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: new URL("/twittercard.png", BASE_URL).toString(),
+        url: new URL("https://research.topledger.xyz/twittercard.png", BASE_URL).toString(),
         width: 1200,
         height: 630,
         alt: "Top Ledger Research",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     description: "Real-time analytics and metrics dashboard for the Solana blockchain",
     site: "@ledger_top",
     creator: "@ledger_top",
-    images: [new URL("/twittercard.png", BASE_URL).toString()],
+    images: [new URL("https://research.topledger.xyz/twittercard.png", BASE_URL).toString()],
   },
   robots: {
     index: true,

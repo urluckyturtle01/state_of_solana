@@ -346,6 +346,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Check if we have multiple Y-axis fields with stacked mode
     const isMultiYFieldsStacked = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked;
     
+    // Check if we have a groupBy field
+    const hasGroupBy = groupByField && groupByField.trim() !== '';
+    
     // If we have multiple Y fields and stacked mode is enabled
     if (isMultiYFieldsStacked) {
       console.log('Processing multi-y-field stacked chart');
@@ -406,6 +409,49 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         chartData: Object.values(groupedData),
         keys: stackKeys,
         groupColors: colorsByField
+      };
+    }
+    
+    // If no groupBy field is specified, treat it as a simple bar chart
+    if (!hasGroupBy) {
+      console.log('Processing simple bar chart (no groupBy)');
+      
+      // Group by x-axis values to aggregate duplicates
+      const groupedData: Record<string, ChartDataItem> = {};
+      
+      processedData.forEach((item: ChartDataItem) => {
+        const xValue = String(item[xKey]);
+        
+        if (!groupedData[xValue]) {
+          // Initialize with x value and y value
+          groupedData[xValue] = { 
+            [xKey]: item[xKey],
+            [yKey]: 0
+          };
+        }
+        
+        // Sum the y values for the same x value
+        const currentValue = Number(item[yKey]) || 0;
+        groupedData[xValue][yKey] = (groupedData[xValue][yKey] || 0) + currentValue;
+      });
+      
+      // For percentage mode in simple bar chart, normalize to 100%
+      if (displayMode === 'percent') {
+        const total = Object.values(groupedData).reduce((sum, item) => sum + (item[yKey] || 0), 0);
+        if (total > 0) {
+          Object.keys(groupedData).forEach(xValue => {
+            groupedData[xValue][yKey] = (groupedData[xValue][yKey] / total) * 100;
+          });
+        }
+      }
+      
+      // Create color for the single series
+      const singleColor = preferredColorMap[yKey] || blue;
+      
+      return {
+        chartData: Object.values(groupedData),
+        keys: [yKey], // Single key for the y-axis field
+        groupColors: { [yKey]: singleColor }
       };
     }
     
@@ -981,7 +1027,29 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             {chartData.map((d: ChartDataItem, i: number) => {
               const x = xScale(d[xKey]) || 0;
               
-              // Create stack for this data point
+              // Check if this is a simple bar chart (single key)
+              if (keys.length === 1) {
+                // Simple bar chart - render single bars
+                const key = keys[0];
+                const value = Number(d[key]) || 0;
+                const barHeight = innerHeight - yScale(value);
+                const barY = yScale(value);
+                
+                return (
+                  <Bar
+                    key={`bar-${i}`}
+                    x={x}
+                    y={barY}
+                    width={xScale.bandwidth()}
+                    height={barHeight}
+                    fill={groupColors[key]}
+                    opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                    rx={0}
+                  />
+                );
+              }
+              
+              // Stacked bar chart - render stacked bars
               let barY = innerHeight;
               const stackedBars: React.ReactNode[] = [];
               
@@ -991,7 +1059,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 .sort((a, b) => Number(d[a]) - Number(d[b])) // Sort ascending for proper stacking
                 .forEach(key => {
                   const value = Number(d[key]) || 0;
-                  const barHeight = innerHeight - yScale(value);
+                  // For stacked bars, the height is the scaled difference of the value
+                  const scaledValue = yScale(0) - yScale(value);
+                  const barHeight = Math.abs(scaledValue);
                   barY -= barHeight;
                   
                   stackedBars.push(
@@ -1048,6 +1118,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // Calculate total value for each key across all data points
       const keyTotals: Record<string, number> = {};
       
+      // Check if we have a groupBy field
+      const hasGroupBy = groupByField && groupByField.trim() !== '';
+      
       // Calculate totals using all data, not just visible data
       data.forEach(item => {
         if (Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked) {
@@ -1057,18 +1130,24 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             const value = Number(item[key]) || 0;
             keyTotals[key] = (keyTotals[key] || 0) + value;
           });
-        } else if (groupByField) {
+        } else if (hasGroupBy) {
           // For group-by stacked charts
           const groupValue = String(item[groupByField]);
           const value = Number(item[yKey]) || 0;
           keyTotals[groupValue] = (keyTotals[groupValue] || 0) + value;
+        } else {
+          // For simple bar charts (no groupBy)
+          const value = Number(item[yKey]) || 0;
+          keyTotals[yKey] = (keyTotals[yKey] || 0) + value;
         }
       });
 
       // Get all possible keys (including hidden ones)
       const allKeys = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
         ? yField.map(field => typeof field === 'string' ? field : field.field)
-        : Array.from(new Set(data.map(item => String(item[groupByField]))));
+        : hasGroupBy 
+          ? Array.from(new Set(data.map(item => String(item[groupByField]))))
+          : [yKey]; // Simple bar chart has only one key
       
       // Create and sort legend items by total value (descending)
       const newLegendItems = allKeys

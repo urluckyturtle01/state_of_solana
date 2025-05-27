@@ -561,6 +561,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   // Memoize the chart rendering to prevent unnecessary re-renders
   const renderChart = React.useCallback(() => {
+    console.log("=== CHART RENDER DEBUG ===");
     console.log("Rendering chart with config:", {
       chartType: chartConfig.chartType,
       isStacked: chartConfig.isStacked,
@@ -569,6 +570,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       yAxis: chartConfig.dataMapping.yAxis,
       groupBy: chartConfig.dataMapping.groupBy
     });
+    console.log("Data length:", data.length);
+    console.log("First data item:", data[0]);
     
     // Get the unit from the chart config for use with all chart types
     const yAxisUnit = getYAxisUnit(chartConfig.dataMapping.yAxis);
@@ -587,8 +590,23 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     switch (chartConfig.chartType) {
       case 'line':
       case 'bar':
+        // For bar charts, check if stacked mode is enabled FIRST
+        if (chartConfig.chartType === 'bar' && chartConfig.isStacked) {
+          console.log("=== DECISION: Using StackedBarChart for stacked mode ===");
+          return <StackedBarChart 
+            {...commonProps}
+            onFilterChange={(newFilters: Record<string, string>) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }}
+          />;
+        }
+        
+        // Then check for multi-series (array) configurations
         if (chartConfig.dataMapping.yAxis && Array.isArray(chartConfig.dataMapping.yAxis)) {
-          console.log("Using MultiSeriesLineBarChart for mixed bar/line series or single line type");
+          console.log("=== DECISION: Using MultiSeriesLineBarChart for array yAxis ===");
           return <MultiSeriesLineBarChart 
             {...commonProps}
             onFilterChange={(newFilters: Record<string, string>) => {
@@ -600,22 +618,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           />;
         }
         
-        // For bar charts, check if stacked mode is enabled
-        if (!chartConfig.isStacked) {
-          return <SimpleBarChart 
-            {...commonProps}
-            onFilterChange={(newFilters: Record<string, string>) => {
-              // Apply the filter changes
-              Object.entries(newFilters).forEach(([key, value]) => {
-                handleFilterChange(key, value);
-              });
-            }}
-          />;
-        }
-        
-        // For stacked bar charts
-        console.log("Using StackedBarChart for stacked mode with multiple Y fields or groupBy");
-        return <StackedBarChart 
+        // For simple bar charts (single field, not stacked)
+        console.log("=== DECISION: Using SimpleBarChart ===");
+        return <SimpleBarChart 
           {...commonProps}
           onFilterChange={(newFilters: Record<string, string>) => {
             // Apply the filter changes
@@ -688,22 +693,28 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   };
 
   if (error) {
-    return (
-      <div className= "p-4 rounded-md">
-        <div className="flex">
-          
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-gray-800">Error Loading Chart</h3>
-            <div className="mt-2 text-sm text-gray-700">
-              <p>{error}</p>
+    console.log("=== ERROR STATE ===", error);
+    console.log("Data available despite error:", data.length);
+    
+    // Don't return early if we have data to show
+    if (data.length === 0) {
+      return (
+        <div className="p-4 rounded-md">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-gray-800">Error Loading Chart</h3>
+              <div className="mt-2 text-sm text-gray-700">
+                <p>{error}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
+    
+    // If we have data, show a warning but continue to render the chart
+    console.log("Showing chart with fallback data");
   }
-
-  
 
   // Render expanded modal view if isExpanded is true
   if (isExpanded) {
