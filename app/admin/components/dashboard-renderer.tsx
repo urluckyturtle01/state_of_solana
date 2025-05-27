@@ -443,7 +443,7 @@ const OptimizedChartCard: React.FC<OptimizedChartCardProps> = ({ title, children
 export default function DashboardRenderer({ 
   pageId, 
   overrideCharts,
-  enableCaching = true, // Default to true for better performance
+  enableCaching = true,
 }: DashboardRendererProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -451,12 +451,10 @@ export default function DashboardRenderer({
   const [downloadingCharts, setDownloadingCharts] = useState<Record<string, boolean>>({});
   const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
-  
-  // Add state for loading charts
   const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
-  // Add state to track overall page loading
   const [isPageLoading, setIsPageLoading] = useState(true);
-  
+  const [allChartsLoaded, setAllChartsLoaded] = useState(false);
+
   // Add state for filter values
   const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
   const [chartData, setChartData] = useState<Record<string, any[]>>({});
@@ -604,118 +602,57 @@ export default function DashboardRenderer({
   // Load charts and data on mount
   useEffect(() => {
     setIsClient(true);
-    
-    // Show content much faster
-    setTimeout(() => {
-      if (isMounted.current) {
-        setIsPageLoading(false);
-      }
-    }, 5); // Almost instant display
+    let mounted = true;
 
     async function loadCharts() {
       try {
         const loadedCharts = await initializeCharts();
         
-        // Skip updates if component unmounted
-        if (!isMounted.current) return;
+        if (!mounted) return;
         
         setCharts(loadedCharts);
         
-        // Initialize all states in a single update batch
-        const expandedState: Record<string, boolean> = {};
-        const downloadingState: Record<string, boolean> = {};
-        const screenshottingState: Record<string, boolean> = {};
+        // Initialize loading states
         const initialLoadingState: Record<string, boolean> = {};
-        const initialFilterValues: Record<string, Record<string, string>> = {};
-        
-        // Fast initialization in a single pass
         loadedCharts.forEach(chart => {
-          expandedState[chart.id] = false;
-          downloadingState[chart.id] = false;
-          screenshottingState[chart.id] = false;
           initialLoadingState[chart.id] = true;
-          
-          // Initialize filter values for each chart
-          if (chart.additionalOptions?.filters) {
-            initialFilterValues[chart.id] = {};
-            
-            // Add timeFilter if available
-            if (chart.additionalOptions.filters.timeFilter?.options?.length) {
-              initialFilterValues[chart.id]['timeFilter'] = chart.additionalOptions.filters.timeFilter.options[0];
-            }
-            
-            // Add currencyFilter if available
-            if (chart.additionalOptions.filters.currencyFilter?.options?.length) {
-              initialFilterValues[chart.id]['currencyFilter'] = chart.additionalOptions.filters.currencyFilter.options[0];
-            }
-            
-            // Add displayModeFilter if available
-            if (chart.additionalOptions.filters.displayModeFilter?.options?.length) {
-              initialFilterValues[chart.id]['displayModeFilter'] = chart.additionalOptions.filters.displayModeFilter.options[0];
-            }
-          }
+        });
+        setLoadingCharts(initialLoadingState);
+        
+        // Load all charts data
+        const results = await wrappedBatchFetchChartData(loadedCharts, {});
+        
+        if (!mounted) return;
+        
+        // Process results and update loading states
+        const newLoadingStates: Record<string, boolean> = {};
+        results.forEach(result => {
+          newLoadingStates[result.chartId] = false;
         });
         
-        // Skip updates if component unmounted
-        if (!isMounted.current) return;
+        setLoadingCharts(newLoadingStates);
         
-        // Batch all state updates for better performance
-        setExpandedCharts(expandedState);
-        setDownloadingCharts(downloadingState);
-        setScreenshottingCharts(screenshottingState);
-        setLoadingCharts(initialLoadingState);
-        setFilterValues(initialFilterValues);
+        // Check if all charts are loaded
+        const allLoaded = Object.values(newLoadingStates).every(state => !state);
+        setAllChartsLoaded(allLoaded);
         
-        // Load all charts at once
-        wrappedBatchFetchChartData(loadedCharts, initialFilterValues)
-          .then(results => {
-            if (!isMounted.current) return;
-            
-            // Process all results at once
-            const newChartData: Record<string, any[]> = {};
-            
-            results.forEach(result => {
-              newChartData[result.chartId] = result.data;
-              
-              // Update loading state for each chart
-              setLoadingCharts(prev => ({
-                ...prev,
-                [result.chartId]: false
-              }));
-            });
-            
-            // Update chart data all at once
-            setChartData(prev => ({
-              ...prev,
-              ...newChartData
-            }));
-            
-            // Update legends immediately
-            results.forEach(result => {
-              updateLegends(result.chartId, result.data);
-            });
-          })
-          .catch(error => {
-            console.error('Error fetching chart data:', error);
-            if (!isMounted.current) return;
-            
-            // Reset loading states for all charts
-            const resetLoadingState: Record<string, boolean> = {};
-            loadedCharts.forEach(chart => {
-              resetLoadingState[chart.id] = false;
-            });
-            setLoadingCharts(resetLoadingState);
-          });
+        if (allLoaded) {
+          setIsPageLoading(false);
+        }
       } catch (error) {
         console.error(`Error loading charts for page ${pageId}:`, error);
-        if (isMounted.current) {
+        if (mounted) {
           setIsPageLoading(false);
         }
       }
     }
     
     loadCharts();
-  }, [pageId, overrideCharts, initializeCharts, enableCaching]);
+    
+    return () => {
+      mounted = false;
+    };
+  }, [pageId, overrideCharts, initializeCharts, wrappedBatchFetchChartData]);
 
   // Simplified fetchChartDataWithFilters for individual chart updates
   const fetchChartDataWithFilters = useCallback(async (chart: ChartConfig, skipLoadingState = false) => {
@@ -1758,13 +1695,32 @@ export default function DashboardRenderer({
     }
   }, [chartData, charts, legends, pageId]);
 
-  if (!isClient) {
-    return null; // Return nothing during SSR
+  if (isPageLoading || !allChartsLoaded) {
+    return (
+      <div className="flex flex-col justify-center items-center h-[calc(100vh-200px)] bg-black">
+        <div className="relative w-18 h-18">
+          {/* Outer spinning ring */}
+          <div className="absolute inset-0 border-t-2 border-r-2 border-blue-400/60 rounded-full animate-spin"></div>
+          
+          {/* Middle spinning ring - reverse direction */}
+          <div className="absolute inset-2 border-b-2 border-l-2 border-purple-400/80 rounded-full animate-[spin_1.5s_linear_infinite_reverse]"></div>
+          
+          {/* Inner pulse */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-4 h-4 bg-teal-400 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        
+        {/* Text below loader */}
+        <p className="mt-8 text-gray-400 text-sm font-light tracking-wider animate-pulse">
+          Top Ledger Research...
+        </p>
+      </div>
+    );
   }
 
-  if (isPageLoading) {
-    // Return nothing instead of spinner
-    return null;
+  if (!isClient) {
+    return null; // Return nothing during SSR
   }
 
   return (
