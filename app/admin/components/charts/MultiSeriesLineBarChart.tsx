@@ -39,7 +39,7 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface MultiSeriesLineBarChartProps {
+export interface MultiSeriesLineBarChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -49,6 +49,8 @@ interface MultiSeriesLineBarChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
@@ -171,7 +173,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   onCloseExpanded,
   colorMap: externalColorMap,
   filterValues,
-  yAxisUnit
+  yAxisUnit,
+  hiddenSeries,
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -195,6 +199,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
+
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    setHiddenSeriesState(hiddenSeries || []);
+  }, [hiddenSeries]);
 
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
@@ -545,10 +557,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -688,9 +700,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // For all fields, show their values
       const tooltipItems = fields
         .filter(field => {
-          // Include all non-zero values (both positive and negative)
+          // Only include non-hidden fields with non-zero values
           const value = Number(dataPoint[field]);
-          return !isNaN(value) && value !== 0;
+          return !hiddenSeriesState.includes(field) && !isNaN(value) && value !== 0;
         })
         .map(field => {
           // Find the original YAxisConfig for this field to get the unit
@@ -712,24 +724,29 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           };
         });
       
-      // If no values found, show placeholder
+      // If no values found, show placeholder for first visible field
       if (tooltipItems.length === 0 && fields.length > 0) {
-        // Find the unit for the first field
-        let firstFieldUnit = undefined;
-        if (Array.isArray(yField) && fields.length > 0) {
-          const firstFieldConfig = yField.find(f => {
-            const fName = typeof f === 'string' ? f : f.field;
-            return fName === fields[0];
-          });
-          firstFieldUnit = typeof firstFieldConfig === 'string' ? undefined : firstFieldConfig?.unit;
-        }
+        // Find the first visible field
+        const firstVisibleField = fields.find(field => !hiddenSeriesState.includes(field));
         
-        tooltipItems.push({
-          label: formatFieldName(fields[0]),
-          value: formatWithUnit(0, firstFieldUnit),
-          color: fieldColors[fields[0]] || blue,
-          shape: fieldTypes[fields[0]] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
-        });
+        if (firstVisibleField) {
+          // Find the unit for the first visible field
+          let firstFieldUnit = undefined;
+          if (Array.isArray(yField)) {
+            const firstFieldConfig = yField.find(f => {
+              const fName = typeof f === 'string' ? f : f.field;
+              return fName === firstVisibleField;
+            });
+            firstFieldUnit = typeof firstFieldConfig === 'string' ? undefined : firstFieldConfig?.unit;
+          }
+          
+          tooltipItems.push({
+            label: formatFieldName(firstVisibleField),
+            value: formatWithUnit(0, firstFieldUnit),
+            color: fieldColors[firstVisibleField] || blue,
+            shape: fieldTypes[firstVisibleField] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
+          });
+        }
       }
       
       // Update the tooltip
@@ -748,7 +765,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         top: safePosition.top
       }));
     }
-  }, [chartData, fields, xKey, fieldColors, fieldTypes, formatWithUnit, tooltip, yField]);
+  }, [chartData, fields, xKey, fieldColors, fieldTypes, formatWithUnit, tooltip, yField, hiddenSeriesState]);
 
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -825,12 +842,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
+    if (onFilterChange) {
+      onFilterChange(filterValues || {});
     }
     
     setError(null);
-  }, [filterValues, chartConfig]);
+  }, [filterValues, onFilterChange]);
 
   // Process brush data
   const brushData = useMemo(() => {
@@ -1202,6 +1219,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setIsClient(true);
   }, []);
 
+  // Handler to toggle series visibility
+  const handleLegendClick = (fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  };
+
   // Render content function
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
@@ -1458,11 +1484,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             {chartData.map((d, i) => (
               <React.Fragment key={`bars-${i}`}>
                 {fields.map((field, fieldIndex) => {
+                  // Skip if this field is hidden
+                  if (hiddenSeriesState.includes(field)) return null;
+                  
                   // Skip if this field should be rendered as a line
                   if (fieldTypes[field] === 'line') return null;
                   
                   // Determine how many fields should be rendered as bars
-                  const barFields = fields.filter(f => fieldTypes[f] !== 'line');
+                  const barFields = fields.filter(f => fieldTypes[f] !== 'line' && !hiddenSeriesState.includes(f));
                   const barWidth = xScale.bandwidth() / barFields.length;
                   
                   // Find this field's position in the barFields array
@@ -1498,6 +1527,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             
             {/* Render lines on top of bars */}
             {fields.map(field => {
+              // Skip if this field is hidden
+              if (hiddenSeriesState.includes(field)) return null;
+              
               // Only render fields configured as lines
               if (fieldTypes[field] !== 'line') return null;
               
@@ -1695,6 +1727,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                       label={item.label}
                       color={item.color}
                       shape={fieldTypes[item.id] === 'line' ? 'circle' : 'square'}
+                      onClick={() => handleLegendClick(item.id)}
+                      inactive={hiddenSeriesState.includes(item.id)}
                     />
                   ))}
                 </div>

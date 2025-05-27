@@ -542,93 +542,26 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       <div className="mt-3">
         <DataTable
           columns={dataTableColumns}
-          data={paginatedData}
+          data={filteredData}
           keyExtractor={(row) => row.id || JSON.stringify(row)}
           isLoading={loading}
           error={error}
           initialSortColumn={tableConfig.defaultSortColumn || undefined}
           initialSortDirection={tableConfig.defaultSortDirection || 'asc'}
           variant={tableConfig.variant}
-          pagination={undefined} // Disable built-in pagination
-          searchTerm={searchTerm}
+          pagination={tableConfig.enablePagination ? {
+            enabled: true,
+            rowsPerPage: tableConfig.rowsPerPage || 10,
+            onPageChange: handlePageChange,
+            currentPage: currentPage
+          } : undefined}
+          searchTerm={undefined}
           onRetry={handleRetry}
           cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
           containerClassName="overflow-x-auto"
           noDataMessage="No data available"
         />
       </div>
-      
-      {/* Custom Pagination - only show if needed and enabled */}
-      {tableConfig.enablePagination && filteredData.length > (tableConfig.rowsPerPage || 10) && (
-        <>
-          <div className="h-px bg-gray-900 w-full mt-3"></div>
-          <div className="flex items-center justify-between pt-3">
-            <div>
-              <p className="text-xs text-gray-500">
-                Showing {currentPage * (tableConfig.rowsPerPage || 10) + 1} to {Math.min((currentPage + 1) * (tableConfig.rowsPerPage || 10), filteredData.length)} of {filteredData.length} results
-              </p>
-            </div>
-            <div className="flex gap-1">
-              {/* First Page Button */}
-              <button
-                onClick={() => handlePageChange(0)}
-                disabled={currentPage === 0}
-                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
-                  currentPage === 0
-                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                }`}
-              >
-                ⟪
-              </button>
-              
-              {/* Previous Page Button */}
-              <button
-                onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-                disabled={currentPage === 0}
-                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
-                  currentPage === 0
-                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                }`}
-              >
-                ←
-              </button>
-              
-              {/* Page Indicator */}
-              <span className="relative inline-flex items-center px-3 py-1 text-xs font-medium bg-gray-800/80 text-gray-300 rounded-md">
-                {currentPage + 1} / {totalPages}
-              </span>
-              
-              {/* Next Page Button */}
-              <button
-                onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-                disabled={currentPage >= totalPages - 1}
-                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
-                  currentPage >= totalPages - 1
-                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                }`}
-              >
-                →
-              </button>
-              
-              {/* Last Page Button */}
-              <button
-                onClick={() => handlePageChange(totalPages - 1)}
-                disabled={currentPage >= totalPages - 1}
-                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
-                  currentPage >= totalPages - 1
-                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                }`}
-              >
-                ⟫
-              </button>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 };

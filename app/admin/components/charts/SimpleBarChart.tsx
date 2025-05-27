@@ -37,7 +37,7 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface SimpleBarChartProps {
+export interface SimpleBarChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -47,6 +47,8 @@ interface SimpleBarChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -69,7 +71,9 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   onCloseExpanded,
   colorMap: externalColorMap,
   filterValues,
-  yAxisUnit
+  yAxisUnit,
+  hiddenSeries,
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -111,6 +115,15 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    console.log('SimpleBarChart: hiddenSeries prop changed:', hiddenSeries);
+    setHiddenSeriesState(hiddenSeries || []);
+  }, [hiddenSeries]);
+
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
@@ -138,6 +151,14 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   
   // Ensure yKey is always a string (first y-field for backwards compatibility)
   const yKey = yFields[0];
+
+  console.log('SimpleBarChart field mapping:', {
+    xKey,
+    yKey,
+    yFields,
+    isMultiSeries,
+    chartTitle: chartConfig.title
+  });
 
   // Format value for tooltip
   const formatValue = useCallback((value: number, unit?: string) => {
@@ -215,12 +236,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
+    if (onFilterChange) {
+      onFilterChange(filterValues || {});
     }
     
     setError(null);
-  }, [filterValues, chartConfig]);
+  }, [filterValues, onFilterChange]);
 
   // Process data for the chart - use filtered data when available
   const { chartData, barColor } = useMemo(() => {
@@ -511,8 +532,9 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         // For multi-series, show non-zero values for all y fields
         tooltipItems = yFields
           .filter(field => {
+            // Only include non-hidden fields with non-zero values
             const value = Number(dataPoint[field]);
-            return !isNaN(value) && value !== 0;
+            return !hiddenSeriesState.includes(field) && !isNaN(value) && value !== 0;
           })
           .map(field => ({
             label: formatFieldName(field),
@@ -530,17 +552,25 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               : Math.abs(Number(b.value));
             return bVal - aVal;
           });
-        
-        // If no items passed the filter, show the first field with a 0 value
+        // If no items passed the filter, show placeholder for first visible field
         if (tooltipItems.length === 0 && yFields.length > 0) {
-          tooltipItems = [{
-            label: formatFieldName(yFields[0]),
-            value: '$0.00',
-            color: typeof barColor === 'string' ? barColor : (barColor[yFields[0]] || blue),
-            shape: 'square' as 'square'
-          }];
+          const firstVisibleField = yFields.find(field => !hiddenSeriesState.includes(field));
+          if (firstVisibleField) {
+            tooltipItems = [{
+              label: formatFieldName(firstVisibleField),
+              value: formatValue(0, getYAxisUnit(yField, yAxisUnit)),
+              color: typeof barColor === 'string' ? barColor : (barColor[firstVisibleField] || blue),
+              shape: 'square' as 'square'
+            }];
+          }
         }
       } else {
+        if (hiddenSeriesState.includes(yKey)) {
+          if (tooltip.visible) {
+            setTooltip(prev => ({ ...prev, visible: false }));
+          }
+          return;
+        }
         // For simple bar chart, just show the single value
         tooltipItems = [{
           label: formatFieldName(yKey),
@@ -567,7 +597,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, yKey, yFields, barColor, formatValue, 
-      tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit]);
+      tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit, hiddenSeriesState]);
       
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -854,7 +884,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
-    // Show error state with refresh button
+    // Show error state or no data
     if (error) {
       return (
         <div className="flex flex-col justify-center items-center h-full">
@@ -865,6 +895,18 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               <span>Refresh</span>
             </div>
           </ButtonSecondary>
+        </div>
+      );
+    }
+
+    // Check if all series are hidden
+    const allSeriesHidden = yFields.length > 0 && yFields.every(field => hiddenSeriesState.includes(field));
+
+    // Show message when all series are hidden
+    if (allSeriesHidden) {
+      return (
+        <div className="flex justify-center items-center h-full">
+          <div className="text-gray-400/80 text-xs">All series are hidden</div>
         </div>
       );
     }
@@ -1098,24 +1140,24 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               // For multi-series, render bars side by side
               chartData.map((d: ChartDataItem) => {
                 const x = xScale(d[xKey]) || 0;
-                const barWidth = xScale.bandwidth() / yFields.length; // Divide bar width by number of fields
-                
+                // Only count visible fields for bar width
+                const visibleFields = yFields.filter(f => !hiddenSeriesState.includes(f));
+                const barWidth = xScale.bandwidth() / (visibleFields.length || 1);
                 return (
                   <React.Fragment key={`multi-${d[xKey]}`}>
                     {yFields.map((field, i) => {
+                      if (hiddenSeriesState.includes(field)) return null;
                       const value = Number(d[field]) || 0;
                       // For positive values, the bar starts at the value position and extends down to zero
                       // For negative values, the bar starts at zero and extends down to the value position
                       const barHeight = Math.abs(yScale(0) - yScale(value));
                       // Position each field's bar side by side
-                      const barX = x + (i * barWidth);
+                      const barX = x + (visibleFields.indexOf(field) * barWidth);
                       // For positive values, the bar's y position is at the value's y coordinate
                       // For negative values, the bar's y position is at the zero line
                       const barY = value >= 0 ? yScale(value) : yScale(0);
-                      
                       // Get color for this field
                       const color = typeof barColor === 'object' ? (barColor[field] || blue) : barColor;
-                      
                       return (
                         <Bar
                           key={`bar-${d[xKey]}-${field}`}
@@ -1134,41 +1176,41 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               })
             ) : (
               // For single y-field, render regular bars
-              chartData.map((d: ChartDataItem, i: number) => {
-                const barX = xScale(d[xKey]) || 0;
-                const barWidth = xScale.bandwidth();
-                const value = Number(d[yKey]) || 0;
-                // For positive values, the bar starts at the value position and extends down to zero
-                // For negative values, the bar starts at zero and extends down to the value position
-                const barHeight = Math.abs(yScale(0) - yScale(value));
-                // For positive values, the bar's y position is at the value's y coordinate
-                // For negative values, the bar's y position is at the zero line
-                const barY = value >= 0 ? yScale(value) : yScale(0);
-                
-                // Determine bar color based on config
-                const color = typeof barColor === 'string' 
-                  ? barColor 
-                  : (barColor[d[xKey]] || blue);
-                
-                return (
-                  <Bar
-                    key={`bar-${i}`}
-                    x={barX}
-                    y={barY}
-                    width={barWidth}
-                    height={barHeight}
-                    fill={color}
-                    opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                    rx={0}
-                  />
-                );
-              })
+              hiddenSeriesState.includes(yKey) ? null : (
+                chartData.map((d: ChartDataItem, i: number) => {
+                  const barX = xScale(d[xKey]) || 0;
+                  const barWidth = xScale.bandwidth();
+                  const value = Number(d[yKey]) || 0;
+                  // For positive values, the bar starts at the value position and extends down to zero
+                  // For negative values, the bar starts at zero and extends down to the value position
+                  const barHeight = Math.abs(yScale(0) - yScale(value));
+                  // For positive values, the bar's y position is at the value's y coordinate
+                  // For negative values, the bar's y position is at the zero line
+                  const barY = value >= 0 ? yScale(value) : yScale(0);
+                  // Determine bar color based on config
+                  const color = typeof barColor === 'string' 
+                    ? barColor 
+                    : (barColor[d[xKey]] || blue);
+                  return (
+                    <Bar
+                      key={`bar-${i}`}
+                      x={barX}
+                      y={barY}
+                      width={barWidth}
+                      height={barHeight}
+                      fill={color}
+                      opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                      rx={0}
+                    />
+                  );
+                })
+              )
             )}
           </Group>
         </svg>
       </div>
     );
-  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues]);
+  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues, hiddenSeriesState]);
 
   // Update legend items 
   useEffect(() => {
@@ -1274,10 +1316,10 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -1298,6 +1340,15 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       })
       .join(' ');
+  };
+
+  // Handler to toggle series visibility
+  const handleLegendClick = (fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
   };
 
   // When rendering the chart in expanded mode, use the Modal component
@@ -1417,6 +1468,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                     color={item.color}
                     shape="square"
                     tooltipText={item.value ? formatValue(item.value) : undefined}
+                    onClick={() => handleLegendClick(item.id)}
+                    inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}
               </div>

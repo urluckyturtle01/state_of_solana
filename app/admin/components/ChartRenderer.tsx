@@ -29,6 +29,7 @@ interface ChartRendererProps {
   onColorsGenerated?: (colorMap: Record<string, string>) => void;
   // Add loading state prop
   isLoading?: boolean;
+  hiddenSeries?: string[];
 }
 
 // Add helper function at the top of the file
@@ -45,7 +46,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   filterValues: externalFilterValues,
   colorMap: externalColorMap,
   onColorsGenerated,
-  isLoading = false
+  isLoading = false,
+  hiddenSeries = []
 }) => {
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -571,239 +573,98 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     // Get the unit from the chart config for use with all chart types
     const yAxisUnit = getYAxisUnit(chartConfig.dataMapping.yAxis);
     
+    const commonProps = {
+      chartConfig,
+      data,
+      isExpanded,
+      onCloseExpanded,
+      colorMap: legendColorMap,
+      filterValues,
+      hiddenSeries,
+      yAxisUnit
+    };
+    
     switch (chartConfig.chartType) {
+      case 'line':
       case 'bar':
-        // Check if we should use MultiSeriesLineBarChart (multiple Y fields with mixed line/bar types)
-        // OR if we have a single field of type 'line'
-        if ((Array.isArray(chartConfig.dataMapping.yAxis) && 
-            chartConfig.dataMapping.yAxis.length > 0 && 
-            (chartConfig.dataMapping.yAxis.some(field => 
-              typeof field !== 'string' && field.type === 'line') ||
-             // Single field case where the field type is 'line'
-             (chartConfig.dataMapping.yAxis.length === 1 && 
-              typeof chartConfig.dataMapping.yAxis[0] !== 'string' && 
-              chartConfig.dataMapping.yAxis[0].type === 'line')))) {
-          
+        if (chartConfig.dataMapping.yAxis && Array.isArray(chartConfig.dataMapping.yAxis)) {
           console.log("Using MultiSeriesLineBarChart for mixed bar/line series or single line type");
           return <MultiSeriesLineBarChart 
-            chartConfig={{
-              ...chartConfig,
-              onFilterChange: (newFilters) => {
-                // Apply the filter changes
-                Object.entries(newFilters).forEach(([key, value]) => {
-                  handleFilterChange(key, value);
-                });
-              }
-            }} 
-            data={data} 
-            isExpanded={isExpanded} 
-            onCloseExpanded={onCloseExpanded}
-            colorMap={legendColorMap}
-            filterValues={filterValues}
-            yAxisUnit={yAxisUnit}
-          />;
-        }
-        
-        // Use SimpleBarChart for simple bar charts (non-stacked)
-        if (!chartConfig.isStacked) {
-          return <SimpleBarChart 
-            chartConfig={{
-              ...chartConfig,
-              onFilterChange: (newFilters) => {
-                // Apply the filter changes
-                Object.entries(newFilters).forEach(([key, value]) => {
-                  handleFilterChange(key, value);
-                });
-              }
-            }} 
-            data={data} 
-            isExpanded={isExpanded} 
-            onCloseExpanded={onCloseExpanded}
-            colorMap={legendColorMap}
-            filterValues={filterValues}
-            yAxisUnit={yAxisUnit}
-          />;
-        }
-        
-        // Use StackedBarChart for stacked charts with groupBy field or multiple Y fields
-        if (chartConfig.isStacked && (chartConfig.dataMapping.groupBy || 
-            (Array.isArray(chartConfig.dataMapping.yAxis) && chartConfig.dataMapping.yAxis.length > 1))) {
-          console.log("Using StackedBarChart for stacked mode with multiple Y fields or groupBy");
-          return <StackedBarChart 
-            chartConfig={{
-              ...chartConfig,
-              onFilterChange: (newFilters) => {
-                // Apply the filter changes
-                Object.entries(newFilters).forEach(([key, value]) => {
-                  handleFilterChange(key, value);
-                });
-              }
-            }} 
-            data={data} 
-            isExpanded={isExpanded} 
-            onCloseExpanded={onCloseExpanded}
-            colorMap={legendColorMap}
-            filterValues={filterValues}
-            yAxisUnit={yAxisUnit}
-          />;
-        }
-        
-        // Fall back to SimpleBarChart for other bar chart cases
-        return <SimpleBarChart 
-          chartConfig={{
-            ...chartConfig,
-            onFilterChange: (newFilters) => {
+            {...commonProps}
+            onFilterChange={(newFilters: Record<string, string>) => {
               // Apply the filter changes
               Object.entries(newFilters).forEach(([key, value]) => {
                 handleFilterChange(key, value);
               });
-            }
-          }} 
-          data={data} 
-          isExpanded={isExpanded} 
-          onCloseExpanded={onCloseExpanded}
-          colorMap={legendColorMap}
-          filterValues={filterValues}
-          yAxisUnit={yAxisUnit}
-        />;
-
-      case 'stacked-bar':
-        // Use StackedBarChart for stacked bar charts with groupBy or multiple Y fields
-        if (chartConfig.dataMapping.groupBy || 
-            (Array.isArray(chartConfig.dataMapping.yAxis) && chartConfig.dataMapping.yAxis.length > 1)) {
-          console.log("Using StackedBarChart for stacked-bar type with groupBy or multiple Y fields");
-          return <StackedBarChart 
-            chartConfig={{
-              ...chartConfig,
-              isStacked: true, // Ensure it's marked as stacked
-              onFilterChange: (newFilters) => {
-                // Apply the filter changes
-                Object.entries(newFilters).forEach(([key, value]) => {
-                  handleFilterChange(key, value);
-                });
-              }
-            }} 
-            data={data} 
-            isExpanded={isExpanded} 
-            onCloseExpanded={onCloseExpanded}
-            colorMap={legendColorMap}
-            filterValues={filterValues}
-            yAxisUnit={yAxisUnit}
+            }}
           />;
         }
+        
+        // For bar charts, check if stacked mode is enabled
+        if (!chartConfig.isStacked) {
+          return <SimpleBarChart 
+            {...commonProps}
+            onFilterChange={(newFilters: Record<string, string>) => {
+              // Apply the filter changes
+              Object.entries(newFilters).forEach(([key, value]) => {
+                handleFilterChange(key, value);
+              });
+            }}
+          />;
+        }
+        
+        // For stacked bar charts
+        console.log("Using StackedBarChart for stacked mode with multiple Y fields or groupBy");
+        return <StackedBarChart 
+          {...commonProps}
+          onFilterChange={(newFilters: Record<string, string>) => {
+            // Apply the filter changes
+            Object.entries(newFilters).forEach(([key, value]) => {
+              handleFilterChange(key, value);
+            });
+          }}
+        />;
         
       case 'dual-axis': // Handle dual-axis with the enhanced BarChart
         return <DualAxisChart 
-          chartConfig={{
-            ...chartConfig,
-            onFilterChange: (newFilters) => {
-              // Apply the filter changes
-              Object.entries(newFilters).forEach(([key, value]) => {
-                handleFilterChange(key, value);
-              });
-            }
-          }} 
-          data={data} 
-          isExpanded={isExpanded} 
-          onCloseExpanded={onCloseExpanded}
-          colorMap={legendColorMap}
-          filterValues={filterValues}
-          yAxisUnit={yAxisUnit}
+          {...commonProps}
+          onFilterChange={(newFilters: Record<string, string>) => {
+            // Apply the filter changes
+            Object.entries(newFilters).forEach(([key, value]) => {
+              handleFilterChange(key, value);
+            });
+          }}
         />;
         
       case 'pie':
         return <PieChart 
-          chartConfig={{
-            ...chartConfig,
-            onFilterChange: (newFilters) => {
-              // Apply the filter changes
-              Object.entries(newFilters).forEach(([key, value]) => {
-                handleFilterChange(key, value);
-              });
-            }
-          }} 
-          data={data} 
-          isExpanded={isExpanded} 
-          onCloseExpanded={onCloseExpanded}
-          colorMap={legendColorMap}
-          filterValues={filterValues}
-          yAxisUnit={yAxisUnit}
+          {...commonProps}
+          onFilterChange={(newFilters: Record<string, string>) => {
+            // Apply the filter changes
+            Object.entries(newFilters).forEach(([key, value]) => {
+              handleFilterChange(key, value);
+            });
+          }}
         />;
         
       case 'area':
       case 'stacked-area':
         return <SimpleAreaChart 
-          chartConfig={{
-            ...chartConfig,
-            isStacked: chartConfig.chartType === 'stacked-area',
-            onFilterChange: (newFilters) => {
-              // Apply the filter changes
-              Object.entries(newFilters).forEach(([key, value]) => {
-                handleFilterChange(key, value);
-              });
-            }
-          }} 
-          data={data} 
-          isExpanded={isExpanded} 
-          onCloseExpanded={onCloseExpanded}
-          colorMap={legendColorMap}
-          filterValues={filterValues}
-          yAxisUnit={yAxisUnit}
-          onColorsGenerated={(colorMap) => setLegendColorMap(colorMap)}
+          {...commonProps}
+          isStacked={chartConfig.chartType === 'stacked-area'}
+          onFilterChange={(newFilters: Record<string, string>) => {
+            // Apply the filter changes
+            Object.entries(newFilters).forEach(([key, value]) => {
+              handleFilterChange(key, value);
+            });
+          }}
         />;
         
-      /* Temporarily commented out until AreaChart is implemented
-      case 'area':
-      case 'stacked-area':
-        return <AreaChart chartConfig={chartConfig} data={data} />;
-      */
-        
-      // For other chart types, show a placeholder message
       default:
-        return (
-          <div className="border border-gray-200 rounded-lg p-4 bg-white">
-            <div className="mb-4">
-              <h3 className="text-lg font-medium text-gray-900">{chartConfig.title}</h3>
-              {chartConfig.subtitle && <p className="text-sm text-gray-500">{chartConfig.subtitle}</p>}
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded border border-gray-200 h-64 flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-lg font-medium text-indigo-600 mb-2">Chart Preview</p>
-                <p className="text-sm text-gray-500 mb-4">Type: {chartConfig.chartType}</p>
-                <p className="text-sm text-gray-500 mb-4">
-                  This chart type is not yet implemented. Please select bar or stacked-bar chart.
-                </p>
-                <div className="grid grid-cols-3 gap-2 text-xs text-gray-500">
-                  <div className="bg-white p-2 rounded border">
-                    X-Axis: {typeof chartConfig.dataMapping.xAxis === 'string' ? chartConfig.dataMapping.xAxis : Array.isArray(chartConfig.dataMapping.xAxis) ? chartConfig.dataMapping.xAxis.join(', ') : 'Complex type'}
-                  </div>
-                  <div className="bg-white p-2 rounded border">
-                    Y-Axis: {
-                      typeof chartConfig.dataMapping.yAxis === 'string' ? chartConfig.dataMapping.yAxis : 
-                      Array.isArray(chartConfig.dataMapping.yAxis) ? 
-                        chartConfig.dataMapping.yAxis.map(f => getFieldFromYAxisConfig(f)).join(', ') : 
-                        'Complex type'
-                    }
-                  </div>
-                  {chartConfig.dataMapping.groupBy && (
-                    <div className="bg-white p-2 rounded border">
-                      Group By: {chartConfig.dataMapping.groupBy}
-                    </div>
-                  )}
-                </div>
-                <div className="mt-4 bg-white p-2 rounded border text-xs text-left">
-                  <p className="font-medium mb-1">Sample Data ({Math.min(3, data.length)} of {data.length} rows):</p>
-                  <pre className="overflow-auto max-h-16">
-                    {JSON.stringify(data.slice(0, 3), null, 2)}
-                  </pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        console.warn(`Unsupported chart type: ${chartConfig.chartType}`);
+        return null;
     }
-  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues]);
+  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues, hiddenSeries]);
 
   // Implement logic to extract the unit from yAxis when necessary
   const getYAxisUnit = (yAxis: string | YAxisConfig | (string | YAxisConfig)[]): string | undefined => {

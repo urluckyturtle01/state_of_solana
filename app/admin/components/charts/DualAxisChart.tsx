@@ -39,7 +39,7 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface DualAxisChartProps {
+export interface DualAxisChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -49,6 +49,8 @@ interface DualAxisChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
@@ -175,7 +177,9 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   onCloseExpanded,
   colorMap: externalColorMap,
   filterValues,
-  yAxisUnit
+  yAxisUnit,
+  hiddenSeries = [],
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -216,6 +220,9 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
+
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
 
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
@@ -358,12 +365,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
+    if (onFilterChange) {
+      onFilterChange(filterValues || {});
     }
     
     setError(null);
-  }, [filterValues, chartConfig]);
+  }, [filterValues, onFilterChange]);
 
   // Extract data for the chart
   const { chartData, fields, fieldColors } = useMemo(() => {
@@ -528,21 +535,25 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     // Only update if showing a new x-value or hiding previous one
     if (!tooltip.visible || tooltip.key !== xValue) {
       // For dual-axis, show all field values
-      const tooltipItems = fields
+      const visibleFields = fields.filter(field => !hiddenSeriesState.includes(field));
+      if (visibleFields.length === 0) {
+        if (tooltip.visible) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+        }
+        return;
+      }
+      let tooltipItems = visibleFields
         .filter(field => {
-          // Only include fields with non-zero values
           const value = Number(dataPoint[field]);
-          return !isNaN(value) && value > 0;
+          return !isNaN(value) && value !== 0;
         })
         .map(field => {
           // Get the unit specific to this field only
           const fieldUnit = getYAxisUnit(
-            // Look for this specific field in the yField array
             Array.isArray(yField) 
               ? yField.find(f => getYAxisField(f) === field) || field 
               : field
           );
-          
           return {
             label: formatFieldName(field),
             value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit),
@@ -550,24 +561,27 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             shape: shouldRenderAsLine(field) ? 'circle' as 'circle' : 'square' as 'square'
           };
         });
-      
-      // If no values found, show placeholder
-      if (tooltipItems.length === 0 && fields.length > 0) {
+      // If no items passed the filter, show placeholder for first visible field
+      if (tooltipItems.length === 0 && visibleFields.length > 0) {
+        const firstVisibleField = visibleFields[0];
         const firstFieldUnit = getYAxisUnit(
           Array.isArray(yField) 
-            ? yField.find(f => getYAxisField(f) === fields[0]) || fields[0] 
-            : fields[0]
+            ? yField.find(f => getYAxisField(f) === firstVisibleField) || firstVisibleField 
+            : firstVisibleField
         );
-        
-        tooltipItems.push({
-          label: formatFieldName(fields[0]),
+        tooltipItems = [{
+          label: formatFieldName(firstVisibleField),
           value: formatWithUnit(0, firstFieldUnit),
-          color: fieldColors[fields[0]] || blue,
-          shape: shouldRenderAsLine(fields[0]) ? 'circle' as 'circle' : 'square' as 'square'
-        });
+          color: fieldColors[firstVisibleField] || blue,
+          shape: shouldRenderAsLine(firstVisibleField) ? 'circle' as 'circle' : 'square' as 'square'
+        }];
       }
-      
-      // Update the tooltip
+      if (tooltipItems.length === 0) {
+        if (tooltip.visible) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+        }
+        return;
+      }
       setTooltip({
         visible: true,
         key: xValue,
@@ -584,7 +598,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, fields, xKey, yField, 
-      fieldColors, formatValue, tooltip.visible, tooltip.key, tooltip.items, shouldRenderAsLine, getYAxisUnit]);
+      fieldColors, formatValue, tooltip.visible, tooltip.key, tooltip.items, shouldRenderAsLine, getYAxisUnit, hiddenSeriesState]);
 
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -750,10 +764,10 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
   
   // Update legend items based on chart data
   const updateLegendItems = useCallback(() => {
@@ -1096,8 +1110,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             {currentData.map((d, i) => (
               <React.Fragment key={`bars-${i}`}>
                 {fields.map((field, fieldIndex) => {
-                  // Skip if this field should be rendered as a line
-                  if (shouldRenderAsLine(field)) return null;
+                  // Skip if this field should be rendered as a line or is hidden
+                  if (shouldRenderAsLine(field) || hiddenSeriesState.includes(field)) return null;
                   
                   // Determine how many fields should be rendered as bars
                   const barFields = fields.filter(f => !shouldRenderAsLine(f));
@@ -1131,8 +1145,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             
             {/* Render lines on top of bars */}
             {fields.map(field => {
-              // Only render fields configured as lines
-              if (!shouldRenderAsLine(field)) return null;
+              // Only render fields configured as lines and not hidden
+              if (!shouldRenderAsLine(field) || hiddenSeriesState.includes(field)) return null;
               
               const lineData = lineDataByField[field];
               if (!lineData || lineData.length === 0) return null;
@@ -1158,7 +1172,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     handleMouseMove, handleMouseLeave,
     tooltip, fieldColors, isRightAxisField, shouldRenderAsLine, formatTickValue, formatXAxisLabel,
     isBrushActive, isModalBrushActive, filteredData, modalFilteredData, data, yAxisUnit, 
-    filterValues, modalFilterValues, formatRightAxisTickValue
+    filterValues, modalFilterValues, formatRightAxisTickValue, hiddenSeriesState
   ]);
 
   // Render the brush with time scale
@@ -1198,6 +1212,22 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     handleModalBrushChange, handleBrushChange,
     modalFilterValues, filterValues
   ]);
+
+  // Handler to toggle series visibility
+  const handleLegendClick = (fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  };
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    console.log('DualAxisChart: hiddenSeries prop changed:', hiddenSeries);
+    console.log('DualAxisChart: fields are:', fields);
+    setHiddenSeriesState(hiddenSeries || []);
+  }, [hiddenSeries, fields]);
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
@@ -1315,6 +1345,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                     label={item.label}
                     color={item.color}
                     shape={shouldRenderAsLine(item.id) ? 'circle' : 'square'}
+                    onClick={() => handleLegendClick(item.id)}
+                    inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}
               </div>

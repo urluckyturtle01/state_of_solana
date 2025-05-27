@@ -37,7 +37,7 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface StackedBarChartProps {
+export interface StackedBarChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -47,6 +47,8 @@ interface StackedBarChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -69,7 +71,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   onCloseExpanded,
   colorMap: externalColorMap,
   filterValues,
-  yAxisUnit
+  yAxisUnit,
+  hiddenSeries = [],
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -113,6 +117,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Add display mode to state
   const [displayMode, setDisplayMode] = useState<DisplayMode>('absolute');
+
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
 
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
@@ -246,10 +253,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
   
   // Handle filter changes - for both modal and normal view
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -274,20 +281,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig, isExpanded, handleModalFilterChange]);
+  }, [modalFilterValues, onFilterChange, isExpanded, handleModalFilterChange]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
+    if (onFilterChange) {
+      onFilterChange(filterValues || {});
     }
     
     setError(null);
-  }, [filterValues, chartConfig]);
+  }, [filterValues, onFilterChange]);
 
   // Process data for the chart - use filtered data when available
   const { chartData, keys, groupColors } = useMemo(() => {
@@ -343,9 +350,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     if (isMultiYFieldsStacked) {
       console.log('Processing multi-y-field stacked chart');
       
-      // Get all y-fields as keys for stacking
+      // Get all y-fields as keys for stacking (excluding hidden ones)
       const stackKeys = Array.isArray(yField) 
-        ? yField.map(field => typeof field === 'string' ? field : field.field)
+        ? yField
+            .map(field => typeof field === 'string' ? field : field.field)
+            .filter(key => !hiddenSeriesState.includes(key))
         : [yKey];
       
       // Group by x-axis values to prevent duplicate x values
@@ -411,8 +420,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       const xValue = String(item[xKey]);
       const groupValue = String(item[groupByField]);
       
-      // Track all unique group values
-      allGroups.add(groupValue);
+      // Track all unique group values (excluding hidden ones)
+      if (!hiddenSeriesState.includes(groupValue)) {
+        allGroups.add(groupValue);
+      }
       
       // Initialize the grouped data structure for this x value
       if (!groupedData[xValue]) {
@@ -422,9 +433,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         groupedValues[xValue] = {};
       }
       
-      // Sum values for the same x value and group
-      const currentValue = Number(item[yKey]) || 0;
-      groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
+      // Sum values for the same x value and group (if not hidden)
+      if (!hiddenSeriesState.includes(groupValue)) {
+        const currentValue = Number(item[yKey]) || 0;
+        groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
+      }
     });
     
     // Second pass: build the final data structure
@@ -470,7 +483,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       keys: stackKeys,
       groupColors: colorsByGroup
     };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -616,9 +629,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // For stacked bar, we show all keys (stack segments)
       const tooltipItems = keys
         .filter(key => {
-          // Only include keys with non-zero values
+          // Only include keys with non-zero values and not hidden
           const value = Number(dataPoint[key]);
-          return !isNaN(value) && value > 0;
+          return !isNaN(value) && value > 0 && !hiddenSeriesState.includes(key);
         })
         .map(key => ({
           label: formatFieldName(key),
@@ -637,14 +650,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           return bVal - aVal;
         });
       
-      // If no items passed the filter, show the first key with a 0 value
-      if (tooltipItems.length === 0 && keys.length > 0) {
-        tooltipItems.push({
-          label: formatFieldName(keys[0]),
-          value: formatValue(0, yAxisUnit),
-          color: groupColors[keys[0]] || blue,
-          shape: 'square' as 'square'
-        });
+      // If no items passed the filter, don't show tooltip
+      if (tooltipItems.length === 0) {
+        setTooltip(prev => ({ ...prev, visible: false }));
+        return;
       }
       
       // Update the tooltip
@@ -664,7 +673,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, keys, groupColors, formatValue, 
-      tooltip.visible, tooltip.key, yAxisUnit]);
+      tooltip.visible, tooltip.key, yAxisUnit, hiddenSeriesState]);
 
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -766,8 +775,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       );
     }
 
+    // Check if all series are hidden
+    const allSeriesHidden = keys.length > 0 && keys.every(key => hiddenSeriesState.includes(key));
+
+    // Show message when all series are hidden
+    if (allSeriesHidden) {
+      return (
+        <div className="flex justify-center items-center h-full">
+          <p className="text-gray-400 text-[12px]">Select a series from the legend to show data.</p>
+        </div>
+      );
+    }
+
     // Show loader when no data is available yet
-    if (chartData.length === 0 || !keys || keys.length === 0) {
+    if (chartData.length === 0) {
       return (
         <div className="flex justify-center items-center h-full">
           <PrettyLoader size="sm" />
@@ -1021,29 +1042,47 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       .join(' ');
   };
 
-  // Update legend items 
+  // Update legend items when data changes
   useEffect(() => {
     if (chartData.length > 0 && keys.length > 0) {
       // Calculate total value for each key across all data points
       const keyTotals: Record<string, number> = {};
       
-      keys.forEach(key => {
-        keyTotals[key] = chartData.reduce((sum, d) => sum + (Number(d[key]) || 0), 0);
+      // Calculate totals using all data, not just visible data
+      data.forEach(item => {
+        if (Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked) {
+          // For multi-y-field stacked charts
+          yField.forEach(field => {
+            const key = typeof field === 'string' ? field : field.field;
+            const value = Number(item[key]) || 0;
+            keyTotals[key] = (keyTotals[key] || 0) + value;
+          });
+        } else if (groupByField) {
+          // For group-by stacked charts
+          const groupValue = String(item[groupByField]);
+          const value = Number(item[yKey]) || 0;
+          keyTotals[groupValue] = (keyTotals[groupValue] || 0) + value;
+        }
       });
+
+      // Get all possible keys (including hidden ones)
+      const allKeys = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
+        ? yField.map(field => typeof field === 'string' ? field : field.field)
+        : Array.from(new Set(data.map(item => String(item[groupByField]))));
       
       // Create and sort legend items by total value (descending)
-      const newLegendItems = keys
+      const newLegendItems = allKeys
         .map(key => ({
           id: key,
           label: formatFieldName(key),
           color: groupColors[key] || blue,
-          value: keyTotals[key]
+          value: keyTotals[key] || 0
         }))
         .sort((a, b) => b.value - a.value);
       
       setLegendItems(newLegendItems);
     }
-  }, [chartData, keys, groupColors]);
+  }, [data, chartData, keys, groupColors, yField, yKey, groupByField, chartConfig.isStacked]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -1302,6 +1341,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
       setIsBrushActive, setFilteredData, maxValue, modalFilterValues, filterValues]);
 
+  // Handler to toggle series visibility
+  const handleLegendClick = useCallback((fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  }, []);
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    setHiddenSeriesState(hiddenSeries);
+  }, [hiddenSeries]);
+
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
     // Only render Modal on client-side to prevent hydration errors
@@ -1414,6 +1467,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                     label={item.label}
                     color={item.color}
                     shape="square"
+                    onClick={() => handleLegendClick(item.id)}
+                    inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}
               </div>

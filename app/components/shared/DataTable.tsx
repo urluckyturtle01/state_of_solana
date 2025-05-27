@@ -42,6 +42,7 @@ export interface DataTableProps<T> {
     enabled: boolean;
     rowsPerPage: number;
     onPageChange?: (page: number) => void;
+    currentPage?: number;
   };
   searchTerm?: string;
   onRetry?: () => void;
@@ -77,8 +78,9 @@ export default function DataTable<T>({
   // State for sorting
   const [sortColumn, setSortColumn] = useState<string | undefined>(initialSortColumn);
   const [sortDirection, setSortDirection] = useState<SortDirection>(initialSortDirection);
-  // State for pagination
-  const [currentPage, setCurrentPage] = useState<number>(0);
+  // State for pagination - use external currentPage if provided
+  const [internalCurrentPage, setInternalCurrentPage] = useState<number>(0);
+  const currentPage = pagination?.currentPage !== undefined ? pagination.currentPage : internalCurrentPage;
 
   // Format cell value based on column configuration and value type
   const formatCellValue = (value: any, column: Column<T>) => {
@@ -210,7 +212,7 @@ export default function DataTable<T>({
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
+    setInternalCurrentPage(newPage);
     if (pagination?.onPageChange) {
       pagination.onPageChange(newPage);
     }
@@ -229,6 +231,9 @@ export default function DataTable<T>({
       setSortColumn(columnKey);
       setSortDirection('asc');
     }
+    
+    // Reset to first page when sorting changes
+    setInternalCurrentPage(0);
   };
 
   // Render sort indicator
@@ -362,98 +367,74 @@ export default function DataTable<T>({
 
       {/* Pagination */}
       {pagination?.enabled && totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-800">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button
-              onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-              disabled={currentPage === 0}
-              className={`relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                currentPage === 0
-                  ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                  : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-              }`}
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-              disabled={currentPage === totalPages - 1}
-              className={`ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                currentPage === totalPages - 1
-                  ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                  : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-              }`}
-            >
-              Next
-            </button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <>
+          <div className="h-px bg-gray-900 w-full mt-3"></div>
+          <div className="flex items-center justify-between pt-0">
             <div>
-              <p className="text-sm text-gray-400">
-                Showing <span className="font-medium">{currentPage * (pagination.rowsPerPage) + 1}</span> to{' '}
-                <span className="font-medium">
-                  {Math.min((currentPage + 1) * (pagination.rowsPerPage), sortedData.length)}
-                </span>{' '}
-                of <span className="font-medium">{sortedData.length}</span> results
+              <p className="text-xs text-gray-500">
+                Showing {currentPage * pagination.rowsPerPage + 1} to {Math.min((currentPage + 1) * pagination.rowsPerPage, sortedData.length)} of {sortedData.length} results
               </p>
             </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                <button
-                  onClick={() => handlePageChange(0)}
-                  disabled={currentPage === 0}
-                  className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-700 text-sm font-medium ${
-                    currentPage === 0
-                      ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                      : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                  }`}
-                >
-                  <span className="sr-only">First</span>
-                  ⟪
-                </button>
-                <button
-                  onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-                  disabled={currentPage === 0}
-                  className={`relative inline-flex items-center px-2 py-2 border border-gray-700 text-sm font-medium ${
-                    currentPage === 0
-                      ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                      : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                  }`}
-                >
-                  <span className="sr-only">Previous</span>
-                  ←
-                </button>
-                <span className="relative inline-flex items-center px-4 py-2 border border-gray-700 bg-gray-800 text-sm font-medium text-gray-300">
-                  {currentPage + 1} / {totalPages}
-                </span>
-                <button
-                  onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-                  disabled={currentPage === totalPages - 1}
-                  className={`relative inline-flex items-center px-2 py-2 border border-gray-700 text-sm font-medium ${
-                    currentPage === totalPages - 1
-                      ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                      : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                  }`}
-                >
-                  <span className="sr-only">Next</span>
-                  →
-                </button>
-                <button
-                  onClick={() => handlePageChange(totalPages - 1)}
-                  disabled={currentPage === totalPages - 1}
-                  className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-700 text-sm font-medium ${
-                    currentPage === totalPages - 1
-                      ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
-                      : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
-                  }`}
-                >
-                  <span className="sr-only">Last</span>
-                  ⟫
-                </button>
-              </nav>
+            <div className="flex gap-1">
+              {/* First Page Button */}
+              <button
+                onClick={() => handlePageChange(0)}
+                disabled={currentPage === 0}
+                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
+                  currentPage === 0
+                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
+                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
+                }`}
+              >
+                ⟪
+              </button>
+              
+              {/* Previous Page Button */}
+              <button
+                onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
+                disabled={currentPage === 0}
+                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
+                  currentPage === 0
+                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
+                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
+                }`}
+              >
+                ←
+              </button>
+              
+              {/* Page Indicator */}
+              <span className="relative inline-flex items-center px-3 py-1 text-xs font-medium bg-gray-800/80 text-gray-300 rounded-md">
+                {currentPage + 1} / {totalPages}
+              </span>
+              
+              {/* Next Page Button */}
+              <button
+                onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
+                disabled={currentPage >= totalPages - 1}
+                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
+                  currentPage >= totalPages - 1
+                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
+                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
+                }`}
+              >
+                →
+              </button>
+              
+              {/* Last Page Button */}
+              <button
+                onClick={() => handlePageChange(totalPages - 1)}
+                disabled={currentPage >= totalPages - 1}
+                className={`relative inline-flex items-center px-2 py-1 text-xs font-medium rounded-md ${
+                  currentPage >= totalPages - 1
+                    ? 'text-gray-500 bg-gray-800/50 cursor-not-allowed'
+                    : 'text-gray-300 bg-gray-800 hover:bg-gray-700'
+                }`}
+              >
+                ⟫
+              </button>
             </div>
           </div>
-        </div>
+        </>
       )} 
     </div>
   );

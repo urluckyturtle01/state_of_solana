@@ -34,7 +34,7 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
-interface PieChartProps {
+export interface PieChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -44,6 +44,8 @@ interface PieChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 interface PieDataPoint {
@@ -61,12 +63,20 @@ const PieChart: React.FC<PieChartProps> = ({
   onCloseExpanded,
   colorMap: externalColorMap,
   filterValues,
-  yAxisUnit
+  yAxisUnit,
+  hiddenSeries = [],
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
+  const [legendItems, setLegendItems] = useState<Array<{
+    id: string;
+    label: string;
+    color: string;
+    value?: number;
+    percentage: number;
+  }>>([]);
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
@@ -86,6 +96,9 @@ const PieChart: React.FC<PieChartProps> = ({
     top: 0,
     data: null
   });
+
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
 
   // Extract mapping fields
   const labelField = chartConfig.dataMapping.xAxis;
@@ -137,24 +150,26 @@ const PieChart: React.FC<PieChartProps> = ({
     if (!data || data.length === 0 || !xKey || !yKey) {
       return [];
     }
-
-    // Calculate total value for percentage
-    const totalValue = data.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
+    // Calculate total value for percentage (excluding hidden series)
+    const filteredData = data.filter(item => !hiddenSeriesState.includes(String(item[xKey])));
+    const totalValue = filteredData.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
     
     // Create pie data points with percentages
-    return data.map(item => ({
-      label: String(item[xKey]),
-      value: Number(item[yKey]) || 0,
-      percentage: totalValue > 0 ? ((Number(item[yKey]) || 0) / totalValue) * 100 : 0,
-      originalData: item
-    }))
-    .filter(item => item.value > 0)  // Filter out zero values
-    .sort((a, b) => b.value - a.value); // Sort by value (descending)
-  }, [data, xKey, yKey]);
+    return filteredData
+      .map(item => ({
+        label: String(item[xKey]),
+        value: Number(item[yKey]) || 0,
+        percentage: totalValue > 0 ? ((Number(item[yKey]) || 0) / totalValue) * 100 : 0,
+        originalData: item
+      }))
+      .filter(item => item.value > 0)  // Filter out zero values
+      .sort((a, b) => b.value - a.value); // Sort by value (descending)
+  }, [data, xKey, yKey, hiddenSeriesState]);
 
   // Create color scale based on data
   const colorScale = useMemo(() => {
-    const dataLabels = pieData.map(d => d.label);
+    // Use all data for color scale, not just filtered data
+    const dataLabels = data.map(d => String(d[xKey]));
     
     // Use external color map if available, otherwise generate from color palette
     const colorValues = dataLabels.map((label, index) => 
@@ -165,17 +180,17 @@ const PieChart: React.FC<PieChartProps> = ({
       domain: dataLabels,
       range: colorValues
     });
-  }, [pieData, externalColorMap]);
+  }, [data, xKey, externalColorMap]);
 
   // Refresh data placeholder
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(filterValues || {});
+    if (onFilterChange) {
+      onFilterChange(filterValues || {});
     }
     
     setError(null);
-  }, [filterValues, chartConfig]);
+  }, [filterValues, onFilterChange]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -254,46 +269,43 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Handle mouse interaction for pie segments
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
+    // Don't show tooltip for hidden segments
+    if (hiddenSeriesState.includes(dataPoint.label)) return;
     const containerRef = e.currentTarget.closest('.chart-container');
     if (!containerRef) return;
-    
     const rect = containerRef.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
     // Calculate safe position for mobile
     const safePosition = calculateSafeTooltipPosition(x, y, rect);
-    
     setTooltip({
       visible: true,
       data: dataPoint,
       left: safePosition.left,
       top: safePosition.top
     });
-  }, []);
+  }, [hiddenSeriesState]);
 
   // Handle touch interaction for pie segments
   const handleTouch = useCallback((e: React.TouchEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
+    // Don't show tooltip for hidden segments
+    if (hiddenSeriesState.includes(dataPoint.label)) return;
     // Note: Cannot preventDefault in touch handlers due to passive event listeners
-    
     const containerRef = e.currentTarget.closest('.chart-container');
     if (!containerRef) return;
-    
     const rect = containerRef.getBoundingClientRect();
     const touch = e.touches[0];
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
-    
     // Calculate safe position for mobile
     const safePosition = calculateSafeTooltipPosition(x, y, rect);
-    
     setTooltip({
       visible: true,
       data: dataPoint,
       left: safePosition.left,
       top: safePosition.top
     });
-  }, []);
+  }, [hiddenSeriesState]);
 
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -306,6 +318,11 @@ const PieChart: React.FC<PieChartProps> = ({
       setModalFilterValues(filterValues);
     }
   }, [filterValues]);
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    setHiddenSeriesState(hiddenSeries);
+  }, [hiddenSeries]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -325,23 +342,31 @@ const PieChart: React.FC<PieChartProps> = ({
       .join(' ');
   };
 
-  // Update legend items when pie data changes
+  // Update legend items when data changes
   useEffect(() => {
-    if (pieData.length > 0) {
-      // PieData is already sorted in the useMemo, but let's sort again by value
-      const newLegendItems = pieData
-        .map(item => ({
-          id: item.label,
-          label: formatFieldName(item.label),
-          color: colorScale(item.label) as string,
-          value: item.value,
-          percentage: item.percentage
-        }))
-        .sort((a, b) => b.value - a.value);
-      
-      setLegendItems(newLegendItems);
+    if (!data || data.length === 0 || !xKey || !yKey) {
+      setLegendItems([]);
+      return;
     }
-  }, [pieData, colorScale]);
+    // Calculate total value for percentage (all data)
+    const totalValue = data.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
+    const allLegendItems = data
+      .filter(item => Number(item[yKey]) > 0) // Only show items with positive values
+      .map(item => {
+        const label = String(item[xKey]);
+        const value = Number(item[yKey]) || 0;
+        const percentage = totalValue > 0 ? (value / totalValue) * 100 : 0;
+        return {
+          id: label,
+          label: formatFieldName(label),
+          color: colorScale(label) as string,
+          value,
+          percentage
+        };
+      })
+      .sort((a, b) => b.value - a.value);
+    setLegendItems(allLegendItems);
+  }, [data, xKey, yKey, colorScale]);
 
   // Enhanced function to handle modal filter changes
   const handleModalFilterChange = useCallback((key: string, value: string) => {
@@ -356,10 +381,10 @@ const PieChart: React.FC<PieChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
   
   // Handle filter changes - for both modal and normal view
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -379,10 +404,19 @@ const PieChart: React.FC<PieChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig, isExpanded, handleModalFilterChange]);
+  }, [modalFilterValues, isExpanded, handleModalFilterChange, onFilterChange]);
+
+  // Handler to toggle series visibility
+  const handleLegendClick = (fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  };
 
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
@@ -401,8 +435,17 @@ const PieChart: React.FC<PieChartProps> = ({
       );
     }
     
+    // Show message when all series are hidden
+    if (data.length > 0 && hiddenSeriesState.length === data.length) {
+      return (
+        <div className="flex justify-center items-center h-full">
+          <p className="text-gray-400 text-[12px]">Select a series from the legend to show data.</p>
+        </div>
+      );
+    }
+    
     // Show loader when no data is available yet
-    if (pieData.length === 0) {
+    if (pieData.length === 0 && hiddenSeriesState.length < data.length) {
       return (
         <div className="flex justify-center items-center h-full">
           <PrettyLoader size="sm" />
@@ -560,7 +603,7 @@ const PieChart: React.FC<PieChartProps> = ({
     );
   }, [
     pieData, error, refreshData, handleMouseLeave,
-    tooltip, colorScale, formatValue, yUnit, filterValues
+    tooltip, colorScale, formatValue, yUnit, filterValues, hiddenSeriesState
   ]);
 
   // Render the chart with legends
@@ -673,9 +716,11 @@ const PieChart: React.FC<PieChartProps> = ({
                   {legendItems.map(item => (
                     <LegendItem 
                       key={item.id} 
-                      label={`${item.label} (${item.value?.toFixed(1)}%)`}
+                      label={`${item.label} (${item.percentage.toFixed(1)}%)`}
                       color={item.color}
                       shape="square"
+                      onClick={() => handleLegendClick(item.id)}
+                      inactive={hiddenSeriesState.includes(item.id)}
                     />
                   ))}
                 </div>

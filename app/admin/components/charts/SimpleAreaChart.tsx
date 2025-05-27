@@ -62,7 +62,7 @@ const createGradientColor = (baseColor: string, index: number = 0): { main: stri
   };
 };
 
-interface SimpleAreaChartProps {
+export interface SimpleAreaChartProps {
   chartConfig: ChartConfig;
   data: any[];
   width?: number;
@@ -72,7 +72,9 @@ interface SimpleAreaChartProps {
   colorMap?: Record<string, string>;
   filterValues?: Record<string, string>;
   yAxisUnit?: string;
-  onColorsGenerated?: (colorMap: Record<string, string>) => void;
+  isStacked?: boolean;
+  hiddenSeries?: string[];
+  onFilterChange?: (newFilters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -96,7 +98,9 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   colorMap: externalColorMap,
   filterValues,
   yAxisUnit,
-  onColorsGenerated
+  isStacked = false,
+  hiddenSeries = [],
+  onFilterChange
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -141,9 +145,18 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
+  // Track hidden series (by field id)
+  const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
+
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
+  
+  console.log('SimpleAreaChart chartConfig.dataMapping:', {
+    xAxis: chartConfig.dataMapping.xAxis,
+    yAxis: chartConfig.dataMapping.yAxis,
+    yField: yField
+  });
   
   // For type safety, ensure we use string values for indexing
   const xKey = typeof xField === 'string' ? xField : xField[0];
@@ -478,7 +491,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     };
   };
 
-  // Handle mouse/touch events for tooltips
+  // Handle interaction (mouse or touch) for tooltips
   const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
     // Get the correct coordinates based on event type
     const isTouchEvent = 'touches' in e;
@@ -553,15 +566,23 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       
       if (isMultiSeries) {
         // For multi-series, show non-zero values for all y fields
-        tooltipItems = yFields
+        const visibleFields = yFields.filter(field => !hiddenSeriesState.includes(field));
+        // If no visible fields, hide tooltip and return
+        if (visibleFields.length === 0) {
+          if (tooltip.visible) {
+            setTooltip(prev => ({ ...prev, visible: false }));
+          }
+          return;
+        }
+        tooltipItems = visibleFields
           .filter(field => {
             const value = Number(dataPoint[field]);
             return !isNaN(value) && value !== 0;
           })
-          .map((field, index) => ({
+          .map((field) => ({
             label: formatFieldName(field),
             value: formatValue(Number(dataPoint[field]) || 0, getYAxisUnit(yField, yAxisUnit)),
-            color: allColorsArray[index % allColorsArray.length],
+            color: allColorsArray[yFields.indexOf(field) % allColorsArray.length],
             shape: 'circle' as 'circle'
           }))
           .sort((a, b) => {
@@ -574,18 +595,40 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
               : Math.abs(Number(b.value));
             return bVal - aVal;
           });
-        
-        // If no items passed the filter, show the first field with a 0 value
-        if (tooltipItems.length === 0 && yFields.length > 0) {
+        // If no items passed the filter, show placeholder for first visible field
+        if (tooltipItems.length === 0 && visibleFields.length > 0) {
+          const firstVisibleField = visibleFields[0];
           tooltipItems = [{
-            label: formatFieldName(yFields[0]),
-            value: '$0.00',
-            color: allColorsArray[0],
+            label: formatFieldName(firstVisibleField),
+            value: formatValue(0, getYAxisUnit(yField, yAxisUnit)),
+            color: allColorsArray[yFields.indexOf(firstVisibleField) % allColorsArray.length],
             shape: 'circle' as 'circle'
           }];
         }
+        // Only set tooltip if there are items
+        if (tooltipItems.length === 0) {
+          if (tooltip.visible) {
+            setTooltip(prev => ({ ...prev, visible: false }));
+          }
+          return;
+        }
+        // Update the tooltip
+        setTooltip({
+          visible: true,
+          key: xValue,
+          items: tooltipItems,
+          left: safePosition.left,
+          top: safePosition.top
+        });
+        return;
       } else {
         // For simple area chart, just show the single value
+        if (hiddenSeriesState.includes(yKey)) {
+          if (tooltip.visible) {
+            setTooltip(prev => ({ ...prev, visible: false }));
+          }
+          return;
+        }
         tooltipItems = [{
           label: formatFieldName(yKey),
           value: formatValue(dataPoint[yKey], getYAxisUnit(yField, yAxisUnit)),
@@ -611,7 +654,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, yKey, yFields, areaColor, formatValue, 
-      tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit]);
+      tooltip.visible, tooltip.key, isMultiSeries, yAxisUnit, hiddenSeriesState]);
       
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -896,8 +939,31 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     return Math.max(...values, 1);
   }, [chartData, yKey]);
 
+  // Handler to toggle series visibility
+  const handleLegendClick = (fieldId: string) => {
+    setHiddenSeriesState(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  };
+
+  // Update hidden series when prop changes
+  useEffect(() => {
+    console.log('SimpleAreaChart: hiddenSeries prop changed:', hiddenSeries);
+    console.log('SimpleAreaChart: yFields are:', yFields);
+    console.log('SimpleAreaChart: isMultiSeries:', isMultiSeries);
+    setHiddenSeriesState(hiddenSeries || []);
+  }, [hiddenSeries, yFields, isMultiSeries]);
+
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
+    console.log('SimpleAreaChart renderChartContent:', {
+      yFields,
+      hiddenSeriesState,
+      isMultiSeries
+    });
+    
     // Show error state with refresh button
     if (error) {
       return (
@@ -1028,6 +1094,10 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
           <defs>
             {isMultiSeries ? (
               yFields.map((field, i) => {
+                if (hiddenSeriesState.includes(field)) {
+                  console.log(`SimpleAreaChart: Hiding field ${field} because it's in hiddenSeriesState:`, hiddenSeriesState);
+                  return null;
+                }
                 const color = allColorsArray[i % allColorsArray.length];
                 return (
                   <LinearGradient
@@ -1170,9 +1240,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
             {isMultiSeries ? (
               // For multi-series, render stacked or overlapping areas
               yFields.map((field, i) => {
+                if (hiddenSeriesState.includes(field)) {
+                  console.log(`SimpleAreaChart: Hiding field ${field} because it's in hiddenSeriesState:`, hiddenSeriesState);
+                  return null;
+                }
                 // Get color for this field
                 const color = allColorsArray[i % allColorsArray.length];
-                
                 return (
                   <g key={`area-group-${field}`}>
                     {/* Area fill without stroke */}
@@ -1200,28 +1273,30 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
               })
             ) : (
               // For single y-field, render single area with clean styling
-              <g>
-                {/* Area fill without stroke */}
-                <AreaClosed
-                  data={chartData}
-                  x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
-                  y={(d) => yScale(Number(d[yKey]) || 0)}
-                  yScale={yScale}
-                  fill={`url(#gradient-${yKey}-${isModal ? 'modal' : 'normal'})`}
-                  stroke="none"
-                  curve={curveMonotoneX}
-                />
-                {/* Top line only */}
-                <LinePath
-                  data={chartData}
-                  x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
-                  y={(d) => yScale(Number(d[yKey]) || 0)}
-                  stroke={allColorsArray[0]}
-                  strokeWidth={0.5}
-                  curve={curveMonotoneX}
-                  fill="none"
-                />
-              </g>
+              hiddenSeriesState.includes(yKey) ? null : (
+                <g>
+                  {/* Area fill without stroke */}
+                  <AreaClosed
+                    data={chartData}
+                    x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
+                    y={(d) => yScale(Number(d[yKey]) || 0)}
+                    yScale={yScale}
+                    fill={`url(#gradient-${yKey}-${isModal ? 'modal' : 'normal'})`}
+                    stroke="none"
+                    curve={curveMonotoneX}
+                  />
+                  {/* Top line only */}
+                  <LinePath
+                    data={chartData}
+                    x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
+                    y={(d) => yScale(Number(d[yKey]) || 0)}
+                    stroke={allColorsArray[0]}
+                    strokeWidth={0.5}
+                    curve={curveMonotoneX}
+                    fill="none"
+                  />
+                </g>
+              )
             )}
           </Group>
         </svg>
@@ -1275,12 +1350,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       }
       
       // Communicate colors to dashboard renderer only once per data change
-      if (onColorsGenerated && Object.keys(colorMap).length > 0 && !colorsGeneratedRef.current) {
-        onColorsGenerated(colorMap);
+      if (onFilterChange && Object.keys(colorMap).length > 0 && !colorsGeneratedRef.current) {
+        onFilterChange(colorMap);
         colorsGeneratedRef.current = true;
       }
     }
-  }, [chartData, yKey, isMultiSeries, yFields]);
+  }, [chartData, yKey, isMultiSeries, yFields, onFilterChange]);
 
   // Reset colors generated flag when data changes
   useEffect(() => {
@@ -1356,10 +1431,10 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // If onFilterChange exists in chartConfig, call it with updated filters
-    if (chartConfig.onFilterChange) {
-      chartConfig.onFilterChange(updatedFilters);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, chartConfig]);
+  }, [modalFilterValues, onFilterChange]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -1499,6 +1574,8 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
                     color={item.color}
                     shape="circle"
                     tooltipText={item.value ? formatValue(item.value) : undefined}
+                    onClick={() => handleLegendClick(item.id)}
+                    inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}
               </div>

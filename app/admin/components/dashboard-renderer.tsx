@@ -43,6 +43,7 @@ interface DashboardRendererProps {
 }
 
 interface Legend {
+  id?: string; // Add optional id field for raw field names
   label: string;
   color: string;
   value?: number;
@@ -460,6 +461,8 @@ export default function DashboardRenderer({
   const [chartData, setChartData] = useState<Record<string, any[]>>({});
   // Add state to track legend colors and order
   const [legendColorMaps, setLegendColorMaps] = useState<Record<string, Record<string, string>>>({});
+  // Add state to track hidden series for each chart
+  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
   
   // Use ref to track if component is mounted to avoid memory leaks
   const isMounted = useRef(true);
@@ -1123,6 +1126,7 @@ export default function DashboardRenderer({
           .join(' ');
         
         return {
+          id: field, // Add the raw field name as id
           label: `${fieldName}`,
           color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
           value: fieldTotals[field] || 0,
@@ -1302,16 +1306,17 @@ export default function DashboardRenderer({
               .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
             
-            newLabels.push(label);
+            newLabels.push(field); // Use raw field name instead of formatted label
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[label] && isNewColorMap) {
-              colorMap[label] = getColorByIndex(index);
+            if (!colorMap[field] && isNewColorMap) { // Use field instead of label
+              colorMap[field] = getColorByIndex(index);
             }
             
             return {
+              id: field, // Add the raw field name as id
               label,
-              color: colorMap[label] || getColorByIndex(index),
+              color: colorMap[field] || getColorByIndex(index), // Use field instead of label
               value: total,
               shape: 'square' as const // Area charts use square shapes
             };
@@ -1325,16 +1330,17 @@ export default function DashboardRenderer({
               .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
           
-          newLabels.push(label);
+          newLabels.push(yFieldName); // Use raw field name instead of formatted label
           
           // Use consistent color from our map, or generate a new one if needed
-          if (!colorMap[label] && isNewColorMap) {
-            colorMap[label] = getColorByIndex(0);
+          if (!colorMap[yFieldName] && isNewColorMap) { // Use field instead of label
+            colorMap[yFieldName] = getColorByIndex(0);
           }
           
           chartLegends = [{
+            id: yFieldName, // Add the raw field name as id
             label,
-            color: colorMap[label] || getColorByIndex(0),
+            color: colorMap[yFieldName] || getColorByIndex(0), // Use field instead of label
             value: total,
             shape: 'square' as const // Area charts use square shapes
           }];
@@ -1344,16 +1350,18 @@ export default function DashboardRenderer({
         chartLegends = data
           .map((item, index) => {
             const label = String(item[xField]);
-            newLabels.push(label);
+            const id = label; // For non-date based, id and label are the same
+            newLabels.push(id);
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[label] && isNewColorMap) {
-              colorMap[label] = getColorByIndex(index);
+            if (!colorMap[id] && isNewColorMap) {
+              colorMap[id] = getColorByIndex(index);
             }
             
             return {
+              id,
               label,
-              color: colorMap[label] || getColorByIndex(index),
+              color: colorMap[id] || getColorByIndex(index),
               value: Number(item[yAxisFields[0]]) || 0,
               shape: 'square' as const // Area charts use square shapes
             };
@@ -1401,19 +1409,20 @@ export default function DashboardRenderer({
               .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
             
-            newLabels.push(label);
+            newLabels.push(field); // Use raw field name instead of formatted label
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[label] && isNewColorMap) {
-              colorMap[label] = getColorByIndex(index);
+            if (!colorMap[field] && isNewColorMap) { // Use field instead of label
+              colorMap[field] = getColorByIndex(index);
             }
             
             // Determine if this field should be rendered as a line
             const isLine = isLineType(chart, field);
             
             return {
+              id: field, // Add the raw field name as id
               label,
-              color: colorMap[label] || getColorByIndex(index),
+              color: colorMap[field] || getColorByIndex(index), // Use field instead of label
               value: total,
               shape: isLine ? 'circle' as const : 'square' as const
             };
@@ -1427,19 +1436,20 @@ export default function DashboardRenderer({
               .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' ');
           
-          newLabels.push(label);
+          newLabels.push(yFieldName); // Use raw field name instead of formatted label
           
           // Use consistent color from our map, or generate a new one if needed
-          if (!colorMap[label] && isNewColorMap) {
-            colorMap[label] = getColorByIndex(0);
+          if (!colorMap[yFieldName] && isNewColorMap) { // Use field instead of label
+            colorMap[yFieldName] = getColorByIndex(0);
           }
           
           // Determine if this field should be rendered as a line
           const isLine = isLineType(chart, yFieldName);
           
           chartLegends = [{
+            id: yFieldName, // Add the raw field name as id
             label,
-            color: colorMap[label] || getColorByIndex(0),
+            color: colorMap[yFieldName] || getColorByIndex(0), // Use field instead of label
             value: total,
             shape: isLine ? 'circle' as const : 'square' as const
           }];
@@ -1450,16 +1460,18 @@ export default function DashboardRenderer({
         chartLegends = data
           .map((item, index) => {
             const label = String(item[xField]);
-            newLabels.push(label);
+            const id = label; // For non-date based, id and label are the same
+            newLabels.push(id);
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[label] && isNewColorMap) {
-              colorMap[label] = getColorByIndex(index);
+            if (!colorMap[id] && isNewColorMap) {
+              colorMap[id] = getColorByIndex(index);
             }
             
             return {
+              id,
               label,
-              color: colorMap[label] || getColorByIndex(index),
+              color: colorMap[id] || getColorByIndex(index),
               value: Number(item[yAxisFields[0]]) || 0,
               // Bar chart series are always squares
               shape: chart.chartType === 'line' ? 'circle' as const : 'square' as const
@@ -1695,6 +1707,24 @@ export default function DashboardRenderer({
     }
   }, [chartData, charts, legends, pageId]);
 
+  // Add handler to toggle series visibility
+  const handleLegendClick = useCallback((chartId: string, label: string) => {
+    console.log('Dashboard handleLegendClick:', { chartId, label });
+    setHiddenSeries(prev => {
+      const chartHidden = prev[chartId] || [];
+      const newHidden = chartHidden.includes(label)
+        ? chartHidden.filter(id => id !== label)
+        : [...chartHidden, label];
+      
+      console.log('Updated hiddenSeries for chart', chartId, ':', newHidden);
+      
+      return {
+        ...prev,
+        [chartId]: newHidden
+      };
+    });
+  }, []);
+
   if (isPageLoading || !allChartsLoaded) {
     return (
       <div className="flex flex-col justify-center items-center h-[calc(100vh-200px)] bg-black">
@@ -1779,11 +1809,13 @@ export default function DashboardRenderer({
               {legends[chart.id] && legends[chart.id].length > 0 ? (
                 legends[chart.id].map(legend => (
                     <LegendItem 
-                      key={legend.label}
+                      key={legend.id || legend.label}
                       label={truncateLabel(legend.label)} 
                       color={legend.color} 
                       shape={legend.shape || 'square'}
                       tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
+                      onClick={() => handleLegendClick(chart.id, legend.id || legend.label)}
+                      inactive={(hiddenSeries[chart.id] || []).includes(legend.id || legend.label)}
                     />
                 ))
               ) : null}
@@ -1822,6 +1854,8 @@ export default function DashboardRenderer({
               colorMap={legendColorMaps[chart.id]}
               // Add a callback to receive colors from BarChart
               onColorsGenerated={(colorMap) => syncLegendColors(chart.id, colorMap)}
+              // Pass hidden series to ChartRenderer
+              hiddenSeries={hiddenSeries[chart.id] || []}
               // Pass loading state
               isLoading={false}
             />
