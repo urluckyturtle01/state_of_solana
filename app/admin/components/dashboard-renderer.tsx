@@ -1711,10 +1711,7 @@ export default function DashboardRenderer({
           </div>
         </div>
         
-        {/* Text below loader */}
-        <p className="mt-8 text-gray-400 text-sm font-light tracking-wider animate-pulse">
-          Top Ledger Research...
-        </p>
+        
       </div>
     );
   }
