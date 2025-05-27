@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", type: "image/x-icon" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "https://topledger.xyz/favicon.svg", type: "image/svg+xml" },
     ],
   },
   openGraph: {
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     description: "Real-time analytics and metrics dashboard for the Solana blockchain",
     site: "@ledger_top",
     creator: "@ledger_top",
-    images: [new URL("https://research.topledger.xyz/twittercard.png", BASE_URL).toString()],
+    images: [new URL("/twittercard.png", BASE_URL).toString()],
   },
   robots: {
     index: true,
