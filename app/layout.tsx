@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/twittercard.jpg",  // will resolve against metadataBase
+        url: "/twittercard.png",  // will resolve against metadataBase
         width: 1200,
         height: 630,
         alt: "Top Ledger Research",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     site: "@TopLedgerResearch",
     // (Optional) who created the content
     creator: "@TopLedgerResearch",
-    images: ["/twittercard.jpg"],  // will resolve against metadataBase
+    images: ["/twittercard.png"],  // will resolve against metadataBase
   },
 
   robots: {
