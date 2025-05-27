@@ -57,8 +57,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Top Ledger Research",
     description: "Real-time analytics and metrics dashboard for the Solana blockchain",
-    site: "@TopLedgerResearch",
-    creator: "@TopLedgerResearch",
+    site: "@ledger_top",
+    creator: "@ledger_top",
     images: [new URL("/twittercard.png", BASE_URL).toString()],
   },
   robots: {
