@@ -572,15 +572,15 @@ const TableRenderer: React.FC<TableRendererProps> = ({
             <PrettyLoader size="sm" />
           </div>
         ) : (
-          <DataTable
-            columns={dataTableColumns}
+        <DataTable
+          columns={dataTableColumns}
             data={filteredData}
-            keyExtractor={(row) => row.id || JSON.stringify(row)}
+          keyExtractor={(row) => row.id || JSON.stringify(row)}
             isLoading={false}
-            error={error}
-            initialSortColumn={tableConfig.defaultSortColumn || undefined}
-            initialSortDirection={tableConfig.defaultSortDirection || 'asc'}
-            variant={tableConfig.variant}
+          error={error}
+          initialSortColumn={tableConfig.defaultSortColumn || undefined}
+          initialSortDirection={tableConfig.defaultSortDirection || 'asc'}
+          variant={tableConfig.variant}
             pagination={tableConfig.enablePagination ? {
               enabled: true,
               rowsPerPage: tableConfig.rowsPerPage || 10,
@@ -588,11 +588,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               currentPage: currentPage
             } : undefined}
             searchTerm={undefined}
-            onRetry={handleRetry}
-            cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
-            containerClassName="overflow-x-auto"
-            noDataMessage="No data available"
-          />
+          onRetry={handleRetry}
+          cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
+          containerClassName="overflow-x-auto"
+          noDataMessage="No data available"
+        />
         )}
       </div>
     </div>

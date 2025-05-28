@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
 import PrettyLoader from './PrettyLoader';
 import Loader from './Loader'
+import ShareButton from './ShareButton';
+import { ChartConfig } from '@/app/admin/types';
 
 interface ChartCardProps {
   title: string;
@@ -19,6 +21,8 @@ interface ChartCardProps {
   legendWidth?: '1/4' | '1/5' | '1/6';
   isLoading?: boolean;
   id?: string;
+  chart?: ChartConfig;
+  filterValues?: Record<string, string>;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -37,6 +41,8 @@ const ChartCard: React.FC<ChartCardProps> = ({
   legendWidth = '1/5',
   isLoading = false,
   id,
+  chart,
+  filterValues,
 }) => {
   // Define color variants
   const colorVariants = {
@@ -98,6 +104,13 @@ const ChartCard: React.FC<ChartCardProps> = ({
                 <CameraIcon className="w-4 h-4" />
               )}
             </button>
+          )}
+          {chart && (
+            <ShareButton 
+              chart={chart} 
+              filterValues={filterValues} 
+              className={colors.button}
+            />
           )}
           {onDownloadClick && (
             <button 

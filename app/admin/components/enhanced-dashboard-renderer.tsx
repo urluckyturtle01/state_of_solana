@@ -83,7 +83,7 @@ const getFromLocalStorage = <T,>(key: string): T | null => {
   
   return null;
 };
-
+        
 // Helper to deduplicate requests
 const deduplicatedFetch = async <T,>(
   key: string,
@@ -107,7 +107,7 @@ const deduplicatedFetch = async <T,>(
 // Preload counter configurations for a page with deduplication
 const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Promise<CounterConfig[]> => {
   const cacheKey = `counters_${pageId}`;
-  
+
   // Check if we need to force a refresh from localStorage flag
   if (typeof window !== 'undefined') {
     const needsRefresh = localStorage.getItem('counters_need_refresh') === 'true';
@@ -161,35 +161,35 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
     delete PAGE_COUNTERS_CACHE[pageId];
     if (typeof window !== 'undefined') {
       localStorage.removeItem(`edr_cache_${cacheKey}`);
+      }
     }
-  }
-  
+    
   // Use deduplication for the actual fetch
   return deduplicatedFetch(cacheKey, async () => {
     try {
       const counters = await getCounterConfigsByPage(pageId);
-      
-      // Cache the counters for future use
-      PAGE_COUNTERS_CACHE[pageId] = {
-        counters,
-        timestamp: Date.now(),
-        expiresIn: COUNTER_CACHE_DURATION
-      };
+    
+    // Cache the counters for future use
+    PAGE_COUNTERS_CACHE[pageId] = {
+      counters,
+      timestamp: Date.now(),
+      expiresIn: COUNTER_CACHE_DURATION
+    };
       
       // Persist to localStorage
       persistToLocalStorage(cacheKey, counters, COUNTER_CACHE_DURATION);
-      
-      return counters;
-    } catch (error) {
-      console.error(`Error preloading counters for page ${pageId}:`, error);
-      
-      // Return cached counters even if expired in case of error
-      if (PAGE_COUNTERS_CACHE[pageId]) {
-        return PAGE_COUNTERS_CACHE[pageId].counters;
-      }
-      
-      return [];
+    
+    return counters;
+  } catch (error) {
+    console.error(`Error preloading counters for page ${pageId}:`, error);
+    
+    // Return cached counters even if expired in case of error
+    if (PAGE_COUNTERS_CACHE[pageId]) {
+      return PAGE_COUNTERS_CACHE[pageId].counters;
     }
+    
+    return [];
+  }
   });
 };
 
@@ -232,30 +232,30 @@ const preloadTableConfigs = async (pageId: string, forceRefresh = false): Promis
   
   // Use deduplication for the actual fetch
   return deduplicatedFetch(cacheKey, async () => {
-    try {
-      const tables = await getTableConfigsByPage(pageId);
-      
-      // Cache the tables for future use
-      PAGE_TABLES_CACHE[pageId] = {
-        tables,
-        timestamp: Date.now(),
-        expiresIn: TABLE_CACHE_DURATION
-      };
+  try {
+    const tables = await getTableConfigsByPage(pageId);
+    
+    // Cache the tables for future use
+    PAGE_TABLES_CACHE[pageId] = {
+      tables,
+      timestamp: Date.now(),
+      expiresIn: TABLE_CACHE_DURATION
+    };
       
       // Persist to localStorage
       persistToLocalStorage(cacheKey, tables, TABLE_CACHE_DURATION);
-      
-      return tables;
-    } catch (error) {
-      console.error(`Error preloading tables for page ${pageId}:`, error);
-      
-      // Return cached tables even if expired in case of error
-      if (PAGE_TABLES_CACHE[pageId]) {
-        return PAGE_TABLES_CACHE[pageId].tables;
-      }
-      
-      return [];
+    
+    return tables;
+  } catch (error) {
+    console.error(`Error preloading tables for page ${pageId}:`, error);
+    
+    // Return cached tables even if expired in case of error
+    if (PAGE_TABLES_CACHE[pageId]) {
+      return PAGE_TABLES_CACHE[pageId].tables;
     }
+    
+    return [];
+  }
   });
 };
 
@@ -315,7 +315,7 @@ export default React.memo(function EnhancedDashboardRenderer({
             // Prefetch configs in background
             preloadCounterConfigs(page).catch(() => {});
             preloadTableConfigs(page).catch(() => {});
-          }
+      }
         });
       }, 500); // Reduced from 2000ms to 500ms
     };
@@ -351,7 +351,7 @@ export default React.memo(function EnhancedDashboardRenderer({
     
     // Only show loading on initial load, not refreshes
     if (!isInitialLoadComplete) {
-      setIsLoadingCounters(true);
+    setIsLoadingCounters(true);
     }
     setError(null);
     
@@ -367,18 +367,18 @@ export default React.memo(function EnhancedDashboardRenderer({
       }
       
       if (isMountedRef.current) {
-        setCounters(pageCounters || []);
+      setCounters(pageCounters || []);
         // Start progressive rendering
         setRenderBatch(0);
       }
     } catch (error) {
       console.error('Error loading counters:', error);
       if (isMountedRef.current) {
-        setError('Failed to load counter data. Please try refreshing the page.');
+      setError('Failed to load counter data. Please try refreshing the page.');
       }
     } finally {
       if (isMountedRef.current) {
-        setIsLoadingCounters(false);
+      setIsLoadingCounters(false);
         setIsInitialLoadComplete(true);
       }
     }
@@ -409,7 +409,7 @@ export default React.memo(function EnhancedDashboardRenderer({
     
     // Only show loading on initial load
     if (!isInitialLoadComplete) {
-      setIsLoadingTables(true);
+    setIsLoadingTables(true);
     }
     setError(null);
     
@@ -428,16 +428,16 @@ export default React.memo(function EnhancedDashboardRenderer({
       console.log(`Loaded ${pageTables?.length || 0} tables for page ${pageId}:`, pageTables);
       
       if (isMountedRef.current) {
-        setTables(pageTables || []);
+      setTables(pageTables || []);
       }
     } catch (error) {
       console.error('Error loading tables:', error);
       if (isMountedRef.current) {
-        setError('Failed to load table data. Please try refreshing the page.');
+      setError('Failed to load table data. Please try refreshing the page.');
       }
     } finally {
       if (isMountedRef.current) {
-        setIsLoadingTables(false);
+      setIsLoadingTables(false);
       }
     }
   }, [pageId, overrideTables, refreshTrigger, isInitialLoadComplete]);
@@ -450,7 +450,7 @@ export default React.memo(function EnhancedDashboardRenderer({
       loadTables()
     ]);
   }, [loadCounters, loadTables]);
-  
+
   // Clean up on unmount
   useEffect(() => {
     return () => {

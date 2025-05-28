@@ -129,52 +129,52 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
   // Process batches in parallel
   for (const batch of chartBatches) {
     const batchPromises = batch.map(chart => {
-      const chartFilters = filterValues[chart.id] || {};
-      const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+    const chartFilters = filterValues[chart.id] || {};
+    const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+    
+    // Check cache first
+    if (CHART_DATA_CACHE[cacheKey]) {
+      const cachedItem = CHART_DATA_CACHE[cacheKey];
+      const now = Date.now();
       
-      // Check cache first
-      if (CHART_DATA_CACHE[cacheKey]) {
-        const cachedItem = CHART_DATA_CACHE[cacheKey];
-        const now = Date.now();
-        
-        // Use cached data if not expired
-        if (now - cachedItem.timestamp < cachedItem.expiresIn) {
-          return Promise.resolve({
-            chartId: chart.id,
-            data: cachedItem.data,
-            fromCache: true
-          });
-        }
-      }
-      
-      // Fetch from API if not in cache
-      return fetchChartData(chart, chartFilters, enableCaching)
-        .then(data => ({
+      // Use cached data if not expired
+      if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+        return Promise.resolve({
           chartId: chart.id,
-          data,
-          fromCache: false
-        }))
-        .catch(error => {
-          console.error(`Error fetching data for chart ${chart.id}:`, error);
-          
-          // Try to use cached data as fallback if available, even if expired
-          if (CHART_DATA_CACHE[cacheKey]) {
-            return {
-              chartId: chart.id,
-              data: CHART_DATA_CACHE[cacheKey].data,
-              fromCache: true,
-              error
-            };
-          }
-          
+          data: cachedItem.data,
+          fromCache: true
+        });
+      }
+    }
+    
+    // Fetch from API if not in cache
+    return fetchChartData(chart, chartFilters, enableCaching)
+      .then(data => ({
+        chartId: chart.id,
+        data,
+        fromCache: false
+      }))
+      .catch(error => {
+        console.error(`Error fetching data for chart ${chart.id}:`, error);
+        
+        // Try to use cached data as fallback if available, even if expired
+        if (CHART_DATA_CACHE[cacheKey]) {
           return {
             chartId: chart.id,
-            data: [],
+            data: CHART_DATA_CACHE[cacheKey].data,
+            fromCache: true,
             error
           };
-        });
-    });
-    
+        }
+        
+        return {
+          chartId: chart.id,
+          data: [],
+          error
+        };
+      });
+  });
+  
     // Wait for current batch to complete before starting next
     const batchResults = await Promise.all(batchPromises);
     allResults.push(...batchResults);
@@ -374,16 +374,16 @@ const fetchFromApi = async (
       // Use requestIdleCallback for non-blocking localStorage write
       if ('requestIdleCallback' in window) {
         window.requestIdleCallback(() => {
-          try {
-            const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
-            localStorage.setItem(localStorageKey, JSON.stringify({
-              data: parsedData,
-              timestamp: Date.now(),
-              expires: Date.now() + cacheExpiry,
-              apiUrl: url.toString()
-            }));
-          } catch (e) {
-            console.warn('Error caching to localStorage:', e);
+      try {
+        const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+        localStorage.setItem(localStorageKey, JSON.stringify({
+          data: parsedData,
+          timestamp: Date.now(),
+          expires: Date.now() + cacheExpiry,
+          apiUrl: url.toString()
+        }));
+      } catch (e) {
+        console.warn('Error caching to localStorage:', e);
           }
         });
       } else {
@@ -507,7 +507,7 @@ export default function DashboardRenderer({
   const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [allChartsLoaded, setAllChartsLoaded] = useState(false);
-
+  
   // Add state for filter values
   const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
   const [chartData, setChartData] = useState<Record<string, any[]>>({});
@@ -684,18 +684,18 @@ export default function DashboardRenderer({
         const results = await wrappedBatchFetchChartData(loadedCharts, filterValues);
         
         if (!mounted) return;
-        
+            
         // Process results and update states
-        const newChartData: Record<string, any[]> = {};
+            const newChartData: Record<string, any[]> = {};
         const newLoadingStates: Record<string, boolean> = {};
-        
-        results.forEach(result => {
+            
+            results.forEach(result => {
           newChartData[result.chartId] = result.data || [];
           newLoadingStates[result.chartId] = false;
-          
-          // Update legends immediately
+            
+            // Update legends immediately
           if (result.data && result.data.length > 0) {
-            updateLegends(result.chartId, result.data);
+              updateLegends(result.chartId, result.data);
           }
         });
         
@@ -1835,6 +1835,8 @@ export default function DashboardRenderer({
           legendWidth="1/5"
           className="md:h-[500px] h-auto"
           id={`chart-card-${chart.id}`}
+          chart={chart}
+          filterValues={filterValues[chart.id]}
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={
@@ -1905,7 +1907,7 @@ export default function DashboardRenderer({
                     ...prev,
                     [chart.id]: data
                   }));
-                  updateLegends(chart.id, data);
+                updateLegends(chart.id, data);
                 }
                 
                 // Set loading to false when data is loaded
