@@ -1095,8 +1095,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
     
-    // Convert snake_case or kebab-case to space-separated
-    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+    // Convert only underscores to space-separated (keep hyphens)
+    const spaceSeparated = fieldName.replace(/_/g, ' ');
     
     // Always capitalize the first letter of the entire string
     if (spaceSeparated.length === 0) return '';
