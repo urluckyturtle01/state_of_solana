@@ -556,12 +556,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         if (tooltipItems.length === 0 && yFields.length > 0) {
           const firstVisibleField = yFields.find(field => !hiddenSeriesState.includes(field));
           if (firstVisibleField) {
-            tooltipItems = [{
+          tooltipItems = [{
               label: formatFieldName(firstVisibleField),
               value: formatValue(0, getYAxisUnit(yField, yAxisUnit)),
               color: typeof barColor === 'string' ? barColor : (barColor[firstVisibleField] || blue),
-              shape: 'square' as 'square'
-            }];
+            shape: 'square' as 'square'
+          }];
           }
         }
       } else {
@@ -1177,33 +1177,33 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             ) : (
               // For single y-field, render regular bars
               hiddenSeriesState.includes(yKey) ? null : (
-                chartData.map((d: ChartDataItem, i: number) => {
-                  const barX = xScale(d[xKey]) || 0;
-                  const barWidth = xScale.bandwidth();
-                  const value = Number(d[yKey]) || 0;
-                  // For positive values, the bar starts at the value position and extends down to zero
-                  // For negative values, the bar starts at zero and extends down to the value position
-                  const barHeight = Math.abs(yScale(0) - yScale(value));
-                  // For positive values, the bar's y position is at the value's y coordinate
-                  // For negative values, the bar's y position is at the zero line
-                  const barY = value >= 0 ? yScale(value) : yScale(0);
-                  // Determine bar color based on config
-                  const color = typeof barColor === 'string' 
-                    ? barColor 
-                    : (barColor[d[xKey]] || blue);
-                  return (
-                    <Bar
-                      key={`bar-${i}`}
-                      x={barX}
-                      y={barY}
-                      width={barWidth}
-                      height={barHeight}
-                      fill={color}
-                      opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                      rx={0}
-                    />
-                  );
-                })
+              chartData.map((d: ChartDataItem, i: number) => {
+                const barX = xScale(d[xKey]) || 0;
+                const barWidth = xScale.bandwidth();
+                const value = Number(d[yKey]) || 0;
+                // For positive values, the bar starts at the value position and extends down to zero
+                // For negative values, the bar starts at zero and extends down to the value position
+                const barHeight = Math.abs(yScale(0) - yScale(value));
+                // For positive values, the bar's y position is at the value's y coordinate
+                // For negative values, the bar's y position is at the zero line
+                const barY = value >= 0 ? yScale(value) : yScale(0);
+                // Determine bar color based on config
+                const color = typeof barColor === 'string' 
+                  ? barColor 
+                  : (barColor[d[xKey]] || blue);
+                return (
+                  <Bar
+                    key={`bar-${i}`}
+                    x={barX}
+                    y={barY}
+                    width={barWidth}
+                    height={barHeight}
+                    fill={color}
+                    opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                    rx={0}
+                  />
+                );
+              })
               )
             )}
           </Group>

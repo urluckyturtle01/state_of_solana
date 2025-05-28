@@ -731,21 +731,21 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         
         if (firstVisibleField) {
           // Find the unit for the first visible field
-          let firstFieldUnit = undefined;
+        let firstFieldUnit = undefined;
           if (Array.isArray(yField)) {
-            const firstFieldConfig = yField.find(f => {
-              const fName = typeof f === 'string' ? f : f.field;
+          const firstFieldConfig = yField.find(f => {
+            const fName = typeof f === 'string' ? f : f.field;
               return fName === firstVisibleField;
-            });
-            firstFieldUnit = typeof firstFieldConfig === 'string' ? undefined : firstFieldConfig?.unit;
-          }
-          
-          tooltipItems.push({
+          });
+          firstFieldUnit = typeof firstFieldConfig === 'string' ? undefined : firstFieldConfig?.unit;
+        }
+        
+        tooltipItems.push({
             label: formatFieldName(firstVisibleField),
-            value: formatWithUnit(0, firstFieldUnit),
+          value: formatWithUnit(0, firstFieldUnit),
             color: fieldColors[firstVisibleField] || blue,
             shape: fieldTypes[firstVisibleField] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
-          });
+        });
         }
       }
       

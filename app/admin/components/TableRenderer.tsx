@@ -414,6 +414,9 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     }));
   }, [visibleColumns]);
 
+  // Fix: Only show loading spinner if there is no data at all
+  const showLoading = loading && data.length === 0;
+
   return (
     <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
       {/* Header Section with Title and Action Buttons */}
@@ -540,27 +543,31 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       
       {/* Table content using enhanced DataTable component */}
       <div className="mt-3">
-        <DataTable
-          columns={dataTableColumns}
-          data={filteredData}
-          keyExtractor={(row) => row.id || JSON.stringify(row)}
-          isLoading={loading}
-          error={error}
-          initialSortColumn={tableConfig.defaultSortColumn || undefined}
-          initialSortDirection={tableConfig.defaultSortDirection || 'asc'}
-          variant={tableConfig.variant}
-          pagination={tableConfig.enablePagination ? {
-            enabled: true,
-            rowsPerPage: tableConfig.rowsPerPage || 10,
-            onPageChange: handlePageChange,
-            currentPage: currentPage
-          } : undefined}
-          searchTerm={undefined}
-          onRetry={handleRetry}
-          cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
-          containerClassName="overflow-x-auto"
-          noDataMessage="No data available"
-        />
+        {showLoading ? (
+          <Loader size="md" className="w-8 h-8 mx-auto my-8" />
+        ) : (
+          <DataTable
+            columns={dataTableColumns}
+            data={filteredData}
+            keyExtractor={(row) => row.id || JSON.stringify(row)}
+            isLoading={false}
+            error={error}
+            initialSortColumn={tableConfig.defaultSortColumn || undefined}
+            initialSortDirection={tableConfig.defaultSortDirection || 'asc'}
+            variant={tableConfig.variant}
+            pagination={tableConfig.enablePagination ? {
+              enabled: true,
+              rowsPerPage: tableConfig.rowsPerPage || 10,
+              onPageChange: handlePageChange,
+              currentPage: currentPage
+            } : undefined}
+            searchTerm={undefined}
+            onRetry={handleRetry}
+            cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
+            containerClassName="overflow-x-auto"
+            noDataMessage="No data available"
+          />
+        )}
       </div>
     </div>
   );

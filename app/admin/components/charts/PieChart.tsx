@@ -157,13 +157,13 @@ const PieChart: React.FC<PieChartProps> = ({
     // Create pie data points with percentages
     return filteredData
       .map(item => ({
-        label: String(item[xKey]),
-        value: Number(item[yKey]) || 0,
-        percentage: totalValue > 0 ? ((Number(item[yKey]) || 0) / totalValue) * 100 : 0,
-        originalData: item
-      }))
-      .filter(item => item.value > 0)  // Filter out zero values
-      .sort((a, b) => b.value - a.value); // Sort by value (descending)
+      label: String(item[xKey]),
+      value: Number(item[yKey]) || 0,
+      percentage: totalValue > 0 ? ((Number(item[yKey]) || 0) / totalValue) * 100 : 0,
+      originalData: item
+    }))
+    .filter(item => item.value > 0)  // Filter out zero values
+    .sort((a, b) => b.value - a.value); // Sort by value (descending)
   }, [data, xKey, yKey, hiddenSeriesState]);
 
   // Create color scale based on data
@@ -364,7 +364,7 @@ const PieChart: React.FC<PieChartProps> = ({
           percentage
         };
       })
-      .sort((a, b) => b.value - a.value);
+        .sort((a, b) => b.value - a.value);
     setLegendItems(allLegendItems);
   }, [data, xKey, yKey, colorScale]);
 

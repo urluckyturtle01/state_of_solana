@@ -468,7 +468,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       // Track all unique group values (excluding hidden ones)
       if (!hiddenSeriesState.includes(groupValue)) {
-        allGroups.add(groupValue);
+      allGroups.add(groupValue);
       }
       
       // Initialize the grouped data structure for this x value
@@ -481,8 +481,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       // Sum values for the same x value and group (if not hidden)
       if (!hiddenSeriesState.includes(groupValue)) {
-        const currentValue = Number(item[yKey]) || 0;
-        groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
+      const currentValue = Number(item[yKey]) || 0;
+      groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
       }
     });
     

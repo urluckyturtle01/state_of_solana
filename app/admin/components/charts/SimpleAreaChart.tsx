@@ -1274,28 +1274,28 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
             ) : (
               // For single y-field, render single area with clean styling
               hiddenSeriesState.includes(yKey) ? null : (
-                <g>
-                  {/* Area fill without stroke */}
-                  <AreaClosed
-                    data={chartData}
-                    x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
-                    y={(d) => yScale(Number(d[yKey]) || 0)}
-                    yScale={yScale}
-                    fill={`url(#gradient-${yKey}-${isModal ? 'modal' : 'normal'})`}
-                    stroke="none"
-                    curve={curveMonotoneX}
-                  />
-                  {/* Top line only */}
-                  <LinePath
-                    data={chartData}
-                    x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
-                    y={(d) => yScale(Number(d[yKey]) || 0)}
-                    stroke={allColorsArray[0]}
-                    strokeWidth={0.5}
-                    curve={curveMonotoneX}
-                    fill="none"
-                  />
-                </g>
+              <g>
+                {/* Area fill without stroke */}
+                <AreaClosed
+                  data={chartData}
+                  x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
+                  y={(d) => yScale(Number(d[yKey]) || 0)}
+                  yScale={yScale}
+                  fill={`url(#gradient-${yKey}-${isModal ? 'modal' : 'normal'})`}
+                  stroke="none"
+                  curve={curveMonotoneX}
+                />
+                {/* Top line only */}
+                <LinePath
+                  data={chartData}
+                  x={(d) => (xScale(d[xKey]) || 0) + xScale.bandwidth() / 2}
+                  y={(d) => yScale(Number(d[yKey]) || 0)}
+                  stroke={allColorsArray[0]}
+                  strokeWidth={0.5}
+                  curve={curveMonotoneX}
+                  fill="none"
+                />
+              </g>
               )
             )}
           </Group>
