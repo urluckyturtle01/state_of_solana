@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getChartConfigsByPage, getCounterConfigsByPage, getTableConfigsByPage } from '../utils';
 import { ChartConfig, CounterConfig, TableConfig } from '../types';
-import dynamic from 'next/dynamic';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
-
-// Lazy load components for better initial load performance
-const DashboardRenderer = React.lazy(() => import('./dashboard-renderer'));
-const CounterRenderer = React.lazy(() => import('./CounterRenderer'));
-const TableRenderer = React.lazy(() => import('./TableRenderer'));
+import DashboardRenderer from './dashboard-renderer';
+import CounterRenderer from './CounterRenderer';
+import TableRenderer from './TableRenderer';
 
 // Simple loading fallback
 const ChartLoadingFallback = () => (
@@ -518,14 +515,7 @@ export default React.memo(function EnhancedDashboardRenderer({
               'md:col-span-2' // Default to 1/3 width
             }`}
           >
-            <Suspense fallback={
-              <div className="bg-gray-900/20 border border-gray-800/50 rounded-lg p-4 animate-pulse">
-                <div className="h-4 bg-gray-700/50 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-gray-700/50 rounded w-1/2"></div>
-              </div>
-            }>
-              <MemoizedCounterRenderer counterConfig={counter} />
-            </Suspense>
+            <MemoizedCounterRenderer counterConfig={counter} />
           </div>
         ))}
       </div>
@@ -553,18 +543,7 @@ export default React.memo(function EnhancedDashboardRenderer({
               'md:col-span-6' // Full width (width=3) = 6 of 6 columns
             }`}
           >
-            <Suspense fallback={
-              <div className="bg-gray-900/20 border border-gray-800/50 rounded-lg p-4 h-64 animate-pulse">
-                <div className="h-4 bg-gray-700/50 rounded w-1/4 mb-4"></div>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gray-700/50 rounded w-full"></div>
-                  <div className="h-3 bg-gray-700/50 rounded w-full"></div>
-                  <div className="h-3 bg-gray-700/50 rounded w-full"></div>
-                </div>
-              </div>
-            }>
-              <MemoizedTableRenderer tableConfig={table} />
-            </Suspense>
+            <MemoizedTableRenderer tableConfig={table} />
           </div>
         ))}
       </div>
@@ -577,13 +556,11 @@ export default React.memo(function EnhancedDashboardRenderer({
       {renderCounters}
       
       {/* Render charts immediately without lazy loading */}
-      <Suspense fallback={null}>
-        <DashboardRenderer
-          pageId={pageId}
-          overrideCharts={overrideCharts}
-          enableCaching={enableCaching}
-        />
-      </Suspense>
+      <DashboardRenderer
+        pageId={pageId}
+        overrideCharts={overrideCharts}
+        enableCaching={enableCaching}
+      />
       
       {/* Render tables below charts */}
       {renderTables}

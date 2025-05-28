@@ -4,9 +4,10 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { TableConfig } from '../types';
 import DataTable, { Column } from '@/app/components/shared/DataTable';
 import { ExpandIcon, DownloadIcon } from '@/app/components/shared/Icons';
-import Loader from '@/app/components/shared/Loader';
+import PrettyLoader from '@/app/components/shared/PrettyLoader';
 import TimeFilter from '@/app/components/shared/filters/TimeFilter';
 import CurrencyFilter from '@/app/components/shared/filters/CurrencyFilter';
+import Loader from '@/app/components/shared/Loader';
 
 interface TableRendererProps {
   tableConfig: TableConfig;
@@ -30,6 +31,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
   const [retryCount, setRetryCount] = useState<number>(0);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [autoRetryIntervalId, setAutoRetryIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   // Filter states
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
@@ -221,6 +223,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         setData(rows);
         setLoading(false);
         setError(null);
+        // Clear auto-retry interval if it exists
+        if (autoRetryIntervalId) {
+          clearInterval(autoRetryIntervalId);
+          setAutoRetryIntervalId(null);
+        }
       } catch (fetchError) {
         clearTimeout(timeout);
         throw fetchError; // Rethrow to be handled by the retry logic
@@ -237,11 +244,19 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         return;
       }
       
+      // If all retries failed, set up an auto-retry interval
+      if (!autoRetryIntervalId) {
+        const intervalId = setInterval(() => {
+          fetchData(0);
+        }, 5000); // retry every 5 seconds
+        setAutoRetryIntervalId(intervalId);
+      }
+      
       console.error('Error fetching table data:', error);
       setError(error instanceof Error ? error.message : String(error));
       setLoading(false);
     }
-  }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading, activeFilters]);
+  }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading, activeFilters, autoRetryIntervalId]);
 
   // Function to handle manual retry
   const handleRetry = useCallback(() => {
@@ -417,6 +432,13 @@ const TableRenderer: React.FC<TableRendererProps> = ({
   // Fix: Only show loading spinner if there is no data at all
   const showLoading = loading && data.length === 0;
 
+  // Clear auto-retry interval on unmount
+  useEffect(() => {
+    return () => {
+      if (autoRetryIntervalId) clearInterval(autoRetryIntervalId);
+    };
+  }, [autoRetryIntervalId]);
+
   return (
     <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
       {/* Header Section with Title and Action Buttons */}
@@ -435,7 +457,9 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               disabled={isDownloading || data.length === 0}
             >
               {isDownloading ? (
-                <Loader size="xs" className="w-4 h-4" />
+                <div className="flex justify-center items-center h-full">
+                <PrettyLoader size="sm" />
+              </div>
               ) : (
                 <DownloadIcon className="w-4 h-4" />
               )}
@@ -544,7 +568,9 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       {/* Table content using enhanced DataTable component */}
       <div className="mt-3">
         {showLoading ? (
-          <Loader size="md" className="w-8 h-8 mx-auto my-8" />
+          <div className="flex justify-center items-center h-full">
+            <PrettyLoader size="sm" />
+          </div>
         ) : (
           <DataTable
             columns={dataTableColumns}

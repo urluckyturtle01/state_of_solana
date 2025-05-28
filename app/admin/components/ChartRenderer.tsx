@@ -54,7 +54,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 }) => {
   const [data, setData] = useState<any[]>(preloadedData || []);
   const [error, setError] = useState<string | null>(null);
-  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
   // Use internal or external filter values based on what's provided
   const [internalFilterValues, setInternalFilterValues] = useState<Record<string, string>>({});
   const [isFilterChanged, setIsFilterChanged] = useState(false);
@@ -245,6 +244,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     const signal = controller.signal;
     
     const fetchData = async () => {
+      setError(null);
+      
       // Variable to hold our parsed data
       let parsedData: any[] = [];
       
@@ -256,17 +257,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         if (cachedData) {
           console.log('Using cached data for', chartConfig.title);
           parsedData = JSON.parse(cachedData);
-          
-          // Set cached data immediately
-          setData(parsedData);
-          setError(null);
-          
-          // Start background refresh if we have cached data
-          setIsBackgroundLoading(true);
-        }
-        
-        // Always fetch fresh data in the background
-        try {
+        } else {
           // Create URL with API key if provided
           let apiUrl;
           try {
@@ -303,28 +294,34 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             // Add time filter parameter
             if (filterConfig.timeFilter && filterValues['timeFilter']) {
               parameters[filterConfig.timeFilter.paramName] = filterValues['timeFilter'];
+              console.log(`Setting time filter: ${filterConfig.timeFilter.paramName}=${filterValues['timeFilter']}`);
             } else if (filterConfig.timeFilter && 
                      Array.isArray(filterConfig.timeFilter.options) && 
                      filterConfig.timeFilter.options.length > 0) {
               parameters[filterConfig.timeFilter.paramName] = filterConfig.timeFilter.options[0];
+              console.log(`Setting default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
             }
             
             // Add currency filter parameter
             if (filterConfig.currencyFilter && filterValues['currencyFilter']) {
               parameters[filterConfig.currencyFilter.paramName] = filterValues['currencyFilter'];
+              console.log(`Setting currency filter: ${filterConfig.currencyFilter.paramName}=${filterValues['currencyFilter']}`);
             } else if (filterConfig.currencyFilter && 
                      Array.isArray(filterConfig.currencyFilter.options) && 
                      filterConfig.currencyFilter.options.length > 0) {
               parameters[filterConfig.currencyFilter.paramName] = filterConfig.currencyFilter.options[0];
+              console.log(`Setting default currency filter: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
             }
             
             // Add display mode filter parameter
             if (filterConfig.displayModeFilter && filterValues['displayModeFilter']) {
               parameters[filterConfig.displayModeFilter.paramName] = filterValues['displayModeFilter'];
+              console.log(`Setting display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterValues['displayModeFilter']}`);
             } else if (filterConfig.displayModeFilter && 
                      Array.isArray(filterConfig.displayModeFilter.options) && 
                      filterConfig.displayModeFilter.options.length > 0) {
               parameters[filterConfig.displayModeFilter.paramName] = filterConfig.displayModeFilter.options[0];
+              console.log(`Setting default display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterConfig.displayModeFilter.options[0]}`);
             }
           }
           
@@ -336,17 +333,25 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             headers: {
               'Content-Type': 'application/json',
             },
-            cache: 'no-store',
-            signal,
+            cache: 'no-store', // Use no-store to ensure we always get fresh data
+            signal, // Add abort signal
+            // Add a longer timeout for slow connections
             ...{ timeout: 15000 }
           };
           
+          // Add body with parameters for POST request
           if (hasParameters) {
+            // Format exactly as in the cURL example: {"parameters":{"Date Part":"W"}}
             options.body = JSON.stringify({ parameters });
+            console.log(`Fetching data with request body:`, options.body);
           }
           
-          // Fetch fresh data in the background
+          console.log(`Fetching data from: ${apiUrl.toString()} with method: ${options.method}`);
+          
+          // Fetch data from API with timeout and proper error handling
           const response = await fetch(apiUrl.toString(), options);
+          
+          console.log(`API response status: ${response.status} ${response.statusText}`);
           
           if (!response.ok) {
             throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
@@ -354,54 +359,191 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           
           const result = await response.json();
           
+          console.log(`API response structure:`, Object.keys(result));
+          
           // Handle different API response formats
+          
+          // Format 1: Standard Redash format with query_result.data.rows
           if (result?.query_result?.data?.rows) {
             parsedData = result.query_result.data.rows;
-          } else if (Array.isArray(result)) {
+            console.log(`Found ${parsedData.length} rows in Redash format`);
+          } 
+          // Format 2: Direct array response
+          else if (Array.isArray(result)) {
             parsedData = result;
-          } else if (result?.data && Array.isArray(result.data)) {
+            console.log(`Found ${parsedData.length} rows in direct array format`);
+          } 
+          // Format 3: Data property containing array
+          else if (result?.data && Array.isArray(result.data)) {
             parsedData = result.data;
-          } else if (result?.rows && Array.isArray(result.rows)) {
+            console.log(`Found ${parsedData.length} rows in data array format`);
+          }
+          // Format 4: Rows property containing array
+          else if (result?.rows && Array.isArray(result.rows)) {
             parsedData = result.rows;
-          } else if (result?.results && Array.isArray(result.results)) {
+            console.log(`Found ${parsedData.length} rows in rows array format`);
+          }
+          // Format 5: Results property containing array
+          else if (result?.results && Array.isArray(result.results)) {
             parsedData = result.results;
-          } else if (result?.error) {
+            console.log(`Found ${parsedData.length} rows in results array format`);
+          }
+          // Format 6: Check for error property
+          else if (result?.error) {
             throw new Error(`API returned an error: ${result.error}`);
-          } else {
+          }
+          else {
+            console.error('Unrecognized API response structure:', result);
             throw new Error('API response does not have a recognized structure');
           }
           
-          // Cache the fresh data
+          // Cache the result to prevent unnecessary fetches
           try {
             sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
           } catch (e) {
             console.warn('Failed to cache data:', e);
           }
           
-          // Update the data with fresh data
-          if (!signal.aborted) {
-            setData(parsedData);
-            setError(null);
+          // Reset filter changed flag
+          setIsFilterChanged(false);
+        }
+        
+        // Process the data if we have any (either from API or fallback)
+        if (parsedData.length > 0 && !signal.aborted) {
+          // Log the data for debugging purposes
+          console.log('Chart data successfully loaded:', parsedData.slice(0, 2));
+          
+          // Validate that we can access the required data fields
+          try {
+            const { xAxis, yAxis, groupBy } = chartConfig.dataMapping;
+            const sampleItem = parsedData[0];
+
+            // Normalize arrays and strings for processing
+            const xAxisFields = Array.isArray(xAxis) ? xAxis : [xAxis];
+            let yAxisFields: string[] = [];
             
-            // Call onDataLoaded callback if provided
-            if (onDataLoaded) {
+            // Extract field names from yAxis which could be strings or YAxisConfig objects
+            if (Array.isArray(yAxis)) {
+              yAxisFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+            } else {
+              yAxisFields = [getFieldFromYAxisConfig(yAxis)];
+            }
+            
+            // Check and normalize fields if needed
+            let needsNormalization = false;
+            
+            // Check if the required fields exist
+            const fieldExists = (item: any, field: string) => {
+              return !!findMatchingField(item, field);
+            };
+            
+            // Check x-axis fields
+            for (const field of xAxisFields) {
+              if (!fieldExists(sampleItem, field)) {
+                throw new Error(`X-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, field) !== field) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Check y-axis fields
+            for (const field of yAxisFields) {
+              if (!fieldExists(sampleItem, field)) {
+                throw new Error(`Y-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, field) !== field) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Check for group by field if this is a stacked chart
+            if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+              if (!fieldExists(sampleItem, groupBy)) {
+                throw new Error(`Group By field "${groupBy}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, groupBy) !== groupBy) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Normalize the data if needed
+            if (needsNormalization) {
+              parsedData = parsedData.map(item => {
+                const normalizedItem = { ...item };
+                
+                // Normalize x-axis fields
+                for (const field of xAxisFields) {
+                  const matchingField = findMatchingField(item, field);
+                  if (matchingField && matchingField !== field) {
+                    normalizedItem[field] = item[matchingField];
+                  }
+                }
+                
+                // Normalize y-axis fields
+                for (const field of yAxisFields) {
+                  const matchingField = findMatchingField(item, field);
+                  if (matchingField && matchingField !== field) {
+                    normalizedItem[field] = item[matchingField];
+                  }
+                }
+                
+                // Normalize group by field if needed
+                if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+                  const matchingGroupField = findMatchingField(item, groupBy);
+                  if (matchingGroupField && matchingGroupField !== groupBy) {
+                    normalizedItem[groupBy] = item[matchingGroupField];
+                  }
+                }
+                
+                return normalizedItem;
+              });
+            }
+            
+            // Call onDataLoaded callback if provided and component is still mounted
+            if (onDataLoaded && !signal.aborted) {
               onDataLoaded(parsedData);
             }
+            
+            // Set data only if component is still mounted
+            if (!signal.aborted) {
+              setData(parsedData);
+            }
+          } catch (error) {
+            if (!signal.aborted) {
+              console.error('Error processing data:', error);
+              setError(`Error processing data: ${error instanceof Error ? error.message : String(error)}`);
+            }
           }
-        } catch (error) {
-          // Only log the error, don't show it to the user if we have cached data
-          console.error('Error fetching fresh data:', error);
-          if (!cachedData) {
-            setError(`Error fetching data: ${error instanceof Error ? error.message : String(error)}`);
-          }
-        } finally {
-          setIsBackgroundLoading(false);
         }
       } catch (error) {
-        // Only set error if we don't have cached data
-        if (!parsedData.length) {
-          console.error('Error processing data:', error);
-          setError(`Error processing data: ${error instanceof Error ? error.message : String(error)}`);
+        // Only set error if the request wasn't cancelled and component is still mounted
+        if (!signal.aborted) {
+          console.error('Error fetching chart data:', error);
+          
+          // More detailed error messages based on error type
+          let errorMessage: string;
+          
+          if (error instanceof Error) {
+            // Network errors
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+              errorMessage = `Network error: Unable to reach the API. Check if the endpoint is accessible.`;
+            }
+            // CORS issues
+            else if (error.message.includes('CORS')) {
+              errorMessage = `CORS error: The API doesn't allow requests from this origin.`;
+            } 
+            // API validation errors (like 404, 500, etc.)
+            else if (error.message.includes('API request failed with status')) {
+              errorMessage = error.message;
+            }
+            // Default error message
+            else {
+              errorMessage = error.message;
+            }
+          } else {
+            errorMessage = String(error);
+          }
           
           // Use sample data as fallback
           parsedData = getSampleData(
@@ -409,7 +551,14 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             chartConfig.dataMapping.groupBy
           );
           
-          setData(parsedData);
+          // Show a warning message but continue with fallback data
+          setError(`Using fallback data: ${errorMessage}`);
+          console.log('Using fallback data:', parsedData);
+          
+          // Set the data with the fallback
+          if (!signal.aborted) {
+            setData(parsedData);
+          }
         }
       }
     };
