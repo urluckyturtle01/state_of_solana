@@ -316,12 +316,9 @@ export default function DataTable<T>({
       <div className="flex flex-col justify-center items-center h-64">
         <p className="text-red-400 text-[12px] mb-2">{error}</p>
         {onRetry && (
-          <button
-            onClick={onRetry}
-            className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
-          >
-            Retry Loading
-          </button>
+          <div className="flex justify-center items-center h-64">
+            <PrettyLoader size="sm" />
+          </div>
         )}
       </div>
     );
