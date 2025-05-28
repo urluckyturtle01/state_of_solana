@@ -14,7 +14,7 @@ export default function Layout({ children }: LayoutProps) {
   // Effect to detect mobile viewport
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is the standard md breakpoint
+      setIsMobile(window.innerWidth < 1100); // 768px is the standard md breakpoint
     };
 
     // Check on initial render
@@ -31,15 +31,19 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className={`flex flex-col md:flex-row min-h-screen bg-black w-full ${isMobile ? '' : 'overflow-hidden'}`}>
-      {/* Desktop sidebar - hidden on mobile */}
-      <div className="hidden md:block">
-        <Sidebar />
-      </div>
+       {/* Sidebar on desktop */}
+       {!isMobile && (
+        <div >
+          <Sidebar />
+        </div>
+      )}
 
-      {/* Mobile navigation - shown only on mobile */}
-      <div className="md:hidden">
-        <MobileNavbar />
-      </div>
+      {/* Mobile nav on small screens */}
+      {isMobile && (
+        <div >
+          <MobileNavbar />
+        </div>
+      )}
 
       {/* Main content - adjusted for mobile/desktop */}
       <main className={`flex-1 ${isMobile ? 'mt-18 p-4' : 'ml-48 p-8'} bg-gradient-to-br from-black to-gray-950 overflow-auto w-full`}>
