@@ -30,6 +30,8 @@ interface ChartRendererProps {
   // Add loading state prop
   isLoading?: boolean;
   hiddenSeries?: string[];
+  // Add prop to pass pre-loaded data
+  preloadedData?: any[];
 }
 
 // Add helper function at the top of the file
@@ -47,9 +49,10 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   colorMap: externalColorMap,
   onColorsGenerated,
   isLoading = false,
-  hiddenSeries = []
+  hiddenSeries = [],
+  preloadedData
 }) => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>(preloadedData || []);
   const [error, setError] = useState<string | null>(null);
   // Use internal or external filter values based on what's provided
   const [internalFilterValues, setInternalFilterValues] = useState<Record<string, string>>({});
@@ -57,6 +60,14 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   // Add state to track legend colors, use external if provided
   const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>(externalColorMap || {});
   
+  // Update data when preloadedData changes
+  useEffect(() => {
+    if (preloadedData && preloadedData.length > 0) {
+      setData(preloadedData);
+      setError(null);
+    }
+  }, [preloadedData]);
+
   // Update legendColorMap when externalColorMap changes
   useEffect(() => {
     if (externalColorMap) {
@@ -215,6 +226,12 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   // Fetch data from API when component mounts or filters change
   useEffect(() => {
+    // Skip fetching if we have preloaded data
+    if (preloadedData && preloadedData.length > 0) {
+      console.log(`Using preloaded data for chart ${chartConfig.title}, skipping API fetch`);
+      return;
+    }
+    
     // Create a stringified version of the data mapping for dependency comparison
     const dataMappingKey = JSON.stringify({
       xAxis: chartConfig.dataMapping.xAxis,

@@ -6,7 +6,7 @@ import PrettyLoader from "@/app/components/shared/PrettyLoader";
 // Create a loading component for Suspense fallback
 const ChartLoading = () => (
   <div className="w-full h-[500px] flex items-center justify-center">
-    <PrettyLoader size="sm" />
+    
   </div>
 );
 

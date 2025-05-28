@@ -89,7 +89,7 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   try {
     // Fetch charts from API with a shorter timeout for faster failure
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5-second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // Increased to 3 seconds for better reliability
     
     const charts = await getChartConfigsByPage(pageId);
     clearTimeout(timeoutId);
@@ -114,58 +114,73 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   }
 };
 
-// Batch fetch function for more efficient API calls
+// Batch fetch function for more efficient API calls with parallel execution
 const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<string, Record<string, string>>, enableCaching: boolean) => {
-  // Create an array of promises for all charts
-  const fetchPromises = charts.map(chart => {
-    const chartFilters = filterValues[chart.id] || {};
-    const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
-    
-    // Check cache first
-    if (CHART_DATA_CACHE[cacheKey]) {
-      const cachedItem = CHART_DATA_CACHE[cacheKey];
-      const now = Date.now();
+  // Split charts into batches for parallel processing
+  const PARALLEL_BATCH_SIZE = 4; // Process 4 charts at a time
+  const chartBatches: ChartConfig[][] = [];
+  
+  for (let i = 0; i < charts.length; i += PARALLEL_BATCH_SIZE) {
+    chartBatches.push(charts.slice(i, i + PARALLEL_BATCH_SIZE));
+  }
+  
+  const allResults: any[] = [];
+  
+  // Process batches in parallel
+  for (const batch of chartBatches) {
+    const batchPromises = batch.map(chart => {
+      const chartFilters = filterValues[chart.id] || {};
+      const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
       
-      // Use cached data if not expired
-      if (now - cachedItem.timestamp < cachedItem.expiresIn) {
-        return Promise.resolve({
-          chartId: chart.id,
-          data: cachedItem.data,
-          fromCache: true
-        });
-      }
-    }
-    
-    // Fetch from API if not in cache
-    return fetchChartData(chart, chartFilters, enableCaching)
-      .then(data => ({
-        chartId: chart.id,
-        data,
-        fromCache: false
-      }))
-      .catch(error => {
-        console.error(`Error fetching data for chart ${chart.id}:`, error);
+      // Check cache first
+      if (CHART_DATA_CACHE[cacheKey]) {
+        const cachedItem = CHART_DATA_CACHE[cacheKey];
+        const now = Date.now();
         
-        // Try to use cached data as fallback if available, even if expired
-        if (CHART_DATA_CACHE[cacheKey]) {
+        // Use cached data if not expired
+        if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+          return Promise.resolve({
+            chartId: chart.id,
+            data: cachedItem.data,
+            fromCache: true
+          });
+        }
+      }
+      
+      // Fetch from API if not in cache
+      return fetchChartData(chart, chartFilters, enableCaching)
+        .then(data => ({
+          chartId: chart.id,
+          data,
+          fromCache: false
+        }))
+        .catch(error => {
+          console.error(`Error fetching data for chart ${chart.id}:`, error);
+          
+          // Try to use cached data as fallback if available, even if expired
+          if (CHART_DATA_CACHE[cacheKey]) {
+            return {
+              chartId: chart.id,
+              data: CHART_DATA_CACHE[cacheKey].data,
+              fromCache: true,
+              error
+            };
+          }
+          
           return {
             chartId: chart.id,
-            data: CHART_DATA_CACHE[cacheKey].data,
-            fromCache: true,
+            data: [],
             error
           };
-        }
-        
-        return {
-          chartId: chart.id,
-          data: [],
-          error
-        };
-      });
-  });
+        });
+    });
+    
+    // Wait for current batch to complete before starting next
+    const batchResults = await Promise.all(batchPromises);
+    allResults.push(...batchResults);
+  }
   
-  // Wait for all fetches to complete
-  return Promise.all(fetchPromises);
+  return allResults;
 };
 
 // Simplified fetch function to reduce overhead
@@ -174,25 +189,34 @@ const fetchChartData = async (
   chartFilters: Record<string, string>,
   cacheEnabled: boolean = true
 ) => {
+  const cacheKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+  
   // First try to get from localStorage for instant rendering
   if (typeof window !== 'undefined' && cacheEnabled) {
     try {
-      const cacheKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
       const cachedData = localStorage.getItem(cacheKey);
       
       if (cachedData) {
         const parsedCache = JSON.parse(cachedData);
-        if (parsedCache.expires > Date.now()) {
+        const now = Date.now();
+        
+        if (parsedCache.expires > now) {
           console.log(`Using localStorage cache for chart ${chart.id}`);
           
           // Update memory cache too
-          CHART_DATA_CACHE[`${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`] = {
+          const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+          CHART_DATA_CACHE[memoryCacheKey] = {
             data: parsedCache.data,
             timestamp: parsedCache.timestamp,
             expiresIn: parsedCache.expires - parsedCache.timestamp
           };
           
-          // Refresh in background after returning cached data
+          // If data is less than 5 minutes old, just return it
+          if (now - parsedCache.timestamp < 5 * 60 * 1000) {
+            return parsedCache.data;
+          }
+          
+          // Otherwise refresh in background after returning cached data
           setTimeout(() => {
             fetchFromApi(chart, chartFilters, cacheKey, cacheEnabled).catch(console.error);
           }, 100);
@@ -215,7 +239,12 @@ const fetchChartData = async (
     if (now - cachedItem.timestamp < cachedItem.expiresIn) {
       console.log(`Using memory cache for chart ${chart.id}`);
       
-      // Refresh in background after returning cached data
+      // If data is less than 5 minutes old, just return it
+      if (now - cachedItem.timestamp < 5 * 60 * 1000) {
+        return cachedItem.data;
+      }
+      
+      // Otherwise refresh in background after returning cached data
       setTimeout(() => {
         fetchFromApi(chart, chartFilters, memoryCacheKey, cacheEnabled).catch(console.error);
       }, 500);
@@ -228,7 +257,7 @@ const fetchChartData = async (
   return fetchFromApi(chart, chartFilters, memoryCacheKey, cacheEnabled);
 };
 
-// Extract API fetch logic to reuse in background refresh
+// Extract API fetch logic to reuse in background refresh with optimized timeouts
 const fetchFromApi = async (
   chart: ChartConfig, 
   chartFilters: Record<string, string>, 
@@ -280,6 +309,9 @@ const fetchFromApi = async (
     
     // Set up request options with performance optimizations
     const hasParameters = Object.keys(parameters).length > 0;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // Reduced from 8s to 5s for faster failure
+    
     const options: RequestInit = {
       method: hasParameters ? 'POST' : 'GET',
       headers: {
@@ -289,10 +321,9 @@ const fetchFromApi = async (
       },
       // More aggressive caching strategy
       cache: 'force-cache',
-      // Reduce priority of non-critical resources
-      priority: 'high',
-      // Use a shorter timeout for faster failure/recovery
-      signal: AbortSignal.timeout(5000) // 5-second timeout (increased from 2s)
+      // Use keepalive for better connection reuse
+      keepalive: true,
+      signal: controller.signal
     };
     
     // Add body with parameters for POST request
@@ -303,6 +334,7 @@ const fetchFromApi = async (
     // Fetch data from API with optimized options
     console.log(`Fetching chart data from API: ${url.toString()}`);
     const response = await fetch(url.toString(), options);
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -339,16 +371,36 @@ const fetchFromApi = async (
     
     // Cache in localStorage for persistence across page refreshes
     if (typeof window !== 'undefined' && cacheEnabled) {
-      try {
-        const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
-        localStorage.setItem(localStorageKey, JSON.stringify({
-          data: parsedData,
-          timestamp: Date.now(),
-          expires: Date.now() + cacheExpiry,
-          apiUrl: url.toString()
-        }));
-      } catch (e) {
-        console.warn('Error caching to localStorage:', e);
+      // Use requestIdleCallback for non-blocking localStorage write
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => {
+          try {
+            const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+            localStorage.setItem(localStorageKey, JSON.stringify({
+              data: parsedData,
+              timestamp: Date.now(),
+              expires: Date.now() + cacheExpiry,
+              apiUrl: url.toString()
+            }));
+          } catch (e) {
+            console.warn('Error caching to localStorage:', e);
+          }
+        });
+      } else {
+        // Fallback for browsers without requestIdleCallback
+        setTimeout(() => {
+          try {
+            const localStorageKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
+            localStorage.setItem(localStorageKey, JSON.stringify({
+              data: parsedData,
+              timestamp: Date.now(),
+              expires: Date.now() + cacheExpiry,
+              apiUrl: url.toString()
+            }));
+          } catch (e) {
+            console.warn('Error caching to localStorage:', e);
+          }
+        }, 0);
       }
     }
     
@@ -602,7 +654,7 @@ export default function DashboardRenderer({
     }
   }, [pageId, overrideCharts]);
 
-  // Load charts and data on mount
+  // Load charts and data on mount - optimized to load data immediately
   useEffect(() => {
     setIsClient(true);
     let mounted = true;
@@ -615,24 +667,39 @@ export default function DashboardRenderer({
         
         setCharts(loadedCharts);
         
-        // Initialize loading states
+        // Initialize loading states and data
         const initialLoadingState: Record<string, boolean> = {};
+        const initialChartData: Record<string, any[]> = {};
+        
         loadedCharts.forEach(chart => {
           initialLoadingState[chart.id] = true;
+          // Initialize with empty array to prevent individual chart loading
+          initialChartData[chart.id] = [];
         });
+        
         setLoadingCharts(initialLoadingState);
+        setChartData(initialChartData);
         
         // Load all charts data
-        const results = await wrappedBatchFetchChartData(loadedCharts, {});
+        const results = await wrappedBatchFetchChartData(loadedCharts, filterValues);
         
         if (!mounted) return;
         
-        // Process results and update loading states
+        // Process results and update states
+        const newChartData: Record<string, any[]> = {};
         const newLoadingStates: Record<string, boolean> = {};
+        
         results.forEach(result => {
+          newChartData[result.chartId] = result.data || [];
           newLoadingStates[result.chartId] = false;
+          
+          // Update legends immediately
+          if (result.data && result.data.length > 0) {
+            updateLegends(result.chartId, result.data);
+          }
         });
         
+        setChartData(newChartData);
         setLoadingCharts(newLoadingStates);
         
         // Check if all charts are loaded
@@ -1725,7 +1792,12 @@ export default function DashboardRenderer({
     });
   }, []);
 
-  if (isPageLoading || !allChartsLoaded) {
+  if (!isClient) {
+    return null; // Return nothing during SSR
+  }
+
+  // Don't show page loading if we already have data from session storage
+  if (isPageLoading && Object.keys(chartData).length === 0) {
     return (
       <div className="flex flex-col justify-center items-center h-[calc(100vh-200px)] bg-black">
         <div className="relative w-18 h-18">
@@ -1744,10 +1816,6 @@ export default function DashboardRenderer({
         
       </div>
     );
-  }
-
-  if (!isClient) {
-    return null; // Return nothing during SSR
   }
 
   return (
@@ -1829,15 +1897,16 @@ export default function DashboardRenderer({
           >
             <MemoizedChartRenderer 
               chartConfig={chart} 
+              preloadedData={chartData[chart.id] || []}
               onDataLoaded={(data: any[]) => {
                 // Store initial data and update legends
-                if (!chartData[chart.id]) {
+                if (!chartData[chart.id] || chartData[chart.id].length === 0) {
                   setChartData(prev => ({
                     ...prev,
                     [chart.id]: data
                   }));
+                  updateLegends(chart.id, data);
                 }
-                updateLegends(chart.id, data);
                 
                 // Set loading to false when data is loaded
                 setLoadingCharts(prev => ({
@@ -1857,7 +1926,7 @@ export default function DashboardRenderer({
               // Pass hidden series to ChartRenderer
               hiddenSeries={hiddenSeries[chart.id] || []}
               // Pass loading state
-              isLoading={false}
+              isLoading={loadingCharts[chart.id] || false}
             />
           </div>
         </ChartCard>
