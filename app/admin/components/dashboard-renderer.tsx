@@ -867,7 +867,7 @@ export default function DashboardRenderer({
         // Hide the action buttons (camera, download, expand icons)
         const actionButtons = clone.querySelectorAll('button');
         actionButtons.forEach(button => {
-          if (button.title === 'Take Screenshot' || button.title === 'Download CSV' || button.title === 'Expand Chart') {
+          if (button.title === 'Take Screenshot' || button.title === 'Download CSV' || button.title === 'Expand Chart' || button.title === 'Share Chart') {
             button.style.display = 'none';
           }
         });

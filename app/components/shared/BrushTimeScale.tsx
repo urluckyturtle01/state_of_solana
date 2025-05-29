@@ -28,7 +28,7 @@ const BrushHandle = ({
     <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
       <path
       className=" stroke-[#374151] cursor-ew-resize"
-        fill=""
+        fill="transparent"
         d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
         //stroke='#374151'
         strokeWidth="0.7"
