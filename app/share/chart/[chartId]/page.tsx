@@ -133,125 +133,111 @@ export default function SharedChartPage() {
       chartType: chart.chartType,
       dataLength: data.length,
       groupBy: chart.dataMapping.groupBy,
+      dualAxisConfig: chart.dualAxisConfig,
       sampleData: data.slice(0, 2)
     });
 
     // Generate legends based on chart type and data
     let chartLegends: Legend[] = [];
     
-    // Check if this is a chart with groupBy field
-    const hasGroupByField = !!chart.dataMapping.groupBy;
-    const groupField = chart.dataMapping.groupBy || '';
-    const groupByFieldExists = data.length > 0 && groupField && data[0][groupField] !== undefined;
-    const isValidStackedChart = isStackedBarChart(chart) && hasGroupByField && groupByFieldExists;
-    const hasGroupByWithRegularChart = !isStackedBarChart(chart) && hasGroupByField && groupByFieldExists && 
-                                      (chart.chartType === 'bar' || chart.chartType === 'line');
+    // First, check if this is a dual-axis chart
+    const isDualAxis = chart.chartType === 'dual-axis' && chart.dualAxisConfig;
 
-    if (isValidStackedChart || hasGroupByWithRegularChart) {
-      console.log('Processing as chart with groupBy:', groupField);
-      // Use group by field values for legends
-      const uniqueGroups = Array.from(new Set(data.map(item => item[groupField])));
+    if (isDualAxis && chart.dualAxisConfig) {
+      console.log('Processing as dual axis chart');
       
-      const yField = typeof chart.dataMapping.yAxis === 'string' ? 
-        chart.dataMapping.yAxis : 
-        Array.isArray(chart.dataMapping.yAxis) ? 
-          getFieldName(chart.dataMapping.yAxis[0]) : 
-          getFieldName(chart.dataMapping.yAxis);
-
-      const groupTotals: Record<string, number> = {};
-      uniqueGroups.forEach(group => {
-        if (group !== null && group !== undefined) {
-          const groupStr = String(group);
-          groupTotals[groupStr] = data
-            .filter(item => item[groupField] === group)
-            .reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
-        }
+      // For dual axis charts, create separate legends for left and right axes
+      const leftAxisFields = chart.dualAxisConfig.leftAxisFields || [];
+      const rightAxisFields = chart.dualAxisConfig.rightAxisFields || [];
+      
+      // Process all fields from both axes
+      const allFields = [...leftAxisFields, ...rightAxisFields];
+      
+      // Calculate totals for each field for tooltips
+      const fieldTotals: Record<string, number> = {};
+      
+      allFields.forEach(field => {
+        fieldTotals[field] = data.reduce((sum, item) => 
+          sum + (Number(item[field]) || 0), 0);
       });
-
-      chartLegends = uniqueGroups
-        .filter(group => group !== null && group !== undefined)
-        .map((group, index) => {
-          const groupStr = String(group);
-          return {
-            id: groupStr,
-            label: groupStr,
-            color: legendColorMap[groupStr] || getColorByIndex(index),
-            value: groupTotals[groupStr] || 0,
-            shape: 'square' as const
-          };
-        })
-        .sort((a, b) => (b.value || 0) - (a.value || 0));
-    } else if (chart.chartType === 'pie') {
-      console.log('Processing as pie chart');
-      // Handle pie charts
-      const categoryField = typeof chart.dataMapping.xAxis === 'string' ? 
-        chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
-      const valueField = typeof chart.dataMapping.yAxis === 'string' ? 
-        chart.dataMapping.yAxis : 
-        Array.isArray(chart.dataMapping.yAxis) ? 
-          getFieldName(chart.dataMapping.yAxis[0]) : 
-          getFieldName(chart.dataMapping.yAxis);
-
-      chartLegends = data
-        .filter(item => item[categoryField] !== null && item[categoryField] !== undefined)
-        .map((item, index) => {
-          const label = String(item[categoryField]);
-          const value = Number(item[valueField]) || 0;
-          return {
-            id: label,
-            label,
-            color: legendColorMap[label] || getColorByIndex(index),
-            value,
-            shape: 'square' as const
-          };
-        })
-        .sort((a, b) => (b.value || 0) - (a.value || 0));
-    } else if (chart.chartType === 'bar' || chart.chartType === 'line') {
-      console.log('Processing as regular bar/line chart');
-      // For regular charts without groupBy, check if it's a multi-series chart
-      const xField = typeof chart.dataMapping.xAxis === 'string' ? 
-        chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
       
-      // Get field names from yAxis
-      let yAxisFields: string[] = [];
-      if (Array.isArray(chart.dataMapping.yAxis)) {
-        yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
-      } else {
-        yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
-      }
+      // Create legend items for all fields
+      chartLegends = allFields.map((field, index) => {
+        const isRightAxis = rightAxisFields.includes(field);
+        const fieldName = field.replace(/_/g, ' ')
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        
+        return {
+          id: field, // Add the raw field name as id
+          label: `${fieldName}`,
+          color: legendColorMap[field] || getColorByIndex(index),
+          value: fieldTotals[field] || 0,
+          // Determine shape based on axis (typically lines for right axis)
+          shape: isRightAxis ? 'circle' as const : 'square' as const
+        };
+      }).sort((a, b) => (b.value || 0) - (a.value || 0)); // Sort by value in descending order
+    }
+    // Check if this is a chart with groupBy field
+    else {
+      const hasGroupByField = !!chart.dataMapping.groupBy;
+      const groupField = chart.dataMapping.groupBy || '';
+      const groupByFieldExists = data.length > 0 && groupField && data[0][groupField] !== undefined;
+      const isValidStackedChart = isStackedBarChart(chart) && hasGroupByField && groupByFieldExists;
+      const hasGroupByWithRegularChart = !isStackedBarChart(chart) && hasGroupByField && groupByFieldExists && 
+                                        (chart.chartType === 'bar' || chart.chartType === 'line');
 
-      // Check if this is a date-based chart
-      const isDateBased = data.length > 0 && 
-        (xField.toLowerCase().includes('date') || 
-         xField.toLowerCase().includes('time') || 
-         typeof data[0][xField] === 'string' && 
-         data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
+      if (isValidStackedChart || hasGroupByWithRegularChart) {
+        console.log('Processing as chart with groupBy:', groupField);
+        // Use group by field values for legends
+        const uniqueGroups = Array.from(new Set(data.map(item => item[groupField])));
+        
+        const yField = typeof chart.dataMapping.yAxis === 'string' ? 
+          chart.dataMapping.yAxis : 
+          Array.isArray(chart.dataMapping.yAxis) ? 
+            getFieldName(chart.dataMapping.yAxis[0]) : 
+            getFieldName(chart.dataMapping.yAxis);
 
-      if (isDateBased && yAxisFields.length > 1) {
-        // Multi-series time chart - use y-axis field names as legends
-        chartLegends = yAxisFields.map((field, index) => {
-          const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-          const label = field.replace(/_/g, ' ')
-            .split(' ')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-          
-          return {
-            id: field,
-            label,
-            color: legendColorMap[field] || getColorByIndex(index),
-            value: total,
-            shape: 'square' as const
-          };
+        const groupTotals: Record<string, number> = {};
+        uniqueGroups.forEach(group => {
+          if (group !== null && group !== undefined) {
+            const groupStr = String(group);
+            groupTotals[groupStr] = data
+              .filter(item => item[groupField] === group)
+              .reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
+          }
         });
-      } else if (!isDateBased) {
-        // Non-date based chart - use data points as legends (limited to prevent overcrowding)
-        const maxLegendItems = 10;
+
+        chartLegends = uniqueGroups
+          .filter(group => group !== null && group !== undefined)
+          .map((group, index) => {
+            const groupStr = String(group);
+            return {
+              id: groupStr,
+              label: groupStr,
+              color: legendColorMap[groupStr] || getColorByIndex(index),
+              value: groupTotals[groupStr] || 0,
+              shape: 'square' as const
+            };
+          })
+          .sort((a, b) => (b.value || 0) - (a.value || 0));
+      } else if (chart.chartType === 'pie') {
+        console.log('Processing as pie chart');
+        // Handle pie charts
+        const categoryField = typeof chart.dataMapping.xAxis === 'string' ? 
+          chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
+        const valueField = typeof chart.dataMapping.yAxis === 'string' ? 
+          chart.dataMapping.yAxis : 
+          Array.isArray(chart.dataMapping.yAxis) ? 
+            getFieldName(chart.dataMapping.yAxis[0]) : 
+            getFieldName(chart.dataMapping.yAxis);
+
         chartLegends = data
-          .slice(0, maxLegendItems)
+          .filter(item => item[categoryField] !== null && item[categoryField] !== undefined)
           .map((item, index) => {
-            const label = String(item[xField]);
-            const value = Number(item[yAxisFields[0]]) || 0;
+            const label = String(item[categoryField]);
+            const value = Number(item[valueField]) || 0;
             return {
               id: label,
               label,
@@ -259,35 +245,91 @@ export default function SharedChartPage() {
               value,
               shape: 'square' as const
             };
-          });
-      }
-    } else if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
-      console.log('Processing as area chart');
-      // Handle area charts similar to bar/line charts
-      let yAxisFields: string[] = [];
-      if (Array.isArray(chart.dataMapping.yAxis)) {
-        yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
-      } else {
-        yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
-      }
+          })
+          .sort((a, b) => (b.value || 0) - (a.value || 0));
+      } else if (chart.chartType === 'bar' || chart.chartType === 'line') {
+        console.log('Processing as regular bar/line chart');
+        // For regular charts without groupBy, check if it's a multi-series chart
+        const xField = typeof chart.dataMapping.xAxis === 'string' ? 
+          chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
+        
+        // Get field names from yAxis
+        let yAxisFields: string[] = [];
+        if (Array.isArray(chart.dataMapping.yAxis)) {
+          yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
+        } else {
+          yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+        }
 
-      if (yAxisFields.length > 1) {
-        // Multi-series area chart
-        chartLegends = yAxisFields.map((field, index) => {
-          const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-          const label = field.replace(/_/g, ' ')
-            .split(' ')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-          
-          return {
-            id: field,
-            label,
-            color: legendColorMap[field] || getColorByIndex(index),
-            value: total,
-            shape: 'square' as const
-          };
-        });
+        // Check if this is a date-based chart
+        const isDateBased = data.length > 0 && 
+          (xField.toLowerCase().includes('date') || 
+           xField.toLowerCase().includes('time') || 
+           typeof data[0][xField] === 'string' && 
+           data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
+
+        if (isDateBased && yAxisFields.length > 1) {
+          // Multi-series time chart - use y-axis field names as legends
+          chartLegends = yAxisFields.map((field, index) => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            const label = field.replace(/_/g, ' ')
+              .split(' ')
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            
+            return {
+              id: field,
+              label,
+              color: legendColorMap[field] || getColorByIndex(index),
+              value: total,
+              shape: 'square' as const
+            };
+          });
+        } else if (!isDateBased) {
+          // Non-date based chart - use data points as legends (limited to prevent overcrowding)
+          const maxLegendItems = 10;
+          chartLegends = data
+            .slice(0, maxLegendItems)
+            .map((item, index) => {
+              const label = String(item[xField]);
+              const value = Number(item[yAxisFields[0]]) || 0;
+              return {
+                id: label,
+                label,
+                color: legendColorMap[label] || getColorByIndex(index),
+                value,
+                shape: 'square' as const
+              };
+            });
+        }
+      } else if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
+        console.log('Processing as area chart');
+        // Handle area charts similar to bar/line charts
+        let yAxisFields: string[] = [];
+        if (Array.isArray(chart.dataMapping.yAxis)) {
+          yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
+        } else {
+          yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+        }
+
+        if (yAxisFields.length > 1) {
+          // Multi-series area chart
+          chartLegends = yAxisFields.map((field, index) => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            const label = field.replace(/_/g, ' ')
+              .split(' ')
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            
+            return {
+              id: field,
+              label,
+              color: legendColorMap[field] || getColorByIndex(index),
+              value: total,
+              shape: 'square' as const
+            };
+          });
+        }
       }
     }
 
