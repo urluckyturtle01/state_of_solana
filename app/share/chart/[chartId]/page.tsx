@@ -301,6 +301,22 @@ export default function SharedChartPage() {
                 shape: 'square' as const
               };
             });
+        } else if (isDateBased && yAxisFields.length === 1) {
+          // Single series time chart - use the y-axis field name as legend
+          const field = yAxisFields[0];
+          const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+          const label = field.replace(/_/g, ' ')
+            .split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          chartLegends = [{
+            id: field,
+            label,
+            color: legendColorMap[field] || getColorByIndex(0),
+            value: total,
+            shape: 'square' as const
+          }];
         }
       } else if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
         console.log('Processing as area chart');
