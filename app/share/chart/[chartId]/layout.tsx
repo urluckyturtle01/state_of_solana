@@ -17,11 +17,11 @@ export async function generateMetadata({ params }: GenerateMetadataProps): Promi
     
     if (!response.ok) {
       return {
-        title: 'Shared Chart | Top Ledger',
-        description: 'View and interact with this shared chart from Top Ledger analytics.',
+        title: 'Shared Chart | Top Ledger Research',
+        description: 'View and interact with this shared chart from Top Ledger Research.',
         openGraph: {
-          title: 'Shared Chart | Top Ledger',
-          description: 'View and interact with this shared chart from Top Ledger analytics.',
+          title: 'Shared Chart | Top Ledger Research',
+          description: 'View and interact with this shared chart from Top Ledger Research.',
           type: 'website',
         },
       };
