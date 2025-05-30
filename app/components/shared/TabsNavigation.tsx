@@ -18,6 +18,7 @@ export interface TabsNavigationProps {
   title?: string;
   description?: string;
   showDivider?: boolean;
+  onTabClick?: (e: React.MouseEvent, tabKey: string) => void;
 }
 
 const TabsNavigation: React.FC<TabsNavigationProps> = ({
@@ -26,6 +27,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   title,
   description,
   showDivider = true,
+  onTabClick,
 }) => {
   return (
     <div>
@@ -47,6 +49,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
                 <Link
                   key={tab.key}
                   href={tab.path}
+                  onClick={onTabClick ? (e) => onTabClick(e, tab.key) : undefined}
                   className={`flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap transition-all duration-200 ${
                     isActive 
                       ? "text-white bg-gray-900/40 border-b-2 border-emerald-500" 

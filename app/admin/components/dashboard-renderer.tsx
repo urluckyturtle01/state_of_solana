@@ -12,8 +12,8 @@ import Modal from '../../components/shared/Modal';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
-import * as htmlToImage from 'html-to-image';
 import Loader from '../../components/shared/Loader';
+import { useChartScreenshot } from '../../components/shared';
 
 // Helper function to extract field name from YAxisConfig or use string directly
 function getFieldName(field: string | YAxisConfig): string {
@@ -528,6 +528,9 @@ export default function DashboardRenderer({
     return batchFetchChartData(charts, filters, enableCaching);
   }, [enableCaching]);
   
+  // Initialize screenshot functionality
+  const { captureScreenshot } = useChartScreenshot();
+  
   // Helper function to convert data to CSV format
   const convertDataToCsv = (data: any[], chart: ChartConfig, timeFilter?: string, displayMode?: string): string => {
     if (!data || data.length === 0) {
@@ -812,239 +815,25 @@ export default function DashboardRenderer({
     }));
   };
 
-  // Handle screenshot capture for chart
-  const captureChartScreenshot = async (chart: ChartConfig) => {
+  // Handle screenshot capture for chart using the new ChartScreenshot component
+  const handleChartScreenshot = async (chart: ChartConfig) => {
     try {
       // Set loading state
       setScreenshottingCharts(prev => ({ ...prev, [chart.id]: true }));
-      console.log(`Starting screenshot capture for chart: ${chart.id}`);
-
-      // Get the entire card element instead of just the chart container
+      
+      // Use the screenshot capture hook
       const cardElementId = `chart-card-${chart.id}`;
-      console.log(`Looking for card element with ID: ${cardElementId}`);
-      const cardElement = document.getElementById(cardElementId);
+      await captureScreenshot(chart, cardElementId);
       
-      if (!cardElement) {
-        console.error(`Card element not found with ID: ${cardElementId}`);
-        // Log all card IDs for debugging
-        const allCardElements = document.querySelectorAll('[id^="chart-card-"]');
-        console.log(`Found ${allCardElements.length} card elements:`, 
-          Array.from(allCardElements).map(el => el.id));
-        
-        throw new Error(`Card element not found with ID: ${cardElementId}`);
-      }
-      
-      console.log(`Found card element, dimensions: ${cardElement.offsetWidth}x${cardElement.offsetHeight}`);
-
-      try {
-        // Create a wrapper with solid background
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'fixed';
-        wrapper.style.top = '0';
-        wrapper.style.left = '0';
-        wrapper.style.width = '100vw';
-        wrapper.style.height = '100vh';
-        wrapper.style.backgroundColor = '#121212';
-        wrapper.style.zIndex = '-9999';
-        wrapper.style.display = 'flex';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.padding = '20px';
-        wrapper.style.boxSizing = 'border-box';
-        wrapper.style.overflow = 'hidden';
-        
-        // Clone the element to avoid modifying the original
-        const clone = cardElement.cloneNode(true) as HTMLElement;
-        clone.style.position = 'relative';
-        clone.style.width = `${cardElement.offsetWidth}px`;
-        clone.style.height = `${cardElement.offsetHeight}px`;
-        clone.style.backgroundColor = '#121212';
-        clone.style.color = 'white';
-        clone.style.border = '1px solid #333';
-        clone.style.maxWidth = '100%';
-        clone.style.maxHeight = '100%';
-
-        // Hide the action buttons (camera, download, expand icons)
-        const actionButtons = clone.querySelectorAll('button');
-        actionButtons.forEach(button => {
-          if (button.title === 'Take Screenshot' || button.title === 'Download CSV' || button.title === 'Expand Chart' || button.title === 'Share Chart') {
-            button.style.display = 'none';
-          }
-        });
-
-        // Create a watermark with the TopLedger logo
-        const watermark = document.createElement('div');
-        watermark.style.position = 'absolute';
-        watermark.style.top = '50%';
-        watermark.style.left = '50%';
-        watermark.style.transform = 'translate(-50%, -50%)';
-        watermark.style.zIndex = '1000';
-        watermark.style.opacity = '0.28';
-        watermark.style.pointerEvents = 'none';
-        watermark.style.display = 'flex';
-        watermark.style.flexDirection = 'column';
-        watermark.style.alignItems = 'center';
-        watermark.style.justifyContent = 'center';
-
-        // Create the image element for the logo
-        const logo = document.createElement('img');
-        logo.src = '/topledger-full 1.svg';
-        logo.style.fill = 'white';
-        logo.style.width = '100px';
-        logo.style.height = 'auto';
-        logo.style.filter = 'brightness(2)'; // Make the logo slightly brighter for visibility
-
-        // Add the logo to the watermark
-        watermark.appendChild(logo);
-
-        // Create text element for source attribution in top right corner
-        const sourceText = document.createElement('div');
-        sourceText.textContent = 'Source : Top Ledger';
-        sourceText.style.position = 'absolute';
-        sourceText.style.top = '18px';
-        sourceText.style.right = '20px';
-        //sourceText.style.transform = 'translateX(-50%)';
-        sourceText.style.color = '#4ade80'; // Bright green color
-        sourceText.style.fontSize = '10px';
-        sourceText.style.fontFamily = 'Arial, sans-serif';
-        sourceText.style.padding = '4px 8px';
-        sourceText.style.border = '0.5px solidrgb(43, 99, 64)';
-        sourceText.style.borderRadius = '2px';
-        sourceText.style.background = 'rgba(26, 255, 83, 0.08)';
-        sourceText.style.textAlign = 'center';
-        sourceText.style.zIndex = '1001'; // Higher than the watermark to ensure visibility
-        sourceText.style.letterSpacing = '1px';
-        sourceText.style.fontWeight = '300';
-
-        // Append the clone to the wrapper
-        wrapper.appendChild(clone);
-
-        // Add the watermark to the clone
-        clone.appendChild(watermark);
-
-        // Add the source text directly to the clone (not inside the watermark)
-        clone.appendChild(sourceText);
-
-        // Apply styles to fix transparency issues
-        const fixTransparency = (element: HTMLElement) => {
-          // Force background colors on elements that might be transparent
-          if (element.tagName === 'DIV' || element.tagName === 'SPAN' || element.tagName === 'P') {
-            // Get the computed style
-            const style = window.getComputedStyle(element);
-            
-            // Check if the background is transparent or semi-transparent
-            if (style.backgroundColor === 'transparent' || 
-                style.backgroundColor.includes('rgba') ||
-                style.backgroundColor === 'rgba(0, 0, 0, 0)') {
-              element.style.backgroundColor = '#121212';
-            }
-            
-            // Check text color to ensure contrast
-            if (style.color === 'transparent' ||
-                style.color.includes('rgba') ||
-                style.color === 'rgba(0, 0, 0, 0)') {
-              element.style.color = '#ffffff';  
-            }
-          }
-          
-          // Special handling for SVG elements
-          if (element.tagName === 'svg' || element.tagName === 'SVG') {
-            const svgElement = element as unknown as SVGElement;
-            svgElement.style.backgroundColor = '#121212';
-            // Ensure SVG paths and other elements are visible
-            Array.from(svgElement.querySelectorAll('*')).forEach(node => {
-              if (node instanceof SVGElement) {
-                // Set stroke to ensure visibility
-                if (!node.getAttribute('stroke') || node.getAttribute('stroke') === 'none') {
-                  node.setAttribute('stroke', 'currentColor');
-                }
-                
-                // Set fill if not already set
-                if (!node.getAttribute('fill') || node.getAttribute('fill') === 'none') {
-                  node.setAttribute('fill', 'currentColor');
-                }
-              }
-            });
-          }
-          
-          // Process child elements recursively
-          Array.from(element.children).forEach(child => {
-            if (child instanceof HTMLElement) {
-              fixTransparency(child);
-            }
-          });
-        };
-        
-        // Fix transparency issues in the clone
-        fixTransparency(clone);
-
-        // Add the watermark after fixing transparency issues
-        clone.appendChild(watermark);
-        
-        // Add the wrapper to the DOM temporarily
-        document.body.appendChild(wrapper);
-        
-        console.log('Starting image capture with html-to-image...');
-        
-        try {
-          // Add a short delay to allow the DOM to update and logo to load
-          await new Promise(resolve => setTimeout(resolve, 300));
-          
-          // Wait for the logo to load
-          await new Promise((resolve, reject) => {
-            if (logo.complete) {
-              resolve(true);
-            } else {
-              logo.onload = () => resolve(true);
-              logo.onerror = () => {
-                console.error('Logo failed to load');
-                // Continue without logo if it fails to load
-                resolve(false);
-              };
-            }
-          });
-          
-          // Use htmlToImage to capture the clone
-          const dataUrl = await htmlToImage.toJpeg(clone, {
-            quality: 0.95,
-            backgroundColor: '#121212',
-            width: cardElement.offsetWidth,
-            height: cardElement.offsetHeight,
-            style: {
-              backgroundColor: '#121212'
-            },
-            pixelRatio: 2
-          });
-          
-          console.log('Image captured successfully, creating download link');
-          
-          // Create download link
-          const link = document.createElement('a');
-          link.download = `${chart.title.replace(/\s+/g, '_').toLowerCase()}_${new Date().toISOString().split('T')[0]}.jpg`;
-          link.href = dataUrl;
-          link.click();
-          
-          console.log('Screenshot downloaded successfully');
-        } finally {
-          // Always clean up by removing the wrapper
-          if (document.body.contains(wrapper)) {
-            document.body.removeChild(wrapper);
-          }
-        }
-      } catch (captureError) {
-        console.error('Error during screenshot capture:', captureError);
-        throw captureError;
-      }
     } catch (error) {
       console.error('Error capturing screenshot:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Failed to capture screenshot: ${errorMessage}`);
+      // Error handling is already done in the hook
     } finally {
       // Clear loading state
       setScreenshottingCharts(prev => ({ ...prev, [chart.id]: false }));
     }
   };
-  
+
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
     console.log(`Filter changed for chart ${chartId}: ${filterType} = ${value}`);
@@ -1828,7 +1617,7 @@ export default function DashboardRenderer({
           accentColor="blue"
           onExpandClick={() => toggleChartExpanded(chart.id)}
           onDownloadClick={() => downloadCSV(chart)}
-          onScreenshotClick={() => captureChartScreenshot(chart)}
+          onScreenshotClick={() => handleChartScreenshot(chart)}
           isDownloading={downloadingCharts[chart.id]}
           isScreenshotting={screenshottingCharts[chart.id]}
           isLoading={false}

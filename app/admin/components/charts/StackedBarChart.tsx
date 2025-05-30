@@ -49,6 +49,7 @@ export interface StackedBarChartProps {
   yAxisUnit?: string;
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
+  displayMode?: DisplayMode;
 }
 
 interface DateBrushPoint {
@@ -73,7 +74,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   filterValues,
   yAxisUnit,
   hiddenSeries = [],
-  onFilterChange
+  onFilterChange,
+  displayMode
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -114,9 +116,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
-
-  // Add display mode to state
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('absolute');
 
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
@@ -228,21 +227,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   useEffect(() => {
     if (filterValues) {
       setModalFilterValues(filterValues);
-      // Extract display mode from filter values if available
-      if (filterValues['displayMode']) {
-        setDisplayMode(filterValues['displayMode'] as DisplayMode);
-      }
     }
   }, [filterValues]);
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
-    
-    // Update display mode state if that's what changed
-    if (key === 'displayMode') {
-      setDisplayMode(value as DisplayMode);
-    }
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -266,11 +256,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     console.log(`Filter changed: ${key} = ${value}`);
-    
-    // Update display mode state if that's what changed
-    if (key === 'displayMode') {
-      setDisplayMode(value as DisplayMode);
-    }
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -1480,7 +1465,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               {/* Display mode filter - always show this for stacked charts */}
               <div className="flex items-center">
                 <DisplayModeFilter
-                  mode={displayMode}
+                  mode={displayMode || 'absolute'}
                   onChange={(value) => handleFilterChange('displayMode', value)}
                 />
               </div>
