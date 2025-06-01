@@ -14,6 +14,7 @@ interface ApiConfig {
   chartTitle?: string;
   apiKey?: string;
   additionalOptions?: any;
+  page?: string;
 }
 
 // Column data interface
@@ -68,7 +69,8 @@ export default function ExplorerPage() {
                 columns: [],
                 chartTitle: chart.title,
                 apiKey: chart.apiKey,
-                additionalOptions: chart.additionalOptions
+                additionalOptions: chart.additionalOptions,
+                page: chart.page
               });
             }
             
@@ -166,7 +168,7 @@ export default function ExplorerPage() {
   };
 
   // Fetch data for a specific API
-  const fetchApiData = async (api: ApiConfig): Promise<any[]> => {
+  const fetchApiData = async (api: ApiConfig, customParameters?: Record<string, string>): Promise<any[]> => {
     let url = api.endpoint;
     
     // Ensure the URL has proper format - some endpoints might be missing .json
@@ -200,8 +202,8 @@ export default function ExplorerPage() {
       urlObj.searchParams.set('api_key', apiKey);
     }
     
-    // Get default parameters for filters
-    const defaultParams = getApiParameters(api);
+    // Get default parameters for filters, or use custom parameters if provided
+    const defaultParams = customParameters || getApiParameters(api);
     const hasParameters = Object.keys(defaultParams).length > 0;
     
     const finalUrl = urlObj.toString();
@@ -214,6 +216,7 @@ export default function ExplorerPage() {
     console.log('Original apiKey:', api.apiKey);
     console.log('Cleaned apiKey:', apiKey);
     console.log('Default params:', defaultParams);
+    console.log('Custom params provided:', !!customParameters);
     console.log('Has parameters:', hasParameters);
     console.log('Final URL:', finalUrl);
     console.log('Additional Options:', api.additionalOptions);
@@ -300,8 +303,8 @@ export default function ExplorerPage() {
     }
   };
 
-  // Fetch data for a selected column
-  const fetchColumnData = async (api: ApiConfig, columnName: string) => {
+  // Fetch data for a selected column with optional custom parameters
+  const fetchColumnDataWithParams = async (api: ApiConfig, columnName: string, customParameters?: Record<string, string>) => {
     const columnKey = `${api.id}_${columnName}`;
     
     setColumnData(prev => ({
@@ -319,21 +322,18 @@ export default function ExplorerPage() {
     try {
       console.log(`Fetching data for API: ${api.name} (${api.id})`);
       console.log(`Endpoint: ${api.endpoint}`);
-      console.log(`Parameters:`, getApiParameters(api));
+      console.log(`Parameters:`, customParameters || getApiParameters(api));
       
-      const data = await fetchApiData(api);
+      const data = await fetchApiData(api, customParameters);
       console.log(`Received ${data.length} rows for ${api.name}`);
       
       if (data.length === 0) {
         console.warn(`API ${api.name} returned no data`);
       }
       
-      // Limit to 100 rows for performance
-      const limitedData = data.slice(0, 100);
-      
       // Auto-detect date columns for this API if not already mapped
       if (!dateColumnMapping[api.id]) {
-        const potentialDateColumns = detectDateColumns(api, limitedData);
+        const potentialDateColumns = detectDateColumns(api, data);
         if (potentialDateColumns.length > 0) {
           // Auto-select the first detected date column
           setDateColumnMapping(prev => ({
@@ -349,7 +349,7 @@ export default function ExplorerPage() {
           apiId: api.id,
           apiName: api.name,
           columnName,
-          data: limitedData,
+          data: data, // Store all data instead of limiting to 100
           loading: false,
           error: undefined
         }
@@ -382,6 +382,11 @@ export default function ExplorerPage() {
         }
       }));
     }
+  };
+
+  // Fetch data for a selected column (wrapper function)
+  const fetchColumnData = async (api: ApiConfig, columnName: string) => {
+    return fetchColumnDataWithParams(api, columnName);
   };
 
   const toggleApiExpansion = (apiId: string) => {
@@ -424,19 +429,42 @@ export default function ExplorerPage() {
 
   // Handle parameter changes for APIs
   const handleParameterChange = (apiId: string, paramName: string, value: string) => {
+    const newParameters = {
+      ...selectedParameters[apiId],
+      [paramName]: value
+    };
+    
+    // Update state for future reference
     setSelectedParameters(prev => ({
       ...prev,
-      [apiId]: {
-        ...prev[apiId],
-        [paramName]: value
-      }
+      [apiId]: newParameters
     }));
 
-    // Refetch data for all selected columns of this API
+    // Immediately refetch data with the new parameters
     const api = apis.find(a => a.id === apiId);
     if (api && selectedColumns[apiId]) {
+      // Build the complete parameter set for this API
+      const completeParams: Record<string, string> = {};
+      
+      if (api.additionalOptions?.filters) {
+        const filters = api.additionalOptions.filters;
+        
+        // Add time filter 
+        if (filters.timeFilter?.paramName && filters.timeFilter?.options?.length > 0) {
+          const paramNameFilter = filters.timeFilter.paramName;
+          completeParams[paramNameFilter] = newParameters[paramNameFilter] || filters.timeFilter.options[0];
+        }
+        
+        // Add currency filter
+        if (filters.currencyFilter?.paramName && filters.currencyFilter?.options?.length > 0) {
+          const paramNameFilter = filters.currencyFilter.paramName;
+          completeParams[paramNameFilter] = newParameters[paramNameFilter] || filters.currencyFilter.options[0];
+        }
+      }
+      
+      // Refetch all selected columns with the new parameters
       selectedColumns[apiId].forEach(column => {
-        fetchColumnData(api, column);
+        fetchColumnDataWithParams(api, column, completeParams);
       });
     }
   };
@@ -449,6 +477,7 @@ export default function ExplorerPage() {
   // Generate table data from selected columns with date-based joining
   const generateJoinedTableData = () => {
     const selectedData = getSelectedColumnData();
+    console.log('generateJoinedTableData - selectedData:', selectedData);
     if (selectedData.length === 0) return { headers: [], rows: [], needsDateMapping: false };
 
     // Group columns by API
@@ -461,11 +490,19 @@ export default function ExplorerPage() {
     }, {} as Record<string, ColumnData[]>);
 
     const apiIds = Object.keys(apiGroups);
+    console.log('generateJoinedTableData - apiIds:', apiIds, 'apiGroups:', apiGroups);
     
     // If only one API, use simple table generation
     if (apiIds.length === 1) {
       const apiData = apiGroups[apiIds[0]];
       const maxLength = Math.max(...apiData.map(col => col.data.length));
+      console.log('Single API mode - apiData:', apiData, 'maxLength:', maxLength);
+      
+      // Log sample data structure
+      if (apiData.length > 0 && apiData[0].data.length > 0) {
+        console.log('Sample data structure:', apiData[0].data[0]);
+        console.log('Column name to look for:', apiData[0].columnName);
+      }
       
       const headers = apiData.map(col => ({
         name: col.columnName,
@@ -475,16 +512,47 @@ export default function ExplorerPage() {
       }));
       
       const rows = [];
-      for (let i = 0; i < Math.min(maxLength, 100); i++) {
+      for (let i = 0; i < maxLength; i++) {
         const row: any = { index: i + 1 };
         apiData.forEach(col => {
           const key = `${col.apiId}_${col.columnName}`;
           const rowData = col.data[i];
-          row[key] = rowData ? (rowData[col.columnName] || '-') : '-';
+          
+          // Debug logging for first few rows
+          if (i < 3) {
+            console.log(`Row ${i}, Column ${col.columnName}:`, {
+              key,
+              rowData,
+              columnName: col.columnName,
+              value: rowData ? (rowData[col.columnName] || 'NOT_FOUND') : 'NO_ROW_DATA',
+              availableKeys: rowData ? Object.keys(rowData) : 'NO_KEYS'
+            });
+          }
+          
+          // Handle case-insensitive column name matching
+          let value = '-';
+          if (rowData) {
+            // First try exact match
+            if (rowData[col.columnName] !== undefined) {
+              value = rowData[col.columnName];
+            } else {
+              // Try case-insensitive match
+              const availableKeys = Object.keys(rowData);
+              const matchingKey = availableKeys.find(key => 
+                key.toLowerCase() === col.columnName.toLowerCase()
+              );
+              if (matchingKey) {
+                value = rowData[matchingKey];
+              }
+            }
+          }
+          
+          row[key] = value;
         });
         rows.push(row);
       }
       
+      console.log('Generated rows (first 3):', rows.slice(0, 3));
       return { headers, rows, needsDateMapping: false };
     }
 
@@ -585,7 +653,24 @@ export default function ExplorerPage() {
           const colData = col.data[index];
           if (colData) {
             const key = `${col.apiId}_${col.columnName}`;
-            joinedRow[key] = colData[col.columnName] || '-';
+            
+            // Handle case-insensitive column name matching
+            let value = '-';
+            // First try exact match
+            if (colData[col.columnName] !== undefined) {
+              value = colData[col.columnName];
+            } else {
+              // Try case-insensitive match
+              const availableKeys = Object.keys(colData);
+              const matchingKey = availableKeys.find(dataKey => 
+                dataKey.toLowerCase() === col.columnName.toLowerCase()
+              );
+              if (matchingKey) {
+                value = colData[matchingKey];
+              }
+            }
+            
+            joinedRow[key] = value;
           }
         });
       });
@@ -605,7 +690,7 @@ export default function ExplorerPage() {
 
     // Sort joined data by date and convert to array
     const sortedDates = Array.from(joinedData.keys()).sort();
-    const rows = sortedDates.slice(0, 100).map((date, index) => ({
+    const rows = sortedDates.map((date, index) => ({
       index: index + 1,
       date,
       ...joinedData.get(date)

@@ -3,7 +3,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import ChartCard from "@/app/components/shared/ChartCard";
+import TextboxCard from "../components/TextboxCard";
+import AddTextboxModal from "../components/AddTextboxModal";
 import DualAxisChart from "@/app/admin/components/charts/DualAxisChart";
 import MultiSeriesLineBarChart from "@/app/admin/components/charts/MultiSeriesLineBarChart";
 import StackedBarChart from "@/app/admin/components/charts/StackedBarChart";
@@ -24,6 +27,16 @@ interface SavedChart {
   configuration: any;
   chartConfig: any;
   chartData: any[];
+  order?: number;
+}
+
+interface DashboardTextbox {
+  id: string;
+  content: string;
+  width: 'half' | 'full';
+  height?: number;
+  createdAt: Date;
+  order?: number;
 }
 
 interface Dashboard {
@@ -34,6 +47,7 @@ interface Dashboard {
   createdAt: Date;
   lastModified: Date;
   charts: SavedChart[];
+  textboxes: DashboardTextbox[];
 }
 
 interface Legend {
@@ -63,7 +77,7 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
 export default function DashboardPage() {
   const params = useParams();
   const dashboardId = params.id as string;
-  const { getDashboard } = useDashboards();
+  const { getDashboard, reorderItems, deleteChart, deleteTextbox, addTextboxToDashboard, updateTextbox } = useDashboards();
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -79,12 +93,119 @@ export default function DashboardPage() {
   // Screenshot state for charts
   const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
 
+  // Modal state
+  const [showTextboxModal, setShowTextboxModal] = useState(false);
+
   // Initialize screenshot functionality
   const { captureScreenshot } = useChartScreenshot();
 
   const dashboard = useMemo(() => {
     return getDashboard(dashboardId);
   }, [dashboardId, getDashboard]);
+
+  // Listen for edit mode changes from a global source
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Global edit mode listener
+  useEffect(() => {
+    const handleEditModeChange = (event: CustomEvent) => {
+      setIsEditMode(event.detail.isEditMode);
+      // Clear expanded chart when entering edit mode
+      if (event.detail.isEditMode) {
+        setExpandedChart(null);
+      }
+    };
+
+    window.addEventListener('dashboardEditModeChange', handleEditModeChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('dashboardEditModeChange', handleEditModeChange as EventListener);
+    };
+  }, []);
+
+  // Global textbox modal listener
+  useEffect(() => {
+    const handleTextboxModalChange = (event: CustomEvent) => {
+      setShowTextboxModal(event.detail.showTextboxModal);
+    };
+
+    window.addEventListener('textboxModalChange', handleTextboxModalChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('textboxModalChange', handleTextboxModalChange as EventListener);
+    };
+  }, []);
+
+  // Handle drag and drop for mixed items
+  const handleOnDragEnd = (result: DropResult) => {
+    if (!result.destination || !dashboard) return;
+    
+    const startIndex = result.source.index;
+    const endIndex = result.destination.index;
+    
+    if (startIndex !== endIndex) {
+      reorderItems(dashboard.id, startIndex, endIndex);
+    }
+  };
+
+  // Handle chart deletion
+  const handleDeleteChart = (chartId: string) => {
+    if (dashboard && window.confirm('Are you sure you want to delete this chart?')) {
+      deleteChart(dashboard.id, chartId);
+    }
+  };
+
+  // Handle textbox deletion
+  const handleDeleteTextbox = (textboxId: string) => {
+    if (dashboard && window.confirm('Are you sure you want to delete this textbox?')) {
+      deleteTextbox(dashboard.id, textboxId);
+    }
+  };
+
+  // Handle textbox creation
+  const handleAddTextbox = (content: string, width: 'half' | 'full') => {
+    if (dashboard) {
+      addTextboxToDashboard(dashboard.id, content, width);
+    }
+    setShowTextboxModal(false); // Close modal after adding textbox
+  };
+
+  // Handle modal close
+  const handleCloseTextboxModal = () => {
+    setShowTextboxModal(false);
+  };
+
+  // Handle textbox content change
+  const handleTextboxContentChange = (textboxId: string, content: string) => {
+    if (dashboard) {
+      updateTextbox(dashboard.id, textboxId, { content });
+    }
+  };
+
+  // Handle textbox height change
+  const handleTextboxHeightChange = (textboxId: string, height: number) => {
+    if (dashboard) {
+      updateTextbox(dashboard.id, textboxId, { height });
+    }
+  };
+
+  // Create combined items array for rendering - sort by order field
+  const allItems = useMemo(() => {
+    if (!dashboard) return [];
+    
+    // Combine and sort by order field
+    const combined = [
+      ...dashboard.charts.map(chart => ({ ...chart, itemType: 'chart' as const })),
+      ...dashboard.textboxes.map(textbox => ({ ...textbox, itemType: 'textbox' as const }))
+    ];
+    
+    // Sort by order field, with fallback to creation date for items without order
+    return combined.sort((a, b) => {
+      const orderA = a.order !== undefined ? a.order : new Date(a.createdAt).getTime();
+      const orderB = b.order !== undefined ? b.order : new Date(b.createdAt).getTime();
+      return orderA - orderB;
+    });
+  }, [dashboard]);
 
   // Generate legends for a chart based on its data and configuration
   const updateLegends = (chartId: string, data: any[], configuration: any) => {
@@ -298,7 +419,9 @@ export default function DashboardPage() {
 
   // Handle chart expand/collapse
   const handleExpandChart = (chartId: string) => {
-    setExpandedChart(chartId);
+    if (!isEditMode) {
+      setExpandedChart(chartId);
+    }
   };
 
   const handleCloseExpanded = () => {
@@ -307,6 +430,8 @@ export default function DashboardPage() {
 
   // Handle chart screenshot
   const handleChartScreenshot = async (chart: SavedChart) => {
+    if (isEditMode) return; // Don't allow screenshots in edit mode
+    
     try {
       // Set loading state
       setScreenshottingCharts(prev => ({ ...prev, [chart.id]: true }));
@@ -428,104 +553,104 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Dashboard Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/dashboards"
-              className="text-gray-400 hover:text-gray-200 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <h1 className="text-2xl font-semibold text-gray-100">{dashboard.name}</h1>
-          </div>
-          {dashboard.description && (
-            <p className="text-gray-400 text-sm ml-8">{dashboard.description}</p>
-          )}
-          <div className="flex items-center gap-4 text-xs text-gray-500 ml-8">
-            <div className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span>{dashboard.chartsCount} charts</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Last modified {formatDate(dashboard.lastModified)}</span>
-            </div>
-          </div>
-        </div>
+      {/* Add Textbox Modal */}
+      <AddTextboxModal
+        isOpen={showTextboxModal}
+        onClose={handleCloseTextboxModal}
+        onSubmit={handleAddTextbox}
+      />
 
-        {/* Dashboard Actions */}
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 text-sm text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md transition-colors flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add Chart
-          </button>
-          <button className="px-3 py-1.5 text-sm text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md transition-colors flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Settings
-          </button>
-        </div>
-      </div>
-
-      {/* Charts Grid */}
-      {dashboard.charts.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {dashboard.charts.map(chart => (
-            <ChartCard
-              key={chart.id}
-              title={chart.name}
-              description={chart.description}
-              className="h-[460px]"
-              id={`chart-card-${chart.id}`}
-              onExpandClick={() => handleExpandChart(chart.id)}
-              onScreenshotClick={() => handleChartScreenshot(chart)}
-              isScreenshotting={screenshottingCharts[chart.id]}
-              filterBar={
-                isStackedChart(chart) ? (
-                  <div className="flex flex-wrap gap-3 items-center">
-                    <DisplayModeFilter
-                      mode={displayModes[chart.id] || 'absolute'}
-                      onChange={(mode) => handleDisplayModeChange(chart.id, mode)}
-                    />
-                  </div>
-                ) : undefined
-              }
-              legend={
-                <>
-                  {legends[chart.id] && legends[chart.id].length > 0 ? (
-                    legends[chart.id].map(legend => (
-                      <LegendItem 
-                        key={legend.id || legend.label}
-                        label={truncateLabel(legend.label)} 
-                        color={legend.color} 
-                        shape={legend.shape || 'square'}
-                        tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
-                        onClick={() => handleLegendClick(chart.id, legend.id || legend.label)}
-                        inactive={(hiddenSeries[chart.id] || []).includes(legend.id || legend.label)}
-                      />
-                    ))
-                  ) : null}
-                </>
-              }
-            >
-              {renderChart(chart)}
-            </ChartCard>
-          ))}
-          
-          
-        </div>
+      {/* Charts and Textboxes Grid */}
+      {allItems.length > 0 ? (
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable droppableId="dashboard-items" isDropDisabled={!isEditMode}>
+            {(provided) => (
+              <div 
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-start"
+              >
+                {allItems.map((item, index) => (
+                  <Draggable 
+                    key={item.id} 
+                    draggableId={item.id} 
+                    index={index}
+                    isDragDisabled={!isEditMode}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        className={`transition-all duration-200 relative ${
+                          snapshot.isDragging ? 'transform rotate-2 scale-105 z-50' : ''
+                        } ${
+                          item.itemType === 'textbox' && item.width === 'full' ? 'md:col-span-2' : ''
+                        }`}
+                      >
+                        {item.itemType === 'chart' ? (
+                          <ChartCard
+                            title={item.name}
+                            description={item.description}
+                            className="h-[460px]"
+                            id={`chart-card-${item.id}`}
+                            onExpandClick={() => handleExpandChart(item.id)}
+                            onScreenshotClick={() => handleChartScreenshot(item)}
+                            onDeleteClick={() => handleDeleteChart(item.id)}
+                            isScreenshotting={screenshottingCharts[item.id]}
+                            isEditMode={isEditMode}
+                            dragHandleProps={provided.dragHandleProps}
+                            filterBar={
+                              isStackedChart(item) ? (
+                                <div className="flex flex-wrap gap-3 items-center">
+                                  <DisplayModeFilter
+                                    mode={displayModes[item.id] || 'absolute'}
+                                    onChange={(mode) => handleDisplayModeChange(item.id, mode)}
+                                  />
+                                </div>
+                              ) : undefined
+                            }
+                            legend={
+                              <>
+                                {legends[item.id] && legends[item.id].length > 0 ? (
+                                  legends[item.id].map(legend => (
+                                    <LegendItem 
+                                      key={legend.id || legend.label}
+                                      label={truncateLabel(legend.label)} 
+                                      color={legend.color} 
+                                      shape={legend.shape || 'square'}
+                                      tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
+                                      onClick={() => handleLegendClick(item.id, legend.id || legend.label)}
+                                      inactive={(hiddenSeries[item.id] || []).includes(legend.id || legend.label)}
+                                    />
+                                  ))
+                                ) : null}
+                              </>
+                            }
+                          >
+                            {renderChart(item)}
+                          </ChartCard>
+                        ) : (
+                          <TextboxCard
+                            id={item.id}
+                            content={item.content}
+                            width={item.width}
+                            height={item.height}
+                            isEditMode={isEditMode}
+                            onDeleteClick={() => handleDeleteTextbox(item.id)}
+                            onContentChange={(content) => handleTextboxContentChange(item.id, content)}
+                            onHeightChange={(height) => handleTextboxHeightChange(item.id, height)}
+                            dragHandleProps={provided.dragHandleProps}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       ) : (
         /* Empty State */
         <div className="flex items-center justify-center h-[400px] border-2 border-dashed border-gray-800 rounded-lg">
@@ -536,9 +661,9 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-200 mb-2">No charts yet</h3>
+              <h3 className="text-lg font-medium text-gray-200 mb-2">No content yet</h3>
               <p className="text-gray-400 text-sm mb-4">
-                Start creating visualizations in the Explorer and add them to this dashboard
+                Start creating visualizations in the Explorer or add textboxes to this dashboard
               </p>
               <Link 
                 href="/explorer"

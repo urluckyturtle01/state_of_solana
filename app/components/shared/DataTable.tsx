@@ -255,7 +255,7 @@ export default function DataTable<T>({
       case 'striped':
         return `${baseClass} ${className}`;
       case 'bordered':
-        return `${baseClass} border border-gray-700 ${className}`;
+        return `${baseClass} border border-gray-900 ${className}`;
       case 'compact':
         return `${baseClass} text-xs ${className}`;
       default:
@@ -268,7 +268,7 @@ export default function DataTable<T>({
     let rowClass = rowClassName(index);
     
     if (variant === 'striped' && index % 2 === 0) {
-      rowClass += ' bg-gray-800/30';
+      rowClass += ' bg-gray-900/10';
     }
     
     if (variant === 'compact') {
@@ -350,7 +350,7 @@ export default function DataTable<T>({
                   <td 
                     key={`${keyExtractor(row)}-${column.key}`} 
                     className={`text-[12px] ${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
-                      variant === 'bordered' ? 'border-x border-gray-700' : ''
+                      variant === 'bordered' ? 'border-x border-gray-900' : ''
                     }`}
                   >
                     {renderCell(row, column)}

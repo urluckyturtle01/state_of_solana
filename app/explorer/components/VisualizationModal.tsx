@@ -23,6 +23,16 @@ interface VisualizationModalProps {
     rows: any[];
   };
   onSaveVisualization: (name: string, configuration: ChartConfiguration, chartConfig: ChartConfig, chartData: any[]) => void;
+  editingVisualization?: SavedVisualization | null;
+}
+
+interface SavedVisualization {
+  id: string;
+  name: string;
+  description?: string;
+  configuration: any;
+  chartConfig: any;
+  chartData: any[];
 }
 
 interface SeriesConfig {
@@ -42,6 +52,7 @@ interface ChartConfiguration {
   xColumn: string;
   yColumns: string[];
   groupBy: string;
+  isStacked: boolean;
   series: SeriesConfig[];
   colors: Record<string, string>;
 }
@@ -65,13 +76,48 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
   return label.substring(0, maxLength) + '...';
 };
 
+// Function to clean up API field names for better display
+const cleanFieldName = (fieldName: string): string => {
+  // Handle null/undefined fieldName
+  if (!fieldName || typeof fieldName !== 'string') {
+    return '';
+  }
+  
+  // Remove API URL prefix if present
+  let cleaned = fieldName;
+  
+  // Remove URL pattern (everything before the last part that starts with "Get")
+  const getIndex = cleaned.toLowerCase().lastIndexOf(' get ');
+  if (getIndex !== -1) {
+    cleaned = cleaned.substring(getIndex + 5); // +5 to remove " get "
+  }
+  
+  // If no "Get" found, try to extract from URL pattern
+  if (getIndex === -1 && cleaned.includes('api/queries/')) {
+    const parts = cleaned.split(' ');
+    // Find parts that don't contain URL-like strings
+    const meaningfulParts = parts.filter(part => 
+      !part.includes('http') && 
+      !part.includes('api/') && 
+      !part.toLowerCase().startsWith('get')
+    );
+    cleaned = meaningfulParts.join(' ');
+  }
+  
+  // Remove any remaining "Get" prefix
+  cleaned = cleaned.replace(/^get\s+/i, '');
+  
+  return cleaned.trim();
+};
+
 const VisualizationModal: React.FC<VisualizationModalProps> = ({
   isOpen,
   onClose,
   columnData,
   apis,
   joinedTableData,
-  onSaveVisualization
+  onSaveVisualization,
+  editingVisualization
 }) => {
   const [activeTab, setActiveTab] = useState('General');
   const [configuration, setConfiguration] = useState<ChartConfiguration>({
@@ -83,6 +129,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     xColumn: '',
     yColumns: [],
     groupBy: '',
+    isStacked: false,
     series: [],
     colors: {}
   });
@@ -127,10 +174,43 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     }
   }, [availableColumns, configuration.xColumn]);
 
-  // Auto-switch to stacked when groupBy is selected
+  // Initialize configuration when editing a visualization
   useEffect(() => {
-    if (configuration.groupBy && configuration.groupBy !== '') {
-      // When groupBy is selected, automatically switch to stacked if not already set
+    if (editingVisualization && isOpen) {
+      setConfiguration(editingVisualization.configuration);
+      // Reset other states that might be affected
+      setActiveTab('General');
+      setDisplayMode('absolute');
+      setHiddenSeries([]);
+      setLegendColorMap({});
+      setLegends([]);
+    } else if (!editingVisualization && isOpen) {
+      // Reset to default configuration when creating new visualization
+      setConfiguration({
+        name: 'Chart',
+        description: '',
+        type: 'bar',
+        chartType: 'simple',
+        isHorizontal: false,
+        xColumn: '',
+        yColumns: [],
+        groupBy: '',
+        isStacked: false,
+        series: [],
+        colors: {}
+      });
+      setActiveTab('General');
+      setDisplayMode('absolute');
+      setHiddenSeries([]);
+      setLegendColorMap({});
+      setLegends([]);
+    }
+  }, [editingVisualization, isOpen]);
+
+  // Auto-switch to stacked when isStacked is checked - modified to respect the checkbox
+  useEffect(() => {
+    if (configuration.isStacked) {
+      // When isStacked is checked, automatically switch to stacked if not already set
       if (configuration.chartType === 'simple') {
         setConfiguration(prev => ({
           ...prev,
@@ -138,25 +218,28 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
         }));
       }
     } else {
-      // When groupBy is cleared, switch back to simple if currently stacked (unless we have multiple Y columns)
-      if (configuration.chartType === 'stacked' && configuration.yColumns.length <= 1) {
+      // When isStacked is unchecked, switch back to simple if currently stacked (unless we have dual axis)
+      if (configuration.chartType === 'stacked') {
         setConfiguration(prev => ({
           ...prev,
           chartType: 'simple'
         }));
       }
     }
-  }, [configuration.groupBy, configuration.chartType, configuration.yColumns.length]);
+  }, [configuration.isStacked, configuration.chartType]);
 
   // Update series when yColumns change
   useEffect(() => {
     if (configuration.yColumns.length > 0) {
+      // Standard series generation for yColumns
       const newSeries = configuration.yColumns.map((col, index) => {
         const existingSeries = configuration.series.find(s => s.id === col);
         return existingSeries || {
           id: col,
           label: availableColumns.find(c => c.key === col)?.name || col,
-          yAxis: index === 0 ? 'left' as const : 'right' as const,
+          // For stacked charts, all series should use the same Y-axis (left)
+          // For non-stacked charts, alternate between left and right
+          yAxis: configuration.isStacked ? 'left' as const : (index === 0 ? 'left' as const : 'right' as const),
           type: 'bar' as const,
           order: index + 1
         };
@@ -169,67 +252,179 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     }
   }, [configuration.yColumns, availableColumns]);
 
+  // Update series Y-axis assignments when isStacked changes
+  useEffect(() => {
+    if (configuration.series.length > 0) {
+      const updatedSeries = configuration.series.map((series, index) => ({
+        ...series,
+        // For stacked charts, all series should use the same Y-axis (left)
+        // For non-stacked charts, alternate between left and right
+        yAxis: configuration.isStacked ? 'left' as const : (index === 0 ? 'left' as const : 'right' as const)
+      }));
+      
+      // Only update if there's actually a change
+      const hasChanges = updatedSeries.some((series, index) => 
+        series.yAxis !== configuration.series[index].yAxis
+      );
+      
+      if (hasChanges) {
+        setConfiguration(prev => ({
+          ...prev,
+          series: updatedSeries
+        }));
+      }
+    }
+  }, [configuration.isStacked]);
+
   // Generate chart data from joined table data
   const chartData = useMemo(() => {
     if (!configuration.xColumn || joinedTableData.rows.length === 0) {
       return [];
     }
 
-    // Determine if we're using a stacked chart
     const hasGroupBy = Boolean(configuration.groupBy && configuration.groupBy !== '');
-    const isStackedChart = hasGroupBy || (configuration.yColumns.length > 1 && configuration.chartType === 'stacked');
-
-    if (isStackedChart) {
-      // For StackedBarChart, use original column names
-      return joinedTableData.rows.map(row => {
-        const dataPoint: any = {};
+    
+    // If we have groupBy but not stacked, transform data for grouped bars
+    if (hasGroupBy && !configuration.isStacked) {
+      // Transform data so each group becomes a separate field
+      const groupedData: Record<string, any> = {};
+      const uniqueGroups = new Set<string>();
+      
+      // Clean field names
+      const cleanedXColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.xColumn)?.name || configuration.xColumn);
+      const cleanedYColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.yColumns[0])?.name || configuration.yColumns[0]);
+      const cleanedGroupColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.groupBy)?.name || configuration.groupBy);
+      
+      // Collect all unique x-values and group values
+      joinedTableData.rows.forEach(row => {
+        const xValue = row[configuration.xColumn];
+        const groupValue = String(row[configuration.groupBy] || 'Unknown');
         
-        // Add x-axis value with original column name
-        dataPoint[configuration.xColumn] = row[configuration.xColumn];
+        // Store unique groups
+        uniqueGroups.add(groupValue);
         
-        // Add y-axis values with original column names
-        configuration.yColumns.forEach(yCol => {
-          dataPoint[yCol] = parseFloat(row[yCol]) || 0;
-        });
-        
-        // Add group by value with original column name if specified
-        if (configuration.groupBy) {
-          dataPoint[configuration.groupBy] = row[configuration.groupBy];
+        // Initialize x-value group if needed
+        if (!groupedData[xValue]) {
+          groupedData[xValue] = { [cleanedXColumn]: xValue };
         }
         
-        return dataPoint;
+        // Store the value for each group
+        const yValue = parseFloat(row[configuration.yColumns[0]]) || 0;
+        groupedData[xValue][groupValue] = (groupedData[xValue][groupValue] || 0) + yValue;
       });
-    } else {
-      // For other charts (MultiSeriesLineBarChart, DualAxisChart), use cleaned field names
-      const xColumnName = configuration.xColumn.split('_').pop() || configuration.xColumn;
       
-      return joinedTableData.rows.map(row => {
-        const dataPoint: any = {};
-        
-        // Add x-axis value with cleaned name
-        dataPoint[xColumnName] = row[configuration.xColumn];
-        
-        // Add y-axis values with cleaned names
-        configuration.yColumns.forEach(yCol => {
-          // Use the same intelligent field name extraction as in updateLegends
-          let fieldName: string;
-          if (yCol.includes('_')) {
-            const parts = yCol.split('_');
-            if (parts.length >= 3) {
-              fieldName = parts.slice(-2).join('_'); // e.g., "25th_percentile"
-            } else {
-              fieldName = parts[parts.length - 1]; // fallback to last part
-            }
-          } else {
-            fieldName = yCol;
+      // Fill missing groups with 0 for each x-value
+      Object.keys(groupedData).forEach(xValue => {
+        uniqueGroups.forEach(group => {
+          if (!(group in groupedData[xValue])) {
+            groupedData[xValue][group] = 0;
           }
-          dataPoint[fieldName] = parseFloat(row[yCol]) || 0;
+        });
+      });
+      
+      return Object.values(groupedData);
+    }
+    
+    // Standard processing for non-groupBy or stacked charts
+    return joinedTableData.rows.map(row => {
+      const dataPoint: any = {};
+      
+      // Add x-axis value with cleaned column name
+      const cleanedXColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.xColumn)?.name || configuration.xColumn);
+      dataPoint[cleanedXColumn] = row[configuration.xColumn];
+      
+      // Add y-axis values with cleaned column names
+      configuration.yColumns.forEach(yCol => {
+        const cleanedYColumn = cleanFieldName(availableColumns.find(col => col.key === yCol)?.name || yCol);
+        dataPoint[cleanedYColumn] = parseFloat(row[yCol]) || 0;
+      });
+      
+      // Add group by value with cleaned column name if specified
+      if (configuration.groupBy) {
+        const cleanedGroupColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.groupBy)?.name || configuration.groupBy);
+        dataPoint[cleanedGroupColumn] = row[configuration.groupBy];
+      }
+      
+      return dataPoint;
+    });
+  }, [configuration, joinedTableData.rows, availableColumns]);
+
+  // Update series for grouped charts after chartData is available
+  useEffect(() => {
+    const hasGroupBy = Boolean(configuration.groupBy && configuration.groupBy !== '');
+    
+    // Special handling for grouped but not stacked charts
+    if (hasGroupBy && !configuration.isStacked && chartData.length > 0 && configuration.yColumns.length > 0) {
+      // For grouped charts, series are based on group values, not yColumns
+      const cleanedXColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.xColumn)?.name || configuration.xColumn);
+      const uniqueGroups = new Set<string>();
+      
+      // Extract unique groups from the transformed data
+      chartData.forEach(dataPoint => {
+        Object.keys(dataPoint).forEach(key => {
+          if (key !== cleanedXColumn) {
+            uniqueGroups.add(key);
+          }
+        });
+      });
+      
+      // Only update series if the groups have actually changed
+      const currentGroupIds = new Set(configuration.series.map(s => s.id));
+      const newGroupIds = new Set(Array.from(uniqueGroups));
+      
+      // Check if groups have changed
+      const groupsChanged = currentGroupIds.size !== newGroupIds.size || 
+        Array.from(newGroupIds).some(group => !currentGroupIds.has(group));
+      
+      if (groupsChanged) {
+        const groupSeries = Array.from(uniqueGroups).map((group, index) => {
+          const existingSeries = configuration.series.find(s => s.id === group);
+          return existingSeries || {
+            id: group,
+            label: group,
+            yAxis: 'left' as const,
+            type: 'bar' as const,
+            order: index + 1
+          };
         });
         
-        return dataPoint;
-      });
+        setConfiguration(prev => ({
+          ...prev,
+          series: groupSeries
+        }));
+      }
+    } else if (!hasGroupBy && configuration.yColumns.length > 0) {
+      // When groupBy is removed, revert to yColumn-based series
+      // Check if current series are group-based (not matching yColumns)
+      const currentSeriesIds = new Set(configuration.series.map(s => s.id));
+      const yColumnIds = new Set(configuration.yColumns);
+      
+      // If series don't match yColumns, regenerate them
+      const seriesNeedReset = currentSeriesIds.size !== yColumnIds.size || 
+        Array.from(yColumnIds).some(col => !currentSeriesIds.has(col));
+      
+      if (seriesNeedReset) {
+        const yColumnSeries = configuration.yColumns.map((col, index) => {
+          // Try to preserve existing series configuration if it exists
+          const existingSeries = configuration.series.find(s => s.id === col);
+          return existingSeries || {
+            id: col,
+            label: availableColumns.find(c => c.key === col)?.name || col,
+            // For stacked charts, all series should use the same Y-axis (left)
+            // For non-stacked charts, alternate between left and right
+            yAxis: configuration.isStacked ? 'left' as const : (index === 0 ? 'left' as const : 'right' as const),
+            type: 'bar' as const,
+            order: index + 1
+          };
+        });
+        
+        setConfiguration(prev => ({
+          ...prev,
+          series: yColumnSeries
+        }));
+      }
     }
-  }, [configuration, joinedTableData.rows]);
+  }, [configuration.groupBy, configuration.isStacked, configuration.yColumns.length, availableColumns, configuration.xColumn]);
 
   // Update legends when chart data or configuration changes
   useEffect(() => {
@@ -245,45 +440,64 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     const hasGroupBy = Boolean(configuration.groupBy && configuration.groupBy !== '');
     const hasMultipleSeries = configuration.series.length > 1;
     
-    // Determine the appropriate chart type
+    // Determine the appropriate chart type - now respects isStacked checkbox
     let finalChartType: ChartType;
     if (hasDualAxis) {
       finalChartType = 'dual-axis';
-    } else if (hasGroupBy || (hasMultipleSeries && configuration.chartType === 'stacked')) {
+    } else if (configuration.isStacked) {
+      // Only use stacked-bar when isStacked is explicitly checked
       finalChartType = 'stacked-bar';
     } else {
+      // Use regular bar for non-stacked (even with groupBy)
       finalChartType = 'bar';
     }
 
-    // For stacked charts, use full column names; for others, use cleaned names
+    // Use cleaned field names to match the data
     const isStackedChart = finalChartType === 'stacked-bar';
-    const xAxisValue = isStackedChart 
-      ? configuration.xColumn 
-      : configuration.xColumn.split('_').pop() || configuration.xColumn;
+    const xAxisValue = cleanFieldName(availableColumns.find(col => col.key === configuration.xColumn)?.name || configuration.xColumn);
 
-    // For StackedBarChart, it expects strings in yAxis field, not YAxisConfig objects
+    // For all chart types, use cleaned field names to match the data
     let yAxisValue: string | string[] | YAxisConfig | YAxisConfig[];
     if (isStackedChart) {
-      // For stacked charts, use full column names as plain strings
-      yAxisValue = configuration.yColumns.length === 1 ? configuration.yColumns[0] : configuration.yColumns;
+      // For stacked charts, use cleaned column names as plain strings
+      const cleanedYColumns = configuration.yColumns.map(yCol => 
+        cleanFieldName(availableColumns.find(col => col.key === yCol)?.name || yCol)
+      );
+      yAxisValue = cleanedYColumns.length === 1 ? cleanedYColumns[0] : cleanedYColumns;
+    } else if (hasGroupBy && !configuration.isStacked) {
+      // For non-stacked grouped charts, we need to create YAxisConfig for each group
+      // Extract unique groups from chartData
+      const uniqueGroups = new Set<string>();
+      chartData.forEach(dataPoint => {
+        Object.keys(dataPoint).forEach(key => {
+          // Skip the x-axis field
+          const cleanedXColumn = cleanFieldName(availableColumns.find(col => col.key === configuration.xColumn)?.name || configuration.xColumn);
+          if (key !== cleanedXColumn) {
+            uniqueGroups.add(key);
+          }
+        });
+      });
+      
+      // Map each group to its corresponding series configuration
+      const groupConfigs: YAxisConfig[] = Array.from(uniqueGroups).map(group => {
+        // Find the series configuration for this group
+        const seriesConfig = configuration.series.find(s => s.id === group || s.label === group);
+        const seriesType = seriesConfig ? seriesConfig.type : 'bar';
+        
+        return {
+          field: group,
+          type: seriesType, // Use the individual series type
+          unit: undefined
+        };
+      });
+      
+      yAxisValue = groupConfigs.length === 1 ? groupConfigs[0] : groupConfigs;
     } else {
       // For other charts that need YAxisConfig with cleaned field names
       const yAxisConfigs: YAxisConfig[] = configuration.series.map(series => {
-        // Use the same intelligent field name extraction
-        let fieldName: string;
-        if (series.id.includes('_')) {
-          const parts = series.id.split('_');
-          if (parts.length >= 3) {
-            fieldName = parts.slice(-2).join('_'); // e.g., "25th_percentile"
-          } else {
-            fieldName = parts[parts.length - 1]; // fallback to last part
-          }
-        } else {
-          fieldName = series.id;
-        }
-        
+        const cleanedFieldName = cleanFieldName(availableColumns.find(col => col.key === series.id)?.name || series.id);
         return {
-          field: fieldName,
+          field: cleanedFieldName,
           type: series.type,
           unit: undefined
         };
@@ -301,42 +515,22 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
       dataMapping: {
         xAxis: xAxisValue,
         yAxis: yAxisValue,
-        groupBy: hasGroupBy ? configuration.groupBy : undefined // Only used by stacked charts
+        groupBy: hasGroupBy ? cleanFieldName(availableColumns.find(col => col.key === configuration.groupBy)?.name || configuration.groupBy) : undefined
       },
       useDistinctColors: hasMultipleSeries || hasGroupBy,
       dualAxisConfig: hasDualAxis ? {
-        leftAxisFields: configuration.series.filter(s => s.yAxis === 'left').map(s => {
-          // Use the same intelligent field name extraction
-          if (s.id.includes('_')) {
-            const parts = s.id.split('_');
-            if (parts.length >= 3) {
-              return parts.slice(-2).join('_'); // e.g., "25th_percentile"
-            } else {
-              return parts[parts.length - 1]; // fallback to last part
-            }
-          } else {
-            return s.id;
-          }
-        }),
-        rightAxisFields: configuration.series.filter(s => s.yAxis === 'right').map(s => {
-          // Use the same intelligent field name extraction
-          if (s.id.includes('_')) {
-            const parts = s.id.split('_');
-            if (parts.length >= 3) {
-              return parts.slice(-2).join('_'); // e.g., "25th_percentile"
-            } else {
-              return parts[parts.length - 1]; // fallback to last part
-            }
-          } else {
-            return s.id;
-          }
-        }),
+        leftAxisFields: configuration.series.filter(s => s.yAxis === 'left').map(s => 
+          cleanFieldName(availableColumns.find(col => col.key === s.id)?.name || s.id)
+        ),
+        rightAxisFields: configuration.series.filter(s => s.yAxis === 'right').map(s => 
+          cleanFieldName(availableColumns.find(col => col.key === s.id)?.name || s.id)
+        ),
         leftAxisType: configuration.series.find(s => s.yAxis === 'left')?.type || 'bar',
         rightAxisType: configuration.series.find(s => s.yAxis === 'right')?.type || 'line'
       } : undefined,
       additionalOptions: {}
     };
-  }, [configuration]);
+  }, [configuration, availableColumns]);
 
   const tabs = ['General', 'X Axis', 'Y Axis', 'Series'];
 
@@ -365,8 +559,8 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     }));
   };
 
-  // Check if stacked chart option should be available
-  const canUseStackedChart = Boolean(configuration.groupBy && configuration.groupBy !== '') || configuration.yColumns.length > 1;
+  // Check if stacked chart option should be available - modified to be more flexible
+  const canUseStackedChart = configuration.yColumns.length > 0;
 
   // Generate legends for the preview chart
   const updateLegends = (data: any[], config: ChartConfiguration) => {
@@ -377,23 +571,68 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     const isNewColorMap = Object.keys(colorMap).length === 0;
     
     const hasGroupBy = Boolean(config.groupBy && config.groupBy !== '');
-    const groupField = config.groupBy || '';
+    const cleanedGroupField = hasGroupBy ? cleanFieldName(availableColumns.find(col => col.key === config.groupBy)?.name || config.groupBy) : '';
     const isDual = config.chartType === 'dual';
     
-    if (hasGroupBy && data[0] && data[0][groupField] !== undefined) {
-      // Chart with groupBy - show group values in legend
-      const uniqueGroups = Array.from(new Set(data.map(item => item[groupField])));
+    // Special handling for non-stacked grouped charts
+    if (hasGroupBy && !config.isStacked && data.length > 0) {
+      // For non-stacked grouped charts, each group becomes a separate series
+      const cleanedXColumn = cleanFieldName(availableColumns.find(col => col.key === config.xColumn)?.name || config.xColumn);
+      const uniqueGroups = new Set<string>();
+      
+      // Extract all group fields from the transformed data
+      data.forEach(dataPoint => {
+        Object.keys(dataPoint).forEach(key => {
+          if (key !== cleanedXColumn) {
+            uniqueGroups.add(key);
+          }
+        });
+      });
       
       const groupTotals: Record<string, number> = {};
-      const yField = config.yColumns[0];
+      
+      // Calculate totals for each group
+      Array.from(uniqueGroups).forEach(group => {
+        groupTotals[group] = data.reduce((sum, item) => sum + (Number(item[group]) || 0), 0);
+      });
+      
+      // Assign colors if new color map
+      if (isNewColorMap) {
+        const sortedGroups = Object.entries(groupTotals)
+          .sort((a, b) => b[1] - a[1])
+          .map(([group]) => group);
+        
+        sortedGroups.forEach((group, index) => {
+          if (!colorMap[group]) {
+            colorMap[group] = getColorByIndex(index);
+          }
+        });
+      }
+      
+      chartLegends = Array.from(uniqueGroups)
+        .map(group => ({
+          id: group,
+          label: group,
+          color: colorMap[group] || getColorByIndex(Array.from(uniqueGroups).indexOf(group)),
+          value: groupTotals[group] || 0,
+          shape: 'square' as const
+        }))
+        .sort((a, b) => (b.value || 0) - (a.value || 0));
+    }
+    else if (hasGroupBy && data[0] && data[0][cleanedGroupField] !== undefined) {
+      // Chart with groupBy - show group values in legend
+      const uniqueGroups = Array.from(new Set(data.map(item => item[cleanedGroupField])));
+      
+      const groupTotals: Record<string, number> = {};
+      const cleanedYField = cleanFieldName(availableColumns.find(col => col.key === config.yColumns[0])?.name || config.yColumns[0]);
       
       uniqueGroups.forEach(group => {
         if (group !== null && group !== undefined) {
           const groupStr = String(group);
           
           groupTotals[groupStr] = data
-            .filter(item => item[groupField] === group)
-            .reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
+            .filter(item => item[cleanedGroupField] === group)
+            .reduce((sum, item) => sum + (Number(item[cleanedYField]) || 0), 0);
         }
       });
       
@@ -417,7 +656,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
           return {
             id: groupStr,
             label: groupStr,
-            color: colorMap[groupStr] || getColorByIndex(Object.keys(colorMap).length),
+            color: colorMap[groupStr] || getColorByIndex(uniqueGroups.indexOf(group)),
             value: groupTotals[groupStr] || 0,
             shape: 'square' as const
           };
@@ -427,30 +666,18 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     else if (isDual && config.series) {
       // Dual axis chart - show series in legend
       config.series.forEach((series: any, index: number) => {
-        // Use the same intelligent field name extraction
-        let fieldName: string;
-        if (series.id.includes('_')) {
-          const parts = series.id.split('_');
-          if (parts.length >= 3) {
-            fieldName = parts.slice(-2).join('_'); // e.g., "25th_percentile"
-          } else {
-            fieldName = parts[parts.length - 1]; // fallback to last part
-          }
-        } else {
-          fieldName = series.id;
+        const cleanedFieldName = cleanFieldName(availableColumns.find(col => col.key === series.id)?.name || series.id);
+        
+        if (isNewColorMap && !colorMap[cleanedFieldName]) {
+          colorMap[cleanedFieldName] = getColorByIndex(index);
         }
         
-        if (isNewColorMap && !colorMap[fieldName]) {
-          colorMap[fieldName] = getColorByIndex(index);
-        }
-        
-        const total = data.reduce((sum, item) => sum + (Number(item[fieldName]) || 0), 0);
+        const total = data.reduce((sum, item) => sum + (Number(item[cleanedFieldName]) || 0), 0);
         
         chartLegends.push({
-          id: fieldName,
-          label: series.label || fieldName.replace(/_/g, ' ').split(' ').map((word: string) => 
-            word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-          color: colorMap[fieldName] || getColorByIndex(index),
+          id: cleanedFieldName,
+          label: series.label || cleanedFieldName,
+          color: colorMap[cleanedFieldName] || getColorByIndex(index),
           value: total,
           shape: series.yAxis === 'right' ? 'circle' as const : 'square' as const
         });
@@ -459,52 +686,18 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     else if (config.yColumns && config.yColumns.length > 1) {
       // Multiple Y columns - show each column in legend
       config.yColumns.forEach((column: string, index: number) => {
-        // For multiple Y columns, preserve the full field name to maintain uniqueness
-        // Only do intelligent extraction if all fields would result in the same shortened name
-        let fieldName: string = column; // Default to full field name
+        const cleanedFieldName = cleanFieldName(availableColumns.find(col => col.key === column)?.name || column);
         
-        // Check if this is a date-based chart where we should use full field names
-        const xField = typeof chartConfig.dataMapping?.xAxis === 'string' ? 
-          chartConfig.dataMapping.xAxis : chartConfig.dataMapping?.xAxis?.[0];
-        
-        const isDateBased = data.length > 0 && xField && 
-          (xField.toLowerCase().includes('date') || 
-           xField.toLowerCase().includes('time') || 
-           typeof data[0][xField] === 'string' && 
-           data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
-        
-        // For date-based charts with multiple series, always use full field names to avoid conflicts
-        if (isDateBased || config.yColumns.length > 1) {
-          fieldName = column; // Use full field name
-        } else {
-          // Only do intelligent extraction for non-date based single series charts
-          if (column.includes('_')) {
-            const parts = column.split('_');
-            if (parts.length >= 3) {
-              fieldName = parts.slice(-2).join('_'); // e.g., "25th_percentile"
-            } else {
-              fieldName = parts[parts.length - 1]; // fallback to last part
-            }
-          } else {
-            fieldName = column;
-          }
+        if (isNewColorMap && !colorMap[cleanedFieldName]) {
+          colorMap[cleanedFieldName] = getColorByIndex(index);
         }
         
-        if (isNewColorMap && !colorMap[fieldName]) {
-          colorMap[fieldName] = getColorByIndex(index);
-        }
-        
-        const total = data.reduce((sum, item) => sum + (Number(item[fieldName]) || 0), 0);
-        
-        // Create a more readable label from the full field name
-        const readableLabel = availableColumns.find(col => col.key === column)?.name || 
-          fieldName.replace(/_/g, ' ').split(' ').map((word: string) => 
-            word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        const total = data.reduce((sum, item) => sum + (Number(item[cleanedFieldName]) || 0), 0);
         
         chartLegends.push({
-          id: fieldName,
-          label: readableLabel,
-          color: colorMap[fieldName] || getColorByIndex(index),
+          id: cleanedFieldName,
+          label: cleanedFieldName,
+          color: colorMap[cleanedFieldName] || getColorByIndex(index),
           value: total,
           shape: 'square' as const
         });
@@ -513,32 +706,18 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     else if (config.yColumns.length === 1) {
       // Single series - create one legend entry
       const yField = config.yColumns[0];
+      const cleanedFieldName = cleanFieldName(availableColumns.find(col => col.key === yField)?.name || yField);
       
-      // Use the same intelligent field name extraction for consistency
-      let fieldName: string;
-      if (yField.includes('_')) {
-        const parts = yField.split('_');
-        if (parts.length >= 3) {
-          fieldName = parts.slice(-2).join('_'); // e.g., "25th_percentile"
-        } else {
-          fieldName = parts[parts.length - 1]; // fallback to last part
-        }
-      } else {
-        fieldName = yField;
-      }
+      const total = data.reduce((sum, item) => sum + (Number(item[cleanedFieldName]) || 0), 0);
       
-      const total = data.reduce((sum, item) => sum + (Number(item[fieldName]) || 0), 0);
-      const label = availableColumns.find(col => col.key === yField)?.name || fieldName.replace(/_/g, ' ').split(' ').map((word: string) => 
-        word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      
-      if (isNewColorMap && !colorMap[fieldName]) {
-        colorMap[fieldName] = getColorByIndex(0);
+      if (isNewColorMap && !colorMap[cleanedFieldName]) {
+        colorMap[cleanedFieldName] = getColorByIndex(0);
       }
       
       chartLegends = [{
-        id: fieldName,
-        label,
-        color: colorMap[fieldName] || getColorByIndex(0),
+        id: cleanedFieldName,
+        label: cleanedFieldName,
+        color: colorMap[cleanedFieldName] || getColorByIndex(0),
         value: total,
         shape: 'square' as const
       }];
@@ -562,11 +741,11 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     );
   };
 
-  // Check if current configuration is a stacked chart
+  // Check if current configuration is a stacked chart - updated to use isStacked checkbox
   const isStackedChart = () => {
     const hasGroupBy = Boolean(configuration.groupBy && configuration.groupBy !== '');
     const hasMultipleYColumns = configuration.yColumns.length > 1;
-    return hasGroupBy || (hasMultipleYColumns && configuration.chartType === 'stacked');
+    return configuration.isStacked && (hasGroupBy || hasMultipleYColumns);
   };
 
   // Handle display mode change for stacked charts
@@ -614,13 +793,13 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Visualization Type
               </label>
               <select
                 value={configuration.type}
                 onChange={(e) => handleConfigChange('type', e.target.value as ChartType)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="bar">Chart</option>
                 <option value="line">Line</option>
@@ -630,69 +809,48 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Visualization Name
               </label>
               <input
                 type="text"
                 value={configuration.name}
                 onChange={(e) => handleConfigChange('name', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 placeholder="Chart"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Description
               </label>
               <textarea
                 value={configuration.description}
                 onChange={(e) => handleConfigChange('description', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none"
                 placeholder="Optional description for your chart..."
                 rows={3}
               />
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Chart Type
               </label>
               <select
                 value={configuration.chartType}
                 onChange={(e) => handleConfigChange('chartType', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="simple">Bar</option>
-                <option 
-                  value="stacked" 
-                  disabled={!canUseStackedChart}
-                  className={!canUseStackedChart ? 'text-gray-500' : ''}
-                >
-                  Stacked Bar {!canUseStackedChart ? '(requires group by or multiple Y columns)' : ''}
-                </option>
-                <option value="dual">Dual Axis</option>
+                
+                
               </select>
-              {configuration.chartType === 'stacked' && !canUseStackedChart && (
-                <p className="text-xs text-yellow-400 mt-1">
-                  ⚠️ Stacked charts require a group by field or multiple Y columns
-                </p>
-              )}
+              
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="horizontal"
-                checked={configuration.isHorizontal}
-                onChange={(e) => handleConfigChange('isHorizontal', e.target.checked)}
-                className="w-4 h-4 text-blue-600 bg-gray-900 border-gray-600 rounded focus:ring-blue-500"
-              />
-              <label htmlFor="horizontal" className="text-xs text-gray-300">
-                Horizontal Chart
-              </label>
-            </div>
+            
           </div>
         );
 
@@ -700,13 +858,13 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 X Column
               </label>
               <select
                 value={configuration.xColumn}
                 onChange={(e) => handleConfigChange('xColumn', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="">Choose column...</option>
                 {availableColumns.map(col => (
@@ -723,7 +881,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-3">
                 Y Columns
               </label>
               <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -735,9 +893,9 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                         type="checkbox"
                         checked={configuration.yColumns.includes(col.key)}
                         onChange={() => handleYColumnToggle(col.key)}
-                        className="w-4 h-4 text-blue-600 bg-gray-900 border-gray-600 rounded focus:ring-blue-500"
+                        className="appearance-none w-4 h-4 rounded border border-gray-700/80 bg-gray-900/40 checked:bg-blue-900 checked:border-blue-900  relative checked:after:content-['✓'] checked:after:text-white checked:after:text-xs checked:after:absolute checked:after:inset-0 checked:after:flex checked:after:items-center checked:after:justify-center"
                       />
-                      <span className="text-gray-300">
+                      <span className="text-gray-500 text-xs">
                         {col.name} ({col.apiName})
                       </span>
                     </label>
@@ -745,14 +903,16 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
               </div>
             </div>
 
+            
+
             <div>
-              <label className="block text-xs font-medium text-gray-300 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 Group by
               </label>
               <select
                 value={configuration.groupBy}
                 onChange={(e) => handleConfigChange('groupBy', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-3 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               >
                 <option value="">Choose column...</option>
                 {availableColumns
@@ -764,6 +924,19 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                   ))}
               </select>
             </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isStacked"
+                checked={configuration.isStacked}
+                onChange={(e) => handleConfigChange('isStacked', e.target.checked)}
+                className="appearance-none w-4 h-4 rounded border border-gray-700/80 bg-gray-900/40 checked:bg-blue-900 checked:border-blue-900  relative checked:after:content-['✓'] checked:after:text-white checked:after:text-xs checked:after:absolute checked:after:inset-0 checked:after:flex checked:after:items-center checked:after:justify-center"
+              />
+              <label htmlFor="isStacked" className="text-xs text-gray-500">
+                Is Stacked
+              </label>
+            </div>
           </div>
         );
 
@@ -772,8 +945,8 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
           <div className="space-y-4">
             {configuration.series.length > 0 ? (
               <div>
-                <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-300 mb-2 pb-2 border-b border-gray-700">
-                  <div className="col-span-1">Order</div>
+                <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 mb-2 pb-2 border-b border-gray-900">
+                  
                   <div className="col-span-5">Label</div>
                   <div className="col-span-3">Y Axis</div>
                   <div className="col-span-3">Type</div>
@@ -783,22 +956,16 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                     .sort((a, b) => a.order - b.order)
                     .map((series, index) => (
                       <div key={series.id} className="grid grid-cols-12 gap-2 items-center">
-                        {/* Order */}
-                        <div className="col-span-1 flex items-center space-x-1">
-                          <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                          </svg>
-                          <span className="text-sm text-gray-300">{series.order}</span>
-                        </div>
+                        
                         
                         {/* Label */}
                         <div className="col-span-5">
-                          <input
-                            type="text"
-                            value={series.label}
-                            onChange={(e) => handleSeriesUpdate(series.id, 'label', e.target.value)}
-                            className="w-full px-2 py-1 bg-gray-900 border border-gray-700 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          />
+                          <p className="w-full px-2 py-1 rounded text-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            
+                            {series.label}
+                            
+                            
+                          </p>
                         </div>
                         
                         {/* Y Axis */}
@@ -810,7 +977,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                               value="left"
                               checked={series.yAxis === 'left'}
                               onChange={(e) => handleSeriesUpdate(series.id, 'yAxis', e.target.value)}
-                              className="w-3 h-3 text-blue-600 bg-gray-900 border-gray-600 focus:ring-blue-500"
+                              className="appearance-none w-3 h-3 rounded-full border border-gray-700/80 bg-gray-900/40 checked:bg-blue-800 checked:border-gray-200  relative checked:after:text-white checked:after:text-xs checked:after:absolute checked:after:inset-0 checked:after:flex checked:after:items-center checked:after:justify-center"
                             />
                             <span className="text-xs text-gray-300">left</span>
                           </label>
@@ -821,7 +988,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                               value="right"
                               checked={series.yAxis === 'right'}
                               onChange={(e) => handleSeriesUpdate(series.id, 'yAxis', e.target.value)}
-                              className="w-3 h-3 text-blue-600 bg-gray-900 border-gray-600 focus:ring-blue-500"
+                              className="appearance-none w-3 h-3 rounded-full border border-gray-700/80 bg-gray-900/40 checked:bg-blue-800 checked:border-gray-200  relative checked:after:text-white checked:after:text-xs checked:after:absolute checked:after:inset-0 checked:after:flex checked:after:items-center checked:after:justify-center"
                             />
                             <span className="text-xs text-gray-300">right</span>
                           </label>
@@ -832,10 +999,10 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                           <select
                             value={series.type}
                             onChange={(e) => handleSeriesUpdate(series.id, 'type', e.target.value as 'bar' | 'line')}
-                            className="w-full px-2 py-1 bg-gray-900 border border-gray-700 rounded text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="text-xs bg-gray-900/40 border-[0.5px] border-gray-700/60 rounded px-2 py-2 w-full text-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                           >
-                            <option value="line">📈 Line</option>
-                            <option value="bar">📊 Bar</option>
+                            <option value="line"> Line</option>
+                            <option value="bar"> Bar</option>
                           </select>
                         </div>
                       </div>
@@ -857,7 +1024,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
 
   const isConfigurationValid = configuration.xColumn && configuration.yColumns.length > 0;
 
-  // Determine which chart component to use
+  // Determine which chart component to use - updated to respect isStacked checkbox
   const renderChart = () => {
     const hasDualAxis = configuration.series.some(s => s.yAxis === 'right');
     const hasGroupBy = Boolean(configuration.groupBy && configuration.groupBy !== '');
@@ -876,9 +1043,8 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     
     // Logic for chart selection:
     // 1. If dual axis is configured -> DualAxisChart
-    // 2. If groupBy field exists (regardless of stacked setting) -> StackedBarChart
-    // 3. If multiple Y columns but no dual axis -> MultiSeriesLineBarChart  
-    // 4. Default single Y column, no groupBy -> MultiSeriesLineBarChart
+    // 2. If isStacked is true -> StackedBarChart
+    // 3. Otherwise -> MultiSeriesLineBarChart
     
     if (hasDualAxis) {
       return (
@@ -886,7 +1052,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
           {...commonProps}
         />
       );
-    } else if (hasGroupBy || (hasMultipleYColumns && configuration.chartType === 'stacked')) {
+    } else if (configuration.isStacked) {
       return (
         <StackedBarChart
           {...commonProps}
@@ -905,11 +1071,11 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Visualization Editor"
+      title={editingVisualization ? "Edit Visualization" : "Create Visualization"}
     >
       <div className="h-[80vh] flex">
         {/* Left Panel - Configuration */}
-        <div className="w-1/3 border-r border-gray-700 pr-6">
+        <div className="w-1/3 border-r border-gray-900 pr-6">
           <div className="space-y-4">
             {/* Tab Navigation */}
             <div className="flex flex-wrap gap-1">
@@ -919,8 +1085,8 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                   onClick={() => setActiveTab(tab)}
                   className={`px-3 py-1.5 text-xs rounded transition-colors ${
                     activeTab === tab
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      ? 'bg-gray-800 text-white'
+                      : 'bg-gray-900 text-gray-300 hover:bg-gray-900/80'
                   }`}
                 >
                   {tab}
@@ -938,10 +1104,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
         {/* Right Panel - Preview */}
         <div className="w-2/3 pl-6">
           <div className="h-full flex flex-col">
-            <div className="mb-4">
-              <h3 className="text-lg font-medium text-gray-200 mb-2">Preview</h3>
-              <div className="h-px bg-gray-700"></div>
-            </div>
+            
             
             <div className="flex-1 min-h-0">
               {isConfigurationValid ? (
@@ -984,14 +1147,14 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                   {renderChart()}
                 </ChartCard>
               ) : (
-                <div className="h-full flex items-center justify-center bg-gray-900/50 rounded-lg border border-gray-700">
+                <div className="h-full flex items-center justify-center bg-gray-950/50 rounded-lg border border-gray-900">
                   <div className="text-center text-gray-400">
                     <div className="mb-2">
                       <svg className="w-12 h-12 mx-auto opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       </svg>
                     </div>
-                    <p className="text-sm">Select X and Y columns to preview chart</p>
+                    <p className="text-sm text-gray-600">Select X and Y columns to preview chart</p>
                   </div>
                 </div>
               )}
