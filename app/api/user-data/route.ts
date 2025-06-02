@@ -17,9 +17,12 @@ console.log('============================');
 const isProduction = process.env.NODE_ENV === 'production';
 const hasAWSCredentials = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
 
+// Temporarily force development mode to test functionality
+const forceDevelopmentMode = true; // TODO: Remove this after S3 is fixed
+
 let s3Client: S3Client | null = null;
 
-if (hasAWSCredentials) {
+if (hasAWSCredentials && !forceDevelopmentMode) {
   console.log('Initializing S3 client with credentials...');
   try {
     const region = process.env.AWS_REGION || 'ap-southeast-2';
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest) {
     console.log('Processing request for user:', userId);
 
     // Development mode fallback
-    if (!hasAWSCredentials) {
+    if (!hasAWSCredentials || forceDevelopmentMode) {
       console.log('Using development mode (in-memory storage)');
       
       let userData = devUserStorage.get(userId);
@@ -295,7 +298,7 @@ export async function POST(request: NextRequest) {
     console.log('Processing save request for user:', userId);
 
     // Development mode fallback
-    if (!hasAWSCredentials) {
+    if (!hasAWSCredentials || forceDevelopmentMode) {
       console.log('Using development mode (in-memory storage)');
       
       let existingUserData = devUserStorage.get(userId);
