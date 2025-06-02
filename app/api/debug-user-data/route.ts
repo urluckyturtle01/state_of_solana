@@ -55,12 +55,15 @@ export async function GET(request: NextRequest) {
 
     // Try to connect to S3
     try {
+      const region = process.env.AWS_REGION || 'ap-southeast-2';
+      console.log('Using AWS region:', region);
       const s3Client = new S3Client({
-        region: process.env.AWS_REGION || 'us-east-1',
+        region: region,
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
         },
+        forcePathStyle: false, // Use virtual-hosted-style URLs
       });
 
       const bucketName = process.env.S3_BUCKET_NAME || 'tl-state-of-solana';

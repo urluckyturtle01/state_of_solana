@@ -22,12 +22,15 @@ let s3Client: S3Client | null = null;
 if (hasAWSCredentials) {
   console.log('Initializing S3 client with credentials...');
   try {
+    const region = process.env.AWS_REGION || 'ap-southeast-2';
+    console.log('Using AWS region:', region);
     s3Client = new S3Client({
-      region: process.env.AWS_REGION || 'us-east-1',
+      region: region,
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
       },
+      forcePathStyle: false, // Use virtual-hosted-style URLs
     });
     console.log('S3 client initialized successfully');
   } catch (error) {
@@ -37,7 +40,7 @@ if (hasAWSCredentials) {
   console.log('No AWS credentials found, will use development mode');
 }
 
-const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'state-of-solana';
+const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'tl-state-of-solana';
 
 interface UserData {
   userId: string;
