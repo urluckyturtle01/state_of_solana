@@ -6,6 +6,7 @@ import TabsNavigation from "@/app/components/shared/TabsNavigation";
 import { PlusIcon, ArrowLeftIcon, PencilIcon, DocumentTextIcon, TrashIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { useDashboards } from "../../contexts/DashboardContext";
 import { useCreateDashboardModal } from "../../contexts/CreateDashboardModalContext";
+import { useAuth } from "../../contexts/AuthContext";
 import ConfirmationModal from "@/app/components/shared/ConfirmationModal";
 import ShareModal from "@/app/components/shared/ShareModal";
 
@@ -16,8 +17,9 @@ interface DashboardsHeaderProps {
 export default function DashboardsHeader({}: DashboardsHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { dashboards, updateDashboard, deleteDashboard, forceSave } = useDashboards();
+  const { dashboards, updateDashboard, deleteDashboard, forceSave, updateDashboardCreator, userName } = useDashboards();
   const { setShowCreateModal } = useCreateDashboardModal();
+  const { user } = useAuth();
   
   // Edit mode state - managed internally
   const [isEditMode, setIsEditMode] = useState(false);
@@ -114,11 +116,25 @@ export default function DashboardsHeader({}: DashboardsHeaderProps) {
   };
 
   const handleTogglePublic = (isPublic: boolean) => {
-    if (currentDashboard) {
-      // For now, we'll simulate toggling public status
-      // In a real app, this would call an API to update the dashboard's public status
-      console.log('Toggling dashboard public status:', currentDashboard.name, 'to', isPublic);
-      // You would update the dashboard's public status here
+    console.log('🔍 handleTogglePublic called:', { isPublic, userName, currentDashboard: currentDashboard?.name });
+    
+    if (currentDashboard && isPublic) {
+      // When making public, use the stored user name from S3 data
+      const creatorName = userName || 'Anonymous';
+      
+      console.log('👤 Available userName from context:', userName);
+      console.log('✉️ User email from auth:', user?.email);
+      console.log('👤 User name from auth:', user?.name);
+      console.log('📝 Final creatorName to use:', creatorName);
+      
+      updateDashboardCreator(currentDashboard.id, creatorName);
+      console.log('✅ updateDashboardCreator called for dashboard:', currentDashboard.name);
+    } else {
+      console.log('❌ Conditions not met:', { 
+        hasDashboard: !!currentDashboard, 
+        isPublic, 
+        hasUserName: !!userName 
+      });
     }
   };
 

@@ -33,11 +33,13 @@ interface Dashboard {
   lastModified: Date;
   charts: SavedChart[];
   textboxes: DashboardTextbox[];
+  createdBy?: string; // Creator's name
 }
 
 interface DashboardContextType {
   dashboards: Dashboard[];
   isLoading: boolean;
+  userName: string;
   addChartToDashboard: (dashboardId: string, chart: SavedChart) => void;
   addTextboxToDashboard: (dashboardId: string, content: string, width: 'half' | 'full') => void;
   updateTextbox: (dashboardId: string, textboxId: string, updates: Partial<Pick<DashboardTextbox, 'content' | 'height'>>) => void;
@@ -51,6 +53,7 @@ interface DashboardContextType {
   reorderItems: (dashboardId: string, startIndex: number, endIndex: number) => void;
   saveToServer: () => Promise<void>;
   forceSave: () => Promise<void>;
+  updateDashboardCreator: (id: string, creatorName: string) => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -66,6 +69,7 @@ export const useDashboards = () => {
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [dashboards, setDashboards] = useState<Dashboard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userName, setUserName] = useState<string>(''); // Store user name from S3
   const { isAuthenticated, user } = useAuth();
 
   // Load user data when authenticated
@@ -114,7 +118,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         createdAt: new Date('2024-01-15'),
         lastModified: new Date('2024-03-01'),
         charts: [],
-        textboxes: []
+        textboxes: [],
+        createdBy: undefined
       },
       {
         id: generateShortId(),
@@ -124,7 +129,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         createdAt: new Date('2024-01-20'),
         lastModified: new Date('2024-03-02'),
         charts: [],
-        textboxes: []
+        textboxes: [],
+        createdBy: undefined
       },
       {
         id: generateShortId(),
@@ -134,7 +140,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         createdAt: new Date('2024-02-01'),
         lastModified: new Date('2024-02-28'),
         charts: [],
-        textboxes: []
+        textboxes: [],
+        createdBy: undefined
       },
       {
         id: generateShortId(),
@@ -144,7 +151,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         createdAt: new Date('2024-02-10'),
         lastModified: new Date('2024-03-03'),
         charts: [],
-        textboxes: []
+        textboxes: [],
+        createdBy: undefined
       }
     ];
 
@@ -163,8 +171,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           console.log('📊 Raw data:', {
             dashboards: data.userData.dashboards?.length || 0,
             charts: data.userData.charts?.length || 0,
-            textboxes: data.userData.textboxes?.length || 0
+            textboxes: data.userData.textboxes?.length || 0,
+            userName: data.userData.name
           });
+          
+          // Store the user name from S3 data
+          setUserName(data.userData.name || data.userData.email || 'User');
           
           // Handle both old denormalized and new normalized structures
           let dashboardsWithDates: Dashboard[];
@@ -202,7 +214,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 lastModified: new Date(dashboard.lastModified),
                 charts: dashboardCharts,
                 textboxes: dashboardTextboxes,
-                chartsCount: dashboardCharts.length // Ensure consistency
+                chartsCount: dashboardCharts.length, // Ensure consistency
+                createdBy: data.userData.createdBy
               };
             });
           } else {
@@ -219,7 +232,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               textboxes: dashboard.textboxes?.map((textbox: any) => ({
                 ...textbox,
                 createdAt: new Date(textbox.createdAt)
-              })) || []
+              })) || [],
+              createdBy: data.userData.createdBy
             }));
           }
           
@@ -255,7 +269,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         createdAt: d.createdAt.toISOString(),
         lastModified: d.lastModified.toISOString(),
         chartsCount: d.charts.length, // Keep for quick access
-        textboxesCount: d.textboxes.length
+        textboxesCount: d.textboxes.length,
+        createdBy: d.createdBy
       })),
       charts: dashboards.flatMap(d => 
         d.charts.map(chart => ({
@@ -307,7 +322,11 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // Save to localStorage immediately for public dashboard access
       try {
         localStorage.setItem('dashboards', JSON.stringify(dashboards));
-        console.log('💾 Saved dashboards to localStorage');
+        console.log('💾 Saved dashboards to localStorage:', dashboards.map(d => ({
+          id: d.id,
+          name: d.name, 
+          createdBy: d.createdBy
+        })));
       } catch (error) {
         console.error('Failed to save to localStorage:', error);
       }
@@ -383,7 +402,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       createdAt: new Date(),
       lastModified: new Date(),
       charts: [],
-      textboxes: []
+      textboxes: [],
+      createdBy: undefined // Creator will be set when dashboard is made public
     };
     
     setDashboards(prev => [...prev, newDashboard]);
@@ -534,10 +554,52 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setDashboards(prev => prev.filter(dashboard => dashboard.id !== id));
   };
 
+  const updateDashboardCreator = (id: string, creatorName: string) => {
+    console.log('🏗️ updateDashboardCreator called:', { id, creatorName });
+    
+    setDashboards(prev => {
+      const updated = prev.map(dashboard => {
+        if (dashboard.id === id) {
+          console.log('📊 Updating dashboard:', dashboard.name, 'with creator:', creatorName);
+          const updatedDashboard = {
+            ...dashboard,
+            createdBy: creatorName,
+            lastModified: new Date()
+          };
+          console.log('✅ Updated dashboard object:', { 
+            id: updatedDashboard.id, 
+            name: updatedDashboard.name, 
+            createdBy: updatedDashboard.createdBy 
+          });
+          return updatedDashboard;
+        }
+        return dashboard;
+      });
+      
+      console.log('💾 All dashboards after update:', updated.map(d => ({ 
+        id: d.id, 
+        name: d.name, 
+        createdBy: d.createdBy 
+      })));
+      
+      // Dispatch event for public dashboard refresh
+      setTimeout(() => {
+        const event = new CustomEvent('dashboardUpdated', {
+          detail: { dashboardId: id }
+        });
+        window.dispatchEvent(event);
+        console.log('📡 Dispatched dashboardUpdated event for:', id);
+      }, 100);
+      
+      return updated;
+    });
+  };
+
   return (
     <DashboardContext.Provider value={{
       dashboards,
       isLoading,
+      userName,
       addChartToDashboard,
       addTextboxToDashboard,
       updateTextbox,
@@ -550,7 +612,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       deleteTextbox,
       reorderItems,
       saveToServer,
-      forceSave
+      forceSave,
+      updateDashboardCreator
     }}>
       {children}
     </DashboardContext.Provider>

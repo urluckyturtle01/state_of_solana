@@ -41,6 +41,12 @@ const ShareModal: React.FC<ShareModalProps> = ({
     const newPublicStatus = !isPublic;
     setIsPublic(newPublicStatus);
     
+    console.log('🔄 ShareModal handleToggle called:', { 
+      previousStatus: isPublic, 
+      newPublicStatus,
+      dashboardId 
+    });
+    
     // Generate URL when making public, clear when making private
     if (newPublicStatus) {
       const generatedUrl = `${window.location.origin}/public/${dashboardId}`;
@@ -50,6 +56,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
     }
     
     // Call the parent callback
+    console.log('📞 ShareModal calling onTogglePublic with:', newPublicStatus);
     onTogglePublic(newPublicStatus);
   };
 

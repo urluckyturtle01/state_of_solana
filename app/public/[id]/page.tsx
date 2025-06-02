@@ -46,6 +46,7 @@ interface Dashboard {
   lastModified: Date;
   charts: SavedChart[];
   textboxes: DashboardTextbox[];
+  createdBy?: string;
 }
 
 interface Legend {
@@ -76,6 +77,30 @@ export default function PublicDashboardPage() {
   const params = useParams();
   const dashboardId = params.id as string;
   const { dashboard, isLoading } = usePublicDashboard(dashboardId);
+
+  // Debug logging
+  useEffect(() => {
+    if (dashboard) {
+      console.log('🔍 Public dashboard loaded:', {
+        id: dashboard.id,
+        name: dashboard.name,
+        createdBy: dashboard.createdBy,
+        dashboardObject: dashboard
+      });
+    }
+  }, [dashboard]);
+
+  // Force refresh on mount to get latest data
+  useEffect(() => {
+    console.log('🚀 Public dashboard page mounted, forcing data refresh...');
+    // Small delay to ensure context is loaded
+    setTimeout(() => {
+      const event = new CustomEvent('dashboardUpdated', {
+        detail: { dashboardId }
+      });
+      window.dispatchEvent(event);
+    }, 200);
+  }, [dashboardId]);
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -442,7 +467,7 @@ export default function PublicDashboardPage() {
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-500">Public Dashboard</p>
+              <p className="text-xs text-gray-500">Created by {dashboard.createdBy || 'Unknown'}</p>
               <p className="text-xs text-gray-600">View Only</p>
             </div>
           </div>
