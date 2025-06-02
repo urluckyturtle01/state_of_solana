@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from '@/app/contexts/AuthContext';
 import UserProfile from './auth/UserProfile';
@@ -72,6 +72,7 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { isAuthenticated, openLoginModal } = useAuth();
   
@@ -83,7 +84,14 @@ export default function Sidebar() {
     // Check if this item requires authentication
     if (item.requiresAuth && !isAuthenticated) {
       e.preventDefault();
-      openLoginModal();
+      openLoginModal(item.path);
+      return;
+    }
+    
+    // For authenticated users on protected routes, force navigation
+    if (item.requiresAuth && isAuthenticated) {
+      e.preventDefault();
+      router.push(item.path);
       return;
     }
     // For non-protected routes, normal navigation will proceed
@@ -233,6 +241,32 @@ export default function Sidebar() {
                   </div>
                 ) : (
                   // Regular menu item
+                  item?.requiresAuth ? (
+                    <button 
+                      onClick={(e) => handleNavigation(item, e)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        isActive 
+                          ? 'text-white bg-gray-900/70' 
+                          : 'text-gray-500 hover:text-gray-300 hover:bg-gray-900/40'
+                      }`}
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5 min-w-5" 
+                        fill={item?.name === "Wrapped BTC" ? "currentColor" : "none"}
+                        viewBox="0 0 24 24" 
+                        stroke={item?.name === "Wrapped BTC" ? "none" : "currentColor"}
+                        strokeWidth={1.5}
+                      >
+                        <path 
+                          strokeLinecap={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                          strokeLinejoin={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                          d={item?.icon || ''} 
+                        />
+                      </svg>
+                      <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                    </button>
+                  ) : (
                   <Link 
                     href={item?.path || '/'} 
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
@@ -257,6 +291,7 @@ export default function Sidebar() {
                     </svg>
                     <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
                   </Link>
+                  )
                 )}
               </li>
             );

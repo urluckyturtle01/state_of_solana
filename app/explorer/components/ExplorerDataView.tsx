@@ -104,10 +104,17 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
   const [editingVisualization, setEditingVisualization] = useState<SavedVisualization | null>(null);
   
   // Use UserDataContext for user-specific data
-  const { explorerData, addVisualization, updateVisualization, isLoading } = useUserData();
+  const { explorerData, addVisualization, updateVisualization, deleteVisualization, isLoading } = useUserData();
   const { isAuthenticated } = useAuth();
   const { addChartToDashboard } = useDashboards();
   const savedVisualizations = explorerData.savedVisualizations;
+
+  // Debug logging for dashboard context
+  useEffect(() => {
+    console.log('🔍 Explorer: Dashboard context check');
+    console.log('🔐 Is authenticated:', isAuthenticated);
+    console.log('📊 addChartToDashboard function available:', !!addChartToDashboard);
+  }, [isAuthenticated, addChartToDashboard]);
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -483,19 +490,22 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
       name: 'Table',
       path: '#',
       key: 'table',
-      icon: 'M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586l-2 2V6H5v12h7.586l-2 2H4a1 1 0 01-1-1V4z M19 7.414l-2 2V17a1 1 0 001 1h2V7.414z'
+      icon: 'M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586l-2 2V6H5v12h7.586l-2 2H4a1 1 0 01-1-1V4z M19 7.414l-2 2V17a1 1 0 001 1h2V7.414z',
+      closeable: false // Table tab is not closeable
     },
     ...savedVisualizations.map(viz => ({
       name: viz.name,
       path: '#',
       key: viz.id,
-      icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+      icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+      closeable: true // Visualization tabs are closeable
     })),
     { 
       name: '+ Add Visualization',
       path: '#',
       key: 'add-visualization',
-      icon: 'M12 4v16m8-8H4'
+      icon: 'M12 4v16m8-8H4',
+      closeable: false // Add button is not closeable
     }
   ];
 
@@ -546,6 +556,31 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
     
     setIsVisualizationModalOpen(false);
     setEditingVisualization(null);
+  };
+
+  const handleDeleteVisualization = (visualizationId: string) => {
+    if (window.confirm('Are you sure you want to delete this visualization?')) {
+      // Use the context delete function which will trigger auto-save
+      deleteVisualization(visualizationId);
+      
+      // If the deleted tab was active, switch to Table tab
+      if (activeTab === visualizationId) {
+        setActiveTab('table');
+      }
+      
+      // Clean up related state
+      setLegends(prev => {
+        const updated = { ...prev };
+        delete updated[visualizationId];
+        return updated;
+      });
+      
+      setLegendColorMaps(prev => {
+        const updated = { ...prev };
+        delete updated[visualizationId];
+        return updated;
+      });
+    }
   };
 
   const renderVisualizationChart = (visualization: SavedVisualization) => {
@@ -620,6 +655,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
           activeTab={activeTab}
           showDivider={false}
           onTabClick={handleTabClick}
+          onTabClose={handleDeleteVisualization}
         />
       </div>
 
@@ -831,8 +867,11 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
               </button>
               <button
                 onClick={() => {
+                  console.log('🖱️ Add to Dashboard button clicked');
+                  console.log('📊 Current visualization:', visualization);
                   setSelectedVisualizationForDashboard(visualization);
                   setIsDashboardModalOpen(true);
+                  console.log('🔄 Modal should open now');
                 }}
                 className="flex-1 py-2 text-sm text-gray-500 bg-gray-900/20 hover:bg-gray-900/40 border border-gray-800/80 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
@@ -927,21 +966,31 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
           setSelectedVisualizationForDashboard(null);
         }}
         onAddToDashboard={(dashboardId) => {
+          console.log('🎯 Explorer: Adding chart to dashboard:', dashboardId);
+          console.log('📊 Selected visualization:', selectedVisualizationForDashboard);
+          
           if (selectedVisualizationForDashboard) {
-            // Convert SavedVisualization to SavedChart format for dashboard
+            // Create deep copies to ensure complete independence from Explorer visualization
             const chartForDashboard = {
               id: `chart-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate unique ID for dashboard
               name: selectedVisualizationForDashboard.name,
               type: selectedVisualizationForDashboard.configuration.chartType as 'bar' | 'stacked' | 'dual' | 'line',
               description: selectedVisualizationForDashboard.description || `Chart created from Explorer visualization`,
               createdAt: new Date(),
-              configuration: selectedVisualizationForDashboard.configuration,
-              chartConfig: selectedVisualizationForDashboard.chartConfig,
-              chartData: selectedVisualizationForDashboard.chartData
+              // Deep copy all data structures to prevent shared references
+              configuration: JSON.parse(JSON.stringify(selectedVisualizationForDashboard.configuration)),
+              chartConfig: JSON.parse(JSON.stringify(selectedVisualizationForDashboard.chartConfig)),
+              chartData: JSON.parse(JSON.stringify(selectedVisualizationForDashboard.chartData))
             };
+            
+            console.log('🔄 Chart being added with deep copies:', chartForDashboard);
             
             // Add the chart to the dashboard
             addChartToDashboard(dashboardId, chartForDashboard);
+            
+            console.log('✅ addChartToDashboard called');
+          } else {
+            console.log('❌ No selected visualization found');
           }
           setIsDashboardModalOpen(false);
           setSelectedVisualizationForDashboard(null);

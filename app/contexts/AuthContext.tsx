@@ -2,12 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: any;
   showLoginModal: boolean;
-  openLoginModal: () => void;
+  pendingRoute: string | null;
+  openLoginModal: (route?: string) => void;
   closeLoginModal: () => void;
   checkAuthForRoute: (route: string) => boolean;
 }
@@ -27,16 +29,31 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { data: session, status } = useSession();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [pendingRoute, setPendingRoute] = useState<string | null>(null);
+  const router = useRouter();
 
   const isAuthenticated = status === 'authenticated';
   const user = session?.user;
 
-  const openLoginModal = () => {
+  // Handle redirect after successful authentication
+  useEffect(() => {
+    if (isAuthenticated && pendingRoute) {
+      router.push(pendingRoute);
+      setPendingRoute(null);
+      closeLoginModal();
+    }
+  }, [isAuthenticated, pendingRoute, router]);
+
+  const openLoginModal = (route?: string) => {
+    if (route) {
+      setPendingRoute(route);
+    }
     setShowLoginModal(true);
   };
 
   const closeLoginModal = () => {
     setShowLoginModal(false);
+    setPendingRoute(null);
   };
 
   const checkAuthForRoute = (route: string) => {
@@ -51,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated,
       user,
       showLoginModal,
+      pendingRoute,
       openLoginModal,
       closeLoginModal,
       checkAuthForRoute

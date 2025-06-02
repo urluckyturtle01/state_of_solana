@@ -7,6 +7,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import ChartCard from "@/app/components/shared/ChartCard";
 import TextboxCard from "../components/TextboxCard";
 import AddTextboxModal from "../components/AddTextboxModal";
+import ConfirmationModal from "@/app/components/shared/ConfirmationModal";
 import DualAxisChart from "@/app/admin/components/charts/DualAxisChart";
 import MultiSeriesLineBarChart from "@/app/admin/components/charts/MultiSeriesLineBarChart";
 import StackedBarChart from "@/app/admin/components/charts/StackedBarChart";
@@ -77,7 +78,7 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
 export default function DashboardPage() {
   const params = useParams();
   const dashboardId = params.id as string;
-  const { getDashboard, reorderItems, deleteChart, deleteTextbox, addTextboxToDashboard, updateTextbox } = useDashboards();
+  const { getDashboard, reorderItems, deleteChart, deleteTextbox, addTextboxToDashboard, updateTextbox, dashboards } = useDashboards();
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -96,12 +97,26 @@ export default function DashboardPage() {
   // Modal state
   const [showTextboxModal, setShowTextboxModal] = useState(false);
 
+  // Delete confirmation modal states
+  const [deleteChartModal, setDeleteChartModal] = useState<{
+    isOpen: boolean;
+    chart: SavedChart | null;
+  }>({ isOpen: false, chart: null });
+  
+  const [deleteTextboxModal, setDeleteTextboxModal] = useState<{
+    isOpen: boolean;
+    textbox: DashboardTextbox | null;
+  }>({ isOpen: false, textbox: null });
+
   // Initialize screenshot functionality
   const { captureScreenshot } = useChartScreenshot();
 
   const dashboard = useMemo(() => {
-    return getDashboard(dashboardId);
-  }, [dashboardId, getDashboard]);
+    console.log('🔍 Dashboard useMemo triggered, looking for dashboard:', dashboardId);
+    const foundDashboard = getDashboard(dashboardId);
+    console.log('📊 Found dashboard:', foundDashboard?.name, 'with', foundDashboard?.charts?.length || 0, 'charts');
+    return foundDashboard;
+  }, [dashboardId, dashboards]);
 
   // Listen for edit mode changes from a global source
   const [isEditMode, setIsEditMode] = useState(false);
@@ -150,15 +165,35 @@ export default function DashboardPage() {
 
   // Handle chart deletion
   const handleDeleteChart = (chartId: string) => {
-    if (dashboard && window.confirm('Are you sure you want to delete this chart?')) {
-      deleteChart(dashboard.id, chartId);
+    if (dashboard) {
+      const chart = dashboard.charts.find(c => c.id === chartId);
+      if (chart) {
+        setDeleteChartModal({ isOpen: true, chart });
+      }
+    }
+  };
+
+  const confirmDeleteChart = () => {
+    if (dashboard && deleteChartModal.chart) {
+      deleteChart(dashboard.id, deleteChartModal.chart.id);
+      setDeleteChartModal({ isOpen: false, chart: null });
     }
   };
 
   // Handle textbox deletion
   const handleDeleteTextbox = (textboxId: string) => {
-    if (dashboard && window.confirm('Are you sure you want to delete this textbox?')) {
-      deleteTextbox(dashboard.id, textboxId);
+    if (dashboard) {
+      const textbox = dashboard.textboxes.find(t => t.id === textboxId);
+      if (textbox) {
+        setDeleteTextboxModal({ isOpen: true, textbox });
+      }
+    }
+  };
+
+  const confirmDeleteTextbox = () => {
+    if (dashboard && deleteTextboxModal.textbox) {
+      deleteTextbox(dashboard.id, deleteTextboxModal.textbox.id);
+      setDeleteTextboxModal({ isOpen: false, textbox: null });
     }
   };
 
@@ -675,6 +710,30 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+      
+      {/* Delete Chart Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteChartModal.isOpen}
+        onClose={() => setDeleteChartModal({ isOpen: false, chart: null })}
+        onConfirm={confirmDeleteChart}
+        title="Delete Chart"
+        message={deleteChartModal.chart ? `Are you sure you want to delete "${deleteChartModal.chart.name}"?\n\nThis action cannot be undone.` : ''}
+        confirmText="Delete Chart"
+        cancelText="Cancel"
+        isDangerous={true}
+      />
+
+      {/* Delete Textbox Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteTextboxModal.isOpen}
+        onClose={() => setDeleteTextboxModal({ isOpen: false, textbox: null })}
+        onConfirm={confirmDeleteTextbox}
+        title="Delete Textbox"
+        message="Are you sure you want to delete this textbox?This action cannot be undone."
+        confirmText="Delete Textbox"
+        cancelText="Cancel"
+        isDangerous={true}
+      />
     </div>
   );
 } 

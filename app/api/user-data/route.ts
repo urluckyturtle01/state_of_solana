@@ -44,6 +44,8 @@ interface UserData {
   email: string;
   name: string;
   dashboards: any[];
+  charts: any[];      // Separate normalized table
+  textboxes: any[];   // Separate normalized table
   explorerData: {
     savedVisualizations: any[];
     selectedColumns: Record<string, string[]>;
@@ -98,9 +100,7 @@ export async function GET(request: NextRequest) {
               description: 'Jito SOL metrics and analytics',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '2',
@@ -108,9 +108,7 @@ export async function GET(request: NextRequest) {
               description: 'Jupiter LP token performance tracking',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '3',
@@ -118,9 +116,7 @@ export async function GET(request: NextRequest) {
               description: 'Aggregation volume and routing analytics',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '4',
@@ -128,11 +124,11 @@ export async function GET(request: NextRequest) {
               description: 'Database performance monitoring',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             }
           ],
+          charts: [], // Normalized charts table
+          textboxes: [], // Normalized textboxes table
           explorerData: {
             savedVisualizations: [],
             selectedColumns: {},
@@ -199,9 +195,7 @@ export async function GET(request: NextRequest) {
               description: 'Jito SOL metrics and analytics',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '2',
@@ -209,9 +203,7 @@ export async function GET(request: NextRequest) {
               description: 'Jupiter LP token performance tracking',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '3',
@@ -219,9 +211,7 @@ export async function GET(request: NextRequest) {
               description: 'Aggregation volume and routing analytics',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             },
             {
               id: '4',
@@ -229,11 +219,11 @@ export async function GET(request: NextRequest) {
               description: 'Database performance monitoring',
               chartsCount: 0,
               createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString(),
-              charts: [],
-              textboxes: []
+              lastModified: new Date().toISOString()
             }
           ],
+          charts: [], // Normalized charts table
+          textboxes: [], // Normalized textboxes table
           explorerData: {
             savedVisualizations: [],
             selectedColumns: {},
@@ -286,11 +276,15 @@ export async function POST(request: NextRequest) {
 
     console.log('Parsing request body...');
     const body = await request.json();
-    const { dashboards, explorerData } = body;
+    const { dashboards, charts, textboxes, explorerData } = body;
     console.log('Request body parsed:', { 
       hasDashboards: !!dashboards, 
+      hasCharts: !!charts,
+      hasTextboxes: !!textboxes,
       hasExplorerData: !!explorerData,
       dashboardsCount: dashboards?.length || 0,
+      chartsCount: charts?.length || 0,
+      textboxesCount: textboxes?.length || 0,
       visualizationsCount: explorerData?.savedVisualizations?.length || 0
     });
 
@@ -310,6 +304,8 @@ export async function POST(request: NextRequest) {
           email: session.user.email,
           name: session.user.name || '',
           dashboards: [],
+          charts: [],
+          textboxes: [],
           explorerData: {
             savedVisualizations: [],
             selectedColumns: {},
@@ -326,6 +322,8 @@ export async function POST(request: NextRequest) {
       const updatedUserData: UserData = {
         ...existingUserData,
         dashboards: dashboards || existingUserData.dashboards,
+        charts: charts || existingUserData.charts,
+        textboxes: textboxes || existingUserData.textboxes,
         explorerData: explorerData || existingUserData.explorerData,
         lastModified: new Date().toISOString()
       };
@@ -370,6 +368,8 @@ export async function POST(request: NextRequest) {
           email: session.user.email,
           name: session.user.name || '',
           dashboards: [],
+          charts: [],
+          textboxes: [],
           explorerData: {
             savedVisualizations: [],
             selectedColumns: {},
@@ -387,6 +387,8 @@ export async function POST(request: NextRequest) {
     const updatedUserData: UserData = {
       ...existingUserData,
       dashboards: dashboards || existingUserData.dashboards,
+      charts: charts || existingUserData.charts,
+      textboxes: textboxes || existingUserData.textboxes,
       explorerData: explorerData || existingUserData.explorerData,
       lastModified: new Date().toISOString()
     };

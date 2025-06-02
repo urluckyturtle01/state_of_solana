@@ -33,9 +33,16 @@ const AddToDashboardModal: React.FC<AddToDashboardModalProps> = ({
   }, [searchQuery, dashboards]);
   
   const handleAddToDashboard = () => {
+    console.log('🎯 Modal: Add to Dashboard clicked');
+    console.log('📊 Selected dashboard ID:', selectedDashboardId);
+    console.log('📈 Chart name:', chartName);
+    
     if (selectedDashboardId) {
+      console.log('✅ Calling onAddToDashboard with ID:', selectedDashboardId);
       onAddToDashboard(selectedDashboardId);
       onClose();
+    } else {
+      console.log('❌ No dashboard selected');
     }
   };
   

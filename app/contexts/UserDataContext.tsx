@@ -126,7 +126,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Auto-save explorer data when it changes (for authenticated users)
   useEffect(() => {
-    if (isAuthenticated && explorerData.savedVisualizations.length > 0) {
+    if (isAuthenticated) {
       const timeoutId = setTimeout(() => {
         saveToServer();
       }, 1000); // Debounce saves by 1 second

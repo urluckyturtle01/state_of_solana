@@ -11,6 +11,7 @@ export interface Tab {
   icon: string;
   viewBox?: string;
   strokeWidth?: number;
+  closeable?: boolean;
 }
 
 interface ButtonConfig {
@@ -31,9 +32,11 @@ export interface TabsNavigationProps {
   icon?: React.ReactNode;
   showDivider?: boolean;
   onTabClick?: (e: React.MouseEvent, tabKey: string) => void;
+  onTabClose?: (tabKey: string) => void;
   button?: ButtonConfig;
   secondaryButton?: ButtonConfig;
   tertiaryButton?: ButtonConfig;
+  quaternaryButton?: ButtonConfig;
   editable?: boolean;
   onTitleChange?: (newTitle: string) => void;
   onDescriptionChange?: (newDescription: string) => void;
@@ -47,9 +50,11 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   staticInfo,
   showDivider = true,
   onTabClick,
+  onTabClose,
   button,
   secondaryButton,
   tertiaryButton,
+  quaternaryButton,
   editable = false,
   onTitleChange,
   onDescriptionChange,
@@ -61,6 +66,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   const [editDescription, setEditDescription] = useState("");
   const [isHoveringTitle, setIsHoveringTitle] = useState(false);
   const [isHoveringDescription, setIsHoveringDescription] = useState(false);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null); // Add hover state for tabs
   
   // Refs for auto-focus
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -229,14 +235,14 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
 
   return (
     <div>
-      {(title || description || button || secondaryButton || tertiaryButton) && (
+      {(title || description || button || secondaryButton || tertiaryButton || quaternaryButton) && (
         <div className="mt-0 mb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               {renderEditableTitle()}
               {renderEditableDescription()}
             </div>
-            {(button || secondaryButton || tertiaryButton) && (
+            {(button || secondaryButton || tertiaryButton || quaternaryButton) && (
               <div className="ml-4 flex items-center space-x-2">
                 {tertiaryButton && (
                   <div>
@@ -319,6 +325,22 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
                     )}
                   </div>
                 )}
+                {quaternaryButton && (
+                  <div>
+                    <ButtonSecondary
+                      onClick={quaternaryButton.onClick}
+                      disabled={quaternaryButton.disabled}
+                      className={quaternaryButton.className}
+                    >
+                      {quaternaryButton.icon && (
+                        <span className="flex items-center mr-1">
+                          {quaternaryButton.icon}
+                        </span>
+                      )}
+                      {quaternaryButton.label}
+                    </ButtonSecondary>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -332,32 +354,71 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
             <div className="flex overflow-x-auto hide-scrollbar">
               {tabs?.map((tab) => {
                 const isActive = activeTab === tab.key;
+                const isHovered = hoveredTab === tab.key;
                 
                 return (
-                  <Link
+                  <div
                     key={tab.key}
-                    href={tab.path}
-                    onClick={onTabClick ? (e) => onTabClick(e, tab.key) : undefined}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap transition-all duration-200 ${
+                    className={`relative group flex items-center transition-all duration-200 ${
                       isActive 
                         ? "text-white bg-gray-900/40 border-b-2 border-emerald-500" 
                         : "text-gray-400 hover:text-gray-200"
                     }`}
+                    onMouseEnter={() => setHoveredTab(tab.key)}
+                    onMouseLeave={() => setHoveredTab(null)}
                   >
-                    {tab.icon && (
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-4 w-4" 
-                        fill="none" 
-                        viewBox={tab.viewBox || "0 0 24 24"}
-                        stroke="currentColor" 
-                        strokeWidth={tab.strokeWidth || 1.5}
+                    <Link
+                      href={tab.path}
+                      onClick={onTabClick ? (e) => onTabClick(e, tab.key) : undefined}
+                      className={`flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap transition-all duration-200 ${
+                        tab.closeable ? 'pr-1' : ''
+                      }`}
+                    >
+                      {tab.icon && (
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          className="h-4 w-4" 
+                          fill="none" 
+                          viewBox={tab.viewBox || "0 0 24 24"}
+                          stroke="currentColor" 
+                          strokeWidth={tab.strokeWidth || 1.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
+                        </svg>
+                      )}
+                      <span className="font-medium text-[13px]">{tab.name}</span>
+                    </Link>
+                    
+                    {/* Chrome-style close button */}
+                    {tab.closeable && onTabClose && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onTabClose(tab.key);
+                        }}
+                        className={`flex items-center justify-center w-5 h-5 mr-2 rounded-full transition-all duration-200 ${
+                          isHovered || isActive
+                            ? 'opacity-100 hover:bg-gray-700/50' 
+                            : 'opacity-0'
+                        }`}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
-                      </svg>
+                        <svg 
+                          className="w-3 h-3 text-gray-400 hover:text-white" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M6 18L18 6M6 6l12 12" 
+                          />
+                        </svg>
+                      </button>
                     )}
-                    <span className="font-medium text-[13px]">{tab.name}</span>
-                  </Link>
+                  </div>
                 );
               })}
             </div>

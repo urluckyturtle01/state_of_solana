@@ -44,11 +44,13 @@ interface DashboardContextType {
   createDashboard: (name: string, description?: string) => Dashboard;
   getDashboard: (id: string) => Dashboard | undefined;
   updateDashboard: (id: string, updates: Partial<Pick<Dashboard, 'name' | 'description'>>) => void;
+  deleteDashboard: (id: string) => void;
   reorderCharts: (dashboardId: string, startIndex: number, endIndex: number) => void;
   deleteChart: (dashboardId: string, chartId: string) => void;
   deleteTextbox: (dashboardId: string, textboxId: string) => void;
   reorderItems: (dashboardId: string, startIndex: number, endIndex: number) => void;
   saveToServer: () => Promise<void>;
+  forceSave: () => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -71,7 +73,33 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (isAuthenticated && user) {
       loadUserData();
     } else {
-      // Load default dashboards for non-authenticated users
+      // For non-authenticated users (public dashboards), try to load from localStorage first
+      try {
+        const storedDashboards = localStorage.getItem('dashboards');
+        if (storedDashboards) {
+          const dashboards = JSON.parse(storedDashboards);
+          const dashboardsWithDates = dashboards.map((dashboard: any) => ({
+            ...dashboard,
+            createdAt: new Date(dashboard.createdAt),
+            lastModified: new Date(dashboard.lastModified),
+            charts: dashboard.charts?.map((chart: any) => ({
+              ...chart,
+              createdAt: new Date(chart.createdAt)
+            })) || [],
+            textboxes: dashboard.textboxes?.map((textbox: any) => ({
+              ...textbox,
+              createdAt: new Date(textbox.createdAt)
+            })) || []
+          }));
+          setDashboards(dashboardsWithDates);
+          console.log('📥 Loaded dashboards from localStorage for public access');
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to load from localStorage:', error);
+      }
+      
+      // Fallback to default empty dashboards if no localStorage data
       loadDefaultDashboards();
     }
   }, [isAuthenticated, user]);
@@ -79,7 +107,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const loadDefaultDashboards = () => {
     const defaultDashboards: Dashboard[] = [
       {
-        id: '1',
+        id: generateShortId(),
         name: 'jito sol',
         description: 'Jito SOL metrics and analytics',
         chartsCount: 0,
@@ -89,7 +117,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         textboxes: []
       },
       {
-        id: '2',
+        id: generateShortId(),
         name: 'JLP Dashboard',
         description: 'Jupiter LP token performance tracking',
         chartsCount: 0,
@@ -99,7 +127,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         textboxes: []
       },
       {
-        id: '3',
+        id: generateShortId(),
         name: 'Jupiter Aggregator',
         description: 'Aggregation volume and routing analytics',
         chartsCount: 0,
@@ -109,7 +137,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         textboxes: []
       },
       {
-        id: '4',
+        id: generateShortId(),
         name: 'Lag in major tables',
         description: 'Database performance monitoring',
         chartsCount: 0,
@@ -131,20 +159,76 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const data = await response.json();
         
         if (data.success && data.userData) {
-          // Convert date strings back to Date objects
-          const dashboardsWithDates = data.userData.dashboards.map((dashboard: any) => ({
-            ...dashboard,
-            createdAt: new Date(dashboard.createdAt),
-            lastModified: new Date(dashboard.lastModified),
-            charts: dashboard.charts?.map((chart: any) => ({
-              ...chart,
-              createdAt: new Date(chart.createdAt)
-            })) || [],
-            textboxes: dashboard.textboxes?.map((textbox: any) => ({
-              ...textbox,
-              createdAt: new Date(textbox.createdAt)
-            })) || []
-          }));
+          console.log('📥 Loading normalized user data from S3');
+          console.log('📊 Raw data:', {
+            dashboards: data.userData.dashboards?.length || 0,
+            charts: data.userData.charts?.length || 0,
+            textboxes: data.userData.textboxes?.length || 0
+          });
+          
+          // Handle both old denormalized and new normalized structures
+          let dashboardsWithDates: Dashboard[];
+          
+          if (data.userData.charts && Array.isArray(data.userData.charts)) {
+            // New normalized structure - reconstruct dashboards
+            console.log('📊 Using normalized structure');
+            
+            const dashboards = data.userData.dashboards || [];
+            const charts = data.userData.charts || [];
+            const textboxes = data.userData.textboxes || [];
+            
+            dashboardsWithDates = dashboards.map((dashboard: any) => {
+              // Find charts for this dashboard
+              const dashboardCharts = charts
+                .filter((chart: any) => chart.dashboardId === dashboard.id)
+                .map((chart: any) => ({
+                  ...chart,
+                  createdAt: new Date(chart.createdAt)
+                }))
+                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+              
+              // Find textboxes for this dashboard
+              const dashboardTextboxes = textboxes
+                .filter((textbox: any) => textbox.dashboardId === dashboard.id)
+                .map((textbox: any) => ({
+                  ...textbox,
+                  createdAt: new Date(textbox.createdAt)
+                }))
+                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+              
+              return {
+                ...dashboard,
+                createdAt: new Date(dashboard.createdAt),
+                lastModified: new Date(dashboard.lastModified),
+                charts: dashboardCharts,
+                textboxes: dashboardTextboxes,
+                chartsCount: dashboardCharts.length // Ensure consistency
+              };
+            });
+          } else {
+            // Old denormalized structure - convert dates
+            console.log('📊 Using legacy denormalized structure');
+            dashboardsWithDates = data.userData.dashboards.map((dashboard: any) => ({
+              ...dashboard,
+              createdAt: new Date(dashboard.createdAt),
+              lastModified: new Date(dashboard.lastModified),
+              charts: dashboard.charts?.map((chart: any) => ({
+                ...chart,
+                createdAt: new Date(chart.createdAt)
+              })) || [],
+              textboxes: dashboard.textboxes?.map((textbox: any) => ({
+                ...textbox,
+                createdAt: new Date(textbox.createdAt)
+              })) || []
+            }));
+          }
+          
+          console.log('✅ Reconstructed dashboards:', dashboardsWithDates.map(d => ({
+            id: d.id,
+            name: d.name,
+            chartsCount: d.charts.length,
+            textboxesCount: d.textboxes.length
+          })));
           
           setDashboards(dashboardsWithDates);
         }
@@ -158,7 +242,42 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const saveToServer = async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
+
+    // Create properly normalized structure for S3
+    const normalizedData = {
+      dashboards: dashboards.map(d => ({
+        id: d.id,
+        name: d.name,
+        description: d.description,
+        createdAt: d.createdAt.toISOString(),
+        lastModified: d.lastModified.toISOString(),
+        chartsCount: d.charts.length, // Keep for quick access
+        textboxesCount: d.textboxes.length
+      })),
+      charts: dashboards.flatMap(d => 
+        d.charts.map(chart => ({
+          ...chart,
+          dashboardId: d.id, // Foreign key reference
+          createdAt: chart.createdAt.toISOString()
+        }))
+      ),
+      textboxes: dashboards.flatMap(d =>
+        d.textboxes.map(textbox => ({
+          ...textbox,
+          dashboardId: d.id, // Foreign key reference
+          createdAt: textbox.createdAt.toISOString()
+        }))
+      )
+    };
+
+    console.log('💾 Saving to S3:', {
+      dashboards: normalizedData.dashboards.length,
+      charts: normalizedData.charts.length,
+      textboxes: normalizedData.textboxes.length
+    });
 
     try {
       const response = await fetch('/api/user-data', {
@@ -166,22 +285,34 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          dashboards: dashboards
-        }),
+        body: JSON.stringify(normalizedData),
       });
-
+      
       if (!response.ok) {
-        throw new Error('Failed to save dashboards');
+        const errorText = await response.text();
+        console.error('❌ Save failed:', response.status, errorText);
+        throw new Error(`Failed to save dashboards: ${response.status} ${errorText}`);
       }
+      
+      const result = await response.json();
+      console.log('✅ Save successful');
     } catch (error) {
-      console.error('Failed to save dashboards to server:', error);
+      console.error('❌ Save error:', error);
     }
   };
 
   // Auto-save dashboards when they change (for authenticated users)
   useEffect(() => {
     if (isAuthenticated && dashboards.length > 0) {
+      // Save to localStorage immediately for public dashboard access
+      try {
+        localStorage.setItem('dashboards', JSON.stringify(dashboards));
+        console.log('💾 Saved dashboards to localStorage');
+      } catch (error) {
+        console.error('Failed to save to localStorage:', error);
+      }
+
+      // Also save to server with debounce
       const timeoutId = setTimeout(() => {
         saveToServer();
       }, 1000); // Debounce saves by 1 second
@@ -191,8 +322,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [dashboards, isAuthenticated]);
 
   const addChartToDashboard = (dashboardId: string, chart: SavedChart) => {
-    setDashboards(prev => 
-      prev.map(dashboard => {
+    setDashboards(prev => {
+      const updatedDashboards = prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
           // Get next order number
           const allItems = [...dashboard.charts, ...dashboard.textboxes];
@@ -209,8 +340,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           };
         }
         return dashboard;
-      })
-    );
+      });
+      
+      return updatedDashboards;
+    });
   };
 
   const addTextboxToDashboard = (dashboardId: string, content: string, width: 'half' | 'full') => {
@@ -222,7 +355,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           const maxOrder = allItems.length > 0 ? Math.max(...allItems.map(item => item.order || 0)) : -1;
           
           const newTextbox: DashboardTextbox = {
-            id: `textbox-${Date.now()}`,
+            id: `textbox-${generateShortId()}`,
             content,
             width,
             createdAt: new Date(),
@@ -243,7 +376,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const createDashboard = (name: string, description?: string): Dashboard => {
     const newDashboard: Dashboard = {
-      id: `dashboard-${Date.now()}`,
+      id: generateShortId(),
       name,
       description,
       chartsCount: 0,
@@ -252,7 +385,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       charts: [],
       textboxes: []
     };
-
+    
     setDashboards(prev => [...prev, newDashboard]);
     return newDashboard;
   };
@@ -392,6 +525,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     );
   };
 
+  const forceSave = async () => {
+    console.log('🚀 Force save triggered manually');
+    await saveToServer();
+  };
+
+  const deleteDashboard = (id: string) => {
+    setDashboards(prev => prev.filter(dashboard => dashboard.id !== id));
+  };
+
   return (
     <DashboardContext.Provider value={{
       dashboards,
@@ -402,13 +544,34 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       createDashboard,
       getDashboard,
       updateDashboard,
+      deleteDashboard,
       reorderCharts,
       deleteChart,
       deleteTextbox,
       reorderItems,
-      saveToServer
+      saveToServer,
+      forceSave
     }}>
       {children}
     </DashboardContext.Provider>
   );
-}; 
+};
+
+// Generate a proper UUID v4
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// Generate a shorter, URL-friendly unique ID (12 characters)
+function generateShortId(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 12; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+} 
