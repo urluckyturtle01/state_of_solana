@@ -68,9 +68,14 @@ export async function GET(request: NextRequest) {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
           },
-          // Let AWS SDK automatically determine the correct endpoint
-          forcePathStyle: false, // Use virtual-hosted-style URLs
-          maxAttempts: 3, // Retry failed requests
+          // Force path style to false for virtual-hosted-style requests
+          forcePathStyle: false,
+          // Explicitly set to use the regional endpoint
+          useAccelerateEndpoint: false,
+          useDualstackEndpoint: false,
+          // Increase retry attempts for redirect issues
+          maxAttempts: 5,
+          retryMode: 'adaptive',
         });
         console.log('S3 client initialized successfully for region:', region);
       } catch (error) {
