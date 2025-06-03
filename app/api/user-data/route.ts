@@ -17,12 +17,9 @@ console.log('============================');
 const isProduction = process.env.NODE_ENV === 'production';
 const hasAWSCredentials = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
 
-// Temporarily force development mode to test functionality
-const forceDevelopmentMode = true; // TODO: Remove this after S3 is fixed
-
 let s3Client: S3Client | null = null;
 
-if (hasAWSCredentials && !forceDevelopmentMode) {
+if (hasAWSCredentials) {
   console.log('Initializing S3 client with credentials...');
   try {
     const region = process.env.AWS_REGION || 'ap-southeast-2';
@@ -34,10 +31,12 @@ if (hasAWSCredentials && !forceDevelopmentMode) {
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
       },
       forcePathStyle: false, // Use virtual-hosted-style URLs
+      maxAttempts: 3, // Retry failed requests
     });
     console.log('S3 client initialized successfully');
   } catch (error) {
     console.error('Failed to initialize S3 client:', error);
+    s3Client = null; // Fallback to development mode
   }
 } else {
   console.log('No AWS credentials found, will use development mode');
@@ -87,7 +86,7 @@ export async function GET(request: NextRequest) {
     console.log('Processing request for user:', userId);
 
     // Development mode fallback
-    if (!hasAWSCredentials || forceDevelopmentMode) {
+    if (!hasAWSCredentials) {
       console.log('Using development mode (in-memory storage)');
       
       let userData = devUserStorage.get(userId);
@@ -154,6 +153,9 @@ export async function GET(request: NextRequest) {
       });
     } catch (error: any) {
       console.log('S3 error:', error.name, error.message);
+      console.log('Full S3 error:', error);
+      
+      // Handle specific S3 errors
       if (error.name === 'NoSuchKey') {
         console.log('User data not found in S3, creating default data');
         // User doesn't exist, return default structure
@@ -180,6 +182,24 @@ export async function GET(request: NextRequest) {
           mode: 'production'
         });
       }
+      
+      // Handle region/endpoint errors by providing better error info
+      if (error.message?.includes('endpoint') || error.message?.includes('bucket')) {
+        console.error('S3 bucket endpoint error - possible region mismatch');
+        console.error('Current region:', process.env.AWS_REGION);
+        console.error('Bucket name:', BUCKET_NAME);
+        
+        return NextResponse.json({ 
+          error: 'S3 configuration error',
+          details: `Bucket endpoint mismatch. Check if bucket "${BUCKET_NAME}" exists in region "${process.env.AWS_REGION || 'ap-southeast-2'}"`,
+          debugInfo: {
+            bucketName: BUCKET_NAME,
+            region: process.env.AWS_REGION || 'ap-southeast-2',
+            errorMessage: error.message
+          }
+        }, { status: 500 });
+      }
+      
       throw error;
     }
   } catch (error) {
@@ -232,7 +252,7 @@ export async function POST(request: NextRequest) {
     console.log('Processing save request for user:', userId);
 
     // Development mode fallback
-    if (!hasAWSCredentials || forceDevelopmentMode) {
+    if (!hasAWSCredentials) {
       console.log('Using development mode (in-memory storage)');
       
       let existingUserData = devUserStorage.get(userId);
