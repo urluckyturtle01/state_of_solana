@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isLoading: boolean;
   user: any;
   showLoginModal: boolean;
   pendingRoute: string | null;
@@ -33,6 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   const isAuthenticated = status === 'authenticated';
+  const isLoading = status === 'loading';
   const user = session?.user;
 
   // Handle redirect after successful authentication
@@ -66,6 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <AuthContext.Provider value={{
       isAuthenticated,
+      isLoading,
       user,
       showLoginModal,
       pendingRoute,
