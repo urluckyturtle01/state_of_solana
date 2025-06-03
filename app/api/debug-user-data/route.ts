@@ -54,118 +54,139 @@ export async function GET(request: NextRequest) {
     }
 
     // Try to connect to S3
-    try {
-      const region = process.env.AWS_REGION || 'ap-southeast-2';
-      console.log('Using AWS region:', region);
-      const s3Client = new S3Client({
-        region: region,
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-        },
-        forcePathStyle: false, // Use virtual-hosted-style URLs
-      });
+    let s3Client: S3Client | null = null;
+    const hasAWSCredentials = !!process.env.AWS_ACCESS_KEY_ID && !!process.env.AWS_SECRET_ACCESS_KEY;
 
-      const bucketName = process.env.S3_BUCKET_NAME || 'tl-state-of-solana';
-      const userKey = `user-data/${userId}.json`;
-      
-      // Check if user file exists
+    if (hasAWSCredentials) {
+      console.log('Initializing S3 client with credentials...');
       try {
-        console.log('Checking for user file:', userKey);
-        const getCommand = new GetObjectCommand({
-          Bucket: bucketName,
-          Key: userKey,
+        const region = process.env.AWS_REGION || 'ap-southeast-2';
+        console.log('Using AWS region:', region);
+        s3Client = new S3Client({
+          region: region,
+          credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+          },
+          // Let AWS SDK automatically determine the correct endpoint
+          forcePathStyle: false, // Use virtual-hosted-style URLs
+          maxAttempts: 3, // Retry failed requests
         });
-        
-        const response = await s3Client.send(getCommand);
-        const userData = JSON.parse(await response.Body!.transformToString());
-        
+        console.log('S3 client initialized successfully for region:', region);
+      } catch (error) {
+        console.error('Failed to initialize S3 client:', error);
+        s3Client = null; // Fallback to development mode
+      }
+    } else {
+      console.log('No AWS credentials found, will use development mode');
+    }
+
+    const bucketName = process.env.S3_BUCKET_NAME || 'tl-state-of-solana';
+    const userKey = `user-data/${userId}.json`;
+    
+    // Check if user file exists
+    try {
+      console.log('Checking for user file:', userKey);
+      
+      if (!s3Client) {
         return NextResponse.json({
-          status: 'user_data_found',
-          message: 'User data found in S3',
+          status: 's3_client_not_initialized',
+          message: 'S3 client could not be initialized',
           userId,
           envCheck,
-          userData: {
-            dashboardCount: userData.dashboards?.length || 0,
-            dashboardNames: userData.dashboards?.map((d: any) => d.name) || [],
-            chartsTotal: userData.dashboards?.reduce((total: number, d: any) => total + (d.charts?.length || 0), 0) || 0,
-            lastModified: userData.lastModified,
-            createdAt: userData.createdAt
-          },
+          debugInfo: {
+            message: 'S3 client initialization failed',
+            suggestion: 'Check AWS credentials and configuration'
+          }
+        });
+      }
+      
+      const getCommand = new GetObjectCommand({
+        Bucket: bucketName,
+        Key: userKey,
+      });
+      
+      const response = await s3Client.send(getCommand);
+      if (!response.Body) {
+        throw new Error('No body in S3 response');
+      }
+      const userData = JSON.parse(await response.Body.transformToString());
+      
+      return NextResponse.json({
+        status: 'user_data_found',
+        message: 'User data found in S3',
+        userId,
+        envCheck,
+        userData: {
+          dashboardCount: userData.dashboards?.length || 0,
+          dashboardNames: userData.dashboards?.map((d: any) => d.name) || [],
+          chartsTotal: userData.dashboards?.reduce((total: number, d: any) => total + (d.charts?.length || 0), 0) || 0,
+          lastModified: userData.lastModified,
+          createdAt: userData.createdAt
+        },
+        s3Info: {
+          bucket: bucketName,
+          key: userKey,
+          region: process.env.AWS_REGION
+        }
+      });
+      
+    } catch (getError: any) {
+      console.log('User file not found or error:', getError.name, getError.message);
+      
+      // List files in user-data directory to see what exists
+      try {
+        if (!s3Client) {
+          throw new Error('S3 client not available');
+        }
+        
+        const listCommand = new ListObjectsV2Command({
+          Bucket: bucketName,
+          Prefix: 'user-data/',
+          MaxKeys: 20
+        });
+        
+        const listResponse = await s3Client.send(listCommand);
+        const userFiles = listResponse.Contents?.map(obj => obj.Key) || [];
+        
+        return NextResponse.json({
+          status: 'user_data_not_found',
+          message: 'User data not found in S3',
+          userId,
+          envCheck,
           s3Info: {
             bucket: bucketName,
             key: userKey,
-            region: process.env.AWS_REGION
+            region: process.env.AWS_REGION,
+            error: getError.message,
+            userFilesFound: userFiles
+          },
+          debugInfo: {
+            message: 'Your user data file does not exist in S3',
+            possibleReasons: [
+              'This is your first time logging in',
+              'Data was created under a different email/account',
+              'S3 bucket or region configuration changed',
+              'Data was accidentally deleted'
+            ],
+            suggestion: 'Check if you logged in with the same Google account before'
           }
         });
         
-      } catch (getError: any) {
-        console.log('User file not found or error:', getError.name, getError.message);
-        
-        // List files in user-data directory to see what exists
-        try {
-          const listCommand = new ListObjectsV2Command({
-            Bucket: bucketName,
-            Prefix: 'user-data/',
-            MaxKeys: 20
-          });
-          
-          const listResponse = await s3Client.send(listCommand);
-          const userFiles = listResponse.Contents?.map(obj => obj.Key) || [];
-          
-          return NextResponse.json({
-            status: 'user_data_not_found',
-            message: 'User data not found in S3',
-            userId,
-            envCheck,
-            s3Info: {
-              bucket: bucketName,
-              key: userKey,
-              region: process.env.AWS_REGION,
-              error: getError.message,
-              userFilesFound: userFiles
-            },
-            debugInfo: {
-              message: 'Your user data file does not exist in S3',
-              possibleReasons: [
-                'This is your first time logging in',
-                'Data was created under a different email/account',
-                'S3 bucket or region configuration changed',
-                'Data was accidentally deleted'
-              ],
-              suggestion: 'Check if you logged in with the same Google account before'
-            }
-          });
-          
-        } catch (listError) {
-          console.error('Failed to list S3 objects:', listError);
-          return NextResponse.json({
-            status: 's3_connection_error',
-            message: 'Cannot connect to S3 or list files',
-            userId,
-            envCheck,
-            error: listError instanceof Error ? listError.message : 'Unknown error',
-            debugInfo: {
-              message: 'There\'s an issue connecting to S3',
-              suggestion: 'Check S3 credentials and bucket configuration'
-            }
-          });
-        }
+      } catch (listError) {
+        console.error('Failed to list S3 objects:', listError);
+        return NextResponse.json({
+          status: 's3_connection_error',
+          message: 'Cannot connect to S3 or list files',
+          userId,
+          envCheck,
+          error: listError instanceof Error ? listError.message : 'Unknown error',
+          debugInfo: {
+            message: 'There\'s an issue connecting to S3',
+            suggestion: 'Check S3 credentials and bucket configuration'
+          }
+        });
       }
-      
-    } catch (s3Error) {
-      console.error('S3 client error:', s3Error);
-      return NextResponse.json({
-        status: 's3_client_error',
-        message: 'Failed to initialize S3 client',
-        userId,
-        envCheck,
-        error: s3Error instanceof Error ? s3Error.message : 'Unknown error',
-        debugInfo: {
-          message: 'Cannot create S3 client',
-          suggestion: 'Check AWS credentials and region configuration'
-        }
-      });
     }
     
   } catch (error) {
