@@ -174,7 +174,22 @@ const TextboxCard: React.FC<TextboxCardProps> = ({
 
 **Bold** and *italic* text
 
-- [x] Task list
+**Unordered Lists:**
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+
+**Ordered Lists:**
+1. First item
+2. Second item
+   1. Nested numbered item
+   2. Another nested item
+3. Third item
+
+**Task Lists:**
+- [x] Completed task
 - [ ] Unchecked item
 
 > Blockquote
@@ -299,22 +314,33 @@ console.log('Hello!');
                       {children}
                     </p>
                   ),
+                  // Custom list components
+                  ul: ({children, ...props}) => (
+                    <ul className="list-disc list-inside text-gray-300 mb-4 pl-4 text-sm space-y-1" {...props}>
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({children, ...props}) => (
+                    <ol className="list-decimal list-inside text-gray-300 mb-4 pl-4 text-sm space-y-1" {...props}>
+                      {children}
+                    </ol>
+                  ),
                   // Custom components for better styling
                   table: ({children, ...props}) => (
                     <div className="overflow-x-auto my-4">
                       <table className="min-w-full" {...props}>{children}</table>
                     </div>
                   ),
-                  // Style task list items
+                  // Style task list items and regular list items
                   li: ({children, className, ...props}) => {
                     if (className?.includes('task-list-item')) {
                       return (
-                        <li className="list-none flex items-start gap-2" {...props}>
+                        <li className="list-none flex items-start gap-2 text-sm text-gray-300" {...props}>
                           {children}
                         </li>
                       );
                     }
-                    return <li className="text-sm text-gray-300" {...props}>{children}</li>;
+                    return <li className="text-sm text-gray-300 leading-relaxed" {...props}>{children}</li>;
                   },
                   // Style checkboxes in task lists
                   input: ({type, ...props}) => {

@@ -54,12 +54,34 @@ export default function AddTextboxModal({ isOpen, onClose, onSubmit }: AddTextbo
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Enter your content here... You can use **bold**, *italic*, [links](url), etc."
+              placeholder="Enter your content here...
+
+**Examples:**
+# Heading
+**Bold** and *italic* text
+
+Unordered lists:
+- First item
+- Second item
+  - Nested item
+
+Ordered lists:
+1. First item
+2. Second item
+   1. Nested item
+
+Task lists:
+- [x] Done
+- [ ] Todo
+
+> Blockquote
+
+`Code` and [links](url)"
               className="w-full h-32 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
               required
             />
             <p className="text-xs text-gray-500 mt-1">
-              Supports markdown formatting: **bold**, *italic*, [links](url), `code`, etc.
+              Supports markdown: **bold**, *italic*, [links](url), `code`, lists (- or 1.), &gt; quotes, etc.
             </p>
           </div>
 
