@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useDashboards } from '@/app/contexts/DashboardContext';
 
 interface SavedChart {
   id: string;
@@ -37,41 +36,72 @@ interface Dashboard {
 }
 
 export const usePublicDashboard = (dashboardId: string) => {
-  const { getDashboard, dashboards, isLoading } = useDashboards();
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get the dashboard from the context (which now loads from localStorage for public access)
-    const foundDashboard = getDashboard(dashboardId);
-    setDashboard(foundDashboard || null);
-    console.log('🔍 Public dashboard lookup:', dashboardId, foundDashboard ? 'found' : 'not found');
-    if (foundDashboard) {
-      console.log('📊 Dashboard content:', {
-        id: foundDashboard.id,
-        name: foundDashboard.name,
-        createdBy: foundDashboard.createdBy,
-        charts: foundDashboard.charts.length,
-        textboxes: foundDashboard.textboxes.length,
-        lastModified: foundDashboard.lastModified
-      });
-    }
-  }, [dashboardId, getDashboard, dashboards, refreshTrigger]);
-
-  // Listen for dashboard updates
-  useEffect(() => {
-    const handleDashboardUpdate = (event: CustomEvent) => {
-      if (event.detail.dashboardId === dashboardId) {
-        console.log('🔄 Public dashboard received update event, refreshing...');
-        setRefreshTrigger(prev => prev + 1);
+    const fetchPublicDashboard = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        console.log('🔍 Fetching public dashboard:', dashboardId);
+        const response = await fetch(`/api/public-dashboard/${dashboardId}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.dashboard) {
+            console.log('✅ Public dashboard loaded successfully:', data.dashboard.name);
+            
+            // Convert date strings back to Date objects
+            const dashboardWithDates = {
+              ...data.dashboard,
+              createdAt: new Date(data.dashboard.createdAt),
+              lastModified: new Date(data.dashboard.lastModified),
+              charts: data.dashboard.charts.map((chart: any) => ({
+                ...chart,
+                createdAt: new Date(chart.createdAt)
+              })),
+              textboxes: data.dashboard.textboxes.map((textbox: any) => ({
+                ...textbox,
+                createdAt: new Date(textbox.createdAt)
+              }))
+            };
+            
+            setDashboard(dashboardWithDates);
+            console.log('📊 Dashboard content:', {
+              id: dashboardWithDates.id,
+              name: dashboardWithDates.name,
+              createdBy: dashboardWithDates.createdBy,
+              charts: dashboardWithDates.charts.length,
+              textboxes: dashboardWithDates.textboxes.length,
+              lastModified: dashboardWithDates.lastModified
+            });
+          } else {
+            console.error('❌ Invalid response structure:', data);
+            setError('Invalid dashboard data received');
+            setDashboard(null);
+          }
+        } else {
+          const errorData = await response.json();
+          console.error('❌ Failed to fetch public dashboard:', response.status, errorData);
+          setError(errorData.details || 'Dashboard not found or not accessible');
+          setDashboard(null);
+        }
+      } catch (fetchError) {
+        console.error('❌ Error fetching public dashboard:', fetchError);
+        setError('Failed to load dashboard');
+        setDashboard(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    window.addEventListener('dashboardUpdated', handleDashboardUpdate as EventListener);
-    return () => {
-      window.removeEventListener('dashboardUpdated', handleDashboardUpdate as EventListener);
-    };
+    if (dashboardId) {
+      fetchPublicDashboard();
+    }
   }, [dashboardId]);
 
-  return { dashboard, isLoading };
+  return { dashboard, isLoading, error };
 }; 

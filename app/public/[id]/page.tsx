@@ -76,7 +76,7 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
 export default function PublicDashboardPage() {
   const params = useParams();
   const dashboardId = params.id as string;
-  const { dashboard, isLoading } = usePublicDashboard(dashboardId);
+  const { dashboard, isLoading, error } = usePublicDashboard(dashboardId);
 
   // Debug logging
   useEffect(() => {
@@ -89,18 +89,6 @@ export default function PublicDashboardPage() {
       });
     }
   }, [dashboard]);
-
-  // Force refresh on mount to get latest data
-  useEffect(() => {
-    console.log('🚀 Public dashboard page mounted, forcing data refresh...');
-    // Small delay to ensure context is loaded
-    setTimeout(() => {
-      const event = new CustomEvent('dashboardUpdated', {
-        detail: { dashboardId }
-      });
-      window.dispatchEvent(event);
-    }, 200);
-  }, [dashboardId]);
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -425,7 +413,7 @@ export default function PublicDashboardPage() {
     );
   }
 
-  if (!dashboard) {
+  if (error || !dashboard) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -436,8 +424,14 @@ export default function PublicDashboardPage() {
           </div>
           <h3 className="text-lg font-medium text-gray-200 mb-2">Dashboard not found</h3>
           <p className="text-gray-400 text-sm mb-4">
-            The dashboard you're looking for doesn't exist or is not publicly accessible.
+            {error || "The dashboard you're looking for doesn't exist or is not publicly accessible."}
           </p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+          >
+            Try again
+          </button>
         </div>
       </div>
     );
