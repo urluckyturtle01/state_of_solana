@@ -99,40 +99,7 @@ export async function GET(request: NextRequest) {
           userId,
           email: session.user.email,
           name: session.user.name || '',
-          dashboards: [
-            {
-              id: '1',
-              name: 'jito sol',
-              description: 'Jito SOL metrics and analytics',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '2',
-              name: 'JLP Dashboard',
-              description: 'Jupiter LP token performance tracking',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '3',
-              name: 'Jupiter Aggregator',
-              description: 'Aggregation volume and routing analytics',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '4',
-              name: 'Lag in major tables',
-              description: 'Database performance monitoring',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            }
-          ],
+          dashboards: [], // Start with empty dashboards - user will create their own
           charts: [], // Normalized charts table
           textboxes: [], // Normalized textboxes table
           explorerData: {
@@ -194,40 +161,7 @@ export async function GET(request: NextRequest) {
           userId,
           email: session.user.email,
           name: session.user.name || '',
-          dashboards: [
-            {
-              id: '1',
-              name: 'jito sol',
-              description: 'Jito SOL metrics and analytics',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '2',
-              name: 'JLP Dashboard',
-              description: 'Jupiter LP token performance tracking',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '3',
-              name: 'Jupiter Aggregator',
-              description: 'Aggregation volume and routing analytics',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            },
-            {
-              id: '4',
-              name: 'Lag in major tables',
-              description: 'Database performance monitoring',
-              chartsCount: 0,
-              createdAt: new Date().toISOString(),
-              lastModified: new Date().toISOString()
-            }
-          ],
+          dashboards: [], // Start with empty dashboards - user will create their own
           charts: [], // Normalized charts table
           textboxes: [], // Normalized textboxes table
           explorerData: {
