@@ -68,8 +68,8 @@ export async function GET(request: NextRequest) {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
           },
-          // Use standard configuration without custom endpoints
-          forcePathStyle: false,
+          // Use path-style URLs to avoid regional redirect issues
+          forcePathStyle: true,
           maxAttempts: 3,
         });
         console.log('S3 client initialized successfully for region:', region);
