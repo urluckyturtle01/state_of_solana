@@ -36,14 +36,9 @@ if (hasAWSCredentials && !forceDevelopmentMode) {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
       },
-      // Force path style to false for virtual-hosted-style requests
+      // Use standard configuration without custom endpoints
       forcePathStyle: false,
-      // Explicitly set to use the regional endpoint
-      useAccelerateEndpoint: false,
-      useDualstackEndpoint: false,
-      // Increase retry attempts for redirect issues
-      maxAttempts: 5,
-      retryMode: 'adaptive',
+      maxAttempts: 3,
     });
     console.log('S3 client initialized successfully for region:', region);
   } catch (error) {
@@ -199,54 +194,8 @@ export async function GET(request: NextRequest) {
         });
       }
       
-      // Handle PermanentRedirect by recreating S3 client with correct configuration
-      if (error.name === 'PermanentRedirect' || error.Code === 'PermanentRedirect') {
-        console.log('Handling PermanentRedirect - recreating S3 client');
-        try {
-          // Extract the correct endpoint from error if available
-          const correctEndpoint = error.Endpoint;
-          if (correctEndpoint) {
-            console.log('Using correct endpoint from error:', correctEndpoint);
-            
-            // Recreate S3 client with correct endpoint
-            const region = process.env.AWS_REGION || 'ap-southeast-2';
-            s3Client = new S3Client({
-              region: region,
-              credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-              },
-              endpoint: `https://${correctEndpoint}`,
-              forcePathStyle: false,
-              maxAttempts: 3,
-            });
-            
-            // Retry the request with new client
-            const retryCommand = new GetObjectCommand({
-              Bucket: BUCKET_NAME,
-              Key: key,
-            });
-            const retryResponse = await s3Client.send(retryCommand);
-            if (retryResponse.Body) {
-              const userData = JSON.parse(await retryResponse.Body.transformToString());
-              console.log('Successfully retrieved user data after redirect fix');
-              
-              return NextResponse.json({ 
-                success: true, 
-                userData,
-                isNewUser: false,
-                mode: 'production'
-              });
-            }
-          }
-        } catch (retryError) {
-          console.error('Retry after redirect failed:', retryError);
-          // Fall through to general error handling
-        }
-      }
-      
       // Handle region/endpoint errors by providing better error info
-      if (error.message?.includes('endpoint') || error.message?.includes('bucket')) {
+      if (error.message?.includes('endpoint') || error.message?.includes('bucket') || error.name === 'PermanentRedirect') {
         console.error('S3 bucket endpoint error - possible region mismatch');
         console.error('Current region:', process.env.AWS_REGION);
         console.error('Bucket name:', BUCKET_NAME);
