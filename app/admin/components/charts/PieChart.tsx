@@ -100,6 +100,9 @@ const PieChart: React.FC<PieChartProps> = ({
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
 
+  // Debounce timer ref for filter changes
+  const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
+
   // Extract mapping fields
   const labelField = chartConfig.dataMapping.xAxis;
   const valueField = chartConfig.dataMapping.yAxis;
@@ -377,13 +380,21 @@ const PieChart: React.FC<PieChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
+    
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
   
   // Handle filter changes - for both modal and normal view
@@ -605,6 +616,15 @@ const PieChart: React.FC<PieChartProps> = ({
     pieData, error, refreshData, handleMouseLeave,
     tooltip, colorScale, formatValue, yUnit, filterValues, hiddenSeriesState
   ]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (filterDebounceTimer.current) {
+        clearTimeout(filterDebounceTimer.current);
+      }
+    };
+  }, []);
 
   // Render the chart with legends
   return (

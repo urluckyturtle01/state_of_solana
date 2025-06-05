@@ -20,7 +20,6 @@ export default function CacheRefresher() {
       
       // Only process if we need a refresh and haven't done it yet
       if (needsRefresh === 'true' && !refreshed) {
-        console.log('Detected need for cache refresh');
         
         // Clear flag
         localStorage.removeItem('counters_need_refresh');
@@ -46,12 +45,10 @@ export default function CacheRefresher() {
             // Remove all identified keys
             keysToRemove.forEach(key => {
               localStorage.removeItem(key);
-              console.log(`Removed cache key: ${key}`);
             });
             
             // Force reload of the page if we're on the page that needs refreshing
             if (refreshedPage && pathname && pathname.includes(refreshedPage)) {
-              console.log(`Current path (${pathname}) matches refreshed page (${refreshedPage}), reloading`);
               window.location.reload();
             }
           }

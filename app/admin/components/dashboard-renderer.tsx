@@ -15,6 +15,13 @@ import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/
 import * as htmlToImage from 'html-to-image';
 import Loader from '../../components/shared/Loader';
 
+// Add Dashboard interface
+interface Dashboard {
+  id: string;
+  name: string;
+  charts?: ChartConfig[];
+}
+
 // Helper function to extract field name from YAxisConfig or use string directly
 function getFieldName(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
@@ -37,9 +44,11 @@ const ChartRenderer = dynamic(() => import('./ChartRenderer'), {
 });
 
 interface DashboardRendererProps {
-  pageId: string;
-  overrideCharts?: ChartConfig[]; // Add optional prop to override charts
-  enableCaching?: boolean; // Add optional prop for enabling caching
+  dashboardId?: string;
+  pageId?: string;
+  overrideCharts?: ChartConfig[];
+  enableCaching?: boolean;
+  enableFrontendFiltering?: boolean; // New prop to enable frontend filtering
 }
 
 interface Legend {
@@ -68,9 +77,7 @@ const PAGE_CONFIG_CACHE: Record<string, {
 }> = {};
 
 // Lazily load the ChartRenderer component with dynamic import
-const MemoizedChartRenderer = React.memo(dynamic(() => import('./ChartRenderer'), {
-  ssr: false,
-}));
+const MemoizedChartRenderer = React.memo(ChartRenderer);
 
 // Optimization: preload charts by pageId for faster subsequent loads
 const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
@@ -446,6 +453,47 @@ function isStackedBarChart(chart: ChartConfig): boolean {
          (chart.chartType === 'bar' && chart.isStacked === true);
 }
 
+// Add function to check if a stacked chart has negative values
+function hasNegativeValues(chart: ChartConfig, chartData: any[]): boolean {
+  if (!isStackedBarChart(chart) || !chartData || chartData.length === 0) {
+    return false;
+  }
+
+  const yField = chart.dataMapping.yAxis;
+  const groupByField = chart.dataMapping.groupBy || '';
+  
+  // Get y-field name(s)
+  let yFields: string[] = [];
+  if (typeof yField === 'string') {
+    yFields = [yField];
+  } else if (Array.isArray(yField)) {
+    yFields = yField.map(field => typeof field === 'string' ? field : field.field);
+  } else {
+    yFields = [typeof yField === 'string' ? yField : yField.field];
+  }
+  
+  // Check for negative values
+  for (const item of chartData) {
+    if (groupByField && item[groupByField]) {
+      // For stacked charts with groupBy field
+      const value = Number(item[yFields[0]]) || 0;
+      if (value < 0) {
+        return true;
+      }
+    } else {
+      // For stacked charts with multiple y-fields
+      for (const field of yFields) {
+        const value = Number(item[field]) || 0;
+        if (value < 0) {
+          return true;
+        }
+      }
+    }
+  }
+  
+  return false;
+}
+
 // Add SessionStorage utils to persist state between page navigations
 const SessionStorageCache = {
   getItem: (key: string) => {
@@ -494,27 +542,73 @@ const OptimizedChartCard: React.FC<OptimizedChartCardProps> = ({ title, children
 );
 
 export default function DashboardRenderer({ 
+  dashboardId, 
   pageId, 
   overrideCharts,
   enableCaching = true,
+  enableFrontendFiltering = true, // Set to true by default to enable client-side filtering
 }: DashboardRendererProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [dashboards, setDashboards] = useState<Dashboard[]>([]);
+  const [selectedDashboard, setSelectedDashboard] = useState<Dashboard | null>(null);
   const [expandedCharts, setExpandedCharts] = useState<Record<string, boolean>>({});
+  const [chartData, setChartData] = useState<Record<string, any[]>>({});
+  const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
+  const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
+  const [refreshing, setRefreshing] = useState<Record<string, boolean>>({});
+  const [allChartData, setAllChartData] = useState<Record<string, any[]>>({}); // Store all unfiltered data
+  
+  // Add missing state variables
   const [downloadingCharts, setDownloadingCharts] = useState<Record<string, boolean>>({});
   const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
+  const [legendColorMaps, setLegendColorMaps] = useState<Record<string, Record<string, string>>>({});
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
-  const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
+  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [allChartsLoaded, setAllChartsLoaded] = useState(false);
   
-  // Add state for filter values
-  const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
-  const [chartData, setChartData] = useState<Record<string, any[]>>({});
-  // Add state to track legend colors and order
-  const [legendColorMaps, setLegendColorMaps] = useState<Record<string, Record<string, string>>>({});
-  // Add state to track hidden series for each chart
-  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
+  // Add state to track complete datasets
+  const [completeDatasets, setCompleteDatasets] = useState<Record<string, any[]>>({});
+  const [usingClientFiltering, setUsingClientFiltering] = useState<Record<string, boolean>>({});
+  
+  // Add state to track charts with negative values
+  const [chartsWithNegativeValues, setChartsWithNegativeValues] = useState<Record<string, boolean>>({});
+  
+  // For frontend filtering, fetch all data once without filters
+  const fetchAllDataForChart = useCallback(async (chart: ChartConfig) => {
+    if (!enableFrontendFiltering) return;
+    
+    try {
+      const url = new URL(chart.apiEndpoint);
+      if (chart.apiKey) {
+        url.searchParams.append('api_key', chart.apiKey);
+      }
+      
+      // Fetch without any filter parameters to get all data
+      const response = await fetch(url.toString());
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      
+      // Store all data for this chart
+      setAllChartData(prev => ({
+        ...prev,
+        [chart.id]: data
+      }));
+      
+      // Set initial filtered data
+      setChartData(prev => ({
+        ...prev,
+        [chart.id]: data
+      }));
+      
+      return data;
+    } catch (error) {
+      console.error(`Error fetching all data for chart ${chart.id}:`, error);
+      return [];
+    }
+  }, [enableFrontendFiltering]);
   
   // Use ref to track if component is mounted to avoid memory leaks
   const isMounted = useRef(true);
@@ -644,6 +738,11 @@ export default function DashboardRenderer({
   const initializeCharts = useMemo(() => async () => {
     if (overrideCharts) {
       return overrideCharts;
+    }
+    
+    if (!pageId) {
+      console.warn('No pageId provided to DashboardRenderer');
+      return [];
     }
     
     try {
@@ -1045,23 +1144,144 @@ export default function DashboardRenderer({
     }
   };
   
-  // Handle filter changes
-  const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
-    console.log(`Filter changed for chart ${chartId}: ${filterType} = ${value}`);
+  // Fetch complete data for all charts on initial load
+  useEffect(() => {
+    if (charts.length === 0) return;
     
+    async function fetchAllCompleteData() {
+      // Set loading state for all charts at the beginning
+      const initialLoadingState: Record<string, boolean> = {};
+      charts.forEach(chart => {
+        initialLoadingState[chart.id] = true;
+      });
+      setLoadingCharts(prev => ({
+        ...prev,
+        ...initialLoadingState
+      }));
+      
+      // Create tracking objects
+      const newCompleteDatasets: Record<string, any[]> = {};
+      const newUsingClientFiltering: Record<string, boolean> = {};
+      
+      // Process charts in batches to avoid overwhelming the API
+      const batchSize = 2;
+      for (let i = 0; i < charts.length; i += batchSize) {
+        const batch = charts.slice(i, i + batchSize);
+        
+        // Process each chart in the batch concurrently
+        await Promise.all(batch.map(async (chart) => {
+          try {
+            // Create special ALL filter to get complete dataset
+            const completeFilters = {
+              timeFilter: 'ALL',
+              _fetchComplete: 'true'
+            };
+            
+            // Construct URL with API key
+            const url = new URL(chart.apiEndpoint);
+            if (chart.apiKey) {
+              url.searchParams.append('api_key', chart.apiKey);
+            }
+            
+            // Fetch complete dataset
+            const response = await fetch(url.toString(), {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                // Remove x-priority header to avoid CORS issues
+              },
+              cache: 'force-cache'
+            });
+            
+            if (!response.ok) {
+              throw new Error(`Failed to fetch complete data: ${response.status}`);
+            }
+            
+            // Process response
+            const result = await response.json();
+            let completeData: any[] = [];
+            
+            // Extract data from various response formats
+            if (result?.query_result?.data?.rows) {
+              completeData = result.query_result.data.rows;
+            } else if (Array.isArray(result)) {
+              completeData = result;
+            } else if (result?.data && Array.isArray(result.data)) {
+              completeData = result.data;
+            } else if (result?.rows && Array.isArray(result.rows)) {
+              completeData = result.rows;
+            } else if (result?.results && Array.isArray(result.results)) {
+              completeData = result.results;
+            }
+            
+            // Store complete dataset if we got at least some data
+            if (completeData.length > 0) {
+              newCompleteDatasets[chart.id] = completeData;
+              newUsingClientFiltering[chart.id] = true;
+              
+              // Also update chartData state with the complete data
+              setChartData(prev => ({
+                ...prev,
+                [chart.id]: completeData
+              }));
+              
+              // Update loading state
+              setLoadingCharts(prev => ({
+                ...prev,
+                [chart.id]: false
+              }));
+            } else {
+              newUsingClientFiltering[chart.id] = false;
+              
+              // Still clear loading state even with no data
+              setLoadingCharts(prev => ({
+                ...prev,
+                [chart.id]: false
+              }));
+            }
+          } catch (error) {
+            newUsingClientFiltering[chart.id] = false;
+            
+            // Clear loading state on error and show fallback data
+            setLoadingCharts(prev => ({
+              ...prev,
+              [chart.id]: false
+            }));
+            
+            // Fallback to the regular API endpoint
+            try {
+              const fallbackData = await fetchChartDataWithFilters(chart, true);
+            } catch (fallbackError) {
+              // Fallback also failed
+            }
+          }
+        }));
+      }
+      
+      // Update state with all complete datasets
+      setCompleteDatasets(newCompleteDatasets);
+      setUsingClientFiltering(newUsingClientFiltering);
+      
+      // Ensure all charts are marked as loaded in case any were missed
+      const finalLoadingState: Record<string, boolean> = {};
+      charts.forEach(chart => {
+        finalLoadingState[chart.id] = false;
+      });
+      setLoadingCharts(finalLoadingState);
+    }
+    
+    fetchAllCompleteData();
+  }, [charts]);
+
+  // Modified handleFilterChange to use client-side filtering when available
+  const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
     // Use a function reference to prevent infinite loops
     if (filterValues[chartId]?.[filterType] === value) {
       // Skip update if the value hasn't changed
       return;
     }
     
-    // Set loading state when filter changes
-    setLoadingCharts(prev => ({
-      ...prev,
-      [chartId]: true
-    }));
-    
-    // Update filter value
+    // Update filter value immediately
     setFilterValues(prev => ({
       ...prev,
       [chartId]: {
@@ -1074,14 +1294,145 @@ export default function DashboardRenderer({
     const chart = charts.find(c => c.id === chartId);
     if (!chart) return;
     
-    // Fetch updated data with the new filter
-    await fetchChartDataWithFilters(chart);
+    // Check if we have complete data for client-side filtering
+    if (usingClientFiltering[chartId] && completeDatasets[chartId]) {
+      // Get the complete dataset
+      const completeData = completeDatasets[chartId];
+      
+      // Get current filters
+      const currentFilters = {
+        ...(filterValues[chartId] || {}),
+        [filterType]: value
+      };
+      
+      // Apply filters client-side
+      const filteredData = applyClientFilters(completeData, currentFilters, chart);
+      
+      // Update chart data with filtered results
+      setChartData(prev => ({
+        ...prev,
+        [chartId]: filteredData
+      }));
+      
+      // No loading state needed for client filtering
+      setLoadingCharts(prev => ({
+        ...prev,
+        [chartId]: false
+      }));
+    } else {
+      // Fall back to server-side filtering
+      
+      // Set loading state
+      setLoadingCharts(prev => ({
+        ...prev,
+        [chartId]: true
+      }));
+      
+      // Fetch updated data with the new filter
+      await fetchChartDataWithFilters(chart);
+    }
+  };
+
+  // Add a client-side filtering function
+  const applyClientFilters = (data: any[], filters: Record<string, string>, chart: ChartConfig): any[] => {
+    if (!data || data.length === 0) return [];
     
-    // Reset loading state after fetch
-    setLoadingCharts(prev => ({
-      ...prev,
-      [chartId]: false
-    }));
+    let result = [...data];
+    
+    // Extract field mappings
+    const xField = chart.dataMapping.xAxis;
+    const xKey = typeof xField === 'string' ? xField : xField[0];
+    
+    // Apply time filter
+    if (filters.timeFilter && filters.timeFilter !== 'ALL') {
+      const now = new Date();
+      let cutoffDate: Date | null = null;
+      
+      // Calculate cutoff date based on filter
+      switch (filters.timeFilter) {
+        case 'D': // Daily (last 30 days)
+          cutoffDate = new Date(now);
+          cutoffDate.setDate(now.getDate() - 30);
+          break;
+        case 'W': // Weekly (last 12 weeks)
+          cutoffDate = new Date(now);
+          cutoffDate.setDate(now.getDate() - 12 * 7);
+          break;
+        case 'M': // Monthly (last 12 months)
+          cutoffDate = new Date(now);
+          cutoffDate.setMonth(now.getMonth() - 12);
+          break;
+        case 'Q': // Quarterly (last 8 quarters)
+          cutoffDate = new Date(now);
+          cutoffDate.setMonth(now.getMonth() - 24);
+          break;
+        case 'Y': // Yearly (all years)
+          // No filtering for yearly view
+          break;
+      }
+      
+      // Apply date filter if we have a cutoff date
+      if (cutoffDate) {
+        result = result.filter(item => {
+          // Get date value from the x-axis field
+          const dateValue = item[xKey];
+          if (!dateValue) return true;
+          
+          // Try to parse the date
+          let itemDate: Date | null = null;
+          
+          try {
+            // Handle different date formats
+            if (typeof dateValue === 'string') {
+              // ISO format (YYYY-MM-DD)
+              if (/^\d{4}-\d{2}-\d{2}/.test(dateValue)) {
+                itemDate = new Date(dateValue);
+              }
+              // MM/DD/YYYY format
+              else if (/^\d{2}\/\d{2}\/\d{4}/.test(dateValue)) {
+                const [month, day, year] = dateValue.split('/').map(Number);
+                itemDate = new Date(year, month - 1, day);
+              }
+              // Month Year format (Jan 2023)
+              else if (/^[A-Za-z]{3}\s\d{4}$/.test(dateValue)) {
+                const [month, year] = dateValue.split(' ');
+                const monthIdx = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(month);
+                if (monthIdx !== -1) {
+                  itemDate = new Date(parseInt(year), monthIdx, 1);
+                }
+              }
+              // Just year (2023)
+              else if (/^\d{4}$/.test(dateValue)) {
+                itemDate = new Date(parseInt(dateValue), 0, 1);
+              }
+            } else if (dateValue instanceof Date) {
+              itemDate = dateValue;
+            }
+          } catch (e) {
+            // Failed to parse date
+          }
+          
+          // Skip items with invalid dates
+          if (!itemDate || isNaN(itemDate.getTime())) return true;
+          
+          // Keep items with dates after the cutoff
+          return itemDate >= cutoffDate;
+        });
+      }
+    }
+    
+    // Apply currency filter
+    if (filters.currencyFilter && filters.currencyFilter !== 'ALL') {
+      const currencyField = 'currency'; // Adjust field name as needed
+      
+      if (result.length > 0 && currencyField in result[0]) {
+        result = result.filter(item => item[currencyField] === filters.currencyFilter);
+      }
+    }
+    
+    // Apply display mode filter (handled by chart component)
+    
+    return result;
   };
 
   // Add function to determine if a field is rendered as a line
@@ -1730,6 +2081,15 @@ export default function DashboardRenderer({
         if (chart) {
           console.log(`Updating legends for ${chart.chartType} chart ${chartId} with ${data.length} data points`);
           updateLegends(chartId, data);
+          
+          // Check for negative values in stacked charts
+          if (isStackedBarChart(chart)) {
+            const hasNegatives = hasNegativeValues(chart, data);
+            setChartsWithNegativeValues(prev => ({
+              ...prev,
+              [chartId]: hasNegatives
+            }));
+          }
         }
       }
     });
@@ -1864,8 +2224,8 @@ export default function DashboardRenderer({
                 />
               )}
               
-              {/* Display Mode Filter - always show for stacked charts, or when explicitly configured */}
-              {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
+              {/* Display Mode Filter - only show for stacked charts without negative values or when explicitly configured */}
+              {((isStackedBarChart(chart) && !chartsWithNegativeValues[chart.id]) || chart.additionalOptions?.filters?.displayModeFilter) && (
                 <DisplayModeFilter
                   mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
                   onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
@@ -1907,7 +2267,7 @@ export default function DashboardRenderer({
                     ...prev,
                     [chart.id]: data
                   }));
-                updateLegends(chart.id, data);
+                  updateLegends(chart.id, data);
                 }
                 
                 // Set loading to false when data is loaded
@@ -1929,6 +2289,8 @@ export default function DashboardRenderer({
               hiddenSeries={hiddenSeries[chart.id] || []}
               // Pass loading state
               isLoading={loadingCharts[chart.id] || false}
+              // Enable client-side filtering
+              enableFrontendFiltering={usingClientFiltering[chart.id] || false}
             />
           </div>
         </ChartCard>

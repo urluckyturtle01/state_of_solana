@@ -63,7 +63,6 @@ const FormMultiInputWithType: React.FC<FormMultiInputWithTypeProps> = ({
     const newValues = [...values];
     // Toggle between 'bar' and 'line'
     newValues[index].type = newValues[index].type === 'bar' ? 'line' : 'bar';
-    console.log(`Toggling chart type for ${newValues[index].field} from ${newValues[index].type === 'line' ? 'bar' : 'line'} to ${newValues[index].type}`);
     onChange(id, newValues);
   };
 

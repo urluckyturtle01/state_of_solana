@@ -116,7 +116,6 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
     
     // If localStorage indicates we need a refresh for this page, enable forceRefresh
     if ((needsRefresh && refreshedPage === pageId)) {
-      console.log(`Force refreshing counter configs for page ${pageId} due to localStorage flag`);
       forceRefresh = true;
       
       // Check if the flag is too old (more than 5 minutes)
@@ -133,7 +132,6 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
     // Check localStorage first for instant loading
     const localStorageData = getFromLocalStorage<CounterConfig[]>(cacheKey);
     if (localStorageData) {
-      console.log(`Using localStorage cache for counter configs ${pageId}`);
       // Update in-memory cache too
       PAGE_COUNTERS_CACHE[pageId] = {
         counters: localStorageData,
@@ -150,12 +148,10 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
       
       // Use cached counters if not expired
       if (now - cachedConfig.timestamp < cachedConfig.expiresIn) {
-        console.log(`Using cached counter configs for page ${pageId}`);
         return Promise.resolve(cachedConfig.counters);
       }
     }
   } else {
-    console.log(`Force refreshing counter configs for page ${pageId}`);
     
     // If we're doing a force refresh, clear caches
     delete PAGE_COUNTERS_CACHE[pageId];
@@ -202,7 +198,6 @@ const preloadTableConfigs = async (pageId: string, forceRefresh = false): Promis
     // Check localStorage first for instant loading
     const localStorageData = getFromLocalStorage<TableConfig[]>(cacheKey);
     if (localStorageData) {
-      console.log(`Using localStorage cache for table configs ${pageId}`);
       // Update in-memory cache too
       PAGE_TABLES_CACHE[pageId] = {
         tables: localStorageData,
@@ -219,12 +214,10 @@ const preloadTableConfigs = async (pageId: string, forceRefresh = false): Promis
       
       // Use cached tables if not expired
       if (now - cachedConfig.timestamp < cachedConfig.expiresIn) {
-        console.log(`Using cached table configs for page ${pageId}`);
         return Promise.resolve(cachedConfig.tables);
       }
     }
   } else {
-    console.log(`Force refreshing table configs for page ${pageId}`);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(`edr_cache_${cacheKey}`);
     }
@@ -425,7 +418,6 @@ export default React.memo(function EnhancedDashboardRenderer({
       }
       
       // Log the tables for debugging
-      console.log(`Loaded ${pageTables?.length || 0} tables for page ${pageId}:`, pageTables);
       
       if (isMountedRef.current) {
       setTables(pageTables || []);

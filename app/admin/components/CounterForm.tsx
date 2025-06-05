@@ -215,7 +215,6 @@ const CounterForm: React.FC<CounterFormProps> = ({
         throw new Error(`Invalid URL: ${formData.apiEndpoint}`);
       }
 
-      console.log('Testing API endpoint:', apiUrl.toString());
 
       // Fetch data
       const response = await fetch(apiUrl.toString());
@@ -226,7 +225,6 @@ const CounterForm: React.FC<CounterFormProps> = ({
       const result = await response.json();
       
       // Log the response for debugging
-      console.log('API Response:', result);
 
       // Advanced data extraction logic to handle various API structures
       let data: any[] = [];
@@ -275,7 +273,6 @@ const CounterForm: React.FC<CounterFormProps> = ({
       if (foundArray) {
         data = foundArray;
         foundData = true;
-        console.log('Found array data through recursive search:', data);
       }
       
       // If recursive search didn't find anything, try the original explicit checks
@@ -283,24 +280,19 @@ const CounterForm: React.FC<CounterFormProps> = ({
         if (Array.isArray(result)) {
           data = result;
           foundData = true;
-          console.log('Found data in array format');
         } else if (result.data && Array.isArray(result.data)) {
           data = result.data;
           foundData = true;
-          console.log('Found data in result.data array');
         } else if (result.results && Array.isArray(result.results)) {
           data = result.results;
           foundData = true;
-          console.log('Found data in result.results array');
         } else if (result.rows && Array.isArray(result.rows)) {
           data = result.rows;
           foundData = true;
-          console.log('Found data in result.rows array');
         } else if (result.query_result && result.query_result.data && Array.isArray(result.query_result.data.rows)) {
           // Redash format
           data = result.query_result.data.rows;
           foundData = true;
-          console.log('Found data in Redash format');
         } else if (typeof result === 'object' && result !== null) {
           // When all else fails, try to use the result object directly
           // This is useful for APIs that return a simple object with values
@@ -315,12 +307,10 @@ const CounterForm: React.FC<CounterFormProps> = ({
           if (hasNumericValues) {
             data = [result];
             foundData = true;
-            console.log('Using result object directly as single-row data - contains numeric values');
           } else {
             // Last resort: convert the entire response to a single row object
             data = [result];
             foundData = true;
-            console.log('Using result object directly as single-row data - fallback approach');
           }
         }
       }
@@ -338,11 +328,9 @@ const CounterForm: React.FC<CounterFormProps> = ({
       const rowIndex = formData.rowIndex || 0;
       const row = data[Math.min(rowIndex, data.length - 1)];
       
-      console.log('Selected row:', row);
       
       // Show all available fields to help user
       const availableFields = Object.keys(row);
-      console.log('Available fields:', availableFields);
       
       // Check if the specified field exists
       if (formData.valueField && !row.hasOwnProperty(formData.valueField)) {
@@ -425,7 +413,6 @@ const CounterForm: React.FC<CounterFormProps> = ({
         try {
           // Clear localStorage cache for this page
           localStorage.removeItem(`counters_page_${formData.page}`);
-          console.log(`Cleared localStorage cache for page ${formData.page}`);
           
           // Also clear session storage if it exists
           sessionStorage.removeItem(`counters_page_${formData.page}`);
