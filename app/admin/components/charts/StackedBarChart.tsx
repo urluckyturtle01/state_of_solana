@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect, memo, Suspense } from 'react';
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
 import { GridRows } from '@visx/grid';
@@ -35,6 +35,62 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
       />
     </svg>
   );
+};
+
+// Cache object for storing processed data results
+const dataCache = new Map<string, any>();
+
+// Define chart data types for better type safety
+interface ChartDataItem {
+  [key: string]: any;
+}
+
+interface ProcessedChartData {
+  chartData: ChartDataItem[];
+  keys: string[];
+  groupColors: Record<string, string>;
+}
+
+interface BrushDataPoint {
+  date: Date;
+  value: number;
+  idx: number;
+  originalIndex: number;
+  originalData: any;
+}
+
+// Function to generate cache key from filters and other state
+const generateCacheKey = (
+  data: any[], 
+  filterValues: Record<string, string> = {},
+  displayMode: string = 'absolute',
+  hiddenSeries: string[] = []
+): string => {
+  // Create a deterministic cache key from all relevant state
+  const hiddenSeriesKey = hiddenSeries.sort().join(',');
+  return JSON.stringify({
+    dataLength: data.length,
+    dataFirstItemId: data[0]?.id || '',
+    dataLastItemId: data[data.length - 1]?.id || '',
+    filters: filterValues,
+    displayMode,
+    hiddenSeries: hiddenSeriesKey
+  });
+};
+
+// Function to optimize rendering by limiting the number of bars in the chart
+const limitVisibleDataPoints = (data: any[], maxPoints = 100): any[] => {
+  if (!data || data.length <= maxPoints) return data;
+  
+  // For large datasets, sample points to improve performance
+  const step = Math.ceil(data.length / maxPoints);
+  const sampledData = [];
+  
+  for (let i = 0; i < data.length; i += step) {
+    sampledData.push(data[i]);
+  }
+  
+  return sampledData;
 };
 
 export interface StackedBarChartProps {
@@ -120,6 +176,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
+
+  // Add a loading state to show spinner during data processing
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Add state to track if the chart data is ready
+  const [isDataReady, setIsDataReady] = useState(false);
 
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
@@ -235,11 +297,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [filterValues]);
 
-  // Enhanced filter change handler for modal
+  // Enhanced filter change handler for modal with debounce
+  const debouncedFilterChangeRef = useRef<NodeJS.Timeout | null>(null);
+  
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
     
-    // Update display mode state if that's what changed
+    // Update display mode state immediately if that's what changed
     if (key === 'displayMode') {
       setDisplayMode(value as DisplayMode);
     }
@@ -249,16 +313,37 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Set processing state
+    setIsProcessing(true);
+    
+    // Clear previous timeout if exists
+    if (debouncedFilterChangeRef.current) {
+      clearTimeout(debouncedFilterChangeRef.current);
     }
+    
+    // Debounce the actual filter change callback
+    debouncedFilterChangeRef.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+      setIsProcessing(false);
+    }, 300); // 300ms debounce
   }, [modalFilterValues, onFilterChange]);
   
-  // Handle filter changes - for both modal and normal view
+  // Clean up debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debouncedFilterChangeRef.current) {
+        clearTimeout(debouncedFilterChangeRef.current);
+      }
+    };
+  }, []);
+  
+  // Handle filter changes - for both modal and normal view with optimized performance
   const handleFilterChange = useCallback((key: string, value: string) => {
     // For modal-specific behavior, use the enhanced handler
     if (isExpanded) {
@@ -267,6 +352,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     console.log(`Filter changed: ${key} = ${value}`);
     
+    // Show loading state immediately for better UX
+    setIsProcessing(true);
+    
     // Update display mode state if that's what changed
     if (key === 'displayMode') {
       setDisplayMode(value as DisplayMode);
@@ -277,13 +365,26 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Clear any existing timeout
+    if (debouncedFilterChangeRef.current) {
+      clearTimeout(debouncedFilterChangeRef.current);
     }
+    
+    // Debounce the actual filter change callback for smoother transitions
+    debouncedFilterChangeRef.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+      
+      // Clear loading state after processing completes
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 50);
+    }, 250); // 250ms debounce is responsive but prevents rapid changes
   }, [modalFilterValues, onFilterChange, isExpanded, handleModalFilterChange]);
 
   // Placeholder for refresh data functionality
@@ -296,14 +397,31 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setError(null);
   }, [filterValues, onFilterChange]);
 
-  // Process data for the chart - use filtered data when available
+  // Process data for the chart - use filtered data when available and implement caching
   const { chartData, keys, groupColors } = useMemo(() => {
-    // Use appropriate filtered data depending on context
-    const currentData: any[] = 
+    // Generate cache key based on current state
+    const currentData = 
       (isExpanded && isModalBrushActive && modalFilteredData.length > 0) ? modalFilteredData :
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
       data;
     
+    const cacheKey = generateCacheKey(
+      currentData, 
+      isExpanded ? modalFilterValues : filterValues,
+      displayMode,
+      hiddenSeriesState
+    );
+    
+    // Check if we have a cached result
+    if (dataCache.has(cacheKey)) {
+      console.log('Using cached chart data');
+      return dataCache.get(cacheKey);
+    }
+    
+    console.log('Processing chart data from scratch');
+    setIsProcessing(true);
+    
+    // Use appropriate filtered data depending on context
     if (isExpanded) {
       console.log('Modal chart data source:', 
         isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered data' : 'full data',
@@ -312,8 +430,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
     // If no data is available, return empty defaults
     if (!currentData || currentData.length === 0) {
+      setIsProcessing(false);
       return { 
-        chartData: [] as ChartDataItem[],
+        chartData: [] as any[],
         keys: [] as string[],
         groupColors: {} as Record<string, string>
       };
@@ -323,7 +442,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const preferredColorMap = externalColorMap || {};
     
     // Filter data first
-    const processedData: ChartDataItem[] = currentData.filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
+    const processedData = currentData.filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
     
     // Sort by date if applicable
     if (processedData.length > 0) {
@@ -350,6 +469,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const hasGroupBy = groupByField && groupByField.trim() !== '';
     
     // If we have multiple Y fields and stacked mode is enabled
+    let result;
     if (isMultiYFieldsStacked) {
       console.log('Processing multi-y-field stacked chart');
       
@@ -361,9 +481,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         : [yKey];
       
       // Group by x-axis values to prevent duplicate x values
-      const groupedData: Record<string, ChartDataItem> = {};
+      const groupedData: Record<string, any> = {};
       
-      processedData.forEach((item: ChartDataItem) => {
+      processedData.forEach((item: any) => {
         const xValue = String(item[xKey]);
         
         if (!groupedData[xValue]) {
@@ -405,21 +525,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         colorsByField[field] = preferredColorMap[field] || getColorByIndex(i % allColorsArray.length);
       });
       
-      return {
+      result = {
         chartData: Object.values(groupedData),
         keys: stackKeys,
         groupColors: colorsByField
       };
     }
-    
     // If no groupBy field is specified, treat it as a simple bar chart
-    if (!hasGroupBy) {
+    else if (!hasGroupBy) {
       console.log('Processing simple bar chart (no groupBy)');
       
       // Group by x-axis values to aggregate duplicates
-      const groupedData: Record<string, ChartDataItem> = {};
+      const groupedData: Record<string, any> = {};
       
-      processedData.forEach((item: ChartDataItem) => {
+      processedData.forEach((item: any) => {
         const xValue = String(item[xKey]);
         
         if (!groupedData[xValue]) {
@@ -448,88 +567,123 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // Create color for the single series
       const singleColor = preferredColorMap[yKey] || blue;
       
-      return {
+      result = {
         chartData: Object.values(groupedData),
         keys: [yKey], // Single key for the y-axis field
         groupColors: { [yKey]: singleColor }
       };
-    }
-    
-    // Standard processing for group-by stacking (original logic)
-    // Group by x-axis values to prevent duplicate bars
-    const groupedData: Record<string, ChartDataItem> = {};
-    const groupedValues: Record<string, Record<string, number>> = {};
-    const allGroups = new Set<string>();
-    
-    // First pass: collect all unique groups and x values
-    processedData.forEach((item: ChartDataItem) => {
-      const xValue = String(item[xKey]);
-      const groupValue = String(item[groupByField]);
+    } else {
+      // Standard processing for group-by stacking (original logic)
+      // Group by x-axis values to prevent duplicate bars
+      const groupedData: Record<string, any> = {};
+      const groupedValues: Record<string, Record<string, number>> = {};
+      const allGroups = new Set<string>();
       
-      // Track all unique group values (excluding hidden ones)
-      if (!hiddenSeriesState.includes(groupValue)) {
-      allGroups.add(groupValue);
-      }
-      
-      // Initialize the grouped data structure for this x value
-      if (!groupedData[xValue]) {
-        groupedData[xValue] = { 
-          [xKey]: item[xKey] 
-        };
-        groupedValues[xValue] = {};
-      }
-      
-      // Sum values for the same x value and group (if not hidden)
-      if (!hiddenSeriesState.includes(groupValue)) {
-      const currentValue = Number(item[yKey]) || 0;
-      groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
-      }
-    });
-    
-    // Second pass: build the final data structure
-    Object.keys(groupedData).forEach(xValue => {
-      // Make sure each group has a value (even if zero)
-      allGroups.forEach(group => {
-        groupedData[xValue][group] = groupedValues[xValue][group] || 0;
-      });
-    });
-    
-    // For percentage mode, convert values to percentages
-    if (displayMode === 'percent') {
-      Object.keys(groupedData).forEach(xValue => {
-        // Calculate the total for this x value
-        const total = Array.from(allGroups).reduce(
-          (sum, group) => sum + (groupedData[xValue][group] || 0), 0
-        );
+      // First pass: collect all unique groups and x values
+      processedData.forEach((item: any) => {
+        const xValue = String(item[xKey]);
+        const groupValue = String(item[groupByField]);
         
-        if (total > 0) {
-          // Convert each value to percentage
-          allGroups.forEach(group => {
-            groupedData[xValue][group] = (groupedData[xValue][group] / total) * 100;
-          });
+        // Track all unique group values (excluding hidden ones)
+        if (!hiddenSeriesState.includes(groupValue)) {
+          allGroups.add(groupValue);
+        }
+        
+        // Initialize the grouped data structure for this x value
+        if (!groupedData[xValue]) {
+          groupedData[xValue] = { 
+            [xKey]: item[xKey] 
+          };
+          groupedValues[xValue] = {};
+        }
+        
+        // Sum values for the same x value and group (if not hidden)
+        if (!hiddenSeriesState.includes(groupValue)) {
+          const currentValue = Number(item[yKey]) || 0;
+          groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
         }
       });
+      
+      // Second pass: build the final data structure
+      Object.keys(groupedData).forEach(xValue => {
+        // Make sure each group has a value (even if zero)
+        allGroups.forEach(group => {
+          groupedData[xValue][group] = groupedValues[xValue][group] || 0;
+        });
+      });
+      
+      // For percentage mode, convert values to percentages
+      if (displayMode === 'percent') {
+        Object.keys(groupedData).forEach(xValue => {
+          // Calculate the total for this x value
+          const total = Array.from(allGroups).reduce(
+            (sum, group) => sum + (groupedData[xValue][group] || 0), 0
+          );
+          
+          if (total > 0) {
+            // Convert each value to percentage
+            allGroups.forEach(group => {
+              groupedData[xValue][group] = (groupedData[xValue][group] / total) * 100;
+            });
+          }
+        });
+      }
+      
+      // Convert to array
+      const uniqueProcessedData = Object.values(groupedData);
+      
+      // Get all unique group values as keys for the stack
+      const stackKeys = Array.from(allGroups);
+      console.log(`Found ${stackKeys.length} groups for stacking:`, stackKeys);
+      
+      // Create color map for each group
+      const colorsByGroup: Record<string, string> = {};
+      stackKeys.forEach((group, i) => {
+        colorsByGroup[group] = preferredColorMap[group] || getColorByIndex(i % allColorsArray.length);
+      });
+      
+      result = { 
+        chartData: uniqueProcessedData,
+        keys: stackKeys,
+        groupColors: colorsByGroup
+      };
     }
     
-    // Convert to array
-    const uniqueProcessedData = Object.values(groupedData);
+    // Store result in cache
+    dataCache.set(cacheKey, result);
     
-    // Get all unique group values as keys for the stack
-    const stackKeys = Array.from(allGroups);
-    console.log(`Found ${stackKeys.length} groups for stacking:`, stackKeys);
+    // Limit cache size to prevent memory issues (keep last 20 results)
+    if (dataCache.size > 20) {
+      // Remove oldest entry (first key)
+      const firstKey = dataCache.keys().next().value;
+      dataCache.delete(firstKey);
+    }
     
-    // Create color map for each group
-    const colorsByGroup: Record<string, string> = {};
-    stackKeys.forEach((group, i) => {
-      colorsByGroup[group] = preferredColorMap[group] || getColorByIndex(i % allColorsArray.length);
-    });
+    // Update processing state
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsDataReady(true);
+    }, 0);
     
-    return { 
-      chartData: uniqueProcessedData,
-      keys: stackKeys,
-      groupColors: colorsByGroup
-    };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState]);
+    return result;
+  }, [
+    data, 
+    filteredData, 
+    modalFilteredData, 
+    isBrushActive, 
+    isModalBrushActive, 
+    xKey, 
+    yKey, 
+    yField, 
+    groupByField, 
+    externalColorMap, 
+    isExpanded, 
+    chartConfig, 
+    displayMode, 
+    hiddenSeriesState, 
+    modalFilterValues,
+    filterValues
+  ]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -545,14 +699,18 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [tooltip.visible]);
 
-  // Helper function to calculate safe tooltip position for mobile
-  const calculateSafeTooltipPosition = (
+  // Helper function to calculate safe tooltip position for mobile - with memoization
+  const calculateSafeTooltipPosition = useCallback((
     mouseX: number, 
     mouseY: number, 
     containerRect: DOMRect,
     tooltipEstimatedWidth = 200, // Estimated tooltip width
     tooltipEstimatedHeight = 100 // Estimated tooltip height
   ) => {
+    // Debounce position updates for smoother performance
+    const roundedX = Math.round(mouseX / 5) * 5;
+    const roundedY = Math.round(mouseY / 5) * 5;
+    
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const isMobile = viewportWidth < 768;
@@ -566,15 +724,15 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     // Mobile: calculate safe position
-    const absoluteX = containerRect.left + mouseX;
-    const absoluteY = containerRect.top + mouseY;
+    const absoluteX = containerRect.left + roundedX;
+    const absoluteY = containerRect.top + roundedY;
     
-    let safeLeft = mouseX;
-    let safeTop = mouseY - 10;
+    let safeLeft = roundedX;
+    let safeTop = roundedY - 10;
     
     // Check right boundary
     if (absoluteX + tooltipEstimatedWidth > viewportWidth) {
-      safeLeft = mouseX - tooltipEstimatedWidth;
+      safeLeft = roundedX - tooltipEstimatedWidth;
       // Ensure it doesn't go off the left edge
       if (containerRect.left + safeLeft < 0) {
         safeLeft = 10 - containerRect.left;
@@ -588,12 +746,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Check top boundary
     if (absoluteY - tooltipEstimatedHeight < 0) {
-      safeTop = mouseY + 20; // Position below cursor
+      safeTop = roundedY + 20; // Position below cursor
     }
     
     // Check bottom boundary
     if (absoluteY + tooltipEstimatedHeight > viewportHeight) {
-      safeTop = mouseY - tooltipEstimatedHeight - 10;
+      safeTop = roundedY - tooltipEstimatedHeight - 10;
       // Ensure it doesn't go above the top
       if (containerRect.top + safeTop < 0) {
         safeTop = 10 - containerRect.top;
@@ -604,122 +762,142 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       left: Math.max(safeLeft, 0),
       top: Math.max(safeTop, 0)
     };
-  };
+  }, []);
 
-  // Handle interaction (mouse or touch) for tooltips
+  // Add debounce for tooltip updates for better performance
+  const tooltipDebounceRef = useRef<number | null>(null);
+  
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (tooltipDebounceRef.current !== null) {
+        cancelAnimationFrame(tooltipDebounceRef.current);
+      }
+    };
+  }, []);
+  
+  // Handle interaction (mouse or touch) for tooltips with debounced updates
   const handleInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>, isModal = false) => {
-    // Get the correct coordinates based on event type
-    const isTouchEvent = 'touches' in e;
-    const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
-    const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-    
-    const containerRef = isModal ? modalChartRef : chartRef;
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    // Get position relative to chart container
-    const mouseX = clientX - rect.left;
-    const mouseY = clientY - rect.top;
-    
-    // Use current data based on brush state
-    const currentData = isModal 
-      ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
-      : (isBrushActive && filteredData.length > 0 ? filteredData : data);
-    
-    // Check if we have data to work with
-    if (currentData.length === 0 || !keys || keys.length === 0) return;
-    
-    // Calculate available chart space
-    const margin = { top: 10, right: 15, bottom: 30, left: 40 };
-    const innerWidth = rect.width - margin.left - margin.right;
-    
-    // Adjust mouseX to account for margin
-    const adjustedMouseX = mouseX - margin.left;
-    
-    // Early exit if mouse is outside the chart area
-    if (adjustedMouseX < 0 || adjustedMouseX > innerWidth) {
-      if (tooltip.visible) {
-        setTooltip(prev => ({ ...prev, visible: false }));
-      }
-      return;
+    // Clear previous debounce timeout
+    if (tooltipDebounceRef.current !== null) {
+      cancelAnimationFrame(tooltipDebounceRef.current);
     }
     
-    // Calculate bar width and find closest bar
-    const barWidth = innerWidth / chartData.length;
-    const barIndex = Math.floor(adjustedMouseX / barWidth);
-    
-    // Validate the index
-    if (barIndex < 0 || barIndex >= chartData.length) {
-      if (tooltip.visible) {
-        setTooltip(prev => ({ ...prev, visible: false }));
-      }
-      return;
-    }
-    
-    // Get the data point at this index
-    const dataPoint = chartData[barIndex];
-    if (!dataPoint) {
-      if (tooltip.visible) {
-        setTooltip(prev => ({ ...prev, visible: false }));
-      }
-      return;
-    }
-
-    const xValue = dataPoint[xKey];
-    
-    // Calculate safe tooltip position for mobile
-    const safePosition = calculateSafeTooltipPosition(mouseX, mouseY, rect);
-    
-    // Only update if showing a new x-value or hiding previous one
-    if (!tooltip.visible || tooltip.key !== xValue) {
-      // For stacked bar, we show all keys (stack segments)
-      const tooltipItems = keys
-        .filter(key => {
-          // Only include keys with non-zero values and not hidden
-          const value = Number(dataPoint[key]);
-          return !isNaN(value) && value > 0 && !hiddenSeriesState.includes(key);
-        })
-        .map(key => ({
-          label: formatFieldName(key),
-          value: formatValue(Number(dataPoint[key]) || 0, yAxisUnit),
-          color: groupColors[key] || blue,
-          shape: 'square' as 'square'
-        }))
-        .sort((a, b) => {
-          // Sort by value (descending)
-          const aVal = typeof a.value === 'string' 
-            ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
-            : a.value;
-          const bVal = typeof b.value === 'string' 
-            ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
-            : b.value;
-          return bVal - aVal;
-        });
+    // Use requestAnimationFrame for smoother updates
+    tooltipDebounceRef.current = requestAnimationFrame(() => {
+      // Get the correct coordinates based on event type
+      const isTouchEvent = 'touches' in e;
+      const clientX = isTouchEvent ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+      const clientY = isTouchEvent ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
       
-      // If no items passed the filter, don't show tooltip
-      if (tooltipItems.length === 0) {
-        setTooltip(prev => ({ ...prev, visible: false }));
+      const containerRef = isModal ? modalChartRef : chartRef;
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+  
+      // Get position relative to chart container
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+      
+      // Use current data based on brush state
+      const currentData = isModal 
+        ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
+        : (isBrushActive && filteredData.length > 0 ? filteredData : data);
+      
+      // Check if we have data to work with
+      if (currentData.length === 0 || !keys || keys.length === 0) return;
+      
+      // Calculate available chart space
+      const margin = { top: 10, right: 15, bottom: 30, left: 40 };
+      const innerWidth = rect.width - margin.left - margin.right;
+      
+      // Adjust mouseX to account for margin
+      const adjustedMouseX = mouseX - margin.left;
+      
+      // Early exit if mouse is outside the chart area
+      if (adjustedMouseX < 0 || adjustedMouseX > innerWidth) {
+        if (tooltip.visible) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+        }
         return;
       }
       
-      // Update the tooltip
-      setTooltip({
-        visible: true,
-        key: xValue,
-        items: tooltipItems,
-        left: safePosition.left,
-        top: safePosition.top
-      });
-    } else {
-      // If tooltip content isn't changing, just update position
-      setTooltip(prev => ({
-        ...prev,
-        left: safePosition.left,
-        top: safePosition.top
-      }));
-    }
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, keys, groupColors, formatValue, 
-      tooltip.visible, tooltip.key, yAxisUnit, hiddenSeriesState]);
+      // Calculate bar width and find closest bar
+      const barWidth = innerWidth / optimizedChartData.length;
+      const barIndex = Math.floor(adjustedMouseX / barWidth);
+      
+      // Validate the index
+      if (barIndex < 0 || barIndex >= optimizedChartData.length) {
+        if (tooltip.visible) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+        }
+        return;
+      }
+      
+      // Get the data point at this index
+      const dataPoint = optimizedChartData[barIndex];
+      if (!dataPoint) {
+        if (tooltip.visible) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+        }
+        return;
+      }
+  
+      const xValue = dataPoint[xKey];
+      
+      // Calculate safe tooltip position for mobile
+      const safePosition = calculateSafeTooltipPosition(mouseX, mouseY, rect);
+      
+      // Only update if showing a new x-value or hiding previous one
+      if (!tooltip.visible || tooltip.key !== xValue) {
+        // For stacked bar, we show all keys (stack segments)
+        const tooltipItems = keys
+          .filter(key => {
+            // Only include keys with non-zero values and not hidden
+            const value = Number(dataPoint[key]);
+            return !isNaN(value) && value > 0 && !hiddenSeriesState.includes(key);
+          })
+          .map(key => ({
+            label: formatFieldName(key),
+            value: formatValue(Number(dataPoint[key]) || 0, yAxisUnit),
+            color: groupColors[key] || blue,
+            shape: 'square' as 'square'
+          }))
+          .sort((a, b) => {
+            // Sort by value (descending)
+            const aVal = typeof a.value === 'string' 
+              ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
+              : a.value;
+            const bVal = typeof b.value === 'string' 
+              ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
+              : b.value;
+            return bVal - aVal;
+          });
+        
+        // If no items passed the filter, don't show tooltip
+        if (tooltipItems.length === 0) {
+          setTooltip(prev => ({ ...prev, visible: false }));
+          return;
+        }
+        
+        // Update the tooltip
+        setTooltip({
+          visible: true,
+          key: xValue,
+          items: tooltipItems,
+          left: safePosition.left,
+          top: safePosition.top
+        });
+      } else {
+        // If tooltip content isn't changing, just update position
+        setTooltip(prev => ({
+          ...prev,
+          left: safePosition.left,
+          top: safePosition.top
+        }));
+      }
+    });
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, optimizedChartData, xKey, keys, groupColors, formatValue, 
+      tooltip.visible, tooltip.key, yAxisUnit, hiddenSeriesState, calculateSafeTooltipPosition]);
 
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -743,11 +921,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const adjustedMouseX = mouseX - margin.left;
     
     // Only handle touch if it's within the chart area
-    if (adjustedMouseX >= 0 && adjustedMouseX <= innerWidth && chartData.length > 0) {
+    if (adjustedMouseX >= 0 && adjustedMouseX <= innerWidth && optimizedChartData.length > 0) {
       // Note: Cannot preventDefault in touch handlers due to passive event listeners
       handleInteraction(e, isModal);
     }
-  }, [handleInteraction, chartData.length]);
+  }, [handleInteraction, optimizedChartData.length]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>, isModal = false) => {
     // Only handle if tooltip is already visible (user is interacting with chart)
@@ -804,7 +982,19 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     return `${value.substring(0, 3)}...`;
   };
 
-  // Render chart content
+  // Optimize rendering by limiting visible data points based on screen size
+  const optimizedChartData = useMemo(() => {
+    // Only sample data for non-expanded view to maintain detail in expanded mode
+    if (!isExpanded && chartData.length > 100) {
+      // Detect viewport width for responsive sampling
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const maxPoints = isMobile ? 30 : 60;
+      return limitVisibleDataPoints(chartData, maxPoints);
+    }
+    return chartData;
+  }, [chartData, isExpanded]);
+
+  // Render chart content with loading indicator
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
     if (error) {
@@ -817,6 +1007,15 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               <span>Refresh</span>
             </div>
           </ButtonSecondary>
+        </div>
+      );
+    }
+
+    // Show loading indicator when processing data
+    if (isProcessing) {
+      return (
+        <div className="flex justify-center items-center h-full">
+          <PrettyLoader size="sm" />
         </div>
       );
     }
@@ -834,7 +1033,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
 
     // Show loader when no data is available yet
-    if (chartData.length === 0) {
+    if (optimizedChartData.length === 0) {
       return (
         <div className="flex justify-center items-center h-full">
           <PrettyLoader size="sm" />
@@ -851,14 +1050,14 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Create scales
     const xScale = scaleBand<string>({
-      domain: chartData.map((d: ChartDataItem) => d[xKey]),
+      domain: optimizedChartData.map((d: ChartDataItem) => d[xKey]),
       range: [0, innerWidth],
       padding: 0.2,
     });
     
     // Calculate the max value for the y-axis (sum of stacked values)
     const yMax = Math.max(
-      ...chartData.map(d => {
+      ...optimizedChartData.map(d => {
         // Sum all values in the stack
         return keys.reduce((total, key) => total + (Number(d[key]) || 0), 0);
       }),
@@ -881,36 +1080,36 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Calculate x-axis tick values - limit to 8 for date data, 5 for mobile
     const xTickValues = (() => {
       // Check if the data contains dates
-      const isDateData = chartData.length > 0 && 
-        typeof chartData[0][xKey] === 'string' && 
-        (/^\d{4}-\d{2}-\d{2}/.test(chartData[0][xKey]) || 
-         /^\d{2}\/\d{2}\/\d{4}/.test(chartData[0][xKey]) ||
-         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
-         /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
-         /^\d{4}$/.test(chartData[0][xKey]));
+      const isDateData = optimizedChartData.length > 0 && 
+        typeof optimizedChartData[0][xKey] === 'string' && 
+        (/^\d{4}-\d{2}-\d{2}/.test(optimizedChartData[0][xKey]) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(optimizedChartData[0][xKey]) ||
+         /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(optimizedChartData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(optimizedChartData[0][xKey]) || 
+         /^\d{4}$/.test(optimizedChartData[0][xKey]));
       
       // Detect mobile screen size
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
       const maxTicks = isMobile ? 5 : 8;
       
       // For date data, limit ticks based on screen size
-      if (isDateData && chartData.length > maxTicks) {
-        const tickInterval = Math.ceil(chartData.length / maxTicks);
-        return chartData
+      if (isDateData && optimizedChartData.length > maxTicks) {
+        const tickInterval = Math.ceil(optimizedChartData.length / maxTicks);
+        return optimizedChartData
           .filter((_, i) => i % tickInterval === 0)
           .map(d => d[xKey]);
       }
       
       // For other data types on mobile, also limit to 5 ticks
-      if (isMobile && chartData.length > 5) {
-        const tickInterval = Math.ceil(chartData.length / 5);
-        return chartData
+      if (isMobile && optimizedChartData.length > 5) {
+        const tickInterval = Math.ceil(optimizedChartData.length / 5);
+        return optimizedChartData
           .filter((_, i) => i % tickInterval === 0)
           .map(d => d[xKey]);
       }
       
       // For other data types on desktop, show all values
-      return chartData.map(d => d[xKey]);
+      return optimizedChartData.map(d => d[xKey]);
     })();
 
     // Render the chart content
@@ -1024,7 +1223,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             />
             
             {/* Render stacked bars */}
-            {chartData.map((d: ChartDataItem, i: number) => {
+            {optimizedChartData.map((d: ChartDataItem, i: number) => {
               const x = xScale(d[xKey]) || 0;
               
               // Check if this is a simple bar chart (single key)
@@ -1088,8 +1287,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         </svg>
       </div>
     );
-  }, [chartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
-      groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items]);
+  }, [optimizedChartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
+    groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items, isProcessing, hiddenSeriesState]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -1114,7 +1313,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Update legend items when data changes
   useEffect(() => {
-    if (chartData.length > 0 && keys.length > 0) {
+    if (optimizedChartData.length > 0 && keys.length > 0) {
       // Calculate total value for each key across all data points
       const keyTotals: Record<string, number> = {};
       
@@ -1161,13 +1360,23 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       setLegendItems(newLegendItems);
     }
-  }, [data, chartData, keys, groupColors, yField, yKey, groupByField, chartConfig.isStacked]);
+  }, [data, optimizedChartData, keys, groupColors, yField, yKey, groupByField, chartConfig.isStacked]);
 
-  // Process data for brush component
+  // Process data for brush component with caching
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
+    // Generate a simple cache key for brush data
+    const brushCacheKey = `brush_${data.length}_${data[0]?.id || ''}_${data[data.length - 1]?.id || ''}`;
+    
+    // Check if we have cached brush data
+    if (dataCache.has(brushCacheKey)) {
+      console.log('Using cached brush data');
+      return dataCache.get(brushCacheKey) as any[];
+    }
+    
     console.log('Creating brush data with', data.length, 'items');
+    setIsProcessing(true);
     
     // First, apply the same sorting/filtering as the chart data
     let processedData: any[] = [...data].filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
@@ -1194,56 +1403,73 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Check if we have multiple Y-axis fields with stacked mode
     const isMultiYFieldsStacked = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked;
     
-    // Group by x-axis values to prevent duplicates
-    const groupedData: Record<string, any> = {};
+    // Group by x-axis values to prevent duplicates - use a faster approach with Map
+    const groupedDataMap = new Map();
     
     processedData.forEach((item: any) => {
       const xValue = String(item[xKey]);
       
-      if (!groupedData[xValue]) {
-        groupedData[xValue] = {
+      if (!groupedDataMap.has(xValue)) {
+        groupedDataMap.set(xValue, {
           ...item,
           [xKey]: item[xKey],
           totalValue: 0
-        };
+        });
       }
+      
+      const groupedItem = groupedDataMap.get(xValue);
       
       // For multi-y-field stacked charts, sum all the y fields for total value
       if (isMultiYFieldsStacked) {
         allYFields.forEach(field => {
           if (item[field] !== undefined && item[field] !== null) {
             const value = Number(item[field]) || 0;
-            groupedData[xValue].totalValue += value;
+            groupedItem.totalValue += value;
           }
         });
       } else {
         // Add to the total value for this x value using the primary yKey
-        groupedData[xValue].totalValue += Number(item[yKey]) || 0;
+        groupedItem.totalValue += Number(item[yKey]) || 0;
       }
     });
     
-    // Convert back to array
-    const uniqueData = Object.values(groupedData);
+    // Convert Map to array
+    const uniqueData = Array.from(groupedDataMap.values());
     console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
     
     // Create synthetic dates if needed
     const baseDate = new Date();
     baseDate.setHours(0, 0, 0, 0);
     
+    // Optimize date parsing with a helper function
+    const parseDate = (dateStr: string) => {
+      // Fast path for ISO format
+      if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+        return new Date(dateStr);
+      } 
+      // Other date formats
+      else if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr) || 
+              /^[A-Za-z]{3}\s\d{4}$/.test(dateStr) || 
+              /^\d{4}$/.test(dateStr)) {
+        return new Date(dateStr);
+      }
+      return null;
+    };
+    
+    // Pre-allocate the array for better performance
+    const brushDataPoints = new Array(uniqueData.length);
+    
     // Create a series of evenly spaced date points for brush
-    const brushDataPoints = uniqueData.map((d: any, i: number) => {
+    for (let i = 0; i < uniqueData.length; i++) {
+      const d = uniqueData[i];
       let dateObj;
       
       // Try to parse the date from the x-axis field
-      if (typeof d[xKey] === 'string' && 
-         (d[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
-          /^\d{2}\/\d{2}\/\d{4}/.test(d[xKey]) ||
-          /^[A-Za-z]{3}\s\d{4}$/.test(d[xKey]) || 
-         /^\d{4}$/.test(d[xKey]))) {
-        // This is a date string, parse it
-        dateObj = new Date(d[xKey]);
+      if (typeof d[xKey] === 'string') {
+        dateObj = parseDate(d[xKey]);
+        
         // Check if the date is valid
-        if (isNaN(dateObj.getTime())) {
+        if (!dateObj || isNaN(dateObj.getTime())) {
           // Invalid date, use synthetic date based on index
           dateObj = new Date(baseDate);
           dateObj.setDate(baseDate.getDate() + i);
@@ -1260,14 +1486,22 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // For the brush, use the total value across all stacked elements
       const totalValue = d.totalValue || 0;
       
-      return {
+      brushDataPoints[i] = {
         date: dateObj,
         value: totalValue,
         idx: i,
         originalIndex: i,
         originalData: d
       };
-    });
+    }
+    
+    // Store in cache
+    dataCache.set(brushCacheKey, brushDataPoints);
+    
+    // Update processing state
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 0);
     
     console.log('Created brush data points for stacked chart:', brushDataPoints.length);
     return brushDataPoints;
@@ -1366,16 +1600,16 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Calculate max value for brush scaling
   const maxValue = useMemo(() => {
-    if (!chartData || chartData.length === 0) return 1;
+    if (!optimizedChartData || optimizedChartData.length === 0) return 1;
     
     // For stacked charts, use the sum of all values in each stack
     return Math.max(
-      ...chartData.map(d => {
+      ...optimizedChartData.map(d => {
         return keys.reduce((total, key) => total + (Number(d[key]) || 0), 0);
       }),
       1
     );
-  }, [chartData, keys]);
+  }, [optimizedChartData, keys]);
 
   // Render the brush with proper shape reflecting bar values
   const renderBrushArea = useCallback((modalView = false) => {
@@ -1558,11 +1792,30 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     );
   }
 
+  // Progressive loading for better UX
+  useEffect(() => {
+    // Gradually reveal chart components for better perceived performance
+    if (!isClient) {
+      setIsClient(true);
+    }
+    
+    // Start with loading state
+    if (!isDataReady && data.length > 0) {
+      setIsProcessing(true);
+      
+      // Use a short timeout to allow the UI to render the loading state first
+      const timer = setTimeout(() => {
+        setIsDataReady(true);
+        setIsProcessing(false);
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isClient, isDataReady, data.length]);
+
   // Render normal view with brush
   return (
     <div className="w-full h-full relative">
-     
-      
       <div className="h-[85%] w-full">
         <ParentSize debounceTime={10}>
           {({ width: parentWidth, height: parentHeight }) => 
@@ -1573,7 +1826,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         </ParentSize>
       </div>
       
-      {brushData.length > 0 ? renderBrushArea(false) : (null)}
+      {/* Only render brush area when chart data is ready */}
+      {isDataReady && brushData.length > 0 ? renderBrushArea(false) : null}
     </div>
   );
 };
