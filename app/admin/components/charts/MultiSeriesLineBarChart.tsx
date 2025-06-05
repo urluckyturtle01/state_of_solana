@@ -1616,7 +1616,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           margin={{ top: 0, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
-          strokeWidth={hasGroupBy ? 1 : 1}
+          strokeWidth={hasGroupBy ? 1 : 0.5}
           filterValues={modalView ? modalFilterValues : filterValues}
           key={`brush-${modalView ? 'modal' : 'main'}-${JSON.stringify(modalView ? modalFilterValues : filterValues)}`} // Add key to force re-render when filters change
         />
