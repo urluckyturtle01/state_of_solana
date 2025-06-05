@@ -105,10 +105,18 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
+  const [legendItems, setLegendItems] = useState<Array<{
+    id: string;
+    label: string;
+    color: string;
+    value?: number;
+  }>>([]);
   
   // Add ref to track if colors have been generated to prevent infinite loops
   const colorsGeneratedRef = useRef<boolean>(false);
+  
+  // Debounce timer ref for filter changes
+  const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
   
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
@@ -956,6 +964,20 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     setHiddenSeriesState(hiddenSeries || []);
   }, [hiddenSeries, yFields, isMultiSeries]);
 
+  // Reset colors generated flag when data changes
+  useEffect(() => {
+    colorsGeneratedRef.current = false;
+  }, [data]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (filterDebounceTimer.current) {
+        clearTimeout(filterDebounceTimer.current);
+      }
+    };
+  }, []);
+
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     console.log('SimpleAreaChart renderChartContent:', {
@@ -1357,11 +1379,6 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     }
   }, [chartData, yKey, isMultiSeries, yFields, onFilterChange]);
 
-  // Reset colors generated flag when data changes
-  useEffect(() => {
-    colorsGeneratedRef.current = false;
-  }, [data]);
-
   // Render the brush with proper shape reflecting area values
   const renderBrushArea = useCallback((modalView = false) => {
     if (!brushData || brushData.length === 0) return null;
@@ -1406,12 +1423,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
             // This makes the line more visible even for small values
             return Math.max(absVal, maxBrushValue * 0.05);
           }}
-          lineColor={isSimpleChartWithoutFilters ? "#3b82f6" : "#60a5fa"} // Brighter blue for simple charts
+          lineColor={"#3b82f6"} // Brighter blue for simple charts
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           // Use smoother curve type to avoid sharp corners
           curveType={isMultiSeries ? "monotoneX" : "monotoneX"}
-          strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
+          //strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
@@ -1427,13 +1444,21 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
+    
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
 
   // Helper function to format field names for display

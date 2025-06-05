@@ -162,9 +162,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       }
       
       // Log the actual URL being fetched for debugging
-      console.log('Fetching data from URL:', url.toString());
       if (requestOptions.body) {
-        console.log('Request body:', requestOptions.body);
       }
       
       // Add timeout for the fetch request
@@ -237,7 +235,6 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       // Check if we should retry
       const maxRetries = 2;
       if (retry < maxRetries) {
-        console.log(`Retrying fetch (${retry + 1}/${maxRetries})...`);
         // Exponential backoff: 2s, 4s
         const delay = 2000 * Math.pow(2, retry);
         setTimeout(() => fetchData(retry + 1), delay);
@@ -383,10 +380,15 @@ const TableRenderer: React.FC<TableRendererProps> = ({
             case 'number':
               const num = Number(value);
               if (isNaN(num)) return value;
-              return num.toLocaleString('en-US', { 
-                minimumFractionDigits: column.format.decimals || 0,
-                maximumFractionDigits: column.format.decimals || 0
-              });
+              
+             
+                return num.toLocaleString('en-US', { 
+                  minimumFractionDigits: Math.max(column.format.decimals || 0, 1),
+                  maximumFractionDigits: Math.max(column.format.decimals || 0, 1)
+                });
+              
+              
+             
               
             case 'currency':
               const currency = Number(value);

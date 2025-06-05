@@ -224,6 +224,9 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
 
+  // Debounce timer ref for filter changes
+  const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
+
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
@@ -760,13 +763,21 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
+    
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
   
   // Update legend items based on chart data
@@ -1198,7 +1209,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
           }}
           getDate={(d) => d.date}
           getValue={(d) => d.value}
-          lineColor="#60a5fa"
+          lineColor="#3b82f6"
           margin={{ top: 0, right: 28, bottom: 20, left: 30 }}
           isModal={modalView}
           curveType="catmullRom"
@@ -1228,6 +1239,15 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     console.log('DualAxisChart: fields are:', fields);
     setHiddenSeriesState(hiddenSeries || []);
   }, [hiddenSeries, fields]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (filterDebounceTimer.current) {
+        clearTimeout(filterDebounceTimer.current);
+      }
+    };
+  }, []);
 
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {

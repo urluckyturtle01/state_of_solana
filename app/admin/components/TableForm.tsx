@@ -332,9 +332,7 @@ const TableForm: React.FC<TableFormProps> = ({
         });
       }
       
-      console.log('Testing API endpoint:', url.toString());
       if (requestOptions.body) {
-        console.log('Request body:', requestOptions.body);
       }
       
       // Add timeout for the fetch request
@@ -499,7 +497,6 @@ const TableForm: React.FC<TableFormProps> = ({
         try {
           // Clear localStorage cache for this page
           localStorage.removeItem(`tables_page_${formData.page}`);
-          console.log(`Cleared localStorage cache for page ${formData.page}`);
           
           // Also clear session storage if it exists
           sessionStorage.removeItem(`tables_page_${formData.page}`);

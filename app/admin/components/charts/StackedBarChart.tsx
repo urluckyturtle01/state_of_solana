@@ -178,14 +178,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Format with appropriate scale
     let formattedValue: string;
-    if (value >= 1000000000) {
-      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      formattedValue = `${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      formattedValue = `${(value / 1000).toFixed(2)}K`;
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+    } else if (absValue >= 1000000) {
+      formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
+    } else if (absValue >= 1000) {
+      formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
     } else {
-      formattedValue = value.toFixed(2);
+      formattedValue = `${sign}${absValue.toFixed(2)}`;
     }
     
     // Return with correct unit placement (or no unit if not specified)
@@ -201,26 +204,29 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
     if (value === 0) return '0';
     
-    if (value >= 1000000000) {
-      const formattedValue = (value / 1000000000).toFixed(1);
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}B` 
-        : `${formattedValue}B`;
-    } else if (value >= 1000000) {
-      const formattedValue = (value / 1000000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}B` 
+        : `${sign}${formattedValue}B`;
+    } else if (absValue >= 1000000) {
+      const formattedValue = (absValue / 1000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}M` 
-        : `${formattedValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}M` 
+        : `${sign}${formattedValue}M`;
+    } else if (absValue >= 1000) {
+      const formattedValue = (absValue / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
-    } else if (value < 1) {
+        ? `${sign}${formattedValue.slice(0, -2)}K` 
+        : `${sign}${formattedValue}K`;
+    } else if (absValue < 1) {
       // For values between 0 and 1, show decimal places
-      return value.toFixed(1);
+      return `${sign}${absValue.toFixed(1)}`;
     } else {
-      return value.toFixed(0);
+      return `${sign}${absValue.toFixed(0)}`;
     }
   }, [displayMode]);
 
@@ -297,7 +303,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, [filterValues, onFilterChange]);
 
   // Process data for the chart - use filtered data when available
-  const { chartData, keys, groupColors } = useMemo(() => {
+  const { chartData, keys, groupColors, hasNegativeValues } = useMemo(() => {
     // Use appropriate filtered data depending on context
     const currentData: any[] = 
       (isExpanded && isModalBrushActive && modalFilteredData.length > 0) ? modalFilteredData :
@@ -315,7 +321,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return { 
         chartData: [] as ChartDataItem[],
         keys: [] as string[],
-        groupColors: {} as Record<string, string>
+        groupColors: {} as Record<string, string>,
+        hasNegativeValues: false
       };
     }
 
@@ -349,6 +356,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Check if we have a groupBy field
     const hasGroupBy = groupByField && groupByField.trim() !== '';
     
+    // Variable to track if any negative values exist in the data
+    let hasNegativeValues = false;
+    
     // If we have multiple Y fields and stacked mode is enabled
     if (isMultiYFieldsStacked) {
       console.log('Processing multi-y-field stacked chart');
@@ -381,6 +391,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           if (item[key] !== undefined && item[key] !== null) {
             const value = Number(item[key]) || 0;
             groupedData[xValue][key] = (groupedData[xValue][key] || 0) + value;
+            // Check for negative values
+            if (value < 0) {
+              hasNegativeValues = true;
+            }
           }
         });
       });
@@ -408,7 +422,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return {
         chartData: Object.values(groupedData),
         keys: stackKeys,
-        groupColors: colorsByField
+        groupColors: colorsByField,
+        hasNegativeValues
       };
     }
     
@@ -433,6 +448,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         // Sum the y values for the same x value
         const currentValue = Number(item[yKey]) || 0;
         groupedData[xValue][yKey] = (groupedData[xValue][yKey] || 0) + currentValue;
+        
+        // Check for negative values
+        if (currentValue < 0) {
+          hasNegativeValues = true;
+        }
       });
       
       // For percentage mode in simple bar chart, normalize to 100%
@@ -451,7 +471,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return {
         chartData: Object.values(groupedData),
         keys: [yKey], // Single key for the y-axis field
-        groupColors: { [yKey]: singleColor }
+        groupColors: { [yKey]: singleColor },
+        hasNegativeValues
       };
     }
     
@@ -468,7 +489,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       // Track all unique group values (excluding hidden ones)
       if (!hiddenSeriesState.includes(groupValue)) {
-      allGroups.add(groupValue);
+        allGroups.add(groupValue);
       }
       
       // Initialize the grouped data structure for this x value
@@ -481,8 +502,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       // Sum values for the same x value and group (if not hidden)
       if (!hiddenSeriesState.includes(groupValue)) {
-      const currentValue = Number(item[yKey]) || 0;
-      groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
+        const currentValue = Number(item[yKey]) || 0;
+        groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
+        
+        // Check for negative values
+        if (currentValue < 0) {
+          hasNegativeValues = true;
+        }
       }
     });
     
@@ -527,7 +553,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     return { 
       chartData: uniqueProcessedData,
       keys: stackKeys,
-      groupColors: colorsByGroup
+      groupColors: colorsByGroup,
+      hasNegativeValues
     };
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState]);
 
@@ -675,9 +702,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // For stacked bar, we show all keys (stack segments)
       const tooltipItems = keys
         .filter(key => {
-          // Only include keys with non-zero values and not hidden
+          // Include keys with non-zero values (both positive and negative) and not hidden
           const value = Number(dataPoint[key]);
-          return !isNaN(value) && value > 0 && !hiddenSeriesState.includes(key);
+          return !isNaN(value) && value !== 0 && !hiddenSeriesState.includes(key);
         })
         .map(key => ({
           label: formatFieldName(key),
@@ -686,13 +713,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           shape: 'square' as 'square'
         }))
         .sort((a, b) => {
-          // Sort by value (descending)
+          // Sort by absolute value (descending)
           const aVal = typeof a.value === 'string' 
-            ? parseFloat(a.value.replace(/[^0-9.-]+/g, '')) 
-            : a.value;
+            ? Math.abs(parseFloat(a.value.replace(/[^0-9.-]+/g, ''))) 
+            : Math.abs(Number(a.value));
           const bVal = typeof b.value === 'string' 
-            ? parseFloat(b.value.replace(/[^0-9.-]+/g, '')) 
-            : b.value;
+            ? Math.abs(parseFloat(b.value.replace(/[^0-9.-]+/g, ''))) 
+            : Math.abs(Number(b.value));
           return bVal - aVal;
         });
       
@@ -865,8 +892,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       1 // Ensure minimum of 1 to avoid scaling issues
     );
     
+    // Calculate the min value for the y-axis to handle negative values
+    const yMin = Math.min(
+      ...chartData.map(d => {
+        // Find minimum value in the stack
+        return keys.reduce((min, key) => {
+          const value = Number(d[key]) || 0;
+          return value < min ? value : min;
+        }, 0);
+      }),
+      0 // Ensure we always include 0
+    );
+    
     const yScale = scaleLinear<number>({
-      domain: [0, displayMode === 'percent' ? 100 : yMax * 1.1], // Use 100 for percent mode
+      domain: displayMode === 'percent' ? [0, 100] : [yMin * 1.1, yMax * 1.1], // Add 10% padding, use [0, 100] for percent mode
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
@@ -948,6 +987,19 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               strokeOpacity={0.5}
               strokeDasharray="2,3"
             />
+            
+            {/* Zero line with special styling when we have negative values */}
+            {yMin < 0 && (
+              <line
+                x1={0}
+                y1={yScale(0)}
+                x2={innerWidth}
+                y2={yScale(0)}
+                stroke="#374151"
+                strokeWidth={1}
+                strokeOpacity={0.8}
+              />
+            )}
             
             {/* X-axis */}
             <AxisBottom
@@ -1032,8 +1084,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 // Simple bar chart - render single bars
                 const key = keys[0];
                 const value = Number(d[key]) || 0;
-                const barHeight = innerHeight - yScale(value);
-                const barY = yScale(value);
+                const barHeight = Math.abs(yScale(0) - yScale(value));
+                const barY = value >= 0 ? yScale(value) : yScale(0);
                 
                 return (
                   <Bar
@@ -1049,26 +1101,40 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 );
               }
               
-              // Stacked bar chart - render stacked bars
-              let barY = innerHeight;
-              const stackedBars: React.ReactNode[] = [];
+              // For stacked bar charts, we need to handle positive and negative values separately
+              const positiveKeys: string[] = [];
+              const negativeKeys: string[] = [];
               
-              // Generate bars for each key (group), sorted by value
+              // Separate keys into positive and negative based on their values
               keys
-                .filter(key => Number(d[key]) > 0)
-                .sort((a, b) => Number(d[a]) - Number(d[b])) // Sort ascending for proper stacking
+                .filter(key => !hiddenSeriesState.includes(key))
                 .forEach(key => {
                   const value = Number(d[key]) || 0;
-                  // For stacked bars, the height is the scaled difference of the value
-                  const scaledValue = yScale(0) - yScale(value);
-                  const barHeight = Math.abs(scaledValue);
-                  barY -= barHeight;
+                  if (value >= 0) {
+                    positiveKeys.push(key);
+                  } else {
+                    negativeKeys.push(key);
+                  }
+                });
+              
+              // Process positive stack (from bottom to top)
+              let positiveY = yScale(0);
+              const positiveBars: React.ReactNode[] = [];
+              
+              // Sort positive keys by value for proper stacking (ascending)
+              positiveKeys
+                .sort((a, b) => Number(d[a]) - Number(d[b]))
+                .forEach(key => {
+                  const value = Number(d[key]) || 0;
+                  const barHeight = Math.abs(yScale(0) - yScale(value));
+                  // Position bars starting from the zero line and going up
+                  positiveY -= barHeight;
                   
-                  stackedBars.push(
+                  positiveBars.push(
                     <Bar
-                      key={`bar-${i}-${key}`}
+                      key={`pos-bar-${i}-${key}`}
                       x={x}
-                      y={barY}
+                      y={positiveY}
                       width={xScale.bandwidth()}
                       height={barHeight}
                       fill={groupColors[key]}
@@ -1078,9 +1144,38 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                   );
                 });
               
+              // Process negative stack (from zero line down)
+              let negativeY = yScale(0);
+              const negativeBars: React.ReactNode[] = [];
+              
+              // Sort negative keys by absolute value for proper stacking (descending absolute values)
+              negativeKeys
+                .sort((a, b) => Math.abs(Number(d[b])) - Math.abs(Number(d[a])))
+                .forEach(key => {
+                  const value = Number(d[key]) || 0;
+                  const barHeight = Math.abs(yScale(0) - yScale(value));
+                  
+                  negativeBars.push(
+                    <Bar
+                      key={`neg-bar-${i}-${key}`}
+                      x={x}
+                      y={negativeY}
+                      width={xScale.bandwidth()}
+                      height={barHeight}
+                      fill={groupColors[key]}
+                      opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                      rx={0}
+                    />
+                  );
+                  
+                  // Move down for next negative bar
+                  negativeY += barHeight;
+                });
+              
               return (
                 <Group key={`stack-${i}`}>
-                  {stackedBars}
+                  {positiveBars}
+                  {negativeBars}
                 </Group>
               );
             })}
@@ -1089,7 +1184,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       </div>
     );
   }, [chartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
-      groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items]);
+      groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items, hiddenSeriesState, displayMode]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -1407,7 +1502,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             const val = d.value || 0;
             return Math.max(val, maxValue * 0.05);
           }}
-          lineColor="#3b82f6"
+          lineColor={"#3b82f6"}
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           curveType="catmullRom"
@@ -1477,13 +1572,15 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 />
               )}
               
-              {/* Display mode filter - always show this for stacked charts */}
-              <div className="flex items-center">
-                <DisplayModeFilter
-                  mode={displayMode}
-                  onChange={(value) => handleFilterChange('displayMode', value)}
-                />
-              </div>
+              {/* Display mode filter - only show for charts without negative values */}
+              {!hasNegativeValues && (
+                <div className="flex items-center">
+                  <DisplayModeFilter
+                    mode={displayMode}
+                    onChange={(value) => handleFilterChange('displayMode', value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
           

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
 
 import SimpleBarChart from './charts/SimpleBarChart';
@@ -32,6 +32,8 @@ interface ChartRendererProps {
   hiddenSeries?: string[];
   // Add prop to pass pre-loaded data
   preloadedData?: any[];
+  // Add prop to enable frontend filtering
+  enableFrontendFiltering?: boolean;
 }
 
 // Add helper function at the top of the file
@@ -50,7 +52,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   onColorsGenerated,
   isLoading = false,
   hiddenSeries = [],
-  preloadedData
+  preloadedData,
+  enableFrontendFiltering = true
 }) => {
   const [data, setData] = useState<any[]>(preloadedData || []);
   const [error, setError] = useState<string | null>(null);
@@ -60,10 +63,20 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   // Add state to track legend colors, use external if provided
   const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>(externalColorMap || {});
   
+  // Add state to store all unfiltered data for frontend filtering
+  const [allData, setAllData] = useState<any[]>([]);
+  
+  // Add state to store precomputed filtered data
+  const [precomputedFilteredData, setPrecomputedFilteredData] = useState<Record<string, any[]>>({});
+  
+  // Track if we've shown immediate data or not
+  const hasShownImmediateData = useRef(false);
+  
   // Update data when preloadedData changes
   useEffect(() => {
     if (preloadedData && preloadedData.length > 0) {
       setData(preloadedData);
+      setAllData(preloadedData); // Also set allData for frontend filtering
       setError(null);
     }
   }, [preloadedData]);
@@ -74,6 +87,134 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       setLegendColorMap(externalColorMap);
     }
   }, [externalColorMap]);
+
+  // Add function to apply frontend filters
+  const applyFrontendFilters = useCallback((dataToFilter: any[], filters: Record<string, string>) => {
+    if (!enableFrontendFiltering || dataToFilter.length === 0) {
+      return dataToFilter;
+    }
+    
+    // Start with full dataset
+    let filteredData = [...dataToFilter];
+    const filterConfig = chartConfig.additionalOptions?.filters;
+    
+    // Get xKey from chart config
+    const xField = chartConfig.dataMapping.xAxis;
+    const xKey = typeof xField === 'string' ? xField : xField[0];
+    
+    // Apply time filter
+    if (filterConfig?.timeFilter && filters['timeFilter']) {
+      const timeFilter = filters['timeFilter'];
+      // Use x-axis field as the date field for time filtering
+      const dateField = xKey;
+      
+      // Only filter if needed - avoid filtering if possible
+      filteredData = filteredData.filter(item => {
+        // Skip filtering for non-date values
+        const itemDate = new Date(item[dateField]);
+        if (isNaN(itemDate.getTime())) return true;
+        
+        const now = new Date();
+        
+        switch (timeFilter) {
+          case 'D': // Daily - last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(now.getDate() - 30);
+            return itemDate >= thirtyDaysAgo;
+          
+          case 'W': // Weekly - last 12 weeks
+            const twelveWeeksAgo = new Date();
+            twelveWeeksAgo.setDate(now.getDate() - 84);
+            return itemDate >= twelveWeeksAgo;
+          
+          case 'M': // Monthly - last 12 months
+            const twelveMonthsAgo = new Date();
+            twelveMonthsAgo.setMonth(now.getMonth() - 12);
+            return itemDate >= twelveMonthsAgo;
+          
+          case 'Q': // Quarterly - last 8 quarters
+            const eightQuartersAgo = new Date();
+            eightQuartersAgo.setMonth(now.getMonth() - 24);
+            return itemDate >= eightQuartersAgo;
+          
+          case 'Y': // Yearly - all data
+            return true;
+          
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Apply currency filter
+    if (filterConfig?.currencyFilter && filters['currencyFilter']) {
+      const currencyFilter = filters['currencyFilter'];
+      // Look for common currency field names in the data
+      const currencyField = dataToFilter.length > 0 && 'currency' in dataToFilter[0] 
+        ? 'currency' 
+        : 'Currency';
+      
+      if (currencyFilter !== 'ALL' && currencyFilter !== 'USD') {
+        filteredData = filteredData.filter(item => 
+          item[currencyField] === currencyFilter
+        );
+      }
+    }
+    
+    // Apply display mode filter (this might need aggregation logic)
+    if (filterConfig?.displayModeFilter && filters['displayModeFilter']) {
+      const displayMode = filters['displayModeFilter'];
+      
+      // Display mode typically affects how data is shown (percentage vs absolute)
+      // This is usually handled in the chart rendering, not data filtering
+      // But we can pass it through for charts to handle
+    }
+    
+    console.log(`Frontend filtering: ${dataToFilter.length} -> ${filteredData.length} items`);
+    return filteredData;
+  }, [enableFrontendFiltering, chartConfig.additionalOptions?.filters, chartConfig.dataMapping.xAxis]);
+
+  // Precompute filtered data for all filter combinations
+  useEffect(() => {
+    if (!enableFrontendFiltering || allData.length === 0) return;
+    
+    const filterConfig = chartConfig.additionalOptions?.filters;
+    if (!filterConfig?.timeFilter) return;
+    
+    // Create filtered datasets for all time filter options
+    const timeFilterOptions = filterConfig.timeFilter.options || [];
+    const precomputed: Record<string, any[]> = {};
+    
+    console.log(`Precomputing filtered data for ${timeFilterOptions.length} time filter options`);
+    
+    timeFilterOptions.forEach(timeFilter => {
+      // Apply just the time filter
+      const filters = { timeFilter };
+      const filtered = applyFrontendFilters(allData, filters);
+      precomputed[timeFilter] = filtered;
+      console.log(`Precomputed ${filtered.length} items for time filter ${timeFilter}`);
+    });
+    
+    setPrecomputedFilteredData(precomputed);
+  }, [allData, enableFrontendFiltering, chartConfig.additionalOptions?.filters, applyFrontendFilters]);
+
+  // Handle external filter changes for frontend filtering
+  useEffect(() => {
+    if (enableFrontendFiltering && externalFilterValues && allData.length > 0) {
+      console.log('Applying frontend filters due to external filter change');
+      
+      // Check if we have precomputed data for this time filter
+      const timeFilter = externalFilterValues['timeFilter'];
+      if (timeFilter && precomputedFilteredData[timeFilter]) {
+        console.log(`Using precomputed data for time filter ${timeFilter}`);
+        setData(precomputedFilteredData[timeFilter]);
+      } else {
+        // Fall back to regular filtering
+        const filteredData = applyFrontendFilters(allData, externalFilterValues);
+        setData(filteredData);
+      }
+    }
+  }, [enableFrontendFiltering, externalFilterValues, allData, applyFrontendFilters, precomputedFilteredData]);
 
   // Add effect to forward legend colors to parent component
   useEffect(() => {
@@ -167,7 +308,28 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         ...prev,
         [filterType]: value
       }));
-      setIsFilterChanged(true);
+      
+      if (enableFrontendFiltering) {
+        // For frontend filtering, don't set isFilterChanged
+        // We'll apply filters immediately to the stored data
+        const newFilters = {
+          ...internalFilterValues,
+          [filterType]: value
+        };
+        
+        // Use precomputed data if available (for time filters)
+        if (filterType === 'timeFilter' && precomputedFilteredData[value]) {
+          console.log(`Using precomputed data for time filter ${value}`);
+          setData(precomputedFilteredData[value]);
+        } else {
+          // Fall back to regular filtering
+          const filteredData = applyFrontendFilters(allData, newFilters);
+          setData(filteredData);
+        }
+      } else {
+        // For server-side filtering, mark that filters changed
+        setIsFilterChanged(true);
+      }
     }
   };
 
@@ -224,11 +386,50 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     ];
   };
 
+  // Define the precomputeAllFilters function at component level
+  const precomputeAllFilters = useCallback((data: any[]) => {
+    if (!enableFrontendFiltering || data.length === 0) return;
+    
+    const filterConfig = chartConfig.additionalOptions?.filters;
+    if (!filterConfig?.timeFilter) return;
+    
+    const timeFilterOptions = filterConfig.timeFilter.options || [];
+    if (timeFilterOptions.length === 0) return;
+    
+    console.log(`Precomputing filtered data for ${timeFilterOptions.length} time filter options`);
+    
+    const precomputed: Record<string, any[]> = {};
+    timeFilterOptions.forEach(option => {
+      const filters = { timeFilter: option };
+      const filtered = applyFrontendFilters(data, filters);
+      precomputed[option] = filtered;
+      console.log(`Precomputed ${filtered.length} items for time filter ${option}`);
+    });
+    
+    setPrecomputedFilteredData(precomputed);
+    
+    // If we have a current filter, apply it immediately
+    const currentTimeFilter = filterValues?.['timeFilter'];
+    if (currentTimeFilter && precomputed[currentTimeFilter]) {
+      console.log(`Using precomputed data for current time filter ${currentTimeFilter}`);
+      setData(precomputed[currentTimeFilter]);
+    }
+  }, [enableFrontendFiltering, chartConfig.additionalOptions?.filters, applyFrontendFilters, filterValues, setData]);
+
   // Fetch data from API when component mounts or filters change
   useEffect(() => {
     // Skip fetching if we have preloaded data
     if (preloadedData && preloadedData.length > 0) {
       console.log(`Using preloaded data for chart ${chartConfig.title}, skipping API fetch`);
+      
+      // Precompute filters for preloaded data
+      if (enableFrontendFiltering) {
+        setTimeout(() => {
+          console.log('Precomputing filters for preloaded data');
+          precomputeAllFilters(preloadedData);
+        }, 0);
+      }
+      
       return;
     }
     
@@ -250,13 +451,26 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       let parsedData: any[] = [];
       
       try {
-        // Skip API call if using the same endpoint with the same mapping and no filter changes
+        // Add better caching - check localStorage first for better persistence across sessions
         const cacheKey = `${chartConfig.apiEndpoint}-${dataMappingKey}-${JSON.stringify(filterValues)}`;
-        const cachedData = !isFilterChanged ? sessionStorage.getItem(cacheKey) : null;
+        const cachedData = !isFilterChanged && !enableFrontendFiltering ? 
+          localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey) : null;
         
         if (cachedData) {
-          console.log('Using cached data for', chartConfig.title);
-          parsedData = JSON.parse(cachedData);
+                      console.log('Using cached data for', chartConfig.title);
+            parsedData = JSON.parse(cachedData);
+            
+            // Immediately set the data to avoid lag
+            setData(parsedData);
+            setAllData(parsedData);
+            
+            // Start precomputation in the background
+            if (enableFrontendFiltering) {
+              setTimeout(() => {
+                console.log('Background precomputing filtered data from cache');
+                precomputeAllFilters(parsedData);
+              }, 0);
+            }
         } else {
           // Create URL with API key if provided
           let apiUrl;
@@ -290,7 +504,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           const filterConfig = chartConfig.additionalOptions?.filters;
           const hasFilters = filterConfig !== undefined;
           
-          if (hasFilters) {
+          // Only add filter parameters if NOT using frontend filtering
+          if (hasFilters && !enableFrontendFiltering) {
             // Add time filter parameter
             if (filterConfig.timeFilter && filterValues['timeFilter']) {
               parameters[filterConfig.timeFilter.paramName] = filterValues['timeFilter'];
@@ -326,6 +541,11 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           }
           
           const hasParameters = Object.keys(parameters).length > 0;
+          
+          // If using frontend filtering, we want ALL data
+          if (enableFrontendFiltering) {
+            console.log(`Frontend filtering enabled for ${chartConfig.title} - fetching ALL data without filters`);
+          }
           
           // Set up fetch options
           const options: RequestInit = {
@@ -398,10 +618,14 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           }
           
           // Cache the result to prevent unnecessary fetches
-          try {
-            sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
-          } catch (e) {
-            console.warn('Failed to cache data:', e);
+          if (!enableFrontendFiltering) {
+            try {
+              // Store in both localStorage (persists across browser sessions) and sessionStorage
+              localStorage.setItem(cacheKey, JSON.stringify(parsedData));
+              sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
+            } catch (e) {
+              console.warn('Failed to cache data:', e);
+            }
           }
           
           // Reset filter changed flag
@@ -412,6 +636,15 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         if (parsedData.length > 0 && !signal.aborted) {
           // Log the data for debugging purposes
           console.log('Chart data successfully loaded:', parsedData.slice(0, 2));
+          
+          // For immediate rendering, show a subset of the data right away if this is first time
+          if (!hasShownImmediateData.current) {
+            console.log('Showing immediate data preview for faster initial rendering');
+            // Take just a few items for immediate display
+            const previewData = parsedData.slice(0, Math.min(20, parsedData.length));
+            setData(previewData);
+            hasShownImmediateData.current = true;
+          }
           
           // Validate that we can access the required data fields
           try {
@@ -467,47 +700,113 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
               }
             }
             
-            // Normalize the data if needed
+            // Normalize the data if needed - but don't block UI rendering
+            let normalizedData = parsedData;
             if (needsNormalization) {
-              parsedData = parsedData.map(item => {
-                const normalizedItem = { ...item };
-                
-                // Normalize x-axis fields
-                for (const field of xAxisFields) {
-                  const matchingField = findMatchingField(item, field);
-                  if (matchingField && matchingField !== field) {
-                    normalizedItem[field] = item[matchingField];
+              // Do the normalization in the background to avoid UI blocking
+              setTimeout(() => {
+                normalizedData = parsedData.map(item => {
+                  const normalizedItem = { ...item };
+                  
+                  // Normalize x-axis fields
+                  for (const field of xAxisFields) {
+                    const matchingField = findMatchingField(item, field);
+                    if (matchingField && matchingField !== field) {
+                      normalizedItem[field] = item[matchingField];
+                    }
                   }
-                }
-                
-                // Normalize y-axis fields
-                for (const field of yAxisFields) {
-                  const matchingField = findMatchingField(item, field);
-                  if (matchingField && matchingField !== field) {
-                    normalizedItem[field] = item[matchingField];
+                  
+                  // Normalize y-axis fields
+                  for (const field of yAxisFields) {
+                    const matchingField = findMatchingField(item, field);
+                    if (matchingField && matchingField !== field) {
+                      normalizedItem[field] = item[matchingField];
+                    }
                   }
-                }
-                
-                // Normalize group by field if needed
-                if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
-                  const matchingGroupField = findMatchingField(item, groupBy);
-                  if (matchingGroupField && matchingGroupField !== groupBy) {
-                    normalizedItem[groupBy] = item[matchingGroupField];
+                  
+                  // Normalize group by field if needed
+                  if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+                    const matchingGroupField = findMatchingField(item, groupBy);
+                    if (matchingGroupField && matchingGroupField !== groupBy) {
+                      normalizedItem[groupBy] = item[matchingGroupField];
+                    }
                   }
-                }
+                  
+                  return normalizedItem;
+                });
                 
-                return normalizedItem;
-              });
+                // Update the parsedData with normalized version
+                parsedData = normalizedData;
+                
+                // Now update the complete data
+                if (enableFrontendFiltering) {
+                  // For frontend filtering, update all data and apply filters
+                  setAllData(parsedData);
+                  precomputeAllFilters(parsedData);
+                } else {
+                  // For server-side filtering, just update data directly
+                  setData(parsedData);
+                }
+              }, 0);
             }
             
-            // Call onDataLoaded callback if provided and component is still mounted
-            if (onDataLoaded && !signal.aborted) {
-              onDataLoaded(parsedData);
-            }
+
             
-            // Set data only if component is still mounted
-            if (!signal.aborted) {
-              setData(parsedData);
+            // If we've already shown immediate data and this is not a normalization scenario,
+            // now we need to set the complete filtered data
+            if (!needsNormalization) {
+              // If frontend filtering is enabled, store all data and apply filters
+              if (enableFrontendFiltering) {
+                // Store all data for future filtering
+                setAllData(parsedData);
+                
+                // Immediately start precomputing all filter combinations in the background
+                setTimeout(() => {
+                  precomputeAllFilters(parsedData);
+                }, 0);
+                
+                // Check if we have precomputed data for this time filter
+                const timeFilter = filterValues['timeFilter'];
+                let filteredData: any[];
+                
+                if (timeFilter && precomputedFilteredData[timeFilter]) {
+                  console.log(`Using precomputed data for time filter ${timeFilter}`);
+                  filteredData = precomputedFilteredData[timeFilter];
+                  
+                  // Set the filtered data with a slight delay to ensure chart bars render
+                  // This prevents the axis appearing before the bars
+                  setTimeout(() => {
+                    setData(filteredData);
+                    
+                    // Call onDataLoaded with filtered data
+                    if (onDataLoaded && !signal.aborted) {
+                      onDataLoaded(filteredData);
+                    }
+                  }, 10);
+                } else {
+                  // Fall back to regular filtering
+                  filteredData = applyFrontendFilters(parsedData, filterValues);
+                  
+                  // Set the filtered data
+                  setData(filteredData);
+                  
+                  // Call onDataLoaded with filtered data
+                  if (onDataLoaded && !signal.aborted) {
+                    onDataLoaded(filteredData);
+                  }
+                }
+              } else {
+                // For server-side filtering, use data as-is
+                // With a slight delay to ensure chart bars render after axes
+                setTimeout(() => {
+                  setData(parsedData);
+                
+                  // Call onDataLoaded callback if provided and component is still mounted
+                  if (onDataLoaded && !signal.aborted) {
+                    onDataLoaded(parsedData);
+                  }
+                }, 10);
+              }
             }
           } catch (error) {
             if (!signal.aborted) {
@@ -557,7 +856,13 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           
           // Set the data with the fallback
           if (!signal.aborted) {
-            setData(parsedData);
+            if (enableFrontendFiltering) {
+              setAllData(parsedData);
+              const filteredData = applyFrontendFilters(parsedData, filterValues);
+              setData(filteredData);
+            } else {
+              setData(parsedData);
+            }
           }
         }
       }
@@ -574,9 +879,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     return () => {
       controller.abort();
     };
-  }, [chartConfig.apiEndpoint, chartConfig.apiKey, chartConfig.title, JSON.stringify(chartConfig.dataMapping), filterValues, isFilterChanged]);
+  }, [chartConfig.apiEndpoint, chartConfig.apiKey, chartConfig.title, JSON.stringify(chartConfig.dataMapping), filterValues, isFilterChanged, enableFrontendFiltering, applyFrontendFilters]);
 
-  // Memoize the chart rendering to prevent unnecessary re-renders
+  // Pass isLoading prop to chart components
   const renderChart = React.useCallback(() => {
     console.log("=== CHART RENDER DEBUG ===");
     console.log("Rendering chart with config:", {
@@ -601,7 +906,8 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
       colorMap: legendColorMap,
       filterValues,
       hiddenSeries,
-      yAxisUnit
+      yAxisUnit,
+      isLoading // Pass isLoading state to chart components
     };
     
     switch (chartConfig.chartType) {
@@ -686,7 +992,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
         console.warn(`Unsupported chart type: ${chartConfig.chartType}`);
         return null;
     }
-  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues, hiddenSeries]);
+  }, [chartConfig, data, isExpanded, onCloseExpanded, legendColorMap, filterValues, hiddenSeries, isLoading]);
 
   // Implement logic to extract the unit from yAxis when necessary
   const getYAxisUnit = (yAxis: string | YAxisConfig | (string | YAxisConfig)[]): string | undefined => {
