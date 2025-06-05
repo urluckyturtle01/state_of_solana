@@ -378,8 +378,8 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                     return valueScale(val);
                   }}
                   stroke={lineColor || "#53a7fe"}
-                  strokeOpacity={0.7} // Increase opacity for better visibility
-                  strokeWidth={strokeWidth || 1}
+                  strokeOpacity={0.6} // Increase opacity for better visibility
+                  strokeWidth={strokeWidth || 0.5}
                   curve={curveFunction}
                 />
                 
