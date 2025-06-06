@@ -75,12 +75,18 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   yAxisUnit,
   hiddenSeries = [],
   onFilterChange,
-  displayMode
+  displayMode: propDisplayMode
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
+  
+  // Internal display mode state that updates with filter changes
+  const [internalDisplayMode, setInternalDisplayMode] = useState<DisplayMode>(propDisplayMode || 'absolute');
+  
+  // Use internal display mode instead of prop
+  const displayMode = internalDisplayMode;
   
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
@@ -230,6 +236,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [filterValues]);
 
+  // Update internal displayMode when prop changes
+  useEffect(() => {
+    if (propDisplayMode) {
+      setInternalDisplayMode(propDisplayMode);
+    }
+  }, [propDisplayMode]);
+
+  // Update internal displayMode when filter changes
+  useEffect(() => {
+    if (filterValues?.displayMode) {
+      setInternalDisplayMode(filterValues.displayMode as DisplayMode);
+    }
+  }, [filterValues]);
+
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
@@ -241,6 +261,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Update local state
     setModalFilterValues(updatedFilters);
+    
+    // Update internal display mode if needed
+    if (key === 'displayMode') {
+      setInternalDisplayMode(value as DisplayMode);
+    }
     
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (onFilterChange) {
@@ -264,6 +289,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Update local state
     setModalFilterValues(updatedFilters);
+    
+    // Update internal display mode if needed
+    if (key === 'displayMode') {
+      setInternalDisplayMode(value as DisplayMode);
+    }
     
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (onFilterChange) {
@@ -1465,7 +1495,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               {/* Display mode filter - always show this for stacked charts */}
               <div className="flex items-center">
                 <DisplayModeFilter
-                  mode={displayMode || 'absolute'}
+                  mode={internalDisplayMode}
                   onChange={(value) => handleFilterChange('displayMode', value)}
                 />
               </div>
