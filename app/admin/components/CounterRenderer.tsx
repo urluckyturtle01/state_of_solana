@@ -144,7 +144,6 @@ const fetchCounterData = async (
       
       // Use cached data if not expired
       if (now - cachedItem.timestamp < cachedItem.expiresIn) {
-        console.log(`Using cached data for counter with endpoint: ${apiEndpoint}`);
         return {
           ...cachedItem.data,
           rawResponse: cachedItem.rawResponse
@@ -154,7 +153,6 @@ const fetchCounterData = async (
     
     // Check if this request is already in progress
     if (cacheKey in ACTIVE_REQUESTS) {
-      console.log(`Request already in progress for ${apiEndpoint}, reusing promise`);
       return ACTIVE_REQUESTS[cacheKey];
     }
     
@@ -181,7 +179,6 @@ const fetchCounterData = async (
       }
     }
     
-    console.log(`Fetching data from: ${url.toString()}`);
     const startTime = performance.now();
     
     // Create the fetch promise and store it in ACTIVE_REQUESTS
@@ -189,7 +186,6 @@ const fetchCounterData = async (
       try {
         const response = await fetch(url.toString(), { cache: 'no-store' });
         const endTime = performance.now();
-        console.log(`Fetch completed in ${(endTime - startTime).toFixed(2)}ms`);
         
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
@@ -269,7 +265,6 @@ const fetchCounterData = async (
     // Try to use cached data as fallback if available, even if expired
     const cacheKey = `${apiEndpoint}-${apiKey || ''}`;
     if (COUNTER_DATA_CACHE[cacheKey]) {
-      console.log(`Using expired cached data as fallback for counter: ${apiEndpoint}`);
       return {
         ...COUNTER_DATA_CACHE[cacheKey].data,
         rawResponse: COUNTER_DATA_CACHE[cacheKey].rawResponse
@@ -293,7 +288,6 @@ export const prefetchCounterData = (apiEndpoint: string, apiKey?: string) => {
   
   // Only prefetch if not already in cache or active requests
   if (!(cacheKey in COUNTER_DATA_CACHE) && !(cacheKey in ACTIVE_REQUESTS)) {
-    console.log(`Prefetching data for: ${apiEndpoint}`);
     // Start the fetch but don't await it - just store the promise
     fetchCounterData(apiEndpoint, apiKey).catch(err => {
       console.error(`Error prefetching counter data: ${err.message}`);
@@ -307,13 +301,6 @@ const fetchAndProcessCounter = async (counterConfig: CounterConfig): Promise<{
   previousValue?: number;
   error?: string;
 }> => {
-  console.log("Processing counter with config:", {
-    title: counterConfig.title,
-    hasTrendConfig: !!counterConfig.trendConfig,
-    trendValueField: counterConfig.trendConfig?.valueField,
-    isAutoCalculate: counterConfig.trendConfig?.valueField === 'auto_calculate'
-  });
-  
   try {
     // Fast path: Check if data is already in cache to avoid unnecessary processing
     const cacheKey = `${counterConfig.apiEndpoint}-${counterConfig.apiKey || ''}`;
@@ -322,8 +309,6 @@ const fetchAndProcessCounter = async (counterConfig: CounterConfig): Promise<{
     if (cachedItem) {
       const now = Date.now();
       if (now - cachedItem.timestamp < cachedItem.expiresIn) {
-        console.log(`Using cached processed data for counter: ${counterConfig.title}`);
-        
         // Process the cached data directly to get value and trend
         return processCounterData(counterConfig, cachedItem.rawResponse);
       }
@@ -398,7 +383,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
     if (counterConfig.trendConfig) {
       // Handle auto-calculated trend
       if (counterConfig.trendConfig.valueField === 'auto_calculate') {
-        console.log("Auto-calculating trend value from data");
         // Try to find a previous data point to calculate trend
         if (rows.length > 1) {
           // Attempt to determine if there's a date field we can use for sorting
@@ -433,13 +417,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
               // Calculate percentage change
               if (!isNaN(previousValue) && previousValue !== 0) {
                 const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
-                console.log("Auto-calculated trend:", {
-                  currentValue, 
-                  previousValue, 
-                  percentChange,
-                  currentDate: row[dateField],
-                  previousDate: previousRow[dateField]
-                });
                 return {
                   value: numericValue,
                   previousValue: percentChange
@@ -457,13 +434,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
               // Calculate percentage change
               if (!isNaN(previousValue) && previousValue !== 0) {
                 const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
-                console.log("Auto-calculated trend using row index:", {
-                  currentValue, 
-                  previousValue, 
-                  percentChange,
-                  currentIndex: rowIndex,
-                  previousIndex: rowIndex - 1
-                });
                 return {
                   value: numericValue,
                   previousValue: percentChange
@@ -484,13 +454,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
               // Calculate percentage change
               if (!isNaN(previousValue) && previousValue !== 0 && !isNaN(currentValue)) {
                 const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
-                console.log("Auto-calculated trend using alternative rows:", {
-                  currentValue, 
-                  previousValue, 
-                  percentChange,
-                  currentIndex: currentRowIndex,
-                  previousIndex: previousRowIndex
-                });
                 return {
                   value: numericValue,
                   previousValue: percentChange
@@ -515,13 +478,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
               
               if (!isNaN(currentValue) && !isNaN(previousValue) && previousValue !== 0) {
                 const percentChange = ((currentValue - previousValue) / Math.abs(previousValue)) * 100;
-                console.log("Auto-calculated trend using rowIndex-based fallback:", {
-                  currentValue,
-                  previousValue,
-                  percentChange,
-                  currentRowIndex,
-                  previousRowIndex
-                });
                 return {
                   value: numericValue,
                   previousValue: percentChange
@@ -531,7 +487,6 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
           }
         }
         
-        console.log("Unable to auto-calculate trend - insufficient data");
         // If we couldn't calculate the trend, return without trend value
         return {
           value: numericValue,
@@ -586,13 +541,10 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
   // Clear cache for newly created counters to ensure they're displayed
   useEffect(() => {
     if (isRecentlyCreated(counterConfig)) {
-      console.log(`Detected newly created counter (${counterConfig.title}), clearing cache`);
-      
       // Clear localStorage cache for this page
       if (typeof window !== 'undefined' && counterConfig.page) {
         try {
           localStorage.removeItem(`counters_page_${counterConfig.page}`);
-          console.log(`Cleared localStorage cache for page ${counterConfig.page}`);
         } catch (e) {
           console.warn('Error clearing localStorage cache:', e);
         }
@@ -602,7 +554,6 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
       const cacheKey = `${counterConfig.apiEndpoint}-${counterConfig.apiKey || ''}`;
       if (cacheKey in COUNTER_DATA_CACHE) {
         delete COUNTER_DATA_CACHE[cacheKey];
-        console.log(`Cleared in-memory cache for endpoint ${counterConfig.apiEndpoint}`);
       }
       
       // Remove from active requests if present
@@ -642,8 +593,6 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
         const result = await fetchAndProcessCounter(counterConfig);
         const endTime = performance.now();
         
-        console.log(`Counter ${counterConfig.title} data processed in ${(endTime - startTime).toFixed(2)}ms`);
-
         // If component was unmounted during the async operation, don't update state
         if (!isMounted) return;
 
@@ -676,11 +625,10 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
             } else if (num >= 1000000) {
               formattedValue = `${(num / 1000000).toFixed(1)}M`;
             } else if (num >= 1000) {
-            
               formattedValue = `${(num / 1000).toFixed(1)}K`;
             } else {
               // For smaller numbers
-              formattedValue = isCurrency ? num.toFixed(2) : num.toFixed(1);
+              formattedValue = isCurrency ? num.toFixed(2) : num.toFixed(0);
             }
           } else {
             // For small numbers that aren't currency or percentage
@@ -690,11 +638,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
 
         // Apply prefix and suffix
         if (typeof counterConfig.prefix === 'string' && counterConfig.prefix !== '') {
-          console.log('Adding prefix:', counterConfig.prefix);
           formattedValue = `${counterConfig.prefix}${formattedValue}`;
         }
         if (typeof counterConfig.suffix === 'string' && counterConfig.suffix !== '') {
-          console.log('Adding suffix:', counterConfig.suffix);
           formattedValue = `${formattedValue} ${counterConfig.suffix}`;
         }
 
@@ -703,19 +649,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
 
         // Set trend if available - improve logging here
         if (counterConfig.trendConfig && result.previousValue !== undefined) {
-          console.log(`Setting trend for ${counterConfig.title}:`, {
-            value: result.previousValue,
-            label: counterConfig.trendConfig.label || 'vs. previous period',
-            isAutoCalculate: counterConfig.trendConfig.valueField === 'auto_calculate'
-          });
           setTrend({
             value: parseFloat(result.previousValue.toFixed(1)), // Format to 1 decimal place
             label: counterConfig.trendConfig.label || 'vs. previous period'
-          });
-        } else if (counterConfig.trendConfig) {
-          console.log(`No trend value available for ${counterConfig.title} despite trendConfig:`, {
-            trendConfig: counterConfig.trendConfig,
-            previousValue: result.previousValue
           });
         }
       } catch (error) {

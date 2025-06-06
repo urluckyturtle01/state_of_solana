@@ -1291,12 +1291,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             // This makes the line more visible even for small values
             return Math.max(absVal, maxBrushValue * 0.05);
           }}
-          lineColor={isSimpleChartWithoutFilters ? "#3b82f6" : "#60a5fa"} // Brighter blue for simple charts
+          lineColor={"#3b82f6"} // Brighter blue for simple charts
           margin={{ top: 10, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           // Use smoother curve type to avoid sharp corners
           curveType={isMultiSeries ? "monotoneX" : "monotoneX"}
-          strokeWidth={isMultiSeries ? 2 : 1.5} // Slightly thicker line for multi-series
+          strokeWidth={0.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>

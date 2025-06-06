@@ -64,19 +64,20 @@ const parseNumericValue = (value: string): number => {
   // Remove any commas first
   const cleanValue = value.replace(/,/g, '');
   
-  // Extract numeric part and multiplier (B, M, T)
-  const match = cleanValue.match(/([^\d]*)?([\d.]+)\s*([BMT])?\s*(SOL)?/);
+  // Extract numeric part and multiplier (B, M, T, K)
+  const match = cleanValue.match(/([^\d]*)?([\d.]+)\s*([BMTK])?\s*(SOL)?/);
   if (!match) return 0;
   
   const number = parseFloat(match[2]);
   const multiplier = match[3];
   
-  // Return raw numeric value in a consistent scale
+  // Return actual numeric value
   switch(multiplier) {
-    case 'T': return number * 1000000; // Convert T to millions for consistency
-    case 'B': return number * 1000;    // Convert B to millions for consistency
-    case 'M': return number;           // Already in millions
-    default: return number;
+    case 'T': return number * 1000000000000; // Trillion
+    case 'B': return number * 1000000000;    // Billion
+    case 'M': return number * 1000000;       // Million
+    case 'K': return number * 1000;          // Thousand
+    default: return number;                  // No multiplier
   }
 };
 
@@ -92,21 +93,18 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
   if (targetValue.includes(',') && !targetValue.includes('$')) {
     formattedValue = Math.round(value).toLocaleString('en-US');
   }
-  // If target ends with T, format as trillion
-  else if (targetValue.includes('T')) {
-    formattedValue = `${(value / 1000000).toFixed(1)}T`;
+  // Format based on actual numeric value ranges
+  else if (value >= 1000000000000) {
+    formattedValue = `${(value / 1000000000000).toFixed(1)}T`;
   }
-  // If target ends with B, format as billion
-  else if (targetValue.includes('B')) {
-    formattedValue = `${(value / 1000).toFixed(1)}B`;
+  else if (value >= 1000000000) {
+    formattedValue = `${(value / 1000000000).toFixed(1)}B`;
   }
-  // If target ends with M or is SOL value in millions
-  else if (targetValue.includes('M') || (isSOL && value >= 1)) {
-    formattedValue = `${value.toFixed(1)}M`;
+  else if (value >= 1000000) {
+    formattedValue = `${(value / 1000000).toFixed(1)}M`;
   }
-  // If target ends with K, format as thousand
-  else if (targetValue.includes('K')) {
-    formattedValue = `${value.toFixed(1)}K`;
+  else if (value >= 1000) {
+    formattedValue = `${(value / 1000).toFixed(1)}K`;
   }
   // For percentages
   else if (targetValue.includes('%')) {
@@ -148,13 +146,6 @@ export default function Counter({
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const targetValue = useRef<string>(value);
   const frameRef = useRef<number>(0);
-  
-  // For debugging trend value
-  useEffect(() => {
-    if (trend) {
-      console.log(`Counter "${title}" trend value:`, trend.value, 'isLoading:', isLoading);
-    }
-  }, [title, trend, isLoading]);
   
   useEffect(() => {
     // Don't animate on first render or if value is "Loading..."

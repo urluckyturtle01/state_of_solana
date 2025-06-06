@@ -544,6 +544,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setModalFilterValues(filterValues);
   }, [JSON.stringify(filterValues), isModalBrushActive, isBrushActive, isExpanded, data, forceBrushVisualReset]);
   
+  // Debounce timer ref for filter changes
+  const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
+
   // Update the modal filter change handler
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`Modal filter changed: ${key} = ${value}`);
@@ -553,13 +556,21 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
+    
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
 
   // Handle mouse leave for tooltip
@@ -1601,11 +1612,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             // Make sure values are visible even if they're small
             return Math.max(val, maxBrushValue * 0.05);
           }}
-          lineColor={hasGroupBy ? "#60a5fa" : (isChartWithoutFilters ? "#3b82f6" : "#60a5fa")} // Brighter blue for simple charts
+          lineColor={"#3b82f6"} // Brighter blue for simple charts
           margin={{ top: 0, right: 15 + padding, bottom: modalView ? 10 : 20, left: 40 + padding }}
           isModal={modalView}
           curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
-          strokeWidth={hasGroupBy ? 2 : 1.5}
+          strokeWidth={hasGroupBy ? 1 : 0.5}
           filterValues={modalView ? modalFilterValues : filterValues}
           key={`brush-${modalView ? 'modal' : 'main'}-${JSON.stringify(modalView ? modalFilterValues : filterValues)}`} // Add key to force re-render when filters change
         />
@@ -1616,6 +1627,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain,
     setIsBrushActive, setFilteredData, chartConfig.dataMapping.groupBy, filterValues, modalFilterValues
   ]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (filterDebounceTimer.current) {
+        clearTimeout(filterDebounceTimer.current);
+      }
+    };
+  }, []);
 
   // Render the chart with brush
   return (

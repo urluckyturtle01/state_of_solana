@@ -363,7 +363,12 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                 {/* Line representing the data */}
                 <LinePath 
                   data={lineData}
-                  x={(d) => indexScale(d.idx)}
+                  x={(d) => {
+                    // Use date-based x-position for smoother lines that follow the pattern
+                    // This ensures points are positioned by their actual date values
+                    const date = new Date(d.date);
+                    return brushDateScale(date);
+                  }}
                   y={(d) => {
                     // Ensure we have valid values
                     const val = d.value;
@@ -373,8 +378,8 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                     return valueScale(val);
                   }}
                   stroke={lineColor || "#53a7fe"}
-                  strokeOpacity={0.3}
-                  strokeWidth={strokeWidth || 1.5}
+                  strokeOpacity={0.6} // Increase opacity for better visibility
+                  strokeWidth={strokeWidth || 0.5}
                   curve={curveFunction}
                 />
                 
