@@ -1209,8 +1209,10 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
           }}
           getDate={(d) => d.date}
           getValue={(d) => d.value}
+
           lineColor="#3b82f6"
           margin={{ top: 0, right: 28, bottom: 20, left: 30 }}
+
           isModal={modalView}
           curveType="catmullRom"
           

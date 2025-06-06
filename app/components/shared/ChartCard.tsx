@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import PrettyLoader from './PrettyLoader';
 import Loader from './Loader'
 import ShareButton from './ShareButton';
@@ -14,6 +15,7 @@ interface ChartCardProps {
   onExpandClick?: () => void;
   onDownloadClick?: () => void;
   onScreenshotClick?: () => void;
+  onDeleteClick?: () => void;
   isDownloading?: boolean;
   isScreenshotting?: boolean;
   accentColor?: 'blue' | 'purple' | 'green' | 'orange' | 'indigo';
@@ -23,6 +25,8 @@ interface ChartCardProps {
   id?: string;
   chart?: ChartConfig;
   filterValues?: Record<string, string>;
+  isEditMode?: boolean;
+  dragHandleProps?: any;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -34,6 +38,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   onExpandClick,
   onDownloadClick,
   onScreenshotClick,
+  onDeleteClick,
   isDownloading = false,
   isScreenshotting = false,
   accentColor = 'blue',
@@ -43,6 +48,8 @@ const ChartCard: React.FC<ChartCardProps> = ({
   id,
   chart,
   filterValues,
+  isEditMode = false,
+  dragHandleProps,
 }) => {
   // Define color variants
   const colorVariants = {
@@ -83,59 +90,84 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const colors = colorVariants[accentColor];
 
   return (
-    <div id={id} className={`bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg ${colors.hover} transition-all duration-300 ${className}`}>
+    <div 
+      id={id} 
+      className={`bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg transition-all duration-300 relative ${
+        isEditMode ? 'cursor-grab active:cursor-grabbing border-blue-500/30 bg-black/90' : colors.hover
+      } ${className}`}
+      {...(isEditMode ? dragHandleProps : {})}
+    >
+      {/* Edit Mode Controls */}
+      {isEditMode && (
+        <>
+          {/* Delete Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteClick?.();
+            }}
+            className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors group cursor-pointer"
+            title="Delete Chart"
+          >
+            <XMarkIcon className="w-3.5 h-3.5" />
+          </button>
+        </>
+      )}
+
       {/* Header Section with Title and Action Buttons */}
       <div className="flex justify-between items-center mb-3">
         <div className="-mt-1">
           <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">{title}</h2>
           {description && <p className="text-gray-500 text-[10px] tracking-wide">{description}</p>}
         </div>
-        <div className="flex justify-end space-x-2 -mr-2 md:mr-0">
-          {onScreenshotClick && (
-            <button 
-              className={`p-1.5 ${colors.button} rounded-md transition-colors ${isScreenshotting ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={onScreenshotClick}
-              title="Take Screenshot"
-              disabled={isScreenshotting}
-            >
-              {isScreenshotting ? (
-                <Loader size="xs" className="w-4 h-4" />
-              ) : (
-                <CameraIcon className="w-4 h-4" />
-              )}
-            </button>
-          )}
-          {chart && (
-            <ShareButton 
-              chart={chart} 
-              filterValues={filterValues} 
-              className={colors.button}
-            />
-          )}
-          {onDownloadClick && (
-            <button 
-              className={`p-1.5 ${colors.button} rounded-md transition-colors ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}
-              onClick={onDownloadClick}
-              title="Download CSV"
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <Loader size="sm" />
-              ) : (
-                <DownloadIcon className="w-4 h-4" />
-              )}
-            </button>
-          )}
-          {onExpandClick && (
-            <button 
-              className={`p-1.5 ${colors.button} rounded-md transition-colors hidden md:block`}
-              onClick={onExpandClick}
-              title="Expand Chart"
-            >
-              <ExpandIcon className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+        {!isEditMode && (
+          <div className="flex justify-end space-x-2 -mr-2 md:mr-0" onClick={(e) => e.stopPropagation()}>
+            {onScreenshotClick && (
+              <button 
+                className={`p-1.5 ${colors.button} rounded-md transition-colors ${isScreenshotting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={onScreenshotClick}
+                title="Take Screenshot"
+                disabled={isScreenshotting}
+              >
+                {isScreenshotting ? (
+                  <Loader size="xs" className="w-4 h-4" />
+                ) : (
+                  <CameraIcon className="w-4 h-4" />
+                )}
+              </button>
+            )}
+            {chart && (
+              <ShareButton 
+                chart={chart} 
+                filterValues={filterValues} 
+                className={colors.button}
+              />
+            )}
+            {onDownloadClick && (
+              <button 
+                className={`p-1.5 ${colors.button} rounded-md transition-colors ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={onDownloadClick}
+                title="Download CSV"
+                disabled={isDownloading}
+              >
+                {isDownloading ? (
+                  <Loader size="sm" />
+                ) : (
+                  <DownloadIcon className="w-4 h-4" />
+                )}
+              </button>
+            )}
+            {onExpandClick && (
+              <button 
+                className={`p-1.5 ${colors.button} rounded-md transition-colors hidden md:block`}
+                onClick={onExpandClick}
+                title="Expand Chart"
+              >
+                <ExpandIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
       
       {/* First Divider */}
@@ -144,7 +176,10 @@ const ChartCard: React.FC<ChartCardProps> = ({
       {/* Filter Bar */}
       {filterBar && (
         <>
-          <div className="flex items-center justify-start pl-1 py-2 overflow-visible relative">
+          <div 
+            className="flex items-center justify-start pl-1 py-2 overflow-visible relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             {filterBar}
           </div>
           {/* Second Divider after filters */}
@@ -168,7 +203,10 @@ const ChartCard: React.FC<ChartCardProps> = ({
         {/* Legend Area - Only render if legend is provided */}
         {legend && (
           
-          <div className={`${legendWidthClasses[legendWidth]} mt-2 lg:mt-0 lg:pl-4 flex flex-col`}>
+          <div 
+            className={`${legendWidthClasses[legendWidth]} mt-2 lg:mt-0 lg:pl-4 flex flex-col`}
+            onClick={(e) => e.stopPropagation()}
+          >
           
             <div className="h-px bg-gray-900 w-full lg:hidden md:hidden mb-2"></div>
             <div className="flex-1 min-h-0">

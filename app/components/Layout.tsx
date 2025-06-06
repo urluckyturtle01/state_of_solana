@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import MobileNavbar from './MobileNavbar';
+import { DashboardProvider } from '../contexts/DashboardContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,7 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   return (
+    <DashboardProvider>
     <div className={`flex flex-col md:flex-row min-h-screen bg-black w-full ${isMobile ? '' : 'overflow-hidden'}`}>
        {/* Sidebar on desktop */}
        {!isMobile && (
@@ -52,5 +54,6 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </main>
     </div>
+    </DashboardProvider>
   );
 } 

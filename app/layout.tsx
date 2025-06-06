@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import ClientHydration from "./components/ClientHydration";
+import AuthWrapper from "./components/auth/AuthWrapper";
+import SaveNotification from "./components/shared/SaveNotification";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -78,7 +80,10 @@ export default function RootLayout({
         className={`${inter.variable} ${robotoMono.variable} antialiased min-h-screen bg-black text-gray-100`}
       >
         <ClientHydration />
-        {children}
+        <AuthWrapper>
+          {children}
+          <SaveNotification />
+        </AuthWrapper>
       </body>
     </html>
   );

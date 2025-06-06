@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from '@/app/contexts/AuthContext';
+import UserProfile from './auth/UserProfile';
 
 const menuItems = [
 { name: "Overview", path: "/dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
@@ -14,7 +16,7 @@ const menuItems = [
 { name: "DEX", path: "/dex", icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
 { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M16.56 11.57C17.15 10.88 17.5 9.98 17.5 9C17.5 7.14 16.23 5.57 14.5 5.13V3H12.5V5H10.5V3H8.5V5H5.5V7H7.5V17H5.5V19H8.5V21H10.5V19H12.5V21H14.5V19C16.71 19 18.5 17.21 18.5 15C18.5 13.55 17.72 12.27 16.56 11.57ZM9.5 7H13.5C14.6 7 15.5 7.9 15.5 9C15.5 10.1 14.6 11 13.5 11H9.5V7ZM14.5 17H9.5V13H14.5C15.6 13 16.5 13.9 16.5 15C16.5 16.1 15.6 17 14.5 17Z" },  
 { name: "Compute Units", path: "/compute-units", icon: "M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" },
-  
+ 
   { 
     name: "Projects", 
     path: "/projects", 
@@ -63,15 +65,37 @@ const menuItems = [
         status: "soon"
       }
     ]
-  }
+  },
+  { name: "Explorer", path: "/explorer", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", requiresAuth: true, hidden: true },
+{ name: "Dashboards", path: "/dashboards", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z", requiresAuth: true, hidden: true },
+ 
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { isAuthenticated, openLoginModal } = useAuth();
   
   const toggleDropdown = (itemName: string) => {
     setOpenDropdown(openDropdown === itemName ? null : itemName);
+  };
+
+  const handleNavigation = (item: any, e: React.MouseEvent) => {
+    // Check if this item requires authentication
+    if (item.requiresAuth && !isAuthenticated) {
+      e.preventDefault();
+      openLoginModal(item.path);
+      return;
+    }
+    
+    // For authenticated users on protected routes, force navigation
+    if (item.requiresAuth && isAuthenticated) {
+      e.preventDefault();
+      router.push(item.path);
+      return;
+    }
+    // For non-protected routes, normal navigation will proceed
   };
 
   return (
@@ -94,7 +118,8 @@ export default function Sidebar() {
       
       <nav className="flex-1 px-2 py-3 overflow-y-auto">
         <ul className="space-y-2.5">
-          {menuItems.map((item) => {
+        {menuItems.filter(item => !item.hidden).map((item) => {
+
             // Check for exact paths first to avoid conflicts
             let isActive = false;
             let isSubItemActive = false;
@@ -218,6 +243,32 @@ export default function Sidebar() {
                   </div>
                 ) : (
                   // Regular menu item
+                  item?.requiresAuth ? (
+                    <button 
+                      onClick={(e) => handleNavigation(item, e)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                        isActive 
+                          ? 'text-white bg-gray-900/70' 
+                          : 'text-gray-500 hover:text-gray-300 hover:bg-gray-900/40'
+                      }`}
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5 min-w-5" 
+                        fill={item?.name === "Wrapped BTC" ? "currentColor" : "none"}
+                        viewBox="0 0 24 24" 
+                        stroke={item?.name === "Wrapped BTC" ? "none" : "currentColor"}
+                        strokeWidth={1.5}
+                      >
+                        <path 
+                          strokeLinecap={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                          strokeLinejoin={item?.name === "Wrapped BTC" ? undefined : "round"} 
+                          d={item?.icon || ''} 
+                        />
+                      </svg>
+                      <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                    </button>
+                  ) : (
                   <Link 
                     href={item?.path || '/'} 
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
@@ -242,12 +293,18 @@ export default function Sidebar() {
                     </svg>
                     <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
                   </Link>
+                  )
                 )}
               </li>
             );
           })}
         </ul>
       </nav>
+      
+      {/* User Profile Section */}
+      <div className="px-2 pb-2">
+        <UserProfile />
+      </div>
       
       <div className="p-3 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50">
         <div className="relative group">
