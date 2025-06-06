@@ -1686,7 +1686,7 @@ export default function DashboardRenderer({
             id={`chart-container-${chart.id}`}
             data-testid={`chart-container-${chart.id}`}
           >
-            <MemoizedChartRenderer 
+            <ChartRenderer 
               chartConfig={chart} 
               preloadedData={chartData[chart.id] || []}
               onDataLoaded={(data: any[]) => {

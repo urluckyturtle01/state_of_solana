@@ -119,6 +119,7 @@ export default function Sidebar() {
       <nav className="flex-1 px-2 py-3 overflow-y-auto">
         <ul className="space-y-2.5">
         {menuItems.filter(item => !item.hidden).map((item) => {
+
             // Check for exact paths first to avoid conflicts
             let isActive = false;
             let isSubItemActive = false;
