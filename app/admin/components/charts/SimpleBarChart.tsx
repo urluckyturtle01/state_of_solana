@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
 import { GridRows } from '@visx/grid';
@@ -90,9 +90,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   // Modal-specific filtered data
   const [modalFilteredData, setModalFilteredData] = useState<any[]>([]);
 
-  // Add a state to store precomputed filtered data for each time filter
-  const [precomputedFilteredData, setPrecomputedFilteredData] = useState<Record<string, any[]>>({});
-
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
@@ -117,9 +114,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
-  
-  // Add local data state for immediate rendering
-  const [localData, setLocalData] = useState<any[]>(data);
 
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
@@ -129,31 +123,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     console.log('SimpleBarChart: hiddenSeries prop changed:', hiddenSeries);
     setHiddenSeriesState(hiddenSeries || []);
   }, [hiddenSeries]);
-  
-  // Update local data when prop data changes
-  useEffect(() => {
-    if (data.length > 0) {
-      setLocalData(data);
-    }
-  }, [data]);
-
-  // Set isClient to true when component mounts in browser
-  useEffect(() => {
-    setIsClient(true);
-    
-    // Force immediate initial render with simplified data
-    if (data.length > 0) {
-      // Create a simple version of the data for immediate rendering
-      // Just use the first few items (up to 20) for immediate display
-      const quickData = data.slice(0, Math.min(20, data.length));
-      setLocalData(quickData);
-      
-      // Then set the complete data after a short delay
-      setTimeout(() => {
-        setLocalData(data);
-      }, 10);
-    }
-  }, []);
 
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
@@ -259,6 +228,11 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, [filterValues]);
 
+  // Set isClient to true when component mounts in browser
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
     // If onFilterChange exists in chartConfig, call it with current filters
@@ -269,136 +243,17 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     setError(null);
   }, [filterValues, onFilterChange]);
 
-  // Helper function to apply time filter
-  const applyTimeFilter = useCallback((dataToFilter: any[], timeFilter: string, dateField: string): any[] => {
-    if (!dataToFilter || dataToFilter.length === 0) return dataToFilter;
-    
-    return dataToFilter.filter(item => {
-      const itemDate = new Date(item[dateField]);
-      if (isNaN(itemDate.getTime())) return true; // Keep non-date items
-      
-      const now = new Date();
-      
-      switch (timeFilter) {
-        case 'D': // Daily - last 30 days
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(now.getDate() - 30);
-          return itemDate >= thirtyDaysAgo;
-        
-        case 'W': // Weekly - last 12 weeks
-          const twelveWeeksAgo = new Date();
-          twelveWeeksAgo.setDate(now.getDate() - 84);
-          return itemDate >= twelveWeeksAgo;
-        
-        case 'M': // Monthly - last 12 months
-          const twelveMonthsAgo = new Date();
-          twelveMonthsAgo.setMonth(now.getMonth() - 12);
-          return itemDate >= twelveMonthsAgo;
-        
-        case 'Q': // Quarterly - last 8 quarters
-          const eightQuartersAgo = new Date();
-          eightQuartersAgo.setMonth(now.getMonth() - 24);
-          return itemDate >= eightQuartersAgo;
-        
-        case 'Y': // Yearly - all data
-          return true;
-        
-        default:
-          return true;
-      }
-    });
-  }, []);
-  
-  // Precompute filtered data for all time filter options with progressive loading
-  const precomputeFilteredData = useCallback(() => {
-    if (!chartConfig.additionalOptions?.filters?.timeFilter || data.length === 0) return;
-    
-    const timeFilterOptions = chartConfig.additionalOptions.filters.timeFilter.options || [];
-    if (timeFilterOptions.length === 0) return;
-    
-    console.log('Precomputing filtered data for time filters:', timeFilterOptions);
-    
-    // Create an object to store filtered data for each time filter option
-    const precomputed: Record<string, any[]> = {};
-    
-    // Get the current time filter or use the first option
-    const currentTimeFilter = filterValues?.timeFilter || timeFilterOptions[0];
-    
-    // Prioritize filters: current first, then others
-    const prioritizedFilters = [
-      currentTimeFilter,
-      ...timeFilterOptions.filter(filter => filter !== currentTimeFilter)
-    ];
-    
-    // Process one filter at a time to avoid UI freezing
-    const processNextFilter = (index: number) => {
-      if (index >= prioritizedFilters.length) {
-        console.log('All filters precomputed successfully');
-        return;
-      }
-      
-      const timeFilter = prioritizedFilters[index];
-      
-      // Skip if already precomputed
-      if (precomputed[timeFilter]) {
-        processNextFilter(index + 1);
-        return;
-      }
-      
-      // Apply filter and store result
-      const filtered = applyTimeFilter(data, timeFilter, xKey);
-      precomputed[timeFilter] = filtered;
-      console.log(`Precomputed ${filtered.length} items for time filter ${timeFilter}`);
-      
-      // Update state with this filter's result
-      setPrecomputedFilteredData(prev => ({
-        ...prev,
-        [timeFilter]: filtered
-      }));
-      
-      // Process next filter with a small delay to keep UI responsive
-      setTimeout(() => {
-        processNextFilter(index + 1);
-      }, index === 0 ? 0 : 50); // No delay for first filter, small delay for others
-    };
-    
-    // Start processing with the prioritized filters
-    processNextFilter(0);
-    
-  }, [data, chartConfig.additionalOptions?.filters?.timeFilter, xKey, filterValues?.timeFilter, applyTimeFilter]);
-  
-  // Use layout effect to ensure precomputation happens before the first render
-  useLayoutEffect(() => {
-    if (data.length > 0) {
-      precomputeFilteredData();
-    }
-  }, [data, precomputeFilteredData]);
-  
-  // Also keep the regular effect for subsequent data changes
-  useEffect(() => {
-    if (data.length > 0) {
-      precomputeFilteredData();
-    }
-  }, [data, precomputeFilteredData]);
-
-  // Process data for the chart - use precomputed filtered data when available
+  // Process data for the chart - use filtered data when available
   const { chartData, barColor } = useMemo(() => {
     // Use appropriate filtered data depending on context
-    let currentData: any[] = 
+    const currentData: any[] = 
       (isExpanded && isModalBrushActive && modalFilteredData.length > 0) ? modalFilteredData :
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
-      localData;
-    
-    // Use precomputed filtered data for current time filter if available
-    const currentTimeFilter = isExpanded ? modalFilterValues?.timeFilter : filterValues?.timeFilter;
-    if (currentTimeFilter && precomputedFilteredData[currentTimeFilter] && !isBrushActive && !isModalBrushActive) {
-      currentData = precomputedFilteredData[currentTimeFilter];
-    }
+      data;
     
     if (isExpanded) {
       console.log('Modal chart data source:', 
-        isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered data' : 
-        (currentTimeFilter && precomputedFilteredData[currentTimeFilter]) ? 'precomputed filtered data' : 'full data',
+        isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered data' : 'full data',
         'Count:', currentData.length);
     }
       
@@ -416,14 +271,11 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     // For simple bar chart, use consistent color unless explicitly configured
     const shouldUseConsistentColor = !chartConfig.useDistinctColors;
     
-    // Filter data first - only process essential field to avoid lag
-    const processedData: ChartDataItem[] = currentData
-      .filter((d: any) => d[xKey] !== undefined && d[xKey] !== null)
-      // Limit max items for first render to improve performance
-      .slice(0, Math.min(100, currentData.length));
+    // Filter data first
+    const processedData: ChartDataItem[] = currentData.filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
     
-    // Defer complex sorting for subsequent renders
-    if (processedData.length > 0 && isClient) {
+    // Sort by date if applicable
+    if (processedData.length > 0) {
       // Detect if data contains dates
       const isDateField = typeof processedData[0][xKey] === 'string' && 
         (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
@@ -440,7 +292,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       }
     }
     
-    // For multi-series, handle differently than single y-field
+    // If multi-series, handle differently than single y-field
     if (isMultiSeries) {
       // Create color map for each y-field
       const colorMap: Record<string, string> = {};
@@ -449,7 +301,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         colorMap[field] = preferredColorMap[field] || getColorByIndex(i);
       });
       
-      // Group by x-axis values to prevent duplicate x values - simplified for first render
+      // Group by x-axis values to prevent duplicate x values
       const groupedData: Record<string, ChartDataItem> = {};
       processedData.forEach((item: ChartDataItem) => {
         const xValue = String(item[xKey]);
@@ -464,6 +316,15 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           yFields.forEach(field => {
             groupedData[xValue][field] = item[field] !== undefined ? item[field] : 0;
           });
+        } else {
+          // Update fields if they have higher values (for aggregating duplicates)
+          yFields.forEach(field => {
+            if (item[field] !== undefined && 
+                (groupedData[xValue][field] === undefined || 
+                 Number(item[field]) > Number(groupedData[xValue][field]))) {
+              groupedData[xValue][field] = item[field];
+            }
+          });
         }
       });
       
@@ -475,16 +336,27 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         barColor: colorMap
       };
     } else {
-      // Single y-field, simplified logic
-      // Group by x-axis values to prevent duplicate bars - simplified for first render
+      // Single y-field, original logic
+      // Group by x-axis values to prevent duplicate bars
       const groupedData: Record<string, ChartDataItem> = {};
       processedData.forEach((item: ChartDataItem) => {
         const xValue = String(item[xKey]);
-        groupedData[xValue] = { ...item };
+        
+        // If this x-value is already in the grouped data, update it
+        if (groupedData[xValue]) {
+          // By default, take the highest value to address the double bar issue
+          if ((Number(item[yKey]) || 0) > (Number(groupedData[xValue][yKey]) || 0)) {
+            groupedData[xValue] = item;
+          }
+        } else {
+          // First time seeing this x value
+          groupedData[xValue] = { ...item };
+        }
       });
       
       // Convert back to array
       const uniqueProcessedData = Object.values(groupedData);
+      console.log(`Processed ${processedData.length} items into ${uniqueProcessedData.length} unique data points`);
       
       // Use a consistent color unless distinctColors is requested
       if (shouldUseConsistentColor) {
@@ -506,9 +378,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         };
       }
     }
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, 
-      chartConfig, isMultiSeries, yFields, externalColorMap, isExpanded, filterValues, 
-      modalFilterValues, precomputedFilteredData, isClient]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, externalColorMap, isExpanded]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -1012,89 +882,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     return Math.max(...values, 1);
   }, [chartData, yKey]);
 
-  // Add state to track pre-rendered chart variations
-  const [preRenderedCharts, setPreRenderedCharts] = useState<Record<string, React.ReactNode>>({});
-  const [hasPreRendered, setHasPreRendered] = useState(false);
-  const renderCount = useRef(0);
-
-  // Pre-render charts for all time filter options to enable instant switching
-  useEffect(() => {
-    // Only pre-render when we have sufficient data and haven't done it yet
-    if (
-      data.length > 0 && 
-      chartConfig.additionalOptions?.filters?.timeFilter &&
-      !hasPreRendered &&
-      isClient
-    ) {
-      const timeFilterOptions = chartConfig.additionalOptions.filters.timeFilter.options || [];
-      if (timeFilterOptions.length === 0) return;
-      
-      console.log('Pre-rendering charts for all time filter options');
-      
-      // Delay pre-rendering to ensure initial chart is displayed first
-      setTimeout(() => {
-        const preRendered: Record<string, React.ReactNode> = {};
-        
-        // Start with current filter
-        const currentFilter = filterValues?.timeFilter || timeFilterOptions[0];
-        
-        // Process in order of priority (current filter first, then others)
-        const orderedFilters = [
-          currentFilter, 
-          ...timeFilterOptions.filter(f => f !== currentFilter)
-        ];
-        
-        // Process one filter at a time with delays to avoid freezing the UI
-        const processNextFilter = (index: number) => {
-          if (index >= orderedFilters.length) {
-            setHasPreRendered(true);
-            return;
-          }
-          
-          const filter = orderedFilters[index];
-          
-          // Get data for this filter option
-          let filterData = precomputedFilteredData[filter] || data;
-          
-                     // Create a temp version of the chart with this data
-           // Store the rendered chart (without actually rendering it)
-           preRendered[filter] = (
-             <div key={`prerendered-${filter}`} className="w-full h-full">
-               {/* We'll apply the actual dimensions when rendering */}
-               {renderChartContent(800, 400, false, filterData)}
-             </div>
-           );
-          
-          // Process next filter after a short delay
-          setTimeout(() => {
-            setPreRenderedCharts(prev => ({
-              ...prev,
-              [filter]: preRendered[filter]
-            }));
-            processNextFilter(index + 1);
-          }, 100);
-        };
-        
-        // Start processing filters
-        processNextFilter(0);
-      }, 500);
-    }
-  }, [data.length, chartConfig.additionalOptions?.filters?.timeFilter, 
-      isClient, hasPreRendered, precomputedFilteredData, filterValues?.timeFilter]);
-
-  // Modify the renderChartContent function to support pre-rendered content
-  const renderChartContent = useCallback((
-    chartWidth: number, 
-    chartHeight: number, 
-    isModal = false,
-    customData?: any[]
-  ) => {
-    // Use customData if provided (for pre-rendering), otherwise use chartData
-    const effectiveData = customData || chartData;
-    
-    // Increment render count for debugging
-    renderCount.current++;
-    
+  // Render chart content
+  const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
     if (error) {
       return (
@@ -1122,38 +911,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       );
     }
     
-    // Show simple placeholder if we're still loading client-side
-    if ((!isClient || chartData.length === 0) && data.length > 0) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <div className="w-full h-full flex flex-col">
-            <div className="flex-grow">
-              {/* Placeholder chart bars */}
-              <div className="flex h-full items-end justify-between px-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div 
-                    key={i} 
-                    className="bg-blue-500/40 animate-pulse w-8" 
-                    style={{ 
-                      height: `${20 + Math.random() * 60}%`,
-                      marginRight: '8px',
-                      borderRadius: '2px 2px 0 0'
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-            {/* Placeholder x-axis */}
-            <div className="h-8 border-t border-gray-700/20 flex justify-between px-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="w-8 h-3 bg-gray-400/20 animate-pulse" />
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
     // Show loader when no data is available yet
     if (chartData.length === 0) {
       return (
@@ -1172,7 +929,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     
     // Create scales
     const xScale = scaleBand<string>({
-      domain: effectiveData.map((d: ChartDataItem) => d[xKey]),
+      domain: chartData.map((d: ChartDataItem) => d[xKey]),
       range: [0, innerWidth],
       padding: 0.2,
     });
@@ -1180,22 +937,22 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     // Calculate the max value for the y-axis
     const yMax = isMultiSeries
       ? Math.max(
-          ...effectiveData.flatMap(d => 
+          ...chartData.flatMap(d => 
             yFields.map(field => Number(d[field]) || 0)
           ), 
           1
         )
-      : Math.max(...effectiveData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 1);
+      : Math.max(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 1);
     
     // Calculate the min value for the y-axis to handle negative values
     const yMin = isMultiSeries
       ? Math.min(
-          ...effectiveData.flatMap(d => 
+          ...chartData.flatMap(d => 
             yFields.map(field => Number(d[field]) || 0)
           ),
           0
         )
-      : Math.min(...effectiveData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 0);
+      : Math.min(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 0);
     
     const yScale = scaleLinear<number>({
       domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
@@ -1250,7 +1007,6 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         onMouseLeave={handleMouseLeave}
         onTouchEnd={handleTouchEnd}
         ref={isModal ? modalChartRef : chartRef}
-        data-render-count={renderCount.current}
       >
         {/* Tooltip */}
         {tooltip.visible && tooltip.items && !isModal && (
@@ -1382,7 +1138,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             {/* Render bars */}
             {isMultiSeries ? (
               // For multi-series, render bars side by side
-              effectiveData.map((d: ChartDataItem) => {
+              chartData.map((d: ChartDataItem) => {
                 const x = xScale(d[xKey]) || 0;
                 // Only count visible fields for bar width
                 const visibleFields = yFields.filter(f => !hiddenSeriesState.includes(f));
@@ -1421,7 +1177,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             ) : (
               // For single y-field, render regular bars
               hiddenSeriesState.includes(yKey) ? null : (
-              effectiveData.map((d: ChartDataItem, i: number) => {
+              chartData.map((d: ChartDataItem, i: number) => {
                 const barX = xScale(d[xKey]) || 0;
                 const barWidth = xScale.bandwidth();
                 const value = Number(d[yKey]) || 0;
@@ -1454,7 +1210,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         </svg>
       </div>
     );
-  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues, hiddenSeriesState, isClient]);
+  }, [chartData, xKey, yKey, yFields, barColor, formatTickValue, error, refreshData, tooltip, handleMouseMove, handleMouseLeave, isMultiSeries, filterValues, hiddenSeriesState]);
 
   // Update legend items 
   useEffect(() => {
@@ -1540,7 +1296,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
           isModal={modalView}
           // Use smoother curve type to avoid sharp corners
           curveType={isMultiSeries ? "monotoneX" : "monotoneX"}
-          //strokeWidth={isMultiSeries ? 1 : 0.5} // Slightly thicker line for multi-series
+          strokeWidth={0.5} // Slightly thicker line for multi-series
           filterValues={modalView ? modalFilterValues : filterValues}
         />
       </div>
@@ -1549,46 +1305,21 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
       setIsBrushActive, setFilteredData, isMultiSeries, filterValues, modalFilterValues]);
 
-  // Update the handleFilterChange function for ultra-fast filter switching
+  // Add back the handleFilterChange function
   const handleFilterChange = useCallback((key: string, value: string) => {
-    // For ultra-fast switching, we want to update local state immediately
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
     
-    // Update local state immediately (for instant UI feedback)
+    // Update local state
     setModalFilterValues(updatedFilters);
     
-    // Optimized path for time filter changes
-    if (key === 'timeFilter') {
-      console.log(`Fast filter switch to ${value}`);
-      
-      // Check if we have pre-rendered chart for instant switching
-      const hasCachedChart = hasPreRendered && preRenderedCharts[value];
-      if (hasCachedChart) {
-        console.log(`Using pre-rendered chart for ${value} - instant switch!`);
-      } else if (precomputedFilteredData[value]) {
-        console.log(`Using precomputed data for ${value}`);
-        // If in expanded mode, update modal filtered data directly
-        if (isExpanded) {
-          setModalFilteredData(precomputedFilteredData[value]);
-        } else {
-          // For normal view, update local data immediately
-          setLocalData(precomputedFilteredData[value]);
-        }
-      }
-    }
-    
-    // Always notify parent of filter change (needed for server-side filtering)
+    // If onFilterChange exists in chartConfig, call it with updated filters
     if (onFilterChange) {
-      // Use small timeout to ensure UI updates first
-      setTimeout(() => {
-        onFilterChange(updatedFilters);
-      }, 0);
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, precomputedFilteredData, isExpanded, 
-      hasPreRendered, preRenderedCharts]);
+  }, [modalFilterValues, onFilterChange]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {
@@ -1685,22 +1416,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
               <div className="flex flex-col h-full">
                 {/* Main chart - 85% height */}
                 <div className="h-[85%] w-full relative" ref={modalChartRef}>
-                  {/* Use pre-rendered chart in modal for instant filter switching */}
-                  {hasPreRendered && modalFilterValues?.timeFilter && preRenderedCharts[modalFilterValues.timeFilter] ? (
-                    // Use pre-rendered chart with modal adjustments
-                    <div className="w-full h-full" key={`modal-instant-${modalFilterValues.timeFilter}`}>
-                      {preRenderedCharts[modalFilterValues.timeFilter]}
-                    </div>
-                  ) : (
-                    // Fall back to normal rendering
-                    <ParentSize debounceTime={10}>
-                      {({ width: parentWidth, height: parentHeight }) => 
-                        parentWidth > 0 && parentHeight > 0 
-                          ? renderChartContent(parentWidth, parentHeight, true)
-                          : null
-                      }
-                    </ParentSize>
-                  )}
+                  <ParentSize debounceTime={10}>
+                    {({ width: parentWidth, height: parentHeight }) => 
+                      parentWidth > 0 && parentHeight > 0 
+                        ? renderChartContent(parentWidth, parentHeight, true)
+                        : null
+                    }
+                  </ParentSize>
                 </div>
                 
                 {/* Display tooltip at the container level for modal views */}
@@ -1762,22 +1484,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   return (
     <div className="w-full h-full relative">
       <div className="h-[85%] w-full">
-        {/* If we have a pre-rendered chart for the current filter, use it for instant switching */}
-        {hasPreRendered && filterValues?.timeFilter && preRenderedCharts[filterValues.timeFilter] ? (
-          // Use pre-rendered chart for lightning-fast filter switching
-          <div className="w-full h-full" key={`instant-${filterValues.timeFilter}`}>
-            {preRenderedCharts[filterValues.timeFilter]}
-          </div>
-        ) : (
-          // Fall back to normal rendering
-          <ParentSize debounceTime={10}>
-            {({ width: parentWidth, height: parentHeight }) => 
-              parentWidth > 0 && parentHeight > 0 
-                ? renderChartContent(parentWidth, parentHeight)
-                : null
-            }
-          </ParentSize>
-        )}
+        <ParentSize debounceTime={10}>
+          {({ width: parentWidth, height: parentHeight }) => 
+            parentWidth > 0 && parentHeight > 0 
+              ? renderChartContent(parentWidth, parentHeight)
+              : null
+          }
+        </ParentSize>
       </div>
       
       {brushData.length > 0 ? renderBrushArea(false) : (null)}
