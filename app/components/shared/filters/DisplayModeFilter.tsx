@@ -2,10 +2,11 @@ import React from 'react';
 
 export type DisplayMode = 'absolute' | 'percent';
 
-interface DisplayModeFilterProps {
+export interface DisplayModeFilterProps {
   mode: DisplayMode;
   onChange: (mode: DisplayMode) => void;
   isCompact?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -14,16 +15,18 @@ interface DisplayModeFilterProps {
 const DisplayModeFilter: React.FC<DisplayModeFilterProps> = ({ 
   mode, 
   onChange, 
-  isCompact = false 
+  isCompact = false,
+  disabled = false
 }) => {
   return (
     <div className="flex items-center">
       {!isCompact && <span className="text-xs text-gray-400"></span>}
-      <div className="inline-flex bg-gray-800/40 rounded-md p-0 shadow-inner">
+      <div className={`inline-flex bg-gray-800/40 rounded-md p-0 shadow-inner ${disabled ? 'opacity-50' : ''}`}>
         <button
           className={`text-xs px-1.5 py-1 rounded ${mode === 'absolute' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
-          onClick={() => onChange('absolute')}
+          onClick={() => !disabled && onChange('absolute')}
           title="Chart View"
+          disabled={disabled}
         >
           <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="3" width="4" height="18" rx="1" fill="currentColor"/>
@@ -33,8 +36,9 @@ const DisplayModeFilter: React.FC<DisplayModeFilterProps> = ({
         </button>
         <button
           className={`text-xs px-1.5 py-0.5 rounded ${mode === 'percent' ? 'bg-gray-800 text-white shadow' : 'text-gray-400 hover:text-gray-300'}`}
-          onClick={() => onChange('percent')}
-          title="Percent View"
+          onClick={() => !disabled && onChange('percent')}
+          title={disabled ? 'Percent view not available with negative values' : 'Percent View'}
+          disabled={disabled}
         >
           %
         </button>

@@ -1658,6 +1658,30 @@ export default function DashboardRenderer({
                 <DisplayModeFilter
                   mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
                   onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
+                  disabled={
+                    // Disable for stacked charts with negative values
+                    isStackedBarChart(chart) && 
+                    chartData[chart.id]?.some((item: any) => {
+                      // For stacked bar charts with a group by field
+                      if (chart.dataMapping.groupBy) {
+                        // Check if any value is negative
+                        const yField = typeof chart.dataMapping.yAxis === 'string' ?
+                          chart.dataMapping.yAxis :
+                          Array.isArray(chart.dataMapping.yAxis) ?
+                            getFieldName(chart.dataMapping.yAxis[0]) :
+                            getFieldName(chart.dataMapping.yAxis);
+                        return Number(item[yField]) < 0;
+                      }
+                      // For stacked bar charts with multiple y fields
+                      else if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
+                        return chart.dataMapping.yAxis.some(field => {
+                          const fieldName = typeof field === 'string' ? field : field.field;
+                          return Number(item[fieldName]) < 0;
+                        });
+                      }
+                      return false;
+                    })
+                  }
                 />
               )}
             </div>
