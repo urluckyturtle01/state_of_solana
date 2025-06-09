@@ -20,6 +20,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const PROTECTED_ROUTES = ['/explorer', '/dashboards'];
+const INTERNAL_AUTH_ROUTES = ['/sf-dashboards'];
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -106,9 +107,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuthForRoute = (route: string) => {
     // Check if the route starts with any protected route
-    return PROTECTED_ROUTES.some(protectedRoute => 
+    const isProtectedRoute = PROTECTED_ROUTES.some(protectedRoute => 
       route.startsWith(protectedRoute)
     );
+    
+    // Check if the route requires internal authentication
+    const requiresInternalAuth = INTERNAL_AUTH_ROUTES.some(internalRoute => 
+      route.startsWith(internalRoute)
+    );
+    
+    // Return true if the route requires any kind of authentication
+    return isProtectedRoute || requiresInternalAuth;
   };
 
   return (
