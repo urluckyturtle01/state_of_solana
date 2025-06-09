@@ -91,14 +91,14 @@ const UserProfile: React.FC = () => {
       </button>
 
       {showDropdown && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 bg-gray-900/50 border border-gray-900 rounded-lg shadow-xl py-2 px-2 space-y-4">
+        <div className="absolute bottom-full left-0 right-0 mb-2 bg-gray-950/95 border border-gray-900 rounded-lg shadow-xl py-2 px-2 space-y-4">
           
           
            
             
             <button
               onClick={handleSignOut}
-              className="flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
+              className="flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-900/80 rounded-lg transition-colors"
             >
               <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

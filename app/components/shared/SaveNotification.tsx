@@ -63,7 +63,7 @@ const SaveNotification: React.FC = () => {
 
       {/* Last saved timestamp (subtle) */}
       {lastSaved && !isSaving && !showSuccess && (
-        <div className="bg-gray-900/80 border border-gray-800 rounded-lg px-3 py-2 shadow-lg opacity-60 hover:opacity-100 transition-opacity">
+        <div className="bg-gray-900/80 border border-gray-800 rounded-lg px-3 py-2 shadow-lg opacity-60 hover:opacity-100 transition-opacity md:block hidden lg:block">
           <div className="text-xs text-gray-500">
             Last saved: {lastSaved.toLocaleTimeString()}
           </div>

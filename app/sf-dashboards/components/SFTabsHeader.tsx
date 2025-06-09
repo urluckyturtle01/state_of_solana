@@ -21,7 +21,7 @@ export default function SFTabsHeader({ activeTab = "stablecoin-usage" }: SFTabsH
       tabs={tabs} 
       activeTab={activeTab}
       title="SF Dashboards"
-      description="SF Dashboards"
+      description="Solana blockchain, at a glance"
       showDivider={true}
     />
   );
