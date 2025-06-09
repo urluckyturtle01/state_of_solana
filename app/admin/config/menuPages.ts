@@ -50,6 +50,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "metaplex",
     name: "Metaplex",
     icon: "chart-bar"
+  },
+  {
+    id: "helium",
+    name: "Helium",
+    icon: "chart-bar"
   }
 ];
 
@@ -181,7 +186,30 @@ overview: [
       name: "Competetive Landscape",
       path: "/projects/metaplex/competetive-landscape"
     }
-  ]
+  ],
+  "helium": [
+    {
+      id: "helium-financials",
+      name: "Financials",
+      path: "/projects/helium/financials"
+    },
+    {
+      id: "helium-traction",
+      name: "Traction",
+      path: "/projects/helium/traction"
+    },
+    {
+      id: "helium-protocol-token",
+      name: "Protocol Token",
+      path: "/projects/helium/protocol-token"
+    },
+    
+    {
+      id: "helium-competitive-landscape",
+      name: "Competitive Landscape",
+      path: "/projects/helium/competitive-landscape"
+    }
+    ]
 };
 
 // Helper function to get pages for a specific menu
