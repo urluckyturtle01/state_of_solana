@@ -30,6 +30,7 @@ export const MENU_OPTIONS: MenuItem[] = [
   { id: 'mev', name: 'MEV', icon: 'currency-dollar' },
   { id: 'stablecoins', name: 'Stablecoins', icon: 'coin' },
   { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' },
+  { id: 'sf-dashboards', name: 'SF Dashboards', icon: 'chart-bar' },
   {
     id: "compute-units",
     name: "Compute Units",
@@ -129,6 +130,13 @@ overview: [
       path: "/wrapped-btc/dex-activity"
     }
   ],
+  "sf-dashboards": [
+    {
+      id: "sf-stablecoins",
+      name: "Stablecoins",
+      path: "/sf-dashboards/stablecoins"
+    }
+  ],  
   "raydium": [
     
     {

@@ -1,12 +1,15 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/app/contexts/AuthContext';
 
 const LoginModal = () => {
-  const { showLoginModal, closeLoginModal } = useAuth();
+  const { showLoginModal, closeLoginModal, setIsAuthenticated } = useAuth();
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     try {
@@ -15,6 +18,40 @@ const LoginModal = () => {
     } catch (error) {
       console.error('Login error:', error);
     }
+  };
+
+  const handleInternalLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    // Check if password matches
+    if (password === 'solana123') {
+      try {
+        // Set authenticated state directly
+        setIsAuthenticated(true);
+        
+        // Store authentication in localStorage to persist across page refreshes
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('solana_dashboard_auth', 'true');
+          
+          // Also set a session cookie with 7 day expiry
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 7);
+          document.cookie = `solana_dashboard_session=authenticated; expires=${expiryDate.toUTCString()}; path=/`;
+        }
+        
+        // Close the modal
+        closeLoginModal();
+      } catch (error) {
+        console.error('Internal login error:', error);
+        setError('An unexpected error occurred');
+      }
+    } else {
+      setError('Invalid password');
+    }
+    
+    setLoading(false);
   };
 
   if (!showLoginModal) return null;
@@ -50,7 +87,43 @@ const LoginModal = () => {
           </p>*/}
         </div>
 
-        {/* Google Login Button */}
+        {/* Internal Login Form - Moved to top for priority */}
+        <form onSubmit={handleInternalLogin} className="space-y-4 mb-6">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-gray-900/50 border border-gray-800 rounded-lg py-2.5 px-4 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
+              placeholder="Enter password"
+              required
+              autoFocus
+            />
+            {error && (
+              <p className="mt-2 text-sm text-red-500">{error}</p>
+            )}
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-700 to-purple-700 hover:from-blue-600 hover:to-purple-600 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            {loading ? 'Logging in...' : 'Log in'}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="my-6 flex items-center">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent"></div>
+          <div className="px-4 text-sm text-gray-500">or</div>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent"></div>
+        </div>
+
+        {/* Google Login Button - Moved to bottom */}
         <button
           onClick={handleGoogleLogin}
           className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 border border-gray-700/50 hover:border-gray-600/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -68,15 +141,6 @@ const LoginModal = () => {
             <span className="text-sm font-medium">Continue with Google</span>
           </div>
         </button>
-
-        {/* Divider */}
-        <div className="my-6 flex items-center">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent"></div>
-        </div>
-
-        
-
-        
       </div>
     </div>
   );
