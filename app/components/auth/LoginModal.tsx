@@ -69,18 +69,13 @@ const LoginModal = () => {
 
         {/* Animated Header Icon */}
         <div className="text-center mb-8">
-          <div className="relative w-20 h-20 mx-auto mb-0">
+          <div className="relative w-20 h-8 mx-auto mb-0">
             
-            {/* Lock icon overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
+            
           </div>
           
           <h2 className="text-2xl font-medium bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-3">
-            Authentication Required
+          Welcome back
           </h2>
           {/* <p className="text-gray-400 text-sm leading-relaxed">
             Please sign in to access Explorer and Dashboards
@@ -126,10 +121,16 @@ const LoginModal = () => {
         {/* Google Login Button - Moved to bottom */}
         <button
           onClick={handleGoogleLogin}
-          className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 border border-gray-700/50 hover:border-gray-600/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+          disabled={true} // Make button inactive
+          className="w-full group relative overflow-hidden opacity-30 bg-gradient-to-r from-gray-900 via-black to-gray-900  border border-gray-700/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg"
+        //className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 border border-gray-700/50 hover:border-gray-600/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           {/* Button background glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div 
+          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 transition-opacity duration-300"
+          //className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+
+          ></div>
           
           <div className="relative flex items-center justify-center space-x-3">
             <svg className="w-5 h-5" viewBox="0 0 24 24">

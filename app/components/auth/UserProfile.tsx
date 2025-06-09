@@ -44,6 +44,7 @@ const UserProfile: React.FC = () => {
     // For internal password authentication
     if (isInternalAuth()) {
       setIsAuthenticated(false);
+      window.location.href = '/';
     } else {
       // For NextAuth authentication
       await signOut({ callbackUrl: '/' });

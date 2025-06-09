@@ -10,7 +10,12 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const pathname = usePathname();
-  const { isAuthenticated, isLoading, checkAuthForRoute, openLoginModal } = useAuth();
+  const { isAuthenticated, isLoading, checkAuthForRoute, openLoginModal, isInternalAuth } = useAuth();
+
+  // Add a helper function to check if the current path requires internal auth
+  const isInternalAuthRoute = () => {
+    return pathname.startsWith('/sf-dashboards');
+  };
 
   useEffect(() => {
     const isProtectedRoute = checkAuthForRoute(pathname);
@@ -18,6 +23,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     // Only check authentication after loading is complete
     if (isProtectedRoute && !isLoading && !isAuthenticated) {
       // Redirect or show login modal
+      openLoginModal();
+      return;
+    }
+    
+    // Additionally check for internal auth routes
+    if (isInternalAuthRoute() && !isInternalAuth()) {
+      // This is an internal auth route but user is not authenticated with internal password
       openLoginModal();
     }
   }, [pathname, isAuthenticated, isLoading, checkAuthForRoute, openLoginModal]);
@@ -43,7 +55,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   // If it's a protected route and user is not authenticated (after loading), show nothing (login modal will show)
-  if (isProtectedRoute && !isLoading && !isAuthenticated) {
+  if ((isProtectedRoute && !isLoading && !isAuthenticated) || 
+      (isInternalAuthRoute() && !isInternalAuth())) {
     return null;
   }
 
