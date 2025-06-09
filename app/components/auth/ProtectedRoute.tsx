@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/app/contexts/AuthContext';
 
@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const pathname = usePathname();
   const { isAuthenticated, isLoading, checkAuthForRoute, openLoginModal, isInternalAuth } = useAuth();
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
 
   // Add a helper function to check if the current path requires internal auth
   const isInternalAuthRoute = () => {
@@ -18,26 +19,39 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    const isProtectedRoute = checkAuthForRoute(pathname);
+    // Add a short delay to allow auth state to be loaded from localStorage/cookies
+    const timer = setTimeout(() => {
+      const isProtectedRoute = checkAuthForRoute(pathname);
+      
+      // Only check authentication after loading is complete and we've waited for localStorage
+      if (!isLoading && hasCheckedAuth) {
+        // Check regular protected routes
+        if (isProtectedRoute && !isAuthenticated) {
+          openLoginModal();
+          return;
+        }
+        
+        // Check internal auth routes
+        if (isInternalAuthRoute() && !isInternalAuth()) {
+          openLoginModal();
+        }
+      }
+    }, 300); // Short delay to ensure localStorage is checked
     
-    // Only check authentication after loading is complete
-    if (isProtectedRoute && !isLoading && !isAuthenticated) {
-      // Redirect or show login modal
-      openLoginModal();
-      return;
+    return () => clearTimeout(timer);
+  }, [pathname, isAuthenticated, isLoading, hasCheckedAuth, checkAuthForRoute, openLoginModal]);
+
+  // Set hasCheckedAuth to true after initial render
+  useEffect(() => {
+    if (!isLoading) {
+      setHasCheckedAuth(true);
     }
-    
-    // Additionally check for internal auth routes
-    if (isInternalAuthRoute() && !isInternalAuth()) {
-      // This is an internal auth route but user is not authenticated with internal password
-      openLoginModal();
-    }
-  }, [pathname, isAuthenticated, isLoading, checkAuthForRoute, openLoginModal]);
+  }, [isLoading]);
 
   const isProtectedRoute = checkAuthForRoute(pathname);
 
   // If it's a protected route and session is still loading, show loading state
-  if (isProtectedRoute && isLoading) {
+  if (isProtectedRoute && (isLoading || !hasCheckedAuth)) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -55,8 +69,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   // If it's a protected route and user is not authenticated (after loading), show nothing (login modal will show)
-  if ((isProtectedRoute && !isLoading && !isAuthenticated) || 
-      (isInternalAuthRoute() && !isInternalAuth())) {
+  if (hasCheckedAuth && ((isProtectedRoute && !isAuthenticated) || 
+      (isInternalAuthRoute() && !isInternalAuth()))) {
     return null;
   }
 

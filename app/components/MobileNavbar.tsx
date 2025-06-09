@@ -4,9 +4,30 @@ import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from '@/app/contexts/AuthContext';
+import UserProfile from './auth/UserProfile';
+
+// Define types for menu items
+interface SubMenuItem {
+  name: string;
+  path: string;
+  logo?: string;
+  status?: string;
+}
+
+interface MenuItem {
+  name: string;
+  path: string;
+  icon: string;
+  requiresAuth?: boolean;
+  requiresInternalAuth?: boolean;
+  hidden?: boolean;
+  hasDropdown?: boolean;
+  subItems?: SubMenuItem[];
+}
 
 // Use the same menu items as Sidebar
-const menuItems = [
+const menuItems: MenuItem[] = [
   { name: "Overview", path: "/dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
   { name: "REV", path: "/rev", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
   { name: "MEV", path: "/mev", icon: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" },  
@@ -64,8 +85,15 @@ const menuItems = [
         status: "soon"
       }
     ]
-  }
-  
+  },
+  { 
+    name: "SF Dashboards", 
+    path: "/sf-dashboards", 
+    icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
+    requiresInternalAuth: true,
+  },
+  { name: "Explorer", path: "/explorer", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", requiresAuth: true, hidden: true },
+  { name: "Dashboards", path: "/dashboards", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z", requiresAuth: true, hidden: true }
 ];
 
 export default function MobileNavbar() {
@@ -73,6 +101,7 @@ export default function MobileNavbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const pathname = usePathname();
+  const { isAuthenticated, isInternalAuth, openLoginModal } = useAuth();
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -85,6 +114,24 @@ export default function MobileNavbar() {
 
   const toggleDropdown = (itemName: string) => {
     setOpenDropdown(openDropdown === itemName ? null : itemName);
+  };
+
+  const handleNavigation = (item: MenuItem, e: React.MouseEvent) => {
+    // Check if this item requires authentication
+    if (item.requiresAuth && !isAuthenticated) {
+      e.preventDefault();
+      openLoginModal(item.path);
+      toggleMenu();
+      return;
+    }
+    
+    // For authenticated users on protected routes, force navigation
+    if (item.requiresAuth && isAuthenticated) {
+      e.preventDefault();
+      toggleMenu();
+      return;
+    }
+    // For non-protected routes, normal navigation will proceed
   };
 
   return (
@@ -135,9 +182,9 @@ export default function MobileNavbar() {
         ></div>
         
         {/* Menu Content */}
-        <div className="absolute right-0 top-0 h-full w-64 bg-gray-950 shadow-lg transform transition-transform">
+        <div className="absolute right-0 top-0 h-full w-64 bg-gray-950 shadow-lg transform transition-transform flex flex-col">
           {/* Header */}
-          <div className="h-14 border-b border-gray-800 flex items-center justify-between px-4">
+          <div className="h-14 border-b border-gray-800 flex items-center justify-between px-4 flex-shrink-0">
             <h2 className="text-white text-sm font-medium">Menu</h2>
             <button 
               className="p-2 focus:outline-none" 
@@ -157,9 +204,19 @@ export default function MobileNavbar() {
           </div>
           
           {/* Menu Items */}
-          <nav className="px-2 py-3 overflow-y-auto h-[calc(100%-3.5rem-4rem)]">
+          <nav className="px-2 py-3 overflow-y-auto flex-1">
             <ul className="space-y-2">
-              {menuItems.map((item) => {
+              {menuItems.filter(item => {
+                // Hide items that require internal auth if not authenticated via internal password
+                if (item.requiresInternalAuth && !isInternalAuth()) {
+                  return false;
+                }
+                // Hide items that require auth if not authenticated
+                if (item.requiresAuth && !isAuthenticated) {
+                  return false;
+                }
+                return !item.hidden;
+              }).map((item) => {
                 let isActive = false;
                 let isSubItemActive = false;
                 
@@ -182,7 +239,10 @@ export default function MobileNavbar() {
                       // Dropdown menu item
                       <div>
                         <button
-                          onClick={() => toggleDropdown(item.name)}
+                          onClick={(e) => {
+                            toggleDropdown(item.name);
+                            handleNavigation(item, e);
+                          }}
                           className={`w-full flex items-center justify-between gap-3 px-3 py-3 rounded-lg transition-all duration-200 ${
                             isActive 
                               ? 'text-white bg-gray-900/70' 
@@ -247,7 +307,9 @@ export default function MobileNavbar() {
                                           ? 'text-white bg-gray-800/60' 
                                           : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
                                       }`}
-                                      onClick={toggleMenu}
+                                      onClick={(e) => {
+                                        handleNavigation(item, e);
+                                      }}
                                     >
                                       {subItem.logo && (
                                         <div className="relative w-4 h-4 flex-shrink-0">
@@ -278,7 +340,10 @@ export default function MobileNavbar() {
                             ? 'text-white bg-gray-900/70' 
                             : 'text-gray-500 hover:text-gray-300 hover:bg-gray-900/40'
                         }`}
-                        onClick={toggleMenu}
+                        onClick={(e) => {
+                          handleNavigation(item, e);
+                          toggleMenu();
+                        }}
                       >
                         <svg 
                           xmlns="http://www.w3.org/2000/svg" 
@@ -298,10 +363,15 @@ export default function MobileNavbar() {
               })}
             </ul>
           </nav>
+
+          {/* User Profile Section */}
+          <div className="px-2 pb-2 flex-shrink-0">
+            <UserProfile />
+          </div>
           
           {/* Footer */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50">
-            <div className="relative">
+          <div className="p-3 pt-2 pb-6 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50 flex-shrink-0">
+            <div className="relative group">
               <span 
                 className="cursor-pointer transition-all duration-200 hover:text-emerald-400" 
                 onClick={() => setShowPopup(!showPopup)}

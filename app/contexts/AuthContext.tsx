@@ -35,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [pendingRoute, setPendingRoute] = useState<string | null>(null);
   const [manualAuth, setManualAuth] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const router = useRouter();
 
   // Check if user is authenticated through localStorage on first load
@@ -49,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .some(row => row.startsWith('solana_dashboard_session=authenticated'));
       
       setManualAuth(hasLocalAuth || hasAuthCookie);
+      setAuthChecked(true);
     };
     
     checkLocalAuth();
@@ -66,8 +68,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Combine NextAuth status with manual auth status
   const isAuthenticated = status === 'authenticated' || manualAuth;
-  const isLoading = status === 'loading';
-  const user = session?.user || (manualAuth ? { name: 'Dashboard User' } : null);
+  const isLoading = status === 'loading' || !authChecked;
+  const user = session?.user || (manualAuth ? { name: 'Solana Foundation' } : null);
 
   // Check if the user is authenticated through internal password
   const isInternalAuth = () => {
@@ -95,6 +97,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated, pendingRoute, router]);
 
   const openLoginModal = (route?: string) => {
+    // Don't open login modal if already authenticated through internal password
+    if (isInternalAuth() && route && route.startsWith('/sf-dashboards')) {
+      return;
+    }
+    
     if (route) {
       setPendingRoute(route);
     }
