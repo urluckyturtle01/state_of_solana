@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { trackAuthEvent } from '@/app/utils/analytics';
 
 const LoginModal = () => {
   const { showLoginModal, closeLoginModal, setIsAuthenticated } = useAuth();
@@ -14,6 +15,8 @@ const LoginModal = () => {
   const handleGoogleLogin = async () => {
     try {
       await signIn('google');
+      // Track Google login attempt
+      trackAuthEvent('login', 'google');
       // Don't close the modal here - AuthContext will handle redirect and close
     } catch (error) {
       console.error('Login error:', error);
@@ -30,6 +33,9 @@ const LoginModal = () => {
       try {
         // Set authenticated state directly
         setIsAuthenticated(true);
+        
+        // Track successful internal login
+        trackAuthEvent('login', 'internal-password');
         
         // Store authentication in localStorage to persist across page refreshes
         if (typeof window !== 'undefined') {
