@@ -9,7 +9,7 @@ import ButtonPrimary from '@/app/components/shared/buttons/ButtonPrimary';
 import Image from 'next/image';
 
 const UserProfile: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, setIsAuthenticated, isInternalAuth } = useAuth();
   const { dashboards, isLoading: dashboardsLoading } = useDashboards();
   const { explorerData, isLoading: explorerLoading } = useUserData();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -41,7 +41,13 @@ const UserProfile: React.FC = () => {
   const isLoading = dashboardsLoading || explorerLoading;
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' });
+    // For internal password authentication
+    if (isInternalAuth()) {
+      setIsAuthenticated(false);
+    } else {
+      // For NextAuth authentication
+      await signOut({ callbackUrl: '/' });
+    }
     setShowDropdown(false);
   };
 
