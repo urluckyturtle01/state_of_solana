@@ -32,7 +32,7 @@ const menuItems = [
         name: "Metaplex", 
         path: "/projects/metaplex",
         logo: "https://www.metaplex.com/images/favicon.png",
-        status: "soon"
+        //status: "soon"
       },
       { 
         name: "Squads", 
