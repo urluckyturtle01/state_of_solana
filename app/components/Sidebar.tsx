@@ -7,7 +7,26 @@ import { useState } from "react";
 import { useAuth } from '@/app/contexts/AuthContext';
 import UserProfile from './auth/UserProfile';
 
-const menuItems = [
+// Define types for menu items
+interface SubMenuItem {
+  name: string;
+  path: string;
+  logo?: string;
+  status?: string;
+}
+
+interface MenuItem {
+  name: string;
+  path: string;
+  icon: string;
+  requiresAuth?: boolean;
+  requiresInternalAuth?: boolean;
+  hidden?: boolean;
+  hasDropdown?: boolean;
+  subItems?: SubMenuItem[];
+}
+
+const menuItems: MenuItem[] = [
 { name: "Overview", path: "/dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
 { name: "REV", path: "/rev", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
 { name: "MEV", path: "/mev", icon: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" },  
@@ -66,8 +85,14 @@ const menuItems = [
       }
     ]
   },
+  { 
+    name: "SF Dashboards", 
+    path: "/sf-dashboards", 
+    icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
+    requiresInternalAuth: true,
+  },
   { name: "Explorer", path: "/explorer", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", requiresAuth: true, hidden: true },
-{ name: "Dashboards", path: "/dashboards", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z", requiresAuth: true, hidden: true },
+  { name: "Dashboards", path: "/dashboards", icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z", requiresAuth: true, hidden: true },
  
 ];
 
@@ -75,7 +100,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const { isAuthenticated, openLoginModal } = useAuth();
+  const { isAuthenticated, openLoginModal, isInternalAuth } = useAuth();
   
   const toggleDropdown = (itemName: string) => {
     setOpenDropdown(openDropdown === itemName ? null : itemName);
@@ -118,7 +143,13 @@ export default function Sidebar() {
       
       <nav className="flex-1 px-2 py-3 overflow-y-auto">
         <ul className="space-y-2.5">
-        {menuItems.filter(item => !item.hidden).map((item) => {
+        {menuItems.filter(item => {
+          // Hide items that require internal auth if not authenticated via internal password
+          if (item.requiresInternalAuth && !isInternalAuth()) {
+            return false;
+          }
+          return !item.hidden;
+        }).map((item) => {
 
             // Check for exact paths first to avoid conflicts
             let isActive = false;
