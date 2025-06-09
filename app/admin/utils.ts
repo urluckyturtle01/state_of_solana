@@ -875,8 +875,11 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
         counters.push(counterWithTimestamps);
       }
       
-      // Save to localStorage
-      localStorage.setItem('counterConfigs', JSON.stringify(counters));
+      // Save to localStorage with quota handling
+      const success = safeLocalStorageSet('counterConfigs', JSON.stringify(counters));
+      if (!success) {
+        console.warn('Failed to save counterConfigs to localStorage due to quota limits');
+      }
       
       // Clear all page-specific caches to ensure counter appears
       const keys = Object.keys(localStorage);
@@ -970,8 +973,13 @@ export const saveCounterConfig = async (counterConfig: CounterConfig): Promise<C
         counters.push(counterWithTimestamps);
       }
       
-      // Save to localStorage
-      localStorage.setItem('counterConfigs', JSON.stringify(counters));
+      // Save to localStorage with quota handling
+      const success = safeLocalStorageSet('counterConfigs', JSON.stringify(counters));
+      if (!success) {
+        console.warn('Failed to save counterConfigs to localStorage due to quota limits');
+        // If quota is exceeded, try to continue without localStorage backup
+        console.warn('Counter saved to S3 but localStorage backup failed');
+      }
       
       // Clear relevant page cache to force refresh
       if (counterConfig.page) {
@@ -1023,8 +1031,11 @@ export const deleteCounterConfig = async (counterId: string): Promise<boolean> =
       // Filter out the counter to delete
       const filteredCounters = counters.filter(counter => counter.id !== counterId);
       
-      // Save back to localStorage
-      localStorage.setItem('counterConfigs', JSON.stringify(filteredCounters));
+      // Save back to localStorage with quota handling
+      const success = safeLocalStorageSet('counterConfigs', JSON.stringify(filteredCounters));
+      if (!success) {
+        console.warn('Failed to save updated counterConfigs to localStorage after deletion');
+      }
     }
     
     return true;
@@ -1039,8 +1050,11 @@ export const deleteCounterConfig = async (counterId: string): Promise<boolean> =
       // Filter out the counter to delete
       const filteredCounters = counters.filter(counter => counter.id !== counterId);
       
-      // Save back to localStorage
-      localStorage.setItem('counterConfigs', JSON.stringify(filteredCounters));
+      // Save back to localStorage with quota handling
+      const success = safeLocalStorageSet('counterConfigs', JSON.stringify(filteredCounters));
+      if (!success) {
+        console.warn('Failed to save updated counterConfigs to localStorage after deletion, but continuing');
+      }
       
       return true;
     }
@@ -1471,3 +1485,166 @@ export async function generateMenuStructure(menuId: string, menuName: string, de
     };
   }
 }
+
+/**
+ * Utility functions for localStorage quota management
+ */
+
+// Get localStorage usage in bytes
+const getLocalStorageUsage = (): { used: number; total: number; available: number } => {
+  let used = 0;
+  let total = 5 * 1024 * 1024; // Assume 5MB default quota
+  
+  try {
+    for (const key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        used += localStorage[key].length + key.length;
+      }
+    }
+  } catch (e) {
+    console.warn('Error calculating localStorage usage:', e);
+  }
+  
+  return {
+    used,
+    total,
+    available: total - used
+  };
+};
+
+// Clean up old localStorage data to free space
+const cleanupLocalStorage = (): void => {
+  console.log('🧹 Starting localStorage cleanup...');
+  const usage = getLocalStorageUsage();
+  console.log(`Current usage: ${(usage.used / 1024 / 1024).toFixed(2)}MB / ${(usage.total / 1024 / 1024).toFixed(2)}MB`);
+  
+  // Items to clean up (ordered by priority - least important first)
+  const cleanupTargets = [
+    // Old cache entries
+    { pattern: /^counters_page_/, maxAge: 24 * 60 * 60 * 1000 }, // 24 hours
+    { pattern: /^charts_page_/, maxAge: 24 * 60 * 60 * 1000 },
+    { pattern: /^tables_page_/, maxAge: 24 * 60 * 60 * 1000 },
+    
+    // Temporary flags
+    { pattern: /^counters_need_refresh$/, maxAge: 60 * 60 * 1000 }, // 1 hour
+    { pattern: /^counters_refresh_time$/, maxAge: 60 * 60 * 1000 },
+    { pattern: /^counters_refreshed_page$/, maxAge: 60 * 60 * 1000 },
+    
+    // Old configurations (keep only recent ones)
+    { pattern: /^all_counters$/, maxAge: 7 * 24 * 60 * 60 * 1000 }, // 7 days
+  ];
+  
+  let itemsRemoved = 0;
+  
+  for (const target of cleanupTargets) {
+    for (const key in localStorage) {
+      if (target.pattern.test(key)) {
+        try {
+          // For time-based items, check if they're too old
+          if (key.includes('refresh_time') || key.includes('_time')) {
+            const timeValue = localStorage.getItem(key);
+            if (timeValue) {
+              const timestamp = parseInt(timeValue);
+              if (!isNaN(timestamp) && Date.now() - timestamp > target.maxAge) {
+                localStorage.removeItem(key);
+                itemsRemoved++;
+                console.log(`Removed old timestamp: ${key}`);
+              }
+            }
+          } else {
+            localStorage.removeItem(key);
+            itemsRemoved++;
+            console.log(`Removed cache item: ${key}`);
+          }
+        } catch (e) {
+          console.warn(`Error removing ${key}:`, e);
+        }
+      }
+    }
+  }
+  
+  console.log(`🧹 Cleanup completed. Removed ${itemsRemoved} items.`);
+  
+  const newUsage = getLocalStorageUsage();
+  console.log(`New usage: ${(newUsage.used / 1024 / 1024).toFixed(2)}MB / ${(newUsage.total / 1024 / 1024).toFixed(2)}MB`);
+};
+
+// Safely set localStorage item with quota handling
+const safeLocalStorageSet = (key: string, value: string, maxRetries: number = 3): boolean => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (error: any) {
+      if (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+        console.warn(`localStorage quota exceeded on attempt ${attempt}/${maxRetries} for key: ${key}`);
+        
+        if (attempt < maxRetries) {
+          // Try cleanup and retry
+          cleanupLocalStorage();
+          
+          // If still failing after cleanup, try to reduce the data size
+          if (attempt === maxRetries - 1 && key === 'counterConfigs') {
+            try {
+              const data = JSON.parse(value);
+              if (Array.isArray(data)) {
+                // Keep only the 50 most recent counters
+                const sortedData = data.sort((a, b) => 
+                  new Date(b.updatedAt || b.createdAt || 0).getTime() - 
+                  new Date(a.updatedAt || a.createdAt || 0).getTime()
+                ).slice(0, 50);
+                
+                const reducedValue = JSON.stringify(sortedData);
+                console.log(`Reduced counterConfigs from ${data.length} to ${sortedData.length} items`);
+                
+                try {
+                  localStorage.setItem(key, reducedValue);
+                  return true;
+                } catch (e) {
+                  console.error('Still failing after data reduction:', e);
+                }
+              }
+            } catch (e) {
+              console.error('Error reducing data size:', e);
+            }
+          }
+        }
+      } else {
+        console.error('localStorage error (not quota):', error);
+        break;
+      }
+    }
+  }
+  
+  console.error(`Failed to save to localStorage after ${maxRetries} attempts: ${key}`);
+  return false;
+};
+
+// Initialize localStorage cleanup on first usage
+const initializeLocalStorageManagement = (): void => {
+  // Check if we should run cleanup (only once per session)
+  const sessionKey = 'localStorage_cleanup_done';
+  if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(sessionKey)) {
+    return; // Already cleaned up this session
+  }
+
+  const usage = getLocalStorageUsage();
+  console.log(`📊 localStorage usage: ${(usage.used / 1024 / 1024).toFixed(2)}MB / ${(usage.total / 1024 / 1024).toFixed(2)}MB`);
+  
+  // If usage is above 80%, run cleanup
+  if (usage.used / usage.total > 0.8) {
+    console.log('🧹 localStorage usage high, running cleanup...');
+    cleanupLocalStorage();
+  }
+  
+  // Mark cleanup as done for this session
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.setItem(sessionKey, 'true');
+  }
+};
+
+// Auto-initialize when utils are loaded
+if (typeof window !== 'undefined') {
+  // Run cleanup check after a short delay to avoid blocking initial page load
+  setTimeout(initializeLocalStorageManagement, 1000);
+};
