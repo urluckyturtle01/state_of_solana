@@ -48,11 +48,18 @@ const menuItems: MenuItem[] = [
         logo: "https://raydium.io/logo.png"
       },
       { 
+        name: "Helium", 
+        path: "/projects/helium",
+        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
+        //status: "soon"
+      },
+      { 
         name: "Metaplex", 
         path: "/projects/metaplex",
         logo: "https://www.metaplex.com/images/favicon.png",
         //status: "soon"
       },
+      
       { 
         name: "Squads", 
         path: "/projects/squads",
@@ -75,12 +82,6 @@ const menuItems: MenuItem[] = [
         name: "Pump Fun", 
         path: "/projects/pump-fun",
         logo: "https://pump.fun/logo.png",
-        status: "soon"
-      },
-      { 
-        name: "Helium", 
-        path: "/projects/helium",
-        logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
         status: "soon"
       }
     ]
