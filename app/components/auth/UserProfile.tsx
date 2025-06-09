@@ -7,6 +7,7 @@ import { useDashboards } from '@/app/contexts/DashboardContext';
 import { useUserData } from '@/app/contexts/UserDataContext';
 import ButtonPrimary from '@/app/components/shared/buttons/ButtonPrimary';
 import Image from 'next/image';
+import { trackAuthEvent } from '@/app/utils/analytics';
 
 const UserProfile: React.FC = () => {
   const { user, isAuthenticated, setIsAuthenticated, isInternalAuth } = useAuth();
@@ -44,8 +45,11 @@ const UserProfile: React.FC = () => {
     // For internal password authentication
     if (isInternalAuth()) {
       setIsAuthenticated(false);
-      window.location.href = '/';
+      // Track internal logout
+      trackAuthEvent('logout', 'internal-password');
     } else {
+      // Track Google logout
+      trackAuthEvent('logout', 'google');
       // For NextAuth authentication
       await signOut({ callbackUrl: '/' });
     }

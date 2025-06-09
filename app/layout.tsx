@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientHydration from "./components/ClientHydration";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import SaveNotification from "./components/shared/SaveNotification";
+import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -80,10 +81,12 @@ export default function RootLayout({
         className={`${inter.variable} ${robotoMono.variable} antialiased min-h-screen bg-black text-gray-100`}
       >
         <ClientHydration />
-        <AuthWrapper>
-          {children}
-          <SaveNotification />
-        </AuthWrapper>
+        <AnalyticsProvider>
+          <AuthWrapper>
+            {children}
+            <SaveNotification />
+          </AuthWrapper>
+        </AnalyticsProvider>
       </body>
     </html>
   );
