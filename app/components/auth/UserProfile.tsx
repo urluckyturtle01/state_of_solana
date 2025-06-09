@@ -16,8 +16,8 @@ const UserProfile: React.FC = () => {
 
   // Show login button when not authenticated
   if (!isAuthenticated || !user) {
-    return (
-      <ButtonPrimary 
+    return (null
+     /* <ButtonPrimary 
        onClick={() => signIn('google')}
        className="w-full bg-gray-900/60 hover:bg-gray-900/80 border-gray-900 hover:border-gray-900 text-gray-900"
        icon={
@@ -30,7 +30,7 @@ const UserProfile: React.FC = () => {
         }
      >
         Login with Google
-      </ButtonPrimary>
+      </ButtonPrimary>*/
     );
   }
 

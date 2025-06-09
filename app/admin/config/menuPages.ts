@@ -44,6 +44,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "raydium",
     name: "Raydium",
     icon: "chart-bar"
+  },
+  {
+    id: "metaplex",
+    name: "Metaplex",
+    icon: "chart-bar"
   }
 ];
 
@@ -146,6 +151,28 @@ overview: [
       name: "Competetive Landscape",
       path: "/projects/raydium/competetive-landscape"
     } 
+  ],
+  "metaplex": [
+    {
+      id: "metaplex-financials",
+      name: "Financials",
+      path: "/projects/metaplex/financials"
+    },
+    {
+      id: "metaplex-traction",
+      name: "Traction",
+      path: "/projects/metaplex/traction"
+    },
+    {
+      id: "metaplex-protocol-token",
+      name: "Protocol Token",
+      path: "/projects/metaplex/protocol-token"
+    },
+    {
+      id: "metaplex-competetive-landscape",
+      name: "Competetive Landscape",
+      path: "/projects/metaplex/competetive-landscape"
+    }
   ]
 };
 
