@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Handle redirect after successful authentication
   useEffect(() => {
-    if (isAuthenticated && pendingRoute) {
+    if (isAuthenticated && pendingRoute && typeof pendingRoute === 'string') {
       router.push(pendingRoute);
       setPendingRoute(null);
       closeLoginModal();
@@ -98,11 +98,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const openLoginModal = (route?: string) => {
     // Don't open login modal if already authenticated through internal password
-    if (isInternalAuth() && route && route.startsWith('/sf-dashboards')) {
+    if (isInternalAuth() && route && typeof route === 'string' && route.startsWith('/sf-dashboards')) {
       return;
     }
     
-    if (route) {
+    if (route && typeof route === 'string') {
       setPendingRoute(route);
     }
     setShowLoginModal(true);

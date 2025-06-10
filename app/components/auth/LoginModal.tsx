@@ -29,7 +29,7 @@ const LoginModal = () => {
     setError('');
 
     // Check if password matches
-    if (password === 'solana123') {
+    if (password === process.env.NEXT_PUBLIC_INTERNAL_AUTH_PASSWORD) {
       try {
         // Set authenticated state directly
         setIsAuthenticated(true);

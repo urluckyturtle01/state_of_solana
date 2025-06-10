@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Add a helper function to check if the current path requires internal auth
   const isInternalAuthRoute = () => {
-    return pathname.startsWith('/sf-dashboards');
+    return pathname && typeof pathname === 'string' && pathname.startsWith('/sf-dashboards');
   };
 
   useEffect(() => {
