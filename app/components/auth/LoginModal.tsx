@@ -28,9 +28,19 @@ const LoginModal = () => {
     setLoading(true);
     setError('');
 
-    // Check if password matches
-    if (password === process.env.NEXT_PUBLIC_INTERNAL_AUTH_PASSWORD) {
-      try {
+    try {
+      // Verify password on server side
+      const response = await fetch('/api/auth/verify-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
         // Set authenticated state directly
         setIsAuthenticated(true);
         
@@ -49,12 +59,12 @@ const LoginModal = () => {
         
         // Close the modal
         closeLoginModal();
-      } catch (error) {
-        console.error('Internal login error:', error);
-        setError('An unexpected error occurred');
+      } else {
+        setError(result.error || 'Invalid password');
       }
-    } else {
-      setError('Invalid password');
+    } catch (error) {
+      console.error('Internal login error:', error);
+      setError('Connection error. Please try again.');
     }
     
     setLoading(false);
