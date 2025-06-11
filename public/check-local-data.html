@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Local Data - research.topledger.xyz</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .highlight { background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .dashboard { border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .found { border-color: #28a745; background: #f8fff9; }
+    </style>
+</head>
+<body>
+    <h1>Local Data Checker - research.topledger.xyz</h1>
+    <p>This tool checks what dashboard data is stored in your browser's localStorage for this domain.</p>
+    
+    <div id="output">Loading...</div>
+    
+    <script>
+        function checkLocalData() {
+            const output = document.getElementById('output');
+            let html = '';
+            
+            try {
+                // Check for dashboards in localStorage
+                const dashboards = localStorage.getItem('dashboards');
+                
+                if (dashboards) {
+                    const parsed = JSON.parse(dashboards);
+                    html += `<div class="highlight"><strong>✅ Found ${parsed.length} dashboard(s) in localStorage!</strong></div>`;
+                    
+                    // Look specifically for "awede"
+                    const awedeFound = parsed.find(d => d.name.toLowerCase().includes('awede'));
+                    if (awedeFound) {
+                        html += `<div class="dashboard found">
+                            <h3>🎯 FOUND "awede" dashboard!</h3>
+                            <p><strong>Name:</strong> ${awedeFound.name}</p>
+                            <p><strong>ID:</strong> ${awedeFound.id}</p>
+                            <p><strong>Created:</strong> ${awedeFound.createdAt}</p>
+                            <p><strong>Charts:</strong> ${awedeFound.charts?.length || 0}</p>
+                            <p><strong>Textboxes:</strong> ${awedeFound.textboxes?.length || 0}</p>
+                        </div>`;
+                    }
+                    
+                    html += '<h3>All Dashboards:</h3>';
+                    parsed.forEach(d => {
+                        const isAwede = d.name.toLowerCase().includes('awede');
+                        html += `<div class="dashboard ${isAwede ? 'found' : ''}">
+                            <strong>${d.name}</strong> (ID: ${d.id})
+                            <br>Created: ${d.createdAt}
+                            <br>Charts: ${d.charts?.length || 0}, Textboxes: ${d.textboxes?.length || 0}
+                            ${isAwede ? '<br><strong>👆 This looks like your missing dashboard!</strong>' : ''}
+                        </div>`;
+                    });
+                    
+                    html += '<h3>Full Data:</h3>';
+                    html += `<pre>${JSON.stringify(parsed, null, 2)}</pre>`;
+                    
+                } else {
+                    html += '<div class="highlight">❌ No dashboards found in localStorage for this domain.</div>';
+                    html += '<p>This means your "awede" dashboard was either:</p>';
+                    html += '<ul><li>Created on a different domain (like localhost:3000)</li>';
+                    html += '<li>Never properly saved to localStorage</li>';
+                    html += '<li>Already cleared from your browser</li></ul>';
+                }
+                
+                // Check auth state
+                const authState = localStorage.getItem('solana_dashboard_auth');
+                html += `<p><strong>Auth state:</strong> ${authState || 'Not set'}</p>`;
+                
+                // Show all localStorage keys for this domain
+                const allKeys = Object.keys(localStorage);
+                html += `<p><strong>All localStorage keys for this domain:</strong> ${allKeys.length > 0 ? allKeys.join(', ') : 'None'}</p>`;
+                
+            } catch (error) {
+                html += `<div class="highlight">❌ Error: ${error.message}</div>`;
+            }
+            
+            output.innerHTML = html;
+        }
+        
+        checkLocalData();
+    </script>
+</body>
+</html> 
