@@ -40,7 +40,7 @@ export default function HeliumTabsHeader({ activeTab = "overview" }: HeliumTabsH
       tabs={tabs} 
       activeTab={activeTab}
       title="Helium"
-      description="Comprehensive analytics for Helium "
+      description="Comprehensive analytics for Helium - revenue, data credits, data transfers, payloads, and subscribers"
       showDivider={true}
     />
   );
