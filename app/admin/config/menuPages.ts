@@ -140,9 +140,54 @@ overview: [
       id: "sf-stablecoins",
       name: "Stablecoins",
       path: "/sf-dashboards/stablecoins"
+    },
+    {
+      id: "sf-defi",
+      name: "DeFi",
+      path: "/sf-dashboards/defi"
+    },
+    {
+      id: "sf-ai-tokens",
+      name: "AI Tokens",
+      path: "/sf-dashboards/ai-tokens"
+    },
+    {
+      id: "sf-bitcoin-on-solana",
+      name: "Bitcoin on Solana",
+      path: "/sf-dashboards/bitcoin-on-solana"
+    },
+    {
+      id: "sf-consumer",
+      name: "Consumer",
+      path: "/sf-dashboards/consumer"
+    },
+    {
+      id: "sf-depin",
+      name: "Depin",
+      path: "/sf-dashboards/depin"
+    },
+    {
+      id: "sf-payments",
+      name: "Payments",
+      path: "/sf-dashboards/payments"
+    },
+    {
+      id: "sf-rwa",
+      name: "RWA",
+      path: "/sf-dashboards/rwa"
+    },
+    {
+      id: "sf-treasury",
+      name: "Treasury",
+      path: "/sf-dashboards/treasury"
+    },
+    {
+      id: "sf-vc-funding",
+      name: "VC Funding",
+      path: "/sf-dashboards/vc-funding"
     }
-  ],  
-  "raydium": [
+  ],
+"raydium": [
     
     {
       id: "raydium-financials",
