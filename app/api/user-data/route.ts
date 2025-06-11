@@ -13,6 +13,20 @@ console.log('S3_BUCKET_NAME:', process.env.S3_BUCKET_NAME);
 console.log('Has NEXTAUTH_SECRET:', !!process.env.NEXTAUTH_SECRET);
 console.log('============================');
 
+// Helper function to check internal authentication
+function checkInternalAuth(request: NextRequest): { isAuthenticated: boolean; userId: string | null } {
+  const cookies = request.cookies;
+  const authCookie = cookies.get('solana_dashboard_session');
+  
+  // Check for internal auth cookie
+  if (authCookie?.value === 'authenticated') {
+    console.log('Internal authentication found via cookie');
+    return { isAuthenticated: true, userId: 'solana_foundation_internal' };
+  }
+  
+  return { isAuthenticated: false, userId: null };
+}
+
 // Check if running in development mode and AWS credentials are missing
 const isProduction = process.env.NODE_ENV === 'production';
 const hasAWSCredentials = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
@@ -88,12 +102,33 @@ export async function GET(request: NextRequest) {
       email: session?.user?.email 
     });
     
-    if (!session?.user?.email) {
-      console.log('No valid session found, returning 401');
+    // Check for internal authentication if no session
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    let userName: string | null = null;
+    
+    if (session?.user?.email) {
+      // NextAuth session found
+      userId = session.user.email;
+      userEmail = session.user.email;
+      userName = session.user.name || '';
+      console.log('Using NextAuth session for user:', userId);
+    } else {
+      // Check for internal authentication
+      const internalAuth = checkInternalAuth(request);
+      if (internalAuth.isAuthenticated) {
+        userId = internalAuth.userId!;
+        userEmail = 'internal@solana.foundation';
+        userName = 'Solana Foundation';
+        console.log('Using internal authentication for user:', userId);
+      }
+    }
+    
+    if (!userId) {
+      console.log('No valid authentication found, returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.email; // Use email as user ID
     console.log('Processing request for user:', userId);
 
     // Development mode fallback
@@ -107,8 +142,8 @@ export async function GET(request: NextRequest) {
         // Create default user data for development
         userData = {
           userId,
-          email: session.user.email,
-          name: session.user.name || '',
+          email: userEmail!,
+          name: userName!,
           dashboards: [], // Start with empty dashboards - user will create their own
           charts: [], // Normalized charts table
           textboxes: [], // Normalized textboxes table
@@ -172,8 +207,8 @@ export async function GET(request: NextRequest) {
         // User doesn't exist, return default structure
         const defaultUserData: UserData = {
           userId,
-          email: session.user.email,
-          name: session.user.name || '',
+          email: userEmail!,
+          name: userName!,
           dashboards: [], // Start with empty dashboards - user will create their own
           charts: [], // Normalized charts table
           textboxes: [], // Normalized textboxes table
@@ -240,8 +275,30 @@ export async function POST(request: NextRequest) {
       email: session?.user?.email 
     });
     
-    if (!session?.user?.email) {
-      console.log('No valid session found, returning 401');
+    // Check for internal authentication if no session
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    let userName: string | null = null;
+    
+    if (session?.user?.email) {
+      // NextAuth session found
+      userId = session.user.email;
+      userEmail = session.user.email;
+      userName = session.user.name || '';
+      console.log('Using NextAuth session for user:', userId);
+    } else {
+      // Check for internal authentication
+      const internalAuth = checkInternalAuth(request);
+      if (internalAuth.isAuthenticated) {
+        userId = internalAuth.userId!;
+        userEmail = 'internal@solana.foundation';
+        userName = 'Solana Foundation';
+        console.log('Using internal authentication for user:', userId);
+      }
+    }
+    
+    if (!userId) {
+      console.log('No valid authentication found, returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -259,7 +316,6 @@ export async function POST(request: NextRequest) {
       visualizationsCount: explorerData?.savedVisualizations?.length || 0
     });
 
-    const userId = session.user.email;
     console.log('Processing save request for user:', userId);
 
     // Development mode fallback
@@ -272,8 +328,8 @@ export async function POST(request: NextRequest) {
         console.log('Creating new user data structure for development mode');
         existingUserData = {
           userId,
-          email: session.user.email,
-          name: session.user.name || '',
+          email: userEmail!,
+          name: userName!,
           dashboards: [],
           charts: [],
           textboxes: [],
@@ -336,8 +392,8 @@ export async function POST(request: NextRequest) {
         // Create new user data
         existingUserData = {
           userId,
-          email: session.user.email,
-          name: session.user.name || '',
+          email: userEmail!,
+          name: userName!,
           dashboards: [],
           charts: [],
           textboxes: [],
