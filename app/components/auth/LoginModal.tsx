@@ -137,14 +137,14 @@ const LoginModal = () => {
         {/* Google Login Button - Moved to bottom */}
         <button
           onClick={handleGoogleLogin}
-          disabled={true} // Make button inactive
-          className="w-full group relative overflow-hidden opacity-30 bg-gradient-to-r from-gray-900 via-black to-gray-900  border border-gray-700/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg"
-        //className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 border border-gray-700/50 hover:border-gray-600/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+          //disabled={true} // Make button inactive
+          //className="w-full group relative overflow-hidden opacity-30 bg-gradient-to-r from-gray-900 via-black to-gray-900  border border-gray-700/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg"
+        className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-black to-gray-900 hover:from-gray-800 hover:via-gray-900 hover:to-gray-800 border border-gray-700/50 hover:border-gray-600/50 text-gray-100 font-medium py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           {/* Button background glow effect */}
           <div 
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 transition-opacity duration-300"
-          //className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          //className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 transition-opacity duration-300"
+          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
 
           ></div>
           
