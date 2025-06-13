@@ -40,6 +40,7 @@ interface DashboardRendererProps {
   pageId: string;
   overrideCharts?: ChartConfig[]; // Add optional prop to override charts
   enableCaching?: boolean; // Add optional prop for enabling caching
+  section?: string; // Optional section filter for sectioned pages
 }
 
 interface Legend {
@@ -497,6 +498,7 @@ export default function DashboardRenderer({
   pageId, 
   overrideCharts,
   enableCaching = true,
+  section,
 }: DashboardRendererProps) {
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -1581,6 +1583,12 @@ export default function DashboardRenderer({
     });
   }, []);
 
+  // Filter charts by section if specified - must be before conditional returns
+  const filteredCharts = useMemo(() => {
+    if (!section) return charts;
+    return charts.filter(chart => chart.section === section);
+  }, [charts, section]);
+
   if (!isClient) {
     return null; // Return nothing during SSR
   }
@@ -1609,7 +1617,7 @@ export default function DashboardRenderer({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-      {charts.map((chart) => (
+      {filteredCharts.map((chart) => (
         <div 
           key={chart.id}
           className={`${(chart.width || 2) === 2 ? 'md:col-span-1' : 'md:col-span-2'}`}
