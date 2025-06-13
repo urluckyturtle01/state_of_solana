@@ -55,6 +55,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "helium",
     name: "Helium",
     icon: "chart-bar"
+  },
+  {
+    id: "orca",
+    name: "Orca",
+    icon: "chart-bar"
   }
 ];
 
@@ -259,6 +264,28 @@ overview: [
       name: "Competitive Landscape",
       path: "/projects/helium/competitive-landscape"
     }
+    ],
+    "orca": [
+      {
+        id: "orca-financials",
+        name: "Financials",
+        path: "/projects/orca/financials"
+      },
+      {
+        id: "orca-traction",
+        name: "Traction",
+        path: "/projects/orca/traction"
+      },
+      {
+        id: "orca-protocol-token",
+        name: "Protocol Token",
+        path: "/projects/orca/protocol-token"
+      },
+      {
+        id: "orca-competitive-landscape",
+        name: "Competitive Landscape",
+        path: "/projects/orca/competitive-landscape"
+      }
     ]
 };
 
