@@ -14,6 +14,8 @@ export type AvailablePage =
   | typeof AVAILABLE_PAGES[number]['id']
   // Overview menu pages
   | 'dashboard' | 'network-usage' | 'protocol-rev' | 'market-dynamics'
+  // SF Dashboards pages
+  | 'sf-overview' | 'sf-depin'
   // DEX menu pages
   | 'volume' | 'tvl' | 'traders' | 'aggregators' | 'dex-summary'
   // REV menu pages

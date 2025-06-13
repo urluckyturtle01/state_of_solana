@@ -22,6 +22,7 @@ interface EnhancedDashboardRendererProps {
   overrideCounters?: CounterConfig[];
   overrideTables?: TableConfig[];
   enableCaching?: boolean;
+  section?: string; // Optional section filter for sectioned pages
 }
 
 // Cache durations
@@ -270,6 +271,7 @@ export default React.memo(function EnhancedDashboardRenderer({
   overrideCounters,
   overrideTables,
   enableCaching = true,
+  section,
 }: EnhancedDashboardRendererProps) {
   const [counters, setCounters] = useState<CounterConfig[]>([]);
   const [tables, setTables] = useState<TableConfig[]>([]);
@@ -552,6 +554,7 @@ export default React.memo(function EnhancedDashboardRenderer({
         pageId={pageId}
         overrideCharts={overrideCharts}
         enableCaching={enableCaching}
+        section={section}
       />
       
       {/* Render tables below charts */}

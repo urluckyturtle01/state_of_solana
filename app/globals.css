@@ -25,6 +25,35 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Global scrollbar hiding for all pages */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Hide scrollbars on all elements */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
 /* Custom scrollbar styling */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
@@ -149,4 +178,9 @@ body {
   display: none;  /* Safari and Chrome */
   width: 0;
   height: 0;
+}
+
+/* Section container scroll margin for sectioned pages */
+.section-container {
+  scroll-margin-top: 1rem;
 }

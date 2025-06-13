@@ -1262,13 +1262,38 @@ export default function ChartCreatorPage() {
             helpText={selectedMenu ? "Select the specific page for this chart" : "Select a menu option first"}
           />
           
-          <FormInput
+          <FormSelect
             id="section"
             label="Section"
+            options={
+              formData.page === 'sf-overview' ? [
+                { id: 'network-rev-gdp', name: 'Network REV and GDP' },
+                { id: 'validator', name: 'Validator' },
+                { id: 'onchain-activity', name: 'Onchain Activity' },
+                { id: 'defi', name: 'DEFI' },
+                { id: 'stablecoins', name: 'Stablecoins' },
+              ] : formData.page === 'sf-depin' ? [
+                { id: 'overview', name: 'Overview' },
+                { id: 'rewards', name: 'Rewards' },
+                { id: 'token-burns', name: 'Token Burns' },
+                { id: 'top-program-interactions', name: 'Top Program Interactions - L30 days' },
+                { id: 'token-marketcap-share', name: 'Token Marketcap Share' },
+                { id: 'depin-project-revenue', name: 'DePIN Project Revenue by Chain' },
+                { id: 'solana-depin-fundraising', name: 'Solana DePIN Fundraising' },
+              ] : [
+                { id: '', name: 'No section (default)' },
+              ]
+            }
             value={formData.section || ''}
             onChange={(e) => handleInputChange('section', e.target.value)}
-            placeholder="E.g., Top Charts"
-            helpText="Optional section name for grouping charts"
+            disabled={!formData.page}
+            helpText={
+              formData.page === 'sf-overview' 
+                ? "Select the section where this chart will be displayed on the overview page"
+                : formData.page === 'sf-depin'
+                ? "Select the section where this chart will be displayed on the DePIN page"
+                : "Section selection is only available for SF Dashboard pages (Overview and DePIN)"
+            }
           />
           
           {/* Chart Type Configuration */}
