@@ -137,6 +137,11 @@ overview: [
   ],
   "sf-dashboards": [
     {
+      id: "sf-overview",
+      name: "Overview",
+      path: "/sf-dashboards/overview"
+    },
+    {
       id: "sf-stablecoins",
       name: "Stablecoins",
       path: "/sf-dashboards/stablecoins"
