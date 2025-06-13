@@ -9,6 +9,12 @@ interface SFTabsHeaderProps {
 export default function SFTabsHeader({ activeTab = "stablecoin-usage" }: SFTabsHeaderProps) {
   const tabs: Tab[] = [
     { 
+      name: "Overview", 
+      path: "/sf-dashboards/overview",
+      key: "overview",
+      icon: "M6 20V10M12 20V4M18 20V14"
+    },
+    { 
       name: "Stablecoins", 
       path: "/sf-dashboards/stablecoins",
       key: "stablecoins",
