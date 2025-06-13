@@ -89,7 +89,32 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
   } else if (absValue >= 1000) {
     formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
   } else {
-    formattedValue = `${sign}${absValue.toFixed(2)}`;
+    // For values less than 1000, determine appropriate decimal places based on order of magnitude
+    if (absValue >= 1) {
+      // Values 1-999: show 2 decimal places for consistency in tooltips
+      formattedValue = `${sign}${absValue.toFixed(2)}`;
+    } else if (absValue >= 0.1) {
+      // Values 0.1-0.999: show 3 decimal places
+      formattedValue = `${sign}${absValue.toFixed(3)}`;
+    } else if (absValue >= 0.01) {
+      // Values 0.01-0.099: show 4 decimal places
+      formattedValue = `${sign}${absValue.toFixed(4)}`;
+    } else if (absValue >= 0.001) {
+      // Values 0.001-0.009: show 5 decimal places
+      formattedValue = `${sign}${absValue.toFixed(5)}`;
+    } else if (absValue >= 0.0001) {
+      // Values 0.0001-0.0009: show 6 decimal places
+      formattedValue = `${sign}${absValue.toFixed(6)}`;
+    } else if (absValue > 0) {
+      // Very small values: use scientific notation or show up to 7 decimal places
+      if (absValue < 0.000001) {
+        formattedValue = `${sign}${absValue.toExponential(3)}`;
+      } else {
+        formattedValue = `${sign}${absValue.toFixed(7)}`;
+      }
+    } else {
+      formattedValue = '0';
+    }
   }
   
   // Return with correct unit placement (or no unit if not specified)
@@ -842,11 +867,18 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       return formattedValue.endsWith('.0') 
         ? `${sign}${formattedValue.slice(0, -2)}K` 
         : `${sign}${formattedValue}K`;
-    } else if (absValue < 1) {
-      // For values between 0 and 1, show decimal places
-      return `${sign}${absValue.toFixed(1)}`;
     } else {
-      return `${sign}${absValue.toFixed(0)}`;
+      // For values less than 1000, use clean formatting without trailing zeros
+      const formatted = absValue.toString();
+      
+      // For very small numbers that might need scientific notation
+      if (absValue < 0.000001) {
+        return `${sign}${absValue.toExponential(2)}`;
+      }
+      
+      // Use parseFloat to remove trailing zeros, then convert back to string
+      const cleanValue = parseFloat(absValue.toPrecision(6));
+      return `${sign}${cleanValue}`;
     }
   }, []);
 
@@ -1279,26 +1311,56 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       padding: 0.2,
     });
     
-    // Calculate max value for y-axis
-    const yMax = Math.max(
-      ...chartData.flatMap(d => 
-        fields.map(field => Number(d[field]) || 0)
-      ), 
-      1
-    );
+    // Calculate max and min values for y-axis from actual data
+    const allValues = chartData.flatMap(d => 
+      fields.map(field => Number(d[field]) || 0)
+    ).filter(val => !isNaN(val));
     
-    // Calculate min value for y-axis to handle negative values
-    const yMin = Math.min(
-      ...chartData.flatMap(d => 
-        fields.map(field => Number(d[field]) || 0)
-      ),
-      0
-    );
+    const actualYMax = allValues.length > 0 ? Math.max(...allValues) : 1;
+    const actualYMin = allValues.length > 0 ? Math.min(...allValues) : 0;
+    
+    // Determine appropriate padding and clean domain based on data magnitude
+    let yMax, yMin;
+    
+    // Always start from 0 if all values are positive
+    if (actualYMin >= 0) {
+      yMin = 0;
+    } else {
+      yMin = actualYMin < 0 ? actualYMin * 1.1 : actualYMin;
+    }
+    
+    // Calculate appropriate tick interval and yMax based on data magnitude
+    let tickInterval;
+    if (actualYMax <= 0.001) {
+      // For very small values like 0.0005, use 0.0001 intervals: 0, 0.0001, 0.0002, etc.
+      tickInterval = 0.0001;
+      yMax = Math.ceil(actualYMax / tickInterval) * tickInterval;
+    } else if (actualYMax <= 0.01) {
+      // For values like 0.005, use 0.001 intervals: 0, 0.001, 0.002, etc.
+      tickInterval = 0.001;
+      yMax = Math.ceil(actualYMax / tickInterval) * tickInterval;
+    } else if (actualYMax <= 0.1) {
+      // For values like 0.05, use 0.01 intervals: 0, 0.01, 0.02, etc.
+      tickInterval = 0.01;
+      yMax = Math.ceil(actualYMax / tickInterval) * tickInterval;
+    } else if (actualYMax <= 1) {
+      // For values like 0.5, use 0.1 intervals: 0, 0.1, 0.2, etc.
+      tickInterval = 0.1;
+      yMax = Math.ceil(actualYMax / tickInterval) * tickInterval;
+    } else if (actualYMax <= 10) {
+      // For values like 5, use 1 intervals: 0, 1, 2, etc.
+      tickInterval = 1;
+      yMax = Math.ceil(actualYMax / tickInterval) * tickInterval;
+    } else {
+      // For larger values, use standard padding
+      yMax = actualYMax * 1.1;
+      tickInterval = null; // Let D3 decide
+    }
     
     const yScale = scaleLinear<number>({
-      domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
+      domain: [yMin, yMax],
       range: [innerHeight, 0],
-      nice: true,
+      nice: tickInterval ? false : true, // Don't use nice if we set custom interval
       clamp: true,
     });
     
@@ -1422,7 +1484,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               tickStroke="transparent"
               tickLength={0}
               hideZero={false}
-              numTicks={5}
+              tickValues={tickInterval ? (() => {
+                const ticks = [];
+                for (let i = yMin; i <= yMax; i += tickInterval) {
+                  ticks.push(Math.round(i / tickInterval) * tickInterval); // Round to avoid floating point errors
+                }
+                return ticks;
+              })() : undefined}
+              numTicks={tickInterval ? undefined : 5}
               tickFormat={(value) => formatTickValue(Number(value))}
               tickLabelProps={() => ({
                 fill: '#6b7280',

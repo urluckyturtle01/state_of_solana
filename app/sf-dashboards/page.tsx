@@ -9,7 +9,7 @@ export default function SFDashboardsPage() {
   const router = useRouter();
   
   useEffect(() => {
-    router.replace("/sf-dashboards/stablecoins");
+    router.replace("/sf-dashboards/overview");
   }, [router]);
   
   return (
