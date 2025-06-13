@@ -471,12 +471,15 @@ export default function PublicDashboardPage() {
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         {allItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             {allItems.map((item) => (
               <div
                 key={item.id}
                 className={`${
-                  item.itemType === 'textbox' && item.width === 'full' ? 'md:col-span-2' : ''
+                  item.itemType === 'textbox' && item.width === 'full' ? 'md:col-span-2' :
+                  item.itemType === 'textbox' && item.width === 'half' ? 'md:col-span-1' :
+                  item.itemType === 'chart' && (item.configuration?.width || 2) === 2 ? 'md:col-span-1' :
+                  'md:col-span-2'
                 }`}
               >
                 {item.itemType === 'chart' ? (

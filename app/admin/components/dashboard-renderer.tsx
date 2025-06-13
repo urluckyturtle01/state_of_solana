@@ -1610,22 +1610,25 @@ export default function DashboardRenderer({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
       {charts.map((chart) => (
-        <ChartCard 
+        <div 
           key={chart.id}
-          title={chart.title}
-          description={chart.subtitle}
-          accentColor="blue"
-          onExpandClick={() => toggleChartExpanded(chart.id)}
-          onDownloadClick={() => downloadCSV(chart)}
-          onScreenshotClick={() => handleChartScreenshot(chart)}
-          isDownloading={downloadingCharts[chart.id]}
-          isScreenshotting={screenshottingCharts[chart.id]}
-          isLoading={false}
-          legendWidth="1/5"
-          className="md:h-[500px] h-auto"
-          id={`chart-card-${chart.id}`}
-          chart={chart}
-          filterValues={filterValues[chart.id]}
+          className={`${(chart.width || 2) === 2 ? 'md:col-span-1' : 'md:col-span-2'}`}
+        >
+          <ChartCard 
+            title={chart.title}
+            description={chart.subtitle}
+            accentColor="blue"
+            onExpandClick={() => toggleChartExpanded(chart.id)}
+            onDownloadClick={() => downloadCSV(chart)}
+            onScreenshotClick={() => handleChartScreenshot(chart)}
+            isDownloading={downloadingCharts[chart.id]}
+            isScreenshotting={screenshottingCharts[chart.id]}
+            isLoading={false}
+            legendWidth="1/5"
+            className="md:h-[500px] h-auto"
+            id={`chart-card-${chart.id}`}
+            chart={chart}
+            filterValues={filterValues[chart.id]}
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={
@@ -1745,6 +1748,7 @@ export default function DashboardRenderer({
             />
           </div>
         </ChartCard>
+        </div>
       ))}
     </div>
   );
