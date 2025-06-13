@@ -617,6 +617,55 @@ const TableForm: React.FC<TableFormProps> = ({
               </p>
             </div>
           </div>
+
+          {/* Section Selection - Only show for sectioned pages */}
+          {(formData.page === 'sf-overview' || formData.page === 'sf-depin') && (
+            <div>
+              <label htmlFor="section" className="block text-sm font-medium text-gray-400">
+                Section
+              </label>
+              <select
+                id="section"
+                name="section"
+                value={formData.additionalOptions?.section || ''}
+                onChange={(e) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    additionalOptions: {
+                      ...prev.additionalOptions,
+                      section: e.target.value
+                    }
+                  }));
+                }}
+                className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All Sections</option>
+                {formData.page === 'sf-overview' && (
+                  <>
+                    <option value="network-rev-gdp">Network REV and GDP</option>
+                    <option value="validator">Validator</option>
+                    <option value="onchain-activity">Onchain Activity</option>
+                    <option value="defi">DEFI</option>
+                    <option value="stablecoins">Stablecoins</option>
+                  </>
+                )}
+                {formData.page === 'sf-depin' && (
+                  <>
+                    <option value="overview">Overview</option>
+                    <option value="rewards">Rewards</option>
+                    <option value="token-burns">Token Burns</option>
+                    <option value="top-program-interactions">Top Program Interactions - L30 days</option>
+                    <option value="token-marketcap-share">Token Marketcap Share</option>
+                    <option value="depin-project-revenue">DePIN Project Revenue by Chain</option>
+                    <option value="solana-depin-fundraising">Solana DePIN Fundraising</option>
+                  </>
+                )}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Select which section this table should appear in (optional)
+              </p>
+            </div>
+          )}
           
           {/* Table Width Selection */}
           <div>
