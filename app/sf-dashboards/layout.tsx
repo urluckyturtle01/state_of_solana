@@ -15,7 +15,7 @@ export default function SFLayouts({ children }: SFLayoutsProps) {
   // Extract the active tab from pathname
   // /stablecoins -> overview, /stablecoins/supply -> supply, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'stablecoins';
+  const activeTab = pathname.split('/')[2] || 'overview';
   //const activeTab = pathSegments.length > 2 ? pathSegments[2] : "overview";
   
   return (
