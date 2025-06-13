@@ -51,17 +51,18 @@ export const menuItems: MenuItem[] = [
         //status: "soon"
       },
       { 
+        name: "Orca", 
+        path: "/projects/orca",
+        logo: "https://www.orca.so/favicon.ico",
+        //status: "soon"
+      },
+      { 
         name: "Squads", 
         path: "/projects/squads",
         logo: "https://framerusercontent.com/images/pBwgF4du4byUGDzFtqxnLoQwZqU.png",
         status: "soon"
       },
-      { 
-        name: "Orca", 
-        path: "/projects/orca",
-        logo: "https://www.orca.so/favicon.ico",
-        status: "soon"
-      },
+      
       { 
         name: "Jupiter", 
         path: "/projects/jupiter",
