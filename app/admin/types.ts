@@ -198,6 +198,7 @@ export interface TableConfig {
       currencyFilter?: FilterOption;
       [key: string]: FilterOption | undefined;
     };
+    section?: string;
   };
   createdAt?: string;
   updatedAt?: string;

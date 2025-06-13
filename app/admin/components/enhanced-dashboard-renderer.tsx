@@ -516,7 +516,7 @@ export default React.memo(function EnhancedDashboardRenderer({
     );
   }, [counters, isLoadingCounters, isInitialLoadComplete, renderBatch, overrideCounters, pageId]);
 
-  // Memoized table rendering
+  // Memoized table rendering with section filtering
   const renderTables = useMemo(() => {
     if (isLoadingTables && !isInitialLoadComplete) {
       // Return null during initial loading
@@ -527,9 +527,18 @@ export default React.memo(function EnhancedDashboardRenderer({
       return null;
     }
 
+    // Filter tables by section if section is provided
+    const filteredTables = section 
+      ? tables.filter(table => table.additionalOptions?.section === section)
+      : tables;
+
+    if (filteredTables.length === 0) {
+      return null;
+    }
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4 mb-4">
-        {tables.map((table) => (
+        {filteredTables.map((table) => (
           <div 
             key={table.id} 
             className={`col-span-1 ${
@@ -542,7 +551,7 @@ export default React.memo(function EnhancedDashboardRenderer({
         ))}
       </div>
     );
-  }, [tables, isLoadingTables, isInitialLoadComplete]);
+  }, [tables, isLoadingTables, isInitialLoadComplete, section]);
 
   return (
     <div className="space-y-4">
