@@ -79,6 +79,7 @@ export interface ChartConfig {
   enableCategoricalBrush?: boolean;
   useDistinctColors?: boolean;
   colorScheme?: string;
+  width?: number; // 2 for half width (1/2), 3 for full width (2/2) (defaults to 2)
   dataMapping: {
     xAxis: string | string[];
     yAxis: string | YAxisConfig | (string | YAxisConfig)[];
@@ -115,6 +116,7 @@ export interface ChartFormData {
   enableCategoricalBrush?: boolean;
   useDistinctColors?: boolean;
   colorScheme?: string;
+  width?: number; // 2 for half width (1/2), 3 for full width (2/2) (defaults to 2)
   dataMapping: {
     xAxis: string | string[];
     yAxis: string | string[] | YAxisConfig[];

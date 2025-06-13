@@ -32,6 +32,7 @@ export default function ChartCreatorPage() {
     apiKey: '',
     isStacked: false,
     colorScheme: 'default',
+    width: 2, // Default to half width
     dataMapping: {
       xAxis: '',
       yAxis: '',
@@ -127,6 +128,7 @@ export default function ChartCreatorPage() {
                 apiKey: chartToEdit.apiKey || '',
                 isStacked: chartToEdit.isStacked || false,
                 colorScheme: chartToEdit.colorScheme || 'default',
+                width: chartToEdit.width || 2, // Default to half width if not set
                 dataMapping: {
                   xAxis: chartToEdit.dataMapping.xAxis,
                   yAxis: typeof chartToEdit.dataMapping.yAxis === 'string' 
@@ -296,6 +298,12 @@ export default function ChartCreatorPage() {
             isStacked: isStackedChart || (prev.isStacked && !wasStackedChart(prev))
           }));
         }
+      } else if (name === 'width') {
+        // Handle width as a number
+        setFormData(prev => ({
+          ...prev,
+          [name]: parseInt(value, 10)
+        }));
       } else {
         setFormData(prev => ({
           ...prev,
@@ -1095,6 +1103,7 @@ export default function ChartCreatorPage() {
             apiKey: '',
             isStacked: false,
             colorScheme: 'default',
+            width: 2, // Default to half width
             dataMapping: {
               xAxis: '',
               yAxis: '',
@@ -1284,6 +1293,18 @@ export default function ChartCreatorPage() {
             onChange={(e) => handleInputChange('colorScheme', e.target.value)}
             placeholder="E.g., blue,green,purple or default"
             helpText="Comma-separated colors or 'default'"
+          />
+          
+          <FormSelect
+            id="width"
+            label="Chart Width"
+            options={[
+              { id: '2', name: '1/2 - Half width' },
+              { id: '3', name: '2/2 - Full width' }
+            ]}
+            value={formData.width?.toString() || '2'}
+            onChange={(e) => handleInputChange('width', e.target.value)}
+            helpText="Select how wide the chart should be on desktop. On mobile, all charts will be full width."
           />
           
           <div className="col-span-2">
