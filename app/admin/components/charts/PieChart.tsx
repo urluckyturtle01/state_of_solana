@@ -119,6 +119,61 @@ const PieChart: React.FC<PieChartProps> = ({
   
   // For data access, we need just the field name
   const yKey = yField;
+  
+  // Helper function to find matching field with flexible matching
+  const findMatchingField = useCallback((obj: any, fieldName: string): string | null => {
+    if (!obj || !fieldName) return null;
+    
+    // Direct match
+    if (fieldName in obj) return fieldName;
+    
+    // Case insensitive match
+    const lowerField = fieldName.toLowerCase();
+    const keys = Object.keys(obj);
+    
+    // First try exact match with lowercase
+    for (const key of keys) {
+      if (key.toLowerCase() === lowerField) return key;
+    }
+    
+    // Then try replacing spaces with underscores and vice versa
+    const spaceToUnderscore = lowerField.replace(/ /g, '_');
+    const underscoreToSpace = lowerField.replace(/_/g, ' ');
+    
+    for (const key of keys) {
+      const lowerKey = key.toLowerCase();
+      if (lowerKey === spaceToUnderscore || lowerKey === underscoreToSpace) {
+        return key;
+      }
+    }
+    
+    return null;
+  }, []);
+  
+  // Get actual field names from data (with fallback matching)
+  const actualXKey = useMemo(() => {
+    if (!data || data.length === 0) return xKey;
+    const matchingField = findMatchingField(data[0], xKey);
+    return matchingField || xKey;
+  }, [data, xKey, findMatchingField]);
+  
+  const actualYKey = useMemo(() => {
+    if (!data || data.length === 0) return yKey;
+    const matchingField = findMatchingField(data[0], yKey);
+    return matchingField || yKey;
+  }, [data, yKey, findMatchingField]);
+  
+  // Log field mapping for debugging
+  console.log('PieChart field mapping:', {
+    chartTitle: chartConfig.title,
+    configuredXKey: xKey,
+    configuredYKey: yKey,
+    actualXKey,
+    actualYKey,
+    dataAvailable: data && data.length > 0,
+    availableFields: data && data.length > 0 ? Object.keys(data[0]) : [],
+    yUnit
+  });
 
   // Format value with appropriate units
   const formatValue = useCallback((value: number, unit?: string) => {
@@ -150,29 +205,65 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Transform raw data into pie chart format
   const pieData = useMemo(() => {
-    if (!data || data.length === 0 || !xKey || !yKey) {
+    if (!data || data.length === 0 || !actualXKey || !actualYKey) {
       return [];
     }
+    
+    console.log('PieChart data processing:', {
+      dataLength: data.length,
+      actualXKey,
+      actualYKey,
+      sampleData: data.slice(0, 2),
+      availableFields: data.length > 0 ? Object.keys(data[0]) : []
+    });
+    
     // Calculate total value for percentage (excluding hidden series)
-    const filteredData = data.filter(item => !hiddenSeriesState.includes(String(item[xKey])));
-    const totalValue = filteredData.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
+    const filteredData = data.filter(item => {
+      const labelValue = item[actualXKey];
+      const isHidden = hiddenSeriesState.includes(String(labelValue));
+      
+      // Log any null/undefined labels that might cause "unknown" entries
+      if (labelValue === null || labelValue === undefined || labelValue === '') {
+        console.warn('Found null/undefined/empty label in pie chart data:', item);
+      }
+      
+      return !isHidden && labelValue !== null && labelValue !== undefined && labelValue !== '';
+    });
+    
+    const totalValue = filteredData.reduce((sum, item) => sum + (Number(item[actualYKey]) || 0), 0);
     
     // Create pie data points with percentages
     return filteredData
-      .map(item => ({
-      label: String(item[xKey]),
-      value: Number(item[yKey]) || 0,
-      percentage: totalValue > 0 ? ((Number(item[yKey]) || 0) / totalValue) * 100 : 0,
-      originalData: item
-    }))
-    .filter(item => item.value > 0)  // Filter out zero values
-    .sort((a, b) => b.value - a.value); // Sort by value (descending)
-  }, [data, xKey, yKey, hiddenSeriesState]);
+      .map(item => {
+        const labelValue = item[actualXKey];
+        const numericValue = Number(item[actualYKey]) || 0;
+        
+        // Ensure we have valid label and value
+        if (labelValue === null || labelValue === undefined || labelValue === '' || numericValue <= 0) {
+          console.warn('Skipping invalid pie chart entry:', { label: labelValue, value: numericValue, item });
+          return null;
+        }
+        
+        return {
+          label: String(labelValue).trim(), // Trim whitespace
+          value: numericValue,
+          percentage: totalValue > 0 ? (numericValue / totalValue) * 100 : 0,
+          originalData: item
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null) // Filter out null entries
+      .filter(item => item.value > 0)  // Filter out zero values
+      .sort((a, b) => b.value - a.value); // Sort by value (descending)
+  }, [data, actualXKey, actualYKey, hiddenSeriesState]);
 
   // Create color scale based on data
   const colorScale = useMemo(() => {
-    // Use all data for color scale, not just filtered data
-    const dataLabels = data.map(d => String(d[xKey]));
+    // Use all data for color scale, not just filtered data, but filter out invalid entries
+    const dataLabels = data
+      .filter(d => d[actualXKey] !== null && d[actualXKey] !== undefined && d[actualXKey] !== '')
+      .map(d => String(d[actualXKey]).trim());
+    
+    console.log('PieChart color scale labels:', dataLabels);
     
     // Use external color map if available, otherwise generate from color palette
     const colorValues = dataLabels.map((label, index) => 
@@ -183,7 +274,7 @@ const PieChart: React.FC<PieChartProps> = ({
       domain: dataLabels,
       range: colorValues
     });
-  }, [data, xKey, externalColorMap]);
+  }, [data, actualXKey, externalColorMap]);
 
   // Refresh data placeholder
   const refreshData = useCallback(() => {
