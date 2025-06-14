@@ -349,15 +349,51 @@ const fetchFromApi = async (
     let parsedData: any[] = [];
     
     // Extract data based on API response format with minimal code
-    if (result?.query_result?.data?.rows) parsedData = result.query_result.data.rows;
-    else if (Array.isArray(result)) parsedData = result;
-    else if (result?.data && Array.isArray(result.data)) parsedData = result.data;
-    else if (result?.rows && Array.isArray(result.rows)) parsedData = result.rows;
-    else if (result?.results && Array.isArray(result.results)) parsedData = result.results;
-    else if (result?.error) throw new Error(`API error: ${result.error}`);
+    console.log(`API response for chart ${chart.id}:`, {
+      responseKeys: Object.keys(result),
+      hasQueryResult: !!result?.query_result,
+      hasData: !!result?.data,
+      hasRows: !!result?.rows,
+      hasResults: !!result?.results,
+      isArray: Array.isArray(result)
+    });
+    
+    if (result?.query_result?.data?.rows) {
+      parsedData = result.query_result.data.rows;
+      console.log(`Found ${parsedData.length} rows in Redash format for chart ${chart.id}`);
+    }
+    else if (Array.isArray(result)) {
+      parsedData = result;
+      console.log(`Found ${parsedData.length} rows in direct array format for chart ${chart.id}`);
+    }
+    else if (result?.data && Array.isArray(result.data)) {
+      parsedData = result.data;
+      console.log(`Found ${parsedData.length} rows in data array format for chart ${chart.id}`);
+    }
+    else if (result?.rows && Array.isArray(result.rows)) {
+      parsedData = result.rows;
+      console.log(`Found ${parsedData.length} rows in rows array format for chart ${chart.id}`);
+    }
+    else if (result?.results && Array.isArray(result.results)) {
+      parsedData = result.results;
+      console.log(`Found ${parsedData.length} rows in results array format for chart ${chart.id}`);
+    }
+    else if (result?.error) {
+      throw new Error(`API error: ${result.error}`);
+    }
     else {
       console.warn('Unknown response format:', Object.keys(result).join(','));
+      console.warn('Full response sample:', JSON.stringify(result, null, 2).substring(0, 300));
       throw new Error('Unrecognized API response');
+    }
+    
+    // Log sample of parsed data for debugging
+    if (parsedData.length > 0) {
+      console.log(`Parsed data sample for chart ${chart.id}:`, {
+        totalRows: parsedData.length,
+        firstRow: parsedData[0],
+        availableFields: Object.keys(parsedData[0])
+      });
     }
     
     // Cache the data in memory

@@ -362,6 +362,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           console.log(`API response structure:`, Object.keys(result));
           
           // Handle different API response formats
+          console.log('Raw API response sample:', JSON.stringify(result, null, 2).substring(0, 500));
           
           // Format 1: Standard Redash format with query_result.data.rows
           if (result?.query_result?.data?.rows) {
@@ -394,7 +395,17 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           }
           else {
             console.error('Unrecognized API response structure:', result);
+            console.error('Available keys:', Object.keys(result));
             throw new Error('API response does not have a recognized structure');
+          }
+          
+          // Log sample of parsed data for debugging
+          if (parsedData.length > 0) {
+            console.log('Parsed data sample:', {
+              totalRows: parsedData.length,
+              firstRow: parsedData[0],
+              availableFields: Object.keys(parsedData[0])
+            });
           }
           
           // Cache the result to prevent unnecessary fetches
