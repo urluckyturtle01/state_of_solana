@@ -156,7 +156,7 @@ export default function SFOverviewPage() {
       />
 
       {/* Main content with padding to account for sidebar */}
-      <div className="pr-0">
+      <div className="pr-0 -mt-3">
         {OVERVIEW_SECTIONS.map((section, index) => (
           <div
             key={section.id}
@@ -164,7 +164,7 @@ export default function SFOverviewPage() {
               sectionRefs.current[section.id] = el;
             }}
             data-section-id={section.id}
-            className="section-container py-8"
+            className="section-container py-4"
           >
             {/* Section header */}
             <div className="mb-5">
@@ -190,7 +190,7 @@ export default function SFOverviewPage() {
                 />
               </Suspense>
             </div>
-            <hr className="border-gray-900 mt-16" />
+            
           </div>
         ))}
       </div>
