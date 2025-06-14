@@ -76,9 +76,44 @@ export default function DashboardsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Dashboards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {dashboards.map(dashboard => (
+      {/* Empty State */}
+      {dashboards.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 px-4">
+          <div className="text-center max-w-md">
+            {/* Icon */}
+            <div className="mx-auto w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mb-6">
+              <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            
+            {/* Title */}
+            <h3 className="text-xl font-semibold text-gray-200 mb-2">
+              No dashboards yet
+            </h3>
+            
+            {/* Description */}
+            <p className="text-gray-400 mb-8 leading-relaxed">
+              Create your first dashboard to start organizing and visualizing your data. 
+              Dashboards help you track metrics, monitor performance, and gain insights.
+            </p>
+            
+            {/* CTA Button */}
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Create Your First Dashboard
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Dashboards Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {dashboards.map(dashboard => (
           <div 
             key={dashboard.id}
             className="relative bg-gray-900/50 border border-gray-800 rounded-lg hover:border-gray-700 hover:bg-gray-900/70 transition-all duration-200 group"
@@ -139,7 +174,8 @@ export default function DashboardsPage() {
             )}
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Create Dashboard Modal */}
       {showCreateModal && (

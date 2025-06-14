@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Dashboard Cache</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #b91c1c;
+        }
+        .success {
+            background: #10b981;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: none;
+        }
+        .info {
+            background: #3b82f6;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Clear Dashboard Cache</h1>
+        
+        <div class="info">
+            <strong>This tool will help you clear all cached dashboard data.</strong><br>
+            Use this if you're seeing old default dashboards that should have been removed.
+        </div>
+
+        <h3>Current localStorage Data:</h3>
+        <pre id="currentData">Loading...</pre>
+
+        <button onclick="clearDashboards()">Clear Dashboard Data</button>
+        <button onclick="clearAllData()">Clear All App Data</button>
+        <button onclick="refreshData()">Refresh View</button>
+
+        <div id="successMessage" class="success">
+            ✅ Data cleared successfully! Please refresh your dashboard page.
+        </div>
+
+        <h3>Instructions:</h3>
+        <ol>
+            <li>Click "Clear Dashboard Data" to remove only dashboard-related cache</li>
+            <li>Or click "Clear All App Data" to remove all cached application data</li>
+            <li>Go back to your dashboard page and refresh it</li>
+            <li>You should now see zero dashboards on first login</li>
+        </ol>
+    </div>
+
+    <script>
+        function displayCurrentData() {
+            const data = {
+                dashboards: localStorage.getItem('dashboards'),
+                userPreferences: localStorage.getItem('userPreferences'),
+                explorerData: localStorage.getItem('explorerData'),
+                allKeys: Object.keys(localStorage)
+            };
+            
+            document.getElementById('currentData').textContent = JSON.stringify(data, null, 2);
+        }
+
+        function clearDashboards() {
+            // Clear dashboard-related data
+            localStorage.removeItem('dashboards');
+            localStorage.removeItem('userPreferences');
+            
+            document.getElementById('successMessage').style.display = 'block';
+            displayCurrentData();
+            
+            console.log('Dashboard data cleared from localStorage');
+        }
+
+        function clearAllData() {
+            // Clear all localStorage data
+            localStorage.clear();
+            
+            document.getElementById('successMessage').style.display = 'block';
+            displayCurrentData();
+            
+            console.log('All localStorage data cleared');
+        }
+
+        function refreshData() {
+            displayCurrentData();
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Display current data on page load
+        displayCurrentData();
+    </script>
+</body>
+</html> 

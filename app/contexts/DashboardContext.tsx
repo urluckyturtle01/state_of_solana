@@ -109,53 +109,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [isAuthenticated, user]);
 
   const loadDefaultDashboards = () => {
-    const defaultDashboards: Dashboard[] = [
-      {
-        id: generateShortId(),
-        name: 'jito sol',
-        description: 'Jito SOL metrics and analytics',
-        chartsCount: 0,
-        createdAt: new Date('2024-01-15'),
-        lastModified: new Date('2024-03-01'),
-        charts: [],
-        textboxes: [],
-        createdBy: undefined
-      },
-      {
-        id: generateShortId(),
-        name: 'JLP Dashboard',
-        description: 'Jupiter LP token performance tracking',
-        chartsCount: 0,
-        createdAt: new Date('2024-01-20'),
-        lastModified: new Date('2024-03-02'),
-        charts: [],
-        textboxes: [],
-        createdBy: undefined
-      },
-      {
-        id: generateShortId(),
-        name: 'Jupiter Aggregator',
-        description: 'Aggregation volume and routing analytics',
-        chartsCount: 0,
-        createdAt: new Date('2024-02-01'),
-        lastModified: new Date('2024-02-28'),
-        charts: [],
-        textboxes: [],
-        createdBy: undefined
-      },
-      {
-        id: generateShortId(),
-        name: 'Lag in major tables',
-        description: 'Database performance monitoring',
-        chartsCount: 0,
-        createdAt: new Date('2024-02-10'),
-        lastModified: new Date('2024-03-03'),
-        charts: [],
-        textboxes: [],
-        createdBy: undefined
-      }
-    ];
-
+    // Start with zero dashboards - users will create their own
+    const defaultDashboards: Dashboard[] = [];
     setDashboards(defaultDashboards);
   };
 
