@@ -80,8 +80,9 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // For non-authenticated users (public dashboards), try to load from localStorage first
       try {
         const storedDashboards = localStorage.getItem('dashboards');
-        if (storedDashboards) {
+        if (storedDashboards !== null) {
           const dashboards = JSON.parse(storedDashboards);
+          // Handle both empty arrays and arrays with data
           const dashboardsWithDates = dashboards.map((dashboard: any) => ({
             ...dashboard,
             createdAt: new Date(dashboard.createdAt),
@@ -96,7 +97,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             })) || []
           }));
           setDashboards(dashboardsWithDates);
-          console.log('📥 Loaded dashboards from localStorage for public access');
+          console.log('📥 Loaded dashboards from localStorage for public access:', dashboardsWithDates.length, 'dashboards');
           return;
         }
       } catch (error) {
@@ -273,8 +274,9 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Auto-save dashboards when they change (for authenticated users)
   useEffect(() => {
-    if (isAuthenticated && dashboards.length > 0) {
+    if (isAuthenticated) {
       // Save to localStorage immediately for public dashboard access
+      // This includes saving empty arrays when all dashboards are deleted
       try {
         localStorage.setItem('dashboards', JSON.stringify(dashboards));
         console.log('💾 Saved dashboards to localStorage:', dashboards.map(d => ({
