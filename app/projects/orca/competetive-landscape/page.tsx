@@ -16,7 +16,7 @@ export default function OrcaCompetetiveLandscapePage() {
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="orca-competetive-landscape" 
+          pageId="orca-competitive-landscape" 
           enableCaching={true}
         />
       </Suspense>
