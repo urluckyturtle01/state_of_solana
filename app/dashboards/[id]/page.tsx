@@ -626,7 +626,7 @@ export default function DashboardPage() {
                           <ChartCard
                             title={item.name}
                             description={item.description}
-                            className="h-[460px]"
+                            className="h-[520px]"
                             id={`chart-card-${item.id}`}
                             onExpandClick={() => handleExpandChart(item.id)}
                             onScreenshotClick={() => handleChartScreenshot(item)}
