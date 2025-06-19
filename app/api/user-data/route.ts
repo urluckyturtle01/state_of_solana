@@ -131,13 +131,28 @@ export async function GET(request: NextRequest) {
 
     console.log('Processing request for user:', userId);
 
-    // Development mode fallback
+    // Development mode fallback with file persistence
     if (!hasAWSCredentials || forceDevelopmentMode) {
-      console.log('Using development mode (in-memory storage)');
+      console.log('Using development mode (file-based storage)');
       
-      let userData = devUserStorage.get(userId);
+      // Use file-based storage for development persistence
+      const fs = require('fs');
+      const path = require('path');
+      const userDataDir = path.join(process.cwd(), 'dev-user-data');
+      const userFilePath = path.join(userDataDir, `${userId}.json`);
       
-      if (!userData) {
+      // Ensure directory exists
+      if (!fs.existsSync(userDataDir)) {
+        fs.mkdirSync(userDataDir, { recursive: true });
+      }
+      
+      let userData;
+      
+      if (fs.existsSync(userFilePath)) {
+        console.log('Reading existing user data from file');
+        const fileContent = fs.readFileSync(userFilePath, 'utf8');
+        userData = JSON.parse(fileContent);
+      } else {
         console.log('Creating new user data for development mode');
         // Create default user data for development
         userData = {
@@ -156,9 +171,8 @@ export async function GET(request: NextRequest) {
           lastModified: new Date().toISOString()
         };
         
-        devUserStorage.set(userId, userData);
-      } else {
-        console.log('Retrieved existing user data from memory');
+        // Save to file
+        fs.writeFileSync(userFilePath, JSON.stringify(userData, null, 2));
       }
       
       console.log('Returning development mode data');
@@ -318,13 +332,28 @@ export async function POST(request: NextRequest) {
 
     console.log('Processing save request for user:', userId);
 
-    // Development mode fallback
+    // Development mode fallback with file persistence
     if (!hasAWSCredentials || forceDevelopmentMode) {
-      console.log('Using development mode (in-memory storage)');
+      console.log('Using development mode (file-based storage)');
       
-      let existingUserData = devUserStorage.get(userId);
+      // Use file-based storage for development persistence
+      const fs = require('fs');
+      const path = require('path');
+      const userDataDir = path.join(process.cwd(), 'dev-user-data');
+      const userFilePath = path.join(userDataDir, `${userId}.json`);
       
-      if (!existingUserData) {
+      // Ensure directory exists
+      if (!fs.existsSync(userDataDir)) {
+        fs.mkdirSync(userDataDir, { recursive: true });
+      }
+      
+      let existingUserData;
+      
+      if (fs.existsSync(userFilePath)) {
+        console.log('Reading existing user data from file for update');
+        const fileContent = fs.readFileSync(userFilePath, 'utf8');
+        existingUserData = JSON.parse(fileContent);
+      } else {
         console.log('Creating new user data structure for development mode');
         existingUserData = {
           userId,
@@ -341,8 +370,6 @@ export async function POST(request: NextRequest) {
           createdAt: new Date().toISOString(),
           lastModified: new Date().toISOString()
         };
-      } else {
-        console.log('Retrieved existing user data from memory');
       }
 
       // Update user data
@@ -355,8 +382,9 @@ export async function POST(request: NextRequest) {
         lastModified: new Date().toISOString()
       };
 
-      devUserStorage.set(userId, updatedUserData);
-      console.log('Successfully saved data to memory');
+      // Save to file
+      fs.writeFileSync(userFilePath, JSON.stringify(updatedUserData, null, 2));
+      console.log('Successfully saved data to file');
 
       return NextResponse.json({ 
         success: true, 
