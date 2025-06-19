@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
+import { validateNormalizedData, sanitizeNormalizedData, logValidationResult } from '../utils/dataValidation';
 
 interface SavedChart {
   id: string;
@@ -39,7 +40,10 @@ interface Dashboard {
 interface DashboardContextType {
   dashboards: Dashboard[];
   isLoading: boolean;
+  isSaving: boolean;
+  lastSaved: Date | null;
   userName: string;
+  syncStatus: 'idle' | 'syncing' | 'success' | 'error';
   addChartToDashboard: (dashboardId: string, chart: SavedChart) => void;
   addTextboxToDashboard: (dashboardId: string, content: string, width: 'half' | 'full') => void;
   updateTextbox: (dashboardId: string, textboxId: string, updates: Partial<Pick<DashboardTextbox, 'content' | 'height'>>) => void;
@@ -67,188 +71,218 @@ export const useDashboards = () => {
   return context;
 };
 
-export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [dashboards, setDashboards] = useState<Dashboard[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [userName, setUserName] = useState<string>(''); // Store user name from S3
-  const { isAuthenticated, user } = useAuth();
+// Robust Data Manager Class
+class DashboardDataManager {
+  private pendingSave: NodeJS.Timeout | null = null;
+  private isLoadingData = false;
+  private hasPendingChanges = false;
+  private lastKnownServerState: Dashboard[] = [];
 
-  // Track if data has been loaded to prevent reloading on navigation
-  const [hasLoadedData, setHasLoadedData] = useState(false);
+  constructor(
+    private setDashboards: React.Dispatch<React.SetStateAction<Dashboard[]>>,
+    private setSyncStatus: React.Dispatch<React.SetStateAction<'idle' | 'syncing' | 'success' | 'error'>>,
+    private setIsSaving: React.Dispatch<React.SetStateAction<boolean>>,
+    private setLastSaved: React.Dispatch<React.SetStateAction<Date | null>>,
+    private getApiEndpoint: () => string,
+    private isAuthenticated: boolean
+  ) {}
 
-  // Load user data when authenticated (only once)
-  useEffect(() => {
-    if (isAuthenticated && user && !hasLoadedData) {
-      console.log('🔄 First time loading user data for authenticated user');
-      loadUserData();
-      setHasLoadedData(true);
-    } else if (!isAuthenticated && !hasLoadedData) {
-      console.log('🔄 Loading data for non-authenticated user');
-      // For non-authenticated users (public dashboards), try to load from localStorage first
-      try {
-        const storedDashboards = localStorage.getItem('dashboards');
-        if (storedDashboards !== null) {
-          const dashboards = JSON.parse(storedDashboards);
-          // Handle both empty arrays and arrays with data
-          const dashboardsWithDates = dashboards.map((dashboard: any) => ({
-            ...dashboard,
-            createdAt: new Date(dashboard.createdAt),
-            lastModified: new Date(dashboard.lastModified),
-            charts: dashboard.charts?.map((chart: any) => ({
-              ...chart,
-              createdAt: new Date(chart.createdAt)
-            })) || [],
-            textboxes: dashboard.textboxes?.map((textbox: any) => ({
-              ...textbox,
-              createdAt: new Date(textbox.createdAt)
-            })) || []
-          }));
-          setDashboards(dashboardsWithDates);
-          console.log('📥 Loaded dashboards from localStorage for public access:', dashboardsWithDates.length, 'dashboards');
-        } else {
-          // Fallback to default empty dashboards if no localStorage data
-          loadDefaultDashboards();
-        }
-      } catch (error) {
-        console.error('Failed to load from localStorage:', error);
-        loadDefaultDashboards();
-      }
-      setHasLoadedData(true);
-    }
-  }, [isAuthenticated, user, hasLoadedData]);
-
-  const loadDefaultDashboards = () => {
-    // Start with zero dashboards - users will create their own
-    const defaultDashboards: Dashboard[] = [];
-    setDashboards(defaultDashboards);
-  };
-
-  const loadUserData = async () => {
-    setIsLoading(true);
-    console.log('🔄 Starting loadUserData...');
-    try {
-      console.log('📡 Fetching from /api/user-data...');
-      const response = await fetch('/api/user-data');
-      console.log('📡 Response status:', response.status, response.ok);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('📡 Full API response:', data);
-        
-        if (data.success && data.userData) {
-          console.log('📥 Loading normalized user data from S3');
-          console.log('📊 Raw S3 data counts:', {
-            dashboards: data.userData.dashboards?.length || 0,
-            charts: data.userData.charts?.length || 0,
-            textboxes: data.userData.textboxes?.length || 0,
-            userName: data.userData.name || 'Unknown'
-          });
-          
-          // Add debugging for auth state
-          console.log('🔐 Auth state during load:', {
-            hasUserData: !!data.userData,
-            hasCharts: !!data.userData.charts,
-            isArray: Array.isArray(data.userData.charts)
-          });
-          
-          // Store the user name from S3 data
-          setUserName(data.userData.name || data.userData.email || 'User');
-          
-          // Handle both old denormalized and new normalized structures
-          let dashboardsWithDates: Dashboard[];
-          
-          if (data.userData.charts && Array.isArray(data.userData.charts)) {
-            // New normalized structure - reconstruct dashboards
-            console.log('📊 Using normalized structure');
-            
-            const dashboards = data.userData.dashboards || [];
-            const charts = data.userData.charts || [];
-            const textboxes = data.userData.textboxes || [];
-            
-            dashboardsWithDates = dashboards.map((dashboard: any) => {
-              // Find charts for this dashboard
-              const dashboardCharts = charts
-                .filter((chart: any) => chart.dashboardId === dashboard.id)
-                .map((chart: any) => ({
-                  ...chart,
-                  createdAt: new Date(chart.createdAt)
-                }))
-                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-              
-              // Find textboxes for this dashboard
-              const dashboardTextboxes = textboxes
-                .filter((textbox: any) => textbox.dashboardId === dashboard.id)
-                .map((textbox: any) => ({
-                  ...textbox,
-                  createdAt: new Date(textbox.createdAt)
-                }))
-                .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-              
-              return {
-                ...dashboard,
-                createdAt: new Date(dashboard.createdAt),
-                lastModified: new Date(dashboard.lastModified),
-                charts: dashboardCharts,
-                textboxes: dashboardTextboxes,
-                chartsCount: dashboardCharts.length, // Ensure consistency
-                createdBy: data.userData.createdBy
-              };
-            });
-          } else {
-            // Old denormalized structure - convert dates
-            console.log('📊 Using legacy denormalized structure');
-            dashboardsWithDates = data.userData.dashboards.map((dashboard: any) => ({
-              ...dashboard,
-              createdAt: new Date(dashboard.createdAt),
-              lastModified: new Date(dashboard.lastModified),
-              charts: dashboard.charts?.map((chart: any) => ({
-                ...chart,
-                createdAt: new Date(chart.createdAt)
-              })) || [],
-              textboxes: dashboard.textboxes?.map((textbox: any) => ({
-                ...textbox,
-                createdAt: new Date(textbox.createdAt)
-              })) || [],
-              createdBy: data.userData.createdBy
-            }));
-          }
-          
-          console.log('✅ Reconstructed dashboards:', dashboardsWithDates.map(d => ({
-            id: d.id,
-            name: d.name,
-            chartsCount: d.charts.length,
-            textboxesCount: d.textboxes.length
-          })));
-          
-          console.log('🎯 Setting dashboards state with', dashboardsWithDates.length, 'dashboards');
-          setDashboards(dashboardsWithDates);
-          console.log('✅ Dashboard state updated successfully');
-        } else {
-          console.log('❌ API call was not successful');
-          console.log('Response status:', response.status);
-          console.log('Response text:', await response.text());
-        }
-      } else {
-        console.log('❌ API response not ok, status:', response.status);
-        const errorText = await response.text();
-        console.log('Error response:', errorText);
-      }
-    } catch (error) {
-      console.error('❌ Failed to load user data:', error);
-      console.error('Error details:', error);
-      loadDefaultDashboards(); // Fallback to default dashboards
-    } finally {
-      console.log('🔄 Setting isLoading to false');
-      setIsLoading(false);
-    }
-  };
-
-  const saveToServer = async () => {
-    if (!isAuthenticated) {
+  // Load data from server (only called once on mount)
+  async loadInitialData(): Promise<void> {
+    if (this.isLoadingData) {
+      console.log('🔄 Data load already in progress, skipping...');
       return;
     }
 
-    // Create properly normalized structure for S3
+    this.isLoadingData = true;
+    this.setSyncStatus('syncing');
+    
+    console.log('🔄 Loading initial data from server...');
+    
+    try {
+      const apiEndpoint = this.getApiEndpoint();
+      console.log('📡 Fetching from:', apiEndpoint);
+      
+      const response = await fetch(apiEndpoint);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('📡 Server response:', data);
+        
+        if (data.success && data.userData) {
+          // Validate and sanitize incoming data
+          const sanitizedData = sanitizeNormalizedData(data.userData);
+          const validationResult = validateNormalizedData(sanitizedData);
+          logValidationResult(validationResult, 'Server data validation');
+          
+          const dashboards = this.reconstructDashboards(sanitizedData);
+          console.log('✅ Loaded', dashboards.length, 'dashboards from server');
+          
+          // Update local state AND track server state
+          this.lastKnownServerState = [...dashboards];
+          this.setDashboards(dashboards);
+          
+          // Also sync to localStorage for offline access
+          this.saveToLocalStorage(dashboards);
+          
+          this.setSyncStatus('success');
+        } else {
+          console.log('⚠️ No user data from server, starting with empty state');
+          this.setDashboards([]);
+          this.setSyncStatus('idle');
+        }
+      } else {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load initial data:', error);
+      
+      // Fallback to localStorage
+      const localDashboards = this.loadFromLocalStorage();
+      if (localDashboards.length > 0) {
+        console.log('📥 Loaded', localDashboards.length, 'dashboards from localStorage as fallback');
+        this.setDashboards(localDashboards);
+      }
+      
+      this.setSyncStatus('error');
+    } finally {
+      this.isLoadingData = false;
+    }
+  }
+
+  // Reconstruct dashboards from normalized server data
+  private reconstructDashboards(userData: any): Dashboard[] {
+    if (!userData.charts || !Array.isArray(userData.charts)) {
+      // Legacy format
+      return (userData.dashboards || []).map((dashboard: any) => ({
+        ...dashboard,
+        createdAt: new Date(dashboard.createdAt),
+        lastModified: new Date(dashboard.lastModified),
+        charts: (dashboard.charts || []).map((chart: any) => ({
+          ...chart,
+          createdAt: new Date(chart.createdAt)
+        })),
+        textboxes: (dashboard.textboxes || []).map((textbox: any) => ({
+          ...textbox,
+          createdAt: new Date(textbox.createdAt)
+        }))
+      }));
+    }
+
+    // Normalized format
+    const dashboards = userData.dashboards || [];
+    const charts = userData.charts || [];
+    const textboxes = userData.textboxes || [];
+
+    return dashboards.map((dashboard: any) => {
+      const dashboardCharts = charts
+        .filter((chart: any) => chart.dashboardId === dashboard.id)
+        .map((chart: any) => ({
+          ...chart,
+          createdAt: new Date(chart.createdAt)
+        }))
+        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+
+      const dashboardTextboxes = textboxes
+        .filter((textbox: any) => textbox.dashboardId === dashboard.id)
+        .map((textbox: any) => ({
+          ...textbox,
+          createdAt: new Date(textbox.createdAt)
+        }))
+        .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+
+      return {
+        ...dashboard,
+        createdAt: new Date(dashboard.createdAt),
+        lastModified: new Date(dashboard.lastModified),
+        charts: dashboardCharts,
+        textboxes: dashboardTextboxes,
+        chartsCount: dashboardCharts.length
+      };
+    });
+  }
+
+  // Update dashboards with change tracking
+  updateDashboards(updater: (prev: Dashboard[]) => Dashboard[]): void {
+    if (!this.isAuthenticated) return;
+    
+    this.setDashboards(prev => {
+      const updated = updater(prev);
+      
+      // Mark as having pending changes
+      this.hasPendingChanges = true;
+      
+      // Save to localStorage immediately
+      this.saveToLocalStorage(updated);
+      
+      // Debounce server save
+      this.debouncedServerSave(updated);
+      
+      return updated;
+    });
+  }
+
+  // Debounced server save
+  private debouncedServerSave(dashboards: Dashboard[]): void {
+    if (this.pendingSave) {
+      clearTimeout(this.pendingSave);
+    }
+
+    this.pendingSave = setTimeout(async () => {
+      if (this.hasPendingChanges) {
+        await this.saveToServer(dashboards);
+        this.hasPendingChanges = false;
+      }
+    }, 1000);
+  }
+
+  // Save to server
+  async saveToServer(dashboards: Dashboard[]): Promise<void> {
+    if (!this.isAuthenticated) return;
+
+    this.setIsSaving(true);
+    this.setSyncStatus('syncing');
+
+    const apiEndpoint = this.getApiEndpoint();
+    console.log('💾 Saving to server:', apiEndpoint);
+
+    const normalizedData = this.normalizeForServer(dashboards);
+    console.log('📊 Normalized data:', {
+      endpoint: apiEndpoint,
+      dashboards: normalizedData.dashboards.length,
+      charts: normalizedData.charts.length,
+      textboxes: normalizedData.textboxes.length
+    });
+
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(normalizedData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Save failed: ${response.status} ${errorText}`);
+      }
+
+      // Track successful save
+      this.lastKnownServerState = [...dashboards];
+      this.setLastSaved(new Date());
+      this.setSyncStatus('success');
+      
+      console.log('✅ Successfully saved to server');
+    } catch (error) {
+      console.error('❌ Server save failed:', error);
+      this.setSyncStatus('error');
+      throw error;
+    } finally {
+      this.setIsSaving(false);
+    }
+  }
+
+  // Normalize data for server
+  private normalizeForServer(dashboards: Dashboard[]) {
     const normalizedData = {
       dashboards: dashboards.map(d => ({
         id: d.id,
@@ -256,84 +290,160 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         description: d.description,
         createdAt: d.createdAt.toISOString(),
         lastModified: d.lastModified.toISOString(),
-        chartsCount: d.charts.length, // Keep for quick access
+        chartsCount: d.charts.length,
         textboxesCount: d.textboxes.length,
         createdBy: d.createdBy
       })),
       charts: dashboards.flatMap(d => 
         d.charts.map(chart => ({
           ...chart,
-          dashboardId: d.id, // Foreign key reference
+          dashboardId: d.id,
           createdAt: chart.createdAt.toISOString()
         }))
       ),
       textboxes: dashboards.flatMap(d =>
         d.textboxes.map(textbox => ({
           ...textbox,
-          dashboardId: d.id, // Foreign key reference
+          dashboardId: d.id,
           createdAt: textbox.createdAt.toISOString()
         }))
       )
     };
 
-    console.log('💾 Saving to S3:', {
-      dashboards: normalizedData.dashboards.length,
-      charts: normalizedData.charts.length,
-      textboxes: normalizedData.textboxes.length
-    });
+    // Validate before sending
+    const validationResult = validateNormalizedData(normalizedData);
+    logValidationResult(validationResult, 'Pre-save validation');
+    
+    return normalizedData;
+  }
 
+  // localStorage operations
+  private saveToLocalStorage(dashboards: Dashboard[]): void {
     try {
-      const response = await fetch('/api/user-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(normalizedData),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Save failed:', response.status, errorText);
-        throw new Error(`Failed to save dashboards: ${response.status} ${errorText}`);
-      }
-      
-      const result = await response.json();
-      console.log('✅ Save successful');
+      localStorage.setItem('dashboards', JSON.stringify(dashboards));
+      console.log('💾 Saved to localStorage:', dashboards.length, 'dashboards');
     } catch (error) {
-      console.error('❌ Save error:', error);
+      console.error('Failed to save to localStorage:', error);
     }
-  };
+  }
 
-  // Auto-save dashboards when they change (for authenticated users)
-  useEffect(() => {
-    if (isAuthenticated) {
-      // Save to localStorage immediately for public dashboard access
-      // This includes saving empty arrays when all dashboards are deleted
-      try {
-        localStorage.setItem('dashboards', JSON.stringify(dashboards));
-        console.log('💾 Saved dashboards to localStorage:', dashboards.map(d => ({
-          id: d.id,
-          name: d.name, 
-          createdBy: d.createdBy
-        })));
-      } catch (error) {
-        console.error('Failed to save to localStorage:', error);
+  private loadFromLocalStorage(): Dashboard[] {
+    try {
+      const stored = localStorage.getItem('dashboards');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed.map((dashboard: any) => ({
+          ...dashboard,
+          createdAt: new Date(dashboard.createdAt),
+          lastModified: new Date(dashboard.lastModified),
+          charts: (dashboard.charts || []).map((chart: any) => ({
+            ...chart,
+            createdAt: new Date(chart.createdAt)
+          })),
+          textboxes: (dashboard.textboxes || []).map((textbox: any) => ({
+            ...textbox,
+            createdAt: new Date(textbox.createdAt)
+          }))
+        }));
       }
-
-      // Also save to server with debounce
-      const timeoutId = setTimeout(() => {
-        saveToServer();
-      }, 1000); // Debounce saves by 1 second
-
-      return () => clearTimeout(timeoutId);
+    } catch (error) {
+      console.error('Failed to load from localStorage:', error);
     }
-  }, [dashboards, isAuthenticated]);
+    return [];
+  }
 
-  const addChartToDashboard = (dashboardId: string, chart: SavedChart) => {
-    setDashboards(prev => {
-      const updatedDashboards = prev.map(dashboard => {
+  // Force immediate save
+  async forceSave(dashboards: Dashboard[]): Promise<void> {
+    if (this.pendingSave) {
+      clearTimeout(this.pendingSave);
+      this.pendingSave = null;
+    }
+    
+    await this.saveToServer(dashboards);
+    this.hasPendingChanges = false;
+  }
+
+  // Cleanup
+  cleanup(): void {
+    if (this.pendingSave) {
+      clearTimeout(this.pendingSave);
+    }
+  }
+}
+
+export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [dashboards, setDashboards] = useState<Dashboard[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [userName, setUserName] = useState<string>('');
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
+  
+  const { isAuthenticated, user } = useAuth();
+  const dataManagerRef = useRef<DashboardDataManager | null>(null);
+  const hasInitialized = useRef(false);
+
+  // Get API endpoint based on auth type
+  const getApiEndpoint = useCallback(() => {
+    return user?.email ? '/api/user-data/google' : '/api/user-data/internal';
+  }, [user?.email]);
+
+  // Initialize data manager
+  useEffect(() => {
+    if (isAuthenticated && !hasInitialized.current) {
+      console.log('🚀 Initializing robust dashboard system...');
+      console.log('🔍 Auth state:', {
+        isAuthenticated,
+        userEmail: user?.email,
+        isGoogleAuth: !!user?.email,
+        endpoint: getApiEndpoint()
+      });
+
+      // Create data manager
+      dataManagerRef.current = new DashboardDataManager(
+        setDashboards,
+        setSyncStatus,
+        setIsSaving,
+        setLastSaved,
+        getApiEndpoint,
+        isAuthenticated
+      );
+
+      // Load initial data
+      dataManagerRef.current.loadInitialData();
+      hasInitialized.current = true;
+
+      // Cleanup on unmount
+      return () => {
+        dataManagerRef.current?.cleanup();
+      };
+    }
+  }, [isAuthenticated, getApiEndpoint, user?.email]);
+
+  // Dashboard operations
+  const createDashboard = useCallback((name: string, description?: string): Dashboard => {
+    const newDashboard: Dashboard = {
+      id: generateShortId(),
+      name,
+      description,
+      chartsCount: 0,
+      createdAt: new Date(),
+      lastModified: new Date(),
+      charts: [],
+      textboxes: [],
+      createdBy: undefined
+    };
+    
+    console.log('🆕 Creating dashboard:', newDashboard.name);
+    
+    dataManagerRef.current?.updateDashboards(prev => [...prev, newDashboard]);
+    return newDashboard;
+  }, []);
+
+  const addChartToDashboard = useCallback((dashboardId: string, chart: SavedChart) => {
+    dataManagerRef.current?.updateDashboards(prev => 
+      prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
-          // Get next order number
           const allItems = [...dashboard.charts, ...dashboard.textboxes];
           const maxOrder = allItems.length > 0 ? Math.max(...allItems.map(item => item.order || 0)) : -1;
           
@@ -348,17 +458,14 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           };
         }
         return dashboard;
-      });
-      
-      return updatedDashboards;
-    });
-  };
+      })
+    );
+  }, []);
 
-  const addTextboxToDashboard = (dashboardId: string, content: string, width: 'half' | 'full') => {
-    setDashboards(prev => 
+  const addTextboxToDashboard = useCallback((dashboardId: string, content: string, width: 'half' | 'full') => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
-          // Get next order number
           const allItems = [...dashboard.charts, ...dashboard.textboxes];
           const maxOrder = allItems.length > 0 ? Math.max(...allItems.map(item => item.order || 0)) : -1;
           
@@ -380,31 +487,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const createDashboard = (name: string, description?: string): Dashboard => {
-    const newDashboard: Dashboard = {
-      id: generateShortId(),
-      name,
-      description,
-      chartsCount: 0,
-      createdAt: new Date(),
-      lastModified: new Date(),
-      charts: [],
-      textboxes: [],
-      createdBy: undefined // Creator will be set when dashboard is made public
-    };
-    
-    setDashboards(prev => [...prev, newDashboard]);
-    return newDashboard;
-  };
-
-  const getDashboard = (id: string): Dashboard | undefined => {
-    return dashboards.find(dashboard => dashboard.id === id);
-  };
-
-  const updateDashboard = (id: string, updates: Partial<Pick<Dashboard, 'name' | 'description'>>) => {
-    setDashboards(prev => 
+  const updateDashboard = useCallback((id: string, updates: Partial<Pick<Dashboard, 'name' | 'description'>>) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === id) {
           return {
@@ -416,10 +502,18 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const reorderCharts = (dashboardId: string, startIndex: number, endIndex: number) => {
-    setDashboards(prev => 
+  const deleteDashboard = useCallback((id: string) => {
+    dataManagerRef.current?.updateDashboards(prev => prev.filter(d => d.id !== id));
+  }, []);
+
+  const getDashboard = useCallback((id: string): Dashboard | undefined => {
+    return dashboards.find(dashboard => dashboard.id === id);
+  }, [dashboards]);
+
+  const reorderCharts = useCallback((dashboardId: string, startIndex: number, endIndex: number) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
           const charts = [...dashboard.charts];
@@ -435,10 +529,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const deleteChart = (dashboardId: string, chartId: string) => {
-    setDashboards(prev => 
+  const deleteChart = useCallback((dashboardId: string, chartId: string) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
           const updatedCharts = dashboard.charts.filter(chart => chart.id !== chartId);
@@ -452,10 +546,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const deleteTextbox = (dashboardId: string, textboxId: string) => {
-    setDashboards(prev => 
+  const deleteTextbox = useCallback((dashboardId: string, textboxId: string) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
           const updatedTextboxes = dashboard.textboxes.filter(textbox => textbox.id !== textboxId);
@@ -468,29 +562,25 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const reorderItems = (dashboardId: string, startIndex: number, endIndex: number) => {
-    setDashboards(prev => 
+  const reorderItems = useCallback((dashboardId: string, startIndex: number, endIndex: number) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
-          // Combine and sort all items by order
           const allItems = [
             ...dashboard.charts.map(chart => ({ ...chart, type: 'chart' as const })),
             ...dashboard.textboxes.map(textbox => ({ ...textbox, type: 'textbox' as const }))
           ].sort((a, b) => (a.order || 0) - (b.order || 0));
           
-          // Perform the reorder
           const [reorderedItem] = allItems.splice(startIndex, 1);
           allItems.splice(endIndex, 0, reorderedItem);
           
-          // Update order values
           const itemsWithNewOrder = allItems.map((item, index) => ({
             ...item,
             order: index
           }));
           
-          // Separate back into charts and textboxes
           const newCharts = itemsWithNewOrder
             .filter(item => item.type === 'chart')
             .map(({ type, ...chart }) => chart as SavedChart);
@@ -509,95 +599,70 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const updateTextbox = (dashboardId: string, textboxId: string, updates: Partial<Pick<DashboardTextbox, 'content' | 'height'>>) => {
-    setDashboards(prev => 
+  const updateTextbox = useCallback((dashboardId: string, textboxId: string, updates: Partial<Pick<DashboardTextbox, 'content' | 'height'>>) => {
+    dataManagerRef.current?.updateDashboards(prev => 
       prev.map(dashboard => {
         if (dashboard.id === dashboardId) {
+          const updatedTextboxes = dashboard.textboxes.map(textbox => {
+            if (textbox.id === textboxId) {
+              return { ...textbox, ...updates };
+            }
+            return textbox;
+          });
+          
           return {
             ...dashboard,
-            textboxes: dashboard.textboxes.map(textbox => {
-              if (textbox.id === textboxId) {
-                return {
-                  ...textbox,
-                  ...updates
-                };
-              }
-              return textbox;
-            }),
+            textboxes: updatedTextboxes,
             lastModified: new Date()
           };
         }
         return dashboard;
       })
     );
-  };
+  }, []);
 
-  const forceSave = async () => {
-    console.log('🚀 Force save triggered manually');
-    await saveToServer();
-  };
-
-  const forceReload = async () => {
-    console.log('🔄 Force reload triggered - reloading from S3');
-    setHasLoadedData(false);
-    if (isAuthenticated && user) {
-      await loadUserData();
-      setHasLoadedData(true);
-    }
-  };
-
-  const deleteDashboard = (id: string) => {
-    setDashboards(prev => prev.filter(dashboard => dashboard.id !== id));
-  };
-
-  const updateDashboardCreator = (id: string, creatorName: string) => {
-    console.log('🏗️ updateDashboardCreator called:', { id, creatorName });
-    
-    setDashboards(prev => {
-      const updated = prev.map(dashboard => {
+  const updateDashboardCreator = useCallback((id: string, creatorName: string) => {
+    dataManagerRef.current?.updateDashboards(prev => 
+      prev.map(dashboard => {
         if (dashboard.id === id) {
-          console.log('📊 Updating dashboard:', dashboard.name, 'with creator:', creatorName);
-          const updatedDashboard = {
+          return {
             ...dashboard,
             createdBy: creatorName,
             lastModified: new Date()
           };
-          console.log('✅ Updated dashboard object:', { 
-            id: updatedDashboard.id, 
-            name: updatedDashboard.name, 
-            createdBy: updatedDashboard.createdBy 
-          });
-          return updatedDashboard;
         }
         return dashboard;
-      });
-      
-      console.log('💾 All dashboards after update:', updated.map(d => ({ 
-        id: d.id, 
-        name: d.name, 
-        createdBy: d.createdBy 
-      })));
-      
-      // Dispatch event for public dashboard refresh
-      setTimeout(() => {
-        const event = new CustomEvent('dashboardUpdated', {
-          detail: { dashboardId: id }
-        });
-        window.dispatchEvent(event);
-        console.log('📡 Dispatched dashboardUpdated event for:', id);
-      }, 100);
-      
-      return updated;
-    });
-  };
+      })
+    );
+  }, []);
+
+  const saveToServer = useCallback(async () => {
+    if (dataManagerRef.current) {
+      await dataManagerRef.current.forceSave(dashboards);
+    }
+  }, [dashboards]);
+
+  const forceSave = useCallback(async () => {
+    await saveToServer();
+  }, [saveToServer]);
+
+  const forceReload = useCallback(async () => {
+    if (dataManagerRef.current) {
+      hasInitialized.current = false;
+      await dataManagerRef.current.loadInitialData();
+    }
+  }, []);
 
   return (
     <DashboardContext.Provider value={{
       dashboards,
       isLoading,
+      isSaving,
+      lastSaved,
       userName,
+      syncStatus,
       addChartToDashboard,
       addTextboxToDashboard,
       updateTextbox,
@@ -619,21 +684,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   );
 };
 
-// Generate a proper UUID v4
-function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
-// Generate a shorter, URL-friendly unique ID (12 characters)
 function generateShortId(): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for (let i = 0; i < 12; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 } 

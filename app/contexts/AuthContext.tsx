@@ -66,6 +66,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // Clear internal auth when Google auth is successful to prevent conflicts
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user && manualAuth) {
+      console.log('🔄 Google auth detected, clearing internal auth to prevent conflicts');
+      // Clear internal auth when Google auth is active
+      setManualAuth(false);
+      localStorage.removeItem('solana_dashboard_auth');
+      document.cookie = 'solana_dashboard_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    }
+  }, [status, session, manualAuth]);
+
   // Combine NextAuth status with manual auth status
   const isAuthenticated = status === 'authenticated' || manualAuth;
   const isLoading = status === 'loading' || !authChecked;
