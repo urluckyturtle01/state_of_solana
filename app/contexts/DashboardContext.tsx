@@ -53,6 +53,7 @@ interface DashboardContextType {
   reorderItems: (dashboardId: string, startIndex: number, endIndex: number) => void;
   saveToServer: () => Promise<void>;
   forceSave: () => Promise<void>;
+  forceReload: () => Promise<void>;
   updateDashboardCreator: (id: string, creatorName: string) => void;
 }
 
@@ -72,11 +73,17 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [userName, setUserName] = useState<string>(''); // Store user name from S3
   const { isAuthenticated, user } = useAuth();
 
-  // Load user data when authenticated
+  // Track if data has been loaded to prevent reloading on navigation
+  const [hasLoadedData, setHasLoadedData] = useState(false);
+
+  // Load user data when authenticated (only once)
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !hasLoadedData) {
+      console.log('🔄 First time loading user data for authenticated user');
       loadUserData();
-    } else {
+      setHasLoadedData(true);
+    } else if (!isAuthenticated && !hasLoadedData) {
+      console.log('🔄 Loading data for non-authenticated user');
       // For non-authenticated users (public dashboards), try to load from localStorage first
       try {
         const storedDashboards = localStorage.getItem('dashboards');
@@ -98,16 +105,17 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           }));
           setDashboards(dashboardsWithDates);
           console.log('📥 Loaded dashboards from localStorage for public access:', dashboardsWithDates.length, 'dashboards');
-          return;
+        } else {
+          // Fallback to default empty dashboards if no localStorage data
+          loadDefaultDashboards();
         }
       } catch (error) {
         console.error('Failed to load from localStorage:', error);
+        loadDefaultDashboards();
       }
-      
-      // Fallback to default empty dashboards if no localStorage data
-      loadDefaultDashboards();
+      setHasLoadedData(true);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, hasLoadedData]);
 
   const loadDefaultDashboards = () => {
     // Start with zero dashboards - users will create their own
@@ -531,6 +539,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     await saveToServer();
   };
 
+  const forceReload = async () => {
+    console.log('🔄 Force reload triggered - reloading from S3');
+    setHasLoadedData(false);
+    if (isAuthenticated && user) {
+      await loadUserData();
+      setHasLoadedData(true);
+    }
+  };
+
   const deleteDashboard = (id: string) => {
     setDashboards(prev => prev.filter(dashboard => dashboard.id !== id));
   };
@@ -594,6 +611,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       reorderItems,
       saveToServer,
       forceSave,
+      forceReload,
       updateDashboardCreator
     }}>
       {children}
