@@ -6,6 +6,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDashboards } from "../contexts/DashboardContext";
 import { useCreateDashboardModal } from "../contexts/CreateDashboardModalContext";
 import ConfirmationModal from "../components/shared/ConfirmationModal";
+import { SyncStatusIndicator } from "../components/SyncStatusIndicator";
 
 export default function DashboardsPage() {
   const { dashboards, createDashboard, deleteDashboard, isLoading } = useDashboards();
@@ -76,6 +77,8 @@ export default function DashboardsPage() {
 
   return (
     <div className="space-y-6">
+     
+
       {/* Empty State */}
       {dashboards.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 px-4">
