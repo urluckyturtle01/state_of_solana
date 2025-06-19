@@ -119,7 +119,7 @@ const PieChart: React.FC<PieChartProps> = ({
   
   // For data access, we need just the field name
   const yKey = yField;
-  
+
   // Helper function to find matching field with flexible matching
   const findMatchingField = useCallback((obj: any, fieldName: string): string | null => {
     if (!obj || !fieldName) return null;
@@ -248,12 +248,12 @@ const PieChart: React.FC<PieChartProps> = ({
           label: String(labelValue).trim(), // Trim whitespace
           value: numericValue,
           percentage: totalValue > 0 ? (numericValue / totalValue) * 100 : 0,
-          originalData: item
+      originalData: item
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null) // Filter out null entries
-      .filter(item => item.value > 0)  // Filter out zero values
-      .sort((a, b) => b.value - a.value); // Sort by value (descending)
+    .filter(item => item.value > 0)  // Filter out zero values
+    .sort((a, b) => b.value - a.value); // Sort by value (descending)
   }, [data, actualXKey, actualYKey, hiddenSeriesState]);
 
   // Create color scale based on data

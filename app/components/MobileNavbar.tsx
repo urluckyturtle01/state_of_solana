@@ -212,9 +212,9 @@ export default function MobileNavbar() {
                                     </Link>
                                   )}
                                 </li>
-                                );
-                                })}
-                              </ul>
+                              );
+                            })}
+                          </ul>
                               
                               {/* Show "No projects found" message when searching and no results */}
                               {item.name === "Projects" && projectSearchTerm && getFilteredProjects(item.subItems).length === 0 && (
@@ -261,8 +261,8 @@ export default function MobileNavbar() {
 
           {/* User Profile Section */}
           <div className="px-2 pb-2 flex-shrink-0">
-            <UserProfile />
-          </div>
+        <UserProfile />
+      </div>
           
           {/* Footer */}
           <div className="p-3 pt-2 pb-6 text-[10px] text-gray-500 flex items-center justify-center border-t border-gray-900/50 flex-shrink-0">

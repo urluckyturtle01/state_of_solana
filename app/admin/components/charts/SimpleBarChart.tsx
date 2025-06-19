@@ -640,7 +640,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    console.log('Creating brush data with', data.length, 'items');
+    // console.log('Creating brush data with', data.length, 'items');
     
     // First, apply the same sorting/filtering as the chart data
     let processedData: any[] = [...data].filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
@@ -674,7 +674,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     
     // For simple chart without filters, use more direct approach to ensure continuous line
     if (isSimpleChartWithoutFilters) {
-      console.log('Processing simple chart without filters');
+              // console.log('Processing simple chart without filters');
       
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
@@ -693,7 +693,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
-      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
+              // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
       
       // Create a series of evenly spaced date points for consistency
       const brushDataPoints = uniqueData.map((d: any, i: number) => {
@@ -735,7 +735,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         };
       });
       
-      console.log('Created brush data points for simple chart:', brushDataPoints.length);
+              // console.log('Created brush data points for simple chart:', brushDataPoints.length);
       return brushDataPoints;
     }
     
@@ -783,7 +783,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       };
     });
     
-    console.log('Created brush data points:', brushDataPoints.length);
+          // console.log('Created brush data points:', brushDataPoints.length);
     return brushDataPoints;
   }, [data, xKey, yKey, filterValues]);
   

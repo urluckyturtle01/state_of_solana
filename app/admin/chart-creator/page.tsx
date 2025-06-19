@@ -90,6 +90,9 @@ export default function ChartCreatorPage() {
     }
   });
   
+  // Add state for time aggregation feature
+  const [enableTimeAggregation, setEnableTimeAggregation] = useState(false);
+  
   // Add state for menu selection
   const [selectedMenu, setSelectedMenu] = useState<string>('');
   
@@ -190,6 +193,11 @@ export default function ChartCreatorPage() {
                     }
                   }));
                 }
+              }
+              
+              // Check for time aggregation feature
+              if (chartToEdit.additionalOptions?.enableTimeAggregation) {
+                setEnableTimeAggregation(true);
               }
             } else {
               console.error(`Chart with ID ${editId} not found`);
@@ -571,33 +579,35 @@ export default function ChartCreatorPage() {
     field: keyof typeof filterParams.timeFilter,
     value: string | string[]
   ) => {
-    setFilterParams(prev => ({
+    // Update filter params first
+    setFilterParams(prev => {
+      const updatedParams = {
       ...prev,
       [filterName]: {
         ...prev[filterName],
         [field]: value
       }
-    }));
+      };
     
-    // Update additionalOptions if the filter is enabled
+      // Update form data with the complete filter configuration if filter is enabled
     if (enableFilters[filterName]) {
-      setFormData(prev => {
-        const additionalOptions = prev.additionalOptions || {};
-        
-        additionalOptions.filters = {
-          ...(additionalOptions.filters || {}),
+        setFormData(formPrev => ({
+          ...formPrev,
+          additionalOptions: {
+            ...formPrev.additionalOptions,
+            filters: {
+              ...formPrev.additionalOptions?.filters,
           [filterName]: {
-            ...(additionalOptions.filters?.[filterName] || {}),
-            [field]: value
+                paramName: updatedParams[filterName].paramName,
+                options: updatedParams[filterName].options
           }
-        };
+            }
+          }
+        }));
+      }
         
-        return {
-          ...prev,
-          additionalOptions
-        };
+      return updatedParams;
       });
-    }
   };
   
   // Toggle dual axis mode
@@ -739,6 +749,54 @@ export default function ChartCreatorPage() {
           : dualAxisConfig.rightAxisFields.filter(f => f !== field)
       }
     }));
+  };
+  
+  // Toggle time aggregation feature
+  const toggleTimeAggregation = () => {
+    const newValue = !enableTimeAggregation;
+    setEnableTimeAggregation(newValue);
+    
+    // Update form data with time aggregation setting
+    setFormData(prev => ({
+      ...prev,
+      additionalOptions: {
+        ...prev.additionalOptions,
+        enableTimeAggregation: newValue
+      }
+    }));
+    
+    // If enabling time aggregation, automatically enable time filter
+    if (newValue) {
+      setEnableFilters(prev => ({
+        ...prev,
+        timeFilter: true
+      }));
+      
+      // Set default time filter parameters for aggregation
+      setFilterParams(prev => ({
+        ...prev,
+        timeFilter: {
+          options: ['D', 'W', 'M', 'Q', 'Y'],
+          paramName: 'Date Part'
+        }
+      }));
+      
+      // Add time filter to form data
+      setFormData(prev => ({
+        ...prev,
+        additionalOptions: {
+          ...prev.additionalOptions,
+          enableTimeAggregation: true,
+          filters: {
+            ...prev.additionalOptions?.filters,
+            timeFilter: {
+              options: ['D', 'W', 'M', 'Q', 'Y'],
+              paramName: 'Date Part'
+            }
+          }
+        }
+      }));
+    }
   };
   
   // Validate form fields
@@ -1136,6 +1194,9 @@ export default function ChartCreatorPage() {
             xAxis: false,
             yAxis: false
           });
+          
+          // Reset time aggregation state
+          setEnableTimeAggregation(false);
         } else {
           // If in edit mode, redirect back to manage charts page
           router.push('/admin/manage-dashboard');
@@ -1578,6 +1639,23 @@ export default function ChartCreatorPage() {
             helpText={formData.isStacked ? "Field to group data by (useful for stacked charts to create segments)" : "Optional field to group and segment your data"}
           />
           
+          {/* Advanced Features Section */}
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <h2 className="text-xl font-semibold text-indigo-400 mb-4">Advanced Features</h2>
+            <p className="text-sm text-gray-400 mb-4">Enable advanced data processing and filter features for this chart.</p>
+          </div>
+          
+          {/* Time Aggregation Feature */}
+          <div className="col-span-2">
+            <FormCheckbox
+              id="timeAggregation"
+              label="Enable Automatic Time Aggregation"
+              checked={enableTimeAggregation}
+              onChange={toggleTimeAggregation}
+              helpText="Automatically calculate and show weekly, monthly, quarterly, and yearly data from daily API data. This will enable a time filter for users to switch between time periods."
+            />
+          </div>
+          
           {/* Filter Configuration Section */}
           <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
             <h2 className="text-xl font-semibold text-indigo-400 mb-4">Filter Configuration</h2>
@@ -1591,7 +1669,11 @@ export default function ChartCreatorPage() {
               label="Enable Time Filter"
               checked={enableFilters.timeFilter}
               onChange={() => toggleFilter('timeFilter')}
-              helpText="Add a time period filter (Day, Week, Month, Quarter, Year)"
+              disabled={enableTimeAggregation}
+              helpText={enableTimeAggregation 
+                ? "Time filter is automatically enabled when Time Aggregation is active" 
+                : "Add a time period filter (Day, Week, Month, Quarter, Year)"
+              }
             />
             
             {enableFilters.timeFilter && (

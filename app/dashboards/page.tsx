@@ -112,8 +112,8 @@ export default function DashboardsPage() {
         </div>
       ) : (
         /* Dashboards Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {dashboards.map(dashboard => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {dashboards.map(dashboard => (
           <div 
             key={dashboard.id}
             className="relative bg-gray-900/50 border border-gray-800 rounded-lg hover:border-gray-700 hover:bg-gray-900/70 transition-all duration-200 group"
@@ -174,7 +174,7 @@ export default function DashboardsPage() {
             )}
           </div>
         ))}
-        </div>
+      </div>
       )}
 
       {/* Create Dashboard Modal */}

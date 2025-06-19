@@ -96,6 +96,7 @@ export interface ChartConfig {
       [key: string]: FilterOption | undefined;
     };
     colors?: string[];
+    enableTimeAggregation?: boolean;
   };
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;

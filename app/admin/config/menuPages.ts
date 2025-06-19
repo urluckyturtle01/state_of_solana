@@ -60,6 +60,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     id: "orca",
     name: "Orca",
     icon: "chart-bar"
+  },
+  {
+    id: "test",
+    name: "Test",
+    icon: "chart-bar"
   }
 ];
 
@@ -197,6 +202,13 @@ overview: [
       path: "/sf-dashboards/vc-funding"
     }
   ],
+  "test": [
+    {
+      id: "test",
+      name: "Test",
+      path: "/test"
+    }
+  ],
 "raydium": [
     
     {
@@ -282,9 +294,9 @@ overview: [
         path: "/projects/orca/protocol-token"
       },
       {
-        id: "orca-competitive-landscape",
-        name: "Competitive Landscape",
-        path: "/projects/orca/competitive-landscape"
+        id: "orca-competetive-landscape",
+        name: "Competetive Landscape",
+        path: "/projects/orca/competetive-landscape"
       }
     ]
 };

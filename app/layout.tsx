@@ -82,10 +82,10 @@ export default function RootLayout({
       >
         <ClientHydration />
         <AnalyticsProvider>
-          <AuthWrapper>
-            {children}
-            <SaveNotification />
-          </AuthWrapper>
+        <AuthWrapper>
+          {children}
+          <SaveNotification />
+        </AuthWrapper>
         </AnalyticsProvider>
       </body>
     </html>
