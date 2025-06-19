@@ -21,8 +21,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     // Add a short delay to allow auth state to be loaded from localStorage/cookies
     const timer = setTimeout(() => {
-      const isProtectedRoute = checkAuthForRoute(pathname);
-      
+    const isProtectedRoute = checkAuthForRoute(pathname);
+    
       // Only check authentication after loading is complete and we've waited for localStorage
       if (!isLoading && hasCheckedAuth) {
         // Check regular protected routes
@@ -33,8 +33,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         
         // Check internal auth routes
         if (isInternalAuthRoute() && !isInternalAuth()) {
-          openLoginModal();
-        }
+      openLoginModal();
+    }
       }
     }, 300); // Short delay to ensure localStorage is checked
     

@@ -153,6 +153,14 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
+  // Internal display mode state for time aggregation charts
+  const [internalDisplayMode, setInternalDisplayMode] = useState<DisplayMode>('absolute');
+  
+  // Get current display mode from filters or use internal state
+  const currentDisplayMode = modalFilterValues?.displayMode as DisplayMode || 
+                             filterValues?.displayMode as DisplayMode || 
+                             internalDisplayMode;
+
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
 
@@ -163,7 +171,8 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   console.log('SimpleAreaChart chartConfig.dataMapping:', {
     xAxis: chartConfig.dataMapping.xAxis,
     yAxis: chartConfig.dataMapping.yAxis,
-    yField: yField
+      yField: yField,
+      timeAggregationEnabled: chartConfig.additionalOptions?.enableTimeAggregation
   });
   
   // For type safety, ensure we use string values for indexing
@@ -190,11 +199,16 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   // Ensure yKey is always a string (first y-field for backwards compatibility)
   const yKey = yFields[0];
 
-  // Format value for tooltip
+  // Format value for tooltip with display mode support
   const formatValue = useCallback((value: number, unit?: string) => {
     // Add null/undefined check
     if (value === undefined || value === null) {
       return '0.00';
+    }
+    
+    // Handle percentage mode for time aggregation
+    if (currentDisplayMode === 'percent') {
+      return `${value.toFixed(1)}%`;
     }
     
     // Get the unit symbol (don't use a default)
@@ -219,10 +233,14 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     // Return with correct unit placement (or no unit if not specified)
     if (!unitSymbol) return formattedValue;
     return isUnitPrefix ? `${unitSymbol}${formattedValue}` : `${formattedValue}\u00A0${unitSymbol}`;
-  }, []);
+  }, [currentDisplayMode]);
 
-  // Format y-axis tick value with appropriate units
+  // Format y-axis tick value with appropriate units and display mode support
   const formatTickValue = useCallback((value: number) => {
+    if (currentDisplayMode === 'percent') {
+      return `${value.toFixed(0)}%`;
+    }
+
     if (value === 0) return '0';
     
     const absValue = Math.abs(value);
@@ -249,12 +267,17 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     } else {
       return `${sign}${absValue.toFixed(0)}`;
     }
-  }, []);
+  }, [currentDisplayMode]);
 
   // Update modal filters when component receives new filter values
   useEffect(() => {
     if (filterValues) {
       setModalFilterValues(filterValues);
+      
+      // Update internal display mode if provided in filter values
+      if (filterValues.displayMode) {
+        setInternalDisplayMode(filterValues.displayMode as DisplayMode);
+      }
     }
   }, [filterValues]);
 
@@ -262,6 +285,16 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Track data changes for debugging time aggregation
+  useEffect(() => {
+    console.log('SimpleAreaChart: Data prop changed:', {
+      dataLength: data.length,
+      timeAggregationEnabled: chartConfig.additionalOptions?.enableTimeAggregation,
+      firstDataItem: data[0],
+      currentDisplayMode: currentDisplayMode
+    });
+  }, [data, chartConfig.additionalOptions?.enableTimeAggregation, currentDisplayMode]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
@@ -280,6 +313,14 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       (isExpanded && isModalBrushActive && modalFilteredData.length > 0) ? modalFilteredData :
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
       data;
+    
+    console.log('SimpleAreaChart data processing:', {
+      dataLength: data.length,
+      currentDataLength: currentData.length,
+      isTimeAggregationEnabled: chartConfig.additionalOptions?.enableTimeAggregation,
+      currentDisplayMode: currentDisplayMode,
+      filterValues: filterValues
+    });
     
     if (isExpanded) {
       console.log('Modal chart data source:', 
@@ -351,19 +392,38 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
             groupedData[xValue][field] = item[field] !== undefined ? item[field] : 0;
           });
         } else {
-          // Update fields if they have higher values (for aggregating duplicates)
+          // For time aggregation, sum the values instead of taking max
           yFields.forEach(field => {
-            if (item[field] !== undefined && 
-                (groupedData[xValue][field] === undefined || 
-                 Number(item[field]) > Number(groupedData[xValue][field]))) {
-              groupedData[xValue][field] = item[field];
+            if (item[field] !== undefined) {
+              const existingValue = Number(groupedData[xValue][field]) || 0;
+              const newValue = Number(item[field]) || 0;
+              groupedData[xValue][field] = existingValue + newValue;
             }
           });
         }
       });
       
       // Convert back to array
-      const uniqueProcessedData = Object.values(groupedData);
+      let uniqueProcessedData = Object.values(groupedData);
+      
+      // Apply percentage mode conversion if enabled
+      if (currentDisplayMode === 'percent') {
+        uniqueProcessedData = uniqueProcessedData.map(item => {
+          // Calculate total for this data point across all y-fields
+          const total = yFields.reduce((sum, field) => sum + (Number(item[field]) || 0), 0);
+          
+          // Create new item with percentage values
+          const percentageItem = { ...item };
+          if (total > 0) {
+            yFields.forEach(field => {
+              const value = Number(item[field]) || 0;
+              percentageItem[field] = (value / total) * 100;
+            });
+          }
+          
+          return percentageItem;
+        });
+      }
       
       return {
         chartData: uniqueProcessedData,
@@ -390,8 +450,19 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       });
       
       // Convert back to array
-      const uniqueProcessedData = Object.values(groupedData);
+      let uniqueProcessedData = Object.values(groupedData);
       console.log(`Processed ${processedData.length} items into ${uniqueProcessedData.length} unique data points`);
+      
+      // Apply percentage mode conversion if enabled (for single y-field, normalize to 100%)
+      if (currentDisplayMode === 'percent') {
+        const total = uniqueProcessedData.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
+        if (total > 0) {
+          uniqueProcessedData = uniqueProcessedData.map(item => ({
+            ...item,
+            [yKey]: (Number(item[yKey]) / total) * 100
+          }));
+        }
+      }
       
       // Use a consistent color unless distinctColors is requested
       if (shouldUseConsistentColor) {
@@ -705,7 +776,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    console.log('Creating brush data with', data.length, 'items');
+    // console.log('Creating brush data with', data.length, 'items');
     
     // First, apply the same sorting/filtering as the chart data
     let processedData: any[] = [...data].filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
@@ -758,7 +829,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
-      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
+              // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
       
       // Create a series of evenly spaced date points for consistency
       const brushDataPoints = uniqueData.map((d: any, i: number) => {
@@ -800,7 +871,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
         };
       });
       
-      console.log('Created brush data points for simple chart:', brushDataPoints.length);
+              // console.log('Created brush data points for simple chart:', brushDataPoints.length);
       return brushDataPoints;
     }
     
@@ -848,7 +919,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       };
     });
     
-    console.log('Created brush data points:', brushDataPoints.length);
+          // console.log('Created brush data points:', brushDataPoints.length);
     return brushDataPoints;
   }, [data, xKey, yKey, filterValues]);
   
@@ -1024,8 +1095,16 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       padding: 0.1,
     });
     
-    // Calculate the max value for the y-axis
-    const yMax = isMultiSeries
+    // Calculate the max and min values for the y-axis with display mode support
+    let yMax, yMin;
+    
+    if (currentDisplayMode === 'percent') {
+      // For percentage mode, use fixed scale
+      yMax = isMultiSeries ? 100 : 100; // 100% for both multi-series and single series
+      yMin = 0;
+    } else {
+      // For absolute mode, calculate from data
+      yMax = isMultiSeries
       ? Math.max(
           ...chartData.flatMap(d => 
             yFields.map(field => Number(d[field]) || 0)
@@ -1034,8 +1113,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
         )
       : Math.max(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 1);
     
-    // Calculate the min value for the y-axis to handle negative values
-    const yMin = isMultiSeries
+      yMin = isMultiSeries
       ? Math.min(
           ...chartData.flatMap(d => 
             yFields.map(field => Number(d[field]) || 0)
@@ -1043,11 +1121,14 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
           0
         )
       : Math.min(...chartData.map((d: ChartDataItem) => Number(d[yKey]) || 0), 0);
+    }
     
     const yScale = scaleLinear<number>({
-      domain: [yMin * 1.1, yMax * 1.1], // Add 10% padding on both sides
+      domain: currentDisplayMode === 'percent' 
+        ? [yMin, yMax] // No padding for percentage mode
+        : [yMin * 1.1, yMax * 1.1], // Add 10% padding for absolute mode
       range: [innerHeight, 0],
-      nice: true,
+      nice: currentDisplayMode !== 'percent', // Don't use nice() for percentage mode
       clamp: true,
     });
 
@@ -1437,8 +1518,10 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain, 
       setIsBrushActive, setFilteredData, isMultiSeries, filterValues, modalFilterValues]);
 
-  // Add back the handleFilterChange function
+  // Enhanced filter change handler for area charts with time aggregation support
   const handleFilterChange = useCallback((key: string, value: string) => {
+    console.log(`SimpleAreaChart filter changed: ${key} = ${value}`);
+    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
@@ -1447,19 +1530,38 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
+    // Update internal display mode if changed
+    if (key === 'displayMode') {
+      setInternalDisplayMode(value as DisplayMode);
+    }
+    
     // Clear existing timer
     if (filterDebounceTimer.current) {
       clearTimeout(filterDebounceTimer.current);
     }
     
-    // Debounce the actual filter change callback
+    // For time aggregation enabled charts, we need special handling
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (isTimeAggregationEnabled && key === 'timeFilter') {
+      console.log('SimpleAreaChart: Time aggregation enabled - delegating to ChartRenderer:', value);
+      
+      // For time aggregation, immediately call the parent filter change
+      // The ChartRenderer will handle the actual data re-aggregation
+      if (onFilterChange) {
+        console.log('SimpleAreaChart: Calling onFilterChange with updated filters');
+        onFilterChange(updatedFilters);
+      }
+    } else {
+      // Debounce other filter changes
     filterDebounceTimer.current = setTimeout(() => {
-      // If onFilterChange exists in chartConfig, call it with updated filters
+        console.log('SimpleAreaChart: Debounced filter change for:', key);
       if (onFilterChange) {
         onFilterChange(updatedFilters);
       }
     }, 300); // 300ms debounce delay
-  }, [modalFilterValues, onFilterChange]);
+    }
+  }, [modalFilterValues, onFilterChange, chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {

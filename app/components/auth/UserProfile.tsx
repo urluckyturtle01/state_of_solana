@@ -51,7 +51,7 @@ const UserProfile: React.FC = () => {
       // Track Google logout
       trackAuthEvent('logout', 'google');
       // For NextAuth authentication
-      await signOut({ callbackUrl: '/' });
+    await signOut({ callbackUrl: '/' });
     }
     setShowDropdown(false);
   };

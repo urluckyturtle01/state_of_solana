@@ -617,7 +617,7 @@ const TableForm: React.FC<TableFormProps> = ({
               </p>
             </div>
           </div>
-
+          
           {/* Section Selection - Only show for sectioned pages */}
           {(formData.page === 'sf-overview' || formData.page === 'sf-depin') && (
             <div>

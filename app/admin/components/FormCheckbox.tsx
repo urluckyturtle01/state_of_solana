@@ -6,6 +6,7 @@ interface FormCheckboxProps {
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  disabled?: boolean;
   className?: string;
   error?: string;
   helpText?: string;
@@ -17,6 +18,7 @@ export default function FormCheckbox({
   checked,
   onChange,
   required = false,
+  disabled = false,
   className = '',
   error,
   helpText,
@@ -32,11 +34,12 @@ export default function FormCheckbox({
             checked={checked}
             onChange={onChange}
             required={required}
-            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 bg-gray-700 border-gray-600 rounded"
+            disabled={disabled}
+            className={`focus:ring-indigo-500 h-4 w-4 text-indigo-600 bg-gray-700 border-gray-600 rounded ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           />
         </div>
         <div className="ml-3 text-sm">
-          <label htmlFor={id} className="font-medium text-gray-300">
+          <label htmlFor={id} className={`font-medium ${disabled ? 'text-gray-500' : 'text-gray-300'}`}>
             {label}
             {required && <span className="text-red-400 ml-1">*</span>}
           </label>

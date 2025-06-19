@@ -251,10 +251,26 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Update internal displayMode when filter changes
   useEffect(() => {
-    if (filterValues?.displayMode) {
-      setInternalDisplayMode(filterValues.displayMode as DisplayMode);
+    // Determine the correct filter key to use
+    const displayModeFilterKey = chartConfig.additionalOptions?.filters?.displayModeFilter ? 'displayModeFilter' : 'displayMode';
+    const currentDisplayModeValue = filterValues?.[displayModeFilterKey];
+    
+    console.log('StackedBarChart: displayMode effect triggered:', {
+      displayModeFilterKey,
+      currentDisplayModeValue,
+      propDisplayMode,
+      currentInternalDisplayMode: internalDisplayMode
+    });
+    
+    // Priority: filterValues[displayModeFilterKey] > propDisplayMode > current internalDisplayMode
+    if (currentDisplayModeValue && currentDisplayModeValue !== internalDisplayMode) {
+      console.log(`StackedBarChart: Updating displayMode from filterValues[${displayModeFilterKey}]: ${internalDisplayMode} -> ${currentDisplayModeValue}`);
+      setInternalDisplayMode(currentDisplayModeValue as DisplayMode);
+    } else if (propDisplayMode && propDisplayMode !== internalDisplayMode) {
+      console.log(`StackedBarChart: Updating displayMode from prop: ${internalDisplayMode} -> ${propDisplayMode}`);
+      setInternalDisplayMode(propDisplayMode);
     }
-  }, [filterValues]);
+  }, [filterValues?.displayMode, filterValues?.displayModeFilter, propDisplayMode, internalDisplayMode, chartConfig.additionalOptions?.filters?.displayModeFilter]);
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
@@ -269,7 +285,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // Update internal display mode if needed
-    if (key === 'displayMode') {
+    if (key === 'displayMode' || key === 'displayModeFilter') {
       setInternalDisplayMode(value as DisplayMode);
     }
     
@@ -297,7 +313,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setModalFilterValues(updatedFilters);
     
     // Update internal display mode if needed
-    if (key === 'displayMode') {
+    if (key === 'displayMode' || key === 'displayModeFilter') {
       setInternalDisplayMode(value as DisplayMode);
     }
     
@@ -901,7 +917,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const yMax = Math.max(
       ...chartData.map(d => {
         // Sum all values in the stack
-        return keys.reduce((total, key) => total + (Number(d[key]) || 0), 0);
+        return keys.reduce((total: number, key) => total + (Number(d[key]) || 0), 0);
       }),
       1 // Ensure minimum of 1 to avoid scaling issues
     );
@@ -910,7 +926,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const yMin = Math.min(
       ...chartData.map(d => {
         // Find the most negative value in each stack
-        return keys.reduce((min, key) => {
+        return keys.reduce((min: number, key) => {
           const value = Number(d[key]) || 0;
           return value < min ? value : min;
         }, 0);
@@ -1138,19 +1154,19 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                   if (value >= 0) {
                     // For positive values, stack upward
                     positiveY -= barHeight;
-                    
-                    stackedBars.push(
-                      <Bar
-                        key={`bar-${i}-${key}`}
-                        x={x}
+                  
+                  stackedBars.push(
+                    <Bar
+                      key={`bar-${i}-${key}`}
+                      x={x}
                         y={positiveY}
-                        width={xScale.bandwidth()}
-                        height={barHeight}
-                        fill={groupColors[key]}
-                        opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
-                        rx={0}
-                      />
-                    );
+                      width={xScale.bandwidth()}
+                      height={barHeight}
+                      fill={groupColors[key]}
+                      opacity={tooltip.visible && tooltip.key === d[xKey] ? 1 : 0.8}
+                      rx={0}
+                    />
+                  );
                   } else {
                     // For negative values, stack downward
                     stackedBars.push(
@@ -1462,7 +1478,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // For stacked charts, use the sum of all values in each stack
     return Math.max(
       ...chartData.map(d => {
-        return keys.reduce((total, key) => total + (Number(d[key]) || 0), 0);
+        return keys.reduce((total: number, key) => total + (Number(d[key]) || 0), 0);
       }),
       1
     );
@@ -1568,14 +1584,19 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 />
               )}
               
-              {/* Display mode filter - always show this for stacked charts */}
+              {/* Display mode filter - show based on chart configuration */}
+              {(chartConfig.additionalOptions?.filters?.displayModeFilter || true) && (
               <div className="flex items-center">
                 <DisplayModeFilter
-                  mode={internalDisplayMode}
-                  onChange={(value) => handleFilterChange('displayMode', value)}
-                  disabled={hasNegativeValues}
+                    mode={internalDisplayMode}
+                    onChange={(value) => handleFilterChange(
+                      chartConfig.additionalOptions?.filters?.displayModeFilter ? 'displayModeFilter' : 'displayMode', 
+                      value
+                    )}
+                    disabled={hasNegativeValues}
                 />
               </div>
+              )}
             </div>
           </div>
           

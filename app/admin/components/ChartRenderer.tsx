@@ -53,6 +53,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
   preloadedData
 }) => {
   const [data, setData] = useState<any[]>(preloadedData || []);
+  const [rawData, setRawData] = useState<any[]>([]); // Store raw data for time aggregation
   const [error, setError] = useState<string | null>(null);
   // Use internal or external filter values based on what's provided
   const [internalFilterValues, setInternalFilterValues] = useState<Record<string, string>>({});
@@ -120,6 +121,134 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     return null;
   };
 
+  // Client-side time aggregation function
+  const aggregateDataByTimePeriod = (rawData: any[], timePeriod: string, xField: string, yFields: string[], groupByField?: string): any[] => {
+    if (!rawData || rawData.length === 0) return [];
+    
+          // console.log(`Aggregating ${rawData.length} data points by time period: ${timePeriod}`);
+    
+    // Check if this is a stacked chart with groupBy field
+    const isStackedWithGroupBy = groupByField && chartConfig.isStacked;
+    console.log('Time aggregation for stacked chart with groupBy:', isStackedWithGroupBy, 'groupBy field:', groupByField);
+    
+    // Group data by the appropriate time period (and groupBy field if stacked)
+    const groupedData: Record<string, any> = {};
+    
+    rawData.forEach(item => {
+      const dateValue = item[xField];
+      if (!dateValue) return;
+      
+      let timeGroupKey: string;
+      const date = new Date(dateValue);
+      
+      switch (timePeriod) {
+        case 'D': // Daily - use as is
+          timeGroupKey = dateValue;
+          break;
+        case 'W': // Weekly - group by week start (Monday), keep YYYY-MM-DD format
+          const weekStart = new Date(date);
+          weekStart.setDate(date.getDate() - date.getDay() + 1); // Monday
+          timeGroupKey = weekStart.toISOString().split('T')[0];
+          break;
+        case 'M': // Monthly - use first day of month, keep YYYY-MM-DD format
+          timeGroupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+          break;
+        case 'Q': // Quarterly - use first day of quarter, keep YYYY-MM-DD format
+          const quarter = Math.floor(date.getMonth() / 3) + 1;
+          const quarterStartMonth = (quarter - 1) * 3 + 1; // Q1->1, Q2->4, Q3->7, Q4->10
+          timeGroupKey = `${date.getFullYear()}-${String(quarterStartMonth).padStart(2, '0')}-01`;
+          break;
+        case 'Y': // Yearly - use first day of year, keep YYYY-MM-DD format
+          timeGroupKey = `${date.getFullYear()}-01-01`;
+          break;
+        default:
+          timeGroupKey = dateValue;
+      }
+      
+      // For stacked charts with groupBy, create composite key: time + groupBy value
+      // For non-stacked charts, use just the time key
+      let groupKey: string;
+      if (isStackedWithGroupBy) {
+        const groupValue = String(item[groupByField]);
+        groupKey = `${timeGroupKey}|${groupValue}`;
+      } else {
+        groupKey = timeGroupKey;
+      }
+      
+      if (!groupedData[groupKey]) {
+        groupedData[groupKey] = {
+          [xField]: timeGroupKey, // Always use time value for x-axis
+          _count: 0,
+          _firstDate: date
+        };
+        
+        // For stacked charts with groupBy, preserve the groupBy field
+        if (isStackedWithGroupBy) {
+          groupedData[groupKey][groupByField] = item[groupByField];
+        }
+        
+        // Initialize all numeric fields to 0
+        yFields.forEach(field => {
+          groupedData[groupKey][field] = 0;
+        });
+      }
+      
+      // Sum the values for aggregation
+      yFields.forEach(field => {
+        if (item[field] !== undefined && item[field] !== null) {
+          groupedData[groupKey][field] += Number(item[field]) || 0;
+        }
+      });
+      
+      groupedData[groupKey]._count++;
+      
+      // Keep the earliest date for sorting
+      if (date < groupedData[groupKey]._firstDate) {
+        groupedData[groupKey]._firstDate = date;
+      }
+    });
+    
+    // Convert back to array and sort by date, then by group if stacked
+    const aggregatedData = Object.values(groupedData)
+      .sort((a, b) => {
+        // First sort by time
+        const timeCompare = a._firstDate.getTime() - b._firstDate.getTime();
+        if (timeCompare !== 0) return timeCompare;
+        
+        // If times are equal and this is stacked with groupBy, sort by group value
+        if (isStackedWithGroupBy && groupByField) {
+          const groupA = String(a[groupByField]);
+          const groupB = String(b[groupByField]);
+          return groupA.localeCompare(groupB);
+        }
+        
+        return 0;
+      })
+      .map(item => {
+        // Remove internal fields after sorting
+        const { _count, _firstDate, ...cleanItem } = item;
+        return cleanItem;
+      });
+    
+    // Debug logging for stacked chart aggregation
+    if (isStackedWithGroupBy && aggregatedData.length > 0) {
+      console.log(`Stacked chart aggregation result (${timePeriod}):`, {
+        totalRows: aggregatedData.length,
+        uniqueTimeValues: [...new Set(aggregatedData.map(item => item[xField]))].length,
+        uniqueGroupValues: [...new Set(aggregatedData.map(item => item[groupByField]))].length,
+        sample: aggregatedData.slice(0, 3)
+      });
+    }
+    
+    // Debug logging for quarterly data sorting
+    if (timePeriod === 'Q' && aggregatedData.length > 0) {
+      console.log('Quarterly aggregation result:', aggregatedData.map(item => item[xField]));
+    }
+    
+          // console.log(`Aggregated to ${aggregatedData.length} data points for period ${timePeriod}`);
+    return aggregatedData;
+  };
+
   // Initialize filter values from chart config
   useEffect(() => {
     // Only initialize internal filters if external ones aren't provided
@@ -156,20 +285,125 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   // Handle filter change
   const handleFilterChange = (filterType: string, value: string) => {
-    console.log(`Filter changed: ${filterType} = ${value}`);
+    console.log(`ChartRenderer filter changed: ${filterType} = ${value}`);
     
-    // If external handler is provided, use it
-    if (onFilterChange) {
-      onFilterChange(filterType, value);
+    // For time aggregation enabled charts, handle time filter changes immediately
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (isTimeAggregationEnabled && filterType === 'timeFilter') {
+      console.log('ChartRenderer: Immediate time filter processing for time aggregation');
+      
+      // Update internal state immediately
+      const updatedFilters = {
+        ...(externalFilterValues || internalFilterValues),
+        [filterType]: value
+      };
+      
+      if (!externalFilterValues) {
+        setInternalFilterValues(updatedFilters);
+        setIsFilterChanged(true);
+      }
+      
+      // Trigger immediate re-aggregation if we have raw data
+      if (rawData.length > 0) {
+        const { xAxis, yAxis } = chartConfig.dataMapping;
+        const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+        
+        let yFields: string[] = [];
+        if (Array.isArray(yAxis)) {
+          yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+        } else {
+          yFields = [getFieldFromYAxisConfig(yAxis)];
+        }
+        
+        console.log('ChartRenderer: Applying immediate time aggregation with filter:', value);
+        const aggregatedData = aggregateDataByTimePeriod(rawData, value, xField, yFields, chartConfig.dataMapping.groupBy);
+        setData(aggregatedData);
+        
+        // Call onDataLoaded callback immediately
+        if (onDataLoaded) {
+          onDataLoaded(aggregatedData);
+        }
+      }
+      
+      // Also call external handler if provided
+      if (onFilterChange) {
+        onFilterChange(filterType, value);
+      }
+    } else if (isTimeAggregationEnabled && (filterType === 'displayModeFilter' || filterType === 'displayMode')) {
+      console.log('ChartRenderer: Display mode filter for time aggregation - pass-through only');
+      
+      // For time aggregation charts, displayMode changes should only update state for StackedBarChart
+      // No re-aggregation needed, just pass through the filter value
+      if (!externalFilterValues) {
+        setInternalFilterValues(prev => ({
+          ...prev,
+          [filterType]: value
+        }));
+      }
+      
+      // Call external handler if provided
+      if (onFilterChange) {
+        onFilterChange(filterType, value);
+      }
     } else {
-      // Otherwise update internal state
+      // Standard filter handling for non-time filters (including displayMode)
+      console.log(`ChartRenderer: Standard filter processing for ${filterType}:`, value);
+      
+      // Update internal state immediately for UI responsiveness
+      if (!externalFilterValues) {
       setInternalFilterValues(prev => ({
         ...prev,
         [filterType]: value
       }));
       setIsFilterChanged(true);
     }
+      
+      // Call external handler if provided
+      if (onFilterChange) {
+        onFilterChange(filterType, value);
+      }
+    }
   };
+
+  // Effect to handle client-side time aggregation when time filter changes
+  useEffect(() => {
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const timeFilterValue = filterValues['timeFilter'];
+    
+    console.log('ChartRenderer time aggregation effect triggered:', {
+      isTimeAggregationEnabled,
+      timeFilterValue,
+      rawDataLength: rawData.length,
+      hasFilterValues: !!filterValues
+    });
+    
+    if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0) {
+      console.log('ChartRenderer: Applying client-side time aggregation:', timeFilterValue);
+      
+      // Get field mappings
+      const { xAxis, yAxis } = chartConfig.dataMapping;
+      const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+      
+      // Extract y-field names
+      let yFields: string[] = [];
+      if (Array.isArray(yAxis)) {
+        yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+      } else {
+        yFields = [getFieldFromYAxisConfig(yAxis)];
+      }
+      
+      // Apply time aggregation
+      const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+      console.log('ChartRenderer: Time aggregation complete, setting data:', aggregatedData.length, 'items');
+      setData(aggregatedData);
+      
+      // Call onDataLoaded callback if provided
+      if (onDataLoaded) {
+        onDataLoaded(aggregatedData);
+      }
+    }
+  }, [filterValues['timeFilter'], rawData, chartConfig, onDataLoaded]);
 
   // Sample data to use when API fails
   const getSampleData = (chartType: string, groupByField?: string) => {
@@ -226,9 +460,150 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   // Fetch data from API when component mounts or filters change
   useEffect(() => {
-    // Skip fetching if we have preloaded data
+    // Handle preloaded data with field normalization
     if (preloadedData && preloadedData.length > 0) {
       console.log(`Using preloaded data for chart ${chartConfig.title}, skipping API fetch`);
+      
+      // Apply the same field normalization logic as for API data
+      const normalizePreloadedData = () => {
+        try {
+          const { xAxis, yAxis, groupBy } = chartConfig.dataMapping;
+          const sampleItem = preloadedData[0];
+
+          // Normalize arrays and strings for processing
+          const xAxisFields = Array.isArray(xAxis) ? xAxis : [xAxis];
+          let yAxisFields: string[] = [];
+          
+          // Extract field names from yAxis which could be strings or YAxisConfig objects
+          if (Array.isArray(yAxis)) {
+            yAxisFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+          } else {
+            yAxisFields = [getFieldFromYAxisConfig(yAxis)];
+          }
+          
+          // Check and normalize fields if needed
+          let needsNormalization = false;
+          
+          // Check if the required fields exist
+          const fieldExists = (item: any, field: string) => {
+            return !!findMatchingField(item, field);
+          };
+          
+          // Check x-axis fields
+          for (const field of xAxisFields) {
+            if (!fieldExists(sampleItem, field)) {
+              console.error(`X-axis field "${field}" not found in preloaded data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              setError(`X-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              return;
+            }
+            if (findMatchingField(sampleItem, field) !== field) {
+              needsNormalization = true;
+            }
+          }
+          
+          // Check y-axis fields
+          for (const field of yAxisFields) {
+            if (!fieldExists(sampleItem, field)) {
+              console.error(`Y-axis field "${field}" not found in preloaded data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              setError(`Y-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              return;
+            }
+            if (findMatchingField(sampleItem, field) !== field) {
+              needsNormalization = true;
+            }
+          }
+          
+          // Check for group by field if this is a stacked chart
+          if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+            if (!fieldExists(sampleItem, groupBy)) {
+              console.error(`Group By field "${groupBy}" not found in preloaded data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              setError(`Group By field "${groupBy}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              return;
+            }
+            if (findMatchingField(sampleItem, groupBy) !== groupBy) {
+              needsNormalization = true;
+            }
+          }
+          
+          // Normalize the data if needed
+          let normalizedData = preloadedData;
+          if (needsNormalization) {
+            console.log('Normalizing preloaded data field names...');
+            normalizedData = preloadedData.map(item => {
+              const normalizedItem = { ...item };
+              
+              // Normalize x-axis fields
+              for (const field of xAxisFields) {
+                const matchingField = findMatchingField(item, field);
+                if (matchingField && matchingField !== field) {
+                  normalizedItem[field] = item[matchingField];
+                  console.log(`Normalized field: ${matchingField} -> ${field}`);
+                }
+              }
+              
+              // Normalize y-axis fields
+              for (const field of yAxisFields) {
+                const matchingField = findMatchingField(item, field);
+                if (matchingField && matchingField !== field) {
+                  normalizedItem[field] = item[matchingField];
+                  console.log(`Normalized field: ${matchingField} -> ${field}`);
+                }
+              }
+              
+              // Normalize group by field if needed
+              if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+                const matchingGroupField = findMatchingField(item, groupBy);
+                if (matchingGroupField && matchingGroupField !== groupBy) {
+                  normalizedItem[groupBy] = item[matchingGroupField];
+                  console.log(`Normalized field: ${matchingGroupField} -> ${groupBy}`);
+                }
+              }
+              
+              return normalizedItem;
+            });
+          }
+          
+          // Call onDataLoaded callback if provided
+          if (onDataLoaded) {
+            onDataLoaded(normalizedData);
+          }
+          
+          // For time aggregation, store raw data and apply initial aggregation
+          const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+          if (isTimeAggregationEnabled) {
+            setRawData(normalizedData);
+            console.log('Stored raw preloaded data for time aggregation');
+            
+            // Apply initial time aggregation if filter is set
+            const timeFilterValue = filterValues['timeFilter'];
+            if (timeFilterValue) {
+              const { xAxis, yAxis } = chartConfig.dataMapping;
+              const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+              
+              let yFields: string[] = [];
+              if (Array.isArray(yAxis)) {
+                yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+              } else {
+                yFields = [getFieldFromYAxisConfig(yAxis)];
+              }
+              
+                          const aggregatedData = aggregateDataByTimePeriod(normalizedData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+            setData(aggregatedData);
+            } else {
+              setData(normalizedData);
+            }
+          } else {
+            setData(normalizedData);
+          }
+          console.log('Preloaded data normalized and set successfully');
+          
+        } catch (error) {
+          console.error('Error processing preloaded data:', error);
+          setError(`Error processing preloaded data: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      };
+      
+      normalizePreloadedData();
       return;
     }
     
@@ -289,17 +664,28 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           const parameters: Record<string, any> = {};
           const filterConfig = chartConfig.additionalOptions?.filters;
           const hasFilters = filterConfig !== undefined;
+          const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+          
+          console.log('=== FILTER DEBUG INFO ===');
+          console.log('Chart title:', chartConfig.title);
+          console.log('Enable time aggregation:', isTimeAggregationEnabled);
+          console.log('Filter config:', filterConfig);
+          console.log('Filter values:', filterValues);
+          console.log('Has filters:', hasFilters);
           
           if (hasFilters) {
-            // Add time filter parameter
-            if (filterConfig.timeFilter && filterValues['timeFilter']) {
+            // Skip time filter parameter if time aggregation is enabled (client-side processing)
+            if (filterConfig.timeFilter && filterValues['timeFilter'] && !isTimeAggregationEnabled) {
               parameters[filterConfig.timeFilter.paramName] = filterValues['timeFilter'];
               console.log(`Setting time filter: ${filterConfig.timeFilter.paramName}=${filterValues['timeFilter']}`);
             } else if (filterConfig.timeFilter && 
                      Array.isArray(filterConfig.timeFilter.options) && 
-                     filterConfig.timeFilter.options.length > 0) {
+                     filterConfig.timeFilter.options.length > 0 && 
+                     !isTimeAggregationEnabled) {
               parameters[filterConfig.timeFilter.paramName] = filterConfig.timeFilter.options[0];
               console.log(`Setting default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
+            } else if (isTimeAggregationEnabled && filterConfig.timeFilter) {
+              console.log('Skipping time filter parameter - using client-side time aggregation');
             }
             
             // Add currency filter parameter
@@ -313,19 +699,27 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
               console.log(`Setting default currency filter: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
             }
             
-            // Add display mode filter parameter
-            if (filterConfig.displayModeFilter && filterValues['displayModeFilter']) {
+            // Add display mode filter parameter (skip if time aggregation is enabled - client-side processing)
+            if (filterConfig.displayModeFilter && filterValues['displayModeFilter'] && !isTimeAggregationEnabled) {
               parameters[filterConfig.displayModeFilter.paramName] = filterValues['displayModeFilter'];
               console.log(`Setting display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterValues['displayModeFilter']}`);
             } else if (filterConfig.displayModeFilter && 
                      Array.isArray(filterConfig.displayModeFilter.options) && 
-                     filterConfig.displayModeFilter.options.length > 0) {
+                     filterConfig.displayModeFilter.options.length > 0 &&
+                     !isTimeAggregationEnabled) {
               parameters[filterConfig.displayModeFilter.paramName] = filterConfig.displayModeFilter.options[0];
               console.log(`Setting default display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterConfig.displayModeFilter.options[0]}`);
+            } else if (isTimeAggregationEnabled && filterConfig.displayModeFilter) {
+              console.log('Skipping display mode filter parameter - using client-side processing with time aggregation');
             }
           }
           
           const hasParameters = Object.keys(parameters).length > 0;
+          
+          console.log('=== REQUEST DEBUG INFO ===');
+          console.log('Parameters object:', parameters);
+          console.log('Has parameters:', hasParameters);
+          console.log('Request method will be:', hasParameters ? 'POST' : 'GET');
           
           // Set up fetch options
           const options: RequestInit = {
@@ -518,7 +912,33 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
             
             // Set data only if component is still mounted
             if (!signal.aborted) {
+              // For time aggregation, store raw data and apply aggregation
+              const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+              if (isTimeAggregationEnabled) {
+                setRawData(parsedData);
+                console.log('Stored raw API data for time aggregation');
+                
+                // Apply initial time aggregation if filter is set
+                const timeFilterValue = filterValues['timeFilter'];
+                if (timeFilterValue) {
+                  const { xAxis, yAxis } = chartConfig.dataMapping;
+                  const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+                  
+                  let yFields: string[] = [];
+                  if (Array.isArray(yAxis)) {
+                    yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+                  } else {
+                    yFields = [getFieldFromYAxisConfig(yAxis)];
+                  }
+                  
+                                const aggregatedData = aggregateDataByTimePeriod(parsedData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+              setData(aggregatedData);
+                } else {
               setData(parsedData);
+                }
+              } else {
+                setData(parsedData);
+              }
             }
           } catch (error) {
             if (!signal.aborted) {
@@ -585,7 +1005,17 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
     return () => {
       controller.abort();
     };
-  }, [chartConfig.apiEndpoint, chartConfig.apiKey, chartConfig.title, JSON.stringify(chartConfig.dataMapping), filterValues, isFilterChanged]);
+  }, [
+    chartConfig.apiEndpoint, 
+    chartConfig.apiKey, 
+    chartConfig.title, 
+    JSON.stringify(chartConfig.dataMapping), 
+    // For time aggregation charts, exclude time filter from dependencies
+    chartConfig.additionalOptions?.enableTimeAggregation 
+      ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => key !== 'timeFilter')))
+      : JSON.stringify(filterValues), 
+    isFilterChanged
+  ]);
 
   // Memoize the chart rendering to prevent unnecessary re-renders
   const renderChart = React.useCallback(() => {
@@ -623,6 +1053,7 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           console.log("=== DECISION: Using StackedBarChart for stacked mode ===");
           return <StackedBarChart 
             {...commonProps}
+            displayMode={filterValues['displayMode'] as DisplayMode || 'absolute'}
             onFilterChange={(newFilters: Record<string, string>) => {
               // Apply the filter changes
               Object.entries(newFilters).forEach(([key, value]) => {
@@ -686,8 +1117,10 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
           {...commonProps}
           isStacked={chartConfig.chartType === 'stacked-area'}
           onFilterChange={(newFilters: Record<string, string>) => {
+            console.log('ChartRenderer: SimpleAreaChart filter change callback triggered:', newFilters);
             // Apply the filter changes
             Object.entries(newFilters).forEach(([key, value]) => {
+              console.log(`ChartRenderer: Processing filter from SimpleAreaChart: ${key} = ${value}`);
               handleFilterChange(key, value);
             });
           }}

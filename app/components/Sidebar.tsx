@@ -146,9 +146,9 @@ export default function Sidebar() {
                                 </Link>
                               )}
                             </li>
-                                                      );
-                          })}
-                        </ul>
+                          );
+                        })}
+                      </ul>
                         
                           {/* Show "No projects found" message when searching and no results */}
                           {item.name === "Projects" && projectSearchTerm && getFilteredProjects(item.subItems).length === 0 && (

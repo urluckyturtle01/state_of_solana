@@ -39,6 +39,27 @@ const RefreshIcon = ({ className = "w-4 h-4" }) => {
   );
 };
 
+// Helper function to parse aggregated date formats for time aggregation
+const parseAggregatedDate = (dateString: string): Date => {
+  // Handle different aggregated date formats
+  if (/^\d{4}-\d{2}$/.test(dateString)) {
+    // Monthly format: 2025-01 -> 2025-01-01
+    return new Date(`${dateString}-01`);
+  } else if (/^\d{4}-Q[1-4]$/.test(dateString)) {
+    // Quarterly format: 2025-Q1 -> 2025-01-01, 2025-Q2 -> 2025-04-01, etc.
+    const [year, quarterStr] = dateString.split('-');
+    const quarter = parseInt(quarterStr.substring(1));
+    const month = (quarter - 1) * 3 + 1; // Q1->1, Q2->4, Q3->7, Q4->10
+    return new Date(`${year}-${String(month).padStart(2, '0')}-01`);
+  } else if (/^\d{4}$/.test(dateString)) {
+    // Yearly format: 2025 -> 2025-01-01
+    return new Date(`${dateString}-01-01`);
+  } else {
+    // Standard date formats (YYYY-MM-DD, etc.)
+    return new Date(dateString);
+  }
+};
+
 export interface DualAxisChartProps {
   chartConfig: ChartConfig;
   data: any[];
@@ -659,7 +680,28 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     if (!data || data.length === 0) return [];
     
     // Filter and ensure x values are valid
-    const processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+    let processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+    
+    // Sort by date if applicable
+    if (processedData.length > 0) {
+      // Detect if data contains dates (including aggregated date formats)
+      const isDateField = typeof processedData[0][xKey] === 'string' && 
+        (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+         /^\d{2}\/\d{2}\/\d{4}/.test(processedData[0][xKey]) ||
+         /^[A-Za-z]{3}\s\d{4}$/.test(processedData[0][xKey]) || 
+         /^\d{4}$/.test(processedData[0][xKey]) ||
+         /^\d{4}-\d{2}$/.test(processedData[0][xKey]) || // Monthly format: 2025-01
+         /^\d{4}-Q[1-4]$/.test(processedData[0][xKey])); // Quarterly format: 2025-Q1
+      
+      if (isDateField) {
+        // Sort dates chronologically (oldest to newest)
+        processedData.sort((a, b) => {
+          const dateA = parseAggregatedDate(a[xKey]);
+          const dateB = parseAggregatedDate(b[xKey]);
+          return dateA.getTime() - dateB.getTime();
+        });
+      }
+    }
     
     // Create synthetic dates for brush
     const baseDate = new Date();
@@ -676,8 +718,10 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
          (d[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
           /^\d{2}\/\d{2}\/\d{4}/.test(d[xKey]) ||
           /^[A-Za-z]{3}\s\d{4}$/.test(d[xKey]) || 
-          /^\d{4}$/.test(d[xKey]))) {
-        date = new Date(d[xKey]);
+          /^\d{4}$/.test(d[xKey]) ||
+          /^\d{4}-\d{2}$/.test(d[xKey]) ||
+          /^\d{4}-Q[1-4]$/.test(d[xKey]))) {
+        date = parseAggregatedDate(d[xKey]);
         if (isNaN(date.getTime())) {
           date = new Date(baseDate);
           date.setDate(baseDate.getDate() + i);
@@ -694,8 +738,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       };
     });
     
-    // Ensure brush data is sorted from past to present
-    return brushPoints.sort((a, b) => a.date.getTime() - b.date.getTime());
+    // Return sorted brush data (should already be sorted from processedData sort)
+    return brushPoints;
   }, [data, xKey, fields]);
 
   // Handle brush change

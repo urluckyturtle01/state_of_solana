@@ -92,7 +92,7 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
     // For values less than 1000, determine appropriate decimal places based on order of magnitude
     if (absValue >= 1) {
       // Values 1-999: show 2 decimal places for consistency in tooltips
-      formattedValue = `${sign}${absValue.toFixed(2)}`;
+    formattedValue = `${sign}${absValue.toFixed(2)}`;
     } else if (absValue >= 0.1) {
       // Values 0.1-0.999: show 3 decimal places
       formattedValue = `${sign}${absValue.toFixed(3)}`;
@@ -187,6 +187,27 @@ const formatFieldName = (fieldName: string): string => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(' ');
+};
+
+// Helper function to parse aggregated date formats for time aggregation
+const parseAggregatedDate = (dateString: string): Date => {
+  // Handle different aggregated date formats
+  if (/^\d{4}-\d{2}$/.test(dateString)) {
+    // Monthly format: 2025-01 -> 2025-01-01
+    return new Date(`${dateString}-01`);
+  } else if (/^\d{4}-Q[1-4]$/.test(dateString)) {
+    // Quarterly format: 2025-Q1 -> 2025-01-01, 2025-Q2 -> 2025-04-01, etc.
+    const [year, quarterStr] = dateString.split('-');
+    const quarter = parseInt(quarterStr.substring(1));
+    const month = (quarter - 1) * 3 + 1; // Q1->1, Q2->4, Q3->7, Q4->10
+    return new Date(`${year}-${String(month).padStart(2, '0')}-01`);
+  } else if (/^\d{4}$/.test(dateString)) {
+    // Yearly format: 2025 -> 2025-01-01
+    return new Date(`${dateString}-01-01`);
+  } else {
+    // Standard date formats (YYYY-MM-DD, etc.)
+    return new Date(dateString);
+  }
 };
 
 const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({ 
@@ -503,10 +524,19 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }, 100);
   }, [chartRef, modalChartRef]);
   
+  // Create stable filter reference to prevent infinite loops
+  const stableFilterValues = useMemo(() => {
+    return filterValues ? {
+      timeFilter: filterValues.timeFilter,
+      currencyFilter: filterValues.currencyFilter,
+      displayMode: filterValues.displayMode
+    } : null;
+  }, [filterValues?.timeFilter, filterValues?.currencyFilter, filterValues?.displayMode]);
+  
   // Update modal filters when component receives new filter values
   useEffect(() => {
-    if (filterValues) {
-      setModalFilterValues(filterValues);
+    if (stableFilterValues) {
+      setModalFilterValues(stableFilterValues);
       
       // When filter values change in modal, reset modal brush
       if (isModalBrushActive && isExpanded) {
@@ -519,7 +549,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         forceBrushVisualReset(true);
       }
     }
-  }, [filterValues, isModalBrushActive, isExpanded, data, forceBrushVisualReset]);
+  }, [stableFilterValues, isModalBrushActive, isExpanded, data, forceBrushVisualReset]);
   
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
@@ -539,10 +569,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   
   // Update the direct filter change handler to remove the brush visual reset
   useEffect(() => {
-    console.log('filterValues changed directly from parent:', filterValues);
+    console.log('filterValues changed directly from parent:', stableFilterValues);
     
     // Skip first render
-    if (!filterValues) return;
+    if (!stableFilterValues) return;
     
     // Reset modal brush state if it's active and modal is expanded
     if (isModalBrushActive && isExpanded) {
@@ -566,8 +596,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
     
     // Update the modal filter values to match
-    setModalFilterValues(filterValues);
-  }, [JSON.stringify(filterValues), isModalBrushActive, isBrushActive, isExpanded, data, forceBrushVisualReset]);
+    setModalFilterValues(stableFilterValues);
+  }, [stableFilterValues, isModalBrushActive, isBrushActive, isExpanded, data, forceBrushVisualReset]);
   
   // Debounce timer ref for filter changes
   const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
@@ -896,25 +926,27 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    console.log('Creating brush data with', data.length, 'items');
+    // console.log('Creating brush data with', data.length, 'items');
     
     // Filter and ensure x values are valid
     let processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
     
     // Sort by date if applicable
     if (processedData.length > 0) {
-      // Detect if data contains dates
+      // Detect if data contains dates (including aggregated date formats)
       const isDateField = typeof processedData[0][xKey] === 'string' && 
         (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
          /^\d{2}\/\d{2}\/\d{4}/.test(processedData[0][xKey]) ||
          /^[A-Za-z]{3}\s\d{4}$/.test(processedData[0][xKey]) || 
-         /^\d{4}$/.test(processedData[0][xKey]));
+         /^\d{4}$/.test(processedData[0][xKey]) ||
+         /^\d{4}-\d{2}$/.test(processedData[0][xKey]) || // Monthly format: 2025-01
+         /^\d{4}-Q[1-4]$/.test(processedData[0][xKey])); // Quarterly format: 2025-Q1
       
       if (isDateField) {
         // Sort dates chronologically (oldest to newest)
         processedData.sort((a, b) => {
-          const dateA = new Date(a[xKey]);
-          const dateB = new Date(b[xKey]);
+          const dateA = parseAggregatedDate(a[xKey]);
+          const dateB = parseAggregatedDate(b[xKey]);
           return dateA.getTime() - dateB.getTime();
         });
       }
@@ -926,7 +958,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Check if we're dealing with a chart without filters
     const isChartWithoutFilters = 
-      !filterValues || Object.keys(filterValues).length === 0;
+      !stableFilterValues || Object.keys(stableFilterValues).length === 0;
       
     // Check if this chart has groupBy configuration
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
@@ -936,7 +968,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // For charts with groupBy
     if (hasGroupBy) {
-      console.log('Processing brush data for chart with groupBy:', groupByField);
+      // console.log('Processing brush data for chart with groupBy:', groupByField);
       
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
@@ -980,7 +1012,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
-      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points for groupBy`);
+      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points for groupBy`);
       
       // Create brush data points
       return uniqueData.map((item, i) => {
@@ -992,8 +1024,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
            (xValue.match(/^\d{4}-\d{2}-\d{2}/) || 
             /^\d{2}\/\d{2}\/\d{4}/.test(xValue) ||
             /^[A-Za-z]{3}\s\d{4}$/.test(xValue) || 
-            /^\d{4}$/.test(xValue))) {
-          date = new Date(xValue);
+            /^\d{4}$/.test(xValue) ||
+            /^\d{4}-\d{2}$/.test(xValue) ||
+            /^\d{4}-Q[1-4]$/.test(xValue))) {
+          date = parseAggregatedDate(xValue);
           if (isNaN(date.getTime())) {
             date = new Date(baseDate);
             date.setDate(baseDate.getDate() + i);
@@ -1011,11 +1045,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           originalData: item
         };
       });
+      
+      // console.log('Created brush data for groupBy chart:', uniqueData.length, 'points');
+      return uniqueData;
     }
     
     // For chart without filters, use more direct approach to ensure continuous line
     if (isChartWithoutFilters) {
-      console.log('Processing chart without filters');
+      // console.log('Processing chart without filters');
       
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
@@ -1038,7 +1075,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
-      console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
+      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
       
       // Create a series of evenly spaced date points for consistency
       return uniqueData.map((item, i) => {
@@ -1049,8 +1086,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
            (item[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
             /^\d{2}\/\d{2}\/\d{4}/.test(item[xKey]) ||
             /^[A-Za-z]{3}\s\d{4}$/.test(item[xKey]) || 
-            /^\d{4}$/.test(item[xKey]))) {
-          date = new Date(item[xKey]);
+            /^\d{4}$/.test(item[xKey]) ||
+            /^\d{4}-\d{2}$/.test(item[xKey]) ||
+            /^\d{4}-Q[1-4]$/.test(item[xKey]))) {
+          date = parseAggregatedDate(item[xKey]);
           if (isNaN(date.getTime())) {
             date = new Date(baseDate);
             date.setDate(baseDate.getDate() + i);
@@ -1068,11 +1107,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           originalData: item
         };
       });
+      
+      // console.log('Created brush data for chart without filters:', uniqueData.length, 'points');
+      return uniqueData;
     }
     
     // Standard processing for charts with filters
     // Create data points for the brush line that reflects values
-    return processedData.map((item, i) => {
+    const brushPoints = processedData.map((item, i) => {
       let date;
       
       // Try to parse date from x value or use synthetic date
@@ -1080,8 +1122,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
          (item[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
           /^\d{2}\/\d{2}\/\d{4}/.test(item[xKey]) ||
           /^[A-Za-z]{3}\s\d{4}$/.test(item[xKey]) || 
-          /^\d{4}$/.test(item[xKey]))) {
-        date = new Date(item[xKey]);
+          /^\d{4}$/.test(item[xKey]) ||
+          /^\d{4}-\d{2}$/.test(item[xKey]) ||
+          /^\d{4}-Q[1-4]$/.test(item[xKey]))) {
+        date = parseAggregatedDate(item[xKey]);
         if (isNaN(date.getTime())) {
           date = new Date(baseDate);
           date.setDate(baseDate.getDate() + i);
@@ -1105,7 +1149,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         originalData: item
       };
     });
-  }, [data, xKey, fields, filterValues, chartConfig.dataMapping.groupBy, yField]);
+    
+    // console.log('Created brush data for standard processing:', brushPoints.length, 'points');
+    return brushPoints;
+  }, [data, xKey, fields, stableFilterValues, chartConfig.dataMapping.groupBy, yField]);
 
   // Handle brush change
   const handleBrushChange = useCallback((domain: any) => {
@@ -1313,7 +1360,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Calculate max and min values for y-axis from actual data
     const allValues = chartData.flatMap(d => 
-      fields.map(field => Number(d[field]) || 0)
+        fields.map(field => Number(d[field]) || 0)
     ).filter(val => !isNaN(val));
     
     const actualYMax = allValues.length > 0 ? Math.max(...allValues) : 1;
@@ -1686,15 +1733,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           isModal={modalView}
           curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
           strokeWidth={hasGroupBy ? 1 : 0.5}
-          filterValues={modalView ? modalFilterValues : filterValues}
-          key={`brush-${modalView ? 'modal' : 'main'}-${JSON.stringify(modalView ? modalFilterValues : filterValues)}`} // Add key to force re-render when filters change
+          filterValues={modalView ? modalFilterValues : (stableFilterValues || {})}
+          key={`brush-${modalView ? 'modal' : 'main'}-${(modalView ? modalFilterValues : filterValues)?.timeFilter || 'none'}-${(modalView ? modalFilterValues : filterValues)?.currencyFilter || 'none'}`} // Add key to force re-render when filters change
         />
       </div>
     );
   }, [
     brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange,
     setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain,
-    setIsBrushActive, setFilteredData, chartConfig.dataMapping.groupBy, filterValues, modalFilterValues
+    setIsBrushActive, setFilteredData, chartConfig.dataMapping.groupBy, stableFilterValues, modalFilterValues
   ]);
 
   // Cleanup debounce timer on unmount

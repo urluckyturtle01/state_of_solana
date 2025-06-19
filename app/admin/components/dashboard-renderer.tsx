@@ -315,15 +315,14 @@ const fetchFromApi = async (
     
     const options: RequestInit = {
       method: hasParameters ? 'POST' : 'GET',
-      headers: {
+      headers: hasParameters ? {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Priority': 'high'
+        'Accept': 'application/json'
+      } : {
+        'Accept': 'application/json'
       },
-      // More aggressive caching strategy
-      cache: 'force-cache',
-      // Use keepalive for better connection reuse
-      keepalive: true,
+      // Use default caching to avoid CORS preflight issues
+      cache: 'default',
       signal: controller.signal
     };
     
@@ -882,7 +881,33 @@ export default function DashboardRenderer({
       return;
     }
     
-    // Set loading state when filter changes
+    // Find the chart first to check time aggregation
+    const chart = charts.find(c => c.id === chartId);
+    if (!chart) return;
+    
+    // Check if this chart has time aggregation enabled
+    const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
+    const isTimeFilterChange = filterType === 'timeFilter';
+    const isDisplayModeFilterChange = filterType === 'displayModeFilter' || filterType === 'displayMode';
+    
+    // Skip API calls for time aggregation enabled charts for both timeFilter AND displayModeFilter
+    if (isTimeAggregationEnabled && (isTimeFilterChange || isDisplayModeFilterChange)) {
+      console.log(`Dashboard-renderer: Skipping API call for time aggregation chart ${chartId}, ${filterType}: ${value}`);
+      
+      // Update filter value only (ChartRenderer will handle the data processing)
+      setFilterValues(prev => ({
+        ...prev,
+        [chartId]: {
+          ...prev[chartId],
+          [filterType]: value
+        }
+      }));
+      
+      // No API call needed - ChartRenderer handles time aggregation and StackedBarChart handles displayMode client-side
+      return;
+    }
+    
+    // Set loading state when filter changes (for non-time-aggregation cases)
     setLoadingCharts(prev => ({
       ...prev,
       [chartId]: true
@@ -897,11 +922,7 @@ export default function DashboardRenderer({
       }
     }));
     
-    // Find the chart
-    const chart = charts.find(c => c.id === chartId);
-    if (!chart) return;
-    
-    // Fetch updated data with the new filter
+    // Fetch updated data with the new filter (only for non-time-aggregation cases)
     await fetchChartDataWithFilters(chart);
     
     // Reset loading state after fetch
@@ -936,7 +957,7 @@ export default function DashboardRenderer({
   };
 
   // Generate legends for a chart based on its data and configuration
-  const updateLegends = (chartId: string, data: any[]) => {
+  const updateLegends = useCallback((chartId: string, data: any[]) => {
     const chart = charts.find(c => c.id === chartId);
     if (!chart || !data || data.length === 0) return;
     
@@ -1182,7 +1203,11 @@ export default function DashboardRenderer({
         (xField.toLowerCase().includes('date') || 
          xField.toLowerCase().includes('time') || 
          typeof data[0][xField] === 'string' && 
-         data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
+         (data[0][xField].match(/^\d{4}-\d{2}-\d{2}/) ||
+          data[0][xField].match(/^\d{4}-\d{2}$/) || // Monthly format: 2024-01
+          data[0][xField].match(/^\d{4}-Q[1-4]$/) || // Quarterly format: 2024-Q1
+          data[0][xField].match(/^\d{4}$/)) || // Yearly format: 2024
+         chart.additionalOptions?.enableTimeAggregation) // Always treat time-aggregated charts as date-based
       
       if (isDateBased) {
         // For date-based area charts, use series names or y-axis field names
@@ -1283,7 +1308,11 @@ export default function DashboardRenderer({
         (xField.toLowerCase().includes('date') || 
          xField.toLowerCase().includes('time') || 
          typeof data[0][xField] === 'string' && 
-         data[0][xField].match(/^\d{4}-\d{2}-\d{2}/));
+         (data[0][xField].match(/^\d{4}-\d{2}-\d{2}/) ||
+          data[0][xField].match(/^\d{4}-\d{2}$/) || // Monthly format: 2024-01
+          data[0][xField].match(/^\d{4}-Q[1-4]$/) || // Quarterly format: 2024-Q1
+          data[0][xField].match(/^\d{4}$/)) || // Yearly format: 2024
+         chart.additionalOptions?.enableTimeAggregation) // Always treat time-aggregated charts as date-based
       
       if (isDateBased) {
         // For date-based charts, don't use dates as legend labels
@@ -1416,7 +1445,7 @@ export default function DashboardRenderer({
       ...prev,
       [chartId]: chartLegends
     }));
-  };
+  }, [charts, legendColorMaps]);
 
   // Add a function to directly pass chart colors to ChartRenderer
   const syncLegendColors = useCallback((chartId: string, chartColorMap: Record<string, string>) => {
@@ -1625,6 +1654,32 @@ export default function DashboardRenderer({
     return charts.filter(chart => chart.section === section);
   }, [charts, section]);
 
+  // Memoize onDataLoaded callbacks for all charts to prevent recreating them
+  const onDataLoadedCallbacks = useMemo(() => {
+    const callbacks: Record<string, (data: any[]) => void> = {};
+    
+    filteredCharts.forEach(chart => {
+      callbacks[chart.id] = (data: any[]) => {
+        // Store initial data and update legends
+        if (!chartData[chart.id] || chartData[chart.id].length === 0) {
+          setChartData(prev => ({
+            ...prev,
+            [chart.id]: data
+          }));
+          updateLegends(chart.id, data);
+        }
+        
+        // Set loading to false when data is loaded
+        setLoadingCharts(prev => ({
+          ...prev,
+          [chart.id]: false
+        }));
+      };
+    });
+    
+    return callbacks;
+  }, [filteredCharts, chartData, updateLegends]);
+
   if (!isClient) {
     return null; // Return nothing during SSR
   }
@@ -1659,20 +1714,20 @@ export default function DashboardRenderer({
           className={`${(chart.width || 2) === 2 ? 'md:col-span-1' : 'md:col-span-2'}`}
         >
           <ChartCard 
-            title={chart.title}
-            description={chart.subtitle}
-            accentColor="blue"
-            onExpandClick={() => toggleChartExpanded(chart.id)}
-            onDownloadClick={() => downloadCSV(chart)}
-            onScreenshotClick={() => handleChartScreenshot(chart)}
-            isDownloading={downloadingCharts[chart.id]}
-            isScreenshotting={screenshottingCharts[chart.id]}
-            isLoading={false}
-            legendWidth="1/5"
-            className="md:h-[500px] h-auto"
-            id={`chart-card-${chart.id}`}
-            chart={chart}
-            filterValues={filterValues[chart.id]}
+          title={chart.title}
+          description={chart.subtitle}
+          accentColor="blue"
+          onExpandClick={() => toggleChartExpanded(chart.id)}
+          onDownloadClick={() => downloadCSV(chart)}
+          onScreenshotClick={() => handleChartScreenshot(chart)}
+          isDownloading={downloadingCharts[chart.id]}
+          isScreenshotting={screenshottingCharts[chart.id]}
+          isLoading={false}
+          legendWidth="1/5"
+          className="md:h-[500px] h-auto"
+          id={`chart-card-${chart.id}`}
+          chart={chart}
+          filterValues={filterValues[chart.id]}
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={
@@ -1760,22 +1815,7 @@ export default function DashboardRenderer({
             <ChartRenderer 
               chartConfig={chart} 
               preloadedData={chartData[chart.id] || []}
-              onDataLoaded={(data: any[]) => {
-                // Store initial data and update legends
-                if (!chartData[chart.id] || chartData[chart.id].length === 0) {
-                  setChartData(prev => ({
-                    ...prev,
-                    [chart.id]: data
-                  }));
-                updateLegends(chart.id, data);
-                }
-                
-                // Set loading to false when data is loaded
-                setLoadingCharts(prev => ({
-                  ...prev,
-                  [chart.id]: false
-                }));
-              }}
+              onDataLoaded={onDataLoadedCallbacks[chart.id]}
               isExpanded={expandedCharts[chart.id]}
               onCloseExpanded={() => toggleChartExpanded(chart.id)}
               // Pass filter values and handlers to ChartRenderer
