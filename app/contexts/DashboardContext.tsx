@@ -117,10 +117,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const loadUserData = async () => {
     setIsLoading(true);
+    console.log('🔄 Starting loadUserData...');
     try {
+      console.log('📡 Fetching from /api/user-data...');
       const response = await fetch('/api/user-data');
+      console.log('📡 Response status:', response.status, response.ok);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('📡 Full API response:', data);
         
         if (data.success && data.userData) {
           console.log('📥 Loading normalized user data from S3');
@@ -207,13 +212,25 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             textboxesCount: d.textboxes.length
           })));
           
+          console.log('🎯 Setting dashboards state with', dashboardsWithDates.length, 'dashboards');
           setDashboards(dashboardsWithDates);
+          console.log('✅ Dashboard state updated successfully');
+        } else {
+          console.log('❌ API call was not successful');
+          console.log('Response status:', response.status);
+          console.log('Response text:', await response.text());
         }
+      } else {
+        console.log('❌ API response not ok, status:', response.status);
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
       }
     } catch (error) {
-      console.error('Failed to load user data:', error);
+      console.error('❌ Failed to load user data:', error);
+      console.error('Error details:', error);
       loadDefaultDashboards(); // Fallback to default dashboards
     } finally {
+      console.log('🔄 Setting isLoading to false');
       setIsLoading(false);
     }
   };
