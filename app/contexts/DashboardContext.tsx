@@ -124,11 +124,18 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         
         if (data.success && data.userData) {
           console.log('📥 Loading normalized user data from S3');
-          console.log('📊 Raw data:', {
+          console.log('📊 Raw S3 data counts:', {
             dashboards: data.userData.dashboards?.length || 0,
             charts: data.userData.charts?.length || 0,
             textboxes: data.userData.textboxes?.length || 0,
-            userName: data.userData.name
+            userName: data.userData.name || 'Unknown'
+          });
+          
+          // Add debugging for auth state
+          console.log('🔐 Auth state during load:', {
+            hasUserData: !!data.userData,
+            hasCharts: !!data.userData.charts,
+            isArray: Array.isArray(data.userData.charts)
           });
           
           // Store the user name from S3 data
