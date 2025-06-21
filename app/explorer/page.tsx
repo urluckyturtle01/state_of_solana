@@ -37,110 +37,53 @@ export default function ExplorerPage() {
   const [selectedParameters, setSelectedParameters] = useState<Record<string, Record<string, string>>>({});
   const [dateColumnMapping, setDateColumnMapping] = useState<Record<string, string>>({});
 
-  // Fetch APIs from S3 charts
+  // Setup cache and fetch APIs
   useEffect(() => {
-    const fetchApis = async () => {
+    const setupCacheAndFetchApis = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        // Fetch all chart configurations from S3
-        const response = await fetch('/api/charts');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch charts: ${response.statusText}`);
+        // First try to fetch from JSON cache file
+        let response = await fetch('/api-cache.json');
+        let apisArray = [];
+        
+        if (response.ok) {
+          apisArray = await response.json();
         }
         
-        const data = await response.json();
-        const charts = data.charts || [];
-        
-        // Extract unique APIs from charts
-        const apiMap = new Map<string, ApiConfig>();
-        
-        charts.forEach((chart: any) => {
-          if (chart.apiEndpoint) {
-            const apiId = `${chart.apiEndpoint}_${chart.method || 'GET'}`;
-            
-            if (!apiMap.has(apiId)) {
-              apiMap.set(apiId, {
-                id: apiId,
-                name: chart.title || chart.apiEndpoint.split('/').pop() || 'API',
-                endpoint: chart.apiEndpoint,
-                method: chart.method || 'GET',
-                columns: [],
-                chartTitle: chart.title,
-                apiKey: chart.apiKey,
-                additionalOptions: chart.additionalOptions,
-                page: chart.page
-              });
-            }
-            
-            // Add columns from data mapping
-            const apiConfig = apiMap.get(apiId)!;
-            
-            // Extract columns from different mapping types
-            if (chart.xAxisMapping?.column) {
-              apiConfig.columns.push(chart.xAxisMapping.column);
-            }
-            if (chart.yAxisMapping?.column) {
-              apiConfig.columns.push(chart.yAxisMapping.column);
-            }
-            
-            // Handle dataMapping object
-            if (chart.dataMapping) {
-              if (typeof chart.dataMapping === 'object') {
-                Object.entries(chart.dataMapping).forEach(([key, mapping]: [string, any]) => {
-                  if (typeof mapping === 'string') {
-                    apiConfig.columns.push(mapping);
-                  } else if (mapping?.column) {
-                    apiConfig.columns.push(mapping.column);
-                  } else if (mapping?.field) {
-                    apiConfig.columns.push(mapping.field);
-                  }
-                  
-                  // Handle array of field mappings (for yAxis)
-                  if (Array.isArray(mapping)) {
-                    mapping.forEach((item: any) => {
-                      if (item?.field) {
-                        apiConfig.columns.push(item.field);
-                      }
-                      if (item?.column) {
-                        apiConfig.columns.push(item.column);
-                      }
-                    });
-                  }
-                });
-                
-                // Add direct string values from dataMapping
-                if (chart.dataMapping.xAxis && typeof chart.dataMapping.xAxis === 'string') {
-                  apiConfig.columns.push(chart.dataMapping.xAxis);
-                }
-                if (chart.dataMapping.yAxis && typeof chart.dataMapping.yAxis === 'string') {
-                  apiConfig.columns.push(chart.dataMapping.yAxis);
-                }
-                if (chart.dataMapping.groupBy && typeof chart.dataMapping.groupBy === 'string') {
-                  apiConfig.columns.push(chart.dataMapping.groupBy);
-                }
-              }
-            }
-            
-            // Remove duplicates and empty values
-            apiConfig.columns = [...new Set(apiConfig.columns.filter(col => col && col.trim()))];
+        // If cache is empty or failed to load, setup/update the cache
+        if (!Array.isArray(apisArray) || apisArray.length === 0) {
+          console.log('Cache is empty, initializing...');
+          
+          // Try to setup the cache first
+          await fetch('/api/setup-cache', { method: 'POST' });
+          
+          // If setup fails, try direct update
+          const updateResponse = await fetch('/api/update-api-cache', { method: 'POST' });
+          if (!updateResponse.ok) {
+            throw new Error('Failed to update API cache');
           }
-        });
-        
-        // Convert to array and sort by name
-        const apisArray = Array.from(apiMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+          
+          // Fetch the updated cache
+          response = await fetch('/api-cache.json');
+          if (!response.ok) {
+            throw new Error(`Failed to fetch updated API cache: ${response.statusText}`);
+          }
+          
+          apisArray = await response.json();
+        }
         
         setApis(apisArray);
       } catch (error) {
-        console.error('Failed to fetch APIs:', error);
+        console.error('Failed to fetch APIs from cache:', error);
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchApis();
+    setupCacheAndFetchApis();
   }, []);
 
   // Get parameter values for an API (selected or default)
