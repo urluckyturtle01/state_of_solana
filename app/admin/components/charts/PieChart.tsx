@@ -70,20 +70,8 @@ const PieChart: React.FC<PieChartProps> = ({
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [legendItems, setLegendItems] = useState<Array<{
-    id: string;
-    label: string;
-    color: string;
-    value?: number;
-    percentage: number;
-  }>>([]);
+  const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number, percentage?: number}>>([]);
   
-  // Add state to track client-side rendering
-  const [isClient, setIsClient] = useState(false);
-  
-  // Add state for modal filter values
-  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
-
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
@@ -96,6 +84,12 @@ const PieChart: React.FC<PieChartProps> = ({
     top: 0,
     data: null
   });
+  
+  // Add state for filter values in modal
+  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
+  
+  // Add state to track client-side rendering
+  const [isClient, setIsClient] = useState(false);
 
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
@@ -104,76 +98,48 @@ const PieChart: React.FC<PieChartProps> = ({
   const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Extract mapping fields
-  const labelField = chartConfig.dataMapping.xAxis;
-  const valueField = chartConfig.dataMapping.yAxis;
+  const xField = chartConfig.dataMapping.xAxis;
+  const yField = chartConfig.dataMapping.yAxis;
   
   // For type safety, ensure we use string values for indexing
-  const xKey = typeof labelField === 'string' ? labelField : labelField[0];
-  const yField = typeof valueField === 'string' ? valueField : 
-                (Array.isArray(valueField) ? (typeof valueField[0] === 'string' ? valueField[0] : valueField[0].field) : '');
+  const xKey = typeof xField === 'string' ? xField : xField[0];
+  const yKey = typeof yField === 'string' ? yField : (Array.isArray(yField) ? (typeof yField[0] === 'string' ? yField[0] : yField[0].field) : '');
   
-  // Extract unit if available from YAxisConfig or prop
-  const yUnit = typeof valueField === 'string' ? yAxisUnit : 
-               (Array.isArray(valueField) && valueField.length > 0 && typeof valueField[0] !== 'string' ? 
-               valueField[0].unit : yAxisUnit);
+  // Handle unit from mapping configuration
+  const yUnit = typeof yField === 'string' ? yAxisUnit : (Array.isArray(yField) && yField.length > 0 && typeof yField[0] !== 'string' ? yField[0].unit : yAxisUnit);
   
-  // For data access, we need just the field name
-  const yKey = yField;
+  // Ensure keys are valid
+  const actualXKey = xKey;
+  const actualYKey = yKey;
 
   // Helper function to find matching field with flexible matching
-  const findMatchingField = useCallback((obj: any, fieldName: string): string | null => {
-    if (!obj || !fieldName) return null;
+  const findMatchingField = useCallback((targetField: string): string | null => {
+    if (!data || data.length === 0) return null;
     
-    // Direct match
-    if (fieldName in obj) return fieldName;
+    const availableFields = Object.keys(data[0]);
     
-    // Case insensitive match
-    const lowerField = fieldName.toLowerCase();
-    const keys = Object.keys(obj);
-    
-    // First try exact match with lowercase
-    for (const key of keys) {
-      if (key.toLowerCase() === lowerField) return key;
+    // Exact match first
+    if (availableFields.includes(targetField)) {
+      return targetField;
     }
     
-    // Then try replacing spaces with underscores and vice versa
-    const spaceToUnderscore = lowerField.replace(/ /g, '_');
-    const underscoreToSpace = lowerField.replace(/_/g, ' ');
+    // Case-insensitive match
+    const lowerTarget = targetField.toLowerCase();
+    const caseInsensitiveMatch = availableFields.find(field => field.toLowerCase() === lowerTarget);
+    if (caseInsensitiveMatch) {
+      return caseInsensitiveMatch;
+    }
     
-    for (const key of keys) {
-      const lowerKey = key.toLowerCase();
-      if (lowerKey === spaceToUnderscore || lowerKey === underscoreToSpace) {
-        return key;
-      }
+    // Partial match (contains)
+    const partialMatch = availableFields.find(field => 
+      field.toLowerCase().includes(lowerTarget) || lowerTarget.includes(field.toLowerCase())
+    );
+    if (partialMatch) {
+      return partialMatch;
     }
     
     return null;
-  }, []);
-  
-  // Get actual field names from data (with fallback matching)
-  const actualXKey = useMemo(() => {
-    if (!data || data.length === 0) return xKey;
-    const matchingField = findMatchingField(data[0], xKey);
-    return matchingField || xKey;
-  }, [data, xKey, findMatchingField]);
-  
-  const actualYKey = useMemo(() => {
-    if (!data || data.length === 0) return yKey;
-    const matchingField = findMatchingField(data[0], yKey);
-    return matchingField || yKey;
-  }, [data, yKey, findMatchingField]);
-  
-  // Log field mapping for debugging
-  console.log('PieChart field mapping:', {
-    chartTitle: chartConfig.title,
-    configuredXKey: xKey,
-    configuredYKey: yKey,
-    actualXKey,
-    actualYKey,
-    dataAvailable: data && data.length > 0,
-    availableFields: data && data.length > 0 ? Object.keys(data[0]) : [],
-    yUnit
-  });
+  }, [data]);
 
   // Format value with appropriate units
   const formatValue = useCallback((value: number, unit?: string) => {
@@ -209,14 +175,6 @@ const PieChart: React.FC<PieChartProps> = ({
       return [];
     }
     
-    console.log('PieChart data processing:', {
-      dataLength: data.length,
-      actualXKey,
-      actualYKey,
-      sampleData: data.slice(0, 2),
-      availableFields: data.length > 0 ? Object.keys(data[0]) : []
-    });
-    
     // Calculate total value for percentage (excluding hidden series)
     const filteredData = data.filter(item => {
       const labelValue = item[actualXKey];
@@ -248,12 +206,12 @@ const PieChart: React.FC<PieChartProps> = ({
           label: String(labelValue).trim(), // Trim whitespace
           value: numericValue,
           percentage: totalValue > 0 ? (numericValue / totalValue) * 100 : 0,
-      originalData: item
+          originalData: item
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null) // Filter out null entries
-    .filter(item => item.value > 0)  // Filter out zero values
-    .sort((a, b) => b.value - a.value); // Sort by value (descending)
+      .filter(item => item.value > 0)  // Filter out zero values
+      .sort((a, b) => b.value - a.value); // Sort by value (descending)
   }, [data, actualXKey, actualYKey, hiddenSeriesState]);
 
   // Create color scale based on data
@@ -262,8 +220,6 @@ const PieChart: React.FC<PieChartProps> = ({
     const dataLabels = data
       .filter(d => d[actualXKey] !== null && d[actualXKey] !== undefined && d[actualXKey] !== '')
       .map(d => String(d[actualXKey]).trim());
-    
-    console.log('PieChart color scale labels:', dataLabels);
     
     // Use external color map if available, otherwise generate from color palette
     const colorValues = dataLabels.map((label, index) => 
@@ -422,8 +378,11 @@ const PieChart: React.FC<PieChartProps> = ({
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
     
-    // Convert only snake_case to space-separated, preserve dashes
-    const spaceSeparated = fieldName.replace(/_/g, ' ');
+    // Convert snake_case or kebab-case to space-separated
+    const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
+    
+    // Always capitalize the first letter of the entire string
+    if (spaceSeparated.length === 0) return '';
     
     // Split into words and capitalize each word
     return spaceSeparated
@@ -454,17 +413,16 @@ const PieChart: React.FC<PieChartProps> = ({
           id: label,
           label: formatFieldName(label),
           color: colorScale(label) as string,
-          value,
-          percentage
+          value: value,
+          percentage: percentage
         };
       })
-        .sort((a, b) => b.value - a.value);
+      .sort((a, b) => b.value - a.value);
     setLegendItems(allLegendItems);
   }, [data, xKey, yKey, colorScale]);
 
   // Enhanced function to handle modal filter changes
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`Modal filter changed: ${key} = ${value}`);
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -495,7 +453,6 @@ const PieChart: React.FC<PieChartProps> = ({
       return handleModalFilterChange(key, value);
     }
     
-    console.log(`Filter changed: ${key} = ${value}`);
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -827,7 +784,7 @@ const PieChart: React.FC<PieChartProps> = ({
                   {legendItems.map(item => (
                     <LegendItem 
                       key={item.id} 
-                      label={`${item.label} (${item.percentage.toFixed(1)}%)`}
+                      label={`${item.label} (${(item.percentage || 0).toFixed(1)}%)`}
                       color={item.color}
                       shape="square"
                       onClick={() => handleLegendClick(item.id)}

@@ -800,8 +800,6 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`Modal filter changed: ${key} = ${value}`);
-    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
@@ -851,14 +849,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
     if (isExpanded) {
-      console.log('Modal opened, syncing brush domains');
       // When modal opens, sync the brush domains
       setModalBrushDomain(brushDomain);
       setIsModalBrushActive(isBrushActive);
       
       // Also sync filtered data
       if (isBrushActive && filteredData.length > 0) {
-        console.log('Syncing filtered data to modal:', filteredData.length, 'items');
         setModalFilteredData(filteredData);
       } else {
         setModalFilteredData(data);
@@ -1281,10 +1277,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
 
   // Update hidden series when prop changes
   useEffect(() => {
-    console.log('DualAxisChart: hiddenSeries prop changed:', hiddenSeries);
-    console.log('DualAxisChart: fields are:', fields);
     setHiddenSeriesState(hiddenSeries || []);
-  }, [hiddenSeries, fields]);
+  }, [hiddenSeries]);
 
   // Cleanup debounce timer on unmount
   useEffect(() => {

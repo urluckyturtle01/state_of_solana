@@ -1,75 +1,89 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import DashboardRenderer from './components/dashboard-renderer';
+
+// Performance monitoring component
+const PerformanceMonitor = () => {
+  useEffect(() => {
+    // Track page load timing
+    const pageStartTime = performance.now();
+    console.log(`🏁 [Admin Page] Page component mounted at ${pageStartTime.toFixed(2)}ms`);
+    
+    // Track DOM ready state
+    const trackDOMReady = () => {
+      if (document.readyState === 'complete') {
+        const domReadyTime = performance.now();
+        console.log(`📄 [Admin Page] DOM fully loaded at ${domReadyTime.toFixed(2)}ms`);
+      }
+    };
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', trackDOMReady);
+    } else {
+      trackDOMReady();
+    }
+    
+    // Track when all resources are loaded
+    const handleLoad = () => {
+      const loadCompleteTime = performance.now();
+      console.log(`🎯 [Admin Page] All resources loaded at ${loadCompleteTime.toFixed(2)}ms`);
+      
+      // Navigation timing API for more detailed metrics
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      if (navigation) {
+        console.log(`📊 [Admin Page] DETAILED TIMING BREAKDOWN:`);
+        console.log(`   🌐 DNS Lookup: ${(navigation.domainLookupEnd - navigation.domainLookupStart).toFixed(2)}ms`);
+        console.log(`   🔗 TCP Connect: ${(navigation.connectEnd - navigation.connectStart).toFixed(2)}ms`);
+        console.log(`   📡 Request: ${(navigation.responseStart - navigation.requestStart).toFixed(2)}ms`);
+        console.log(`   📥 Response: ${(navigation.responseEnd - navigation.responseStart).toFixed(2)}ms`);
+        console.log(`   📄 DOM Parse: ${(navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart).toFixed(2)}ms`);
+        console.log(`   🎨 Load Complete: ${(navigation.loadEventEnd - navigation.loadEventStart).toFixed(2)}ms`);
+        console.log(`   🏁 Total Load Time: ${(navigation.loadEventEnd - navigation.fetchStart).toFixed(2)}ms`);
+      }
+    };
+    
+    if (document.readyState === 'complete') {
+      handleLoad();
+    } else {
+      window.addEventListener('load', handleLoad);
+    }
+    
+    return () => {
+      document.removeEventListener('DOMContentLoaded', trackDOMReady);
+      window.removeEventListener('load', handleLoad);
+    };
+  }, []);
+  
+  return null;
+};
 
 export default function AdminDashboard() {
+  const [pageId] = useState('admin');
+  const [mountTime] = useState(performance.now());
+  
+  useEffect(() => {
+    console.log(`🚀 [Admin Page] AdminPage component initialized at ${mountTime.toFixed(2)}ms`);
+    
+    // Track when component finishes rendering
+    const renderCompleteTime = performance.now();
+    console.log(`✅ [Admin Page] Initial render complete at ${renderCompleteTime.toFixed(2)}ms (${(renderCompleteTime - mountTime).toFixed(2)}ms since mount)`);
+  }, [mountTime]);
+
   return (
-    <div className="space-y-8 pt-10">
+    <div className="min-h-screen bg-gray-50">
+      <PerformanceMonitor />
       
-      <div>
-        <h2 className="text-2xl font-semibold text-white mb-6">Dashboard Management</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ActionCard 
-            title="Create Chart" 
-            description="Design and deploy new analytics visualizations" 
-            link="/admin/chart-creator"
-            accentColor="indigo"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            }
-          />
-          
-          <ActionCard 
-            title="Create Counter" 
-            description="Add dynamic metric counters to your dashboards"
-            link="/admin/create-counter"
-            accentColor="green"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-              </svg>
-            }
-          />
-          
-          <ActionCard 
-            title="Manage Dashboard" 
-            description="Edit and organize charts and counters across all pages" 
-            link="/admin/manage-dashboard"
-            accentColor="blue"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            }
-          />
-          
-          <ActionCard 
-            title="Create Menu Section" 
-            description="Add new menu sections and generate folder structure" 
-            link="/admin/menu-creator"
-            accentColor="purple"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-              </svg>
-            }
-          />
-          
-          <ActionCard 
-            title="Manage Menus" 
-            description="Edit, delete, or organize menu sections and pages" 
-            link="/admin/menu-manager"
-            accentColor="amber"
-            icon={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-              </svg>
-            }
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="mt-2 text-gray-600">
+            Comprehensive analytics and insights for Solana ecosystem monitoring.
+          </p>
         </div>
+        
+        <DashboardRenderer pageId={pageId} />
       </div>
     </div>
   );

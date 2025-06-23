@@ -74,8 +74,11 @@ const ChartRenderer = React.memo(dynamic(() => import('./ChartRenderer'), {
   )
 }));
 
-// Enhanced preload charts with better parallel processing
+// Enhanced preload charts with better parallel processing and timing
 const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
+  const startTime = performance.now();
+  console.log(`⏱️ [${pageId}] Starting chart config preload...`);
+  
   // Check if we have cached charts for this page
   if (PAGE_CONFIG_CACHE[pageId]) {
     const cachedConfig = PAGE_CONFIG_CACHE[pageId];
@@ -83,33 +86,106 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
     
     // Use cached charts if not expired
     if (now - cachedConfig.timestamp < cachedConfig.expiresIn) {
-      console.log(`Using cached chart configs for page ${pageId}`);
+      const cacheTime = performance.now() - startTime;
+      console.log(`⚡ [${pageId}] Using cached chart configs (${cacheTime.toFixed(2)}ms)`);
       return Promise.resolve(cachedConfig.charts);
     }
   }
   
   try {
     // Fetch charts from API with optimized timeout and parallel processing
+    const fetchStartTime = performance.now();
+    console.log(`🌐 [${pageId}] Fetching chart configs from API...`);
+    
+    // Create abort controller with aggressive timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased timeout for reliability
+    const timeoutId = setTimeout(() => {
+      console.warn(`⏰ [${pageId}] Config API timeout after 2s, aborting...`);
+      controller.abort();
+    }, 2000); // Reduced from 5000ms to 2000ms for faster fallback
     
-    const charts = await getChartConfigsByPage(pageId);
-    clearTimeout(timeoutId);
-    
-    // Cache the charts for future use
-    PAGE_CONFIG_CACHE[pageId] = {
-      charts,
-      timestamp: Date.now(),
-      expiresIn: CACHE_DURATION
-    };
-    
-    return charts;
+    try {
+      // Use the optimized getChartConfigsByPage function
+      const charts = await getChartConfigsByPage(pageId);
+      clearTimeout(timeoutId);
+      
+      const fetchTime = performance.now() - fetchStartTime;
+      console.log(`✅ [${pageId}] Chart configs fetched (${fetchTime.toFixed(2)}ms) - ${charts.length} charts`);
+      
+      // Cache the charts for future use
+      PAGE_CONFIG_CACHE[pageId] = {
+        charts,
+        timestamp: Date.now(),
+        expiresIn: CACHE_DURATION
+      };
+      
+      const totalTime = performance.now() - startTime;
+      console.log(`🎯 [${pageId}] Chart config preload complete (${totalTime.toFixed(2)}ms total)`);
+      
+      return charts;
+    } catch (apiError) {
+      clearTimeout(timeoutId);
+      
+      // If aborted due to timeout, try to get from cache or return fallback
+      if (controller.signal.aborted) {
+        console.warn(`⏰ [${pageId}] API timeout - checking for fallback options...`);
+        
+        // Check if we have expired cache that we can use
+        if (PAGE_CONFIG_CACHE[pageId]) {
+          const expiredCharts = PAGE_CONFIG_CACHE[pageId].charts;
+          console.log(`🔄 [${pageId}] Using expired cache as fallback - ${expiredCharts.length} charts`);
+          return expiredCharts;
+        }
+        
+        // Try localStorage as final fallback
+        if (typeof window !== 'undefined') {
+          try {
+            const storageKey = `solana-charts-${pageId}`;
+            const storedCharts = localStorage.getItem(storageKey);
+            if (storedCharts) {
+              const cachedData = JSON.parse(storedCharts);
+              if (cachedData.charts && Array.isArray(cachedData.charts)) {
+                console.log(`💾 [${pageId}] Using localStorage fallback - ${cachedData.charts.length} charts`);
+                return cachedData.charts;
+              }
+            }
+          } catch (storageError) {
+            console.warn(`Failed to read localStorage fallback:`, storageError);
+          }
+        }
+        
+        // Return empty array if no fallback available
+        console.warn(`⚠️ [${pageId}] No fallback available, returning empty charts`);
+        return [];
+      }
+      
+      throw apiError; // Re-throw if not a timeout
+    }
   } catch (error) {
-    console.error(`Error preloading charts for page ${pageId}:`, error);
+    const errorTime = performance.now() - startTime;
+    console.error(`❌ [${pageId}] Error preloading charts (${errorTime.toFixed(2)}ms):`, error);
     
     // Return cached charts even if expired in case of error
     if (PAGE_CONFIG_CACHE[pageId]) {
+      console.log(`🔄 [${pageId}] Falling back to expired cache`);
       return PAGE_CONFIG_CACHE[pageId].charts;
+    }
+    
+    // Try localStorage as final fallback
+    if (typeof window !== 'undefined') {
+      try {
+        const storageKey = `solana-charts-${pageId}`;
+        const storedCharts = localStorage.getItem(storageKey);
+        if (storedCharts) {
+          const cachedData = JSON.parse(storedCharts);
+          if (cachedData.charts && Array.isArray(cachedData.charts)) {
+            console.log(`💾 [${pageId}] Emergency localStorage fallback - ${cachedData.charts.length} charts`);
+            return cachedData.charts;
+          }
+        }
+      } catch (storageError) {
+        console.warn(`Failed to read emergency localStorage fallback:`, storageError);
+      }
     }
     
     return [];
@@ -118,10 +194,16 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
 
 // Enhanced batch fetch function with improved parallel execution and error resilience
 const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<string, Record<string, string>>, enableCaching: boolean) => {
+  const batchStartTime = performance.now();
+  console.log(`⏱️ Starting batch data fetch for ${charts.length} charts...`);
+  
   // Process all charts in parallel with larger batch sizes
-  const chartPromises = charts.map(chart => {
+  const chartPromises = charts.map((chart, index) => {
+    const chartStartTime = performance.now();
     const chartFilters = filterValues[chart.id] || {};
     const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
+    
+    console.log(`🔍 [${index + 1}/${charts.length}] Processing chart: ${chart.title}`);
     
     // Check cache first
     if (CHART_DATA_CACHE[cacheKey]) {
@@ -130,38 +212,51 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
       
       // Use cached data if not expired
       if (now - cachedItem.timestamp < cachedItem.expiresIn) {
+        const cacheTime = performance.now() - chartStartTime;
+        console.log(`⚡ [${chart.title}] Using cached data (${cacheTime.toFixed(2)}ms)`);
         return Promise.resolve({
           chartId: chart.id,
           data: cachedItem.data,
-          fromCache: true
+          fromCache: true,
+          loadTime: cacheTime
         });
       }
     }
     
     // Fetch from API if not in cache
+    console.log(`🌐 [${chart.title}] Fetching from API...`);
     return fetchChartData(chart, chartFilters, enableCaching)
-      .then(data => ({
-        chartId: chart.id,
-        data,
-        fromCache: false
-      }))
+      .then(data => {
+        const loadTime = performance.now() - chartStartTime;
+        console.log(`✅ [${chart.title}] API data loaded (${loadTime.toFixed(2)}ms) - ${data?.length || 0} rows`);
+        return {
+          chartId: chart.id,
+          data,
+          fromCache: false,
+          loadTime
+        };
+      })
       .catch(error => {
-        console.error(`Error fetching data for chart ${chart.id}:`, error);
+        const errorTime = performance.now() - chartStartTime;
+        console.error(`❌ [${chart.title}] Error fetching data (${errorTime.toFixed(2)}ms):`, error);
         
         // Try to use cached data as fallback if available, even if expired
         if (CHART_DATA_CACHE[cacheKey]) {
+          console.log(`🔄 [${chart.title}] Using expired cache as fallback`);
           return {
             chartId: chart.id,
             data: CHART_DATA_CACHE[cacheKey].data,
             fromCache: true,
-            error
+            error,
+            loadTime: errorTime
           };
         }
         
         return {
           chartId: chart.id,
           data: [],
-          error
+          error,
+          loadTime: errorTime
         };
       });
   });
@@ -169,19 +264,34 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
   // Wait for all chart data fetches to complete in parallel
   const allResults = await Promise.allSettled(chartPromises);
   
+  const batchTime = performance.now() - batchStartTime;
+  console.log(`🎯 Batch data fetch complete (${batchTime.toFixed(2)}ms total)`);
+  
   // Process results and handle any failures
-  return allResults.map((result, index) => {
+  const processedResults = allResults.map((result, index) => {
     if (result.status === 'fulfilled') {
-      return result.value;
+      const chartResult = result.value;
+      console.log(`📊 [${charts[index].title}] Result: ${chartResult.fromCache ? 'cached' : 'fresh'} data, ${chartResult.loadTime?.toFixed(2)}ms`);
+      return chartResult;
     } else {
-      console.error(`Failed to fetch data for chart ${charts[index].id}:`, result.reason);
+      console.error(`💥 [${charts[index].title}] Failed to fetch data:`, result.reason);
       return {
         chartId: charts[index].id,
         data: [],
-        error: result.reason
+        error: result.reason,
+        loadTime: 0
       };
     }
   });
+  
+  // Summary statistics
+  const totalLoadTime = processedResults.reduce((sum, result) => sum + (result.loadTime || 0), 0);
+  const cachedCount = processedResults.filter(r => r.fromCache).length;
+  const errorCount = processedResults.filter(r => (r as any).error).length;
+  
+  console.log(`📈 Batch Summary: ${charts.length} charts, ${cachedCount} cached, ${errorCount} errors, ${totalLoadTime.toFixed(2)}ms cumulative, ${batchTime.toFixed(2)}ms wall time`);
+  
+  return processedResults;
 };
 
 // Simplified fetch function to reduce overhead
@@ -755,11 +865,24 @@ export default function DashboardRenderer({
     let mounted = true;
 
     async function loadCharts() {
+      const totalStartTime = performance.now();
+      console.log(`🚀 [${pageId}] Starting dashboard load sequence...`);
+      
       try {
-        // Start loading charts config immediately
+        // Phase 1: Load chart configurations
+        const configStartTime = performance.now();
+        console.log(`📋 [${pageId}] Phase 1: Loading chart configurations...`);
+        
         const loadedCharts = await initializeCharts();
         
+        const configTime = performance.now() - configStartTime;
+        console.log(`✅ [${pageId}] Phase 1 complete (${configTime.toFixed(2)}ms) - ${loadedCharts.length} charts loaded`);
+        
         if (!mounted) return;
+        
+        // Phase 2: Initialize chart states
+        const stateInitStartTime = performance.now();
+        console.log(`⚙️ [${pageId}] Phase 2: Initializing chart states...`);
         
         setCharts(loadedCharts);
         
@@ -776,14 +899,27 @@ export default function DashboardRenderer({
         batchUpdateChartStates(initialChartStates);
         setChartData(initialChartData);
         
-        // Start parallel data loading for all charts immediately
+        const stateInitTime = performance.now() - stateInitStartTime;
+        console.log(`✅ [${pageId}] Phase 2 complete (${stateInitTime.toFixed(2)}ms) - States initialized for ${loadedCharts.length} charts`);
+        
+        // Phase 3: Load chart data in parallel
+        const dataLoadStartTime = performance.now();
+        console.log(`📊 [${pageId}] Phase 3: Loading chart data in parallel...`);
+        
         const dataLoadPromise = wrappedBatchFetchChartData(loadedCharts, filterValues);
         
         // Process results as they come in
         const results = await dataLoadPromise;
         
+        const dataLoadTime = performance.now() - dataLoadStartTime;
+        console.log(`✅ [${pageId}] Phase 3 complete (${dataLoadTime.toFixed(2)}ms) - Data loaded for ${results.length} charts`);
+        
         if (!mounted) return;
             
+        // Phase 4: Process results and update UI
+        const uiUpdateStartTime = performance.now();
+        console.log(`🎨 [${pageId}] Phase 4: Updating UI with loaded data...`);
+        
         // Process all results in batch
         const newChartData: Record<string, any[]> = {};
         const loadingUpdates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
@@ -806,8 +942,23 @@ export default function DashboardRenderer({
         if (allLoaded) {
           setIsPageLoading(false);
         }
+        
+        const uiUpdateTime = performance.now() - uiUpdateStartTime;
+        console.log(`✅ [${pageId}] Phase 4 complete (${uiUpdateTime.toFixed(2)}ms) - UI updated`);
+        
+        // Final summary
+        const totalTime = performance.now() - totalStartTime;
+        console.log(`🎯 [${pageId}] DASHBOARD LOAD COMPLETE!`);
+        console.log(`⏱️ [${pageId}] TIMING BREAKDOWN:`);
+        console.log(`   📋 Config Load: ${configTime.toFixed(2)}ms (${(configTime/totalTime*100).toFixed(1)}%)`);
+        console.log(`   ⚙️ State Init: ${stateInitTime.toFixed(2)}ms (${(stateInitTime/totalTime*100).toFixed(1)}%)`);
+        console.log(`   📊 Data Load: ${dataLoadTime.toFixed(2)}ms (${(dataLoadTime/totalTime*100).toFixed(1)}%)`);
+        console.log(`   🎨 UI Update: ${uiUpdateTime.toFixed(2)}ms (${(uiUpdateTime/totalTime*100).toFixed(1)}%)`);
+        console.log(`   🏁 TOTAL: ${totalTime.toFixed(2)}ms`);
+        
       } catch (error) {
-        console.error(`Error loading charts for page ${pageId}:`, error);
+        const errorTime = performance.now() - totalStartTime;
+        console.error(`💥 [${pageId}] Error loading charts (${errorTime.toFixed(2)}ms):`, error);
         if (mounted) {
           setIsPageLoading(false);
         }
@@ -1712,6 +1863,63 @@ export default function DashboardRenderer({
     
     return callbacks;
   }, [filteredCharts, chartData, updateLegends, updateChartState]);
+
+  // Add listener for background chart config updates
+  useEffect(() => {
+    if (!isClient) return;
+    
+    const handleChartConfigsUpdated = (event: CustomEvent) => {
+      const { pageId: updatedPageId, charts: updatedCharts } = event.detail;
+      
+      if (updatedPageId === pageId) {
+        console.log(`🔄 [Config Load] Background config update received for page ${pageId} - ${updatedCharts.length} charts`);
+        
+        // Only update if we currently have no charts or fewer charts
+        if (charts.length === 0 || updatedCharts.length > charts.length) {
+          console.log(`✅ [Config Load] Applying background config update`);
+          setCharts(updatedCharts);
+          
+          // Re-initialize states for new charts
+          const initialChartStates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
+          const initialChartData: Record<string, any[]> = {};
+          
+                     updatedCharts.forEach((chart: ChartConfig) => {
+             if (!getChartState(chart.id, 'loading')) {
+               initialChartStates[chart.id] = { loading: true };
+               initialChartData[chart.id] = [];
+             }
+           });
+          
+          if (Object.keys(initialChartStates).length > 0) {
+            batchUpdateChartStates(initialChartStates);
+            setChartData(prev => ({ ...prev, ...initialChartData }));
+            
+            // Load data for new charts
+            wrappedBatchFetchChartData(updatedCharts, filterValues).then(results => {
+              const newChartData: Record<string, any[]> = {};
+              const loadingUpdates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
+              
+              results.forEach(result => {
+                newChartData[result.chartId] = result.data || [];
+                loadingUpdates[result.chartId] = { loading: false };
+              });
+              
+              setChartData(prev => ({ ...prev, ...newChartData }));
+              batchUpdateChartStates(loadingUpdates);
+            }).catch(error => {
+              console.error('Error loading data for updated charts:', error);
+            });
+          }
+        }
+      }
+    };
+    
+    window.addEventListener('chartConfigsUpdated', handleChartConfigsUpdated as EventListener);
+    
+    return () => {
+      window.removeEventListener('chartConfigsUpdated', handleChartConfigsUpdated as EventListener);
+    };
+  }, [isClient, pageId, charts.length, getChartState, batchUpdateChartStates, setChartData, wrappedBatchFetchChartData, filterValues]);
 
   if (!isClient) {
     return null; // Return nothing during SSR

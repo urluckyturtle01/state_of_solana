@@ -126,6 +126,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
 
+  // Debounce timer ref for filter changes
+  const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
+
   // Extract mapping fields
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
@@ -249,79 +252,73 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [propDisplayMode]);
 
-  // Update internal displayMode when filter changes
+  // Update display mode when props or filter values change
   useEffect(() => {
-    // Determine the correct filter key to use
-    const displayModeFilterKey = chartConfig.additionalOptions?.filters?.displayModeFilter ? 'displayModeFilter' : 'displayMode';
+    const displayModeFilterKey = chartConfig.additionalOptions?.filters?.displayModeFilter?.paramName;
+    
+    // If there's no display mode filter configured, just use the prop value
+    if (!displayModeFilterKey) {
+      if (propDisplayMode !== undefined && propDisplayMode !== internalDisplayMode) {
+        setInternalDisplayMode(propDisplayMode);
+      }
+      return;
+    }
+    
+    // Get current value from filterValues
     const currentDisplayModeValue = filterValues?.[displayModeFilterKey];
     
-    console.log('StackedBarChart: displayMode effect triggered:', {
-      displayModeFilterKey,
-      currentDisplayModeValue,
-      propDisplayMode,
-      currentInternalDisplayMode: internalDisplayMode
-    });
-    
-    // Priority: filterValues[displayModeFilterKey] > propDisplayMode > current internalDisplayMode
+    // Update internal state based on filterValues or prop
     if (currentDisplayModeValue && currentDisplayModeValue !== internalDisplayMode) {
-      console.log(`StackedBarChart: Updating displayMode from filterValues[${displayModeFilterKey}]: ${internalDisplayMode} -> ${currentDisplayModeValue}`);
       setInternalDisplayMode(currentDisplayModeValue as DisplayMode);
-    } else if (propDisplayMode && propDisplayMode !== internalDisplayMode) {
-      console.log(`StackedBarChart: Updating displayMode from prop: ${internalDisplayMode} -> ${propDisplayMode}`);
+    } else if (propDisplayMode !== undefined && propDisplayMode !== internalDisplayMode) {
       setInternalDisplayMode(propDisplayMode);
     }
-  }, [filterValues?.displayMode, filterValues?.displayModeFilter, propDisplayMode, internalDisplayMode, chartConfig.additionalOptions?.filters?.displayModeFilter]);
+  }, [filterValues, propDisplayMode, internalDisplayMode, chartConfig.additionalOptions?.filters?.displayModeFilter?.paramName]);
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`Modal filter changed: ${key} = ${value}`);
-    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
     
-    // Update local state
+    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Update internal display mode if needed
-    if (key === 'displayMode' || key === 'displayModeFilter') {
-      setInternalDisplayMode(value as DisplayMode);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
-    }
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
-  
-  // Handle filter changes - for both modal and normal view
+
+  // Regular filter change handler for main view
   const handleFilterChange = useCallback((key: string, value: string) => {
-    // For modal-specific behavior, use the enhanced handler
-    if (isExpanded) {
-      return handleModalFilterChange(key, value);
-    }
-    
-    console.log(`Filter changed: ${key} = ${value}`);
-    
     const updatedFilters = {
-      ...modalFilterValues,
+      ...(filterValues || {}),
       [key]: value
     };
     
-    // Update local state
-    setModalFilterValues(updatedFilters);
-    
-    // Update internal display mode if needed
-    if (key === 'displayMode' || key === 'displayModeFilter') {
-      setInternalDisplayMode(value as DisplayMode);
+    // Clear existing timer
+    if (filterDebounceTimer.current) {
+      clearTimeout(filterDebounceTimer.current);
     }
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      onFilterChange(updatedFilters);
-    }
-  }, [modalFilterValues, onFilterChange, isExpanded, handleModalFilterChange]);
+    // Debounce the actual filter change callback
+    filterDebounceTimer.current = setTimeout(() => {
+      // If onFilterChange exists in chartConfig, call it with updated filters
+      if (onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    }, 300); // 300ms debounce delay
+  }, [filterValues, onFilterChange]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
@@ -341,11 +338,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
       data;
     
-    if (isExpanded) {
-      console.log('Modal chart data source:', 
-        isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered data' : 'full data',
-        'Count:', currentData.length);
-    }
+
       
     // If no data is available, return empty defaults
     if (!currentData || currentData.length === 0) {
@@ -388,7 +381,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // If we have multiple Y fields and stacked mode is enabled
     if (isMultiYFieldsStacked) {
-      console.log('Processing multi-y-field stacked chart');
       
       // Get all y-fields as keys for stacking (excluding hidden ones)
       const stackKeys = Array.isArray(yField) 
@@ -451,7 +443,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // If no groupBy field is specified, treat it as a simple bar chart
     if (!hasGroupBy) {
-      console.log('Processing simple bar chart (no groupBy)');
       
       // Group by x-axis values to aggregate duplicates
       const groupedData: Record<string, ChartDataItem> = {};
@@ -553,7 +544,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Get all unique group values as keys for the stack
     const stackKeys = Array.from(allGroups);
-    console.log(`Found ${stackKeys.length} groups for stacking:`, stackKeys);
     
     // Create color map for each group
     const colorsByGroup: Record<string, string> = {};
@@ -1274,7 +1264,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
-    console.log('Creating brush data with', data.length, 'items');
     
     // First, apply the same sorting/filtering as the chart data
     let processedData: any[] = [...data].filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
@@ -1331,7 +1320,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Convert back to array
     const uniqueData = Object.values(groupedData);
-    console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
     
     // Create synthetic dates if needed
     const baseDate = new Date();
@@ -1376,7 +1364,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       };
     });
     
-    console.log('Created brush data points for stacked chart:', brushDataPoints.length);
     return brushDataPoints;
   }, [data, xKey, yKey, yField, allYFields, chartConfig]);
   
@@ -1392,7 +1379,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     const { x0, x1 } = domain;
-    console.log('Brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update brush domain
     setBrushDomain([new Date(x0), new Date(x1)]);
@@ -1402,7 +1388,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return item.date >= new Date(x0) && item.date <= new Date(x1);
     });
     
-    console.log('Selected brush items:', selectedBrushItems.length);
     
     // For stacked charts, we need to preserve the x-value structure
     // Extract the x values from the selected brush items
@@ -1411,7 +1396,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Filter the original data to include all items with those x values
     const selectedDataObjects = data.filter(d => selectedXValues.includes(d[xKey]));
     
-    console.log('Filtered data after brush:', selectedDataObjects.length);
     setFilteredData(selectedDataObjects);
     
     if (!isBrushActive) {
@@ -1431,7 +1415,6 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     const { x0, x1 } = domain;
-    console.log('Modal brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update modal brush domain
     setModalBrushDomain([new Date(x0), new Date(x1)]);
@@ -1441,13 +1424,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return item.date >= new Date(x0) && item.date <= new Date(x1);
     });
     
-    console.log('Selected modal brush items:', selectedBrushItems.length);
     
     // Use the same approach as in handleBrushChange
     const selectedXValues = selectedBrushItems.map(item => item.originalData[xKey]);
     const selectedDataObjects = data.filter(d => selectedXValues.includes(d[xKey]));
     
-    console.log('Filtered data after modal brush:', selectedDataObjects.length);
     setModalFilteredData(selectedDataObjects);
     
     if (!isModalBrushActive) {
@@ -1458,14 +1439,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
     if (isExpanded) {
-      console.log('Modal opened, syncing brush domains');
       // When modal opens, sync the brush domains
       setModalBrushDomain(brushDomain);
       setIsModalBrushActive(isBrushActive);
       
       // Also sync filtered data
       if (isBrushActive && filteredData.length > 0) {
-        console.log('Syncing filtered data to modal:', filteredData.length, 'items');
         setModalFilteredData(filteredData);
       }
     }
