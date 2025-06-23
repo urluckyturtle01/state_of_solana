@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
-// Enable server-side rendering for the API route
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Enable ISR for bar stack data with longer cache time (5 minutes)
+export const revalidate = 300;
 
 /**
  * Generate sample data for stacked bar chart

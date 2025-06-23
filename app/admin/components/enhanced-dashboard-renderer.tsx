@@ -3,10 +3,23 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getChartConfigsByPage, getCounterConfigsByPage, getTableConfigsByPage } from '../utils';
 import { ChartConfig, CounterConfig, TableConfig } from '../types';
-import PrettyLoader from '@/app/components/shared/PrettyLoader';
-import DashboardRenderer from './dashboard-renderer';
-import CounterRenderer from './CounterRenderer';
-import TableRenderer from './TableRenderer';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for better bundle splitting and performance
+const DashboardRenderer = dynamic(() => import('./dashboard-renderer'), {
+  ssr: false,
+  loading: () => <ChartLoadingFallback />
+});
+
+const CounterRenderer = dynamic(() => import('./CounterRenderer'), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-800/50 rounded-lg h-20 w-full"></div>
+});
+
+const TableRenderer = dynamic(() => import('./TableRenderer'), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-800/50 rounded-lg h-40 w-full"></div>
+});
 
 // Simple loading fallback
 const ChartLoadingFallback = () => (
@@ -265,6 +278,17 @@ const MemoizedTableRenderer = React.memo(TableRenderer, (prevProps, nextProps) =
          JSON.stringify(prevProps.tableConfig) === JSON.stringify(nextProps.tableConfig);
 });
 
+// Optimized state interface for enhanced dashboard
+interface EnhancedDashboardState {
+  counters: CounterConfig[];
+  tables: TableConfig[];
+  isLoadingCounters: boolean;
+  isLoadingTables: boolean;
+  isInitialLoadComplete: boolean;
+  error: string | null;
+  refreshTrigger: number;
+}
+
 export default React.memo(function EnhancedDashboardRenderer({
   pageId,
   overrideCharts,
@@ -273,28 +297,29 @@ export default React.memo(function EnhancedDashboardRenderer({
   enableCaching = true,
   section,
 }: EnhancedDashboardRendererProps) {
-  const [counters, setCounters] = useState<CounterConfig[]>([]);
-  const [tables, setTables] = useState<TableConfig[]>([]);
-  const [isLoadingCounters, setIsLoadingCounters] = useState<boolean>(true);
-  const [isLoadingTables, setIsLoadingTables] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  // Add a refresh trigger
-  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  // Consolidated state management
+  const [state, setState] = useState<EnhancedDashboardState>({
+    counters: [],
+    tables: [],
+    isLoadingCounters: true,
+    isLoadingTables: true,
+    isInitialLoadComplete: false,
+    error: null,
+    refreshTrigger: 0
+  });
   
   // Track component mount state
   const isMountedRef = useRef(true);
-  
-  // Track if initial load is complete
-  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
-  
-  // Progressive rendering state - render components in batches
-  const [renderBatch, setRenderBatch] = useState(0);
-  const BATCH_SIZE = 6; // Increase batch size for faster rendering
+
+  // Optimized state update helpers
+  const updateState = useCallback((updates: Partial<EnhancedDashboardState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
 
   // Function to force refresh counters and tables
   const refreshData = useCallback(() => {
-    setRefreshTrigger(prev => prev + 1);
-  }, []);
+    updateState({ refreshTrigger: state.refreshTrigger + 1 });
+  }, [state.refreshTrigger, updateState]);
 
   // Prefetch configuration data on component mount - reduce delay
   useEffect(() => {
@@ -320,130 +345,80 @@ export default React.memo(function EnhancedDashboardRenderer({
     }
   }, [pageId]);
 
-  // Optimized load counters with request batching
-  const loadCounters = useCallback(async () => {
+  // Enhanced parallel loading of all component types
+  const loadAllComponents = useCallback(async () => {
     if (!pageId) return;
     
-    // Check if we already have data in memory/localStorage
-    const cachedData = getFromLocalStorage<CounterConfig[]>(`counters_${pageId}`);
-    if (cachedData && !refreshTrigger) {
-      // Set data immediately from cache
-      setCounters(cachedData);
-      setIsLoadingCounters(false);
-      setIsInitialLoadComplete(true);
-      
-      // Still fetch fresh data in background - but with immediate execution
-      Promise.resolve().then(() => {
-        preloadCounterConfigs(pageId, false).then(freshData => {
-          if (isMountedRef.current && JSON.stringify(freshData) !== JSON.stringify(cachedData)) {
-            setCounters(freshData);
-          }
-        }).catch(() => {});
-      });
-      
-      return;
-    }
+    // Check for cached data for immediate display
+    const cachedCounters = getFromLocalStorage<CounterConfig[]>(`counters_${pageId}`);
+    const cachedTables = getFromLocalStorage<TableConfig[]>(`tables_${pageId}`);
     
-    // Only show loading on initial load, not refreshes
-    if (!isInitialLoadComplete) {
-    setIsLoadingCounters(true);
-    }
-    setError(null);
-    
-    try {
-      // Use provided override counters or load from page config
-      let pageCounters: CounterConfig[];
-      
-      if (overrideCounters) {
-        pageCounters = overrideCounters;
-      } else {
-        // Load counters for the page, with force refresh if triggered
-        pageCounters = await preloadCounterConfigs(pageId, refreshTrigger > 0);
+    // Set cached data immediately if available and not refreshing
+    if (!state.refreshTrigger) {
+      if (cachedCounters) {
+        updateState({
+          counters: cachedCounters,
+          isLoadingCounters: false
+        });
       }
       
+      if (cachedTables) {
+        updateState({
+          tables: cachedTables,
+          isLoadingTables: false
+        });
+      }
+    }
+    
+    // Start parallel loading of fresh data
+    const loadPromises: Promise<any>[] = [];
+    
+    // Load counters
+    if (overrideCounters) {
+      loadPromises.push(Promise.resolve(overrideCounters));
+    } else {
+      loadPromises.push(preloadCounterConfigs(pageId, state.refreshTrigger > 0));
+    }
+    
+    // Load tables
+    if (overrideTables) {
+      loadPromises.push(Promise.resolve(overrideTables));
+    } else {
+      loadPromises.push(preloadTableConfigs(pageId, state.refreshTrigger > 0));
+    }
+    
+    // Execute all loads in parallel
+    try {
+      const [freshCounters, freshTables] = await Promise.all(loadPromises);
+      
       if (isMountedRef.current) {
-      setCounters(pageCounters || []);
-        // Start progressive rendering
-        setRenderBatch(0);
+        // Batch update all states at once
+        updateState({
+          counters: freshCounters || [],
+          tables: freshTables || [],
+          isLoadingCounters: false,
+          isLoadingTables: false,
+          isInitialLoadComplete: true,
+          error: null
+        });
       }
     } catch (error) {
-      console.error('Error loading counters:', error);
+      console.error('Error loading components:', error);
       if (isMountedRef.current) {
-      setError('Failed to load counter data. Please try refreshing the page.');
-      }
-    } finally {
-      if (isMountedRef.current) {
-      setIsLoadingCounters(false);
-        setIsInitialLoadComplete(true);
+        updateState({
+          error: 'Failed to load some components. Please try refreshing the page.',
+          isLoadingCounters: false,
+          isLoadingTables: false,
+          isInitialLoadComplete: true
+        });
       }
     }
-  }, [pageId, overrideCounters, refreshTrigger, isInitialLoadComplete]);
-  
-  // Optimized load tables with request batching
-  const loadTables = useCallback(async () => {
-    if (!pageId) return;
-    
-    // Check if we already have data in memory/localStorage
-    const cachedData = getFromLocalStorage<TableConfig[]>(`tables_${pageId}`);
-    if (cachedData && !refreshTrigger) {
-      // Set data immediately from cache
-      setTables(cachedData);
-      setIsLoadingTables(false);
-      
-      // Still fetch fresh data in background - but with immediate execution
-      Promise.resolve().then(() => {
-        preloadTableConfigs(pageId, false).then(freshData => {
-          if (isMountedRef.current && JSON.stringify(freshData) !== JSON.stringify(cachedData)) {
-            setTables(freshData);
-          }
-        }).catch(() => {});
-      });
-      
-      return;
-    }
-    
-    // Only show loading on initial load
-    if (!isInitialLoadComplete) {
-    setIsLoadingTables(true);
-    }
-    setError(null);
-    
-    try {
-      // Use provided override tables or load from page config
-      let pageTables: TableConfig[];
-      
-      if (overrideTables) {
-        pageTables = overrideTables;
-      } else {
-        // Load tables for the page, with force refresh if triggered
-        pageTables = await preloadTableConfigs(pageId, refreshTrigger > 0);
-      }
-      
-      // Log the tables for debugging
-      
-      if (isMountedRef.current) {
-      setTables(pageTables || []);
-      }
-    } catch (error) {
-      console.error('Error loading tables:', error);
-      if (isMountedRef.current) {
-      setError('Failed to load table data. Please try refreshing the page.');
-      }
-    } finally {
-      if (isMountedRef.current) {
-      setIsLoadingTables(false);
-      }
-    }
-  }, [pageId, overrideTables, refreshTrigger, isInitialLoadComplete]);
+  }, [pageId, overrideCounters, overrideTables, state.refreshTrigger, updateState]);
 
-  // Effect to load counter and table data when page changes or refresh is triggered
+  // Replace the individual load functions with the parallel loader
   useEffect(() => {
-    // Load data in parallel
-    Promise.all([
-      loadCounters(),
-      loadTables()
-    ]);
-  }, [loadCounters, loadTables]);
+    loadAllComponents();
+  }, [loadAllComponents]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -452,22 +427,10 @@ export default React.memo(function EnhancedDashboardRenderer({
     };
   }, []);
 
-  // Progressive rendering - increment batch after minimal delay
-  useEffect(() => {
-    if (counters.length > 0 && renderBatch * BATCH_SIZE < counters.length) {
-      // Use requestAnimationFrame for smoother rendering
-      const frameId = requestAnimationFrame(() => {
-        setRenderBatch(prev => prev + 1);
-      });
-      
-      return () => cancelAnimationFrame(frameId);
-    }
-  }, [counters.length, renderBatch]);
-
-  // Memoized counter rendering with progressive loading
+  // Memoized counter rendering
   const renderCounters = useMemo(() => {
     // Only show skeleton if we're loading counters AND we expect to have counters
-    if (isLoadingCounters && !isInitialLoadComplete && !overrideCounters) {
+    if (state.isLoadingCounters && !state.isInitialLoadComplete && !overrideCounters) {
       // Check if this page typically has counters by checking cache or previous data
       const cachedCounters = getFromLocalStorage<CounterConfig[]>(`counters_${pageId}`);
       const hasCachedCounters = cachedCounters && cachedCounters.length > 0;
@@ -489,16 +452,14 @@ export default React.memo(function EnhancedDashboardRenderer({
       }
     }
 
-    if (counters.length === 0) {
+    if (state.counters.length === 0) {
       return null;
     }
 
-    // Progressive rendering - only render up to current batch
-    const countersToRender = counters.slice(0, (renderBatch + 1) * BATCH_SIZE);
-
+    // Render all counters at once - no progressive rendering
     return (
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-0 mt-0">
-        {countersToRender.map((counter) => (
+        {state.counters.map((counter) => (
           <div 
             key={counter.id} 
             className={`col-span-1 ${
@@ -514,23 +475,23 @@ export default React.memo(function EnhancedDashboardRenderer({
         ))}
       </div>
     );
-  }, [counters, isLoadingCounters, isInitialLoadComplete, renderBatch, overrideCounters, pageId]);
+  }, [state.counters, state.isLoadingCounters, state.isInitialLoadComplete, overrideCounters, pageId]);
 
   // Memoized table rendering with section filtering
   const renderTables = useMemo(() => {
-    if (isLoadingTables && !isInitialLoadComplete) {
+    if (state.isLoadingTables && !state.isInitialLoadComplete) {
       // Return null during initial loading
       return null;
     }
 
-    if (tables.length === 0) {
+    if (state.tables.length === 0) {
       return null;
     }
 
     // Filter tables by section if section is provided
     const filteredTables = section 
-      ? tables.filter(table => table.additionalOptions?.section === section)
-      : tables;
+      ? state.tables.filter(table => table.additionalOptions?.section === section)
+      : state.tables;
 
     if (filteredTables.length === 0) {
       return null;
@@ -551,7 +512,7 @@ export default React.memo(function EnhancedDashboardRenderer({
         ))}
       </div>
     );
-  }, [tables, isLoadingTables, isInitialLoadComplete, section]);
+  }, [state.tables, state.isLoadingTables, state.isInitialLoadComplete, section]);
 
   return (
     <div className="space-y-4">
@@ -570,9 +531,9 @@ export default React.memo(function EnhancedDashboardRenderer({
       {renderTables}
       
       {/* Show error if any */}
-      {error && (
+      {state.error && (
         <div className="bg-red-900/20 border border-red-800/30 rounded-md p-4 mt-4">
-          <p className="text-red-400">{error}</p>
+          <p className="text-red-400">{state.error}</p>
         </div>
       )}
     </div>

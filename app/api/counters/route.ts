@@ -8,11 +8,11 @@ import {
   getPageIndex,
   savePageIndex,
   getCountersBatch,
-  saveCountersBatch
+  saveCountersBatch,
+  getBatchedObjectsFromS3
 } from '@/lib/s3';
 
-// Enable server-side rendering for the API route
-export const dynamic = 'force-dynamic';
+// Enable ISR for this API route with 30-second revalidation
 export const revalidate = 30;
 
 // Performance metrics tracking

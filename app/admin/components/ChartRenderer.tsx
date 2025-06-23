@@ -1,15 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
 
-import SimpleBarChart from './charts/SimpleBarChart';
-import StackedBarChart from './charts/StackedBarChart';
-import DualAxisChart from './charts/DualAxisChart';
-import MultiSeriesLineBarChart from './charts/MultiSeriesLineBarChart';
-import PieChart from './charts/PieChart';
-import SimpleAreaChart from './charts/SimpleAreaChart';
+import dynamic from 'next/dynamic';
+import ChartLoading from './shared/LazyChartWrapper';
 import Modal from '../../components/shared/Modal';
-//import LineChart from './charts/LineChart';
-// import AreaChart from './charts/AreaChart';
+
+// Parallel dynamic imports for all chart components to preload them simultaneously
+const SimpleBarChart = dynamic(() => import('./charts/SimpleBarChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
+const StackedBarChart = dynamic(() => import('./charts/StackedBarChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
+const DualAxisChart = dynamic(() => import('./charts/DualAxisChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
+const MultiSeriesLineBarChart = dynamic(() => import('./charts/MultiSeriesLineBarChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
+const PieChart = dynamic(() => import('./charts/PieChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
+const SimpleAreaChart = dynamic(() => import('./charts/SimpleAreaChart'), {
+  ssr: false,
+  loading: () => <ChartLoading />
+});
+
 // Import filter components
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
@@ -39,7 +65,7 @@ function getFieldFromYAxisConfig(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
 }
 
-const ChartRenderer: React.FC<ChartRendererProps> = ({ 
+const ChartRenderer = React.memo<ChartRendererProps>(({ 
   chartConfig, 
   onDataLoaded,
   isExpanded = false, 
@@ -1227,6 +1253,6 @@ const ChartRenderer: React.FC<ChartRendererProps> = ({
 
   // Render the regular chart
   return renderChart();
-};
+});
 
 export default ChartRenderer; 

@@ -1,7 +1,7 @@
-import AWS from 'aws-sdk';
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
-// Configure AWS SDK
-const s3 = new AWS.S3({
+// Configure AWS SDK v3 client
+const s3Client = new S3Client({
   region: process.env.AWS_REGION || process.env.S3_REGION || 'us-east-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY || '',
@@ -37,15 +37,15 @@ export async function saveToS3(key: string, data: any): Promise<boolean> {
     // Debug log - remove or comment out in production
     console.log(`Saving to S3: bucket=${BUCKET_NAME}, key=${key}, credentials available: ${!!process.env.AWS_ACCESS_KEY_ID || !!process.env.S3_ACCESS_KEY}`);
     
-    const params = {
+    const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
       Body: JSON.stringify(data),
       ContentType: 'application/json',
-    };
+    });
 
-    const result = await s3.upload(params).promise();
-    console.log(`Successfully uploaded data to ${result.Location}`);
+    const result = await s3Client.send(command);
+    console.log(`Successfully uploaded data to s3://${BUCKET_NAME}/${key}`);
     endTimer(timer, `Saved data to ${key}`);
     return true;
   } catch (error) {
@@ -59,22 +59,23 @@ export async function saveToS3(key: string, data: any): Promise<boolean> {
 export async function getFromS3<T>(key: string): Promise<T | null> {
   const timer = startTimer();
   try {
-    const params = {
+    const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
-    };
+    });
 
-    const data = await s3.getObject(params).promise();
+    const data = await s3Client.send(command);
     if (data.Body) {
-      const result = JSON.parse(data.Body.toString('utf-8')) as T;
+      const bodyText = await data.Body.transformToString('utf-8');
+      const result = JSON.parse(bodyText) as T;
       endTimer(timer, `Retrieved data from ${key}`);
       return result;
     }
     endTimer(timer, `No data found at ${key}`);
     return null;
-  } catch (error) {
+  } catch (error: any) {
     // Only log a warning for NoSuchKey errors, as they're common and expected
-    if ((error as AWS.AWSError).code === 'NoSuchKey') {
+    if (error.name === 'NoSuchKey') {
       console.warn(`Object not found at ${key}`);
     } else {
       console.error('Error getting data from S3:', error);
@@ -88,12 +89,12 @@ export async function getFromS3<T>(key: string): Promise<T | null> {
 export async function deleteFromS3(key: string): Promise<boolean> {
   const timer = startTimer();
   try {
-    const params = {
+    const command = new DeleteObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
-    };
+    });
 
-    await s3.deleteObject(params).promise();
+    await s3Client.send(command);
     console.log(`Successfully deleted ${key} from S3`);
     endTimer(timer, `Deleted ${key}`);
     return true;
@@ -108,12 +109,12 @@ export async function deleteFromS3(key: string): Promise<boolean> {
 export async function listFromS3(prefix: string): Promise<string[]> {
   const timer = startTimer();
   try {
-    const params = {
+    const command = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
       Prefix: prefix,
-    };
+    });
 
-    const data = await s3.listObjectsV2(params).promise();
+    const data = await s3Client.send(command);
     const keys = (data.Contents || []).map(item => item.Key || '').filter(key => key !== '');
     endTimer(timer, `Listed ${keys.length} objects with prefix ${prefix}`);
     return keys;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listFromS3, deleteFromS3 } from '@/lib/s3';
 
-// Enable server-side rendering for the API route
+// Force dynamic rendering for data modification operations
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 

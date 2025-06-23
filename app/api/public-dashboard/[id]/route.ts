@@ -65,6 +65,9 @@ interface UserData {
   lastModified: string;
 }
 
+// Enable ISR for public dashboard with 2-minute revalidation
+export const revalidate = 120;
+
 // GET - Retrieve public dashboard
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   console.log('\n=== GET /api/public-dashboard/[id] called ===');

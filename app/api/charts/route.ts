@@ -12,7 +12,6 @@ import {
 } from '@/lib/s3';
 
 // Enable ISR for this API route with 30-second revalidation
-export const dynamic = 'force-dynamic';
 export const revalidate = 30;
 
 // Memory cache for charts to avoid repeated S3 calls

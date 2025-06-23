@@ -2,8 +2,101 @@
 
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { MENU_OPTIONS, MENU_PAGES, findMenuForPage } from '../../admin/config/menuPages';
-import { useState, useMemo, useCallback, useRef } from 'react';
-import { VariableSizeList as List } from 'react-window';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+
+// Simple virtual list component
+interface VirtualListProps {
+  height: number;
+  itemCount: number;
+  itemSize: (index: number) => number;
+  children: ({ index, style }: { index: number; style: React.CSSProperties }) => React.ReactNode;
+}
+
+const VirtualList: React.FC<VirtualListProps> = ({ height, itemCount, itemSize, children }) => {
+  const [scrollTop, setScrollTop] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Calculate visible range
+  const { startIndex, endIndex, totalHeight } = useMemo(() => {
+    let accumulatedHeight = 0;
+    let start = 0;
+    let end = 0;
+    let total = 0;
+    
+    // Find start index
+    for (let i = 0; i < itemCount; i++) {
+      const itemHeight = itemSize(i);
+      if (accumulatedHeight + itemHeight > scrollTop) {
+        start = i;
+        break;
+      }
+      accumulatedHeight += itemHeight;
+    }
+    
+    // Find end index and calculate total height
+    accumulatedHeight = 0;
+    for (let i = 0; i < itemCount; i++) {
+      const itemHeight = itemSize(i);
+      total += itemHeight;
+      
+      if (accumulatedHeight + itemHeight > scrollTop + height + 200) { // Add buffer
+        end = Math.min(i + 1, itemCount);
+        break;
+      } else if (i === itemCount - 1) {
+        end = itemCount;
+      }
+      accumulatedHeight += itemHeight;
+    }
+    
+    return { startIndex: start, endIndex: end, totalHeight: total };
+  }, [scrollTop, height, itemCount, itemSize]);
+  
+  // Calculate offset for visible items
+  const offsetY = useMemo(() => {
+    let offset = 0;
+    for (let i = 0; i < startIndex; i++) {
+      offset += itemSize(i);
+    }
+    return offset;
+  }, [startIndex, itemSize]);
+  
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(e.currentTarget.scrollTop);
+  }, []);
+  
+  // Render visible items
+  const visibleItems = [];
+  let currentOffset = offsetY;
+  
+  for (let i = startIndex; i < endIndex; i++) {
+    const itemHeight = itemSize(i);
+    visibleItems.push(
+      children({
+        index: i,
+        style: {
+          position: 'absolute',
+          top: currentOffset,
+          left: 0,
+          right: 0,
+          height: itemHeight,
+        }
+      })
+    );
+    currentOffset += itemHeight;
+  }
+  
+  return (
+    <div
+      ref={containerRef}
+      style={{ height, overflow: 'auto' }}
+      onScroll={handleScroll}
+    >
+      <div style={{ height: totalHeight, position: 'relative' }}>
+        {visibleItems}
+      </div>
+    </div>
+  );
+};
 
 // API Configuration interface
 interface ApiConfig {
@@ -62,7 +155,6 @@ const ApiList: React.FC<ApiListProps> = ({
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const [expandedPages, setExpandedPages] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
-  const listRef = useRef<any>(null);
 
   // Create a cached lookup map for page-to-menu mapping (O(1) lookup)
   const pageToMenuMap = useMemo(() => {
@@ -247,18 +339,6 @@ const ApiList: React.FC<ApiListProps> = ({
         return 40;
     }
   }, [virtualItems]);
-
-  // Reset list cache when items change
-  const resetListCache = useCallback(() => {
-    if (listRef.current) {
-      listRef.current.resetAfterIndex(0);
-    }
-  }, []);
-
-  // Update cache when expansion state changes
-  useMemo(() => {
-    resetListCache();
-  }, [expandedApis, expandedMenus, expandedPages, resetListCache]);
 
   const toggleMenuExpansion = useCallback((menuId: string) => {
     setExpandedMenus(prev => {
@@ -495,17 +575,15 @@ const ApiList: React.FC<ApiListProps> = ({
         </div>
       </div>
       
-      {/* Virtualized List */}
+      {/* Custom Virtual List */}
       <div className="flex-1">
-        <List
-          ref={listRef}
+        <VirtualList
           height={600} // Adjust based on your container height
           itemCount={virtualItems.length}
           itemSize={getItemSize}
-          width="100%"
         >
           {Row}
-        </List>
+        </VirtualList>
       </div>
     </div>
   );
