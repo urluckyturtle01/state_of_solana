@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../lib/auth";
 import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
-// Force dynamic rendering to avoid static generation issues
+// Force dynamic rendering for debug routes that depend on user sessions
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {

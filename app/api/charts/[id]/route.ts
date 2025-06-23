@@ -9,9 +9,17 @@ import {
   getChartsBatch,
   saveChartsBatch
 } from '@/lib/s3';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../../../lib/auth";
 
-// Enable ISR for this API route - cache for 30 seconds
-export const dynamic = 'force-dynamic';
+/*
+ * This API endpoint manages individual chart configurations.
+ * GET: Retrieves a specific chart by ID
+ * PUT: Updates an existing chart (requires authentication)
+ * DELETE: Deletes a specific chart (requires authentication)
+ */
+
+// Enable ISR for this API route with 30-second revalidation
 export const revalidate = 30; // Cache revalidation time in seconds
 
 // Memory cache for charts to avoid repeated S3 calls

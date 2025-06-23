@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
 
+// Enable ISR for shared chart metadata with 5-minute revalidation
+export const revalidate = 300;
+
 interface GenerateMetadataProps {
   params: {
     chartId: string;
@@ -12,7 +15,7 @@ export async function generateMetadata({ params }: GenerateMetadataProps): Promi
     // Use the correct base URL for the API call
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/charts/${params.chartId}`, {
-      cache: 'no-store' // Ensure fresh data for metadata
+      next: { revalidate: 300 } // Use ISR with 5-minute revalidation
     });
     
     if (!response.ok) {

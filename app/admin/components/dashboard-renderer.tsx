@@ -8,11 +8,9 @@ import { ChartConfig, YAxisConfig } from '../types';
 import dynamic from 'next/dynamic';
 import { getColorByIndex } from '../../utils/chartColors';
 import { formatNumber } from '../../utils/formatters';
-import Modal from '../../components/shared/Modal';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
-import Loader from '../../components/shared/Loader';
 import { useChartScreenshot } from '../../components/shared';
 
 // Helper function to extract field name from YAxisConfig or use string directly
@@ -31,10 +29,7 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
   return label.substring(0, maxLength) + '...';
 };
 
-// Dynamic import for the ChartRenderer to avoid SSR issues
-const ChartRenderer = dynamic(() => import('./ChartRenderer'), {
-  ssr: false,
-});
+// Remove the old dynamic import - using optimized one below
 
 interface DashboardRendererProps {
   pageId: string;
@@ -51,7 +46,8 @@ interface Legend {
   shape?: 'circle' | 'square';
 }
 
-// Increase cache duration to 30 minutes for better performance
+// Increase parallel batch size for better performance
+const PARALLEL_BATCH_SIZE = 8; // Increased from 4 to 8 charts at a time
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
 // Add a global cache for chart data - shared across all instances
@@ -68,12 +64,17 @@ const PAGE_CONFIG_CACHE: Record<string, {
   expiresIn: number;
 }> = {};
 
-// Lazily load the ChartRenderer component with dynamic import
-const MemoizedChartRenderer = React.memo(dynamic(() => import('./ChartRenderer'), {
+// Optimized ChartRenderer with React.memo and dynamic import
+const ChartRenderer = React.memo(dynamic(() => import('./ChartRenderer'), {
   ssr: false,
+  loading: () => (
+    <div className="flex justify-center items-center h-64 w-full">
+      <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+    </div>
+  )
 }));
 
-// Optimization: preload charts by pageId for faster subsequent loads
+// Enhanced preload charts with better parallel processing
 const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   // Check if we have cached charts for this page
   if (PAGE_CONFIG_CACHE[pageId]) {
@@ -88,9 +89,9 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   }
   
   try {
-    // Fetch charts from API with a shorter timeout for faster failure
+    // Fetch charts from API with optimized timeout and parallel processing
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // Increased to 3 seconds for better reliability
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased timeout for reliability
     
     const charts = await getChartConfigsByPage(pageId);
     clearTimeout(timeoutId);
@@ -115,21 +116,10 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   }
 };
 
-// Batch fetch function for more efficient API calls with parallel execution
+// Enhanced batch fetch function with improved parallel execution and error resilience
 const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<string, Record<string, string>>, enableCaching: boolean) => {
-  // Split charts into batches for parallel processing
-  const PARALLEL_BATCH_SIZE = 4; // Process 4 charts at a time
-  const chartBatches: ChartConfig[][] = [];
-  
-  for (let i = 0; i < charts.length; i += PARALLEL_BATCH_SIZE) {
-    chartBatches.push(charts.slice(i, i + PARALLEL_BATCH_SIZE));
-  }
-  
-  const allResults: any[] = [];
-  
-  // Process batches in parallel
-  for (const batch of chartBatches) {
-    const batchPromises = batch.map(chart => {
+  // Process all charts in parallel with larger batch sizes
+  const chartPromises = charts.map(chart => {
     const chartFilters = filterValues[chart.id] || {};
     const cacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
     
@@ -176,12 +166,22 @@ const batchFetchChartData = async (charts: ChartConfig[], filterValues: Record<s
       });
   });
   
-    // Wait for current batch to complete before starting next
-    const batchResults = await Promise.all(batchPromises);
-    allResults.push(...batchResults);
-  }
+  // Wait for all chart data fetches to complete in parallel
+  const allResults = await Promise.allSettled(chartPromises);
   
-  return allResults;
+  // Process results and handle any failures
+  return allResults.map((result, index) => {
+    if (result.status === 'fulfilled') {
+      return result.value;
+    } else {
+      console.error(`Failed to fetch data for chart ${charts[index].id}:`, result.reason);
+      return {
+        chartId: charts[index].id,
+        data: [],
+        error: result.reason
+      };
+    }
+  });
 };
 
 // Simplified fetch function to reduce overhead
@@ -505,29 +505,12 @@ const SessionStorageCache = {
   }
 };
 
-// Simple loading indicator for better performance
-const SimpleLoadingSpinner = () => (
-  <div className="flex justify-center items-center h-64 w-full">
-    <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-  </div>
-);
-
-// ChartCard with optimized loading
-interface OptimizedChartCardProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-const OptimizedChartCard: React.FC<OptimizedChartCardProps> = ({ title, children }) => (
-  <div className="bg-gray-900/20 backdrop-blur-sm border border-gray-800/50 rounded-lg">
-    <div className="px-6 py-4 border-b border-gray-800/50">
-      <h3 className="text-gray-200">{title}</h3>
-    </div>
-    <div className="p-4">
-      {children}
-    </div>
-  </div>
-);
+// Memoized components for better performance
+const MemoizedChartCard = React.memo(ChartCard);
+const MemoizedLegendItem = React.memo(LegendItem);
+const MemoizedTimeFilterSelector = React.memo(TimeFilterSelector);
+const MemoizedCurrencyFilter = React.memo(CurrencyFilter);
+const MemoizedDisplayModeFilter = React.memo(DisplayModeFilter);
 
 export default function DashboardRenderer({ 
   pageId, 
@@ -535,23 +518,64 @@ export default function DashboardRenderer({
   enableCaching = true,
   section,
 }: DashboardRendererProps) {
+  // Optimized state management - group related states
   const [charts, setCharts] = useState<ChartConfig[]>([]);
   const [isClient, setIsClient] = useState(false);
-  const [expandedCharts, setExpandedCharts] = useState<Record<string, boolean>>({});
-  const [downloadingCharts, setDownloadingCharts] = useState<Record<string, boolean>>({});
-  const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
-  const [legends, setLegends] = useState<Record<string, Legend[]>>({});
-  const [loadingCharts, setLoadingCharts] = useState<Record<string, boolean>>({});
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [allChartsLoaded, setAllChartsLoaded] = useState(false);
   
-  // Add state for filter values
-  const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
+  // Consolidated chart-specific states
+  const [chartStates, setChartStates] = useState<Record<string, {
+    expanded: boolean;
+    downloading: boolean;
+    screenshotting: boolean;
+    loading: boolean;
+  }>>({});
+  
+  // Data and display states
   const [chartData, setChartData] = useState<Record<string, any[]>>({});
-  // Add state to track legend colors and order
+  const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
+  const [legends, setLegends] = useState<Record<string, Legend[]>>({});
   const [legendColorMaps, setLegendColorMaps] = useState<Record<string, Record<string, string>>>({});
-  // Add state to track hidden series for each chart
   const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
+  
+  // Helper getters for accessing chart states
+  const getChartState = useCallback((chartId: string, key: keyof { expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }) => {
+    return chartStates[chartId]?.[key] ?? false;
+  }, [chartStates]);
+  
+  // Legacy state getters for compatibility
+  const expandedCharts = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    Object.entries(chartStates).forEach(([chartId, state]) => {
+      result[chartId] = state.expanded;
+    });
+    return result;
+  }, [chartStates]);
+  
+  const downloadingCharts = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    Object.entries(chartStates).forEach(([chartId, state]) => {
+      result[chartId] = state.downloading;
+    });
+    return result;
+  }, [chartStates]);
+  
+  const screenshottingCharts = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    Object.entries(chartStates).forEach(([chartId, state]) => {
+      result[chartId] = state.screenshotting;
+    });
+    return result;
+  }, [chartStates]);
+  
+  const loadingCharts = useMemo(() => {
+    const result: Record<string, boolean> = {};
+    Object.entries(chartStates).forEach(([chartId, state]) => {
+      result[chartId] = state.loading;
+    });
+    return result;
+  }, [chartStates]);
   
   // Use ref to track if component is mounted to avoid memory leaks
   const isMounted = useRef(true);
@@ -611,10 +635,41 @@ export default function DashboardRenderer({
     return csvData;
   };
   
+  // Optimized helper functions for chart state management
+  const updateChartState = useCallback((chartId: string, updates: Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>) => {
+    setChartStates(prev => ({
+      ...prev,
+      [chartId]: { ...prev[chartId], ...updates }
+    }));
+  }, []);
+
+  const batchUpdateChartStates = useCallback((updates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>>) => {
+    setChartStates(prev => {
+      const newStates = { ...prev };
+      Object.entries(updates).forEach(([chartId, chartUpdates]) => {
+        newStates[chartId] = { ...newStates[chartId], ...chartUpdates };
+      });
+      return newStates;
+    });
+  }, []);
+
+  const initializeChartState = useCallback((chartId: string) => {
+    setChartStates(prev => ({
+      ...prev,
+      [chartId]: {
+        ...prev[chartId], // Keep any existing overrides first
+        expanded: prev[chartId]?.expanded ?? false,
+        downloading: prev[chartId]?.downloading ?? false,
+        screenshotting: prev[chartId]?.screenshotting ?? false,
+        loading: prev[chartId]?.loading ?? true
+      }
+    }));
+  }, []);
+
   // Add downloadCSV function inside the component
-  const downloadCSV = async (chart: ChartConfig) => {
+  const downloadCSV = useCallback(async (chart: ChartConfig) => {
     // Set loading state
-    setDownloadingCharts(prev => ({ ...prev, [chart.id]: true }));
+    updateChartState(chart.id, { downloading: true });
     
     try {
       // Get the current data for this chart from our state
@@ -669,9 +724,9 @@ export default function DashboardRenderer({
       alert('Failed to download CSV. Please try again.');
     } finally {
       // Clear loading state
-      setDownloadingCharts(prev => ({ ...prev, [chart.id]: false }));
+      updateChartState(chart.id, { downloading: false });
     }
-  };
+  }, [chartData, filterValues, updateChartState]);
 
   // Use effect to clean up ref on unmount
   useEffect(() => {
@@ -680,7 +735,7 @@ export default function DashboardRenderer({
     };
   }, []);
 
-  // Initialize charts with a useMemo to avoid recomputation
+  // Enhanced initialization with better parallel loading
   const initializeCharts = useMemo(() => async () => {
     if (overrideCharts) {
       return overrideCharts;
@@ -694,56 +749,58 @@ export default function DashboardRenderer({
     }
   }, [pageId, overrideCharts]);
 
-  // Load charts and data on mount - optimized to load data immediately
+  // Optimized load charts and data with enhanced parallel processing
   useEffect(() => {
     setIsClient(true);
     let mounted = true;
 
     async function loadCharts() {
       try {
+        // Start loading charts config immediately
         const loadedCharts = await initializeCharts();
         
         if (!mounted) return;
         
         setCharts(loadedCharts);
         
-        // Initialize loading states and data
-        const initialLoadingState: Record<string, boolean> = {};
+        // Initialize chart states in batch
+        const initialChartStates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
         const initialChartData: Record<string, any[]> = {};
         
         loadedCharts.forEach(chart => {
-          initialLoadingState[chart.id] = true;
-          // Initialize with empty array to prevent individual chart loading
+          initialChartStates[chart.id] = { loading: true };
           initialChartData[chart.id] = [];
         });
         
-        setLoadingCharts(initialLoadingState);
+        // Batch update all states at once
+        batchUpdateChartStates(initialChartStates);
         setChartData(initialChartData);
         
-        // Load all charts data
-        const results = await wrappedBatchFetchChartData(loadedCharts, filterValues);
+        // Start parallel data loading for all charts immediately
+        const dataLoadPromise = wrappedBatchFetchChartData(loadedCharts, filterValues);
+        
+        // Process results as they come in
+        const results = await dataLoadPromise;
         
         if (!mounted) return;
             
-        // Process results and update states
-            const newChartData: Record<string, any[]> = {};
-        const newLoadingStates: Record<string, boolean> = {};
+        // Process all results in batch
+        const newChartData: Record<string, any[]> = {};
+        const loadingUpdates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
             
-            results.forEach(result => {
+        results.forEach(result => {
           newChartData[result.chartId] = result.data || [];
-          newLoadingStates[result.chartId] = false;
-            
-            // Update legends immediately
-          if (result.data && result.data.length > 0) {
-              updateLegends(result.chartId, result.data);
-          }
+          loadingUpdates[result.chartId] = { loading: false };
+          
+          // Legends will be updated automatically via useEffect when chartData changes
         });
         
+        // Batch update all chart data and loading states
         setChartData(newChartData);
-        setLoadingCharts(newLoadingStates);
+        batchUpdateChartStates(loadingUpdates);
         
-        // Check if all charts are loaded
-        const allLoaded = Object.values(newLoadingStates).every(state => !state);
+        // Mark all charts as loaded
+        const allLoaded = Object.values(loadingUpdates).every(update => !update.loading);
         setAllChartsLoaded(allLoaded);
         
         if (allLoaded) {
@@ -762,16 +819,13 @@ export default function DashboardRenderer({
     return () => {
       mounted = false;
     };
-  }, [pageId, overrideCharts, initializeCharts, wrappedBatchFetchChartData]);
+  }, [pageId, overrideCharts, initializeCharts, wrappedBatchFetchChartData, filterValues, batchUpdateChartStates]);
 
   // Simplified fetchChartDataWithFilters for individual chart updates
   const fetchChartDataWithFilters = useCallback(async (chart: ChartConfig, skipLoadingState = false) => {
     try {
       if (!skipLoadingState && isMounted.current) {
-        setLoadingCharts(prev => ({
-          ...prev,
-          [chart.id]: true
-        }));
+        updateChartState(chart.id, { loading: true });
       }
       
       const chartFilters = filterValues[chart.id] || {};
@@ -792,13 +846,10 @@ export default function DashboardRenderer({
               [chart.id]: cachedItem.data
             }));
             
-            updateLegends(chart.id, cachedItem.data);
+            // Legends will be updated via useEffect when chartData changes
             
             if (!skipLoadingState) {
-              setLoadingCharts(prev => ({
-                ...prev,
-                [chart.id]: false
-              }));
+              updateChartState(chart.id, { loading: false });
             }
           }
           
@@ -818,15 +869,12 @@ export default function DashboardRenderer({
         [chart.id]: data
       }));
       
-      updateLegends(chart.id, data);
+      // Legends will be updated via useEffect when chartData changes
       
       if (!skipLoadingState) {
-        setLoadingCharts(prev => ({
-          ...prev,
-          [chart.id]: false
-        }));
+        updateChartState(chart.id, { loading: false });
       }
-      
+
       return data;
     } catch (error) {
       console.error(`Error fetching data for chart ${chart.id}:`, error);
@@ -835,28 +883,22 @@ export default function DashboardRenderer({
       if (!isMounted.current) return null;
       
       if (!skipLoadingState) {
-        setLoadingCharts(prev => ({
-          ...prev,
-          [chart.id]: false
-        }));
+        updateChartState(chart.id, { loading: false });
       }
       
       return null;
     }
-  }, [enableCaching, filterValues, isMounted, setChartData, setLoadingCharts, wrappedFetchChartData, CHART_DATA_CACHE]);
+  }, [enableCaching, filterValues, isMounted, setChartData, updateChartState, wrappedFetchChartData]);
 
   const toggleChartExpanded = (chartId: string) => {
-    setExpandedCharts(prev => ({
-      ...prev,
-      [chartId]: !prev[chartId]
-    }));
+    updateChartState(chartId, { expanded: !getChartState(chartId, 'expanded') });
   };
 
   // Handle screenshot capture for chart using the new ChartScreenshot component
   const handleChartScreenshot = async (chart: ChartConfig) => {
     try {
       // Set loading state
-      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: true }));
+      updateChartState(chart.id, { screenshotting: true });
       
       // Use the screenshot capture hook
       const cardElementId = `chart-card-${chart.id}`;
@@ -867,7 +909,7 @@ export default function DashboardRenderer({
       // Error handling is already done in the hook
     } finally {
       // Clear loading state
-      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: false }));
+      updateChartState(chart.id, { screenshotting: false });
     }
   };
 
@@ -908,10 +950,7 @@ export default function DashboardRenderer({
     }
     
     // Set loading state when filter changes (for non-time-aggregation cases)
-    setLoadingCharts(prev => ({
-      ...prev,
-      [chartId]: true
-    }));
+    updateChartState(chartId, { loading: true });
     
     // Update filter value
     setFilterValues(prev => ({
@@ -926,10 +965,7 @@ export default function DashboardRenderer({
     await fetchChartDataWithFilters(chart);
     
     // Reset loading state after fetch
-    setLoadingCharts(prev => ({
-      ...prev,
-      [chartId]: false
-    }));
+    updateChartState(chartId, { loading: false });
   };
 
   // Add function to determine if a field is rendered as a line
@@ -1670,15 +1706,12 @@ export default function DashboardRenderer({
         }
         
         // Set loading to false when data is loaded
-        setLoadingCharts(prev => ({
-          ...prev,
-          [chart.id]: false
-        }));
+        updateChartState(chart.id, { loading: false });
       };
     });
     
     return callbacks;
-  }, [filteredCharts, chartData, updateLegends]);
+  }, [filteredCharts, chartData, updateLegends, updateChartState]);
 
   if (!isClient) {
     return null; // Return nothing during SSR
@@ -1713,7 +1746,7 @@ export default function DashboardRenderer({
           key={chart.id}
           className={`${(chart.width || 2) === 2 ? 'md:col-span-1' : 'md:col-span-2'}`}
         >
-          <ChartCard 
+          <MemoizedChartCard 
           title={chart.title}
           description={chart.subtitle}
           accentColor="blue"
@@ -1736,7 +1769,7 @@ export default function DashboardRenderer({
             <div className="flex flex-wrap gap-3 items-center">
               {/* Time Filter */}
               {chart.additionalOptions?.filters?.timeFilter && (
-                <TimeFilterSelector
+                <MemoizedTimeFilterSelector
                   value={filterValues[chart.id]?.['timeFilter'] || chart.additionalOptions.filters.timeFilter.options[0]}
                   onChange={(value) => handleFilterChange(chart.id, 'timeFilter', value)}
                   options={chart.additionalOptions.filters.timeFilter.options.map((value: string) => ({ 
@@ -1748,7 +1781,7 @@ export default function DashboardRenderer({
               
               {/* Currency Filter */}
               {chart.additionalOptions?.filters?.currencyFilter && (
-                <CurrencyFilter
+                <MemoizedCurrencyFilter
                   currency={filterValues[chart.id]?.['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.options[0]}
                   options={chart.additionalOptions.filters.currencyFilter.options}
                   onChange={(value) => handleFilterChange(chart.id, 'currencyFilter', value)}
@@ -1757,7 +1790,7 @@ export default function DashboardRenderer({
               
               {/* Display Mode Filter - always show for stacked charts, or when explicitly configured */}
               {(isStackedBarChart(chart) || chart.additionalOptions?.filters?.displayModeFilter) && (
-                <DisplayModeFilter
+                <MemoizedDisplayModeFilter
                   mode={filterValues[chart.id]?.['displayMode'] as DisplayMode || 'absolute'}
                   onChange={(value) => handleFilterChange(chart.id, 'displayMode', value)}
                   disabled={
@@ -1793,7 +1826,7 @@ export default function DashboardRenderer({
             <>
               {legends[chart.id] && legends[chart.id].length > 0 ? (
                 legends[chart.id].map(legend => (
-                    <LegendItem 
+                    <MemoizedLegendItem 
                       key={legend.id || legend.label}
                       label={truncateLabel(legend.label)} 
                       color={legend.color} 
@@ -1831,7 +1864,7 @@ export default function DashboardRenderer({
               isLoading={loadingCharts[chart.id] || false}
             />
           </div>
-        </ChartCard>
+        </MemoizedChartCard>
         </div>
       ))}
     </div>

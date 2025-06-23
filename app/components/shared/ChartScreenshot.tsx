@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import * as htmlToImage from 'html-to-image';
+import html2canvas from 'html2canvas';
 import { ChartConfig } from '@/app/admin/types';
 
 export interface ChartScreenshotProps {
@@ -17,7 +17,7 @@ export interface ChartScreenshotOptions {
   sourceText?: string;
   backgroundColor?: string;
   quality?: number;
-  pixelRatio?: number;
+  scale?: number;
 }
 
 export class ChartScreenshotCapture {
@@ -29,7 +29,7 @@ export class ChartScreenshotCapture {
       sourceText: 'Source : Top Ledger',
       backgroundColor: '#121212',
       quality: 0.95,
-      pixelRatio: 2,
+      scale: 2,
       ...options
     };
   }
@@ -74,7 +74,7 @@ export class ChartScreenshotCapture {
       // Add to DOM temporarily
       document.body.appendChild(wrapper);
       
-      console.log('Starting image capture with html-to-image...');
+      console.log('Starting image capture with html2canvas...');
       
       try {
         // Add delay for DOM updates and logo loading
@@ -86,19 +86,21 @@ export class ChartScreenshotCapture {
           await this.waitForImageLoad(logo);
         }
         
-        // Capture the image
-        const dataUrl = await htmlToImage.toJpeg(clone, {
-          quality: this.options.quality,
+        // Capture the image using html2canvas
+        const canvas = await html2canvas(clone, {
           backgroundColor: this.options.backgroundColor,
-          width: cardElement.offsetWidth,
-          height: cardElement.offsetHeight,
-          style: {
-            backgroundColor: this.options.backgroundColor
-          },
-          pixelRatio: this.options.pixelRatio
+          scale: this.options.scale,
+          useCORS: true,
+          allowTaint: true,
+          foreignObjectRendering: true,
+          imageTimeout: 15000,
+          removeContainer: true
         });
         
         console.log('Image captured successfully, creating download link');
+        
+        // Convert canvas to data URL
+        const dataUrl = canvas.toDataURL('image/jpeg', this.options.quality);
         
         // Create and trigger download
         this.downloadImage(dataUrl, chart.title);

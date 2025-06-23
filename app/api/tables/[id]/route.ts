@@ -8,10 +8,18 @@ import {
   getTablesBatch, 
   saveTablesBatch 
 } from '@/lib/s3';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../../../lib/auth";
 
-// Enable server-side rendering for the API route
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+/*
+ * This API endpoint manages individual table configurations.
+ * GET: Retrieves a specific table by ID
+ * PUT: Updates an existing table (requires authentication)
+ * DELETE: Deletes a specific table (requires authentication)
+ */
+
+// Enable ISR with shorter revalidation for dynamic table updates
+export const revalidate = 10;
 
 // GET /api/tables/[id] - Get a specific table by ID
 export async function GET(

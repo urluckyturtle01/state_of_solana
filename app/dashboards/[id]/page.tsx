@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import ChartCard from "@/app/components/shared/ChartCard";
 import TextboxCard from "../components/TextboxCard";
 import AddTextboxModal from "../components/AddTextboxModal";
@@ -18,6 +17,12 @@ import { formatNumber } from "@/app/utils/formatters";
 import DisplayModeFilter, { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import React from "react";
 import { useChartScreenshot } from "@/app/components/shared";
+
+// Simple drag and drop interface
+interface DragState {
+  draggedIndex: number | null;
+  dragOverIndex: number | null;
+}
 
 interface SavedChart {
   id: string;
@@ -97,6 +102,12 @@ export default function DashboardPage() {
   // Modal state
   const [showTextboxModal, setShowTextboxModal] = useState(false);
 
+  // Drag and drop state
+  const [dragState, setDragState] = useState<DragState>({
+    draggedIndex: null,
+    dragOverIndex: null
+  });
+
   // Delete confirmation modal states
   const [deleteChartModal, setDeleteChartModal] = useState<{
     isOpen: boolean;
@@ -151,16 +162,41 @@ export default function DashboardPage() {
     };
   }, []);
 
-  // Handle drag and drop for mixed items
-  const handleOnDragEnd = (result: DropResult) => {
-    if (!result.destination || !dashboard) return;
-    
-    const startIndex = result.source.index;
-    const endIndex = result.destination.index;
-    
-    if (startIndex !== endIndex) {
-      reorderItems(dashboard.id, startIndex, endIndex);
+  // Handle drag and drop with native HTML5 API
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (!isEditMode) {
+      e.preventDefault();
+      return;
     }
+    setDragState({ draggedIndex: index, dragOverIndex: null });
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (!isEditMode || dragState.draggedIndex === null) return;
+    
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    if (index !== dragState.dragOverIndex) {
+      setDragState(prev => ({ ...prev, dragOverIndex: index }));
+    }
+  };
+
+  const handleDragEnd = () => {
+    const { draggedIndex, dragOverIndex } = dragState;
+    
+    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex && dashboard) {
+      reorderItems(dashboard.id, draggedIndex, dragOverIndex);
+    }
+    
+    setDragState({ draggedIndex: null, dragOverIndex: null });
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    handleDragEnd();
   };
 
   // Handle chart deletion
@@ -597,95 +633,78 @@ export default function DashboardPage() {
 
       {/* Charts and Textboxes Grid */}
       {allItems.length > 0 ? (
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <Droppable droppableId="dashboard-items" isDropDisabled={!isEditMode}>
-            {(provided) => (
-              <div 
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-start"
-              >
-                {allItems.map((item, index) => (
-                  <Draggable 
-                    key={item.id} 
-                    draggableId={item.id} 
-                    index={index}
-                    isDragDisabled={!isEditMode}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        className={`transition-all duration-200 relative ${
-                          snapshot.isDragging ? 'transform rotate-2 scale-105 z-50' : ''
-                        } ${
-                          item.itemType === 'textbox' && item.width === 'full' ? 'md:col-span-2' : ''
-                        }`}
-                      >
-                        {item.itemType === 'chart' ? (
-                          <ChartCard
-                            title={item.name}
-                            description={item.description}
-                            className="h-[520px]"
-                            id={`chart-card-${item.id}`}
-                            onExpandClick={() => handleExpandChart(item.id)}
-                            onScreenshotClick={() => handleChartScreenshot(item)}
-                            onDeleteClick={() => handleDeleteChart(item.id)}
-                            isScreenshotting={screenshottingCharts[item.id]}
-                            isEditMode={isEditMode}
-                            dragHandleProps={provided.dragHandleProps}
-                            filterBar={
-                              isStackedChart(item) ? (
-                                <div className="flex flex-wrap gap-3 items-center">
-                                  <DisplayModeFilter
-                                    mode={displayModes[item.id] || 'absolute'}
-                                    onChange={(mode) => handleDisplayModeChange(item.id, mode)}
-                                  />
-                                </div>
-                              ) : undefined
-                            }
-                            legend={
-                              <>
-                                {legends[item.id] && legends[item.id].length > 0 ? (
-                                  legends[item.id].map(legend => (
-                                    <LegendItem 
-                                      key={legend.id || legend.label}
-                                      label={truncateLabel(legend.label)} 
-                                      color={legend.color} 
-                                      shape={legend.shape || 'square'}
-                                      tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
-                                      onClick={() => handleLegendClick(item.id, legend.id || legend.label)}
-                                      inactive={(hiddenSeries[item.id] || []).includes(legend.id || legend.label)}
-                                    />
-                                  ))
-                                ) : null}
-                              </>
-                            }
-                          >
-                            {renderChart(item)}
-                          </ChartCard>
-                        ) : (
-                          <TextboxCard
-                            id={item.id}
-                            content={item.content}
-                            width={item.width}
-                            height={item.height}
-                            isEditMode={isEditMode}
-                            onDeleteClick={() => handleDeleteTextbox(item.id)}
-                            onContentChange={(content) => handleTextboxContentChange(item.id, content)}
-                            onHeightChange={(height) => handleTextboxHeightChange(item.id, height)}
-                            dragHandleProps={provided.dragHandleProps}
-                          />
-                        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 items-start">
+          {allItems.map((item, index) => (
+            <div
+              key={item.id}
+              draggable={isEditMode}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={handleDrop}
+              className={`transition-all duration-200 relative ${
+                dragState.draggedIndex === index ? 'transform rotate-2 scale-105 z-50' : ''
+              } ${
+                item.itemType === 'textbox' && item.width === 'full' ? 'md:col-span-2' : ''
+              }`}
+            >
+              {item.itemType === 'chart' ? (
+                <ChartCard
+                  title={item.name}
+                  description={item.description}
+                  className="h-[520px]"
+                  id={`chart-card-${item.id}`}
+                  onExpandClick={() => handleExpandChart(item.id)}
+                  onScreenshotClick={() => handleChartScreenshot(item)}
+                  onDeleteClick={() => handleDeleteChart(item.id)}
+                  isScreenshotting={screenshottingCharts[item.id]}
+                  isEditMode={isEditMode}
+                  dragHandleProps={{}}
+                  filterBar={
+                    isStackedChart(item) ? (
+                      <div className="flex flex-wrap gap-3 items-center">
+                        <DisplayModeFilter
+                          mode={displayModes[item.id] || 'absolute'}
+                          onChange={(mode) => handleDisplayModeChange(item.id, mode)}
+                        />
                       </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+                    ) : undefined
+                  }
+                  legend={
+                    <>
+                      {legends[item.id] && legends[item.id].length > 0 ? (
+                        legends[item.id].map(legend => (
+                          <LegendItem 
+                            key={legend.id || legend.label}
+                            label={truncateLabel(legend.label)} 
+                            color={legend.color} 
+                            shape={legend.shape || 'square'}
+                            tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
+                            onClick={() => handleLegendClick(item.id, legend.id || legend.label)}
+                            inactive={(hiddenSeries[item.id] || []).includes(legend.id || legend.label)}
+                          />
+                        ))
+                      ) : null}
+                    </>
+                  }
+                >
+                  {renderChart(item)}
+                </ChartCard>
+              ) : (
+                <TextboxCard
+                  id={item.id}
+                  content={item.content}
+                  width={item.width}
+                  height={item.height}
+                  isEditMode={isEditMode}
+                  onDeleteClick={() => handleDeleteTextbox(item.id)}
+                  onContentChange={(content) => handleTextboxContentChange(item.id, content)}
+                  onHeightChange={(height) => handleTextboxHeightChange(item.id, height)}
+                  dragHandleProps={{}}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       ) : (
         /* Empty State */
         <div className="flex items-center justify-center h-[400px] border-2 border-dashed border-gray-800 rounded-lg">

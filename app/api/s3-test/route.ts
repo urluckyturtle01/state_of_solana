@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import AWS from 'aws-sdk';
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
-// Enable server-side rendering for the API route
+// Force dynamic rendering for testing/debugging routes
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -21,8 +21,8 @@ export async function GET(req: NextRequest) {
       .filter(([_, value]) => !value)
       .map(([key, _]) => key);
     
-    // Configure AWS SDK
-    const s3 = new AWS.S3({
+    // Configure AWS SDK v3 client
+    const s3Client = new S3Client({
       region: process.env.AWS_REGION || process.env.S3_REGION || 'us-east-1',
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || process.env.S3_ACCESS_KEY || '',
@@ -39,12 +39,12 @@ export async function GET(req: NextRequest) {
     if (envChecks.AWS_ACCESS_KEY_ID && envChecks.AWS_SECRET_ACCESS_KEY) {
       try {
         // Test listing objects from the bucket
-        const params = {
+        const command = new ListObjectsV2Command({
           Bucket: bucketName,
           MaxKeys: 5
-        };
+        });
         
-        const data = await s3.listObjectsV2(params).promise();
+        const data = await s3Client.send(command);
         s3Status = 'Connected successfully';
         listResult = (data.Contents || []).map(item => item.Key || '').filter(key => key !== '');
       } catch (s3Error) {
