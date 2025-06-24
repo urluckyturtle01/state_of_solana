@@ -135,7 +135,7 @@ export default function ExplorerClient({ initialApis }: ExplorerClientProps) {
         console.log('POST body:', JSON.stringify(postBody, null, 2));
         
         response = await fetch('/api/proxy', {
-          method: 'POST',
+        method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -692,8 +692,8 @@ export default function ExplorerClient({ initialApis }: ExplorerClientProps) {
           </div>
           <p className="text-gray-400 text-sm">Loading APIs...</p>
         </div>
-      </div>
-    );
+  </div>
+);
   }
 
   if (error) {
@@ -711,7 +711,7 @@ export default function ExplorerClient({ initialApis }: ExplorerClientProps) {
       </div>
     );
   }
-
+  
   return (
     <div className="space-y-6">
       {/* Header */}

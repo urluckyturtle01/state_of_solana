@@ -1,0 +1,63 @@
+{
+  "pageId": "dex-token-hotspots",
+  "pageName": "DEX & Token Hotspots",
+  "fetchedAt": "2025-06-24T08:25:54.098Z",
+  "charts": [
+    {
+      "success": false,
+      "error": "API error: 503",
+      "chartId": "chart_1747914341226_ps3utjg",
+      "title": "Top tokens attacked - by SOL drained"
+    },
+    {
+      "success": false,
+      "error": "API error: 503",
+      "chartId": "chart_1747936232766_dnjy7l0",
+      "title": "Top tokens attacked - by attacks"
+    },
+    {
+      "success": false,
+      "error": "API error: 503",
+      "chartId": "chart_1747936484816_kqdflfn",
+      "title": "Top DEXs used - by SOL drained"
+    },
+    {
+      "success": true,
+      "data": [
+        {
+          "dex": "Pump AMM",
+          "attacks": 129372,
+          "total_sol_drained": 9612.335680431997
+        },
+        {
+          "dex": "Pump.fun AMM",
+          "attacks": 129372,
+          "total_sol_drained": 9612.335680431996
+        },
+        {
+          "dex": "PUMP FUN",
+          "attacks": 53193,
+          "total_sol_drained": 6111.3120836960015
+        },
+        {
+          "dex": "Raydium V4",
+          "attacks": 21720,
+          "total_sol_drained": 1963.6238069140004
+        },
+        {
+          "dex": "Raydium CPMM",
+          "attacks": 6939,
+          "total_sol_drained": 1416.6371331349999
+        }
+      ],
+      "timestamp": 1750753554098,
+      "chartId": "chart_1747936861655_4nzbmez",
+      "title": "Top DEXs used - by attacks"
+    }
+  ],
+  "summary": {
+    "totalCharts": 4,
+    "successfulFetches": 1,
+    "failedFetches": 3
+  }
+}

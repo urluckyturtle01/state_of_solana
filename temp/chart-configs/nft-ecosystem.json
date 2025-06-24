@@ -1,0 +1,44 @@
+{
+  "pageId": "nft-ecosystem",
+  "pageName": "NFT Ecosystem",
+  "chartCount": 1,
+  "lastUpdated": "2025-06-24T08:05:53.878Z",
+  "charts": [
+    {
+      "id": "chart_1748001587948_0pkms36",
+      "title": "NFT marketplace revenue",
+      "subtitle": "",
+      "page": "nft-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13172/results.json",
+      "apiKey": "ALdIglv0PhFtf1or3jLzYlqaSlbjndx3wZzRlnhx&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T11:59:47.948Z",
+      "updatedAt": "2025-06-20T06:17:16.370Z"
+    }
+  ]
+}

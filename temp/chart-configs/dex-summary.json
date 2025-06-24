@@ -1,0 +1,77 @@
+{
+  "pageId": "dex-summary",
+  "pageName": "Summary",
+  "chartCount": 2,
+  "lastUpdated": "2025-06-24T08:05:53.871Z",
+  "charts": [
+    {
+      "id": "chart_1748406595056_cvvtmpt",
+      "title": "Daily TVL vs Velocity",
+      "subtitle": "TVL(Total Value Locked) represents total amount of assets (in USD) locked in a pool.",
+      "page": "dex-summary",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12459/results.json",
+      "apiKey": "MwgPFDxoN9SCpEC6I6nhBH85dtNkXndNYcRtHLYA&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Daily_TVL",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "Daily_Velocity",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-28T04:29:55.056Z",
+      "updatedAt": "2025-06-20T09:36:44.351Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Daily_TVL"
+        ],
+        "rightAxisFields": [
+          "Daily_Velocity"
+        ]
+      }
+    },
+    {
+      "id": "chart_1748406887888_vq2chn1",
+      "title": "Velocity By DEX Program Category",
+      "subtitle": "",
+      "page": "dex-summary",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12439/results.json",
+      "apiKey": "zFtRMSKAAC8nTdp6JX2NebxyP6YCct9poXLe5WfN&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Velocity",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_type"
+      },
+      "additionalOptions": {},
+      "createdAt": "2025-05-28T04:34:47.888Z",
+      "updatedAt": "2025-06-20T08:40:36.858Z"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "pageId": "mint-burn",
+  "pageName": "Mint & Burn",
+  "chartCount": 2,
+  "lastUpdated": "2025-06-24T08:05:53.876Z",
+  "charts": [
+    {
+      "id": "chart_1748003855643_e18685s",
+      "title": "Mints",
+      "subtitle": "Amount of stablecoins minted, showing the supply expansion",
+      "page": "mint-burn",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12796/results.json",
+      "apiKey": "FsMRolQsXioS23lMYqhIqoD98nrm2EjkxgeqyPuW&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Mint_Amount",
+        "groupBy": "mint"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T12:37:35.643Z",
+      "updatedAt": "2025-06-23T07:20:54.800Z"
+    },
+    {
+      "id": "chart_1748003967738_y6vzlq5",
+      "title": "Burns",
+      "subtitle": "Amount of stablecoins burned, indicating efforts to reduce supply and manage inflation",
+      "page": "mint-burn",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12796/results.json",
+      "apiKey": "FsMRolQsXioS23lMYqhIqoD98nrm2EjkxgeqyPuW&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Burn_Amount",
+        "groupBy": "mint"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T12:39:27.738Z",
+      "updatedAt": "2025-06-23T07:26:58.674Z"
+    }
+  ]
+}

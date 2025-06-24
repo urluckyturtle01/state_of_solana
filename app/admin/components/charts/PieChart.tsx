@@ -164,7 +164,7 @@ const PieChart: React.FC<PieChartProps> = ({
   }, [data, yKey, findMatchingField]);
   
   // Log field mapping for debugging
-  console.log('PieChart field mapping:', {
+  console.log('PieChart Debug:', {
     chartTitle: chartConfig.title,
     configuredXKey: xKey,
     configuredYKey: yKey,
@@ -209,7 +209,7 @@ const PieChart: React.FC<PieChartProps> = ({
       return [];
     }
     
-    console.log('PieChart data processing:', {
+    console.log('PieChart Data Processing:', {
       dataLength: data.length,
       actualXKey,
       actualYKey,
@@ -248,12 +248,12 @@ const PieChart: React.FC<PieChartProps> = ({
           label: String(labelValue).trim(), // Trim whitespace
           value: numericValue,
           percentage: totalValue > 0 ? (numericValue / totalValue) * 100 : 0,
-      originalData: item
+          originalData: item
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null) // Filter out null entries
-    .filter(item => item.value > 0)  // Filter out zero values
-    .sort((a, b) => b.value - a.value); // Sort by value (descending)
+      .filter(item => item.value > 0)  // Filter out zero values
+      .sort((a, b) => b.value - a.value); // Sort by value (descending)
   }, [data, actualXKey, actualYKey, hiddenSeriesState]);
 
   // Create color scale based on data
@@ -263,7 +263,7 @@ const PieChart: React.FC<PieChartProps> = ({
       .filter(d => d[actualXKey] !== null && d[actualXKey] !== undefined && d[actualXKey] !== '')
       .map(d => String(d[actualXKey]).trim());
     
-    console.log('PieChart color scale labels:', dataLabels);
+    console.log('ColorScale Labels:', dataLabels);
     
     // Use external color map if available, otherwise generate from color palette
     const colorValues = dataLabels.map((label, index) => 
@@ -301,7 +301,7 @@ const PieChart: React.FC<PieChartProps> = ({
   }, [tooltip.visible]);
 
   // Helper function to calculate safe tooltip position for mobile
-  const calculateSafeTooltipPosition = (
+  const calculateSafeTooltipPosition = useCallback((
     mouseX: number, 
     mouseY: number, 
     containerRect: DOMRect,
@@ -359,7 +359,7 @@ const PieChart: React.FC<PieChartProps> = ({
       left: Math.max(safeLeft, 0),
       top: Math.max(safeTop, 0)
     };
-  };
+  }, []);
 
   // Handle mouse interaction for pie segments
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, dataPoint: PieDataPoint) => {
@@ -419,7 +419,7 @@ const PieChart: React.FC<PieChartProps> = ({
   }, [hiddenSeries]);
 
   // Helper function to format field names for display
-  const formatFieldName = (fieldName: string): string => {
+  const formatFieldName = useCallback((fieldName: string): string => {
     if (!fieldName) return '';
     
     // Convert only snake_case to space-separated, preserve dashes
@@ -434,7 +434,7 @@ const PieChart: React.FC<PieChartProps> = ({
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       })
       .join(' ');
-  };
+  }, []);
 
   // Update legend items when data changes
   useEffect(() => {
@@ -442,29 +442,35 @@ const PieChart: React.FC<PieChartProps> = ({
       setLegendItems([]);
       return;
     }
+    
+    // Create a local color function to avoid dependency on colorScale
+    const getItemColor = (label: string, index: number) => {
+      return externalColorMap?.[label] || getColorByIndex(index);
+    };
+    
     // Calculate total value for percentage (all data)
     const totalValue = data.reduce((sum, item) => sum + (Number(item[yKey]) || 0), 0);
     const allLegendItems = data
       .filter(item => Number(item[yKey]) > 0) // Only show items with positive values
-      .map(item => {
+      .map((item, index) => {
         const label = String(item[xKey]);
         const value = Number(item[yKey]) || 0;
         const percentage = totalValue > 0 ? (value / totalValue) * 100 : 0;
         return {
           id: label,
           label: formatFieldName(label),
-          color: colorScale(label) as string,
+          color: getItemColor(label, index),
           value,
           percentage
         };
       })
-        .sort((a, b) => b.value - a.value);
+      .sort((a, b) => b.value - a.value);
     setLegendItems(allLegendItems);
-  }, [data, xKey, yKey, colorScale]);
+  }, [data, xKey, yKey, formatFieldName, externalColorMap]);
 
   // Enhanced function to handle modal filter changes
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`Modal filter changed: ${key} = ${value}`);
+    console.log('Modal filter change:', key, value);
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -495,7 +501,7 @@ const PieChart: React.FC<PieChartProps> = ({
       return handleModalFilterChange(key, value);
     }
     
-    console.log(`Filter changed: ${key} = ${value}`);
+    console.log('Filter change:', key, value);
     
     const updatedFilters = {
       ...modalFilterValues,
@@ -705,7 +711,8 @@ const PieChart: React.FC<PieChartProps> = ({
     );
   }, [
     pieData, error, refreshData, handleMouseLeave,
-    tooltip, colorScale, formatValue, yUnit, filterValues, hiddenSeriesState
+    tooltip, colorScale, formatValue, yUnit, filterValues, hiddenSeriesState,
+    handleTouchEnd, modalChartRef, chartRef, calculateSafeTooltipPosition
   ]);
 
   // Cleanup debounce timer on unmount

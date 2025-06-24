@@ -15,7 +15,7 @@ try {
       "id": "fallback_api_1",
       "name": "Fallback API 1",
       "endpoint": "https://example.com/api/fallback1",
-      "method": "GET",
+    "method": "GET",
       "columns": ["date", "value"],
       "chartTitle": "Fallback Chart 1",
       "page": "fallback"

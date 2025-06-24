@@ -12,7 +12,7 @@ const ExplorerLoading = () => (
 export default function ExplorerPage() {
   // Use the imported data
   const initialApis = Array.isArray(apiCacheData) ? apiCacheData : [];
-  
+
   return (
     <div className="space-y-4">
       <Suspense fallback={<ExplorerLoading />}>

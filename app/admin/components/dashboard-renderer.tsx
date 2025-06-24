@@ -89,12 +89,8 @@ const preloadChartConfigs = async (pageId: string): Promise<ChartConfig[]> => {
   }
   
   try {
-    // Fetch charts from API with optimized timeout and parallel processing
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // Increased timeout for reliability
-    
-    const charts = await getChartConfigsByPage(pageId);
-    clearTimeout(timeoutId);
+    // Try to fetch from temp file first, then fallback to API
+    const charts = await getChartConfigsFromTempFile(pageId);
     
     // Cache the charts for future use
     PAGE_CONFIG_CACHE[pageId] = {
@@ -512,6 +508,64 @@ const MemoizedTimeFilterSelector = React.memo(TimeFilterSelector);
 const MemoizedCurrencyFilter = React.memo(CurrencyFilter);
 const MemoizedDisplayModeFilter = React.memo(DisplayModeFilter);
 
+// Modified function to load charts from temp files
+async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[]> {
+  try {
+    console.log(`Getting charts for page from temp file: ${pageId}`);
+    
+    // Fetch the chart config from temp API route
+    const response = await fetch(`/api/temp-configs/${pageId}`);
+    
+    if (!response.ok) {
+      console.warn(`Temp file not found for page ${pageId}, falling back to API`);
+      // Fallback to original function
+      return await getChartConfigsByPage(pageId);
+    }
+    
+    const pageConfig = await response.json();
+    console.log(`Loaded ${pageConfig.charts?.length || 0} charts from temp file for page: ${pageId}`);
+    
+    return pageConfig.charts || [];
+  } catch (error) {
+    console.warn(`Error loading from temp file for page ${pageId}, falling back to API:`, error);
+    // Fallback to original function
+    return await getChartConfigsByPage(pageId);
+  }
+}
+
+// New function to load cached chart data from temp files
+async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<string, any[]>> {
+  try {
+    console.log(`Getting cached chart data for page from temp file: ${pageId}`);
+    
+    // Fetch the chart data from temp API route
+    const response = await fetch(`/api/temp-data/${pageId}`);
+    
+    if (!response.ok) {
+      console.warn(`Temp data not found for page ${pageId}`);
+      return {};
+    }
+    
+    const pageData = await response.json();
+    const chartDataMap: Record<string, any[]> = {};
+    
+    // Convert cached data to the format expected by the dashboard
+    if (pageData.charts && Array.isArray(pageData.charts)) {
+      pageData.charts.forEach((chartResult: any) => {
+        if (chartResult.success && chartResult.data) {
+          chartDataMap[chartResult.chartId] = chartResult.data;
+        }
+      });
+    }
+    
+    console.log(`Loaded cached data for ${Object.keys(chartDataMap).length} charts from temp file for page: ${pageId}`);
+    return chartDataMap;
+  } catch (error) {
+    console.warn(`Error loading cached data from temp file for page ${pageId}:`, error);
+    return {};
+  }
+}
+
 export default function DashboardRenderer({ 
   pageId, 
   overrideCharts,
@@ -765,47 +819,94 @@ export default function DashboardRenderer({
         
         // Initialize chart states in batch
         const initialChartStates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
-        const initialChartData: Record<string, any[]> = {};
+        let initialChartData: Record<string, any[]> = {};
         
         loadedCharts.forEach(chart => {
           initialChartStates[chart.id] = { loading: true };
           initialChartData[chart.id] = [];
         });
         
-        // Batch update all states at once
-        batchUpdateChartStates(initialChartStates);
-        setChartData(initialChartData);
+        // Try to load cached data first for instant display
+        const cachedData = await getCachedChartDataFromTempFile(pageId);
         
-        // Start parallel data loading for all charts immediately
-        const dataLoadPromise = wrappedBatchFetchChartData(loadedCharts, filterValues);
-        
-        // Process results as they come in
-        const results = await dataLoadPromise;
-        
-        if (!mounted) return;
-            
-        // Process all results in batch
-        const newChartData: Record<string, any[]> = {};
-        const loadingUpdates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
-            
-        results.forEach(result => {
-          newChartData[result.chartId] = result.data || [];
-          loadingUpdates[result.chartId] = { loading: false };
+        if (Object.keys(cachedData).length > 0) {
+          console.log(`🚀 Using ${Object.keys(cachedData).length} cached charts for instant display`);
           
-          // Legends will be updated automatically via useEffect when chartData changes
+          // Merge cached data with initial data
+          initialChartData = { ...initialChartData, ...cachedData };
+          
+          // Update loading states for charts that have cached data
+          Object.keys(cachedData).forEach(chartId => {
+            initialChartStates[chartId] = { loading: false };
+          });
+          
+          // Set charts as loaded for cached ones
+          setChartData(initialChartData);
+          batchUpdateChartStates(initialChartStates);
+          
+          // Show the page immediately with cached data
+          setIsPageLoading(false);
+          setAllChartsLoaded(Object.keys(cachedData).length === loadedCharts.length);
+        } else {
+          // No cached data, show loading states
+          batchUpdateChartStates(initialChartStates);
+          setChartData(initialChartData);
+        }
+        
+        // Now fetch fresh data in the background for charts that need updates
+        const chartsToRefresh = loadedCharts.filter(chart => {
+          // Always refresh if no cached data, or if cached data is older than 1 hour
+          const hasCachedData = cachedData[chart.id];
+          if (!hasCachedData) return true;
+          
+          // For now, always refresh in background to ensure data freshness
+          // In the future, we could check timestamps and only refresh if needed
+          return true;
         });
         
-        // Batch update all chart data and loading states
-        setChartData(newChartData);
-        batchUpdateChartStates(loadingUpdates);
-        
-        // Mark all charts as loaded
-        const allLoaded = Object.values(loadingUpdates).every(update => !update.loading);
-        setAllChartsLoaded(allLoaded);
-        
-        if (allLoaded) {
-          setIsPageLoading(false);
+        if (chartsToRefresh.length > 0) {
+          console.log(`🔄 Refreshing ${chartsToRefresh.length} charts in background`);
+          
+          // Set loading states only for charts being refreshed
+          const refreshingStates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
+          chartsToRefresh.forEach(chart => {
+            refreshingStates[chart.id] = { loading: true };
+          });
+          batchUpdateChartStates(refreshingStates);
+          
+          // Start parallel data loading for charts that need refresh
+          const dataLoadPromise = wrappedBatchFetchChartData(chartsToRefresh, filterValues);
+          
+          // Process results as they come in
+          const results = await dataLoadPromise;
+          
+          if (!mounted) return;
+              
+          // Process all results in batch
+          const newChartData: Record<string, any[]> = { ...initialChartData };
+          const loadingUpdates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
+              
+          results.forEach(result => {
+            newChartData[result.chartId] = result.data || [];
+            loadingUpdates[result.chartId] = { loading: false };
+            
+            // Legends will be updated automatically via useEffect when chartData changes
+          });
+          
+          // Batch update all chart data and loading states
+          setChartData(newChartData);
+          batchUpdateChartStates(loadingUpdates);
+          
+          // Mark all charts as loaded
+          const allLoaded = Object.values(loadingUpdates).every(update => !update.loading);
+          setAllChartsLoaded(allLoaded);
+          
+          if (allLoaded) {
+            setIsPageLoading(false);
+            console.log(`✅ All charts refreshed and loaded`);
+          }
         }
+        
       } catch (error) {
         console.error(`Error loading charts for page ${pageId}:`, error);
         if (mounted) {

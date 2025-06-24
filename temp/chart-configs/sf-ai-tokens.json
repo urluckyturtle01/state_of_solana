@@ -1,0 +1,158 @@
+{
+  "pageId": "sf-ai-tokens",
+  "pageName": "AI Tokens",
+  "chartCount": 6,
+  "lastUpdated": "2025-06-24T08:05:53.881Z",
+  "charts": [
+    {
+      "id": "chart_1749644666030_qehz6b7",
+      "title": "Market cap",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13369/results.json",
+      "apiKey": "HVqXqdjizpKqv40yHqEstBfMeIzSWUE79GPGXvYW&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "market_cap",
+        "groupBy": "token_name",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T12:24:26.030Z",
+      "updatedAt": "2025-06-11T12:24:26.201Z"
+    },
+    {
+      "id": "chart_1749644759560_zw370mz",
+      "title": "Holders",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13369/results.json",
+      "apiKey": "HVqXqdjizpKqv40yHqEstBfMeIzSWUE79GPGXvYW&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "holders",
+        "groupBy": "token_name"
+      },
+      "createdAt": "2025-06-11T12:25:59.560Z",
+      "updatedAt": "2025-06-11T12:25:59.865Z"
+    },
+    {
+      "id": "chart_1749645283067_7mte72x",
+      "title": "Daily traders",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "apiKey": "sKzEvdBnFLdpvk9c1Pr10CQPg0GpIM2Xezl0nljm&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T12:34:43.067Z",
+      "updatedAt": "2025-06-11T12:34:43.347Z"
+    },
+    {
+      "id": "chart_1749645526967_fi4rrog",
+      "title": "Daily trades",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "apiKey": "sKzEvdBnFLdpvk9c1Pr10CQPg0GpIM2Xezl0nljm&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "trades",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T12:38:46.967Z",
+      "updatedAt": "2025-06-11T12:38:47.223Z"
+    },
+    {
+      "id": "chart_1749645875264_ahic8be",
+      "title": "Daily avg trades and volume",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "apiKey": "sKzEvdBnFLdpvk9c1Pr10CQPg0GpIM2Xezl0nljm&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_avd_volume",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "daily_avg_trades",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T12:44:35.264Z",
+      "updatedAt": "2025-06-11T12:44:35.589Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "daily_avd_volume"
+        ],
+        "rightAxisFields": [
+          "daily_avg_trades"
+        ]
+      }
+    },
+    {
+      "id": "chart_1749646034540_d9evqt4",
+      "title": "Daily volume",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "apiKey": "sKzEvdBnFLdpvk9c1Pr10CQPg0GpIM2Xezl0nljm",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T12:47:14.540Z",
+      "updatedAt": "2025-06-11T12:47:14.724Z"
+    }
+  ]
+}
