@@ -120,6 +120,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
   // Update hidden series when prop changes
   useEffect(() => {
+    console.log('SimpleBarChart: hiddenSeries prop changed:', hiddenSeries);
     setHiddenSeriesState(hiddenSeries || []);
   }, [hiddenSeries]);
 
@@ -150,6 +151,14 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   
   // Ensure yKey is always a string (first y-field for backwards compatibility)
   const yKey = yFields[0];
+
+  console.log('SimpleBarChart field mapping:', {
+    xKey,
+    yKey,
+    yFields,
+    isMultiSeries,
+    chartTitle: chartConfig.title
+  });
 
   // Format value for tooltip
   const formatValue = useCallback((value: number, unit?: string) => {

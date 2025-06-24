@@ -349,20 +349,13 @@ export default React.memo(function EnhancedDashboardRenderer({
   const loadAllComponents = useCallback(async () => {
     if (!pageId) return;
     
-    const totalStartTime = performance.now();
-    console.log(`🏗️ [Enhanced-${pageId}] Starting enhanced dashboard load...`);
-    
-    // Phase 1: Check and display cached data
-    const cacheCheckStartTime = performance.now();
-    console.log(`💾 [Enhanced-${pageId}] Phase 1: Checking cache...`);
-    
+    // Check for cached data for immediate display
     const cachedCounters = getFromLocalStorage<CounterConfig[]>(`counters_${pageId}`);
     const cachedTables = getFromLocalStorage<TableConfig[]>(`tables_${pageId}`);
     
     // Set cached data immediately if available and not refreshing
     if (!state.refreshTrigger) {
       if (cachedCounters) {
-        console.log(`⚡ [Enhanced-${pageId}] Found cached counters: ${cachedCounters.length} items`);
         updateState({
           counters: cachedCounters,
           isLoadingCounters: false
@@ -370,7 +363,6 @@ export default React.memo(function EnhancedDashboardRenderer({
       }
       
       if (cachedTables) {
-        console.log(`⚡ [Enhanced-${pageId}] Found cached tables: ${cachedTables.length} items`);
         updateState({
           tables: cachedTables,
           isLoadingTables: false
@@ -378,48 +370,28 @@ export default React.memo(function EnhancedDashboardRenderer({
       }
     }
     
-    const cacheCheckTime = performance.now() - cacheCheckStartTime;
-    console.log(`✅ [Enhanced-${pageId}] Phase 1 complete (${cacheCheckTime.toFixed(2)}ms) - Cache checked`);
-    
-    // Phase 2: Parallel loading of fresh data
-    const parallelLoadStartTime = performance.now();
-    console.log(`🔄 [Enhanced-${pageId}] Phase 2: Loading fresh data in parallel...`);
-    
+    // Start parallel loading of fresh data
     const loadPromises: Promise<any>[] = [];
     
     // Load counters
     if (overrideCounters) {
-      console.log(`📊 [Enhanced-${pageId}] Using override counters`);
       loadPromises.push(Promise.resolve(overrideCounters));
     } else {
-      console.log(`🌐 [Enhanced-${pageId}] Fetching counters from API...`);
       loadPromises.push(preloadCounterConfigs(pageId, state.refreshTrigger > 0));
     }
     
     // Load tables
     if (overrideTables) {
-      console.log(`📋 [Enhanced-${pageId}] Using override tables`);
       loadPromises.push(Promise.resolve(overrideTables));
     } else {
-      console.log(`🌐 [Enhanced-${pageId}] Fetching tables from API...`);
       loadPromises.push(preloadTableConfigs(pageId, state.refreshTrigger > 0));
     }
     
     // Execute all loads in parallel
     try {
-      const promiseStartTime = performance.now();
       const [freshCounters, freshTables] = await Promise.all(loadPromises);
-      const promiseTime = performance.now() - promiseStartTime;
-      
-      console.log(`✅ [Enhanced-${pageId}] Parallel API calls complete (${promiseTime.toFixed(2)}ms)`);
-      console.log(`   📊 Counters: ${freshCounters?.length || 0} items`);
-      console.log(`   📋 Tables: ${freshTables?.length || 0} items`);
       
       if (isMountedRef.current) {
-        // Phase 3: Update UI state
-        const stateUpdateStartTime = performance.now();
-        console.log(`🎨 [Enhanced-${pageId}] Phase 3: Updating component state...`);
-        
         // Batch update all states at once
         updateState({
           counters: freshCounters || [],
@@ -429,25 +401,9 @@ export default React.memo(function EnhancedDashboardRenderer({
           isInitialLoadComplete: true,
           error: null
         });
-        
-        const stateUpdateTime = performance.now() - stateUpdateStartTime;
-        console.log(`✅ [Enhanced-${pageId}] Phase 3 complete (${stateUpdateTime.toFixed(2)}ms) - State updated`);
-        
-        // Final summary
-        const totalTime = performance.now() - totalStartTime;
-        const parallelLoadTime = performance.now() - parallelLoadStartTime;
-        
-        console.log(`🎯 [Enhanced-${pageId}] ENHANCED DASHBOARD LOAD COMPLETE!`);
-        console.log(`⏱️ [Enhanced-${pageId}] TIMING BREAKDOWN:`);
-        console.log(`   💾 Cache Check: ${cacheCheckTime.toFixed(2)}ms (${(cacheCheckTime/totalTime*100).toFixed(1)}%)`);
-        console.log(`   🔄 Parallel Load: ${parallelLoadTime.toFixed(2)}ms (${(parallelLoadTime/totalTime*100).toFixed(1)}%)`);
-        console.log(`     └── API Calls: ${promiseTime.toFixed(2)}ms`);
-        console.log(`     └── State Update: ${stateUpdateTime.toFixed(2)}ms`);
-        console.log(`   🏁 TOTAL: ${totalTime.toFixed(2)}ms`);
       }
     } catch (error) {
-      const errorTime = performance.now() - totalStartTime;
-      console.error(`💥 [Enhanced-${pageId}] Error loading components (${errorTime.toFixed(2)}ms):`, error);
+      console.error('Error loading components:', error);
       if (isMountedRef.current) {
         updateState({
           error: 'Failed to load some components. Please try refreshing the page.',

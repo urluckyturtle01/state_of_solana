@@ -486,13 +486,9 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
 
   // Fetch data from API when component mounts or filters change
   useEffect(() => {
-    const effectStartTime = performance.now();
-    console.log(`📊 [ChartRenderer-${chartConfig.title}] Starting data fetch effect...`);
-    
     // Handle preloaded data with field normalization
     if (preloadedData && preloadedData.length > 0) {
-      const preloadStartTime = performance.now();
-      console.log(`⚡ [ChartRenderer-${chartConfig.title}] Processing preloaded data (${preloadedData.length} rows)...`);
+      console.log(`Using preloaded data for chart ${chartConfig.title}, skipping API fetch`);
       
       // Apply the same field normalization logic as for API data
       const normalizePreloadedData = () => {
@@ -558,8 +554,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           // Normalize the data if needed
           let normalizedData = preloadedData;
           if (needsNormalization) {
-            const normalizeStartTime = performance.now();
-            console.log(`🔄 [ChartRenderer-${chartConfig.title}] Normalizing field names...`);
+            console.log('Normalizing preloaded data field names...');
             normalizedData = preloadedData.map(item => {
               const normalizedItem = { ...item };
               
@@ -568,6 +563,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 const matchingField = findMatchingField(item, field);
                 if (matchingField && matchingField !== field) {
                   normalizedItem[field] = item[matchingField];
+                  console.log(`Normalized field: ${matchingField} -> ${field}`);
                 }
               }
               
@@ -576,6 +572,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 const matchingField = findMatchingField(item, field);
                 if (matchingField && matchingField !== field) {
                   normalizedItem[field] = item[matchingField];
+                  console.log(`Normalized field: ${matchingField} -> ${field}`);
                 }
               }
               
@@ -584,14 +581,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 const matchingGroupField = findMatchingField(item, groupBy);
                 if (matchingGroupField && matchingGroupField !== groupBy) {
                   normalizedItem[groupBy] = item[matchingGroupField];
+                  console.log(`Normalized field: ${matchingGroupField} -> ${groupBy}`);
                 }
               }
               
               return normalizedItem;
             });
-            
-            const normalizeTime = performance.now() - normalizeStartTime;
-            console.log(`✅ [ChartRenderer-${chartConfig.title}] Field normalization complete (${normalizeTime.toFixed(2)}ms)`);
           }
           
           // Call onDataLoaded callback if provided
@@ -602,10 +597,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           // For time aggregation, store raw data and apply initial aggregation
           const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
           if (isTimeAggregationEnabled) {
-            const aggregationStartTime = performance.now();
-            console.log(`⏰ [ChartRenderer-${chartConfig.title}] Applying time aggregation...`);
-            
             setRawData(normalizedData);
+            console.log('Stored raw preloaded data for time aggregation');
             
             // Apply initial time aggregation if filter is set
             const timeFilterValue = filterValues['timeFilter'];
@@ -620,25 +613,18 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 yFields = [getFieldFromYAxisConfig(yAxis)];
               }
               
-              const aggregatedData = aggregateDataByTimePeriod(normalizedData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
-              setData(aggregatedData);
-              
-              const aggregationTime = performance.now() - aggregationStartTime;
-              console.log(`✅ [ChartRenderer-${chartConfig.title}] Time aggregation complete (${aggregationTime.toFixed(2)}ms) - ${aggregatedData.length} rows`);
+                          const aggregatedData = aggregateDataByTimePeriod(normalizedData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+            setData(aggregatedData);
             } else {
               setData(normalizedData);
             }
           } else {
             setData(normalizedData);
           }
-          
-          const preloadTime = performance.now() - preloadStartTime;
-          const totalEffectTime = performance.now() - effectStartTime;
-          console.log(`✅ [ChartRenderer-${chartConfig.title}] Preloaded data processed (${preloadTime.toFixed(2)}ms) - Total effect time: ${totalEffectTime.toFixed(2)}ms`);
+          console.log('Preloaded data normalized and set successfully');
           
         } catch (error) {
-          const errorTime = performance.now() - effectStartTime;
-          console.error(`❌ [ChartRenderer-${chartConfig.title}] Error processing preloaded data (${errorTime.toFixed(2)}ms):`, error);
+          console.error('Error processing preloaded data:', error);
           setError(`Error processing preloaded data: ${error instanceof Error ? error.message : String(error)}`);
         }
       };
@@ -659,112 +645,378 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     const signal = controller.signal;
     
     const fetchData = async () => {
-      const apiStartTime = performance.now();
-      console.log(`🌐 [ChartRenderer-${chartConfig.title}] Starting API data fetch...`);
+      setError(null);
+      
+      // Variable to hold our parsed data
+      let parsedData: any[] = [];
       
       try {
-        setError(null);
+        // Skip API call if using the same endpoint with the same mapping and no filter changes
+        const cacheKey = `${chartConfig.apiEndpoint}-${dataMappingKey}-${JSON.stringify(filterValues)}`;
+        const cachedData = !isFilterChanged ? sessionStorage.getItem(cacheKey) : null;
         
-        // Prepare filters for the request
-        const fetchFiltersStartTime = performance.now();
-        console.log(`🔍 [ChartRenderer-${chartConfig.title}] Preparing filters...`);
-        
-        const cleanFilters = Object.fromEntries(
-          Object.entries(filterValues).filter(([_, value]) => {
-            return value !== null && value !== undefined && value !== '';
-          })
-        );
-        
-        const fetchFiltersTime = performance.now() - fetchFiltersStartTime;
-        console.log(`✅ [ChartRenderer-${chartConfig.title}] Filters prepared (${fetchFiltersTime.toFixed(2)}ms) - ${Object.keys(cleanFilters).length} filters`);
-        
-        // Make the API request
-        const requestStartTime = performance.now();
-        console.log(`📡 [ChartRenderer-${chartConfig.title}] Making API request to ${chartConfig.apiEndpoint}...`);
-        
-        const response = await fetch(chartConfig.apiEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cleanFilters),
-          signal: controller.signal,
-        });
-        
-        const requestTime = performance.now() - requestStartTime;
-        console.log(`✅ [ChartRenderer-${chartConfig.title}] API request complete (${requestTime.toFixed(2)}ms) - Status: ${response.status}`);
-        
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
-        
-        // Parse response data
-        const parseStartTime = performance.now();
-        console.log(`📝 [ChartRenderer-${chartConfig.title}] Parsing response data...`);
-        
-        const responseData = await response.json();
-        
-        const parseTime = performance.now() - parseStartTime;
-        console.log(`✅ [ChartRenderer-${chartConfig.title}] Response parsed (${parseTime.toFixed(2)}ms) - ${responseData?.length || 0} rows`);
-        
-        // Call onDataLoaded callback if provided
-        if (onDataLoaded) {
-          onDataLoaded(responseData);
-        }
-        
-        // Process data for time aggregation if enabled
-        const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
-        if (isTimeAggregationEnabled) {
-          const aggregationStartTime = performance.now();
-          console.log(`⏰ [ChartRenderer-${chartConfig.title}] Processing time aggregation...`);
+        if (cachedData) {
+          console.log('Using cached data for', chartConfig.title);
+          parsedData = JSON.parse(cachedData);
+        } else {
+          // Create URL with API key if provided
+          let apiUrl;
+          try {
+            apiUrl = new URL(chartConfig.apiEndpoint);
+            // Add API key to URL for both GET and POST requests
+            if (chartConfig.apiKey) {
+              // Check if the apiKey contains max_age parameter
+              const apiKeyValue = chartConfig.apiKey.trim();
+              
+              if (apiKeyValue.includes('&max_age=')) {
+                // Split by &max_age= and add each part separately
+                const [baseApiKey, maxAgePart] = apiKeyValue.split('&max_age=');
+                if (baseApiKey) {
+                  apiUrl.searchParams.append('api_key', baseApiKey.trim());
+                }
+                if (maxAgePart) {
+                  apiUrl.searchParams.append('max_age', maxAgePart.trim());
+                }
+              } else {
+                // Just a regular API key
+                apiUrl.searchParams.append('api_key', apiKeyValue);
+              }
+            }
+          } catch (error) {
+            throw new Error(`Invalid URL: ${chartConfig.apiEndpoint}`);
+          }
           
-          setRawData(responseData);
+          // Build parameters object for POST request based on filters
+          const parameters: Record<string, any> = {};
+          const filterConfig = chartConfig.additionalOptions?.filters;
+          const hasFilters = filterConfig !== undefined;
+          const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
           
-          // Apply time aggregation if filter is set
-          const timeFilterValue = filterValues['timeFilter'];
-          if (timeFilterValue) {
-            const { xAxis, yAxis } = chartConfig.dataMapping;
-            const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
-            
-            let yFields: string[] = [];
-            if (Array.isArray(yAxis)) {
-              yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
-            } else {
-              yFields = [getFieldFromYAxisConfig(yAxis)];
+          console.log('=== FILTER DEBUG INFO ===');
+          console.log('Chart title:', chartConfig.title);
+          console.log('Enable time aggregation:', isTimeAggregationEnabled);
+          console.log('Filter config:', filterConfig);
+          console.log('Filter values:', filterValues);
+          console.log('Has filters:', hasFilters);
+          
+          if (hasFilters) {
+            // Skip time filter parameter if time aggregation is enabled (client-side processing)
+            if (filterConfig.timeFilter && filterValues['timeFilter'] && !isTimeAggregationEnabled) {
+              parameters[filterConfig.timeFilter.paramName] = filterValues['timeFilter'];
+              console.log(`Setting time filter: ${filterConfig.timeFilter.paramName}=${filterValues['timeFilter']}`);
+            } else if (filterConfig.timeFilter && 
+                     Array.isArray(filterConfig.timeFilter.options) && 
+                     filterConfig.timeFilter.options.length > 0 && 
+                     !isTimeAggregationEnabled) {
+              parameters[filterConfig.timeFilter.paramName] = filterConfig.timeFilter.options[0];
+              console.log(`Setting default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
+            } else if (isTimeAggregationEnabled && filterConfig.timeFilter) {
+              console.log('Skipping time filter parameter - using client-side time aggregation');
             }
             
-            const aggregatedData = aggregateDataByTimePeriod(responseData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
-            setData(aggregatedData);
+            // Add currency filter parameter
+            if (filterConfig.currencyFilter && filterValues['currencyFilter']) {
+              parameters[filterConfig.currencyFilter.paramName] = filterValues['currencyFilter'];
+              console.log(`Setting currency filter: ${filterConfig.currencyFilter.paramName}=${filterValues['currencyFilter']}`);
+            } else if (filterConfig.currencyFilter && 
+                     Array.isArray(filterConfig.currencyFilter.options) && 
+                     filterConfig.currencyFilter.options.length > 0) {
+              parameters[filterConfig.currencyFilter.paramName] = filterConfig.currencyFilter.options[0];
+              console.log(`Setting default currency filter: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
+            }
             
-            const aggregationTime = performance.now() - aggregationStartTime;
-            console.log(`✅ [ChartRenderer-${chartConfig.title}] Time aggregation complete (${aggregationTime.toFixed(2)}ms) - ${aggregatedData.length} rows`);
-          } else {
-            setData(responseData);
+            // Add display mode filter parameter (skip if time aggregation is enabled - client-side processing)
+            if (filterConfig.displayModeFilter && filterValues['displayModeFilter'] && !isTimeAggregationEnabled) {
+              parameters[filterConfig.displayModeFilter.paramName] = filterValues['displayModeFilter'];
+              console.log(`Setting display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterValues['displayModeFilter']}`);
+            } else if (filterConfig.displayModeFilter && 
+                     Array.isArray(filterConfig.displayModeFilter.options) && 
+                     filterConfig.displayModeFilter.options.length > 0 &&
+                     !isTimeAggregationEnabled) {
+              parameters[filterConfig.displayModeFilter.paramName] = filterConfig.displayModeFilter.options[0];
+              console.log(`Setting default display mode filter: ${filterConfig.displayModeFilter.paramName}=${filterConfig.displayModeFilter.options[0]}`);
+            } else if (isTimeAggregationEnabled && filterConfig.displayModeFilter) {
+              console.log('Skipping display mode filter parameter - using client-side processing with time aggregation');
+            }
           }
-        } else {
-          setData(responseData);
+          
+          const hasParameters = Object.keys(parameters).length > 0;
+          
+          console.log('=== REQUEST DEBUG INFO ===');
+          console.log('Parameters object:', parameters);
+          console.log('Has parameters:', hasParameters);
+          console.log('Request method will be:', hasParameters ? 'POST' : 'GET');
+          
+          // Set up fetch options
+          const options: RequestInit = {
+            method: hasParameters ? 'POST' : 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store', // Use no-store to ensure we always get fresh data
+            signal, // Add abort signal
+            // Add a longer timeout for slow connections
+            ...{ timeout: 15000 }
+          };
+          
+          // Add body with parameters for POST request
+          if (hasParameters) {
+            // Format exactly as in the cURL example: {"parameters":{"Date Part":"W"}}
+            options.body = JSON.stringify({ parameters });
+            console.log(`Fetching data with request body:`, options.body);
+          }
+          
+          console.log(`Fetching data from: ${apiUrl.toString()} with method: ${options.method}`);
+          
+          // Fetch data from API with timeout and proper error handling
+          const response = await fetch(apiUrl.toString(), options);
+          
+          console.log(`API response status: ${response.status} ${response.statusText}`);
+          
+          if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          
+          console.log(`API response structure:`, Object.keys(result));
+          
+          // Handle different API response formats
+          console.log('Raw API response sample:', JSON.stringify(result, null, 2).substring(0, 500));
+          
+          // Format 1: Standard Redash format with query_result.data.rows
+          if (result?.query_result?.data?.rows) {
+            parsedData = result.query_result.data.rows;
+            console.log(`Found ${parsedData.length} rows in Redash format`);
+          } 
+          // Format 2: Direct array response
+          else if (Array.isArray(result)) {
+            parsedData = result;
+            console.log(`Found ${parsedData.length} rows in direct array format`);
+          } 
+          // Format 3: Data property containing array
+          else if (result?.data && Array.isArray(result.data)) {
+            parsedData = result.data;
+            console.log(`Found ${parsedData.length} rows in data array format`);
+          }
+          // Format 4: Rows property containing array
+          else if (result?.rows && Array.isArray(result.rows)) {
+            parsedData = result.rows;
+            console.log(`Found ${parsedData.length} rows in rows array format`);
+          }
+          // Format 5: Results property containing array
+          else if (result?.results && Array.isArray(result.results)) {
+            parsedData = result.results;
+            console.log(`Found ${parsedData.length} rows in results array format`);
+          }
+          // Format 6: Check for error property
+          else if (result?.error) {
+            throw new Error(`API returned an error: ${result.error}`);
+          }
+          else {
+            console.error('Unrecognized API response structure:', result);
+            console.error('Available keys:', Object.keys(result));
+            throw new Error('API response does not have a recognized structure');
+          }
+          
+          // Log sample of parsed data for debugging
+          if (parsedData.length > 0) {
+            console.log('Parsed data sample:', {
+              totalRows: parsedData.length,
+              firstRow: parsedData[0],
+              availableFields: Object.keys(parsedData[0])
+            });
+          }
+          
+          // Cache the result to prevent unnecessary fetches
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
+          } catch (e) {
+            console.warn('Failed to cache data:', e);
+          }
+          
+          // Reset filter changed flag
+          setIsFilterChanged(false);
         }
         
-        const totalApiTime = performance.now() - apiStartTime;
-        const totalEffectTime = performance.now() - effectStartTime;
-        
-        console.log(`🎯 [ChartRenderer-${chartConfig.title}] API DATA FETCH COMPLETE!`);
-        console.log(`⏱️ [ChartRenderer-${chartConfig.title}] API TIMING BREAKDOWN:`);
-        console.log(`   🔍 Filter Prep: ${fetchFiltersTime.toFixed(2)}ms (${(fetchFiltersTime/totalApiTime*100).toFixed(1)}%)`);
-        console.log(`   📡 Request: ${requestTime.toFixed(2)}ms (${(requestTime/totalApiTime*100).toFixed(1)}%)`);
-        console.log(`   📝 Parse: ${parseTime.toFixed(2)}ms (${(parseTime/totalApiTime*100).toFixed(1)}%)`);
-        console.log(`   🏁 API Total: ${totalApiTime.toFixed(2)}ms`);
-        console.log(`   🏁 Effect Total: ${totalEffectTime.toFixed(2)}ms`);
-        
-      } catch (error: any) {
-        const errorTime = performance.now() - apiStartTime;
-        const totalEffectTime = performance.now() - effectStartTime;
-        
-        if (error.name === 'AbortError') {
-          console.log(`🛑 [ChartRenderer-${chartConfig.title}] Request aborted (${errorTime.toFixed(2)}ms)`);
-          return;
+        // Process the data if we have any (either from API or fallback)
+        if (parsedData.length > 0 && !signal.aborted) {
+          // Log the data for debugging purposes
+          console.log('Chart data successfully loaded:', parsedData.slice(0, 2));
+          
+          // Validate that we can access the required data fields
+          try {
+            const { xAxis, yAxis, groupBy } = chartConfig.dataMapping;
+            const sampleItem = parsedData[0];
+
+            // Normalize arrays and strings for processing
+            const xAxisFields = Array.isArray(xAxis) ? xAxis : [xAxis];
+            let yAxisFields: string[] = [];
+            
+            // Extract field names from yAxis which could be strings or YAxisConfig objects
+            if (Array.isArray(yAxis)) {
+              yAxisFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+            } else {
+              yAxisFields = [getFieldFromYAxisConfig(yAxis)];
+            }
+            
+            // Check and normalize fields if needed
+            let needsNormalization = false;
+            
+            // Check if the required fields exist
+            const fieldExists = (item: any, field: string) => {
+              return !!findMatchingField(item, field);
+            };
+            
+            // Check x-axis fields
+            for (const field of xAxisFields) {
+              if (!fieldExists(sampleItem, field)) {
+                throw new Error(`X-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, field) !== field) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Check y-axis fields
+            for (const field of yAxisFields) {
+              if (!fieldExists(sampleItem, field)) {
+                throw new Error(`Y-axis field "${field}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, field) !== field) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Check for group by field if this is a stacked chart
+            if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+              if (!fieldExists(sampleItem, groupBy)) {
+                throw new Error(`Group By field "${groupBy}" not found in data. Available fields: ${Object.keys(sampleItem).join(', ')}`);
+              }
+              if (findMatchingField(sampleItem, groupBy) !== groupBy) {
+                needsNormalization = true;
+              }
+            }
+            
+            // Normalize the data if needed
+            if (needsNormalization) {
+              parsedData = parsedData.map(item => {
+                const normalizedItem = { ...item };
+                
+                // Normalize x-axis fields
+                for (const field of xAxisFields) {
+                  const matchingField = findMatchingField(item, field);
+                  if (matchingField && matchingField !== field) {
+                    normalizedItem[field] = item[matchingField];
+                  }
+                }
+                
+                // Normalize y-axis fields
+                for (const field of yAxisFields) {
+                  const matchingField = findMatchingField(item, field);
+                  if (matchingField && matchingField !== field) {
+                    normalizedItem[field] = item[matchingField];
+                  }
+                }
+                
+                // Normalize group by field if needed
+                if (groupBy && (chartConfig.chartType.includes('stacked') || chartConfig.isStacked)) {
+                  const matchingGroupField = findMatchingField(item, groupBy);
+                  if (matchingGroupField && matchingGroupField !== groupBy) {
+                    normalizedItem[groupBy] = item[matchingGroupField];
+                  }
+                }
+                
+                return normalizedItem;
+              });
+            }
+            
+            // Call onDataLoaded callback if provided and component is still mounted
+            if (onDataLoaded && !signal.aborted) {
+              onDataLoaded(parsedData);
+            }
+            
+            // Set data only if component is still mounted
+            if (!signal.aborted) {
+              // For time aggregation, store raw data and apply aggregation
+              const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+              if (isTimeAggregationEnabled) {
+                setRawData(parsedData);
+                console.log('Stored raw API data for time aggregation');
+                
+                // Apply initial time aggregation if filter is set
+                const timeFilterValue = filterValues['timeFilter'];
+                if (timeFilterValue) {
+                  const { xAxis, yAxis } = chartConfig.dataMapping;
+                  const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+                  
+                  let yFields: string[] = [];
+                  if (Array.isArray(yAxis)) {
+                    yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+                  } else {
+                    yFields = [getFieldFromYAxisConfig(yAxis)];
+                  }
+                  
+                                const aggregatedData = aggregateDataByTimePeriod(parsedData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+              setData(aggregatedData);
+                } else {
+              setData(parsedData);
+                }
+              } else {
+                setData(parsedData);
+              }
+            }
+          } catch (error) {
+            if (!signal.aborted) {
+              console.error('Error processing data:', error);
+              setError(`Error processing data: ${error instanceof Error ? error.message : String(error)}`);
+            }
+          }
         }
-        
-        console.error(`💥 [ChartRenderer-${chartConfig.title}] API error (${errorTime.toFixed(2)}ms, total effect: ${totalEffectTime.toFixed(2)}ms):`, error);
-        setError(`Error fetching data: ${error.message || 'Unknown error'}`);
+      } catch (error) {
+        // Only set error if the request wasn't cancelled and component is still mounted
+        if (!signal.aborted) {
+          console.error('Error fetching chart data:', error);
+          
+          // More detailed error messages based on error type
+          let errorMessage: string;
+          
+          if (error instanceof Error) {
+            // Network errors
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+              errorMessage = `Network error: Unable to reach the API. Check if the endpoint is accessible.`;
+            }
+            // CORS issues
+            else if (error.message.includes('CORS')) {
+              errorMessage = `CORS error: The API doesn't allow requests from this origin.`;
+            } 
+            // API validation errors (like 404, 500, etc.)
+            else if (error.message.includes('API request failed with status')) {
+              errorMessage = error.message;
+            }
+            // Default error message
+            else {
+              errorMessage = error.message;
+            }
+          } else {
+            errorMessage = String(error);
+          }
+          
+          // Use sample data as fallback
+          parsedData = getSampleData(
+            chartConfig.chartType, 
+            chartConfig.dataMapping.groupBy
+          );
+          
+          // Show a warning message but continue with fallback data
+          setError(`Using fallback data: ${errorMessage}`);
+          console.log('Using fallback data:', parsedData);
+          
+          // Set the data with the fallback
+          if (!signal.aborted) {
+            setData(parsedData);
+          }
+        }
       }
     };
     

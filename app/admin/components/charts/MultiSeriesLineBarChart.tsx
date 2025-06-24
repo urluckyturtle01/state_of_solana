@@ -376,6 +376,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           // For a single field in an array, use its specified type
           const singleField = yField[0];
           originalFieldType = typeof singleField === 'string' ? 'bar' : singleField.type;
+          
+          // Log the determined type for debugging
+          console.log('GroupBy: Using field type for all groups:', originalFieldType);
         } else {
           // Fallback to bar if structure is unexpected
           originalFieldType = 'bar';
@@ -489,13 +492,17 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         const modalContainer = chartContainer.closest('.modal-backdrop');
         if (modalContainer) {
           container = modalContainer;
+          console.log('Modal container found for brush reset:', modalContainer);
         }
       }
       
       // Query only within this specific container
       const brushElements = container.querySelectorAll('.visx-brush-selection');
+      console.log(`Found ${brushElements.length} brush elements in ${inModal ? 'modal' : 'main'} view`);
       
       if (brushElements.length > 0) {
+        console.log(`Forcing ${inModal ? 'modal ' : ''}brush visual reset`);
+        
         // Reset the brush width to full width
         brushElements.forEach(el => {
           if (el instanceof SVGRectElement) {
@@ -508,6 +515,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                 // Reset to full width with slight padding on both sides
                 el.setAttribute('width', String(brushWidth - 4));
                 el.setAttribute('x', '2');
+                console.log(`Reset brush to width: ${brushWidth - 4}, x: 2`);
               }
             }
           }
@@ -532,6 +540,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // When filter values change in modal, reset modal brush
       if (isModalBrushActive && isExpanded) {
+        console.log('Filter changed in modal, resetting brush to show full dataset');
         setModalBrushDomain(null);
         setIsModalBrushActive(true); // Keep active but reset domain
         setModalFilteredData(data); // Reset to full dataset
@@ -545,12 +554,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
     if (isExpanded) {
+      console.log('Modal opened, syncing brush domains');
       // When modal opens, sync the brush domains
       setModalBrushDomain(brushDomain);
       setIsModalBrushActive(isBrushActive);
       
       // Also sync filtered data
       if (isBrushActive && filteredData.length > 0) {
+        console.log('Syncing filtered data to modal:', filteredData.length, 'items');
         setModalFilteredData(filteredData);
       }
     }
@@ -558,11 +569,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   
   // Update the direct filter change handler to remove the brush visual reset
   useEffect(() => {
+    console.log('filterValues changed directly from parent:', stableFilterValues);
+    
     // Skip first render
     if (!stableFilterValues) return;
     
     // Reset modal brush state if it's active and modal is expanded
     if (isModalBrushActive && isExpanded) {
+      console.log('Directly resetting brush due to external filter change');
       setModalBrushDomain(null);
       setIsModalBrushActive(true); // Keep active but reset domain
       setModalFilteredData(data); // Reset to full dataset
@@ -588,8 +602,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Debounce timer ref for filter changes
   const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Enhanced filter change handler for modal
+  // Update the modal filter change handler
   const handleModalFilterChange = useCallback((key: string, value: string) => {
+    console.log(`Modal filter changed: ${key} = ${value}`);
+    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
@@ -910,6 +926,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const brushData = useMemo(() => {
     if (!data || data.length === 0) return [];
     
+    // console.log('Creating brush data with', data.length, 'items');
     
     // Filter and ensure x values are valid
     let processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
@@ -951,6 +968,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // For charts with groupBy
     if (hasGroupBy) {
+      // console.log('Processing brush data for chart with groupBy:', groupByField);
       
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
@@ -994,6 +1012,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
+      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points for groupBy`);
       
       // Create brush data points
       return uniqueData.map((item, i) => {
@@ -1027,11 +1046,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         };
       });
       
+      // console.log('Created brush data for groupBy chart:', uniqueData.length, 'points');
       return uniqueData;
     }
     
     // For chart without filters, use more direct approach to ensure continuous line
     if (isChartWithoutFilters) {
+      // console.log('Processing chart without filters');
       
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
@@ -1054,6 +1075,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
+      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
       
       // Create a series of evenly spaced date points for consistency
       return uniqueData.map((item, i) => {
@@ -1086,6 +1108,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         };
       });
       
+      // console.log('Created brush data for chart without filters:', uniqueData.length, 'points');
       return uniqueData;
     }
     
@@ -1127,6 +1150,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       };
     });
     
+    // console.log('Created brush data for standard processing:', brushPoints.length, 'points');
     return brushPoints;
   }, [data, xKey, fields, stableFilterValues, chartConfig.dataMapping.groupBy, yField]);
 
@@ -1142,6 +1166,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
     
     const { x0, x1 } = domain;
+    console.log('Brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update brush domain
     setBrushDomain([new Date(x0), new Date(x1)]);
@@ -1166,12 +1191,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
         });
       
+      console.log('Selected x values in brush range:', selectedBrushXValues.size);
+      
       // Now filter the original data to only include items with x values in our set
       const filteredItems = data.filter(item => {
         const itemXValue = String(item[xKey]);
         return selectedBrushXValues.has(itemXValue);
       });
       
+      console.log('Filtered data for groupBy chart:', filteredItems.length);
       setFilteredData(filteredItems);
     } else {
       // Standard filtering for non-groupBy charts
@@ -1180,6 +1208,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         .map(item => item.originalData)
         .filter(item => item !== null);
         
+      console.log('Filtered data after brush:', selectedBrushItems.length);
       setFilteredData(selectedBrushItems);
     }
     
@@ -1200,6 +1229,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
     
     const { x0, x1 } = domain;
+    console.log('Modal brush change:', new Date(x0), 'to', new Date(x1));
     
     // Update modal brush domain
     setModalBrushDomain([new Date(x0), new Date(x1)]);
@@ -1224,12 +1254,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
         });
       
+      console.log('Selected x values in modal brush range:', selectedBrushXValues.size);
+      
       // Now filter the original data to only include items with x values in our set
       const filteredItems = data.filter(item => {
         const itemXValue = String(item[xKey]);
         return selectedBrushXValues.has(itemXValue);
       });
       
+      console.log('Filtered modal data for groupBy chart:', filteredItems.length);
       setModalFilteredData(filteredItems);
     } else {
       // Standard filtering for non-groupBy charts
@@ -1238,6 +1271,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         .map(item => item.originalData)
         .filter(item => item !== null);
       
+      console.log('Filtered data after modal brush:', selectedBrushItems.length);
       setModalFilteredData(selectedBrushItems);
     }
     
