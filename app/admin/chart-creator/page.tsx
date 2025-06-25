@@ -93,6 +93,9 @@ export default function ChartCreatorPage() {
   // Add state for time aggregation feature
   const [enableTimeAggregation, setEnableTimeAggregation] = useState(false);
   
+  // Add state for tooltip total feature
+  const [showTooltipTotal, setShowTooltipTotal] = useState(false);
+  
   // Add state for menu selection
   const [selectedMenu, setSelectedMenu] = useState<string>('');
   
@@ -198,6 +201,11 @@ export default function ChartCreatorPage() {
               // Check for time aggregation feature
               if (chartToEdit.additionalOptions?.enableTimeAggregation) {
                 setEnableTimeAggregation(true);
+              }
+              
+              // Check for tooltip total feature
+              if (chartToEdit.additionalOptions?.showTooltipTotal) {
+                setShowTooltipTotal(true);
               }
             } else {
               console.error(`Chart with ID ${editId} not found`);
@@ -799,6 +807,21 @@ export default function ChartCreatorPage() {
     }
   };
   
+  // Toggle tooltip total feature
+  const toggleTooltipTotal = () => {
+    const newValue = !showTooltipTotal;
+    setShowTooltipTotal(newValue);
+    
+    // Update form data with tooltip total setting
+    setFormData(prev => ({
+      ...prev,
+      additionalOptions: {
+        ...prev.additionalOptions,
+        showTooltipTotal: newValue
+      }
+    }));
+  };
+  
   // Validate form fields
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -1197,6 +1220,9 @@ export default function ChartCreatorPage() {
           
           // Reset time aggregation state
           setEnableTimeAggregation(false);
+          
+          // Reset tooltip total state
+          setShowTooltipTotal(false);
         } else {
           // If in edit mode, redirect back to manage charts page
           router.push('/admin/manage-dashboard');
@@ -1653,6 +1679,17 @@ export default function ChartCreatorPage() {
               checked={enableTimeAggregation}
               onChange={toggleTimeAggregation}
               helpText="Automatically calculate and show weekly, monthly, quarterly, and yearly data from daily API data. This will enable a time filter for users to switch between time periods."
+            />
+          </div>
+          
+          {/* Tooltip Total Feature */}
+          <div className="col-span-2">
+            <FormCheckbox
+              id="tooltipTotal"
+              label="Show Total in Tooltips"
+              checked={showTooltipTotal}
+              onChange={toggleTooltipTotal}
+              helpText="Display the sum of all values in the chart tooltip. Useful for charts with multiple data series to see the total across all categories."
             />
           </div>
           

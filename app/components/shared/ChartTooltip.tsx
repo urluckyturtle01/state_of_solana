@@ -21,6 +21,7 @@ interface ChartTooltipProps {
   isModal?: boolean;
   timeFilter?: string;
   currencyFilter?: string;
+  showTotal?: boolean;
 }
 
 // Function to render the shape for a legend item
@@ -177,7 +178,8 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   left, 
   isModal = false,
   timeFilter,
-  currencyFilter
+  currencyFilter,
+  showTotal = false
 }) => {
   // Calculate if tooltip should be positioned right to left (to avoid edge cutoff)
   const shouldFlipX = left > (isModal ? 500 : 250);
@@ -219,6 +221,17 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
     return valueB - valueA;
   });
 
+  // Calculate total if showTotal is enabled
+  const totalValue = showTotal ? items.reduce((sum, item) => {
+    return sum + parseValueWithUnits(item.value);
+  }, 0) : 0;
+
+  // Format the total value with the same currency formatting
+  const formatTotal = (total: number): string => {
+    // Use the same formatting logic as individual values
+    return formatValueWithCurrency(total, currencyFilter);
+  };
+
   return (
     <div 
       className="absolute z-10 pointer-events-none bg-gray-900/95 shadow-lg border border-gray-800 rounded-md p-2 text-xs min-w-[180px] w-auto whitespace-nowrap"
@@ -258,6 +271,26 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
             </span>
           </div>
         ))}
+        
+        {/* Show total if enabled */}
+        {showTotal && items.length > 1 && (
+          <>
+            {/* Separator line */}
+            <div className="border-t border-gray-700 my-2"></div>
+            
+            {/* Total row */}
+            <div className="flex items-center justify-between whitespace-nowrap">
+              <div className="flex items-center text-gray-300">
+                <div className="h-2 w-2 mr-1.5"></div> {/* Empty space for alignment */}
+                <span className="text-gray-300 text-[10px] font-semibold ml-2">Total</span>
+              </div>
+              
+              <span className="text-gray-100 font-bold ml-4">
+                {formatTotal(totalValue)}
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
