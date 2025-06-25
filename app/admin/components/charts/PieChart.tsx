@@ -611,6 +611,7 @@ const PieChart: React.FC<PieChartProps> = ({
             top={tooltip.top}
             isModal={false}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -821,6 +822,7 @@ const PieChart: React.FC<PieChartProps> = ({
                       top={tooltip.top}
                       isModal={true}
                       currencyFilter={filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
                     />
                   )}
                 </div>

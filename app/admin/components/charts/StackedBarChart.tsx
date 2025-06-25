@@ -1014,6 +1014,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
             isModal={false}
             timeFilter={filterValues?.timeFilter}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -1628,6 +1629,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                       isModal={true}
                       timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                       currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
                     />
                   </div>
                 )}

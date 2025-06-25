@@ -1501,6 +1501,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             isModal={false}
             timeFilter={filterValues?.timeFilter}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -1824,15 +1825,16 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                       top: tooltip.top,
                       left: tooltip.left
                     }}>
-                      <ChartTooltip
-                        title={String(tooltip.key)}
-                        items={tooltip.items}
-                        left={0}
-                        top={0}
-                        isModal={true}
-                        timeFilter={modalFilterValues?.timeFilter}
-                        currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
-                      />
+                                          <ChartTooltip
+                      title={String(tooltip.key)}
+                      items={tooltip.items}
+                      left={0}
+                      top={0}
+                      isModal={true}
+                      timeFilter={modalFilterValues?.timeFilter}
+                      currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
+                    />
                     </div>
                   )}
                   

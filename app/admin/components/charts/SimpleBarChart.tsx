@@ -1023,6 +1023,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
             isModal={false}
             timeFilter={filterValues?.timeFilter}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -1445,6 +1446,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
                       isModal={true}
                       timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                       currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
                     />
                   </div>
                 )}

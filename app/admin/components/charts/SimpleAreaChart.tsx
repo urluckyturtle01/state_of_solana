@@ -1194,6 +1194,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
             isModal={false}
             timeFilter={filterValues?.timeFilter}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -1678,6 +1679,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
                       isModal={true}
                       timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                       currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
                     />
                   </div>
                 )}

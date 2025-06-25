@@ -97,6 +97,7 @@ export interface ChartConfig {
     };
     colors?: string[];
     enableTimeAggregation?: boolean;
+    showTooltipTotal?: boolean;
   };
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;

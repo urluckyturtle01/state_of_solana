@@ -1056,6 +1056,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
             isModal={false}
             timeFilter={filterValues?.timeFilter}
             currencyFilter={filterValues?.currencyFilter}
+            showTotal={chartConfig.additionalOptions?.showTooltipTotal}
           />
         )}
         
@@ -1389,6 +1390,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                       isModal={true}
                       timeFilter={modalFilterValues?.timeFilter || filterValues?.timeFilter}
                       currencyFilter={modalFilterValues?.currencyFilter || filterValues?.currencyFilter}
+                      showTotal={chartConfig.additionalOptions?.showTooltipTotal}
                     />
                   </div>
                 )}
