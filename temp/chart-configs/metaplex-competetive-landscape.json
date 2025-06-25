@@ -1,7 +1,27 @@
 {
   "pageId": "metaplex-competetive-landscape",
   "pageName": "Competetive Landscape",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T07:53:29.863Z",
-  "charts": []
+  "chartCount": 1,
+  "lastUpdated": "2025-06-25T11:22:18.737Z",
+  "charts": [
+    {
+      "id": "chart_1749629385764_cm5cfml",
+      "title": "Daily Holders",
+      "subtitle": "",
+      "page": "metaplex-competetive-landscape",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json",
+      "apiKey": "vo8bOPRnGz1CHrCu8KPlvXh6e1La8PXva3pXKtje&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Holders",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T08:09:45.764Z",
+      "updatedAt": "2025-06-11T08:09:46.030Z"
+    }
+  ]
 }

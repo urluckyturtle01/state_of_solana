@@ -9,10 +9,21 @@ export async function GET(
   try {
     const { pageId } = params;
     
-    // Read the chart data file for the page from the correct directory
-    const filePath = path.join(process.cwd(), 'temp', 'chart-data', `${pageId}.json`);
+    // Try multiple paths for chart data files (production vs development)
+    const possiblePaths = [
+      path.join(process.cwd(), 'temp', 'chart-data', `${pageId}.json`), // Development
+      path.join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json`) // Production
+    ];
     
-    if (!fs.existsSync(filePath)) {
+    let filePath = '';
+    for (const possiblePath of possiblePaths) {
+      if (fs.existsSync(possiblePath)) {
+        filePath = possiblePath;
+        break;
+      }
+    }
+    
+    if (!filePath || !fs.existsSync(filePath)) {
       return NextResponse.json({ error: 'Page data not found' }, { status: 404 });
     }
     

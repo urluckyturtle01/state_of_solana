@@ -1,7 +1,119 @@
 {
   "pageId": "market-dynamics",
   "pageName": "Market Dynamics",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T07:53:29.855Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-06-25T11:22:18.725Z",
+  "charts": [
+    {
+      "id": "chart_1748257510572_ti26oyy",
+      "title": "TVL",
+      "subtitle": "Total value of assets (in USD) locked in DEX pools",
+      "page": "market-dynamics",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12459/results",
+      "apiKey": "MwgPFDxoN9SCpEC6I6nhBH85dtNkXndNYcRtHLYA&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Daily_TVL",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T11:05:10.572Z",
+      "updatedAt": "2025-06-23T08:52:53.811Z"
+    },
+    {
+      "id": "chart_1748257779755_t38cprw",
+      "title": "Daily solana annualized volatility",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json",
+      "apiKey": "TX3IB72GCHQhkdtMsVBeXKflxLvbucqcGcdewsTI&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "day",
+        "yAxis": [
+          {
+            "field": "volatility_7d",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "volatility_30d",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "volatility_90d",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T11:09:39.755Z",
+      "updatedAt": "2025-05-26T11:10:47.092Z"
+    },
+    {
+      "id": "chart_1748257972419_ypdgfeh",
+      "title": "SOL marketcap",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "section": "",
+      "chartType": "line",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13426/results.json",
+      "apiKey": "x3ZEM6s0UwS2aiYh2yP1rT99UTS3pt92CLFmnSNR&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "mcap_usd",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T11:12:52.419Z",
+      "updatedAt": "2025-06-03T11:41:50.544Z"
+    },
+    {
+      "id": "chart_1748258246028_621ujoi",
+      "title": "SOL price",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13428/results.json",
+      "apiKey": "DB8JKxuFTJ7xFUW07TdWXMEgOdGk5ivr31DRpoId&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "price",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T11:17:26.028Z",
+      "updatedAt": "2025-05-26T11:51:38.475Z"
+    }
+  ]
 }

@@ -1,7 +1,149 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T07:53:29.854Z",
-  "charts": []
+  "chartCount": 3,
+  "lastUpdated": "2025-06-25T11:22:18.724Z",
+  "charts": [
+    {
+      "id": "chart_1748252444149_tkcgszd",
+      "title": "Transactions summary",
+      "subtitle": "Real TPS is the number of non-vote transactions per second",
+      "page": "network-usage",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12916/results.json",
+      "apiKey": "gdMeqktSPbZAlwP6b6rG5Injn8Br05rKXecLvxuN",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Total_TPS",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "Success_TPS",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "Failed_TPS",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "Real_TPS",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T09:40:44.149Z",
+      "updatedAt": "2025-06-02T07:35:17.426Z"
+    },
+    {
+      "id": "chart_1748255554567_w4iy4xx",
+      "title": "Non-vote transaction fees",
+      "subtitle": "",
+      "page": "network-usage",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13249/results.json",
+      "apiKey": "VXYHhXmv3FGJJbtg0W8nxUm7RHWFH1sxVgXJ8Jn2&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_base_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "avg_priority_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "median_priority_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T10:32:34.567Z",
+      "updatedAt": "2025-05-26T11:41:22.025Z"
+    },
+    {
+      "id": "chart_1748255787490_ud2wzln",
+      "title": "Transaction count",
+      "subtitle": "",
+      "page": "network-usage",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12976/results",
+      "apiKey": "0pzEmBGojQAV7yWcJEbd0VhJ6FGpKAk04jztTwSp&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Total_Vote_Transactions",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Total_Non_Vote_Transactions",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Succeesful_Transactions_perc",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          },
+          {
+            "field": "Successful_Non_Vote_Transactiosn_perc",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T10:36:27.490Z",
+      "updatedAt": "2025-05-26T11:42:25.282Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Total_Vote_Transactions",
+          "Total_Non_Vote_Transactions"
+        ],
+        "rightAxisFields": [
+          "Succeesful_Transactions_perc",
+          "Successful_Non_Vote_Transactiosn_perc"
+        ]
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    }
+  ]
 }

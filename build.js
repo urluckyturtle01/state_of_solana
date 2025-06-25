@@ -12,6 +12,36 @@ try {
   console.error('Error cleaning .next directory:', error);
 }
 
+// Copy temp files to public directory for deployment
+console.log('📁 Copying temp files to public directory for deployment...');
+try {
+  // Ensure public/temp directory exists
+  const publicTempDir = path.join('public', 'temp');
+  if (!fs.existsSync(publicTempDir)) {
+    fs.mkdirSync(publicTempDir, { recursive: true });
+  }
+  
+  // Copy chart configs
+  const tempConfigsDir = path.join('temp', 'chart-configs');
+  const publicConfigsDir = path.join(publicTempDir, 'chart-configs');
+  if (fs.existsSync(tempConfigsDir)) {
+    execSync(`cp -r "${tempConfigsDir}" "${publicConfigsDir}"`);
+    console.log('✅ Copied chart configurations');
+  }
+  
+  // Copy chart data
+  const tempDataDir = path.join('temp', 'chart-data');
+  const publicDataDir = path.join(publicTempDir, 'chart-data');
+  if (fs.existsSync(tempDataDir)) {
+    execSync(`cp -r "${tempDataDir}" "${publicDataDir}"`);
+    console.log('✅ Copied chart data');
+  }
+  
+  console.log('📁 Temp files copied successfully for deployment');
+} catch (error) {
+  console.error('Error copying temp files:', error);
+}
+
 // Run the Next.js build
 console.log('🏗️ Building Next.js application...');
 try {

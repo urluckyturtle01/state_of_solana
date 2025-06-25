@@ -1,7 +1,98 @@
 {
   "pageId": "sf-defi",
   "pageName": "DeFi",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T07:53:29.861Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-06-25T11:22:18.732Z",
+  "charts": [
+    {
+      "id": "chart_1749632875612_y0s7hta",
+      "title": "Monthly DEX volume",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13027/results.json",
+      "apiKey": "sO72c6WL0PObMeCjbdUvSVe4VZHGIxMAUIRTtCD3&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "dex",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T09:07:55.612Z",
+      "updatedAt": "2025-06-11T09:07:55.720Z"
+    },
+    {
+      "id": "chart_1749633359002_8x86lnc",
+      "title": "Monthly TVL",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13028/results.json",
+      "apiKey": "LB4hNnsDLLA5HXZOY6rzKViRaHrsKleKTEuJNFCk&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "TVL",
+        "groupBy": "dex",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T09:15:59.002Z",
+      "updatedAt": "2025-06-11T09:15:59.057Z"
+    },
+    {
+      "id": "chart_1749633572344_tghqdkm",
+      "title": "Monthly capital efficiency",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13029/results.json",
+      "apiKey": "tLrp1jmzxnqFOVr7UmxmcRXeC7V2S7yTghgZlFUp&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "Capital_Efficiency",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T09:19:32.344Z",
+      "updatedAt": "2025-06-11T09:19:32.396Z"
+    },
+    {
+      "id": "chart_1749633988142_3e4pwxj",
+      "title": "Monthly capital efficiency by DEXs",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13030/results.json",
+      "apiKey": "unPYrcrkodj8p71b1GVnJE3QIysYCDmilwqx1vOK&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "Capital_Efficiency_perc",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": "dex"
+      },
+      "createdAt": "2025-06-11T09:26:28.142Z",
+      "updatedAt": "2025-06-11T09:26:28.213Z"
+    }
+  ]
 }
