@@ -38,6 +38,21 @@ const LoginModal = () => {
         body: JSON.stringify({ password }),
       });
 
+      // Check if response is ok first
+      if (!response.ok) {
+        console.error('Response not ok:', response.status, response.statusText);
+        
+        // Try to get error message from response
+        try {
+          const errorResult = await response.json();
+          setError(errorResult.error || `Server error (${response.status})`);
+        } catch {
+          setError(`Server error (${response.status}). Please try again.`);
+        }
+        setLoading(false);
+        return;
+      }
+
       const result = await response.json();
 
       if (result.success) {
@@ -63,8 +78,16 @@ const LoginModal = () => {
         setError(result.error || 'Invalid password');
       }
     } catch (error) {
-      console.error('Internal login error:', error);
-      setError('Connection error. Please try again.');
+      console.error('Internal login error details:', error);
+      
+      // More specific error handling
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        setError('Unable to connect to server. Please check your internet connection.');
+      } else if (error instanceof SyntaxError) {
+        setError('Server response error. Please try again.');
+      } else {
+        setError('Connection error. Please try again.');
+      }
     }
     
     setLoading(false);
