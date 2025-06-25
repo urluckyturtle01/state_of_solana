@@ -10,7 +10,7 @@ export async function GET(
     const { pageId } = params;
     
     // Read the chart config file for the page from the correct directory
-    const filePath = path.join(process.cwd(), 'temp', 'chart-configs', `${pageId}.json`);
+    const filePath = path.join(process.cwd(), 'public', 'temp', 'chart-configs', `${pageId}.json`);
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: 'Page config not found' }, { status: 404 });

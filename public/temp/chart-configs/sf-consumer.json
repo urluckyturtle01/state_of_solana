@@ -1,0 +1,86 @@
+{
+  "pageId": "sf-consumer",
+  "pageName": "Consumer",
+  "chartCount": 4,
+  "lastUpdated": "2025-06-25T17:09:11.228Z",
+  "charts": [
+    {
+      "id": "chart_1749646590358_wid4cfu",
+      "title": "Daily holders",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json",
+      "apiKey": "bZXsg22jBPxPr7x8tl2VOoGWcH5MeHWNRTCRqGrl&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Block_date",
+        "yAxis": "Holders",
+        "groupBy": "Mint"
+      },
+      "createdAt": "2025-06-11T12:56:30.358Z",
+      "updatedAt": "2025-06-11T12:56:30.584Z"
+    },
+    {
+      "id": "chart_1749646718768_jamfsdp",
+      "title": "Daily marketcap",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json",
+      "apiKey": "yczvNIuwZ0O9hhfuglmfYBaSdwmlzaprbkvuZ4YZ&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Block_date",
+        "yAxis": "Marketcap",
+        "groupBy": "Mint",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T12:58:38.768Z",
+      "updatedAt": "2025-06-11T12:58:38.918Z"
+    },
+    {
+      "id": "chart_1749647974486_734r07m",
+      "title": "Monthly DEX volume",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13520/results.json",
+      "apiKey": "35PKL7sMInC8wV20OmKnGyFeuKlPuNZGhn3kGOHp&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Dex_Volume",
+        "groupBy": "Mint",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T13:19:34.486Z",
+      "updatedAt": "2025-06-11T13:19:34.668Z"
+    },
+    {
+      "id": "chart_1749648198777_gke5fst",
+      "title": "Monthly transfers",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13522/results.json",
+      "apiKey": "fITgej1L2DSpcpjZlMczIopx4rCSuWNEB43Id3Rp&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Transactions",
+        "groupBy": "Mint"
+      },
+      "createdAt": "2025-06-11T13:23:18.777Z",
+      "updatedAt": "2025-06-11T13:23:18.974Z"
+    }
+  ]
+}

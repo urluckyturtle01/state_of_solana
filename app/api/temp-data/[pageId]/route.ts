@@ -10,7 +10,7 @@ export async function GET(
     const { pageId } = params;
     
     // Read the chart data file for the page from the correct directory
-    const filePath = path.join(process.cwd(), 'temp', 'chart-data', `${pageId}.json`);
+    const filePath = path.join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json`);
     
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: 'Page data not found' }, { status: 404 });

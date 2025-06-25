@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🚀 Starting chart configs update...');
     
-    const tempDir = path.join(process.cwd(), 'temp');
+    const tempDir = path.join(process.cwd(), 'public', 'temp');
     const scriptPath = path.join(tempDir, 'fetch-charts.js');
     
     return new Promise<NextResponse>((resolve) => {
