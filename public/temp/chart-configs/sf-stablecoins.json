@@ -2,7 +2,7 @@
   "pageId": "sf-stablecoins",
   "pageName": "Stablecoins",
   "chartCount": 8,
-  "lastUpdated": "2025-06-25T17:23:18.350Z",
+  "lastUpdated": "2025-06-25T19:06:58.179Z",
   "charts": [
     {
       "id": "chart_1749461368950_lwdnpbr",
@@ -15,13 +15,17 @@
       "apiKey": "UcSiv2vy9gBfjqXriebY88zQDlDIgJEPlQy2C1ow&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "token_supply",
         "groupBy": "symbol"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-09T09:29:28.950Z",
-      "updatedAt": "2025-06-09T11:23:52.662Z"
+      "updatedAt": "2025-06-25T18:35:27.693Z"
     },
     {
       "id": "chart_1749462309577_6j5fgom",
@@ -34,13 +38,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
-        "yAxis": "volume",
+        "yAxis": "volume_usd",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-09T09:45:09.577Z",
-      "updatedAt": "2025-06-09T11:21:38.034Z"
+      "updatedAt": "2025-06-25T18:59:24.656Z"
     },
     {
       "id": "chart_1749462849308_ic7kqsd",
@@ -53,13 +61,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "transfers",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-09T09:54:09.308Z",
-      "updatedAt": "2025-06-09T11:23:24.707Z"
+      "updatedAt": "2025-06-25T18:38:39.373Z"
     },
     {
       "id": "chart_1749463052371_vr7xjdq",
@@ -72,13 +84,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "fee_payer",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-09T09:57:32.371Z",
-      "updatedAt": "2025-06-09T11:24:33.919Z"
+      "updatedAt": "2025-06-25T18:39:37.309Z"
     },
     {
       "id": "chart_1749463279447_2xl289z",
@@ -135,13 +151,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "program_interacted",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-09T10:08:24.635Z",
-      "updatedAt": "2025-06-09T11:25:49.664Z"
+      "updatedAt": "2025-06-25T18:40:17.689Z"
     },
     {
       "id": "chart_1749463907977_k6ce4so",
@@ -154,14 +174,17 @@
       "apiKey": "8GSPY200lQhlBJAnej96disGkUiSBbBot73nMwu4&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "Dex_Volume",
-        "groupBy": "symbol",
-        "yAxisUnit": "$"
+        "groupBy": "Symbol"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-09T10:11:47.977Z",
-      "updatedAt": "2025-06-09T11:51:12.896Z"
+      "updatedAt": "2025-06-25T18:44:03.767Z"
     }
   ]
 }
