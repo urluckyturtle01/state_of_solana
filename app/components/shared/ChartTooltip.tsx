@@ -226,10 +226,43 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
     return sum + parseValueWithUnits(item.value);
   }, 0) : 0;
 
-  // Format the total value with the same currency formatting
+  // Format the total value with M, K, T, B abbreviations
   const formatTotal = (total: number): string => {
-    // Use the same formatting logic as individual values
-    return formatValueWithCurrency(total, currencyFilter);
+    let formattedValue: string;
+    
+    // Format with appropriate scale
+    if (total >= 1000000000000) {
+      formattedValue = `${(total / 1000000000000).toFixed(2)}T`;
+    } else if (total >= 1000000000) {
+      formattedValue = `${(total / 1000000000).toFixed(2)}B`;
+    } else if (total >= 1000000) {
+      formattedValue = `${(total / 1000000).toFixed(2)}M`;
+    } else if (total >= 1000) {
+      formattedValue = `${(total / 1000).toFixed(2)}K`;
+    } else {
+      formattedValue = total.toFixed(2);
+    }
+    
+    // Apply currency formatting if needed
+    if (currencyFilter) {
+      switch (currencyFilter) {
+        case 'USD':
+          return `$${formattedValue}`;
+        case 'EUR':
+          return `€${formattedValue}`;
+        case 'GBP':
+          return `£${formattedValue}`;
+        case 'JPY':
+        case 'CNY':
+          return `¥${formattedValue}`;
+        case 'SOL':
+          return `${formattedValue} SOL`;
+        default:
+          return `${currencyFilter}${formattedValue}`;
+      }
+    }
+    
+    return formattedValue;
   };
 
   return (
@@ -276,16 +309,16 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
         {showTotal && items.length > 1 && (
           <>
             {/* Separator line */}
-            <div className="border-t border-gray-700 my-2"></div>
+            <div className="border-t border-gray-800 my-1"></div>
             
             {/* Total row */}
             <div className="flex items-center justify-between whitespace-nowrap">
               <div className="flex items-center text-gray-300">
                 <div className="h-2 w-2 mr-1.5"></div> {/* Empty space for alignment */}
-                <span className="text-gray-300 text-[10px] font-semibold ml-2">Total</span>
+                <span className="text-gray-300 text-[10px] font-normal ml-2">Total</span>
               </div>
               
-              <span className="text-gray-100 font-bold ml-4">
+              <span className="text-gray-100 font-regular ml-4">
                 {formatTotal(totalValue)}
               </span>
             </div>

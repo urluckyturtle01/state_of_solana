@@ -2,7 +2,7 @@
   "pageId": "sf-ai-tokens",
   "pageName": "AI Tokens",
   "chartCount": 6,
-  "lastUpdated": "2025-06-25T17:23:18.351Z",
+  "lastUpdated": "2025-06-25T19:06:58.210Z",
   "charts": [
     {
       "id": "chart_1749644666030_qehz6b7",
@@ -15,14 +15,17 @@
       "apiKey": "HVqXqdjizpKqv40yHqEstBfMeIzSWUE79GPGXvYW&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "market_cap",
-        "groupBy": "token_name",
-        "yAxisUnit": "$"
+        "groupBy": "token_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-11T12:24:26.030Z",
-      "updatedAt": "2025-06-11T12:24:26.201Z"
+      "updatedAt": "2025-06-25T19:02:31.654Z"
     },
     {
       "id": "chart_1749644759560_zw370mz",
@@ -35,13 +38,17 @@
       "apiKey": "HVqXqdjizpKqv40yHqEstBfMeIzSWUE79GPGXvYW&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "holders",
         "groupBy": "token_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-11T12:25:59.560Z",
-      "updatedAt": "2025-06-11T12:25:59.865Z"
+      "updatedAt": "2025-06-25T19:02:50.642Z"
     },
     {
       "id": "chart_1749645283067_7mte72x",

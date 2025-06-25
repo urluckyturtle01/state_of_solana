@@ -2,7 +2,7 @@
   "pageId": "sf-defi",
   "pageName": "DeFi",
   "chartCount": 4,
-  "lastUpdated": "2025-06-25T17:23:18.350Z",
+  "lastUpdated": "2025-06-25T19:06:58.181Z",
   "charts": [
     {
       "id": "chart_1749632875612_y0s7hta",
@@ -15,14 +15,17 @@
       "apiKey": "sO72c6WL0PObMeCjbdUvSVe4VZHGIxMAUIRTtCD3&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "volume",
-        "groupBy": "dex",
-        "yAxisUnit": "$"
+        "groupBy": "dex"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-11T09:07:55.612Z",
-      "updatedAt": "2025-06-11T09:07:55.720Z"
+      "updatedAt": "2025-06-25T19:01:12.685Z"
     },
     {
       "id": "chart_1749633359002_8x86lnc",
@@ -35,14 +38,17 @@
       "apiKey": "LB4hNnsDLLA5HXZOY6rzKViRaHrsKleKTEuJNFCk&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "TVL",
-        "groupBy": "dex",
-        "yAxisUnit": "$"
+        "groupBy": "dex"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-11T09:15:59.002Z",
-      "updatedAt": "2025-06-11T09:15:59.057Z"
+      "updatedAt": "2025-06-25T19:01:28.324Z"
     },
     {
       "id": "chart_1749633572344_tghqdkm",

@@ -2,7 +2,7 @@
   "pageId": "sf-overview",
   "pageName": "Overview",
   "chartCount": 17,
-  "lastUpdated": "2025-06-25T17:23:18.349Z",
+  "lastUpdated": "2025-06-25T19:06:58.159Z",
   "charts": [
     {
       "id": "chart_1749809832495_hqam9lh",
@@ -42,9 +42,8 @@
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-06-13T10:17:12.495Z",
-      "updatedAt": "2025-06-13T11:22:39.423Z",
       "additionalOptions": {
+        "showTooltipTotal": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -56,7 +55,9 @@
             ]
           }
         }
-      }
+      },
+      "createdAt": "2025-06-13T10:17:12.495Z",
+      "updatedAt": "2025-06-25T18:22:47.460Z"
     },
     {
       "id": "chart_1749814251162_ip5x6ou",
@@ -72,11 +73,11 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "DApp Revenue",
-        "groupBy": "Platform",
-        "yAxisUnit": "$"
+        "yAxis": "dapp_revenue",
+        "groupBy": "platform"
       },
       "additionalOptions": {
+        "showTooltipTotal": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -90,7 +91,7 @@
         }
       },
       "createdAt": "2025-06-13T11:30:51.162Z",
-      "updatedAt": "2025-06-13T11:30:51.369Z"
+      "updatedAt": "2025-06-25T18:21:25.394Z"
     },
     {
       "id": "chart_1749814557247_26tciwb",
@@ -173,6 +174,7 @@
         "groupBy": ""
       },
       "additionalOptions": {
+        "showTooltipTotal": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -186,7 +188,7 @@
         }
       },
       "createdAt": "2025-06-13T11:50:51.298Z",
-      "updatedAt": "2025-06-13T11:50:51.401Z"
+      "updatedAt": "2025-06-25T18:23:53.328Z"
     },
     {
       "id": "chart_1749815739707_3d289dj",
@@ -273,8 +275,11 @@
         ],
         "groupBy": ""
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-13T12:04:13.273Z",
-      "updatedAt": "2025-06-13T12:04:13.447Z"
+      "updatedAt": "2025-06-25T18:24:40.425Z"
     },
     {
       "id": "chart_1749816617339_8ytezdu",
@@ -387,6 +392,7 @@
         "groupBy": "mint"
       },
       "additionalOptions": {
+        "showTooltipTotal": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -400,7 +406,7 @@
         }
       },
       "createdAt": "2025-06-13T12:55:38.660Z",
-      "updatedAt": "2025-06-13T12:55:38.840Z"
+      "updatedAt": "2025-06-25T18:30:07.383Z"
     },
     {
       "id": "chart_1749819503642_nefh80a",
@@ -419,8 +425,11 @@
         "yAxis": "volume_usd",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-13T12:58:23.642Z",
-      "updatedAt": "2025-06-25T17:07:21.397Z"
+      "updatedAt": "2025-06-25T18:31:40.231Z"
     },
     {
       "id": "chart_1749819682803_79lo96i",
@@ -437,11 +446,13 @@
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "p2p_volume",
-        "groupBy": "mint_name",
-        "yAxisUnit": "$"
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-13T13:01:22.803Z",
-      "updatedAt": "2025-06-13T13:01:23.003Z"
+      "updatedAt": "2025-06-25T18:32:15.067Z"
     },
     {
       "id": "chart_1749819983030_2h0mf7l",
@@ -460,8 +471,11 @@
         "yAxis": "transfers",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-13T13:06:23.030Z",
-      "updatedAt": "2025-06-13T13:06:23.240Z"
+      "updatedAt": "2025-06-25T18:32:50.339Z"
     },
     {
       "id": "chart_1749820134362_jvhnl8a",
@@ -480,8 +494,11 @@
         "yAxis": "p2p_transfers",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-13T13:08:54.362Z",
-      "updatedAt": "2025-06-13T13:08:54.541Z"
+      "updatedAt": "2025-06-25T18:33:06.515Z"
     },
     {
       "id": "chart_1749820203812_z5tts01",
