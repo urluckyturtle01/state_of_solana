@@ -1,53 +1,7 @@
 {
   "pageId": "mev-summary",
   "pageName": "Summary",
-  "chartCount": 2,
-  "lastUpdated": "2025-06-25T07:49:36.490Z",
-  "charts": [
-    {
-      "id": "chart_1747912299931_ifdsfj1",
-      "title": "Total sol drained - last 30 days",
-      "subtitle": "",
-      "page": "mev-summary",
-      "section": "",
-      "chartType": "area",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13388/results.json",
-      "apiKey": "v1I32v14WIg9uWYA8ypwToBK3uhPzCbQyBlw2907",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "cumulative_sol_drained",
-        "groupBy": "",
-        "yAxisUnit": "SOL"
-      },
-      "createdAt": "2025-05-22T11:11:39.931Z",
-      "updatedAt": "2025-05-24T20:58:18.401Z"
-    },
-    {
-      "id": "chart_1747912515365_t6aqyxm",
-      "title": "Total attacks",
-      "subtitle": "",
-      "page": "mev-summary",
-      "section": "",
-      "chartType": "area",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13388/results.json",
-      "apiKey": "v1I32v14WIg9uWYA8ypwToBK3uhPzCbQyBlw2907",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_attacks",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-22T11:15:15.365Z",
-      "updatedAt": "2025-05-24T20:57:41.393Z"
-    }
-  ]
+  "chartCount": 0,
+  "lastUpdated": "2025-06-25T07:53:29.857Z",
+  "charts": []
 }

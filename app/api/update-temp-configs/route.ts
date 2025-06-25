@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { spawn } from 'child_process';
-import path from 'path';
+import * as path from 'path';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const tempDir = path.join(process.cwd(), 'temp');
     const scriptPath = path.join(tempDir, 'fetch-charts.js');
     
-    return new Promise((resolve) => {
+    return new Promise<NextResponse>((resolve) => {
       const child = spawn('node', [scriptPath], {
         cwd: tempDir,
         stdio: ['pipe', 'pipe', 'pipe']
