@@ -2,7 +2,7 @@
   "pageId": "sf-payments",
   "pageName": "Payments",
   "chartCount": 5,
-  "lastUpdated": "2025-06-25T19:06:58.312Z",
+  "lastUpdated": "2025-06-25T19:53:37.250Z",
   "charts": [
     {
       "id": "chart_1749715184435_v7ja1zm",
@@ -15,14 +15,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "p2p_volume",
-        "groupBy": "mint_name",
-        "yAxisUnit": "$"
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-12T07:59:44.435Z",
-      "updatedAt": "2025-06-12T07:59:44.630Z"
+      "updatedAt": "2025-06-25T19:49:10.407Z"
     },
     {
       "id": "chart_1749715342755_h0l76vz",
@@ -35,13 +38,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "transfers",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-12T08:02:22.755Z",
-      "updatedAt": "2025-06-12T08:02:22.931Z"
+      "updatedAt": "2025-06-25T19:49:41.992Z"
     },
     {
       "id": "chart_1749715520506_klpv178",
@@ -54,13 +61,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "p2p_fee_payer",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-12T08:05:20.506Z",
-      "updatedAt": "2025-06-12T08:05:20.691Z"
+      "updatedAt": "2025-06-25T19:49:59.767Z"
     },
     {
       "id": "chart_1749715658362_31d4gjv",
@@ -73,13 +84,17 @@
       "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "p2p_avg_transfer_size",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-06-12T08:07:38.362Z",
-      "updatedAt": "2025-06-12T08:07:38.601Z"
+      "updatedAt": "2025-06-25T19:50:21.802Z"
     },
     {
       "id": "chart_1749715869661_267ifcm",
