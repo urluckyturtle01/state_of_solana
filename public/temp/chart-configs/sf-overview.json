@@ -2,7 +2,7 @@
   "pageId": "sf-overview",
   "pageName": "Overview",
   "chartCount": 17,
-  "lastUpdated": "2025-06-25T12:26:35.081Z",
+  "lastUpdated": "2025-06-25T17:09:11.226Z",
   "charts": [
     {
       "id": "chart_1749809832495_hqam9lh",
@@ -131,7 +131,7 @@
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "date",
+        "xAxis": "block_date",
         "yAxis": [
           {
             "field": "vds",
@@ -142,7 +142,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-06-13T11:39:40.531Z",
-      "updatedAt": "2025-06-25T08:39:29.359Z"
+      "updatedAt": "2025-06-25T17:08:30.849Z"
     },
     {
       "id": "chart_1749815451298_342kxs1",
@@ -416,12 +416,11 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "month",
-        "yAxis": "volume",
-        "groupBy": "mint_name",
-        "yAxisUnit": "$"
+        "yAxis": "volume_usd",
+        "groupBy": "mint_name"
       },
       "createdAt": "2025-06-13T12:58:23.642Z",
-      "updatedAt": "2025-06-13T12:58:23.814Z"
+      "updatedAt": "2025-06-25T17:07:21.397Z"
     },
     {
       "id": "chart_1749819682803_79lo96i",
