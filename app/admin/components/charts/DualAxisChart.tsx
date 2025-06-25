@@ -248,7 +248,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   // Debounce timer ref for filter changes
   const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Extract mapping fields
+  // Extract mapping fields with safety checks
+  if (!chartConfig.dataMapping) {
+    console.error('Chart configuration is missing dataMapping:', chartConfig);
+    return <div className="p-4 text-red-500">Error: Chart configuration is incomplete</div>;
+  }
+  
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
   

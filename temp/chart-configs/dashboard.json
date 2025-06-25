@@ -2,7 +2,7 @@
   "pageId": "dashboard",
   "pageName": "User Activity",
   "chartCount": 4,
-  "lastUpdated": "2025-06-24T08:05:53.868Z",
+  "lastUpdated": "2025-06-25T07:49:36.485Z",
   "charts": [
     {
       "id": "chart_1748248498156_cvil0pz",
@@ -46,13 +46,14 @@
       "apiKey": "qMWNTHb9k4p9UjvmT5omRmJghhGlJh5V9XH9Zet9&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "Txns_Cohort",
-        "yAxis": "Wallet_Count",
+        "xAxis": "txns_cohort",
+        "yAxis": "wallet_count",
         "groupBy": ""
       },
       "createdAt": "2025-05-26T08:45:06.338Z",
-      "updatedAt": "2025-05-26T08:45:06.559Z"
+      "updatedAt": "2025-06-24T12:08:51.412Z"
     },
     {
       "id": "chart_1748249302829_m1bfvg0",
@@ -65,13 +66,14 @@
       "apiKey": "hkE1WGaM5wcDut9q1Lvq3OFEpeUc3C8kHeAawrRy&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "Balance_Cohort",
-        "yAxis": "Wallets",
+        "xAxis": "balance_cohort",
+        "yAxis": "wallets",
         "groupBy": ""
       },
       "createdAt": "2025-05-26T08:48:22.829Z",
-      "updatedAt": "2025-05-26T08:48:23.082Z"
+      "updatedAt": "2025-06-24T12:16:46.626Z"
     },
     {
       "id": "chart_1748249412629_n8mxzi1",
@@ -84,13 +86,14 @@
       "apiKey": "zZJ4P3HtiaEeLtDAgm7TvTPVHKofWGOpOHpqZPoM&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "Sol_change_cohort",
-        "yAxis": "Wallets",
+        "xAxis": "sol_change_cohort",
+        "yAxis": "wallets",
         "groupBy": ""
       },
       "createdAt": "2025-05-26T08:50:12.629Z",
-      "updatedAt": "2025-05-26T11:31:38.962Z"
+      "updatedAt": "2025-06-24T12:26:18.525Z"
     }
   ]
 }

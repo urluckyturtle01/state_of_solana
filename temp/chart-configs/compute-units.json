@@ -2,7 +2,7 @@
   "pageId": "compute-units",
   "pageName": "Compute Units",
   "chartCount": 8,
-  "lastUpdated": "2025-06-24T08:05:53.879Z",
+  "lastUpdated": "2025-06-25T07:49:36.495Z",
   "charts": [
     {
       "id": "chart_1748087823998_ru1ktw2",
@@ -15,8 +15,9 @@
       "apiKey": "1aLYPZuX8Lq4nGINkeibVqOmujWcw7oDnydJ1OwT",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "partition_0",
+        "xAxis": "block_date",
         "yAxis": [
           {
             "field": "compute_txns",
@@ -32,7 +33,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-24T11:57:03.998Z",
-      "updatedAt": "2025-05-26T09:53:16.248Z"
+      "updatedAt": "2025-06-24T13:11:15.394Z"
     },
     {
       "id": "chart_1748088263791_vfj94hw",
@@ -45,8 +46,9 @@
       "apiKey": "1aLYPZuX8Lq4nGINkeibVqOmujWcw7oDnydJ1OwT&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "partition_0",
+        "xAxis": "block_date",
         "yAxis": [
           {
             "field": "compute_txns",
@@ -62,7 +64,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-24T12:04:23.791Z",
-      "updatedAt": "2025-05-24T12:04:23.961Z"
+      "updatedAt": "2025-06-24T10:27:07.491Z"
     },
     {
       "id": "chart_1748088783904_hypf57i",

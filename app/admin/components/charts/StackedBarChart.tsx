@@ -126,7 +126,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Track hidden series (by field id)
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries);
 
-  // Extract mapping fields
+  // Extract mapping fields with safety checks
+  if (!chartConfig.dataMapping) {
+    console.error('Chart configuration is missing dataMapping:', chartConfig);
+    return <div className="p-4 text-red-500">Error: Chart configuration is incomplete</div>;
+  }
+  
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
   const groupByField = chartConfig.dataMapping.groupBy || '';

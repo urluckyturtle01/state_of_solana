@@ -18,6 +18,7 @@ import { MENU_OPTIONS, MENU_PAGES } from '../config/menuPages';
 import Button from '../components/Button';
 import dynamic from 'next/dynamic';
 import BatchCleanupButton from '../components/BatchCleanupButton';
+import TempUpdateButtons from '../components/TempUpdateButtons';
 
 // Dynamic imports to avoid SSR issues
 const DashboardRenderer = dynamic(() => import('../components/dashboard-renderer'), {
@@ -356,6 +357,9 @@ export default function ManageDashboardPage() {
           </div>
         </div>
       </div>
+      
+      {/* Temp File Update Section */}
+      <TempUpdateButtons />
       
       {/* Display charts, counters, or tables based on active tab */}
       {activeTab === 'charts' ? (

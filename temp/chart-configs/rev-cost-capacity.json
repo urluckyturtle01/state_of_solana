@@ -2,7 +2,7 @@
   "pageId": "rev-cost-capacity",
   "pageName": "Cost & Capacity",
   "chartCount": 3,
-  "lastUpdated": "2025-06-24T08:05:53.872Z",
+  "lastUpdated": "2025-06-25T07:49:36.489Z",
   "charts": [
     {
       "id": "chart_1748007531839_4qciy9d",
@@ -76,27 +76,28 @@
       "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "Total_Vote_Transactions",
+            "field": "total_vote_transactions",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Total_Non_Vote_Transactions",
+            "field": "total_non_vote_transactions",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Succeesful_Transactions_perc",
+            "field": "succeesful_transactions_perc",
             "type": "line",
             "unit": "%",
             "rightAxis": true
           },
           {
-            "field": "Successful_Non_Vote_Transactiosn_perc",
+            "field": "successful_non_vote_transactions_perc",
             "type": "line",
             "unit": "%",
             "rightAxis": true
@@ -105,17 +106,17 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-23T13:54:23.492Z",
-      "updatedAt": "2025-05-23T13:54:23.874Z",
+      "updatedAt": "2025-06-25T07:16:14.311Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
         "leftAxisFields": [
-          "Total_Vote_Transactions",
-          "Total_Non_Vote_Transactions"
+          "total_vote_transactions",
+          "total_non_vote_transactions"
         ],
         "rightAxisFields": [
-          "Succeesful_Transactions_perc",
-          "Successful_Non_Vote_Transactiosn_perc"
+          "succeesful_transactions_perc",
+          "successful_non_vote_transactions_perc"
         ]
       }
     },
@@ -130,26 +131,27 @@
       "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "Total_TPS",
+            "field": "total_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Success_TPS",
+            "field": "success_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Failed_TPS",
+            "field": "failed_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Real_TPS",
+            "field": "real_tps",
             "type": "line",
             "unit": ""
           }
@@ -157,7 +159,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-23T14:08:01.407Z",
-      "updatedAt": "2025-05-26T08:33:24.374Z"
+      "updatedAt": "2025-06-25T06:35:26.969Z"
     }
   ]
 }

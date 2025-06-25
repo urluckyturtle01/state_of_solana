@@ -2,7 +2,7 @@
   "pageId": "traders",
   "pageName": "Traders",
   "chartCount": 4,
-  "lastUpdated": "2025-06-24T08:05:53.872Z",
+  "lastUpdated": "2025-06-25T07:49:36.488Z",
   "charts": [
     {
       "id": "chart_1748409260362_xqmcvg4",
@@ -90,13 +90,13 @@
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "Month",
-        "yAxis": "Volume",
-        "groupBy": "Signer_Lifetime_Trade_Vol",
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "wallet_lifetime_trade_vol",
         "yAxisUnit": "$"
       },
       "createdAt": "2025-05-28T05:22:30.208Z",
-      "updatedAt": "2025-06-23T08:20:19.278Z"
+      "updatedAt": "2025-06-24T12:04:00.639Z"
     }
   ]
 }

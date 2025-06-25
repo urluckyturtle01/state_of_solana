@@ -2,7 +2,7 @@
   "pageId": "dex-activity",
   "pageName": "DEX Activity",
   "chartCount": 4,
-  "lastUpdated": "2025-06-24T08:05:53.880Z",
+  "lastUpdated": "2025-06-25T07:49:36.497Z",
   "charts": [
     {
       "id": "chart_1748259147791_23e706f",
@@ -15,14 +15,14 @@
       "apiKey": "CAdciqVpawenBLQE4T4l7YeVMauInYbZfMdfbqyF",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
-        "yAxis": "volume",
-        "groupBy": "symbol",
-        "yAxisUnit": "$"
+        "yAxis": "volume_usd",
+        "groupBy": "symbol"
       },
       "createdAt": "2025-05-26T11:32:27.791Z",
-      "updatedAt": "2025-05-26T13:18:01.257Z"
+      "updatedAt": "2025-06-24T12:35:33.095Z"
     },
     {
       "id": "chart_1748259383072_6lmaf4b",
@@ -51,17 +51,17 @@
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13424/results.json",
-      "apiKey": "VxD3rsDiDjTNkXDB8NGu007FkRoyYyFrOxSW9gNT",
+      "apiKey": "VxD3rsDiDjTNkXDB8NGu007FkRoyYyFrOxSW9gNT&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "month",
-        "yAxis": "volume",
-        "groupBy": "pair",
-        "yAxisUnit": "$"
+        "yAxis": "volume_usd",
+        "groupBy": "pair"
       },
       "createdAt": "2025-05-26T11:37:59.329Z",
-      "updatedAt": "2025-05-26T13:16:24.903Z"
+      "updatedAt": "2025-06-24T12:40:19.651Z"
     },
     {
       "id": "chart_1748259581838_gpjdfz3",

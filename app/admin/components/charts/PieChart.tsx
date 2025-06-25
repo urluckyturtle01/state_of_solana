@@ -103,7 +103,12 @@ const PieChart: React.FC<PieChartProps> = ({
   // Debounce timer ref for filter changes
   const filterDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Extract mapping fields
+  // Extract mapping fields with safety checks
+  if (!chartConfig.dataMapping) {
+    console.error('Chart configuration is missing dataMapping:', chartConfig);
+    return <div className="p-4 text-red-500">Error: Chart configuration is incomplete</div>;
+  }
+  
   const labelField = chartConfig.dataMapping.xAxis;
   const valueField = chartConfig.dataMapping.yAxis;
   
