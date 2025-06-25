@@ -1,7 +1,87 @@
 {
   "pageId": "protocol-revenue-summary",
   "pageName": "Summary",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T11:18:03.703Z",
-  "charts": []
+  "chartCount": 2,
+  "lastUpdated": "2025-06-25T12:26:35.078Z",
+  "charts": [
+    {
+      "id": "chart_1747995887555_9x38uwz",
+      "title": "Network & dApp Revenue",
+      "subtitle": "Network revenue = (Base + Priority + Vote) × 0.5 + Jito × 0.95, accounting for fee burns and Jito tips",
+      "page": "protocol-revenue-summary",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13163/results.json",
+      "apiKey": "S8KkuOqLoYqCIPGstMYVC7zxl84uW7c16KT4nNLH&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Network Revenue",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "dApp Revenue",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T10:24:47.555Z",
+      "updatedAt": "2025-06-19T13:24:15.935Z"
+    },
+    {
+      "id": "chart_1747996140499_ez8g6oj",
+      "title": "Top dApp's revenue",
+      "subtitle": "Revenue before buybacks, rebates, and other adjustments",
+      "page": "protocol-revenue-summary",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12535/results.json",
+      "apiKey": "MJYkF0Ej7KXep8UFgBYfj4TaBCwpx1LTQ8KOOm9J&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue_usd",
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T10:29:00.499Z",
+      "updatedAt": "2025-06-24T06:24:00.509Z"
+    }
+  ]
 }

@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🚀 Starting chart configs update...');
     
-    const tempDir = path.join(process.cwd(), 'temp');
+    const tempDir = path.join(process.cwd(), 'public', 'temp');
     const scriptPath = path.join(tempDir, 'fetch-charts.js');
     
     return new Promise<NextResponse>((resolve) => {
@@ -32,32 +32,9 @@ export async function POST(request: NextRequest) {
       
       child.on('close', (code) => {
         if (code === 0) {
-          // Copy updated files to public directory for deployment
-          try {
-            const fs = require('fs');
-            const publicConfigsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
-            const tempConfigsDir = path.join(process.cwd(), 'temp', 'chart-configs');
-            
-            if (fs.existsSync(tempConfigsDir)) {
-              // Ensure public temp directory exists
-              const publicTempDir = path.join(process.cwd(), 'public', 'temp');
-              if (!fs.existsSync(publicTempDir)) {
-                fs.mkdirSync(publicTempDir, { recursive: true });
-              }
-              
-              // Copy files
-              const { execSync } = require('child_process');
-              execSync(`cp -r "${tempConfigsDir}" "${publicTempDir}/"`);
-              
-              console.log('✅ Updated configs copied to public directory');
-            }
-          } catch (copyError) {
-            console.warn('Warning: Could not copy to public directory:', copyError);
-          }
-          
           resolve(NextResponse.json({ 
             success: true, 
-            message: 'Chart configurations updated successfully and copied for deployment',
+            message: 'Chart configurations updated successfully',
             output: output 
           }));
         } else {

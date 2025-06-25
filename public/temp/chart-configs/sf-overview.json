@@ -1,7 +1,514 @@
 {
   "pageId": "sf-overview",
   "pageName": "Overview",
-  "chartCount": 0,
-  "lastUpdated": "2025-06-25T11:18:03.704Z",
-  "charts": []
+  "chartCount": 17,
+  "lastUpdated": "2025-06-25T12:26:35.081Z",
+  "charts": [
+    {
+      "id": "chart_1749809832495_hqam9lh",
+      "title": "Solana real economic value",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "network-rev-gdp",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12586/results",
+      "apiKey": "mg6UPHhm8KrRroTWTQ5akk8MDWCAiD2unttPYRoy&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "base_fees",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "priority_fees",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "jito_total_tips",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "vote_fees",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T10:17:12.495Z",
+      "updatedAt": "2025-06-13T11:22:39.423Z",
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1749814251162_ip5x6ou",
+      "title": "Top dApp's revenue",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "network-rev-gdp",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12589/results",
+      "apiKey": "oiGI7qFLlC7o3etCqCywaqnYbY2Z2bGFxOOKdJwO&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "DApp Revenue",
+        "groupBy": "Platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-13T11:30:51.162Z",
+      "updatedAt": "2025-06-13T11:30:51.369Z"
+    },
+    {
+      "id": "chart_1749814557247_26tciwb",
+      "title": "Validators",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "validator",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13036/results.json",
+      "apiKey": "Zgvl94t2ciEEK7ZMJ1IFmLUZkZn3W214vdrwgVzc&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "validators_count",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T11:35:57.247Z",
+      "updatedAt": "2025-06-13T11:36:00.212Z"
+    },
+    {
+      "id": "chart_1749814780531_i40g2o2",
+      "title": "Validator Decentralization Score",
+      "subtitle": "Measures how evenly stake is distributed among Solana validators.A higher score indicates better decentralization, reducing risks of centralization, censorship, and collusion.",
+      "page": "sf-overview",
+      "section": "validator",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/9153/results.json",
+      "apiKey": "dCCVXwv8cajDX7OiQKwgLxyBnJXErKzjcQVOlEW0&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "date",
+        "yAxis": [
+          {
+            "field": "vds",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T11:39:40.531Z",
+      "updatedAt": "2025-06-25T08:39:29.359Z"
+    },
+    {
+      "id": "chart_1749815451298_342kxs1",
+      "title": "Non-vote transactions",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "onchain-activity",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12588/results",
+      "apiKey": "xbjsbMLLu5eIjAFCoUAkjBWQqjR69FcGo4Kuv4d5&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "successful_txns",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "failed_txns",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-13T11:50:51.298Z",
+      "updatedAt": "2025-06-13T11:50:51.401Z"
+    },
+    {
+      "id": "chart_1749815739707_3d289dj",
+      "title": "Daily fee",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "onchain-activity",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json",
+      "apiKey": "pIZEY1uPvMeGVeS5BCLR90Unf9FxoQOVJVEEn3Wu&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_txn_fee_sol",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "median_txn_fee_sol",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T11:55:39.707Z",
+      "updatedAt": "2025-06-13T11:55:39.916Z"
+    },
+    {
+      "id": "chart_1749816086278_ma9a09x",
+      "title": "TPS",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "onchain-activity",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12540/results.json",
+      "apiKey": "U0d6U06KFG9U8nQndfuVmZNGQCr9puRWiRB22bmb&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_daily_tps",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T12:01:26.278Z",
+      "updatedAt": "2025-06-13T12:01:26.466Z"
+    },
+    {
+      "id": "chart_1749816253273_6lksekc",
+      "title": "Monthly fee payers",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "onchain-activity",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12524/results.json",
+      "apiKey": "2EGZpf9dPt4lZ86Sp4aAi5Ogz0x1PG9EIHAZikUC&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "existing_fee_payers",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "new_fee_payers",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T12:04:13.273Z",
+      "updatedAt": "2025-06-13T12:04:13.447Z"
+    },
+    {
+      "id": "chart_1749816617339_8ytezdu",
+      "title": "DEX volume",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "defi",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12594/results",
+      "apiKey": "X9qTnUVMZxKFTcXvkoSsnEUSdO5IsruQ717A9iri&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-13T12:10:17.339Z",
+      "updatedAt": "2025-06-13T12:10:17.449Z"
+    },
+    {
+      "id": "chart_1749816989671_pu4hbi2",
+      "title": "Daily trades",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "defi",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12594/results",
+      "apiKey": "X9qTnUVMZxKFTcXvkoSsnEUSdO5IsruQ717A9iri&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-13T12:16:29.671Z",
+      "updatedAt": "2025-06-13T12:16:29.841Z"
+    },
+    {
+      "id": "chart_1749817104717_rp8ajfg",
+      "title": "Defi capital efficiency",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "defi",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json",
+      "apiKey": "9fl3LcRZpMRgUrz3trQiv4DNlLgcBcPhxKQjmd9p&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "capital_efficency",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T12:18:24.717Z",
+      "updatedAt": "2025-06-13T12:18:24.856Z"
+    },
+    {
+      "id": "chart_1749819338660_rkfnj5d",
+      "title": "Average stablecoin supply",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12595/results",
+      "apiKey": "W0xmD2n07A9ngTCkvuUiFmc4UmrCup5FSbXXslFw&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Avg_Supply",
+        "groupBy": "mint"
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-13T12:55:38.660Z",
+      "updatedAt": "2025-06-13T12:55:38.840Z"
+    },
+    {
+      "id": "chart_1749819503642_nefh80a",
+      "title": "Monthly transfer volume",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "mint_name",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-13T12:58:23.642Z",
+      "updatedAt": "2025-06-13T12:58:23.814Z"
+    },
+    {
+      "id": "chart_1749819682803_79lo96i",
+      "title": "Monthly p2p transfer volume",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_volume",
+        "groupBy": "mint_name",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-13T13:01:22.803Z",
+      "updatedAt": "2025-06-13T13:01:23.003Z"
+    },
+    {
+      "id": "chart_1749819983030_2h0mf7l",
+      "title": "Monthly transfer count",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "transfers",
+        "groupBy": "mint_name"
+      },
+      "createdAt": "2025-06-13T13:06:23.030Z",
+      "updatedAt": "2025-06-13T13:06:23.240Z"
+    },
+    {
+      "id": "chart_1749820134362_jvhnl8a",
+      "title": "Monthly p2p transfer count ",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_transfers",
+        "groupBy": "mint_name"
+      },
+      "createdAt": "2025-06-13T13:08:54.362Z",
+      "updatedAt": "2025-06-13T13:08:54.541Z"
+    },
+    {
+      "id": "chart_1749820203812_z5tts01",
+      "title": "Velocity",
+      "subtitle": "",
+      "page": "sf-overview",
+      "section": "stablecoins",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12569/results.json",
+      "apiKey": "pXxADZFSMPcxMIjHspl3zbkOdqwm4iFwpuklKei1&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "velocity",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T13:10:03.812Z",
+      "updatedAt": "2025-06-13T13:10:03.999Z"
+    }
+  ]
 }
