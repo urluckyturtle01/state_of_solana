@@ -764,17 +764,8 @@ export default function ChartCreatorPage() {
     const newValue = !enableTimeAggregation;
     setEnableTimeAggregation(newValue);
     
-    // Update form data with time aggregation setting
-    setFormData(prev => ({
-      ...prev,
-      additionalOptions: {
-        ...prev.additionalOptions,
-        enableTimeAggregation: newValue
-      }
-    }));
-    
-    // If enabling time aggregation, automatically enable time filter
-    if (newValue) {
+    // If enabling time aggregation, automatically enable time filter for client-side processing
+    if (newValue && !enableFilters.timeFilter) {
       setEnableFilters(prev => ({
         ...prev,
         timeFilter: true
@@ -788,23 +779,10 @@ export default function ChartCreatorPage() {
           paramName: 'Date Part'
         }
       }));
-      
-      // Add time filter to form data
-      setFormData(prev => ({
-        ...prev,
-        additionalOptions: {
-          ...prev.additionalOptions,
-          enableTimeAggregation: true,
-          filters: {
-            ...prev.additionalOptions?.filters,
-            timeFilter: {
-              options: ['D', 'W', 'M', 'Q', 'Y'],
-              paramName: 'Date Part'
-            }
-          }
-        }
-      }));
     }
+    
+    // Note: Don't disable time filter automatically when disabling time aggregation
+    // as the user might still want server-side time filtering
   };
   
   // Toggle tooltip total feature
@@ -1701,9 +1679,9 @@ export default function ChartCreatorPage() {
               label="Enable Time Filter"
               checked={enableFilters.timeFilter}
               onChange={() => toggleFilter('timeFilter')}
-              disabled={enableTimeAggregation}
+              disabled={false}
               helpText={enableTimeAggregation 
-                ? "Time filter is automatically enabled when Time Aggregation is active" 
+                ? "When Time Aggregation is enabled, time filtering is handled client-side for better performance" 
                 : "Add a time period filter (Day, Week, Month, Quarter, Year)"
               }
             />
