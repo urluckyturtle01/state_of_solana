@@ -2,7 +2,7 @@
   "pageId": "market-dynamics",
   "pageName": "Market Dynamics",
   "chartCount": 4,
-  "lastUpdated": "2025-06-26T12:29:20.774Z",
+  "lastUpdated": "2025-06-26T14:38:46.507Z",
   "charts": [
     {
       "id": "chart_1748257510572_ti26oyy",
@@ -11,7 +11,7 @@
       "page": "market-dynamics",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12459/results",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12459/results.json",
       "apiKey": "MwgPFDxoN9SCpEC6I6nhBH85dtNkXndNYcRtHLYA&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
@@ -20,7 +20,7 @@
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "Daily_TVL",
+            "field": "tvl",
             "type": "line",
             "unit": ""
           }
@@ -28,7 +28,22 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-26T11:05:10.572Z",
-      "updatedAt": "2025-06-23T08:52:53.811Z"
+      "updatedAt": "2025-06-26T14:17:19.568Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
     },
     {
       "id": "chart_1748257779755_t38cprw",
