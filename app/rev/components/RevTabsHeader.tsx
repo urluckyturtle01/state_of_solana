@@ -34,7 +34,7 @@ export default function RevTabsHeader({ activeTab = "overview" }: RevTabsHeaderP
       tabs={tabs} 
       activeTab={activeTab}
       title="REV"
-      description="Revenue metrics and analytics for Solana"
+      description="Tracking Solana Network Revenue and Economic Activity"
       showDivider={true}
     />
   );

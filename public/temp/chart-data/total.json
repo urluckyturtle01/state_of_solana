@@ -1,21 +1,28 @@
 {
   "pageId": "total",
   "pageName": "Total",
-  "fetchedAt": "2025-06-25T19:55:15.036Z",
+  "fetchedAt": "2025-06-26T07:34:31.084Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-06-25",
+          "dApp Revenue": 48451.27686422689,
+          "Total dApp Revenue": 3428734814.6290092,
+          "Network Revenue": 386691.88562040776,
+          "Total Network Revenue": 1815593187.8251448
+        },
+        {
           "block_date": "2025-06-24",
-          "dApp Revenue": 12259646022.634647,
-          "Total dApp Revenue": 15685700085.01917,
+          "dApp Revenue": 2632300.9676216096,
+          "Total dApp Revenue": 3428686363.352145,
           "Network Revenue": 1445119.4555378596,
           "Total Network Revenue": 1815206495.9395244
         },
         {
           "block_date": "2025-06-23",
-          "dApp Revenue": 2601311.14652294,
+          "dApp Revenue": 2601311.1465229406,
           "Total dApp Revenue": 3426054062.3845234,
           "Network Revenue": 1329651.7468343102,
           "Total Network Revenue": 1813761376.4839866
@@ -3794,17 +3801,13 @@
           "Total Network Revenue": 498070.59785197634
         }
       ],
-      "timestamp": 1750881314282,
+      "timestamp": 1750923270333,
       "chartId": "chart_1747996370344_q23bnxz",
       "title": "Network & dApp Revenue"
     },
     {
       "success": true,
       "data": [
-        {
-          "platform": "Raydium",
-          "dapp_revenue": 12581840698.14079
-        },
         {
           "platform": "Pump Fun",
           "dapp_revenue": 608231845.3539437
@@ -3820,6 +3823,10 @@
         {
           "platform": "Bonkbot",
           "dapp_revenue": 363363607.03865117
+        },
+        {
+          "platform": "Raydium",
+          "dapp_revenue": 324874096.7427747
         },
         {
           "platform": "Bloxroute",
@@ -3842,43 +3849,13 @@
           "dapp_revenue": 116211735.20704256
         }
       ],
-      "timestamp": 1750881313607,
+      "timestamp": 1750923269638,
       "chartId": "chart_1747996534384_lz5aaxw",
       "title": "Top dApp's revenue - since Jan'24"
     },
     {
       "success": true,
       "data": [
-        {
-          "Dapp": "Raydium",
-          "Segment": "Spot Dex",
-          "protocol_revenue": 12376152238.853968,
-          "segment_revenue": 12528046055.942633
-        },
-        {
-          "Dapp": "Axiom",
-          "Segment": "Spot Dex",
-          "protocol_revenue": 133359698.94695042,
-          "segment_revenue": 12528046055.942633
-        },
-        {
-          "Dapp": "Pump.Fun AMM",
-          "Segment": "Spot Dex",
-          "protocol_revenue": 17857085.12631962,
-          "segment_revenue": 12528046055.942633
-        },
-        {
-          "Dapp": "Orca",
-          "Segment": "Spot Dex",
-          "protocol_revenue": 636577.1609982604,
-          "segment_revenue": 12528046055.942633
-        },
-        {
-          "Dapp": "Stabble",
-          "Segment": "Spot Dex",
-          "protocol_revenue": 40455.854396987044,
-          "segment_revenue": 12528046055.942633
-        },
         {
           "Dapp": "Photon",
           "Segment": "Telegram Bot",
@@ -3938,6 +3915,36 @@
           "Segment": "Memecoin LaunchPad",
           "protocol_revenue": 1126857.379902232,
           "segment_revenue": 299957660.1410731
+        },
+        {
+          "Dapp": "Axiom",
+          "Segment": "Spot Dex",
+          "protocol_revenue": 133359698.94695042,
+          "segment_revenue": 271080785.5524618
+        },
+        {
+          "Dapp": "Raydium",
+          "Segment": "Spot Dex",
+          "protocol_revenue": 119185637.4559388,
+          "segment_revenue": 271080785.5524618
+        },
+        {
+          "Dapp": "Pump.Fun AMM",
+          "Segment": "Spot Dex",
+          "protocol_revenue": 17857085.12631962,
+          "segment_revenue": 271080785.5524618
+        },
+        {
+          "Dapp": "Orca",
+          "Segment": "Spot Dex",
+          "protocol_revenue": 637908.168855931,
+          "segment_revenue": 271080785.5524618
+        },
+        {
+          "Dapp": "Stabble",
+          "Segment": "Spot Dex",
+          "protocol_revenue": 40455.854396987044,
+          "segment_revenue": 271080785.5524618
         },
         {
           "Dapp": "Phantom",
@@ -4042,7 +4049,7 @@
           "segment_revenue": 1557370.62314142
         }
       ],
-      "timestamp": 1750881313847,
+      "timestamp": 1750923269852,
       "chartId": "chart_1747997913077_mlapsqq",
       "title": "Ecosystem wise top dApp's revenue - since Jan'25"
     },
