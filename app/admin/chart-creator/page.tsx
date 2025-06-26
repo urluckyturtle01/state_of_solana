@@ -1123,39 +1123,34 @@ export default function ChartCreatorPage() {
         };
       }
       
-      // Add filter configurations
-      if (enableFilters.timeFilter || enableFilters.currencyFilter) {
+      // Add additionalOptions for time aggregation, tooltip total, and filters
+      if (enableTimeAggregation || showTooltipTotal || enableFilters.timeFilter || enableFilters.currencyFilter) {
         chartConfig = {
           ...chartConfig,
           additionalOptions: {
             ...(chartConfig.additionalOptions || {}),
-            filters: {}
+            ...(enableTimeAggregation && { enableTimeAggregation: true }),
+            ...(showTooltipTotal && { showTooltipTotal: true }),
           }
         };
         
-        // Ensure filters object is initialized
-        if (!chartConfig.additionalOptions!.filters) {
+        // Add filter configurations
+        if (enableFilters.timeFilter || enableFilters.currencyFilter) {
           chartConfig.additionalOptions!.filters = {};
-        }
-        
-        if (enableFilters.timeFilter) {
-          chartConfig.additionalOptions!.filters = {
-            ...chartConfig.additionalOptions!.filters,
-            timeFilter: {
+          
+          if (enableFilters.timeFilter) {
+            chartConfig.additionalOptions!.filters.timeFilter = {
               paramName: filterParams.timeFilter.paramName,
               options: filterParams.timeFilter.options
-            }
-          };
-        }
-        
-        if (enableFilters.currencyFilter) {
-          chartConfig.additionalOptions!.filters = {
-            ...chartConfig.additionalOptions!.filters,
-            currencyFilter: {
+            };
+          }
+          
+          if (enableFilters.currencyFilter) {
+            chartConfig.additionalOptions!.filters.currencyFilter = {
               paramName: filterParams.currencyFilter.paramName,
               options: filterParams.currencyFilter.options
-            }
-          };
+            };
+          }
         }
       }
       
