@@ -45,7 +45,7 @@ export default function DexTabsHeader({ activeTab = "summary" }: DexTabsHeaderPr
       tabs={tabs} 
       activeTab={activeTab}
       title="DEX"
-      description="Decentralized Exchange metrics for Solana"
+      description="DEX Activity and Performance on Solana"
       showDivider={true}
     />
   );
