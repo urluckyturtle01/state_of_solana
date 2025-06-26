@@ -1204,25 +1204,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, [chartData, keys, xKey, error, formatTickValue, handleMouseMove, handleMouseLeave, 
       groupColors, refreshData, tooltip.visible, tooltip.key, tooltip.items]);
 
-  // Helper function to format field names for display
+  // Helper function to show field names as-is from API
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
     
-    // Convert only underscores to space-separated (keep hyphens)
-    const spaceSeparated = fieldName.replace(/_/g, ' ');
-    
-    // Always capitalize the first letter of the entire string
-    if (spaceSeparated.length === 0) return '';
-    
-    // Split into words and capitalize each word
-    return spaceSeparated
-      .split(' ')
-      .map(word => {
-        if (word.length === 0) return '';
-        // Capitalize first letter, lowercase the rest
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(' ');
+    // Return API field name as-is without any formatting
+    return fieldName;
   };
 
   // Update legend items when data changes

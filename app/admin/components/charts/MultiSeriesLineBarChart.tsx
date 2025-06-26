@@ -927,11 +927,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     setError(null);
   }, [filterValues, onFilterChange]);
 
-  // Process brush data
-  const brushData = useMemo(() => {
+  // Check if time aggregation is enabled
+  const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+
+  // Process original brush data (for brush boundary - never changes with filters when time aggregation is enabled)
+  const originalBrushData = useMemo(() => {
     if (!data || data.length === 0) return [];
-    
-    // console.log('Creating brush data with', data.length, 'items');
     
     // Filter and ensure x values are valid
     let processedData = data.filter(d => d[xKey] !== undefined && d[xKey] !== null);
@@ -961,20 +962,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     const baseDate = new Date();
     baseDate.setHours(0, 0, 0, 0);
     
-    // Check if we're dealing with a chart without filters
-    const isChartWithoutFilters = 
-      !stableFilterValues || Object.keys(stableFilterValues).length === 0;
-      
     // Check if this chart has groupBy configuration
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
-    // Get the groupByField if available
-    const groupByField = chartConfig.dataMapping.groupBy || '';
-    
     // For charts with groupBy
     if (hasGroupBy) {
-      // console.log('Processing brush data for chart with groupBy:', groupByField);
-      
       // Group by x-axis values to prevent duplicates
       const groupedData: Record<string, any> = {};
       
@@ -1017,7 +1009,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // Convert back to array
       const uniqueData = Object.values(groupedData);
-      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points for groupBy`);
       
       // Create brush data points
       return uniqueData.map((item, i) => {
@@ -1050,76 +1041,33 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           originalData: item
         };
       });
-      
-      // console.log('Created brush data for groupBy chart:', uniqueData.length, 'points');
-      return uniqueData;
     }
     
-    // For chart without filters, use more direct approach to ensure continuous line
-    if (isChartWithoutFilters) {
-      // console.log('Processing chart without filters');
+    // For standard processing without groupBy
+    // Get the first field for brush data
+    const firstField = fields.length > 0 ? fields[0] : '';
+    
+    // Group by x-axis values to prevent duplicates
+    const groupedData: Record<string, any> = {};
+    
+    processedData.forEach(item => {
+      const xValue = String(item[xKey]);
       
-      // Group by x-axis values to prevent duplicates
-      const groupedData: Record<string, any> = {};
-      
-      // Get the first field for brush data
-      const firstField = fields.length > 0 ? fields[0] : '';
-      
-      processedData.forEach(item => {
-        const xValue = String(item[xKey]);
-        
-        if (groupedData[xValue]) {
-          // Keep the highest value from the first field
-          if ((Number(item[firstField]) || 0) > (Number(groupedData[xValue][firstField]) || 0)) {
-            groupedData[xValue] = item;
-          }
-        } else {
+      if (groupedData[xValue]) {
+        // Keep the highest value from the first field
+        if ((Number(item[firstField]) || 0) > (Number(groupedData[xValue][firstField]) || 0)) {
           groupedData[xValue] = item;
         }
-      });
-      
-      // Convert back to array
-      const uniqueData = Object.values(groupedData);
-      // console.log(`Processed ${processedData.length} brush items into ${uniqueData.length} unique data points`);
-      
-      // Create a series of evenly spaced date points for consistency
-      return uniqueData.map((item, i) => {
-        let date;
-        
-        // Try to parse date from x value or use synthetic date
-        if (typeof item[xKey] === 'string' && 
-           (item[xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
-            /^\d{2}\/\d{2}\/\d{4}/.test(item[xKey]) ||
-            /^[A-Za-z]{3}\s\d{4}$/.test(item[xKey]) || 
-            /^\d{4}$/.test(item[xKey]) ||
-            /^\d{4}-\d{2}$/.test(item[xKey]) ||
-            /^\d{4}-Q[1-4]$/.test(item[xKey]))) {
-          date = parseAggregatedDate(item[xKey]);
-          if (isNaN(date.getTime())) {
-            date = new Date(baseDate);
-            date.setDate(baseDate.getDate() + i);
-          }
-        } else {
-          date = new Date(baseDate);
-          date.setDate(baseDate.getDate() + i);
-        }
-        
-        return {
-          date,
-          value: Number(item[firstField]) || 0,
-          idx: i,
-          originalIndex: i,
-          originalData: item
-        };
-      });
-      
-      // console.log('Created brush data for chart without filters:', uniqueData.length, 'points');
-      return uniqueData;
-    }
+      } else {
+        groupedData[xValue] = item;
+      }
+    });
     
-    // Standard processing for charts with filters
-    // Create data points for the brush line that reflects values
-    const brushPoints = processedData.map((item, i) => {
+    // Convert back to array
+    const uniqueData = Object.values(groupedData);
+    
+    // Create a series of evenly spaced date points for consistency
+    return uniqueData.map((item, i) => {
       let date;
       
       // Try to parse date from x value or use synthetic date
@@ -1140,24 +1088,132 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         date.setDate(baseDate.getDate() + i);
       }
       
-      // For first field, handle null/undefined values
-      let value = 0;
-      if (fields.length > 0) {
-        value = Number(item[fields[0]]) || 0;
-      }
-      
       return {
         date,
-        value,
+        value: Number(item[firstField]) || 0,
         idx: i,
         originalIndex: i,
         originalData: item
       };
     });
+  }, [data, xKey, fields, chartConfig.dataMapping.groupBy, yField]);
+
+  // Process current brush data (for brush line - updates with filters when time aggregation is enabled)
+  const brushData = useMemo(() => {
+    // When time aggregation is enabled, use current filtered data for the brush line, but keep original boundary
+    if (isTimeAggregationEnabled) {
+      const currentData = isExpanded
+        ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
+        : (isBrushActive && filteredData.length > 0 ? filteredData : data);
+      
+      if (!currentData || currentData.length === 0) return originalBrushData;
+      
+      // Filter and ensure x values are valid
+      let processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
+      
+      // Sort by date if applicable
+      if (processedData.length > 0) {
+        const isDateField = typeof processedData[0][xKey] === 'string' && 
+          (processedData[0][xKey].match(/^\d{4}-\d{2}-\d{2}/) || 
+           /^\d{2}\/\d{2}\/\d{4}/.test(processedData[0][xKey]) ||
+           /^[A-Za-z]{3}\s\d{4}$/.test(processedData[0][xKey]) || 
+           /^\d{4}$/.test(processedData[0][xKey]) ||
+           /^\d{4}-\d{2}$/.test(processedData[0][xKey]) || 
+           /^\d{4}-Q[1-4]$/.test(processedData[0][xKey]));
+        
+        if (isDateField) {
+          processedData.sort((a, b) => {
+            const dateA = parseAggregatedDate(a[xKey]);
+            const dateB = parseAggregatedDate(b[xKey]);
+            return dateA.getTime() - dateB.getTime();
+          });
+        }
+      }
+      
+      // Use the same structure as originalBrushData but with filtered values
+      const firstField = fields.length > 0 ? fields[0] : '';
+      const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
+      
+      if (hasGroupBy) {
+        const groupedData: Record<string, any> = {};
+        
+        processedData.forEach(item => {
+          const xValue = String(item[xKey]);
+          
+          if (!groupedData[xValue]) {
+            groupedData[xValue] = { 
+              [xKey]: item[xKey],
+              totalValue: 0 
+            };
+          }
+          
+          if (Array.isArray(yField) && yField.length > 0) {
+            yField.forEach(field => {
+              const fieldName = typeof field === 'string' ? field : field.field;
+              const value = Number(item[fieldName]) || 0;
+              groupedData[xValue].totalValue += value;
+            });
+          } else {
+            const singleField = typeof yField === 'string' ? yField : 
+                                (Array.isArray(yField) && yField.length > 0 ? 
+                                  (typeof yField[0] === 'string' ? yField[0] : yField[0].field) : 
+                                  '');
+            
+            if (singleField) {
+              const value = Number(item[singleField]) || 0;
+              groupedData[xValue].totalValue += value;
+            }
+          }
+          
+          if (!groupedData[xValue].originalData) {
+            groupedData[xValue].originalData = [];
+          }
+          groupedData[xValue].originalData.push(item);
+        });
+        
+        const uniqueData = Object.values(groupedData);
+        
+        // Map to original brush data structure to maintain same date positions
+        return originalBrushData.map(originalItem => {
+          const xValue = String(originalItem.originalData[xKey]);
+          const matchingData = groupedData[xValue];
+          
+          return {
+            ...originalItem,
+            value: matchingData ? matchingData.totalValue : 0
+          };
+        });
+      } else {
+        const groupedData: Record<string, any> = {};
+        
+        processedData.forEach(item => {
+          const xValue = String(item[xKey]);
+          
+          if (groupedData[xValue]) {
+            if ((Number(item[firstField]) || 0) > (Number(groupedData[xValue][firstField]) || 0)) {
+              groupedData[xValue] = item;
+            }
+          } else {
+            groupedData[xValue] = item;
+          }
+        });
+        
+        // Map to original brush data structure to maintain same date positions
+        return originalBrushData.map(originalItem => {
+          const xValue = String(originalItem.originalData[xKey]);
+          const matchingData = groupedData[xValue];
+          
+          return {
+            ...originalItem,
+            value: matchingData ? (Number(matchingData[firstField]) || 0) : 0
+          };
+        });
+      }
+    }
     
-    // console.log('Created brush data for standard processing:', brushPoints.length, 'points');
-    return brushPoints;
-  }, [data, xKey, fields, stableFilterValues, chartConfig.dataMapping.groupBy, yField]);
+    // When time aggregation is not enabled, use the original logic
+    return originalBrushData;
+  }, [originalBrushData, isTimeAggregationEnabled, data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, isExpanded, xKey, fields, yField, chartConfig.dataMapping.groupBy]);
 
   // Handle brush change
   const handleBrushChange = useCallback((domain: any) => {
@@ -1176,6 +1232,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Update brush domain
     setBrushDomain([new Date(x0), new Date(x1)]);
     
+    // Use originalBrushData for brush boundary calculations to ensure consistency
+    const brushDataForFiltering = isTimeAggregationEnabled ? originalBrushData : brushData;
+    
     // We need to handle filtering differently for groupBy charts since data structure is different
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
@@ -1184,7 +1243,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // We'll create a set of x values that fall within the brush range
       const selectedBrushXValues = new Set<string | null>();
       
-      brushData
+      brushDataForFiltering
         .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
         .forEach(item => {
           // Get the x value from the original data
@@ -1208,7 +1267,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       setFilteredData(filteredItems);
     } else {
       // Standard filtering for non-groupBy charts
-      const selectedBrushItems = brushData
+      const selectedBrushItems = brushDataForFiltering
         .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
         .map(item => item.originalData)
         .filter(item => item !== null);
@@ -1220,7 +1279,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     if (!isBrushActive) {
       setIsBrushActive(true);
     }
-  }, [isBrushActive, brushData, chartConfig.dataMapping.groupBy, data, xKey]);
+  }, [isBrushActive, brushData, originalBrushData, isTimeAggregationEnabled, chartConfig.dataMapping.groupBy, data, xKey]);
   
   // Handle modal brush change
   const handleModalBrushChange = useCallback((domain: any) => {
@@ -1239,6 +1298,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Update modal brush domain
     setModalBrushDomain([new Date(x0), new Date(x1)]);
     
+    // Use originalBrushData for brush boundary calculations to ensure consistency
+    const brushDataForFiltering = isTimeAggregationEnabled ? originalBrushData : brushData;
+    
     // We need to handle filtering differently for groupBy charts since data structure is different
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
@@ -1247,7 +1309,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // We'll create a set of x values that fall within the brush range
       const selectedBrushXValues = new Set<string | null>();
       
-      brushData
+      brushDataForFiltering
         .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
         .forEach(item => {
           // Get the x value from the original data
@@ -1271,7 +1333,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       setModalFilteredData(filteredItems);
     } else {
       // Standard filtering for non-groupBy charts
-      const selectedBrushItems = brushData
+      const selectedBrushItems = brushDataForFiltering
         .filter(item => item.date >= new Date(x0) && item.date <= new Date(x1))
         .map(item => item.originalData)
         .filter(item => item !== null);
@@ -1283,7 +1345,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     if (!isModalBrushActive) {
       setIsModalBrushActive(true);
     }
-  }, [isModalBrushActive, brushData, chartConfig.dataMapping.groupBy, data, xKey]);
+  }, [isModalBrushActive, brushData, originalBrushData, isTimeAggregationEnabled, chartConfig.dataMapping.groupBy, data, xKey]);
 
   // Update legend items when chart data changes
   useEffect(() => {
@@ -1695,23 +1757,33 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const renderBrushArea = useCallback((modalView = false) => {
     if (!brushData || brushData.length === 0) return null;
     
-    // For chart without filters, we need to customize the brush path
-    const isChartWithoutFilters = 
-      !filterValues || Object.keys(filterValues).length === 0;
-    
     // Check if this chart has groupBy configuration
     const hasGroupBy = !!chartConfig.dataMapping.groupBy && chartConfig.dataMapping.groupBy !== '';
     
     // Add a small negative padding to keep the line just inside the brush bounds
     const padding = -0.5;
     
+    // When time aggregation is enabled, use originalBrushData for the brush extent
+    // but keep the current brushData values for the line visualization
+    const brushDisplayData = isTimeAggregationEnabled ? originalBrushData.map((originalItem, idx) => {
+      // Find matching item in current brushData to get updated values
+      const currentItem = brushData.find(item => 
+        item.date.getTime() === originalItem.date.getTime()
+      );
+      
+      return {
+        ...originalItem,
+        value: currentItem ? currentItem.value : 0 // Use current filtered value if available, otherwise 0
+      };
+    }) : brushData;
+    
     // Calculate max value for brush scaling - ensure it's always positive for the line
-    const maxBrushValue = Math.max(...brushData.map(d => Math.abs(d.value || 0)), 1);
+    const maxBrushValue = Math.max(...brushDisplayData.map(d => Math.abs(d.value || 0)), 1);
     
     return (
       <div className="h-[15%] w-full mt-2">
         <BrushTimeScale
-          data={brushData}
+          data={brushDisplayData}
           activeBrushDomain={modalView ? modalBrushDomain : brushDomain}
           onBrushChange={modalView ? handleModalBrushChange : handleBrushChange}
           onClearBrush={() => {
@@ -1740,12 +1812,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           curveType={hasGroupBy ? "monotoneX" : "catmullRom"}
           strokeWidth={hasGroupBy ? 1 : 0.5}
           filterValues={modalView ? modalFilterValues : (stableFilterValues || {})}
-          key={`brush-${modalView ? 'modal' : 'main'}-${(modalView ? modalFilterValues : filterValues)?.timeFilter || 'none'}-${(modalView ? modalFilterValues : filterValues)?.currencyFilter || 'none'}`} // Add key to force re-render when filters change
+          key={`brush-${modalView ? 'modal' : 'main'}-${isTimeAggregationEnabled ? 'time-agg' : 'normal'}-${(modalView ? modalFilterValues : filterValues)?.timeFilter || 'none'}-${(modalView ? modalFilterValues : filterValues)?.currencyFilter || 'none'}`} // Add key to force re-render when filters change
         />
       </div>
     );
   }, [
-    brushData, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange,
+    brushData, originalBrushData, isTimeAggregationEnabled, modalBrushDomain, brushDomain, handleModalBrushChange, handleBrushChange,
     setModalBrushDomain, setIsModalBrushActive, setModalFilteredData, setBrushDomain,
     setIsBrushActive, setFilteredData, chartConfig.dataMapping.groupBy, stableFilterValues, modalFilterValues
   ]);
