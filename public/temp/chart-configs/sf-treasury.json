@@ -2,7 +2,7 @@
   "pageId": "sf-treasury",
   "pageName": "Treasury",
   "chartCount": 5,
-  "lastUpdated": "2025-06-26T09:37:51.264Z",
+  "lastUpdated": "2025-06-26T12:29:20.793Z",
   "charts": [
     {
       "id": "chart_1749803264043_8cf9l45",
@@ -19,11 +19,13 @@
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "monthly_realm_balance",
-        "groupBy": "category",
-        "yAxisUnit": "$"
+        "groupBy": "category"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-13T08:27:44.043Z",
-      "updatedAt": "2025-06-13T08:27:45.241Z"
+      "updatedAt": "2025-06-26T12:26:35.334Z"
     },
     {
       "id": "chart_1749803507206_nf527wm",
