@@ -2,7 +2,7 @@
   "pageId": "network-usage",
   "pageName": "Network Usage",
   "chartCount": 3,
-  "lastUpdated": "2025-07-03T05:48:21.530Z",
+  "lastUpdated": "2025-07-03T16:18:44.251Z",
   "charts": [
     {
       "id": "chart_1748252444149_tkcgszd",
@@ -11,30 +11,31 @@
       "page": "network-usage",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12916/results.json",
-      "apiKey": "gdMeqktSPbZAlwP6b6rG5Injn8Br05rKXecLvxuN",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json",
+      "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "Total_TPS",
+            "field": "total_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Success_TPS",
+            "field": "success_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Failed_TPS",
+            "field": "failed_tps",
             "type": "line",
             "unit": ""
           },
           {
-            "field": "Real_TPS",
+            "field": "real_tps",
             "type": "line",
             "unit": ""
           }
@@ -42,7 +43,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-26T09:40:44.149Z",
-      "updatedAt": "2025-06-02T07:35:17.426Z"
+      "updatedAt": "2025-07-03T10:03:32.191Z"
     },
     {
       "id": "chart_1748255554567_w4iy4xx",
