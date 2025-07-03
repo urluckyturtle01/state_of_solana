@@ -2,7 +2,7 @@
   "pageId": "raydium-competetive-landscape",
   "pageName": "Competetive Landscape",
   "chartCount": 5,
-  "lastUpdated": "2025-07-03T05:48:21.550Z",
+  "lastUpdated": "2025-07-03T16:18:44.261Z",
   "charts": [
     {
       "id": "chart_1749048844645_v08psl4",
@@ -18,11 +18,10 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "volume",
-        "groupBy": "Dex"
+        "yAxis": "volume_usd",
+        "groupBy": "dex"
       },
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -30,14 +29,14 @@
               "D",
               "W",
               "M",
-              "Q",
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-04T14:54:04.645Z",
-      "updatedAt": "2025-06-20T13:35:24.419Z"
+      "updatedAt": "2025-07-03T14:08:54.296Z"
     },
     {
       "id": "chart_1749048959366_ej1oihq",
