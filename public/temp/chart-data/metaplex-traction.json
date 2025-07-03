@@ -1,14 +1,42 @@
 {
   "pageId": "metaplex-traction",
   "pageName": "Traction",
-  "fetchedAt": "2025-06-26T14:39:21.731Z",
+  "fetchedAt": "2025-07-03T05:53:18.118Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-07-02",
+          "transactions": 365928
+        },
+        {
+          "block_date": "2025-07-01",
+          "transactions": 349230
+        },
+        {
+          "block_date": "2025-06-30",
+          "transactions": 395971
+        },
+        {
+          "block_date": "2025-06-29",
+          "transactions": 385853
+        },
+        {
+          "block_date": "2025-06-28",
+          "transactions": 402026
+        },
+        {
+          "block_date": "2025-06-27",
+          "transactions": 328288
+        },
+        {
+          "block_date": "2025-06-26",
+          "transactions": 338710
+        },
+        {
           "block_date": "2025-06-25",
-          "transactions": 307126
+          "transactions": 339173
         },
         {
           "block_date": "2025-06-24",
@@ -5911,7 +5939,7 @@
           "transactions": 17
         }
       ],
-      "timestamp": 1750948760967,
+      "timestamp": 1751521995759,
       "chartId": "chart_1749627736683_bchbaau",
       "title": "Monthly Transactions"
     },
@@ -5919,8 +5947,12 @@
       "success": true,
       "data": [
         {
+          "month": "2025-07-01",
+          "#users": 35574
+        },
+        {
           "month": "2025-06-01",
-          "#users": 392712
+          "#users": 448586
         },
         {
           "month": "2025-05-01",
@@ -6115,7 +6147,7 @@
           "#users": 405
         }
       ],
-      "timestamp": 1750948760511,
+      "timestamp": 1751521988710,
       "chartId": "chart_1749627922355_vt1yejy",
       "title": "Monthly Active Wallets"
     },
@@ -6123,24 +6155,44 @@
       "success": true,
       "data": [
         {
+          "month": "2025-07-01 00:00:00",
+          "protocol": "Bubblegum",
+          "total_txn": 352654
+        },
+        {
+          "month": "2025-07-01 00:00:00",
+          "protocol": "Bubblegum_v2",
+          "total_txn": 9
+        },
+        {
+          "month": "2025-07-01 00:00:00",
+          "protocol": "Others",
+          "total_txn": 25766
+        },
+        {
+          "month": "2025-07-01 00:00:00",
+          "protocol": "Token Metadata",
+          "total_txn": 103122
+        },
+        {
           "month": "2025-06-01 00:00:00",
           "protocol": "Bubblegum",
-          "total_txn": 6669866
+          "total_txn": 8103457
         },
         {
           "month": "2025-06-01 00:00:00",
           "protocol": "Bubblegum_v2",
-          "total_txn": 5238
+          "total_txn": 23056
         },
         {
           "month": "2025-06-01 00:00:00",
           "protocol": "Others",
-          "total_txn": 398337
+          "total_txn": 437036
         },
         {
           "month": "2025-06-01 00:00:00",
           "protocol": "Token Metadata",
-          "total_txn": 1469897
+          "total_txn": 1792565
         },
         {
           "month": "2025-05-01 00:00:00",
@@ -6753,7 +6805,7 @@
           "total_txn": 2769
         }
       ],
-      "timestamp": 1750948760513,
+      "timestamp": 1751521987918,
       "chartId": "chart_1749628211337_ts1ilil",
       "title": "Monthly Transactions by Program"
     },
@@ -6761,10 +6813,16 @@
       "success": true,
       "data": [
         {
+          "month": "2025-07-01",
+          "tm_fungible": 65587,
+          "tm_non_fungible": 1615,
+          "mpl_core": 12794
+        },
+        {
           "month": "2025-06-01",
-          "tm_fungible": 842814,
-          "tm_non_fungible": 40063,
-          "mpl_core": 175696
+          "tm_fungible": 1036509,
+          "tm_non_fungible": 44583,
+          "mpl_core": 193156
         },
         {
           "month": "2025-05-01",
@@ -6869,7 +6927,7 @@
           "mpl_core": null
         }
       ],
-      "timestamp": 1750948761726,
+      "timestamp": 1751521998118,
       "chartId": "chart_1749628724126_z6sgnvd",
       "title": "Monthly Digital Assets Minted"
     },
@@ -6877,19 +6935,69 @@
       "success": true,
       "data": [
         {
-          "month": "2025-03-01",
+          "month": "2024-02-01",
+          "token_type": "Non Fungible",
+          "mints": 963046
+        },
+        {
+          "month": "2024-07-01",
           "token_type": "Fungible",
-          "mints": 897191
+          "mints": 581716
+        },
+        {
+          "month": "2024-05-01",
+          "token_type": "Non Fungible",
+          "mints": 290975
+        },
+        {
+          "month": "2025-01-01",
+          "token_type": "Non Fungible",
+          "mints": 111950
+        },
+        {
+          "month": "2025-07-01",
+          "token_type": "Non Fungible",
+          "mints": 1615
         },
         {
           "month": "2024-04-01",
-          "token_type": "Non Fungible",
-          "mints": 360468
+          "token_type": "Fungible",
+          "mints": 445707
         },
         {
-          "month": "2024-06-01",
+          "month": "2024-09-01",
           "token_type": "Fungible",
-          "mints": 567315
+          "mints": 357578
+        },
+        {
+          "month": "2024-05-01",
+          "token_type": "Fungible",
+          "mints": 603947
+        },
+        {
+          "month": "2025-02-01",
+          "token_type": "Fungible",
+          "mints": 1247137
+        },
+        {
+          "month": "2024-11-01",
+          "token_type": "Fungible",
+          "mints": 1430540
+        },
+        {
+          "month": "2024-09-01",
+          "token_type": "Non Fungible",
+          "mints": 166378
+        },
+        {
+          "month": "2024-07-01",
+          "token_type": "Non Fungible",
+          "mints": 196494
+        },
+        {
+          "month": "2024-02-01",
+          "token_type": "Fungible",
+          "mints": 182899
         },
         {
           "month": "2024-06-01",
@@ -6897,14 +7005,19 @@
           "mints": 299269
         },
         {
-          "month": "2024-10-01",
-          "token_type": "Non Fungible",
-          "mints": 133969
+          "month": "2024-06-01",
+          "token_type": "Fungible",
+          "mints": 567315
         },
         {
           "month": "2024-10-01",
           "token_type": "Fungible",
           "mints": 907465
+        },
+        {
+          "month": "2024-10-01",
+          "token_type": "Non Fungible",
+          "mints": 133969
         },
         {
           "month": "2025-03-01",
@@ -6937,99 +7050,14 @@
           "mints": 86139
         },
         {
-          "month": "2024-01-01",
-          "token_type": "Fungible",
-          "mints": 227830
+          "month": "2024-08-01",
+          "token_type": "Non Fungible",
+          "mints": 218905
         },
         {
           "month": "2025-06-01",
-          "token_type": "Non Fungible",
-          "mints": 40063
-        },
-        {
-          "month": "2025-04-01",
           "token_type": "Fungible",
-          "mints": 1100871
-        },
-        {
-          "month": "2024-03-01",
-          "token_type": "Non Fungible",
-          "mints": 413876
-        },
-        {
-          "month": "2025-01-01",
-          "token_type": "Fungible",
-          "mints": 1781388
-        },
-        {
-          "month": "2025-05-01",
-          "token_type": "Fungible",
-          "mints": 1234621
-        },
-        {
-          "month": "2025-02-01",
-          "token_type": "Non Fungible",
-          "mints": 94058
-        },
-        {
-          "month": "2024-07-01",
-          "token_type": "Fungible",
-          "mints": 581716
-        },
-        {
-          "month": "2025-01-01",
-          "token_type": "Non Fungible",
-          "mints": 111950
-        },
-        {
-          "month": "2024-05-01",
-          "token_type": "Non Fungible",
-          "mints": 290975
-        },
-        {
-          "month": "2024-02-01",
-          "token_type": "Non Fungible",
-          "mints": 963046
-        },
-        {
-          "month": "2024-05-01",
-          "token_type": "Fungible",
-          "mints": 603947
-        },
-        {
-          "month": "2024-09-01",
-          "token_type": "Fungible",
-          "mints": 357578
-        },
-        {
-          "month": "2024-04-01",
-          "token_type": "Fungible",
-          "mints": 445707
-        },
-        {
-          "month": "2024-11-01",
-          "token_type": "Fungible",
-          "mints": 1430540
-        },
-        {
-          "month": "2024-09-01",
-          "token_type": "Non Fungible",
-          "mints": 166378
-        },
-        {
-          "month": "2025-02-01",
-          "token_type": "Fungible",
-          "mints": 1247137
-        },
-        {
-          "month": "2024-02-01",
-          "token_type": "Fungible",
-          "mints": 182899
-        },
-        {
-          "month": "2024-07-01",
-          "token_type": "Non Fungible",
-          "mints": 196494
+          "mints": 1036509
         },
         {
           "month": "2024-08-01",
@@ -7037,9 +7065,54 @@
           "mints": 473872
         },
         {
-          "month": "2025-06-01",
+          "month": "2025-07-01",
           "token_type": "Fungible",
-          "mints": 842814
+          "mints": 65587
+        },
+        {
+          "month": "2025-01-01",
+          "token_type": "Fungible",
+          "mints": 1781388
+        },
+        {
+          "month": "2024-03-01",
+          "token_type": "Non Fungible",
+          "mints": 413876
+        },
+        {
+          "month": "2025-02-01",
+          "token_type": "Non Fungible",
+          "mints": 94058
+        },
+        {
+          "month": "2025-05-01",
+          "token_type": "Fungible",
+          "mints": 1234621
+        },
+        {
+          "month": "2025-04-01",
+          "token_type": "Fungible",
+          "mints": 1100871
+        },
+        {
+          "month": "2025-06-01",
+          "token_type": "Non Fungible",
+          "mints": 44583
+        },
+        {
+          "month": "2024-01-01",
+          "token_type": "Fungible",
+          "mints": 227830
+        },
+        {
+          "month": "2025-03-01",
+          "token_type": "Fungible",
+          "mints": 897191
+        },
+        {
+          "month": "2024-04-01",
+          "token_type": "Non Fungible",
+          "mints": 360468
         },
         {
           "month": "2024-12-01",
@@ -7047,17 +7120,12 @@
           "mints": 1270158
         },
         {
-          "month": "2024-08-01",
-          "token_type": "Non Fungible",
-          "mints": 218905
-        },
-        {
           "month": "2024-03-01",
           "token_type": "Fungible",
           "mints": 351453
         }
       ],
-      "timestamp": 1750948761731,
+      "timestamp": 1751521997163,
       "chartId": "chart_1749629023835_wd03h9z",
       "title": "Monthly TM Fungible and Non-Fungible Mints"
     },
@@ -7065,11 +7133,18 @@
       "success": true,
       "data": [
         {
+          "month": "2025-07-01",
+          "token_metadata_nfts": 67202,
+          "compressed_nfts": 559565,
+          "Bubblegum_v2_cNFTs": 964,
+          "core_nft": 12794
+        },
+        {
           "month": "2025-06-01",
-          "token_metadata_nfts": 911285,
-          "compressed_nfts": 9086513,
-          "Bubblegum_v2_cNFTs": 5076,
-          "core_nft": 178241
+          "token_metadata_nfts": 1081092,
+          "compressed_nfts": 10818988,
+          "Bubblegum_v2_cNFTs": 22669,
+          "core_nft": 193156
         },
         {
           "month": "2025-05-01",
@@ -7408,7 +7483,7 @@
           "core_nft": null
         }
       ],
-      "timestamp": 1750948761727,
+      "timestamp": 1751521997381,
       "chartId": "chart_1749629260401_ack8uo5",
       "title": "Monthly Total Mints by Program"
     }
