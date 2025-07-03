@@ -2,7 +2,7 @@
   "pageId": "volume",
   "pageName": "Volume",
   "chartCount": 4,
-  "lastUpdated": "2025-06-26T14:38:46.508Z",
+  "lastUpdated": "2025-07-03T05:48:21.531Z",
   "charts": [
     {
       "id": "chart_1748407572835_5tzqoau",
@@ -111,7 +111,7 @@
     },
     {
       "id": "chart_1749198741885_xjpdfe6",
-      "title": "Monthly Volume by DEX",
+      "title": "Volume by DEX",
       "subtitle": "",
       "page": "volume",
       "section": "",
@@ -123,9 +123,8 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "volume",
-        "groupBy": "Dex",
-        "yAxisUnit": "$"
+        "yAxis": "volume_usd",
+        "groupBy": "dex"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -143,7 +142,7 @@
         }
       },
       "createdAt": "2025-06-06T08:32:21.885Z",
-      "updatedAt": "2025-06-19T12:25:18.958Z"
+      "updatedAt": "2025-06-30T14:02:26.354Z"
     }
   ]
 }
