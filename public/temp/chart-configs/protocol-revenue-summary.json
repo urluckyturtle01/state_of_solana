@@ -2,7 +2,7 @@
   "pageId": "protocol-revenue-summary",
   "pageName": "Summary",
   "chartCount": 2,
-  "lastUpdated": "2025-06-26T14:38:46.513Z",
+  "lastUpdated": "2025-07-03T05:29:49.050Z",
   "charts": [
     {
       "id": "chart_1747995887555_9x38uwz",
@@ -65,7 +65,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "protocol_revenue_usd",
-        "groupBy": "platform"
+        "groupBy": "platform",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -75,13 +76,15 @@
             "options": [
               "D",
               "W",
-              "M"
+              "M",
+              "Q",
+              "Y"
             ]
           }
         }
       },
       "createdAt": "2025-05-23T10:29:00.499Z",
-      "updatedAt": "2025-06-24T06:24:00.509Z"
+      "updatedAt": "2025-07-01T12:51:26.694Z"
     }
   ]
 }
