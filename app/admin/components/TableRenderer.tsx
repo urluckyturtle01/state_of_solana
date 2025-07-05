@@ -59,6 +59,104 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     return tableConfig.columns.filter(column => !column.hidden);
   }, [tableConfig.columns]);
 
+  // Function to format time period headers for horizontal tables
+  const formatTimePeriodHeader = (period: string | number): string => {
+    const periodStr = String(period);
+    
+    // Quarterly format: 2024-Q1, 2024-Q2, etc. -> Q1 2024, Q2 2024
+    const quarterlyMatch = periodStr.match(/^(\d{4})[-_]?[qQ]([1-4])$/);
+    if (quarterlyMatch) {
+      const [, year, quarter] = quarterlyMatch;
+      return `Q${quarter} ${year}`;
+    }
+    
+    // Alternative quarterly format: Q1-2024, Q2-2024, etc.
+    const altQuarterlyMatch = periodStr.match(/^[qQ]([1-4])[-_]?(\d{4})$/);
+    if (altQuarterlyMatch) {
+      const [, quarter, year] = altQuarterlyMatch;
+      return `Q${quarter} ${year}`;
+    }
+    
+    // Quarterly format with space: 2024 Q1, 2024 Q2, etc.
+    const spaceQuarterlyMatch = periodStr.match(/^(\d{4})\s+[qQ]([1-4])$/);
+    if (spaceQuarterlyMatch) {
+      const [, year, quarter] = spaceQuarterlyMatch;
+      return `Q${quarter} ${year}`;
+    }
+    
+    // Monthly format: 2024-01, 2024-02, etc. -> Jan 2024, Feb 2024
+    const monthlyMatch = periodStr.match(/^(\d{4})[-_](\d{1,2})$/);
+    if (monthlyMatch) {
+      const [, year, month] = monthlyMatch;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthIndex = parseInt(month) - 1;
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${monthNames[monthIndex]} ${year}`;
+      }
+    }
+    
+    // Alternative monthly format: Jan-2024, Feb-2024, etc.
+    const altMonthlyMatch = periodStr.match(/^([A-Za-z]{3,})[-_]?(\d{4})$/);
+    if (altMonthlyMatch) {
+      const [, month, year] = altMonthlyMatch;
+      return `${month} ${year}`;
+    }
+    
+    // Month name format: January, February, etc. with year detection from context
+    const monthNameMatch = periodStr.match(/^(January|February|March|April|May|June|July|August|September|October|November|December)$/i);
+    if (monthNameMatch) {
+      const [, month] = monthNameMatch;
+      return month; // Return month name as-is if no year found
+    }
+    
+    // Numeric month with year: 01/2024, 02/2024, etc.
+    const numericMonthMatch = periodStr.match(/^(\d{1,2})\/(\d{4})$/);
+    if (numericMonthMatch) {
+      const [, month, year] = numericMonthMatch;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthIndex = parseInt(month) - 1;
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${monthNames[monthIndex]} ${year}`;
+      }
+    }
+    
+    // Yearly format: just year numbers -> 2024, 2025
+    const yearlyMatch = periodStr.match(/^(\d{4})$/);
+    if (yearlyMatch) {
+      return periodStr;
+    }
+    
+    // Quarterly start dates: 2024-01-01, 2024-04-01, 2024-07-01, 2024-10-01
+    const quarterlyStartDateMatch = periodStr.match(/^(\d{4})-(01|04|07|10)-01$/);
+    if (quarterlyStartDateMatch) {
+      const [, year, month] = quarterlyStartDateMatch;
+      const quarterMap: { [key: string]: string } = {
+        '01': 'Q1',
+        '04': 'Q2', 
+        '07': 'Q3',
+        '10': 'Q4'
+      };
+      return `${quarterMap[month]} ${year}`;
+    }
+    
+    // Date format: 2024-01-15 -> keep as is
+    const dateMatch = periodStr.match(/^\d{4}-\d{2}-\d{2}$/);
+    if (dateMatch) {
+      return periodStr;
+    }
+    
+    // Week format: 2024-W01, 2024-W02 -> keep as is
+    const weekMatch = periodStr.match(/^\d{4}-W\d{2}$/);
+    if (weekMatch) {
+      return periodStr;
+    }
+    
+    // If no pattern matches, return as-is
+    return periodStr;
+  };
+
   // Transform data for horizontal tables
   const transformedData = useMemo(() => {
     if (tableConfig.orientation !== 'horizontal' || data.length === 0) {
@@ -77,6 +175,23 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         /^(date|time|period|quarter|month|year|block_date)$/i.test(col.field) ||
         /^(q[1-4]|Q[1-4]|\d{4}[-_]?[qQ]?[1-4]?)/.test(col.field)
       );
+      
+      // Also check if any column contains quarterly start dates in the data
+      if (timeFields.length === 0) {
+        const potentialTimeFields = visibleColumns.filter(col => {
+          const sampleValues = data.slice(0, 5).map(row => row[col.field]);
+          return sampleValues.some(value => {
+            const valueStr = String(value);
+            // Check if value looks like a quarterly start date
+            return /^\d{4}-(01|04|07|10)-01$/.test(valueStr) ||
+                   /^\d{4}[-_][qQ][1-4]$/.test(valueStr) ||
+                   /^[qQ][1-4][-_]\d{4}$/.test(valueStr) ||
+                   /^\d{4}[-_]\d{1,2}$/.test(valueStr) ||
+                   /^\d{4}$/.test(valueStr);
+          });
+        });
+        timeFields.push(...potentialTimeFields);
+      }
       
       if (timeFields.length > 0) {
         // Use the first time field as the pivot
@@ -158,6 +273,23 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         /^(q[1-4]|Q[1-4]|\d{4}[-_]?[qQ]?[1-4]?)/.test(col.field)
       );
       
+      // Also check if any column contains quarterly start dates in the data
+      if (timeFields.length === 0) {
+        const potentialTimeFields = visibleColumns.filter(col => {
+          const sampleValues = data.slice(0, 5).map(row => row[col.field]);
+          return sampleValues.some(value => {
+            const valueStr = String(value);
+            // Check if value looks like a quarterly start date
+            return /^\d{4}-(01|04|07|10)-01$/.test(valueStr) ||
+                   /^\d{4}[-_][qQ][1-4]$/.test(valueStr) ||
+                   /^[qQ][1-4][-_]\d{4}$/.test(valueStr) ||
+                   /^\d{4}[-_]\d{1,2}$/.test(valueStr) ||
+                   /^\d{4}$/.test(valueStr);
+          });
+        });
+        timeFields.push(...potentialTimeFields);
+      }
+      
       if (timeFields.length > 0) {
         const timeField = timeFields[0];
         const timePeriods = [...new Set(data.map(row => row[timeField.field]))].sort();
@@ -173,7 +305,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
           },
           ...timePeriods.map(period => ({
             field: String(period),
-            header: String(period),
+            header: formatTimePeriodHeader(period),
             sortable: true,
             filterable: false,
             hidden: false,
@@ -206,14 +338,20 @@ const TableRenderer: React.FC<TableRendererProps> = ({
           hidden: false,
           format: { type: 'text' }
         },
-        ...identifiers.map(id => ({
-          field: String(id),
-          header: String(id),
-          sortable: true,
-          filterable: false,
-          hidden: false,
-          format: { type: 'currency', prefix: '$', decimals: 0 }
-        } as TableColumnConfig))
+        ...identifiers.map(id => {
+          // Check if the identifier looks like a time period
+          const idStr = String(id);
+          const isTimePeriod = /^(\d{4}[-_]?[qQ]?[1-4]?|\d{4}[-_]\d{1,2}|[qQ][1-4][-_]?\d{4}|\d{4}\s+[qQ][1-4]|[A-Za-z]{3,}[-_]?\d{4}|\d{1,2}\/\d{4}|(January|February|March|April|May|June|July|August|September|October|November|December)|\d{4}-(01|04|07|10)-01|\d{4})$/i.test(idStr);
+          
+          return {
+            field: String(id),
+            header: isTimePeriod ? formatTimePeriodHeader(id) : String(id),
+            sortable: true,
+            filterable: false,
+            hidden: false,
+            format: { type: 'currency', prefix: '$', decimals: 0 }
+          } as TableColumnConfig;
+        })
       ];
       
       return newColumns;
@@ -872,10 +1010,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
             } : undefined}
             searchTerm={undefined}
           onRetry={handleRetry}
-          cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
+          cellClassName={tableConfig.orientation === 'horizontal' ? "px-3 py-4 text-[11px] text-gray-300" : "px-6 py-4 whitespace-nowrap text-sm text-gray-300"}
           containerClassName="overflow-x-auto"
           noDataMessage="No data available"
           stickyFirstColumn={tableConfig.orientation === 'horizontal'}
+          isHorizontal={tableConfig.orientation === 'horizontal'}
         />
         )}
       </div>

@@ -47,6 +47,7 @@ export interface DataTableProps<T> {
   searchTerm?: string;
   onRetry?: () => void;
   stickyFirstColumn?: boolean; // New prop for sticky first column
+  isHorizontal?: boolean; // New prop to identify horizontal tables
 }
 
 // Sort direction type
@@ -75,7 +76,8 @@ export default function DataTable<T>({
   pagination,
   searchTerm,
   onRetry,
-  stickyFirstColumn = false
+  stickyFirstColumn = false,
+  isHorizontal = false
 }: DataTableProps<T>) {
   // State for sorting
   const [sortColumn, setSortColumn] = useState<string | undefined>(initialSortColumn);
@@ -287,10 +289,27 @@ export default function DataTable<T>({
       ? 'sticky left-0 z-20 bg-gray-900/95 backdrop-blur-sm border-gray-800 shadow-lg shadow-gray-900/20 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-px after:bg-gradient-to-b after:from-blue-500/30 after:via-gray-500/50 after:to-blue-500/30' 
       : '';
     
+    // For horizontal tables, left-align all columns except the first one
+    let alignment = column.align || 'left';
+    if (isHorizontal && !isFirstColumn) {
+      alignment = 'left';
+    }
+    
+    // For horizontal tables, reduce left padding for non-first columns in headers too
+    let headerPadding = 'px-3 py-2';
+    if (isHorizontal && !isFirstColumn) {
+      headerPadding = 'pl-4 pr-3 py-2';
+    }
+    
+    // For horizontal tables, use same vertical padding as cells
+    if (isHorizontal) {
+      headerPadding = headerPadding.replace('py-2', 'py-4');
+    }
+    
     return (
       <th 
         key={column.key}
-        className={`text-${column.align || 'left'} text-[9px] font-medium text-gray-400 uppercase tracking-wider px-3 py-2 whitespace-nowrap ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''} ${stickyClasses}`}
+        className={`text-${alignment} text-[9px] font-medium text-gray-400 uppercase tracking-wider ${headerPadding} whitespace-nowrap ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''} ${stickyClasses}`}
         onClick={() => column.sortable && handleSort(column)}
         style={{ width: column.width || 'auto' }}
       >
@@ -362,10 +381,23 @@ export default function DataTable<T>({
                     ? `sticky left-0 z-10 ${rowBgClass} backdrop-blur-sm border-gray-800 shadow-lg shadow-gray-900/20 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-px after:bg-gradient-to-b after:from-blue-500/20 after:via-gray-500/40 after:to-blue-500/20` 
                     : '';
                   
+                  // For horizontal tables, left-align all columns except the first one
+                  let cellAlignment = column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left';
+                  if (isHorizontal && !isFirstColumn) {
+                    cellAlignment = 'text-left';
+                  }
+                  
+                  // For horizontal tables, reduce left padding for non-first columns
+                  let customCellClassName = cellClassName;
+                  if (isHorizontal && !isFirstColumn) {
+                    // Remove existing padding classes and add minimal left padding
+                    customCellClassName = cellClassName.replace(/px-\d+/g, 'pr-3').replace(/pl-\d+/g, '') + ' pl-4';
+                  }
+                  
                   return (
                     <td 
                       key={`${keyExtractor(row)}-${column.key}`} 
-                      className={`text-[12px] ${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
+                      className={`text-[12px] ${customCellClassName} ${cellAlignment} ${
                         variant === 'bordered' ? 'border-x border-gray-900' : ''
                       } ${stickyClasses}`}
                     >
