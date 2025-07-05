@@ -158,6 +158,22 @@ export interface CounterConfig {
 
 // Table display types
 export type TableVariant = "simple" | "striped" | "bordered" | "compact";
+export type TableOrientation = "vertical" | "horizontal";
+
+// Computed column configuration
+export interface ComputedColumnConfig {
+  id: string;          // Unique identifier for the computed column
+  header: string;      // Display name for the computed column
+  operation: 'sum' | 'average' | 'difference'; // Type of computation
+  sourceColumns: string[]; // Array of field names to compute from
+  format?: {
+    type: "text" | "number" | "currency" | "percentage" | "date";
+    decimals?: number; // For number/currency/percentage
+    prefix?: string;   // For currency ($, €, etc.) or any prefix
+    suffix?: string;   // For percentage (%) or any suffix
+    dateFormat?: string; // For dates
+  };
+}
 
 // Column configuration for tables
 export interface TableColumnConfig {
@@ -185,6 +201,7 @@ export interface TableConfig {
   apiEndpoint: string;
   apiKey?: string;
   columns: TableColumnConfig[];
+  computedColumns?: ComputedColumnConfig[]; // Optional computed columns
   defaultSortColumn?: string;
   defaultSortDirection?: "asc" | "desc";
   rowsPerPage?: number;
@@ -192,6 +209,7 @@ export interface TableConfig {
   enableSearch?: boolean;
   enableRowSelection?: boolean;
   variant: TableVariant;
+  orientation?: TableOrientation; // Table layout orientation (defaults to vertical)
   width?: number; // 1, 2, or 3 columns (defaults to 3 for full width)
   refreshInterval?: number; // Auto-refresh interval in seconds
   additionalOptions?: {

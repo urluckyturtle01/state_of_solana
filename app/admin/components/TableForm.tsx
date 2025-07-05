@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { TableConfig, TableColumnConfig, TableVariant, AvailablePage } from '../types';
+import { TableConfig, TableColumnConfig, TableVariant, TableOrientation, ComputedColumnConfig, AvailablePage } from '../types';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
 import { saveTableConfig } from '../utils';
@@ -28,6 +28,7 @@ const TableForm: React.FC<TableFormProps> = ({
     apiEndpoint: initialData?.apiEndpoint || '',
     apiKey: initialData?.apiKey || '',
     columns: initialData?.columns || [],
+    computedColumns: initialData?.computedColumns || [],
     defaultSortColumn: initialData?.defaultSortColumn || '',
     defaultSortDirection: initialData?.defaultSortDirection || 'asc',
     rowsPerPage: initialData?.rowsPerPage || 10,
@@ -35,6 +36,7 @@ const TableForm: React.FC<TableFormProps> = ({
     enableSearch: initialData?.enableSearch ?? true,
     enableRowSelection: initialData?.enableRowSelection ?? false,
     variant: initialData?.variant || 'simple',
+    orientation: initialData?.orientation || 'vertical',
     page: initialData?.page || 'dashboard',
     width: initialData?.width || 3, // Default to full width
     refreshInterval: initialData?.refreshInterval || 0,
@@ -61,6 +63,20 @@ const TableForm: React.FC<TableFormProps> = ({
     sortable: true,
     filterable: false,
     hidden: false
+  });
+
+  // State for computed column management
+  const [computedColumns, setComputedColumns] = useState<ComputedColumnConfig[]>(initialData?.computedColumns || []);
+  const [newComputedColumn, setNewComputedColumn] = useState<ComputedColumnConfig>({
+    id: '',
+    header: '',
+    operation: 'sum',
+    sourceColumns: [],
+    format: {
+      type: 'currency',
+      prefix: '$',
+      decimals: 0
+    }
   });
 
   // Add state for filter configuration
@@ -250,6 +266,89 @@ const TableForm: React.FC<TableFormProps> = ({
     setFormData(prevData => ({
       ...prevData,
       columns: updatedColumns,
+    }));
+  };
+
+  // Function to handle adding a new computed column
+  const handleAddComputedColumn = () => {
+    if (!newComputedColumn.header || newComputedColumn.sourceColumns.length === 0) {
+      alert("Header and at least one source column are required!");
+      return;
+    }
+    
+    const computedColumnWithId = {
+      ...newComputedColumn,
+      id: newComputedColumn.id || nanoid()
+    };
+    
+    // Add new computed column to the list
+    const updatedComputedColumns = [...computedColumns, computedColumnWithId];
+    setComputedColumns(updatedComputedColumns);
+    
+    // Update form data
+    setFormData(prevData => ({
+      ...prevData,
+      computedColumns: updatedComputedColumns,
+    }));
+    
+    // Reset new computed column form
+    setNewComputedColumn({
+      id: '',
+      header: '',
+      operation: 'sum',
+      sourceColumns: [],
+      format: {
+        type: 'currency',
+        prefix: '$',
+        decimals: 0
+      }
+    });
+  };
+
+  // Function to handle computed column input changes
+  const handleComputedColumnChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      const columnField = (e.target as HTMLInputElement).dataset.column;
+      
+      if (columnField) {
+        setNewComputedColumn(prev => ({
+          ...prev,
+          sourceColumns: checked 
+            ? [...prev.sourceColumns, columnField]
+            : prev.sourceColumns.filter(col => col !== columnField)
+        }));
+      }
+    } else if (name.includes('.')) {
+      // Handle nested properties like format.type
+      const [parent, child] = name.split('.');
+      setNewComputedColumn(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent as keyof ComputedColumnConfig] as any,
+          [child]: value,
+        },
+      }));
+    } else {
+      setNewComputedColumn(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Function to remove a computed column
+  const handleRemoveComputedColumn = (index: number) => {
+    const updatedComputedColumns = [...computedColumns];
+    updatedComputedColumns.splice(index, 1);
+    setComputedColumns(updatedComputedColumns);
+    
+    // Update form data
+    setFormData(prevData => ({
+      ...prevData,
+      computedColumns: updatedComputedColumns,
     }));
   };
 
@@ -986,6 +1085,198 @@ const TableForm: React.FC<TableFormProps> = ({
           )}
         </div>
         
+        {/* Computed Columns Management */}
+        <div className="space-y-4">
+          <h3 className="text-md font-medium text-gray-300">Computed Columns</h3>
+          <p className="text-sm text-gray-400">
+            Create columns that calculate values from existing columns. In vertical tables, these appear as new columns. In horizontal tables, they appear as new rows.
+          </p>
+          
+          {/* Add New Computed Column Form */}
+          <div className="bg-gray-800 p-4 rounded-md border border-gray-700">
+            <h4 className="text-sm font-medium text-gray-300 mb-3">Add New Computed Column</h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="computedHeader" className="block text-sm font-medium text-gray-400">
+                  Column Header *
+                </label>
+                <input
+                  type="text"
+                  id="computedHeader"
+                  name="header"
+                  value={newComputedColumn.header}
+                  onChange={handleComputedColumnChange}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g. Total Revenue"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="operation" className="block text-sm font-medium text-gray-400">
+                  Operation
+                </label>
+                <select
+                  id="operation"
+                  name="operation"
+                  value={newComputedColumn.operation}
+                  onChange={handleComputedColumnChange}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="sum">Sum</option>
+                  <option value="average">Average</option>
+                  <option value="difference">Difference (First - Others)</option>
+                </select>
+              </div>
+            </div>
+            
+            {/* Source Columns Selection */}
+            {columns.length > 0 && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
+                  Source Columns * (Select columns to compute from)
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-32 overflow-y-auto">
+                  {columns.filter(col => col.format?.type === 'number' || col.format?.type === 'currency').map((column, index) => (
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`source-${column.field}`}
+                        data-column={column.field}
+                        checked={newComputedColumn.sourceColumns.includes(column.field)}
+                        onChange={handleComputedColumnChange}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
+                      />
+                      <label htmlFor={`source-${column.field}`} className="ml-2 block text-sm text-gray-400">
+                        {column.header}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {columns.filter(col => col.format?.type === 'number' || col.format?.type === 'currency').length === 0 && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    No numeric columns available. Add numeric/currency columns first.
+                  </p>
+                )}
+              </div>
+            )}
+            
+            {/* Format Settings */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label htmlFor="computedFormat.type" className="block text-sm font-medium text-gray-400">
+                  Format Type
+                </label>
+                <select
+                  id="computedFormat.type"
+                  name="format.type"
+                  value={newComputedColumn.format?.type || 'currency'}
+                  onChange={handleComputedColumnChange}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="number">Number</option>
+                  <option value="currency">Currency</option>
+                  <option value="percentage">Percentage</option>
+                </select>
+              </div>
+              
+              {newComputedColumn.format?.type === 'currency' && (
+                <div>
+                  <label htmlFor="computedFormat.prefix" className="block text-sm font-medium text-gray-400">
+                    Currency Symbol
+                  </label>
+                  <input
+                    type="text"
+                    id="computedFormat.prefix"
+                    name="format.prefix"
+                    value={newComputedColumn.format?.prefix || '$'}
+                    onChange={handleComputedColumnChange}
+                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="$"
+                  />
+                </div>
+              )}
+              
+              <div>
+                <label htmlFor="computedFormat.decimals" className="block text-sm font-medium text-gray-400">
+                  Decimal Places
+                </label>
+                <input
+                  type="number"
+                  id="computedFormat.decimals"
+                  name="format.decimals"
+                  value={newComputedColumn.format?.decimals || 0}
+                  onChange={handleComputedColumnChange}
+                  min="0"
+                  max="10"
+                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <button
+              type="button"
+              onClick={handleAddComputedColumn}
+              disabled={!newComputedColumn.header || newComputedColumn.sourceColumns.length === 0}
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
+                !newComputedColumn.header || newComputedColumn.sourceColumns.length === 0
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
+              Add Computed Column
+            </button>
+          </div>
+          
+          {/* Computed Column List */}
+          {computedColumns.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-sm font-medium text-gray-300 mb-2">Configured Computed Columns ({computedColumns.length})</h4>
+              <div className="bg-gray-800 rounded-md border border-gray-700 overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-700">
+                  <thead className="bg-gray-800">
+                    <tr>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Header</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Operation</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Source Columns</th>
+                      <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Format</th>
+                      <th scope="col" className="px-3 py-2 text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-gray-900 divide-y divide-gray-800">
+                    {computedColumns.map((computedColumn, index) => (
+                      <tr key={index}>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-300">{computedColumn.header}</td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-300 capitalize">{computedColumn.operation}</td>
+                        <td className="px-3 py-2 text-sm text-gray-300">
+                          {computedColumn.sourceColumns.map(field => {
+                            const col = columns.find(c => c.field === field);
+                            return col?.header || field;
+                          }).join(', ')}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-300">
+                          {computedColumn.format?.type}
+                          {computedColumn.format?.prefix && ` (${computedColumn.format.prefix})`}
+                          {computedColumn.format?.decimals !== undefined && ` (${computedColumn.format.decimals} decimals)`}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveComputedColumn(index)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+        
         {/* Display Settings */}
         <div className="space-y-4">
           <h3 className="text-md font-medium text-gray-300">Display Settings</h3>
@@ -1007,6 +1298,25 @@ const TableForm: React.FC<TableFormProps> = ({
                 <option value="bordered">Bordered</option>
                 <option value="compact">Compact</option>
               </select>
+            </div>
+            
+            <div>
+              <label htmlFor="orientation" className="block text-sm font-medium text-gray-400">
+                Table Orientation
+              </label>
+              <select
+                id="orientation"
+                name="orientation"
+                value={formData.orientation || 'vertical'}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="vertical">Vertical (Standard)</option>
+                <option value="horizontal">Horizontal (Financial Style)</option>
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Horizontal tables display time periods as columns and metrics as rows
+              </p>
             </div>
             
             <div>

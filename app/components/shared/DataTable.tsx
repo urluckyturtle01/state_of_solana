@@ -46,6 +46,7 @@ export interface DataTableProps<T> {
   };
   searchTerm?: string;
   onRetry?: () => void;
+  stickyFirstColumn?: boolean; // New prop for sticky first column
 }
 
 // Sort direction type
@@ -73,7 +74,8 @@ export default function DataTable<T>({
   variant = 'simple',
   pagination,
   searchTerm,
-  onRetry
+  onRetry,
+  stickyFirstColumn = false
 }: DataTableProps<T>) {
   // State for sorting
   const [sortColumn, setSortColumn] = useState<string | undefined>(initialSortColumn);
@@ -279,17 +281,24 @@ export default function DataTable<T>({
   };
 
   // Render column header
-  const renderColumnHeader = (column: Column<T>) => (
-    <th 
-      key={column.key}
-      className={`text-${column.align || 'left'} text-[9px] font-medium text-gray-400 uppercase tracking-wider px-3 py-2 whitespace-nowrap ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''}`}
-      onClick={() => column.sortable && handleSort(column)}
-      style={{ width: column.width || 'auto' }}
-    >
-      {column.header}
-      {renderSortIndicator(column)}
-    </th>
-  );
+  const renderColumnHeader = (column: Column<T>, index: number) => {
+    const isFirstColumn = index === 0;
+    const stickyClasses = stickyFirstColumn && isFirstColumn 
+      ? 'sticky left-0 z-20 bg-gray-900/95 backdrop-blur-sm border-gray-800 shadow-lg shadow-gray-900/20 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-px after:bg-gradient-to-b after:from-blue-500/30 after:via-gray-500/50 after:to-blue-500/30' 
+      : '';
+    
+    return (
+      <th 
+        key={column.key}
+        className={`text-${column.align || 'left'} text-[9px] font-medium text-gray-400 uppercase tracking-wider px-3 py-2 whitespace-nowrap ${column.sortable ? 'cursor-pointer hover:text-gray-200 transition-colors' : ''} ${stickyClasses}`}
+        onClick={() => column.sortable && handleSort(column)}
+        style={{ width: column.width || 'auto' }}
+      >
+        {column.header}
+        {renderSortIndicator(column)}
+      </th>
+    );
+  };
 
   // Custom render function that applies formatting
   const renderCell = (row: T, column: Column<T>) => {
@@ -340,22 +349,30 @@ export default function DataTable<T>({
         <table className={getTableClass()}>
           <thead className={headerClassName}>
             <tr>
-              {columns.map(renderColumnHeader)}
+              {columns.map((column, index) => renderColumnHeader(column, index))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800/50">
             {paginatedData.map((row, index) => (
               <tr key={keyExtractor(row)} className={getRowClass(index)}>
-                {columns.map(column => (
-                  <td 
-                    key={`${keyExtractor(row)}-${column.key}`} 
-                    className={`text-[12px] ${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
-                      variant === 'bordered' ? 'border-x border-gray-900' : ''
-                    }`}
-                  >
-                    {renderCell(row, column)}
-                  </td>
-                ))}
+                {columns.map((column, colIndex) => {
+                  const isFirstColumn = colIndex === 0;
+                  const rowBgClass = index % 2 === 0 ? 'bg-black/30' : 'bg-gray-900/10';
+                  const stickyClasses = stickyFirstColumn && isFirstColumn 
+                    ? `sticky left-0 z-10 ${rowBgClass} backdrop-blur-sm border-gray-800 shadow-lg shadow-gray-900/20 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-px after:bg-gradient-to-b after:from-blue-500/20 after:via-gray-500/40 after:to-blue-500/20` 
+                    : '';
+                  
+                  return (
+                    <td 
+                      key={`${keyExtractor(row)}-${column.key}`} 
+                      className={`text-[12px] ${cellClassName} ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'} ${
+                        variant === 'bordered' ? 'border-x border-gray-900' : ''
+                      } ${stickyClasses}`}
+                    >
+                      {renderCell(row, column)}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
