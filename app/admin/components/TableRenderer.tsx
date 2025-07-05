@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { TableConfig } from '../types';
+import { TableConfig, TableColumnConfig, ComputedColumnConfig } from '../types';
 import DataTable, { Column } from '@/app/components/shared/DataTable';
 import { ExpandIcon, DownloadIcon } from '@/app/components/shared/Icons';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
@@ -59,21 +59,302 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     return tableConfig.columns.filter(column => !column.hidden);
   }, [tableConfig.columns]);
 
+  // Transform data for horizontal tables
+  const transformedData = useMemo(() => {
+    if (tableConfig.orientation !== 'horizontal' || data.length === 0) {
+      return data;
+    }
+
+    // For horizontal tables, we transpose the data structure
+    // This is particularly useful for financial data where you want:
+    // - Time periods as columns (Q1 2024, Q2 2024, etc.)
+    // - Metrics as rows (Net Revenue, Gross Profit, etc.)
+    
+    try {
+      // Strategy 1: If data has identifiable time/period columns and metric identifiers
+      // Look for common time-based field names
+      const timeFields = visibleColumns.filter(col => 
+        /^(date|time|period|quarter|month|year|block_date)$/i.test(col.field) ||
+        /^(q[1-4]|Q[1-4]|\d{4}[-_]?[qQ]?[1-4]?)/.test(col.field)
+      );
+      
+      if (timeFields.length > 0) {
+        // Use the first time field as the pivot
+        const timeField = timeFields[0];
+        const dataColumns = visibleColumns.filter(col => col.field !== timeField.field);
+        
+        // Get unique time periods
+        const timePeriods = [...new Set(data.map(row => row[timeField.field]))].sort();
+        
+        // Transform each metric into a row
+        const horizontalData: any[] = [];
+        
+        dataColumns.forEach(metricCol => {
+          const row: any = { metric: metricCol.header || metricCol.field };
+          
+          timePeriods.forEach(period => {
+            const dataRow = data.find(d => d[timeField.field] === period);
+            row[period] = dataRow ? dataRow[metricCol.field] : null;
+          });
+          
+          horizontalData.push(row);
+        });
+        
+        return horizontalData;
+      }
+      
+      // Strategy 2: If the data is already in financial report format 
+      // (each row is a metric, columns are time periods)
+      // Check if we have multiple numeric columns that could represent time periods
+      const numericColumns = visibleColumns.filter(col => 
+        col.format?.type === 'number' || col.format?.type === 'currency'
+      );
+      
+      if (numericColumns.length >= 2) {
+        // Assume first column is the metric name, rest are time periods
+        const metricColumn = visibleColumns[0];
+        const timeColumns = visibleColumns.slice(1);
+        
+        // Data might already be in the right format, just return as is
+        return data;
+      }
+      
+      // Strategy 3: Fallback - basic transpose assuming first column is identifier
+      const firstColumn = visibleColumns[0];
+      const dataColumns = visibleColumns.slice(1);
+      
+      const horizontalData: any[] = [];
+      const identifiers = [...new Set(data.map(row => row[firstColumn.field]))];
+      
+      dataColumns.forEach(col => {
+        const row: any = { metric: col.header || col.field };
+        
+        identifiers.forEach(id => {
+          const dataRow = data.find(d => d[firstColumn.field] === id);
+          row[id] = dataRow ? dataRow[col.field] : null;
+        });
+        
+        horizontalData.push(row);
+      });
+      
+      return horizontalData;
+      
+    } catch (error) {
+      console.error('Error transforming data for horizontal layout:', error);
+      return data; // Fallback to original data
+    }
+  }, [data, visibleColumns, tableConfig.orientation]);
+
+  // Create columns for horizontal display
+  const horizontalColumns = useMemo(() => {
+    if (tableConfig.orientation !== 'horizontal' || data.length === 0) {
+      return visibleColumns;
+    }
+
+    try {
+      // Strategy 1: Time-based transformation
+      const timeFields = visibleColumns.filter(col => 
+        /^(date|time|period|quarter|month|year|block_date)$/i.test(col.field) ||
+        /^(q[1-4]|Q[1-4]|\d{4}[-_]?[qQ]?[1-4]?)/.test(col.field)
+      );
+      
+      if (timeFields.length > 0) {
+        const timeField = timeFields[0];
+        const timePeriods = [...new Set(data.map(row => row[timeField.field]))].sort();
+        
+        const newColumns: TableColumnConfig[] = [
+          {
+            field: 'metric',
+            header: 'Metric',
+            sortable: false,
+            filterable: false,
+            hidden: false,
+            format: { type: 'text' }
+          },
+          ...timePeriods.map(period => ({
+            field: String(period),
+            header: String(period),
+            sortable: true,
+            filterable: false,
+            hidden: false,
+            format: { type: 'currency', prefix: '$', decimals: 0 }
+          } as TableColumnConfig))
+        ];
+        
+        return newColumns;
+      }
+      
+      // Strategy 2: Already in financial format
+      const numericColumns = visibleColumns.filter(col => 
+        col.format?.type === 'number' || col.format?.type === 'currency'
+      );
+      
+      if (numericColumns.length >= 2) {
+        return visibleColumns; // Use as-is
+      }
+      
+      // Strategy 3: Fallback transpose
+      const firstColumn = visibleColumns[0];
+      const identifiers = [...new Set(data.map(row => row[firstColumn.field]))];
+      
+      const newColumns: TableColumnConfig[] = [
+        {
+          field: 'metric',
+          header: 'Metric',
+          sortable: false,
+          filterable: false,
+          hidden: false,
+          format: { type: 'text' }
+        },
+        ...identifiers.map(id => ({
+          field: String(id),
+          header: String(id),
+          sortable: true,
+          filterable: false,
+          hidden: false,
+          format: { type: 'currency', prefix: '$', decimals: 0 }
+        } as TableColumnConfig))
+      ];
+      
+      return newColumns;
+      
+    } catch (error) {
+      console.error('Error creating horizontal columns:', error);
+      return visibleColumns; // Fallback to original columns
+    }
+  }, [visibleColumns, tableConfig.orientation, data]);
+
+  // Use the appropriate columns and data based on orientation
+  const finalColumns = tableConfig.orientation === 'horizontal' ? horizontalColumns : visibleColumns;
+  const finalData = tableConfig.orientation === 'horizontal' ? transformedData : data;
+
+  // Calculate computed columns/rows
+  const dataWithComputedColumns = useMemo(() => {
+    if (!tableConfig.computedColumns || tableConfig.computedColumns.length === 0) {
+      return finalData;
+    }
+
+    const computeValue = (row: any, computedColumn: ComputedColumnConfig): number => {
+      const values = computedColumn.sourceColumns
+        .map(field => {
+          const value = row[field];
+          return typeof value === 'number' ? value : parseFloat(value) || 0;
+        })
+        .filter(val => !isNaN(val));
+
+      if (values.length === 0) return 0;
+
+      switch (computedColumn.operation) {
+        case 'sum':
+          return values.reduce((acc, val) => acc + val, 0);
+        case 'average':
+          return values.reduce((acc, val) => acc + val, 0) / values.length;
+        case 'difference':
+          return values.length > 1 ? values[0] - values.slice(1).reduce((acc, val) => acc + val, 0) : values[0];
+        default:
+          return 0;
+      }
+    };
+
+    if (tableConfig.orientation === 'horizontal') {
+      // For horizontal tables, add computed columns as new rows
+      const newRows = [...finalData];
+      
+      tableConfig.computedColumns.forEach(computedColumn => {
+        const computedRow: any = { metric: computedColumn.header };
+        
+        // Calculate computed value for each time period column
+        const timeColumns = finalColumns.slice(1); // Skip the metric column
+        timeColumns.forEach(timeCol => {
+          // Find values from all rows for this time period
+          const sourceValues: number[] = [];
+          
+          computedColumn.sourceColumns.forEach(sourceField => {
+            // Find the row that corresponds to this source field
+            const sourceRow = finalData.find(row => row.metric === sourceField);
+            if (sourceRow && sourceRow[timeCol.field] !== undefined) {
+              const value = parseFloat(sourceRow[timeCol.field]) || 0;
+              if (!isNaN(value)) {
+                sourceValues.push(value);
+              }
+            }
+          });
+          
+          let computedValue = 0;
+          if (sourceValues.length > 0) {
+            switch (computedColumn.operation) {
+              case 'sum':
+                computedValue = sourceValues.reduce((acc, val) => acc + val, 0);
+                break;
+              case 'average':
+                computedValue = sourceValues.reduce((acc, val) => acc + val, 0) / sourceValues.length;
+                break;
+              case 'difference':
+                computedValue = sourceValues.length > 1 ? sourceValues[0] - sourceValues.slice(1).reduce((acc, val) => acc + val, 0) : sourceValues[0];
+                break;
+            }
+          }
+          
+          computedRow[timeCol.field] = computedValue;
+        });
+        
+        newRows.push(computedRow);
+      });
+      
+      return newRows;
+    } else {
+      // For vertical tables, add computed columns as new columns to each row
+      return finalData.map(row => {
+        const newRow = { ...row };
+        
+        tableConfig.computedColumns!.forEach(computedColumn => {
+          const computedValue = computeValue(row, computedColumn);
+          newRow[computedColumn.id] = computedValue;
+        });
+        
+        return newRow;
+      });
+    }
+  }, [finalData, tableConfig.computedColumns, tableConfig.orientation, finalColumns]);
+
+  // Add computed columns to the columns list for vertical tables
+  const columnsWithComputed = useMemo(() => {
+    if (!tableConfig.computedColumns || tableConfig.computedColumns.length === 0 || tableConfig.orientation === 'horizontal') {
+      return finalColumns;
+    }
+
+    // For vertical tables, add computed columns to the columns list
+    const computedColumnConfigs: TableColumnConfig[] = tableConfig.computedColumns.map(computedColumn => ({
+      field: computedColumn.id,
+      header: computedColumn.header,
+      sortable: true,
+      filterable: false,
+      hidden: false,
+      format: computedColumn.format
+    }));
+
+    return [...finalColumns, ...computedColumnConfigs];
+  }, [finalColumns, tableConfig.computedColumns, tableConfig.orientation]);
+
+  // Use final processed data and columns
+  const processedData = dataWithComputedColumns;
+  const processedColumns = columnsWithComputed;
+
   // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!tableConfig.enableSearch || !searchTerm.trim()) {
-      return data;
+      return processedData;
     }
     
     const term = searchTerm.toLowerCase().trim();
-    return data.filter(row => {
+    return processedData.filter(row => {
       return Object.values(row).some(value => 
         value !== null && 
         value !== undefined && 
         String(value).toLowerCase().includes(term)
       );
     });
-  }, [data, searchTerm, tableConfig.enableSearch]);
+  }, [processedData, searchTerm, tableConfig.enableSearch]);
 
   // Apply pagination
   const paginatedData = useMemo(() => {
@@ -271,16 +552,16 @@ const TableRenderer: React.FC<TableRendererProps> = ({
 
   // Handle download data
   const handleDownload = useCallback(async () => {
-    if (data.length === 0 || isDownloading) return;
+    if (processedData.length === 0 || isDownloading) return;
     
     setIsDownloading(true);
     try {
       // Convert data to CSV
-      const headers = visibleColumns.map(col => col.header);
+      const headers = processedColumns.map(col => col.header);
       const csvRows = [
         headers.join(','), // Header row
-        ...data.map(row => 
-          visibleColumns.map(col => {
+        ...processedData.map(row => 
+          processedColumns.map(col => {
             let value = row[col.field];
             // Handle values that need quotes
             if (value === null || value === undefined) value = '';
@@ -307,7 +588,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     } finally {
       setIsDownloading(false);
     }
-  }, [data, visibleColumns, isDownloading, tableConfig.title]);
+  }, [processedData, processedColumns, isDownloading, tableConfig.title]);
 
   // Fetch data from API when component mounts or when retryCount changes
   useEffect(() => {
@@ -326,7 +607,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
 
   // Convert TableConfig columns to DataTable Column format
   const dataTableColumns: Column<any>[] = useMemo(() => {
-    return visibleColumns.map(column => ({
+    return processedColumns.map(column => ({
       key: column.field,
       header: column.header,
       sortable: column.sortable !== false,
@@ -429,10 +710,10 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         return value;
       }
     }));
-  }, [visibleColumns]);
+  }, [processedColumns]);
 
   // Fix: Only show loading spinner if there is no data at all
-  const showLoading = loading && data.length === 0;
+  const showLoading = loading && processedData.length === 0;
 
   // Clear auto-retry interval on unmount
   useEffect(() => {
@@ -456,7 +737,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               className={`p-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-md transition-colors ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={onDownloadClick || handleDownload}
               title="Download CSV"
-              disabled={isDownloading || data.length === 0}
+              disabled={isDownloading || processedData.length === 0}
             >
               {isDownloading ? (
                 <div className="flex justify-center items-center h-full">
@@ -471,7 +752,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               className={`p-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-md transition-colors ${isDownloading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={handleDownload}
               title="Download CSV"
-              disabled={isDownloading || data.length === 0}
+              disabled={isDownloading || processedData.length === 0}
             >
               {isDownloading ? (
                 <Loader size="xs" className="w-4 h-4" />
@@ -594,6 +875,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
           cellClassName="px-6 py-4 whitespace-nowrap text-sm text-gray-300"
           containerClassName="overflow-x-auto"
           noDataMessage="No data available"
+          stickyFirstColumn={tableConfig.orientation === 'horizontal'}
         />
         )}
       </div>
