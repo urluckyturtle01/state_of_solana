@@ -2,7 +2,7 @@
   "pageId": "orca-protocol-token",
   "pageName": "Protocol Token",
   "chartCount": 5,
-  "lastUpdated": "2025-07-03T16:18:44.264Z",
+  "lastUpdated": "2025-07-05T08:07:46.659Z",
   "charts": [
     {
       "id": "chart_1749883650330_khpwskt",
@@ -107,18 +107,17 @@
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13516/results.json",
-      "apiKey": "Iy02dH2lQwx5qwGVK12Oow76LyjRtcM2mYOkeyqJ",
+      "apiKey": "Iy02dH2lQwx5qwGVK12Oow76LyjRtcM2mYOkeyqJ&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "Month",
-        "yAxis": "Amount_in_Pool",
-        "groupBy": "Mint",
-        "yAxisUnit": "$"
+        "xAxis": "month",
+        "yAxis": "amount_usd_in_pools",
+        "groupBy": "Mint"
       },
       "createdAt": "2025-06-14T08:12:09.848Z",
-      "updatedAt": "2025-06-14T08:12:10.025Z"
+      "updatedAt": "2025-07-03T21:10:01.602Z"
     }
   ]
 }
