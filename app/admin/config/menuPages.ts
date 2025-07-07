@@ -294,9 +294,9 @@ overview: [
         path: "/projects/orca/protocol-token"
       },
       {
-        id: "orca-competetive-landscape",
-        name: "Competetive Landscape",
-        path: "/projects/orca/competetive-landscape"
+        id: "orca-competitive-landscape",
+        name: "Competitive Landscape",
+        path: "/projects/orca/competitive-landscape"
       }
     ]
 };

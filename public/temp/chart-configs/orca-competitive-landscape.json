@@ -2,47 +2,79 @@
   "pageId": "orca-competitive-landscape",
   "pageName": "orca-competitive-landscape",
   "chartCount": 2,
-  "lastUpdated": "2025-07-05T08:07:46.660Z",
+  "lastUpdated": "2025-07-07T07:40:28.087Z",
   "charts": [
     {
       "id": "chart_1749889214920_nvk4q37",
-      "title": "Monthly Traders",
+      "title": "DEX volume",
       "subtitle": "",
       "page": "orca-competitive-landscape",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13557/results.json",
-      "apiKey": "VWpr3QW49psgyCr58QteGna6WFf2FkLM981hZGjB&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json",
+      "apiKey": "sU79XR6BdxIgJqw2YLwSkKRJbu0FXjdGqv3imwsL&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "Month",
-        "yAxis": "Traders",
-        "groupBy": "Dex"
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "dex",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-14T08:20:14.920Z",
-      "updatedAt": "2025-06-14T08:20:15.076Z"
+      "updatedAt": "2025-07-07T07:35:03.821Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
     },
     {
       "id": "chart_1749889430822_8q4rpe5",
-      "title": "Top 5 Pools across DEXs",
-      "subtitle": "Last 90 days",
+      "title": "Protocol revenue",
+      "subtitle": "",
       "page": "orca-competitive-landscape",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13559/results.json",
-      "apiKey": "dVCfnKDliSudamF3dZe0Cp2LnR2EICEUbbhGaBca&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13572/results.json",
+      "apiKey": "fHHviCSS1CYRIHkosGuB7JXjDlgpJUsL2NSRv5n8&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "Project_name",
-        "yAxis": "volume",
-        "groupBy": "pool"
+        "xAxis": "block_date",
+        "yAxis": "Protocol_fees",
+        "groupBy": "Project",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-14T08:23:50.822Z",
-      "updatedAt": "2025-06-14T08:23:50.998Z"
+      "updatedAt": "2025-07-07T07:38:08.453Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
     }
   ]
 }
