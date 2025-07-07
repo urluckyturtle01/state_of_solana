@@ -2,12 +2,12 @@
   "pageId": "dex-token-hotspots",
   "pageName": "DEX & Token Hotspots",
   "chartCount": 4,
-  "lastUpdated": "2025-07-07T07:40:28.077Z",
+  "lastUpdated": "2025-07-07T08:37:18.753Z",
   "charts": [
     {
       "id": "chart_1747914341226_ps3utjg",
       "title": "Top tokens attacked - by SOL drained",
-      "subtitle": "Total SOL extracted via attacks, broken down by token",
+      "subtitle": "Total SOL extracted via attacks, broken down by token (last 30 days)",
       "page": "dex-token-hotspots",
       "section": "",
       "chartType": "pie",
@@ -15,18 +15,19 @@
       "apiKey": "3PjHRoejiRIHduZyo5NxvhEPNpOSfPFzFu0Hg09k",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "token",
         "yAxis": "total_sol_drained",
         "groupBy": ""
       },
       "createdAt": "2025-05-22T11:45:41.226Z",
-      "updatedAt": "2025-05-24T07:52:38.061Z"
+      "updatedAt": "2025-07-07T08:17:26.750Z"
     },
     {
       "id": "chart_1747936232766_dnjy7l0",
       "title": "Top tokens attacked - by attacks",
-      "subtitle": "",
+      "subtitle": "last 30 days",
       "page": "dex-token-hotspots",
       "section": "",
       "chartType": "pie",
@@ -34,18 +35,19 @@
       "apiKey": "3PjHRoejiRIHduZyo5NxvhEPNpOSfPFzFu0Hg09k",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "token",
         "yAxis": "attacks",
         "groupBy": ""
       },
       "createdAt": "2025-05-22T17:50:32.766Z",
-      "updatedAt": "2025-05-24T07:53:08.946Z"
+      "updatedAt": "2025-07-07T08:21:09.459Z"
     },
     {
       "id": "chart_1747936484816_kqdflfn",
       "title": "Top DEXs used - by SOL drained",
-      "subtitle": "",
+      "subtitle": "last 30 days",
       "page": "dex-token-hotspots",
       "section": "",
       "chartType": "pie",
@@ -60,12 +62,12 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-22T17:54:44.816Z",
-      "updatedAt": "2025-06-24T06:42:46.839Z"
+      "updatedAt": "2025-07-07T08:20:30.851Z"
     },
     {
       "id": "chart_1747936861655_4nzbmez",
       "title": "Top DEXs used - by attacks",
-      "subtitle": "",
+      "subtitle": "last 30 days",
       "page": "dex-token-hotspots",
       "section": "",
       "chartType": "pie",
@@ -73,13 +75,14 @@
       "apiKey": "RqSl6Ca5yWt4QwkKSBB9q7RA0qyMtqeRSESgXvK1",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
-        "xAxis": "Dex",
+        "xAxis": "dex",
         "yAxis": "attacks",
         "groupBy": ""
       },
       "createdAt": "2025-05-22T18:01:01.655Z",
-      "updatedAt": "2025-05-24T07:54:24.469Z"
+      "updatedAt": "2025-07-07T08:31:26.910Z"
     }
   ]
 }
