@@ -58,6 +58,8 @@ interface ChartRendererProps {
   hiddenSeries?: string[];
   // Add prop to pass pre-loaded data
   preloadedData?: any[];
+  // Add callback for modal filter updates
+  onModalFilterUpdate?: (filters: Record<string, string>) => void;
 }
 
 // Add helper function at the top of the file
@@ -76,7 +78,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   onColorsGenerated,
   isLoading = false,
   hiddenSeries = [],
-  preloadedData
+  preloadedData,
+  onModalFilterUpdate
 }) => {
   const [data, setData] = useState<any[]>(preloadedData || []);
   const [rawData, setRawData] = useState<any[]>([]); // Store raw data for time aggregation
@@ -1219,6 +1222,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 handleFilterChange(key, value);
               });
             }}
+            onModalFilterUpdate={onModalFilterUpdate}
           />;
         }
         
