@@ -221,6 +221,12 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
     return valueB - valueA;
   });
 
+  // Limit to maximum 12 items
+  const maxItems = 12;
+  const displayItems = sortedItems.slice(0, maxItems);
+  const hasMoreItems = sortedItems.length > maxItems;
+  const hiddenItemsCount = sortedItems.length - maxItems;
+
   // Calculate total if showTotal is enabled
   const totalValue = showTotal ? items.reduce((sum, item) => {
     return sum + parseValueWithUnits(item.value);
@@ -281,7 +287,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
       
       {/* Items */}
       <div className="space-y-1">
-        {sortedItems.map((item, idx) => (
+        {displayItems.map((item, idx) => (
           <div key={`tooltip-item-${idx}`} className="flex items-center mt-2 justify-between whitespace-nowrap">
             <div className="flex items-center text-gray-400">
               <LegendShape type={item.shape || 'circle'} color={item.color} />
@@ -304,6 +310,15 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
             </span>
           </div>
         ))}
+        
+        {/* Show indicator for hidden items */}
+        {hasMoreItems && (
+          <div className="flex items-center justify-center whitespace-nowrap py-1">
+            <span className="text-gray-500 text-[9px] font-normal italic">
+              ... and {hiddenItemsCount} more item{hiddenItemsCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
         
         {/* Show total if enabled */}
         {showTotal && items.length > 1 && (
