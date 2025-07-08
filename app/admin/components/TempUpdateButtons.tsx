@@ -102,6 +102,47 @@ const TempUpdateButtons: React.FC = () => {
     }
   };
 
+  const forceUpdateData = async () => {
+    setDataStatus({ isUpdating: true, message: 'Force updating chart data...', type: 'info' });
+    
+    try {
+      const response = await fetch('/api/auto-update-temp-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ force: true })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setDataStatus({ 
+          isUpdating: false, 
+          message: 'Data force updated successfully', 
+          type: 'success' 
+        });
+        
+        // Auto-clear success message after 5 seconds
+        setTimeout(() => {
+          setDataStatus({ isUpdating: false, message: '', type: null });
+        }, 5000);
+      } else {
+        setDataStatus({ 
+          isUpdating: false, 
+          message: result.message || 'Failed to force update data', 
+          type: 'error' 
+        });
+      }
+    } catch (error) {
+      setDataStatus({ 
+        isUpdating: false, 
+        message: 'Network error occurred', 
+        type: 'error' 
+      });
+    }
+  };
+
   const updateBoth = async () => {
     // First update configs, then data
     await updateConfigs();
@@ -153,10 +194,30 @@ const TempUpdateButtons: React.FC = () => {
 
   return (
     <div className="space-y-4">
+      {/* GitHub Actions Auto-Update Info */}
+      <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-green-400">🔄 Auto-Update via GitHub Actions</h3>
+          <div className="flex items-center space-x-2">
+            <span className="flex items-center text-green-400 text-xs">
+              <div className="w-2 h-2 bg-green-400 rounded-full mr-1"></div>
+              Every 10 minutes
+            </span>
+          </div>
+        </div>
+        
+        <div className="text-xs text-gray-400 space-y-1">
+          <p>📊 Chart data updates automatically via GitHub Actions workflow</p>
+          <p>🔍 Monitor progress: <span className="text-blue-400">GitHub Repository → Actions tab</span></p>
+          <p>⚡ Manual trigger: Use "Run workflow" button in GitHub Actions</p>
+          <p>📖 Setup guide: <span className="text-blue-400">docs/github-actions-setup.md</span></p>
+        </div>
+      </div>
+
       <div className="bg-gray-800/40 rounded-lg border border-gray-800 p-4">
-        <h3 className="text-sm font-medium text-gray-300 mb-3">Temp File Updates</h3>
+        <h3 className="text-sm font-medium text-gray-300 mb-3">Manual Updates</h3>
         <p className="text-xs text-gray-500 mb-4">
-          Update chart configurations and data from the API to temp files for faster loading
+          Manually update configurations or force data updates outside the automatic schedule
         </p>
         
         <div className="flex flex-wrap gap-3">
@@ -195,6 +256,25 @@ const TempUpdateButtons: React.FC = () => {
               </>
             ) : (
               'Update Data'
+            )}
+          </Button>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={forceUpdateData}
+            disabled={dataStatus.isUpdating}
+          >
+            {dataStatus.isUpdating ? (
+              <>
+                <svg className="w-4 h-4 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Updating...
+              </>
+            ) : (
+              'Force Update Data'
             )}
           </Button>
           

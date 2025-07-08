@@ -953,7 +953,7 @@ export default function DashboardRenderer({
           const defaultValue = getDefaultTimeFilterValue(chart.additionalOptions.filters.timeFilter.options);
           chartFilters['timeFilter'] = defaultValue;
           hasAnyFilters = true;
-          console.log(`✅ Dashboard: Setting default time filter for ${chart.title}: ${defaultValue} from options: [${chart.additionalOptions.filters.timeFilter.options.join(', ')}]`);
+          console.log(`Setting default time filter for ${chart.title}: ${defaultValue}`);
         }
         
         // Set currency filter
@@ -962,7 +962,7 @@ export default function DashboardRenderer({
             chart.additionalOptions.filters.currencyFilter.options.length > 0) {
           chartFilters['currencyFilter'] = chart.additionalOptions.filters.currencyFilter.options[0];
           hasAnyFilters = true;
-          console.log(`✅ Dashboard: Setting default currency filter for ${chart.title}: ${chartFilters['currencyFilter']}`);
+          console.log(`Setting default currency filter for ${chart.title}: ${chartFilters['currencyFilter']}`);
         }
         
         // Set display mode filter
@@ -971,14 +971,14 @@ export default function DashboardRenderer({
             chart.additionalOptions.filters.displayModeFilter.options.length > 0) {
           chartFilters['displayModeFilter'] = chart.additionalOptions.filters.displayModeFilter.options[0];
           hasAnyFilters = true;
-          console.log(`✅ Dashboard: Setting default display mode filter for ${chart.title}: ${chartFilters['displayModeFilter']}`);
+          console.log(`Setting default display mode filter for ${chart.title}: ${chartFilters['displayModeFilter']}`);
         }
         
         // Set display mode for stacked charts (always default to 'absolute')
         if (isStackedBarChart(chart)) {
           chartFilters['displayMode'] = 'absolute';
           hasAnyFilters = true;
-          console.log(`✅ Dashboard: Setting default display mode for stacked chart ${chart.title}: absolute`);
+          console.log(`Setting default display mode for stacked chart ${chart.title}: absolute`);
         }
       }
       
@@ -1109,12 +1109,7 @@ export default function DashboardRenderer({
 
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
-    console.log('=== DASHBOARD FILTER CHANGE ===');
-    console.log('Chart ID:', chartId);
-    console.log('Filter type:', filterType);
-    console.log('New value:', value);
-    console.log('Chart config:', charts.find(c => c.id === chartId)?.title);
-    console.log('Current filter values for chart:', filterValues[chartId]);
+    console.log('Dashboard filter change:', { chartId, filterType, value });
     
     const chart = charts.find(c => c.id === chartId);
     if (!chart) {
@@ -1122,20 +1117,12 @@ export default function DashboardRenderer({
       return;
     }
     
-    console.log('Chart details:', {
-      title: chart.title,
-      hasTimeAggregation: chart.additionalOptions?.enableTimeAggregation,
-      hasFilters: !!chart.additionalOptions?.filters,
-      filterType: filterType
-    });
-
-    // For time aggregation enabled charts, handle timeFilter changes client-side
+    // For time aggregation enabled charts, handle ALL filter changes client-side
     const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
     const isStackedChart = isStackedBarChart(chart);
     
-    if ((isTimeAggregationEnabled && filterType === 'timeFilter') || 
-        (isStackedChart && filterType === 'displayMode')) {
-      console.log('Dashboard: ✅ Client-side filter processing');
+    if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode')) {
+      console.log('Dashboard: Client-side filter processing for time aggregation or display mode');
       
       // Update filter value only (ChartRenderer will handle the data processing)
       setFilterValues(prev => ({
@@ -1146,13 +1133,11 @@ export default function DashboardRenderer({
         }
       }));
       
-      console.log('Dashboard: Filter values updated, ChartRenderer will handle aggregation');
-      
-      // No API call needed - ChartRenderer handles time aggregation and StackedBarChart handles displayMode client-side
+      // No API call needed - ChartRenderer handles time aggregation client-side with preloaded data
       return;
     }
 
-    console.log('Dashboard: ⚙️ Server-side filter processing - will trigger API call');
+    console.log('Dashboard: Server-side filter processing - will trigger API call');
     
     // Set loading state when filter changes (for non-time-aggregation cases)
     updateChartState(chartId, { loading: true });
@@ -1893,17 +1878,6 @@ export default function DashboardRenderer({
     return callbacks;
   }, [filteredCharts, chartData, updateLegends, updateChartState]);
 
-  // Add effect to track filter values changes for debugging
-  useEffect(() => {
-    console.log('=== FILTER VALUES STATE UPDATED ===');
-    console.log('Filter values changed:', filterValues);
-    console.log('Number of charts with filters:', Object.keys(filterValues).length);
-    Object.entries(filterValues).forEach(([chartId, filters]) => {
-      const chart = charts.find(c => c.id === chartId);
-      console.log(`Chart "${chart?.title || chartId}" filters:`, filters);
-    });
-  }, [filterValues, charts]);
-
   // Batch functions for chart state updates
 
   if (!isClient) {
@@ -2046,7 +2020,25 @@ export default function DashboardRenderer({
               onCloseExpanded={() => toggleChartExpanded(chart.id)}
               // Pass filter values and handlers to ChartRenderer
               filterValues={filterValues[chart.id]}
-              onFilterChange={(filterType, value) => handleFilterChange(chart.id, filterType, value)}
+              onFilterChange={(filterType, value) => {
+                // Handle individual filter changes from ChartRenderer's internal calls
+                if (typeof filterType === 'string' && typeof value === 'string') {
+                  handleFilterChange(chart.id, filterType, value);
+                } else if (typeof filterType === 'object' && filterType !== null && !value) {
+                  // Handle bulk filter changes from chart components
+                  const newFilters = filterType as Record<string, string>;
+                  const currentFilters = filterValues[chart.id] || {};
+                  
+                  // Find what changed and apply each change
+                  Object.entries(newFilters).forEach(([key, newValue]) => {
+                    if (currentFilters[key] !== newValue) {
+                      handleFilterChange(chart.id, key, newValue);
+                    }
+                  });
+                } else {
+                  console.warn('Unexpected onFilterChange call:', { filterType, value });
+                }
+              }}
               // Pass the color map to ensure consistent colors
               colorMap={legendColorMaps[chart.id]}
               // Add a callback to receive colors from BarChart

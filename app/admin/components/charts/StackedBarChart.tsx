@@ -279,12 +279,14 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Enhanced filter change handler for modal
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`Modal filter changed: ${key} = ${value}`);
+    console.log(`StackedBarChart Modal filter changed: ${chartConfig.title} - ${key} = ${value}`);
     
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
+    
+    console.log(`StackedBarChart Modal updated filters:`, updatedFilters);
     
     // Update local state
     setModalFilterValues(updatedFilters);
@@ -296,9 +298,10 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // If onFilterChange exists in chartConfig, call it with updated filters
     if (onFilterChange) {
+      console.log(`StackedBarChart Modal calling onFilterChange with:`, updatedFilters);
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange]);
+  }, [modalFilterValues, onFilterChange, chartConfig.title]);
   
   // Handle filter changes - for both modal and normal view
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -310,12 +313,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     console.log(`Filter changed: ${key} = ${value}`);
     
     const updatedFilters = {
-      ...modalFilterValues,
+      ...filterValues,
       [key]: value
     };
-    
-    // Update local state
-    setModalFilterValues(updatedFilters);
     
     // Update internal display mode if needed
     if (key === 'displayMode' || key === 'displayModeFilter') {
@@ -326,7 +326,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     if (onFilterChange) {
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, isExpanded, handleModalFilterChange]);
+  }, [filterValues, onFilterChange, isExpanded, handleModalFilterChange]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
@@ -346,10 +346,15 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
       data;
     
-    if (isExpanded) {
-      console.log('Modal chart data source:', 
-        isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered data' : 'full data',
-        'Count:', currentData.length);
+    // Debug logging for time aggregation charts only
+    if (chartConfig.additionalOptions?.enableTimeAggregation) {
+      console.log('StackedBarChart: Processing time aggregation chart', {
+        chartTitle: chartConfig.title,
+        isExpanded,
+        dataCount: currentData.length,
+        timeFilter: isExpanded ? modalFilterValues?.timeFilter : filterValues?.timeFilter,
+        currencyFilter: isExpanded ? modalFilterValues?.currencyFilter : filterValues?.currencyFilter
+      });
     }
       
     // If no data is available, return empty defaults
@@ -571,7 +576,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       keys: stackKeys,
       groupColors: colorsByGroup
     };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
 
   // Determine if we have any negative values in the data - this needs to be outside the chart renderer
   const hasNegativeValues = useMemo(() => {
@@ -1558,7 +1563,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                 <div className="flex items-center">
                   <TimeFilterSelector
                     value={modalFilterValues?.timeFilter || chartConfig.additionalOptions.filters.timeFilter.activeValue || 'M'}
-                    onChange={(value) => handleFilterChange('timeFilter', value)}
+                    onChange={(value) => handleModalFilterChange('timeFilter', value)}
                     options={chartConfig.additionalOptions.filters.timeFilter.options?.map((opt: string) => ({
                       value: opt,
                       label: opt
@@ -1571,7 +1576,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               {chartConfig.additionalOptions?.filters?.currencyFilter && (
                 <CurrencyFilter
                   currency={modalFilterValues?.currencyFilter || chartConfig.additionalOptions.filters.currencyFilter.activeValue || 'USD'}
-                  onChange={(value) => handleFilterChange('currencyFilter', value as string)}
+                  onChange={(value) => handleModalFilterChange('currencyFilter', value as string)}
                   options={chartConfig.additionalOptions.filters.currencyFilter.options}
                   
                 />
@@ -1582,7 +1587,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
               <div className="flex items-center">
                 <DisplayModeFilter
                     mode={internalDisplayMode}
-                    onChange={(value) => handleFilterChange(
+                    onChange={(value) => handleModalFilterChange(
                       chartConfig.additionalOptions?.filters?.displayModeFilter ? 'displayModeFilter' : 'displayMode', 
                       value
                     )}

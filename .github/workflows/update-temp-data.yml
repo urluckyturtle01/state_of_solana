@@ -1,0 +1,104 @@
+name: Auto Update Chart Data
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update (ignore timing constraints)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Update Chart Data
+        run: |
+          echo "🚀 Starting chart data update..."
+          echo "Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          
+          # Determine if this is a force update
+          FORCE_UPDATE="${{ github.event.inputs.force_update || 'false' }}"
+          
+          # Call the update API
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"scheduled\": true, \"force\": $FORCE_UPDATE}" \
+            "${{ secrets.SITE_URL }}/api/update-temp-data")
+          
+          # Extract response body and status code
+          HTTP_BODY=$(echo "$RESPONSE" | sed -E '$d')
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1 | sed -E 's/.*:([0-9]+)$/\1/')
+          
+          echo "📊 API Response Status: $HTTP_STATUS"
+          echo "📋 Response Body:"
+          echo "$HTTP_BODY"
+          
+          # Check if the request was successful
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Chart data update completed successfully"
+            
+            # Parse success status from JSON response
+            SUCCESS=$(echo "$HTTP_BODY" | jq -r '.success // false')
+            MESSAGE=$(echo "$HTTP_BODY" | jq -r '.message // "No message"')
+            
+            echo "📝 Update Status: $SUCCESS"
+            echo "💬 Message: $MESSAGE"
+            
+            if [ "$SUCCESS" = "true" ]; then
+              echo "🎉 Data updated successfully!"
+            else
+              echo "⚠️ Update completed but may have issues: $MESSAGE"
+            fi
+          else
+            echo "❌ API request failed with status $HTTP_STATUS"
+            echo "📄 Response: $HTTP_BODY"
+            exit 1
+          fi
+
+      - name: Health Check
+        if: always()
+        run: |
+          echo "🔍 Performing health check..."
+          
+          # Check if the site is responsive
+          HEALTH_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            "${{ secrets.SITE_URL }}/api/health" || echo "CURL_FAILED")
+          
+          if [ "$HEALTH_RESPONSE" = "CURL_FAILED" ]; then
+            echo "❌ Health check failed - could not reach site"
+            exit 1
+          fi
+          
+          HEALTH_STATUS=$(echo "$HEALTH_RESPONSE" | tail -n1 | sed -E 's/.*:([0-9]+)$/\1/')
+          
+          if [ "$HEALTH_STATUS" -eq 200 ]; then
+            echo "✅ Site health check passed"
+          else
+            echo "⚠️ Site health check returned status $HEALTH_STATUS"
+          fi
+
+      - name: Update Summary
+        if: always()
+        run: |
+          echo "📈 Update Summary"
+          echo "=================="
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual trigger: Force update = ${{ github.event.inputs.force_update }}"
+          else
+            echo "Scheduled trigger: Every 10 minutes"
+          fi 
