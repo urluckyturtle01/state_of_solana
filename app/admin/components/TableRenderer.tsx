@@ -7,7 +7,6 @@ import { ExpandIcon, DownloadIcon } from '@/app/components/shared/Icons';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
 import TimeFilter from '@/app/components/shared/filters/TimeFilter';
 import CurrencyFilter from '@/app/components/shared/filters/CurrencyFilter';
-import Loader from '@/app/components/shared/Loader';
 
 interface TableRendererProps {
   tableConfig: TableConfig;
@@ -893,7 +892,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               disabled={isDownloading || processedData.length === 0}
             >
               {isDownloading ? (
-                <Loader size="xs" className="w-4 h-4" />
+                <PrettyLoader size="sm" />
               ) : (
                 <DownloadIcon className="w-4 h-4" />
               )}

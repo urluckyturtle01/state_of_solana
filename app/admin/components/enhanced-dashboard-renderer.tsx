@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { getChartConfigsByPage, getCounterConfigsByPage, getTableConfigsByPage } from '../utils';
 import { ChartConfig, CounterConfig, TableConfig } from '../types';
 import dynamic from 'next/dynamic';
+import PrettyLoader from '@/app/components/shared/PrettyLoader';
 
 // Dynamic imports for better bundle splitting and performance
 const DashboardRenderer = dynamic(() => import('./dashboard-renderer'), {
@@ -24,7 +25,7 @@ const TableRenderer = dynamic(() => import('./TableRenderer'), {
 // Simple loading fallback
 const ChartLoadingFallback = () => (
   <div className="flex justify-center items-center h-64 w-full">
-    <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+    <PrettyLoader size="sm" />
   </div>
 );
 

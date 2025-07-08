@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useDashboards } from '@/app/contexts/DashboardContext';
 import { useUserData } from '@/app/contexts/UserDataContext';
+import PrettyLoader from './PrettyLoader';
 
 const SaveNotification: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -39,7 +40,7 @@ const SaveNotification: React.FC = () => {
       {isSaving && (
         <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 shadow-lg flex items-center space-x-3 hidden">
           <div className="flex-shrink-0">
-            <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            <PrettyLoader size="sm" />
           </div>
           <div className="text-sm text-gray-300">
             Saving your data...

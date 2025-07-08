@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import TabsNavigation, { Tab } from '../../components/shared/TabsNavigation';
 import VisualizationModal from './VisualizationModal';
+import PrettyLoader from '@/app/components/shared/PrettyLoader';
 import AddToDashboardModal from './AddToDashboardModal';
 import ChartCard from '@/app/components/shared/ChartCard';
 import DualAxisChart from '@/app/admin/components/charts/DualAxisChart';
@@ -727,7 +728,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
           {loadingColumns.length > 0 && (
             <div className="p-4 border-b border-gray-800/50">
               <div className="flex items-center space-x-2 text-sm text-blue-400/60">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                <PrettyLoader size="sm" />
                 <span>Loading {loadingColumns.length} column(s)...</span>
               </div>
             </div>

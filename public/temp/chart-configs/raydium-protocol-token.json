@@ -2,11 +2,11 @@
   "pageId": "raydium-protocol-token",
   "pageName": "Protocol Token",
   "chartCount": 6,
-  "lastUpdated": "2025-07-07T08:37:18.761Z",
+  "lastUpdated": "2025-07-08T09:32:34.000Z",
   "charts": [
     {
       "id": "chart_1749037046760_nob6d9c",
-      "title": "New and Churned Holders",
+      "title": "New and churned holders",
       "subtitle": "Monthly tracker",
       "page": "raydium-protocol-token",
       "section": "",
@@ -15,6 +15,7 @@
       "apiKey": "WiNaoOIpQNzkitdVgt8CL68s8fasSmNcyq05i59b",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "Month",
         "yAxis": [
@@ -37,11 +38,11 @@
         "groupBy": ""
       },
       "createdAt": "2025-06-04T11:37:26.760Z",
-      "updatedAt": "2025-06-04T11:37:26.967Z"
+      "updatedAt": "2025-07-07T13:35:34.893Z"
     },
     {
       "id": "chart_1749037178794_cs8vi58",
-      "title": "Ray Price Stats",
+      "title": "Ray price stats",
       "subtitle": "Monthly tracker",
       "page": "raydium-protocol-token",
       "section": "",
@@ -50,6 +51,7 @@
       "apiKey": "9roGSspeswcX8w34zVPyMAnzPIRLfXH028NaUPkx",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "Month",
         "yAxis": [
@@ -82,11 +84,11 @@
         "groupBy": ""
       },
       "createdAt": "2025-06-04T11:39:38.794Z",
-      "updatedAt": "2025-06-04T11:39:38.979Z"
+      "updatedAt": "2025-07-07T13:36:16.733Z"
     },
     {
       "id": "chart_1749037709191_oujv8ri",
-      "title": "DEX Swap volume",
+      "title": "Dex swap volume",
       "subtitle": "Protocol token swap volumes comparision stack chart",
       "page": "raydium-protocol-token",
       "section": "",
@@ -99,7 +101,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "Dex_Volume",
-        "groupBy": "mint"
+        "groupBy": "mint",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -117,30 +120,32 @@
         }
       },
       "createdAt": "2025-06-04T11:48:29.191Z",
-      "updatedAt": "2025-06-20T13:34:11.228Z"
+      "updatedAt": "2025-07-07T13:37:23.183Z"
     },
     {
       "id": "chart_1749037824658_bm5v6nr",
-      "title": "Ray Token Marketcap",
+      "title": "Ray token marketcap",
       "subtitle": "Raydium protocol token marketcap is a multiplication of the total circulating supply and the token price at any given time",
       "page": "raydium-protocol-token",
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13507/results.json",
-      "apiKey": "xeRqDhuEHbbRRAF9EmejNcsmyaWvWky7U2mxs8rn",
+      "apiKey": "xeRqDhuEHbbRRAF9EmejNcsmyaWvWky7U2mxs8rn&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "Morketcap",
-        "groupBy": ""
+        "groupBy": "",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-04T11:50:24.658Z",
-      "updatedAt": "2025-06-04T11:50:24.888Z"
+      "updatedAt": "2025-07-07T13:39:00.289Z"
     },
     {
       "id": "chart_1749160564837_1xaej56",
-      "title": "CEX Ray Holdings",
+      "title": "CEX ray holdings",
       "subtitle": "",
       "page": "raydium-protocol-token",
       "section": "",
@@ -149,6 +154,7 @@
       "apiKey": "Lk7wDbqzoVGpKevIXiCbz1ObtScuLId5cn9Ao4aa&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "Month",
         "yAxis": [
@@ -161,11 +167,11 @@
         "groupBy": "cex_name"
       },
       "createdAt": "2025-06-05T21:56:04.837Z",
-      "updatedAt": "2025-06-06T06:53:43.512Z"
+      "updatedAt": "2025-07-07T13:39:51.687Z"
     },
     {
       "id": "chart_1749161870705_avg2sp4",
-      "title": "TVL  in DEX Pools",
+      "title": "TVL  in dex pools",
       "subtitle": "",
       "page": "raydium-protocol-token",
       "section": "",
@@ -178,10 +184,11 @@
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "amount_usd_in_pools",
-        "groupBy": "mint"
+        "groupBy": "mint",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-05T22:17:50.705Z",
-      "updatedAt": "2025-06-25T08:54:14.035Z"
+      "updatedAt": "2025-07-07T13:40:38.796Z"
     }
   ]
 }

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChartConfig } from '@/app/admin/types';
-import Loader from './Loader';
 
 interface ShareButtonProps {
   chart: ChartConfig;

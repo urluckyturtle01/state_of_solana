@@ -2,11 +2,11 @@
   "pageId": "raydium-financials",
   "pageName": "Financials",
   "chartCount": 9,
-  "lastUpdated": "2025-07-07T08:37:18.761Z",
+  "lastUpdated": "2025-07-08T09:32:34.000Z",
   "charts": [
     {
       "id": "chart_1748935655865_ysfoa3j",
-      "title": "Fee & Revenue",
+      "title": "Fee and revenue",
       "subtitle": "",
       "page": "raydium-financials",
       "section": "",
@@ -15,37 +15,26 @@
       "apiKey": "NaP14nl0INqjE8maqOdu8cnDljAkhEaL5kgS0fZb&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
             "field": "Fees",
             "type": "bar",
-            "unit": "",
+            "unit": "$",
             "rightAxis": false
           },
           {
-            "field": "Protocol_fees",
+            "field": "Protocol fees",
             "type": "line",
-            "unit": "",
-            "rightAxis": true
+            "unit": "$"
           }
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-06-03T07:27:35.865Z",
-      "updatedAt": "2025-06-05T12:25:15.411Z",
-      "dualAxisConfig": {
-        "leftAxisType": "bar",
-        "rightAxisType": "line",
-        "leftAxisFields": [
-          "Fees"
-        ],
-        "rightAxisFields": [
-          "Protocol_fees"
-        ]
-      },
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -53,10 +42,22 @@
               "D",
               "W",
               "M",
+              "Q",
               "Y"
             ]
           }
         }
+      },
+      "createdAt": "2025-06-03T07:27:35.865Z",
+      "updatedAt": "2025-07-08T09:31:40.178Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Fees",
+          "Protocol fees"
+        ],
+        "rightAxisFields": []
       }
     },
     {
@@ -327,7 +328,7 @@
     },
     {
       "id": "chart_1748938178401_36oxl80",
-      "title": "Raydium Assets",
+      "title": "Raydium assets",
       "subtitle": "RAY tokens here are from buyback mechanisms driven by Raydium’s economic activity",
       "page": "raydium-financials",
       "section": "",
@@ -336,6 +337,7 @@
       "apiKey": "i6eHPqQYAMCJ2lpJiweVn9iRQE8eaRUbEuJJBy0m&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
@@ -348,7 +350,7 @@
         "groupBy": "symbol"
       },
       "createdAt": "2025-06-03T08:09:38.401Z",
-      "updatedAt": "2025-06-05T11:58:08.189Z"
+      "updatedAt": "2025-07-07T13:30:56.947Z"
     }
   ]
 }

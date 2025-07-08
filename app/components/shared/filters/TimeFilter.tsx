@@ -18,6 +18,19 @@ const filterLabels: Record<string, string> = {
   'W': 'W'
 };
 
+// Helper function to get the default time filter value (prefers 'M' if available)
+export const getDefaultTimeFilterValue = <T extends string>(options: Array<{value: string, label: string}> | string[]): T => {
+  if (!options || options.length === 0) return 'M' as T;
+  
+  // Handle array of strings or array of objects
+  const optionValues = Array.isArray(options) && typeof options[0] === 'string' 
+    ? options as string[]
+    : (options as Array<{value: string}>).map(opt => opt.value);
+  
+  // Prefer 'M' if available, otherwise return first option
+  return (optionValues.includes('M') ? 'M' : optionValues[0]) as T;
+};
+
 function TimeFilterSelector<T extends string = AllTimeFilters>({ 
   value, 
   onChange, 

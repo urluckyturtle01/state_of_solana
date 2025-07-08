@@ -90,10 +90,29 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   // Update data when preloadedData changes
   useEffect(() => {
     if (preloadedData && preloadedData.length > 0) {
-      setData(preloadedData);
+      console.log('ChartRenderer: Setting preloaded data for chart:', chartConfig.title);
+      console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
+      console.log('Preloaded data length:', preloadedData.length);
+      
+      const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+      
+      if (isTimeAggregationEnabled) {
+        // For time aggregation charts, store preloadedData as rawData
+        // and let the aggregation logic process it into data
+        setRawData(preloadedData);
+        console.log('ChartRenderer: Set rawData for time aggregation, length:', preloadedData.length);
+        
+        // Don't set data directly - let the time aggregation effect handle it
+        // The time aggregation effect will process rawData into data based on current filter values
+      } else {
+        // For regular charts, set preloadedData as final data
+        setData(preloadedData);
+        console.log('ChartRenderer: Set data directly for non-time-aggregation chart');
+      }
+      
       setError(null);
     }
-  }, [preloadedData]);
+  }, [preloadedData, chartConfig.additionalOptions?.enableTimeAggregation, chartConfig.title]);
 
   // Update legendColorMap when externalColorMap changes
   useEffect(() => {
@@ -275,20 +294,33 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     return aggregatedData;
   };
 
-  // Initialize filter values from chart config
+  // Effect to initialize filters and apply default time aggregation
   useEffect(() => {
-    // Only initialize internal filters if external ones aren't provided
-    if (externalFilterValues) return;
+    console.log('=== FILTER INITIALIZATION EFFECT ===');
+    console.log('Chart ID:', chartConfig.id);
+    console.log('External filter values:', externalFilterValues);
+    console.log('Current raw data length:', rawData.length);
+    console.log('Current data length:', data.length);
+    console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
     
+    // Don't initialize if we're using external filter values
+    if (externalFilterValues) {
+      console.log('Using external filter values, skipping initialization');
+      return;
+    }
+
     const initialFilters: Record<string, string> = {};
     
     // Extract initial filter values from chart config
     if (chartConfig.additionalOptions?.filters) {
-      // Set time filter
+      // Set time filter - default to 'M' if available, otherwise first option
       if (chartConfig.additionalOptions.filters.timeFilter &&
           Array.isArray(chartConfig.additionalOptions.filters.timeFilter.options) &&
           chartConfig.additionalOptions.filters.timeFilter.options.length > 0) {
-        initialFilters['timeFilter'] = chartConfig.additionalOptions.filters.timeFilter.options[0];
+        const timeOptions = chartConfig.additionalOptions.filters.timeFilter.options;
+        const defaultValue = timeOptions.includes('M') ? 'M' : timeOptions[0];
+        initialFilters['timeFilter'] = defaultValue;
+        console.log('Setting default time filter to:', defaultValue, 'from options:', timeOptions);
       }
       
       // Set currency filter
@@ -296,6 +328,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           Array.isArray(chartConfig.additionalOptions.filters.currencyFilter.options) &&
           chartConfig.additionalOptions.filters.currencyFilter.options.length > 0) {
         initialFilters['currencyFilter'] = chartConfig.additionalOptions.filters.currencyFilter.options[0];
+        console.log('Setting default currency filter to:', initialFilters['currencyFilter']);
       }
       
       // Set display mode filter
@@ -303,11 +336,49 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           Array.isArray(chartConfig.additionalOptions.filters.displayModeFilter.options) &&
           chartConfig.additionalOptions.filters.displayModeFilter.options.length > 0) {
         initialFilters['displayModeFilter'] = chartConfig.additionalOptions.filters.displayModeFilter.options[0];
+        console.log('Setting default display mode filter to:', initialFilters['displayModeFilter']);
       }
     }
     
+    console.log('Setting internal filter values to:', initialFilters);
     setInternalFilterValues(initialFilters);
-  }, [chartConfig.id, externalFilterValues]);
+    
+    // For time aggregation enabled charts, trigger immediate re-aggregation when default filter is set
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const defaultTimeFilter = initialFilters['timeFilter'];
+    
+    console.log('Time aggregation check:', {
+      isTimeAggregationEnabled,
+      defaultTimeFilter,
+      rawDataLength: rawData.length,
+      hasChartMapping: !!chartConfig.dataMapping
+    });
+    
+    if (isTimeAggregationEnabled && defaultTimeFilter && rawData.length > 0) {
+      console.log('ChartRenderer: Applying time aggregation for default filter:', defaultTimeFilter);
+      
+      const { xAxis, yAxis } = chartConfig.dataMapping;
+      const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+      
+      let yFields: string[] = [];
+      if (Array.isArray(yAxis)) {
+        yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+      } else {
+        yFields = [getFieldFromYAxisConfig(yAxis)];
+      }
+      
+      console.log('Aggregating with fields:', { xField, yFields, groupBy: chartConfig.dataMapping.groupBy });
+      const aggregatedData = aggregateDataByTimePeriod(rawData, defaultTimeFilter, xField, yFields, chartConfig.dataMapping.groupBy);
+      console.log('Aggregation result:', aggregatedData.length, 'items, sample:', aggregatedData[0]);
+      setData(aggregatedData);
+      
+      if (onDataLoaded) {
+        onDataLoaded(aggregatedData);
+      }
+    } else if (isTimeAggregationEnabled && defaultTimeFilter && rawData.length === 0) {
+      console.log('ChartRenderer: Time aggregation enabled with default filter, but no raw data yet. Will trigger when rawData loads.');
+    }
+  }, [chartConfig.id, externalFilterValues, rawData]);
 
   // Handle filter change
   const handleFilterChange = (filterType: string, value: string) => {
@@ -392,20 +463,28 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     }
   };
 
-  // Effect to handle client-side time aggregation when time filter changes
+  // Effect to handle client-side time aggregation when time filter changes or rawData becomes available
   useEffect(() => {
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     const timeFilterValue = filterValues['timeFilter'];
     
-    console.log('ChartRenderer time aggregation effect triggered:', {
-      isTimeAggregationEnabled,
-      timeFilterValue,
+    console.log('=== TIME AGGREGATION EFFECT TRIGGERED ===');
+    console.log('Chart:', chartConfig.title);
+    console.log('Time aggregation enabled:', isTimeAggregationEnabled);
+    console.log('Time filter value:', timeFilterValue);
+    console.log('Raw data length:', rawData.length);
+    console.log('Current data length:', data.length);
+    console.log('External filter values:', externalFilterValues);
+    console.log('Internal filter values:', internalFilterValues);
+    console.log('Effect dependencies changed:', {
       rawDataLength: rawData.length,
-      hasFilterValues: !!filterValues
+      chartConfigId: chartConfig.id,
+      hasExternalFilters: !!externalFilterValues,
+      hasInternalFilters: Object.keys(internalFilterValues).length > 0
     });
     
     if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0) {
-      console.log('ChartRenderer: Applying client-side time aggregation:', timeFilterValue);
+      console.log('ChartRenderer: ✅ Applying client-side time aggregation:', timeFilterValue);
       
       // Get field mappings
       const { xAxis, yAxis } = chartConfig.dataMapping;
@@ -419,17 +498,94 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         yFields = [getFieldFromYAxisConfig(yAxis)];
       }
       
+      console.log('Aggregation parameters:', {
+        xField,
+        yFields,
+        groupBy: chartConfig.dataMapping.groupBy,
+        timePeriod: timeFilterValue,
+        rawDataSample: rawData[0]
+      });
+      
       // Apply time aggregation
       const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
-      console.log('ChartRenderer: Time aggregation complete, setting data:', aggregatedData.length, 'items');
+      console.log('ChartRenderer: ✅ Time aggregation complete:', {
+        inputLength: rawData.length,
+        outputLength: aggregatedData.length,
+        timePeriod: timeFilterValue,
+        sampleOutput: aggregatedData[0]
+      });
+      
       setData(aggregatedData);
       
       // Call onDataLoaded callback if provided
       if (onDataLoaded) {
         onDataLoaded(aggregatedData);
       }
+    } else {
+      console.log('ChartRenderer: ❌ Time aggregation NOT applied:', {
+        isTimeAggregationEnabled,
+        timeFilterValue,
+        rawDataLength: rawData.length,
+        reason: !isTimeAggregationEnabled ? 'Time aggregation disabled' : 
+                !timeFilterValue ? 'No time filter value' : 
+                !rawData.length ? 'No raw data' : 'Unknown'
+      });
     }
-  }, [filterValues['timeFilter'], rawData, chartConfig, onDataLoaded]);
+  }, [rawData, chartConfig, onDataLoaded, externalFilterValues, internalFilterValues]); // Fixed dependency array to properly track filter changes
+
+  // Additional effect to ensure data is processed when rawData first becomes available
+  useEffect(() => {
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const timeFilterValue = filterValues['timeFilter'];
+    
+    console.log('=== RAWDATA PROCESSING EFFECT TRIGGERED ===');
+    console.log('Chart:', chartConfig.title);
+    console.log('Time aggregation enabled:', isTimeAggregationEnabled);
+    console.log('Time filter value:', timeFilterValue);
+    console.log('Raw data length:', rawData.length);
+    console.log('Current data length:', data.length);
+    console.log('Should process?:', isTimeAggregationEnabled && timeFilterValue && rawData.length > 0 && data.length !== rawData.length);
+    
+    // Only trigger if we have both rawData and a time filter, and current data is empty or unchanged
+    if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0 && data.length !== rawData.length) {
+      console.log('ChartRenderer: ✅ rawData loaded, applying current filter:', timeFilterValue);
+      
+      const { xAxis, yAxis } = chartConfig.dataMapping;
+      const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+      
+      let yFields: string[] = [];
+      if (Array.isArray(yAxis)) {
+        yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+      } else {
+        yFields = [getFieldFromYAxisConfig(yAxis)];
+      }
+      
+      const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+      console.log('ChartRenderer: ✅ rawData aggregation complete:', {
+        inputLength: rawData.length,
+        outputLength: aggregatedData.length,
+        timePeriod: timeFilterValue
+      });
+      
+      setData(aggregatedData);
+      
+      if (onDataLoaded) {
+        onDataLoaded(aggregatedData);
+      }
+    } else {
+      console.log('ChartRenderer: ❌ rawData processing NOT applied:', {
+        isTimeAggregationEnabled,
+        timeFilterValue,
+        rawDataLength: rawData.length,
+        dataLength: data.length,
+        lengthMatch: data.length === rawData.length,
+        reason: !isTimeAggregationEnabled ? 'Time aggregation disabled' : 
+                !timeFilterValue ? 'No time filter value' : 
+                !rawData.length ? 'No raw data' : 
+                data.length === rawData.length ? 'Data length matches raw data (already processed)' : 'Unknown'
+      });
+    }
+  }, [rawData, chartConfig, data.length, onDataLoaded, externalFilterValues, internalFilterValues]); // Fixed dependency array
 
   // Sample data to use when API fails
   const getSampleData = (chartType: string, groupByField?: string) => {
@@ -652,7 +808,16 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       
       try {
         // Skip API call if using the same endpoint with the same mapping and no filter changes
-        const cacheKey = `${chartConfig.apiEndpoint}-${dataMappingKey}-${JSON.stringify(filterValues)}`;
+        // For time aggregation charts, exclude time filter from cache key since it's client-side only
+        const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+        let cacheFilterValues = filterValues;
+        if (isTimeAggregationEnabled) {
+          // Remove timeFilter from cache key for time aggregation charts
+          cacheFilterValues = Object.fromEntries(
+            Object.entries(filterValues).filter(([key]) => key !== 'timeFilter')
+          );
+        }
+        const cacheKey = `${chartConfig.apiEndpoint}-${dataMappingKey}-${JSON.stringify(cacheFilterValues)}`;
         const cachedData = !isFilterChanged ? sessionStorage.getItem(cacheKey) : null;
         
         if (cachedData) {
@@ -1042,6 +1207,22 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       : JSON.stringify(filterValues), 
     isFilterChanged
   ]);
+
+  // Clear stale cache on component mount to ensure fresh data processing
+  useEffect(() => {
+    console.log('=== CACHE CLEARING EFFECT ===');
+    console.log('Clearing stale cache for chart:', chartConfig.title);
+    
+    // Clear any cached data for this endpoint to ensure fresh processing
+    const keys = Object.keys(sessionStorage);
+    const endpointPrefix = chartConfig.apiEndpoint;
+    keys.forEach(key => {
+      if (key.startsWith(endpointPrefix)) {
+        console.log('Clearing cached data for key:', key);
+        sessionStorage.removeItem(key);
+      }
+    });
+  }, []); // Empty dependency array - only run on mount
 
   // Memoize the chart rendering to prevent unnecessary re-renders
   const renderChart = React.useCallback(() => {
