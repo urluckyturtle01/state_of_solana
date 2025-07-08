@@ -1,12 +1,13 @@
 import { ChartConfig, CounterConfig, TableConfig } from '@/app/admin/types';
 import dynamic from 'next/dynamic';
+import PrettyLoader from './shared/PrettyLoader';
 
 // Use dynamic imports for the existing admin components
 const EnhancedDashboardRenderer = dynamic(() => import('../admin/components/enhanced-dashboard-renderer'), {
   ssr: false,
   loading: () => (
     <div className="flex justify-center items-center h-64 w-full">
-      <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+      <PrettyLoader size="sm" />
     </div>
   )
 });

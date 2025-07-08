@@ -2,7 +2,7 @@
   "pageId": "network-usage",
   "pageName": "Network Usage",
   "chartCount": 3,
-  "lastUpdated": "2025-07-07T08:37:18.749Z",
+  "lastUpdated": "2025-07-08T09:32:33.969Z",
   "charts": [
     {
       "id": "chart_1748252444149_tkcgszd",
@@ -91,46 +91,47 @@
       "apiKey": "0pzEmBGojQAV7yWcJEbd0VhJ6FGpKAk04jztTwSp&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "Total_Vote_Transactions",
+            "field": "total_transactions",
             "type": "bar",
             "unit": ""
           },
           {
-            "field": "Total_Non_Vote_Transactions",
+            "field": "total_vote_transactions",
             "type": "bar",
             "unit": ""
           },
           {
-            "field": "Succeesful_Transactions_perc",
+            "field": "succeesful_transactions_perc",
             "type": "line",
-            "unit": "%",
+            "unit": "",
             "rightAxis": true
           },
           {
-            "field": "Successful_Non_Vote_Transactiosn_perc",
+            "field": "successful_non_vote_transactiosn_perc",
             "type": "line",
-            "unit": "%",
+            "unit": "",
             "rightAxis": true
           }
         ],
         "groupBy": ""
       },
       "createdAt": "2025-05-26T10:36:27.490Z",
-      "updatedAt": "2025-05-26T11:42:25.282Z",
+      "updatedAt": "2025-07-07T09:39:33.796Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
         "leftAxisFields": [
-          "Total_Vote_Transactions",
-          "Total_Non_Vote_Transactions"
+          "total_transactions",
+          "total_vote_transactions"
         ],
         "rightAxisFields": [
-          "Succeesful_Transactions_perc",
-          "Successful_Non_Vote_Transactiosn_perc"
+          "succeesful_transactions_perc",
+          "successful_non_vote_transactiosn_perc"
         ]
       },
       "additionalOptions": {

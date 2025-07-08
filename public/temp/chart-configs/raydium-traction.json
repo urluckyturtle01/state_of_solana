@@ -2,11 +2,11 @@
   "pageId": "raydium-traction",
   "pageName": "Traction",
   "chartCount": 6,
-  "lastUpdated": "2025-07-07T08:37:18.761Z",
+  "lastUpdated": "2025-07-08T09:32:34.000Z",
   "charts": [
     {
       "id": "chart_1748957184547_qexfnue",
-      "title": "Volume by Product",
+      "title": "Volume by product",
       "subtitle": "",
       "page": "raydium-traction",
       "section": "",
@@ -37,11 +37,11 @@
         }
       },
       "createdAt": "2025-06-03T13:26:24.546Z",
-      "updatedAt": "2025-06-25T09:15:48.000Z"
+      "updatedAt": "2025-07-07T13:31:58.727Z"
     },
     {
       "id": "chart_1748957917547_cucbb77",
-      "title": "Trades by Product",
+      "title": "Trades by product",
       "subtitle": "",
       "page": "raydium-traction",
       "section": "",
@@ -72,11 +72,11 @@
         }
       },
       "createdAt": "2025-06-03T13:38:37.547Z",
-      "updatedAt": "2025-06-25T09:16:33.099Z"
+      "updatedAt": "2025-07-07T13:32:36.693Z"
     },
     {
       "id": "chart_1749026720265_8m4ki1m",
-      "title": "Volume by Pool Type",
+      "title": "Volume by pool type",
       "subtitle": "",
       "page": "raydium-traction",
       "section": "",
@@ -107,7 +107,7 @@
         }
       },
       "createdAt": "2025-06-04T08:45:20.264Z",
-      "updatedAt": "2025-06-25T09:09:47.246Z"
+      "updatedAt": "2025-07-07T13:33:26.420Z"
     },
     {
       "id": "chart_1749027349926_782ragi",
@@ -141,7 +141,7 @@
     },
     {
       "id": "chart_1749036077122_njptzsd",
-      "title": "Volume by Pool Age",
+      "title": "Volume by pool age",
       "subtitle": "",
       "page": "raydium-traction",
       "section": "",
@@ -154,14 +154,15 @@
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "volume_usd",
-        "groupBy": "pool_age"
+        "groupBy": "pool_age",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-04T11:21:17.122Z",
-      "updatedAt": "2025-06-25T09:05:41.597Z"
+      "updatedAt": "2025-07-07T13:34:11.214Z"
     },
     {
       "id": "chart_1749036170707_tloqban",
-      "title": "Trades by Lifetime trade volume",
+      "title": "Trades by lifetime trade volume",
       "subtitle": "",
       "page": "raydium-traction",
       "section": "",
@@ -177,7 +178,7 @@
         "groupBy": "lifetime_volume_usd"
       },
       "createdAt": "2025-06-04T11:22:50.707Z",
-      "updatedAt": "2025-06-25T08:23:44.846Z"
+      "updatedAt": "2025-07-07T13:34:49.493Z"
     }
   ]
 }
