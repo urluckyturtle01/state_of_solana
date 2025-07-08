@@ -50,6 +50,7 @@ export interface StackedBarChartProps {
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
   displayMode?: DisplayMode;
+  onModalFilterUpdate?: (filters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -75,7 +76,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   yAxisUnit,
   hiddenSeries = [],
   onFilterChange,
-  displayMode: propDisplayMode
+  displayMode: propDisplayMode,
+  onModalFilterUpdate
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -117,8 +119,11 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const [isModalBrushActive, setIsModalBrushActive] = useState(false);
   const [modalBrushDomain, setModalBrushDomain] = useState<[Date, Date] | null>(null);
   
-  // Add state for filter values in modal
-  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
+  // Add state for filter values in modal - start with empty to avoid stale state
+  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>({});
+  
+  // Track if modal has been properly initialized
+  const [modalInitialized, setModalInitialized] = useState(false);
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
@@ -240,12 +245,91 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [displayMode]);
 
-  // Update modal filters when component receives new filter values
+  // Improved modal filter synchronization
   useEffect(() => {
-    if (filterValues) {
-      setModalFilterValues(filterValues);
+    if (isExpanded && !modalInitialized) {
+      // Initialize modal filters when modal opens for the first time
+      const currentFilters = filterValues || {};
+      console.log('StackedBarChart: Initializing modal filters on modal open:', {
+        currentFilters,
+        previousModalFilters: modalFilterValues,
+        chartTitle: chartConfig.title,
+        filterValuesReady: !!filterValues && Object.keys(filterValues).length > 0
+      });
+      
+      // Force sync to ensure modal starts with correct state
+      setModalFilterValues(currentFilters);
+      setModalInitialized(true);
+    } else if (isExpanded && modalInitialized && filterValues) {
+      // Re-sync if filterValues change while modal is open
+      const hasChanges = Object.keys(filterValues).some(key => 
+        filterValues[key] !== modalFilterValues[key]
+      ) || Object.keys(modalFilterValues).some(key => 
+        modalFilterValues[key] !== filterValues[key]
+      );
+      
+      if (hasChanges) {
+        console.log('StackedBarChart: Re-syncing modal filters due to external change:', {
+          oldFilters: modalFilterValues,
+          newFilters: filterValues,
+          chartTitle: chartConfig.title
+        });
+        setModalFilterValues(filterValues);
+      }
     }
-  }, [filterValues]);
+     }, [isExpanded, modalInitialized, filterValues, modalFilterValues, chartConfig.title]);
+  
+  // Additional effect to handle late filterValues initialization
+  useEffect(() => {
+    if (isExpanded && !modalInitialized && filterValues && Object.keys(filterValues).length > 0) {
+      console.log('StackedBarChart: Late filterValues initialization detected:', {
+        filterValues,
+        chartTitle: chartConfig.title
+      });
+      
+      setModalFilterValues(filterValues);
+      setModalInitialized(true);
+    }
+  }, [isExpanded, modalInitialized, filterValues, chartConfig.title]);
+  
+  // Reset modal state when modal closes to prevent stale state
+  useEffect(() => {
+    if (!isExpanded && modalInitialized) {
+      console.log('StackedBarChart: Modal closing - resetting modal state');
+      
+      // Clear any pending filter change timeouts
+      if (filterChangeTimeoutRef.current) {
+        clearTimeout(filterChangeTimeoutRef.current);
+        filterChangeTimeoutRef.current = null;
+      }
+      
+      // Reset modal-specific state
+      setModalBrushDomain(null);
+      setIsModalBrushActive(false);
+      setModalFilteredData([]);
+      
+      // Reset modal filter values and initialization flag
+      setModalFilterValues({});
+      setModalInitialized(false);
+      
+      console.log('StackedBarChart: Modal state reset complete');
+    }
+  }, [isExpanded, modalInitialized]);
+  
+  // Debug effect to track modal filter changes
+  useEffect(() => {
+    if (isExpanded && chartConfig.additionalOptions?.enableTimeAggregation) {
+      console.log('StackedBarChart: Modal filter values changed:', {
+        chartTitle: chartConfig.title,
+        modalFilterValues,
+        rawDataCount: data.length,
+        modalFilteredDataCount: modalFilteredData.length,
+        isModalBrushActive,
+        currentDataSource: isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered' : 'raw data',
+        timestamp: Date.now()
+      });
+    }
+  }, [modalFilterValues, isExpanded, chartConfig.title, chartConfig.additionalOptions?.enableTimeAggregation, data.length, modalFilteredData.length, isModalBrushActive]);
 
   // Update internal displayMode when prop changes
   useEffect(() => {
@@ -277,31 +361,74 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
   }, [filterValues?.displayMode, filterValues?.displayModeFilter, propDisplayMode, internalDisplayMode, chartConfig.additionalOptions?.filters?.displayModeFilter]);
 
-  // Enhanced filter change handler for modal
+  // Add ref for debouncing filter changes
+  const filterChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Enhanced filter change handler for modal with debouncing
   const handleModalFilterChange = useCallback((key: string, value: string) => {
     console.log(`StackedBarChart Modal filter changed: ${chartConfig.title} - ${key} = ${value}`);
+    
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const isTimeFilter = key === 'timeFilter';
+    const isCurrencyFilter = key === 'currencyFilter';
+    
+    console.log(`StackedBarChart Modal filter analysis:`, {
+      key,
+      value,
+      isTimeAggregationEnabled,
+      isTimeFilter,
+      isCurrencyFilter,
+      shouldHandleLocally: isTimeAggregationEnabled && isTimeFilter,
+      shouldTriggerAPI: !isTimeAggregationEnabled || !isTimeFilter,
+      currentModalFilters: modalFilterValues
+    });
     
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
     
-    console.log(`StackedBarChart Modal updated filters:`, updatedFilters);
-    
-    // Update local state
+    // Update local state first to ensure immediate UI responsiveness
     setModalFilterValues(updatedFilters);
+    
+    // Notify dashboard of modal filter changes for ChartRenderer
+    if (onModalFilterUpdate && isExpanded) {
+      onModalFilterUpdate(updatedFilters);
+    }
     
     // Update internal display mode if needed
     if (key === 'displayMode' || key === 'displayModeFilter') {
       setInternalDisplayMode(value as DisplayMode);
     }
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
-      console.log(`StackedBarChart Modal calling onFilterChange with:`, updatedFilters);
-      onFilterChange(updatedFilters);
+    // Clear any existing timeout
+    if (filterChangeTimeoutRef.current) {
+      clearTimeout(filterChangeTimeoutRef.current);
     }
-  }, [modalFilterValues, onFilterChange, chartConfig.title]);
+    
+    // Handle different filter types appropriately
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, ALL filters are handled client-side - NO API CALLS
+      console.log(`StackedBarChart Modal: Time aggregation chart - NO API call for ${key}`);
+      // Don't call onFilterChange at all - only use onModalFilterUpdate for state sync
+    } else if (onFilterChange) {
+      // For non-time-aggregation charts, allow API calls with debouncing
+      console.log(`StackedBarChart Modal: Non-time aggregation chart - allowing API call for ${key}`);
+      filterChangeTimeoutRef.current = setTimeout(() => {
+        console.log(`StackedBarChart Modal: Executing API call for non-time-aggregation chart`);
+        onFilterChange(updatedFilters);
+      }, 300);
+    }
+  }, [modalFilterValues, onFilterChange, chartConfig.title, chartConfig.additionalOptions?.enableTimeAggregation]);
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (filterChangeTimeoutRef.current) {
+        clearTimeout(filterChangeTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Handle filter changes - for both modal and normal view
   const handleFilterChange = useCallback((key: string, value: string) => {
@@ -322,11 +449,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       setInternalDisplayMode(value as DisplayMode);
     }
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, ALL filters are handled client-side - NO API CALLS
+      console.log(`StackedBarChart: Time aggregation chart - NO API call for ${key}`);
+      // Don't call onFilterChange to avoid API calls
+    } else if (onFilterChange) {
+      console.log(`StackedBarChart: Non-time aggregation chart - calling onFilterChange:`, updatedFilters);
       onFilterChange(updatedFilters);
     }
-  }, [filterValues, onFilterChange, isExpanded, handleModalFilterChange]);
+  }, [filterValues, onFilterChange, isExpanded, handleModalFilterChange, chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Placeholder for refresh data functionality
   const refreshData = useCallback(() => {
@@ -346,15 +479,48 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       (!isExpanded && isBrushActive && filteredData.length > 0) ? filteredData : 
       data;
     
+    // Get the correct filter values for current context
+    const currentFilterValues = isExpanded ? modalFilterValues : filterValues;
+    
     // Debug logging for time aggregation charts only
     if (chartConfig.additionalOptions?.enableTimeAggregation) {
       console.log('StackedBarChart: Processing time aggregation chart', {
         chartTitle: chartConfig.title,
         isExpanded,
         dataCount: currentData.length,
-        timeFilter: isExpanded ? modalFilterValues?.timeFilter : filterValues?.timeFilter,
-        currencyFilter: isExpanded ? modalFilterValues?.currencyFilter : filterValues?.currencyFilter
+        rawDataCount: data.length,
+        isModalBrushActive,
+        modalFilteredDataCount: modalFilteredData.length,
+        dataSource: isExpanded && isModalBrushActive && modalFilteredData.length > 0 ? 'modal filtered' :
+                   !isExpanded && isBrushActive && filteredData.length > 0 ? 'main filtered' : 'raw data',
+        timeFilter: currentFilterValues?.timeFilter,
+        currencyFilter: currentFilterValues?.currencyFilter,
+        activeFilterValues: currentFilterValues,
+        modalFilterValues: isExpanded ? modalFilterValues : 'N/A',
+        parentFilterValues: filterValues,
+        filterValuesMatch: isExpanded ? JSON.stringify(modalFilterValues) === JSON.stringify(filterValues) : true,
+        timestamp: Date.now()
       });
+      
+      // Additional debugging for data sample
+      if (currentData.length > 0) {
+        console.log('StackedBarChart: Data sample for processing:', {
+          firstItem: currentData[0],
+          lastItem: currentData[currentData.length - 1],
+          dateField: xKey,
+          dateRange: currentData.length > 1 ? `${currentData[0][xKey]} to ${currentData[currentData.length - 1][xKey]}` : currentData[0][xKey]
+        });
+      }
+      
+      // Safety check: If in modal and filter values don't match, warn about potential stale state
+      if (isExpanded && modalFilterValues && filterValues && 
+          JSON.stringify(modalFilterValues) !== JSON.stringify(filterValues)) {
+        console.warn('StackedBarChart: Potential stale state detected - modal and parent filter values differ:', {
+          modalFilterValues,
+          filterValues,
+          chartTitle: chartConfig.title
+        });
+      }
     }
       
     // If no data is available, return empty defaults

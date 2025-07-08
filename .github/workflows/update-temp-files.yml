@@ -1,0 +1,66 @@
+name: Update Chart Data Temp Files
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual triggering
+  push:
+    paths:
+      - '.github/workflows/update-temp-files.yml'
+      - 'public/temp/fetch-chart-data.js'
+
+jobs:
+  update-temp-files:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          # No package.json in temp folder, but we need fetch API
+          # Node 18+ has fetch built-in, so we're good
+          echo "Using built-in fetch API"
+          
+      - name: Run chart data fetching script
+        run: |
+          cd public/temp
+          node fetch-chart-data.js
+          
+      - name: Check for changes
+        id: verify-changed-files
+        run: |
+          if [ -n "$(git status --porcelain public/temp/chart-data/)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Files changed:"
+            git status --porcelain public/temp/chart-data/
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          fi
+          
+      - name: Commit and push changes
+        if: steps.verify-changed-files.outputs.changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/temp/chart-data/
+          git commit -m "🤖 Auto-update chart data temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git push
+          
+      - name: Log completion
+        run: |
+          if [ "${{ steps.verify-changed-files.outputs.changed }}" == "true" ]; then
+            echo "✅ Chart data updated and committed successfully"
+          else
+            echo "ℹ️ No changes detected - temp files are up to date"
+          fi 

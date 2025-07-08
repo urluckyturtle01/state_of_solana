@@ -594,6 +594,9 @@ export default function DashboardRenderer({
   // Data and display states
   const [chartData, setChartData] = useState<Record<string, any[]>>({});
   const [filterValues, setFilterValues] = useState<Record<string, Record<string, string>>>({});
+  
+  // Track modal filter values separately for expanded charts
+  const [modalFilterValues, setModalFilterValues] = useState<Record<string, Record<string, string>>>({});
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
   const [legendColorMaps, setLegendColorMaps] = useState<Record<string, Record<string, string>>>({});
   const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
@@ -1085,7 +1088,27 @@ export default function DashboardRenderer({
   }, [enableCaching, filterValues, isMounted, setChartData, updateChartState, wrappedFetchChartData]);
 
   const toggleChartExpanded = (chartId: string) => {
-    updateChartState(chartId, { expanded: !getChartState(chartId, 'expanded') });
+    const isCurrentlyExpanded = getChartState(chartId, 'expanded');
+    
+    if (!isCurrentlyExpanded) {
+      // Chart is being expanded - initialize modal filter values
+      const currentFilters = filterValues[chartId] || {};
+      setModalFilterValues(prev => ({
+        ...prev,
+        [chartId]: { ...currentFilters }
+      }));
+      console.log(`Initializing modal filters for chart ${chartId}:`, currentFilters);
+    } else {
+      // Chart is being collapsed - clean up modal filter values
+      setModalFilterValues(prev => {
+        const newModalFilters = { ...prev };
+        delete newModalFilters[chartId];
+        return newModalFilters;
+      });
+      console.log(`Cleaning up modal filters for chart ${chartId}`);
+    }
+    
+    updateChartState(chartId, { expanded: !isCurrentlyExpanded });
   };
 
   // Handle screenshot capture for chart using the new ChartScreenshot component
@@ -1122,7 +1145,7 @@ export default function DashboardRenderer({
     const isStackedChart = isStackedBarChart(chart);
     
     if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode')) {
-      console.log('Dashboard: Client-side filter processing for time aggregation or display mode');
+      console.log(`Dashboard: Client-side filter processing for ${isTimeAggregationEnabled ? 'time aggregation' : 'stacked chart'} - NO API CALL`);
       
       // Update filter value only (ChartRenderer will handle the data processing)
       setFilterValues(prev => ({
@@ -1133,7 +1156,7 @@ export default function DashboardRenderer({
         }
       }));
       
-      // No API call needed - ChartRenderer handles time aggregation client-side with preloaded data
+      // No API call needed - ChartRenderer handles time aggregation and StackedBarChart handles displayMode client-side
       return;
     }
 
@@ -1727,6 +1750,15 @@ export default function DashboardRenderer({
     }
   }, [legendColorMaps, charts, chartData]);
 
+  // Handle modal filter value updates from expanded charts
+  const handleModalFilterUpdate = useCallback((chartId: string, newModalFilters: Record<string, string>) => {
+    console.log('Dashboard: Updating modal filter values for chart', chartId, newModalFilters);
+    setModalFilterValues(prev => ({
+      ...prev,
+      [chartId]: newModalFilters
+    }));
+  }, []);
+
   // Inside the render method, after setting state, we need to prepare charts with filter callbacks
   // The existing charts array will be updated to include the onFilterChange callback for each chart
   useEffect(() => {
@@ -2019,22 +2051,68 @@ export default function DashboardRenderer({
               isExpanded={expandedCharts[chart.id]}
               onCloseExpanded={() => toggleChartExpanded(chart.id)}
               // Pass filter values and handlers to ChartRenderer
-              filterValues={filterValues[chart.id]}
+              // Use modal filter values when chart is expanded for proper time aggregation
+              filterValues={expandedCharts[chart.id] && modalFilterValues[chart.id] ? 
+                modalFilterValues[chart.id] : 
+                filterValues[chart.id]}
               onFilterChange={(filterType, value) => {
+                // Check if this chart is in modal mode
+                const isModal = expandedCharts[chart.id];
+                
                 // Handle individual filter changes from ChartRenderer's internal calls
                 if (typeof filterType === 'string' && typeof value === 'string') {
-                  handleFilterChange(chart.id, filterType, value);
+                  if (isModal) {
+                    // For modal charts, update modal filter values instead
+                    handleModalFilterUpdate(chart.id, { [filterType]: value });
+                  } else {
+                    handleFilterChange(chart.id, filterType, value);
+                  }
                 } else if (typeof filterType === 'object' && filterType !== null && !value) {
-                  // Handle bulk filter changes from chart components
+                  // Handle filter changes from chart components
                   const newFilters = filterType as Record<string, string>;
-                  const currentFilters = filterValues[chart.id] || {};
+                  const currentFilters = isModal ? 
+                    (modalFilterValues[chart.id] || filterValues[chart.id] || {}) : 
+                    (filterValues[chart.id] || {});
+                  const filterKeys = Object.keys(newFilters);
                   
-                  // Find what changed and apply each change
-                  Object.entries(newFilters).forEach(([key, newValue]) => {
+                  // Check if this is a single time filter change for time aggregation charts
+                  const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
+                  const isSingleTimeFilter = filterKeys.length === 1 && filterKeys[0] === 'timeFilter' && isTimeAggregationEnabled;
+                  
+                  if (isSingleTimeFilter) {
+                    // Handle single time filter change - this should be client-side only
+                    console.log(`Dashboard: Single time filter change for time aggregation chart - client-side only (modal: ${isModal})`);
+                    const [key, newValue] = Object.entries(newFilters)[0];
                     if (currentFilters[key] !== newValue) {
-                      handleFilterChange(chart.id, key, newValue);
+                      if (isModal) {
+                        // Update modal filter values for expanded charts
+                        handleModalFilterUpdate(chart.id, { [key]: newValue });
+                      } else {
+                        // Update regular filter values without triggering API call
+                        setFilterValues(prev => ({
+                          ...prev,
+                          [chart.id]: {
+                            ...prev[chart.id],
+                            [key]: newValue
+                          }
+                        }));
+                      }
                     }
-                  });
+                  } else {
+                    // Handle other filter changes or bulk updates
+                    console.log(`Dashboard: Bulk filter change or non-time filter (modal: ${isModal})`);
+                    Object.entries(newFilters).forEach(([key, newValue]) => {
+                      if (currentFilters[key] !== newValue) {
+                        if (isModal) {
+                          // For modal charts, always use modal filter update
+                          handleModalFilterUpdate(chart.id, { [key]: newValue });
+                        } else {
+                          // For regular charts, may trigger API calls
+                          handleFilterChange(chart.id, key, newValue);
+                        }
+                      }
+                    });
+                  }
                 } else {
                   console.warn('Unexpected onFilterChange call:', { filterType, value });
                 }
@@ -2047,6 +2125,10 @@ export default function DashboardRenderer({
               hiddenSeries={hiddenSeries[chart.id] || []}
               // Pass loading state
               isLoading={loadingCharts[chart.id] || false}
+              // Pass modal filter update callback for expanded charts
+              onModalFilterUpdate={expandedCharts[chart.id] ? 
+                (filters) => handleModalFilterUpdate(chart.id, filters) : 
+                undefined}
             />
           </div>
         </MemoizedChartCard>
