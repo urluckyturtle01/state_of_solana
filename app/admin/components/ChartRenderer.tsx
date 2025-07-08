@@ -468,29 +468,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     const timeFilterValue = filterValues['timeFilter'];
     
-    console.log('=== TIME AGGREGATION EFFECT TRIGGERED ===');
-    console.log('Chart:', chartConfig.title);
-    console.log('Time aggregation enabled:', isTimeAggregationEnabled);
-    console.log('Time filter value:', timeFilterValue);
-    console.log('Raw data length:', rawData.length);
-    console.log('Current data length:', data.length);
-    console.log('External filter values:', externalFilterValues);
-    console.log('Internal filter values:', internalFilterValues);
-    console.log('Effect dependencies changed:', {
-      rawDataLength: rawData.length,
-      chartConfigId: chartConfig.id,
-      hasExternalFilters: !!externalFilterValues,
-      hasInternalFilters: Object.keys(internalFilterValues).length > 0
-    });
-    
     if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0) {
-      console.log('ChartRenderer: ✅ Applying client-side time aggregation:', timeFilterValue);
+      console.log('ChartRenderer: Applying client-side time aggregation:', timeFilterValue);
       
-      // Get field mappings
       const { xAxis, yAxis } = chartConfig.dataMapping;
       const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
       
-      // Extract y-field names
       let yFields: string[] = [];
       if (Array.isArray(yAxis)) {
         yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
@@ -498,57 +481,36 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         yFields = [getFieldFromYAxisConfig(yAxis)];
       }
       
-      console.log('Aggregation parameters:', {
-        xField,
-        yFields,
-        groupBy: chartConfig.dataMapping.groupBy,
-        timePeriod: timeFilterValue,
-        rawDataSample: rawData[0]
-      });
-      
-      // Apply time aggregation
-      const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
-      console.log('ChartRenderer: ✅ Time aggregation complete:', {
-        inputLength: rawData.length,
-        outputLength: aggregatedData.length,
-        timePeriod: timeFilterValue,
-        sampleOutput: aggregatedData[0]
-      });
-      
-      setData(aggregatedData);
-      
-      // Call onDataLoaded callback if provided
-      if (onDataLoaded) {
-        onDataLoaded(aggregatedData);
+      try {
+        const aggregatedData = aggregateDataByTimePeriod(
+          rawData, 
+          timeFilterValue, 
+          xField, 
+          yFields,
+          chartConfig.dataMapping.groupBy ? getFieldFromYAxisConfig(chartConfig.dataMapping.groupBy) : undefined
+        );
+        
+        console.log('ChartRenderer: Time aggregation completed:', {
+          originalDataLength: rawData.length,
+          aggregatedDataLength: aggregatedData.length,
+          timePeriod: timeFilterValue
+        });
+        
+        setData(aggregatedData);
+      } catch (error) {
+        console.error('ChartRenderer: Time aggregation failed:', error);
       }
-    } else {
-      console.log('ChartRenderer: ❌ Time aggregation NOT applied:', {
-        isTimeAggregationEnabled,
-        timeFilterValue,
-        rawDataLength: rawData.length,
-        reason: !isTimeAggregationEnabled ? 'Time aggregation disabled' : 
-                !timeFilterValue ? 'No time filter value' : 
-                !rawData.length ? 'No raw data' : 'Unknown'
-      });
     }
-  }, [rawData, chartConfig, onDataLoaded, externalFilterValues, internalFilterValues]); // Fixed dependency array to properly track filter changes
+  }, [rawData, filterValues['timeFilter'], chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Additional effect to ensure data is processed when rawData first becomes available
   useEffect(() => {
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     const timeFilterValue = filterValues['timeFilter'];
     
-    console.log('=== RAWDATA PROCESSING EFFECT TRIGGERED ===');
-    console.log('Chart:', chartConfig.title);
-    console.log('Time aggregation enabled:', isTimeAggregationEnabled);
-    console.log('Time filter value:', timeFilterValue);
-    console.log('Raw data length:', rawData.length);
-    console.log('Current data length:', data.length);
-    console.log('Should process?:', isTimeAggregationEnabled && timeFilterValue && rawData.length > 0 && data.length !== rawData.length);
-    
-    // Only trigger if we have both rawData and a time filter, and current data is empty or unchanged
-    if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0 && data.length !== rawData.length) {
-      console.log('ChartRenderer: ✅ rawData loaded, applying current filter:', timeFilterValue);
+    // Only trigger if we have both rawData and a time filter, and current data is empty
+    if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0 && data.length === 0) {
+      console.log('ChartRenderer: rawData loaded, applying current filter:', timeFilterValue);
       
       const { xAxis, yAxis } = chartConfig.dataMapping;
       const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
@@ -560,32 +522,22 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         yFields = [getFieldFromYAxisConfig(yAxis)];
       }
       
-      const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
-      console.log('ChartRenderer: ✅ rawData aggregation complete:', {
-        inputLength: rawData.length,
-        outputLength: aggregatedData.length,
-        timePeriod: timeFilterValue
-      });
-      
-      setData(aggregatedData);
-      
-      if (onDataLoaded) {
-        onDataLoaded(aggregatedData);
+      try {
+        const aggregatedData = aggregateDataByTimePeriod(
+          rawData, 
+          timeFilterValue, 
+          xField, 
+          yFields,
+          chartConfig.dataMapping.groupBy ? getFieldFromYAxisConfig(chartConfig.dataMapping.groupBy) : undefined
+        );
+        
+        console.log('ChartRenderer: Initial rawData processing completed');
+        setData(aggregatedData);
+      } catch (error) {
+        console.error('ChartRenderer: Initial rawData processing failed:', error);
       }
-    } else {
-      console.log('ChartRenderer: ❌ rawData processing NOT applied:', {
-        isTimeAggregationEnabled,
-        timeFilterValue,
-        rawDataLength: rawData.length,
-        dataLength: data.length,
-        lengthMatch: data.length === rawData.length,
-        reason: !isTimeAggregationEnabled ? 'Time aggregation disabled' : 
-                !timeFilterValue ? 'No time filter value' : 
-                !rawData.length ? 'No raw data' : 
-                data.length === rawData.length ? 'Data length matches raw data (already processed)' : 'Unknown'
-      });
     }
-  }, [rawData, chartConfig, data.length, onDataLoaded, externalFilterValues, internalFilterValues]); // Fixed dependency array
+  }, [rawData, filterValues['timeFilter'], data.length, chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Sample data to use when API fails
   const getSampleData = (chartType: string, groupByField?: string) => {
