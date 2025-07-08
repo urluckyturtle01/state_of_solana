@@ -1,73 +1,7 @@
 {
   "pageId": "tvl",
   "pageName": "TVL",
-  "chartCount": 3,
-  "lastUpdated": "2025-07-08T09:32:33.972Z",
-  "charts": [
-    {
-      "id": "chart_1748408134780_na95mzp",
-      "title": "DEX TVL",
-      "subtitle": "",
-      "page": "tvl",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json",
-      "apiKey": "6VxvtalvUgsuSnkLIzcoEdI6t2GySCTmClGbKAK1&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "TVL",
-            "type": "line",
-            "unit": "$"
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-28T04:55:34.780Z",
-      "updatedAt": "2025-05-28T04:55:35.084Z"
-    },
-    {
-      "id": "chart_1748408699066_lde0ekk",
-      "title": "DEX TVL Daily",
-      "subtitle": "",
-      "page": "tvl",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json",
-      "apiKey": "QoHzXXunvuLg0rrTWyFTNzmIjIoqY5MJhHo3ltZg&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "tvl",
-        "groupBy": "Program_Type",
-        "yAxisUnit": "$"
-      },
-      "createdAt": "2025-05-28T05:04:59.066Z",
-      "updatedAt": "2025-05-28T05:04:59.250Z"
-    },
-    {
-      "id": "chart_1748408819847_uh1uxtl",
-      "title": "Top Pools by TVL",
-      "subtitle": "",
-      "page": "tvl",
-      "section": "",
-      "chartType": "pie",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13225/results.json",
-      "apiKey": "6rNImjI05B6uxQzhrJcoOkrYN4Upw6oFkN1yqm76&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "pool",
-        "yAxis": "tvl",
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-28T05:06:59.847Z",
-      "updatedAt": "2025-07-04T14:45:01.184Z"
-    }
-  ]
+  "chartCount": 0,
+  "lastUpdated": "2025-07-08T19:14:13.843Z",
+  "charts": []
 }

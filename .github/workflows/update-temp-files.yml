@@ -54,8 +54,23 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add public/temp/chart-data/
-          git commit -m "🤖 Auto-update chart data temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-          git push
+          
+          # Only commit if there are staged changes
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit"
+            exit 0
+          fi
+          
+          git commit -m "🤖 Auto-update chart data temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')" || {
+            echo "Commit failed, likely no changes"
+            exit 0
+          }
+          
+          git push || {
+            echo "Push failed, retrying once..."
+            sleep 2
+            git push
+          }
           
       - name: Log completion
         run: |

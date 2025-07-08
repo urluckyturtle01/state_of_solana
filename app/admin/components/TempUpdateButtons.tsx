@@ -36,16 +36,20 @@ const TempUpdateButtons: React.FC = () => {
       const result = await response.json();
       
       if (result.success) {
+        const message = result.details?.summary ? 
+          `${result.message} (${result.details.summary.totalPages} pages processed)` : 
+          result.message;
+          
         setConfigsStatus({ 
           isUpdating: false, 
-          message: result.message, 
+          message: message, 
           type: 'success' 
         });
         
-        // Auto-clear success message after 5 seconds
+        // Auto-clear success message after 8 seconds
         setTimeout(() => {
           setConfigsStatus({ isUpdating: false, message: '', type: null });
-        }, 5000);
+        }, 8000);
       } else {
         setConfigsStatus({ 
           isUpdating: false, 
@@ -76,16 +80,22 @@ const TempUpdateButtons: React.FC = () => {
       const result = await response.json();
       
       if (result.success) {
+        let message = result.message;
+        if (result.details?.summary) {
+          const s = result.details.summary;
+          message += ` (${s.successfulFetches}/${s.totalCharts} charts, ${s.successRate} success rate)`;
+        }
+        
         setDataStatus({ 
           isUpdating: false, 
-          message: result.message, 
+          message: message, 
           type: 'success' 
         });
         
-        // Auto-clear success message after 5 seconds
+        // Auto-clear success message after 10 seconds for data updates
         setTimeout(() => {
           setDataStatus({ isUpdating: false, message: '', type: null });
-        }, 5000);
+        }, 10000);
       } else {
         setDataStatus({ 
           isUpdating: false, 
@@ -156,7 +166,9 @@ const TempUpdateButtons: React.FC = () => {
       <div className="bg-gray-800/40 rounded-lg border border-gray-800 p-4">
         <h3 className="text-sm font-medium text-gray-300 mb-3">Temp File Updates</h3>
         <p className="text-xs text-gray-500 mb-4">
-          Update chart configurations and data from the API to temp files for faster loading
+          Update chart configurations and data from the API to temp files for faster loading.
+          <br />
+          <span className="text-blue-400">ℹ️ Auto-updates run every 10 minutes via GitHub Actions</span>
         </p>
         
         <div className="flex flex-wrap gap-3">

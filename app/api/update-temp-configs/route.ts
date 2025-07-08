@@ -1,67 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { spawn } from 'child_process';
-import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+
+const execAsync = promisify(exec);
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🚀 Starting chart configs update...');
+    console.log('Manual temp configs update triggered');
     
+    // Run the fetch-charts.js script to update configurations
     const tempDir = path.join(process.cwd(), 'public', 'temp');
     const scriptPath = path.join(tempDir, 'fetch-charts.js');
     
-    return new Promise<NextResponse>((resolve) => {
-      const child = spawn('node', [scriptPath], {
-        cwd: tempDir,
-        stdio: ['pipe', 'pipe', 'pipe']
-      });
-      
-      let output = '';
-      let errorOutput = '';
-      
-      child.stdout.on('data', (data) => {
-        const message = data.toString();
-        output += message;
-        console.log(message);
-      });
-      
-      child.stderr.on('data', (data) => {
-        const message = data.toString();
-        errorOutput += message;
-        console.error(message);
-      });
-      
-      child.on('close', (code) => {
-        if (code === 0) {
-          resolve(NextResponse.json({ 
-            success: true, 
-            message: 'Chart configurations updated successfully',
-            output: output 
-          }));
-        } else {
-          resolve(NextResponse.json({ 
-            success: false, 
-            message: 'Failed to update chart configurations',
-            error: errorOutput,
-            output: output 
-          }, { status: 500 }));
-        }
-      });
-      
-      child.on('error', (error) => {
-        resolve(NextResponse.json({ 
-          success: false, 
-          message: 'Error running script',
-          error: error.message 
-        }, { status: 500 }));
-      });
+    // Execute the script
+    const { stdout, stderr } = await execAsync(`node "${scriptPath}"`, {
+      cwd: tempDir,
+      timeout: 60000 // 60 second timeout
+    });
+    
+    console.log('Script output:', stdout);
+    if (stderr) {
+      console.warn('Script warnings:', stderr);
+    }
+    
+    return NextResponse.json({
+      success: true,
+      message: 'Chart configurations updated successfully',
+      details: {
+        output: stdout,
+        timestamp: new Date().toISOString()
+      }
     });
     
   } catch (error) {
-    console.error('Error updating chart configs:', error);
-    return NextResponse.json({ 
-      success: false, 
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    console.error('Error updating temp configs:', error);
+    
+    return NextResponse.json({
+      success: false,
+      message: 'Failed to update configurations',
+      error: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
 } 

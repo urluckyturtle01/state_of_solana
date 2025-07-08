@@ -1,71 +1,7 @@
 {
   "pageId": "holders-supply",
   "pageName": "Holders & Supply",
-  "chartCount": 3,
-  "lastUpdated": "2025-07-08T09:32:33.986Z",
-  "charts": [
-    {
-      "id": "chart_1748210640957_ullxc4w",
-      "title": "Supply",
-      "subtitle": "Comparing wrapped bitcoin issued by different issuing entities",
-      "page": "holders-supply",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
-      "apiKey": "43oArwpC4KGiIESfKuwvqK7HGOzGGE9nqGSZrLyE",
-      "isStacked": true,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "supply",
-        "groupBy": "symbol"
-      },
-      "createdAt": "2025-05-25T22:04:00.957Z",
-      "updatedAt": "2025-05-25T22:04:01.141Z"
-    },
-    {
-      "id": "chart_1748210765328_0s7ys3a",
-      "title": "Wrapped BTC holders",
-      "subtitle": "Comparing holders of wrapped bitcoin issued by different issuing entities",
-      "page": "holders-supply",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
-      "apiKey": "43oArwpC4KGiIESfKuwvqK7HGOzGGE9nqGSZrLyE",
-      "isStacked": true,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "Holders",
-        "groupBy": "symbol"
-      },
-      "createdAt": "2025-05-25T22:06:05.328Z",
-      "updatedAt": "2025-05-26T12:25:37.384Z"
-    },
-    {
-      "id": "chart_1748210879501_pobqbm1",
-      "title": "Average holding per wallet",
-      "subtitle": "Includes holdings in programs",
-      "page": "holders-supply",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json",
-      "apiKey": "loYepWvnDGaUK1DWbQua395wQazlRRdiz5maqYVL",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "avg_holding",
-            "type": "line",
-            "unit": "$"
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-25T22:07:59.501Z",
-      "updatedAt": "2025-05-26T13:35:55.865Z"
-    }
-  ]
+  "chartCount": 0,
+  "lastUpdated": "2025-07-08T19:14:13.850Z",
+  "charts": []
 }
