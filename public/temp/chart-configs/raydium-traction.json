@@ -1,7 +1,184 @@
 {
   "pageId": "raydium-traction",
   "pageName": "Traction",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.257Z",
-  "charts": []
+  "chartCount": 6,
+  "lastUpdated": "2025-07-09T05:40:10.921Z",
+  "charts": [
+    {
+      "id": "chart_1748957184547_qexfnue",
+      "title": "Volume by product",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13497/results.json",
+      "apiKey": "OJTxBIHf4iDQiv87sKIAjKSbtF86WqOnsz7ozo1r&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "product"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T13:26:24.546Z",
+      "updatedAt": "2025-07-07T13:31:58.727Z"
+    },
+    {
+      "id": "chart_1748957917547_cucbb77",
+      "title": "Trades by product",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13497/results.json",
+      "apiKey": "OJTxBIHf4iDQiv87sKIAjKSbtF86WqOnsz7ozo1r&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": "product"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T13:38:37.547Z",
+      "updatedAt": "2025-07-07T13:32:36.693Z"
+    },
+    {
+      "id": "chart_1749026720265_8m4ki1m",
+      "title": "Volume by pool type",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13499/results",
+      "apiKey": "D8FIAv2MtjpTRuW3yRRrT1hA1GtHU3awKfomY6gm&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "pool_type"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-04T08:45:20.264Z",
+      "updatedAt": "2025-07-07T13:33:26.420Z"
+    },
+    {
+      "id": "chart_1749027349926_782ragi",
+      "title": "Monthly active and new wallets",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13502/results.json",
+      "apiKey": "QvrJRDwSDZAda7LMTVf0ZUpht419hKvSo0J6ecIL",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": [
+          {
+            "field": "Active_Wallets",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "New_Wallets",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-04T08:55:49.926Z",
+      "updatedAt": "2025-06-05T12:14:37.080Z"
+    },
+    {
+      "id": "chart_1749036077122_njptzsd",
+      "title": "Volume by pool age",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13503/results.json",
+      "apiKey": "iJn7Q3dORHSDO3RT9KWO6mmPBXrMXH0A6oaHtbTA&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "pool_age",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-04T11:21:17.122Z",
+      "updatedAt": "2025-07-07T13:34:11.214Z"
+    },
+    {
+      "id": "chart_1749036170707_tloqban",
+      "title": "Trades by lifetime trade volume",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13504/results.json",
+      "apiKey": "0IJ7uwyvWtfjLhT1SfEy5wkTJiU9DeCNkTAdxWzA&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "trades",
+        "groupBy": "lifetime_volume_usd"
+      },
+      "createdAt": "2025-06-04T11:22:50.707Z",
+      "updatedAt": "2025-07-07T13:34:49.493Z"
+    }
+  ]
 }

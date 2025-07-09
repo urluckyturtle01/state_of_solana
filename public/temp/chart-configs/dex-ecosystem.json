@@ -1,7 +1,151 @@
 {
   "pageId": "dex-ecosystem",
   "pageName": "DEX Ecosystem",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.253Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.915Z",
+  "charts": [
+    {
+      "id": "chart_1748000370222_qb6a46o",
+      "title": "Spot DEX revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13171/results.json",
+      "apiKey": "rEzuwlk0RAE0NejUfX3vVcKmiO6ocehFgsBjq5qK&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T11:39:30.222Z",
+      "updatedAt": "2025-07-08T09:32:13.145Z"
+    },
+    {
+      "id": "chart_1748000467485_5uuvy1q",
+      "title": "Memecoin launchpad revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13169/results.json",
+      "apiKey": "5csRuDS90HOdVaNWFua3wRc8e5gYyePNuHGcshkv&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T11:41:07.485Z",
+      "updatedAt": "2025-07-08T09:32:49.086Z"
+    },
+    {
+      "id": "chart_1748001442855_u9uy7lm",
+      "title": "Memecoin trading platform revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13182/results.json",
+      "apiKey": "TKHcPPIIfclxuUcvLvQ43vVAw6OKglHDf469m5py&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T11:57:22.855Z",
+      "updatedAt": "2025-07-08T09:33:37.295Z"
+    },
+    {
+      "id": "chart_1748001498518_6d5arhi",
+      "title": "Telegram bot revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13170/results.json",
+      "apiKey": "oL930Rxt1WLfufIUXUyz6QRfjXTUInkqS5foPV0j&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-05-23T11:58:18.518Z",
+      "updatedAt": "2025-07-08T09:34:14.692Z"
+    }
+  ]
 }

@@ -1,7 +1,87 @@
 {
   "pageId": "dex-activity",
   "pageName": "DEX Activity",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.254Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.918Z",
+  "charts": [
+    {
+      "id": "chart_1748259147791_23e706f",
+      "title": "Wrapped BTC trade volume",
+      "subtitle": "",
+      "page": "dex-activity",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13427/results.json",
+      "apiKey": "CAdciqVpawenBLQE4T4l7YeVMauInYbZfMdfbqyF",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-26T11:32:27.791Z",
+      "updatedAt": "2025-06-24T12:35:33.095Z"
+    },
+    {
+      "id": "chart_1748259383072_6lmaf4b",
+      "title": "Wrapped BTC trades",
+      "subtitle": "",
+      "page": "dex-activity",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13421/results.json",
+      "apiKey": "YXezn6KnJfoKgGceI87sjDNIIe0DKKCf9pLZW6mx",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "trades",
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-26T11:36:23.072Z",
+      "updatedAt": "2025-05-26T13:15:33.141Z"
+    },
+    {
+      "id": "chart_1748259479329_di12tbr",
+      "title": "Wrapped BTC trade volume - by pool type",
+      "subtitle": "",
+      "page": "dex-activity",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13424/results.json",
+      "apiKey": "VxD3rsDiDjTNkXDB8NGu007FkRoyYyFrOxSW9gNT&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "pair"
+      },
+      "createdAt": "2025-05-26T11:37:59.329Z",
+      "updatedAt": "2025-06-24T12:40:19.651Z"
+    },
+    {
+      "id": "chart_1748259581838_gpjdfz3",
+      "title": "Total wrapped BTC trade volume - by pool type",
+      "subtitle": "last 30 days",
+      "page": "dex-activity",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13422/results.json",
+      "apiKey": "TnJOTkKLkqBU3cEoK8uQtfOyzd7g5Cgcpxymu6oV",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "pair",
+        "yAxis": "volume",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T11:39:41.838Z",
+      "updatedAt": "2025-05-26T13:17:38.359Z"
+    }
+  ]
 }

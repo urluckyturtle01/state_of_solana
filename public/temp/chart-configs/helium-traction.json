@@ -1,7 +1,107 @@
 {
   "pageId": "helium-traction",
   "pageName": "Traction",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.259Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.924Z",
+  "charts": [
+    {
+      "id": "chart_1749489327623_av6q9bs",
+      "title": "IOT data transfer by payload size",
+      "subtitle": "",
+      "page": "helium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/helium/api/queries/7454/results.json",
+      "apiKey": "bu9Ju2wL8TvslcUq81jL7r1QiHuIZjyPYxJb449V&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "count",
+        "groupBy": "payloadsize_group"
+      },
+      "createdAt": "2025-06-09T17:15:27.623Z",
+      "updatedAt": "2025-06-09T17:15:27.935Z"
+    },
+    {
+      "id": "chart_1749490010662_rac18jk",
+      "title": "Mobile data transfer",
+      "subtitle": "",
+      "page": "helium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/helium/api/queries/13047/results.json",
+      "apiKey": "SEtpKF394scvhuebroEyfoZTrmSnbWGj0zJxXVZP&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "count",
+        "groupBy": "payloadsize_group"
+      },
+      "createdAt": "2025-06-09T17:26:50.662Z",
+      "updatedAt": "2025-06-09T17:26:52.318Z"
+    },
+    {
+      "id": "chart_1749491156056_vsudxpt",
+      "title": "mobile subscriber nft",
+      "subtitle": "",
+      "page": "helium-traction",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/helium/api/queries/6601/results.json",
+      "apiKey": "n0aPO2doGI9bSdO1xWYRaM4bq3NkYU9ZO8TfxULy&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_subscribers",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": false
+          },
+          {
+            "field": "cumulative_subscriber",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-09T17:45:56.056Z",
+      "updatedAt": "2025-06-09T17:45:57.608Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "daily_subscribers"
+        ],
+        "rightAxisFields": [
+          "cumulative_subscriber"
+        ]
+      }
+    },
+    {
+      "id": "chart_1749492330099_0nkq38d",
+      "title": "DC Burned for network usage",
+      "subtitle": "",
+      "page": "helium-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json",
+      "apiKey": "ylHSfx4LVFXoOD0gR0FF4z2xhYqzoI6gfpBaFRjY&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "dc_burned",
+        "groupBy": "subdao"
+      },
+      "createdAt": "2025-06-09T18:05:30.099Z",
+      "updatedAt": "2025-06-09T18:05:30.485Z"
+    }
+  ]
 }

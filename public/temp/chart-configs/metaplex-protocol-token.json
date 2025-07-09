@@ -1,7 +1,103 @@
 {
   "pageId": "metaplex-protocol-token",
   "pageName": "Protocol Token",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.259Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.923Z",
+  "charts": [
+    {
+      "id": "chart_1749629492886_6cc1t7a",
+      "title": "Daily Marketcap",
+      "subtitle": "",
+      "page": "metaplex-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json",
+      "apiKey": "vo8bOPRnGz1CHrCu8KPlvXh6e1La8PXva3pXKtje&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Morketcap",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T08:11:32.886Z",
+      "updatedAt": "2025-06-11T08:11:33.112Z"
+    },
+    {
+      "id": "chart_1749629612694_c2iukxs",
+      "title": "Monthly Dex Volume",
+      "subtitle": "MPLX Swap",
+      "page": "metaplex-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13609/results.json",
+      "apiKey": "gu3I0jTNsJVl5q2Qc0QtUAykvNhew8bXJK89cVMY&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Dex_Volume",
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-11T08:13:32.694Z",
+      "updatedAt": "2025-06-20T14:21:44.386Z"
+    },
+    {
+      "id": "chart_1749629746190_gdyf5y5",
+      "title": "Monthly CEX MPLX Holdings",
+      "subtitle": "",
+      "page": "metaplex-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13610/results.json",
+      "apiKey": "5sgaSlVerdNwVFsc62t98b6eI907M6wBGb43Y6oN&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Holdings",
+        "groupBy": "cex_name",
+        "yAxisUnit": "MPLX"
+      },
+      "createdAt": "2025-06-11T08:15:46.190Z",
+      "updatedAt": "2025-06-11T08:15:46.512Z"
+    },
+    {
+      "id": "chart_1749629854397_2ixs5y6",
+      "title": "Monthly MPLX Dex Pool TVL",
+      "subtitle": "",
+      "page": "metaplex-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13611/results.json",
+      "apiKey": "aIw64EF9JMyA16CNFylrpClYPKYGM3DQyl6Frf4S &max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Amount_in_Pool",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-11T08:17:34.397Z",
+      "updatedAt": "2025-06-11T08:17:34.711Z"
+    }
+  ]
 }

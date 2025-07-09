@@ -1,7 +1,64 @@
 {
   "pageId": "orca-competetive-landscape",
   "pageName": "Competetive Landscape",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.260Z",
-  "charts": []
+  "chartCount": 2,
+  "lastUpdated": "2025-07-09T05:40:10.924Z",
+  "charts": [
+    {
+      "id": "chart_1749889118158_75i3bsc",
+      "title": "Monthly DEX Volume",
+      "subtitle": "",
+      "page": "orca-competetive-landscape",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json",
+      "apiKey": "sU79XR6BdxIgJqw2YLwSkKRJbu0FXjdGqv3imwsL&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume",
+        "groupBy": "Dex"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-14T08:18:38.158Z",
+      "updatedAt": "2025-06-23T13:05:40.421Z"
+    },
+    {
+      "id": "chart_1749889599744_3pdx331",
+      "title": "Monthly Protocol Revenue",
+      "subtitle": "",
+      "page": "orca-competetive-landscape",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13572/results.json",
+      "apiKey": "fHHviCSS1CYRIHkosGuB7JXjDlgpJUsL2NSRv5n8&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Protocol_fees",
+        "groupBy": "Project"
+      },
+      "additionalOptions": {},
+      "createdAt": "2025-06-14T08:26:39.744Z",
+      "updatedAt": "2025-07-03T21:11:50.208Z"
+    }
+  ]
 }

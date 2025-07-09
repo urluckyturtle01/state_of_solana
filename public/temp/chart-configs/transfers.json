@@ -1,7 +1,124 @@
 {
   "pageId": "transfers",
   "pageName": "Transfers",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.254Z",
-  "charts": []
+  "chartCount": 6,
+  "lastUpdated": "2025-07-09T05:40:10.918Z",
+  "charts": [
+    {
+      "id": "chart_1748251674978_r05i4jl",
+      "title": "Wrapped BTC transfer volume",
+      "subtitle": "",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:27:54.978Z",
+      "updatedAt": "2025-05-26T13:04:01.203Z"
+    },
+    {
+      "id": "chart_1748251833338_2k9v1gg",
+      "title": "Wrapped BTC transfers",
+      "subtitle": "",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "transfers",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-26T09:30:33.338Z",
+      "updatedAt": "2025-05-26T13:04:27.846Z"
+    },
+    {
+      "id": "chart_1748251963887_pmu80vk",
+      "title": "Wrapped BTC p2p transfer volume",
+      "subtitle": "",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_volume_usd",
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:32:43.887Z",
+      "updatedAt": "2025-05-26T13:04:59.121Z"
+    },
+    {
+      "id": "chart_1748255216899_bb5j7rv",
+      "title": "Wrapped BTC p2p transfers",
+      "subtitle": "",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_transfers",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-26T10:26:56.899Z",
+      "updatedAt": "2025-05-26T13:05:32.073Z"
+    },
+    {
+      "id": "chart_1748257268188_20pn6ps",
+      "title": "P2P transfers' fee payers",
+      "subtitle": "Unique signers who paid fees for wrapped BTC p2p transfer aggregated issuer wise",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_fee_payer",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-26T11:01:08.188Z",
+      "updatedAt": "2025-05-26T13:06:44.385Z"
+    },
+    {
+      "id": "chart_1748257815916_5huisy1",
+      "title": "All tranfers' fee payers",
+      "subtitle": "Unique signers who paid fees for all wrapped BTC transfers aggregated issuer wise",
+      "page": "transfers",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "fee_payer",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-26T11:10:15.916Z",
+      "updatedAt": "2025-05-26T13:07:32.431Z"
+    }
+  ]
 }

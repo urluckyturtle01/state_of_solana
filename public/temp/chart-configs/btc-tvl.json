@@ -1,7 +1,92 @@
 {
   "pageId": "btc-tvl",
   "pageName": "TVL",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-09T05:25:53.254Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.918Z",
+  "charts": [
+    {
+      "id": "chart_1748250669223_apna3k8",
+      "title": "Wrapped BTC TVL in DEXs",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13431/results.json",
+      "apiKey": "kyxmqvSLlaN5Rswz4SM0kbYAymmOdFTHpknUgPaZ&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:11:09.223Z",
+      "updatedAt": "2025-07-08T14:35:45.628Z"
+    },
+    {
+      "id": "chart_1748251224754_7w77xp9",
+      "title": "Wrapped BTC TVL by DEX",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13432/results.json",
+      "apiKey": "7IQVHzE8vTPiMhd8jaLoAvqGqUHwqGJmDNgDeI9h&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "Dex",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:20:24.754Z",
+      "updatedAt": "2025-07-08T14:36:13.522Z"
+    },
+    {
+      "id": "chart_1748251446236_de7toe1",
+      "title": "Wrapped BTC TVL by Perpetual",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13434/results.json",
+      "apiKey": "eIabVeL4E9CxitqGLzbghZvsqzuBZLk194lGxB3Y&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "protocol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:24:06.236Z",
+      "updatedAt": "2025-07-08T14:36:40.359Z"
+    },
+    {
+      "id": "chart_1748251566607_7vp9swz",
+      "title": "Wrapped BTC TVL in Perpetuals",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13433/results.json",
+      "apiKey": "krwE97KvHGq03PALdzh4h8JgrkWqxtu7tF8zZkZq&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-26T09:26:06.607Z",
+      "updatedAt": "2025-07-08T14:37:00.343Z"
+    }
+  ]
 }
