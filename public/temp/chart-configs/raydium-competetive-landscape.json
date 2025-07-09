@@ -2,7 +2,7 @@
   "pageId": "raydium-competetive-landscape",
   "pageName": "Competetive Landscape",
   "chartCount": 5,
-  "lastUpdated": "2025-07-09T13:03:50.586Z",
+  "lastUpdated": "2025-07-09T14:45:20.300Z",
   "charts": [
     {
       "id": "chart_1749048844645_v08psl4",
@@ -82,7 +82,7 @@
     },
     {
       "id": "chart_1749196002241_89l5ku7",
-      "title": "Monthly protocol revenue",
+      "title": "Protocol revenue",
       "subtitle": "",
       "page": "raydium-competetive-landscape",
       "section": "",
@@ -95,10 +95,10 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "Protocol_fees",
-        "groupBy": "Project"
+        "groupBy": "Project",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -106,14 +106,14 @@
               "D",
               "W",
               "M",
-              "Q",
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-06T07:46:42.241Z",
-      "updatedAt": "2025-06-20T13:40:26.156Z"
+      "updatedAt": "2025-07-09T14:01:40.473Z"
     },
     {
       "id": "chart_1749196307652_196t7f0",
