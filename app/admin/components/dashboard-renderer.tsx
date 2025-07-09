@@ -11,7 +11,7 @@ import { formatNumber } from '../../utils/formatters';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '../../components/shared/filters/DisplayModeFilter';
-import { useChartScreenshot } from '../../components/shared';
+
 
 // Helper function to extract field name from YAxisConfig or use string directly
 function getFieldName(field: string | YAxisConfig): string {
@@ -651,8 +651,7 @@ export default function DashboardRenderer({
     return batchFetchChartData(charts, filters, enableCaching);
   }, [enableCaching]);
   
-  // Initialize screenshot functionality
-  const { captureScreenshot } = useChartScreenshot();
+  // Screenshot functionality now handled directly in ChartCard
   
   // Helper function to convert data to CSV format
   const convertDataToCsv = (data: any[], chart: ChartConfig, timeFilter?: string, displayMode?: string): string => {
@@ -1111,24 +1110,7 @@ export default function DashboardRenderer({
     updateChartState(chartId, { expanded: !isCurrentlyExpanded });
   };
 
-  // Handle screenshot capture for chart using the new ChartScreenshot component
-  const handleChartScreenshot = async (chart: ChartConfig) => {
-    try {
-      // Set loading state
-      updateChartState(chart.id, { screenshotting: true });
-      
-      // Use the screenshot capture hook
-      const cardElementId = `chart-card-${chart.id}`;
-      await captureScreenshot(chart, cardElementId);
-      
-    } catch (error) {
-      console.error('Error capturing screenshot:', error);
-      // Error handling is already done in the hook
-    } finally {
-      // Clear loading state
-      updateChartState(chart.id, { screenshotting: false });
-    }
-  };
+  // Screenshot functionality now handled directly in ChartCard
 
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
@@ -1951,9 +1933,7 @@ export default function DashboardRenderer({
           accentColor="blue"
           onExpandClick={() => toggleChartExpanded(chart.id)}
           onDownloadClick={() => downloadCSV(chart)}
-          onScreenshotClick={() => handleChartScreenshot(chart)}
           isDownloading={downloadingCharts[chart.id]}
-          isScreenshotting={screenshottingCharts[chart.id]}
           isLoading={false}
           legendWidth="1/5"
           className="md:h-[500px] h-auto"

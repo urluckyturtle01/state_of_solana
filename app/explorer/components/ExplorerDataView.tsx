@@ -17,7 +17,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { useDashboards } from '@/app/contexts/DashboardContext';
 import { getColorByIndex } from '@/app/utils/chartColors';
 import { formatNumber } from '@/app/utils/formatters';
-import { useChartScreenshot } from '@/app/components/shared';
+
 import { PencilIcon } from '@heroicons/react/24/outline';
 
 // API Configuration interface
@@ -129,11 +129,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
   const loadingColumns = Object.values(columnData).filter(col => col.loading);
   const errorColumns = Object.values(columnData).filter(col => col.error);
 
-  // Screenshot state for charts
-  const [screenshottingCharts, setScreenshottingCharts] = useState<Record<string, boolean>>({});
-  
-  // Initialize screenshot functionality
-  const { captureScreenshot } = useChartScreenshot();
+  // Screenshot functionality now handled directly in ChartCard
 
   // Generate legends for a chart based on its data and configuration
   const updateLegends = (chartId: string, data: any[], configuration: any) => {
@@ -453,30 +449,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
     });
   };
 
-  // Handle chart screenshot
-  const handleChartScreenshot = async (visualization: SavedVisualization) => {
-    try {
-      // Set loading state
-      setScreenshottingCharts(prev => ({ ...prev, [visualization.id]: true }));
-      
-      // Create a chart config object for the screenshot
-      const chartConfig = {
-        ...visualization.chartConfig,
-        id: visualization.id,
-        title: visualization.name
-      };
-      
-      // Use the screenshot capture hook
-      const cardElementId = `chart-card-${visualization.id}`;
-      await captureScreenshot(chartConfig, cardElementId);
-      
-    } catch (error) {
-      console.error('Error capturing screenshot:', error);
-    } finally {
-      // Clear loading state
-      setScreenshottingCharts(prev => ({ ...prev, [visualization.id]: false }));
-    }
-  };
+  // Screenshot functionality now handled directly in ChartCard
 
   // Check if a chart is a stacked chart
   const isStackedChart = (configuration: any) => {
@@ -820,8 +793,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
                 description={visualization.description || `${visualization.configuration.chartType === 'dual' ? 'Dual Axis' : visualization.configuration.chartType === 'stacked' ? 'Stacked ' : ''}Chart`}
                 className="h-[500px]"
                 onExpandClick={() => {}}
-                onScreenshotClick={() => handleChartScreenshot(visualization)}
-                isScreenshotting={screenshottingCharts[visualization.id]}
+
                 filterBar={
                   isStackedChart(visualization.configuration) ? (
                     <div className="flex flex-wrap gap-3 items-center">

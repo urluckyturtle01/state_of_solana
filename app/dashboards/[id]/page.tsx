@@ -16,7 +16,7 @@ import { getColorByIndex } from "@/app/utils/chartColors";
 import { formatNumber } from "@/app/utils/formatters";
 import DisplayModeFilter, { DisplayMode } from "@/app/components/shared/filters/DisplayModeFilter";
 import React from "react";
-import { useChartScreenshot } from "@/app/components/shared";
+
 
 // Simple drag and drop interface
 interface DragState {
@@ -119,8 +119,7 @@ export default function DashboardPage() {
     textbox: DashboardTextbox | null;
   }>({ isOpen: false, textbox: null });
 
-  // Initialize screenshot functionality
-  const { captureScreenshot } = useChartScreenshot();
+  // Screenshot functionality now handled directly in ChartCard
 
   const dashboard = useMemo(() => {
     console.log('🔍 Dashboard useMemo triggered, looking for dashboard:', dashboardId);
@@ -499,32 +498,7 @@ export default function DashboardPage() {
     setExpandedChart(null);
   };
 
-  // Handle chart screenshot
-  const handleChartScreenshot = async (chart: SavedChart) => {
-    if (isEditMode) return; // Don't allow screenshots in edit mode
-    
-    try {
-      // Set loading state
-      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: true }));
-      
-      // Create a chart config object for the screenshot
-      const screenshotChartConfig = {
-        ...chart.chartConfig,
-        id: chart.id,
-        title: chart.name
-      };
-      
-      // Use the screenshot capture hook
-      const cardElementId = `chart-card-${chart.id}`;
-      await captureScreenshot(screenshotChartConfig, cardElementId);
-      
-    } catch (error) {
-      console.error('Error capturing screenshot:', error);
-    } finally {
-      // Clear loading state
-      setScreenshottingCharts(prev => ({ ...prev, [chart.id]: false }));
-    }
-  };
+  // Screenshot functionality now handled directly in ChartCard
 
   // Check if a chart is a stacked chart
   const isStackedChart = (chart: SavedChart) => {
@@ -654,9 +628,7 @@ export default function DashboardPage() {
                   className="h-[520px]"
                   id={`chart-card-${item.id}`}
                   onExpandClick={() => handleExpandChart(item.id)}
-                  onScreenshotClick={() => handleChartScreenshot(item)}
                   onDeleteClick={() => handleDeleteChart(item.id)}
-                  isScreenshotting={screenshottingCharts[item.id]}
                   isEditMode={isEditMode}
                   dragHandleProps={{}}
                   filterBar={

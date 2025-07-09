@@ -11,7 +11,7 @@ import { ChartConfig, ChartType, YAxisConfig } from '@/app/admin/types';
 import { getColorByIndex } from '@/app/utils/chartColors';
 import { formatNumber } from '@/app/utils/formatters';
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
-import { useChartScreenshot } from '@/app/components/shared';
+
 
 interface VisualizationModalProps {
   isOpen: boolean;
@@ -145,11 +145,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
   // Expand state for chart
   const [isChartExpanded, setIsChartExpanded] = useState(false);
 
-  // Screenshot state for chart
-  const [isScreenshotting, setIsScreenshotting] = useState(false);
-
-  // Initialize screenshot functionality
-  const { captureScreenshot } = useChartScreenshot();
+  // Screenshot functionality now handled directly in ChartCard
 
   // Get available columns from joined data
   const availableColumns = useMemo(() => {
@@ -762,30 +758,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     setIsChartExpanded(false);
   };
 
-  // Handle chart screenshot
-  const handleChartScreenshot = async () => {
-    try {
-      // Set loading state
-      setIsScreenshotting(true);
-      
-      // Create a chart config object for the screenshot
-      const screenshotChartConfig = {
-        ...chartConfig,
-        id: 'preview-chart',
-        title: configuration.name
-      };
-      
-      // Use the screenshot capture hook
-      const cardElementId = 'preview-chart-card';
-      await captureScreenshot(screenshotChartConfig, cardElementId);
-      
-    } catch (error) {
-      console.error('Error capturing screenshot:', error);
-    } finally {
-      // Clear loading state
-      setIsScreenshotting(false);
-    }
-  };
+  // Screenshot functionality now handled directly in ChartCard
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -1114,8 +1087,6 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
                   className="h-full"
                   id="preview-chart-card"
                   onExpandClick={handleExpandChart}
-                  onScreenshotClick={handleChartScreenshot}
-                  isScreenshotting={isScreenshotting}
                   filterBar={
                     isStackedChart() ? (
                       <div className="flex flex-wrap gap-3 items-center">
