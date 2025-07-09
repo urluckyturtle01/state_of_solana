@@ -75,7 +75,7 @@ function shouldRenderAsLine(field: string | YAxisConfig): boolean {
 function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
   // Get the unit symbol (use defaultUnit as fallback)
   const unitSymbol = unit || defaultUnit || '';
-  const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+  const isUnitPrefix = unitSymbol === '$'; // Only $ goes at the beginning, all other units go at the end
   
   // Format with appropriate scale
   let formattedValue: string;
@@ -283,14 +283,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const xKey = typeof xField === 'string' ? xField : xField[0];
   
   // Extract data for the chart
-  const { chartData, fields, fieldColors, fieldTypes } = useMemo(() => {
+  const { chartData, fields, fieldColors, fieldTypes, fieldUnits } = useMemo(() => {
     // Use appropriate filtered data depending on context
     const currentData = isExpanded
       ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
       : (isBrushActive && filteredData.length > 0 ? filteredData : data);
     
     if (!currentData || currentData.length === 0) {
-      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {} };
+      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {}, fieldUnits: {} };
     }
 
     // Use external color map if available
@@ -320,168 +320,190 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     // Check if groupBy is used
     const groupByField = chartConfig.dataMapping.groupBy;
     
-    if (groupByField && groupByField !== '') {
-      // Process data with groupBy
-      const groupedByX: Record<string, any> = {};
-      const uniqueGroups = new Set<string>();
-      
-      // Collect all unique x-values and group values
-      processedData.forEach(item => {
-        const xValue = item[xKey];
-        const groupValue = item[groupByField]?.toString() || 'Unknown';
+          if (groupByField && groupByField !== '') {
+        // Process data with groupBy
+        const groupedByX: Record<string, any> = {};
+        const uniqueGroups = new Set<string>();
         
-        // Store unique groups
-        uniqueGroups.add(groupValue);
+        // Collect all unique x-values and group values
+        processedData.forEach(item => {
+          const xValue = item[xKey];
+          const groupValue = item[groupByField]?.toString() || 'Unknown';
+          
+          // Store unique groups
+          uniqueGroups.add(groupValue);
+          
+          // Initialize x-value group if needed
+          if (!groupedByX[xValue]) {
+            groupedByX[xValue] = {};
+          }
+          
+          // For single y-field with groupBy, store the value for each group
+          if (typeof yField === 'string') {
+            groupedByX[xValue][groupValue] = Number(item[yField]) || 0;
+          } else if (Array.isArray(yField) && yField.length === 1) {
+            // For array with single y-field
+            const singleField = typeof yField[0] === 'string' ? yField[0] : yField[0].field;
+            groupedByX[xValue][groupValue] = Number(item[singleField]) || 0;
+          } else {
+            // For multiple y-fields with groupBy, store all field values
+            Array.isArray(yField) && yField.forEach(field => {
+              const fieldName = typeof field === 'string' ? field : field.field;
+              if (!groupedByX[xValue][fieldName]) {
+                groupedByX[xValue][fieldName] = {};
+              }
+              groupedByX[xValue][fieldName][groupValue] = Number(item[fieldName]) || 0;
+            });
+          }
+        });
         
-        // Initialize x-value group if needed
-        if (!groupedByX[xValue]) {
-          groupedByX[xValue] = {};
-        }
+        // Transform to array format
+        const uniqueGroupsArray = Array.from(uniqueGroups);
         
-        // For single y-field with groupBy, store the value for each group
-        if (typeof yField === 'string') {
-          groupedByX[xValue][groupValue] = Number(item[yField]) || 0;
-        } else if (Array.isArray(yField) && yField.length === 1) {
-          // For array with single y-field
-          const singleField = typeof yField[0] === 'string' ? yField[0] : yField[0].field;
-          groupedByX[xValue][groupValue] = Number(item[singleField]) || 0;
-        } else {
-          // For multiple y-fields with groupBy, store all field values
+        if (typeof yField === 'string' || (Array.isArray(yField) && yField.length === 1)) {
+          // For single y-field with groupBy, each group becomes a field
+          const resultFields = uniqueGroupsArray;
+          const resultData = Object.entries(groupedByX).map(([xVal, groups]) => {
+            const entry: any = { [xKey]: xVal };
+            uniqueGroupsArray.forEach(group => {
+              entry[group] = (groups as any)[group] || 0;
+            });
+            return entry;
+          });
+          
+          // Get the original field configuration to preserve unit and type
+          let originalFieldConfig: YAxisConfig | string;
+          let originalFieldType: 'bar' | 'line';
+          let originalFieldUnit: string | undefined;
+          
+          if (typeof yField === 'string') {
+            // If yField is a string, use the chart's default type (bar)
+            originalFieldConfig = yField;
+            originalFieldType = 'bar';
+            originalFieldUnit = undefined;
+          } else if (Array.isArray(yField) && yField.length === 1) {
+            // For a single field in an array, use its specified type and unit
+            originalFieldConfig = yField[0];
+            originalFieldType = typeof originalFieldConfig === 'string' ? 'bar' : originalFieldConfig.type;
+            originalFieldUnit = typeof originalFieldConfig === 'string' ? undefined : originalFieldConfig.unit;
+            
+            // Log the determined type for debugging
+            console.log('GroupBy: Using field type and unit for all groups:', originalFieldType, originalFieldUnit);
+          } else {
+            // Fallback to bar if structure is unexpected
+            originalFieldConfig = yField[0] || '';
+            originalFieldType = 'bar';
+            originalFieldUnit = undefined;
+          }
+          
+          // Apply the same type to all group-based series
+          const resultFieldTypes: Record<string, 'bar' | 'line'> = {};  
+          uniqueGroupsArray.forEach(group => {
+            resultFieldTypes[group] = originalFieldType;
+          });
+          
+          // Create unit mapping for all group-based fields
+          const resultFieldUnits: Record<string, string | undefined> = {};
+          uniqueGroupsArray.forEach(group => {
+            resultFieldUnits[group] = originalFieldUnit;
+          });
+          
+          // Assign colors to each field
+          const resultColors: Record<string, string> = {};
+          resultFields.forEach((field, index) => {
+            resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
+          });
+          
+          return { 
+            chartData: resultData,
+            fields: resultFields,
+            fieldColors: resultColors,
+            fieldTypes: resultFieldTypes,
+            fieldUnits: resultFieldUnits
+          };
+              } else {
+          // For multiple y-fields with groupBy, combine field and group
+          const combinedFields: string[] = [];
+          const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
+          const resultFieldUnits: Record<string, string | undefined> = {};
+          
           Array.isArray(yField) && yField.forEach(field => {
             const fieldName = typeof field === 'string' ? field : field.field;
-            if (!groupedByX[xValue][fieldName]) {
-              groupedByX[xValue][fieldName] = {};
-            }
-            groupedByX[xValue][fieldName][groupValue] = Number(item[fieldName]) || 0;
+            const fieldType = typeof field === 'string' ? 'bar' : field.type;
+            const fieldUnit = typeof field === 'string' ? undefined : field.unit;
+            
+            uniqueGroupsArray.forEach(group => {
+              const combinedField = `${fieldName}_${group}`;
+              combinedFields.push(combinedField);
+              resultFieldTypes[combinedField] = fieldType;
+              resultFieldUnits[combinedField] = fieldUnit;
+            });
           });
-        }
-      });
-      
-      // Transform to array format
-      const uniqueGroupsArray = Array.from(uniqueGroups);
-      
-      if (typeof yField === 'string' || (Array.isArray(yField) && yField.length === 1)) {
-        // For single y-field with groupBy, each group becomes a field
-        const resultFields = uniqueGroupsArray;
-        const resultData = Object.entries(groupedByX).map(([xVal, groups]) => {
-          const entry: any = { [xKey]: xVal };
-          uniqueGroupsArray.forEach(group => {
-            entry[group] = (groups as any)[group] || 0;
-          });
-          return entry;
-        });
-        
-        // Determine the field type to use for all groups
-        let originalFieldType: 'bar' | 'line';
-        
-        if (typeof yField === 'string') {
-          // If yField is a string, use the chart's default type (bar)
-          originalFieldType = 'bar';
-        } else if (Array.isArray(yField) && yField.length === 1) {
-          // For a single field in an array, use its specified type
-          const singleField = yField[0];
-          originalFieldType = typeof singleField === 'string' ? 'bar' : singleField.type;
           
-          // Log the determined type for debugging
-          console.log('GroupBy: Using field type for all groups:', originalFieldType);
+          const resultData = Object.entries(groupedByX).map(([xVal, fieldGroups]) => {
+            const entry: any = { [xKey]: xVal };
+            
+            Array.isArray(yField) && yField.forEach(field => {
+              const fieldName = typeof field === 'string' ? field : field.field;
+              
+              uniqueGroupsArray.forEach(group => {
+                const combinedField = `${fieldName}_${group}`;
+                entry[combinedField] = ((fieldGroups as any)[fieldName]?.[group]) || 0;
+              });
+            });
+            
+            return entry;
+          });
+          
+          // Assign colors to each field
+          const resultColors: Record<string, string> = {};
+          combinedFields.forEach((field, index) => {
+            resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
+          });
+          
+          return { 
+            chartData: resultData,
+            fields: combinedFields,
+            fieldColors: resultColors,
+            fieldTypes: resultFieldTypes,
+            fieldUnits: resultFieldUnits
+          };
+        }
+          } else {
+        // Standard processing without groupBy
+        let resultFields: string[] = [];
+        const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
+        const resultFieldUnits: Record<string, string | undefined> = {};
+        
+        if (Array.isArray(yField)) {
+          resultFields = yField.map(field => getYAxisField(field));
+          
+          // Create mapping of field types and units
+          yField.forEach(field => {
+            const fieldName = getYAxisField(field);
+            resultFieldTypes[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
+            resultFieldUnits[fieldName] = typeof field === 'string' ? undefined : (field as YAxisConfig).unit;
+          });
         } else {
-          // Fallback to bar if structure is unexpected
-          originalFieldType = 'bar';
+          resultFields = [getYAxisField(yField)];
+          resultFieldTypes[getYAxisField(yField)] = typeof yField === 'string' ? 'bar' : (yField as YAxisConfig).type;
+          resultFieldUnits[getYAxisField(yField)] = typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit;
         }
         
-        // Apply the same type to all group-based series
-        const resultFieldTypes: Record<string, 'bar' | 'line'> = {};  
-        uniqueGroupsArray.forEach(group => {
-          resultFieldTypes[group] = originalFieldType;
-        });
-        
-        // Assign colors to each field
+        // Prepare color mapping for fields
         const resultColors: Record<string, string> = {};
         resultFields.forEach((field, index) => {
           resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
         });
         
         return { 
-          chartData: resultData,
+          chartData: processedData,
           fields: resultFields,
           fieldColors: resultColors,
-          fieldTypes: resultFieldTypes
-        };
-      } else {
-        // For multiple y-fields with groupBy, combine field and group
-        const combinedFields: string[] = [];
-        const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
-        
-        Array.isArray(yField) && yField.forEach(field => {
-          const fieldName = typeof field === 'string' ? field : field.field;
-          const fieldType = typeof field === 'string' ? 'bar' : field.type;
-          
-          uniqueGroupsArray.forEach(group => {
-            const combinedField = `${fieldName}_${group}`;
-            combinedFields.push(combinedField);
-            resultFieldTypes[combinedField] = fieldType;
-          });
-        });
-        
-        const resultData = Object.entries(groupedByX).map(([xVal, fieldGroups]) => {
-          const entry: any = { [xKey]: xVal };
-          
-          Array.isArray(yField) && yField.forEach(field => {
-            const fieldName = typeof field === 'string' ? field : field.field;
-            
-            uniqueGroupsArray.forEach(group => {
-              const combinedField = `${fieldName}_${group}`;
-              entry[combinedField] = ((fieldGroups as any)[fieldName]?.[group]) || 0;
-            });
-          });
-          
-          return entry;
-        });
-        
-        // Assign colors to each field
-        const resultColors: Record<string, string> = {};
-        combinedFields.forEach((field, index) => {
-          resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
-        });
-        
-        return { 
-          chartData: resultData,
-          fields: combinedFields,
-          fieldColors: resultColors,
-          fieldTypes: resultFieldTypes
+          fieldTypes: resultFieldTypes,
+          fieldUnits: resultFieldUnits
         };
       }
-    } else {
-      // Standard processing without groupBy
-      let resultFields: string[] = [];
-      const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
-      
-      if (Array.isArray(yField)) {
-        resultFields = yField.map(field => getYAxisField(field));
-        
-        // Create mapping of field types (bar or line)
-        yField.forEach(field => {
-          const fieldName = getYAxisField(field);
-          resultFieldTypes[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
-        });
-      } else {
-        resultFields = [getYAxisField(yField)];
-        resultFieldTypes[getYAxisField(yField)] = typeof yField === 'string' ? 'bar' : (yField as YAxisConfig).type;
-      }
-      
-      // Prepare color mapping for fields
-      const resultColors: Record<string, string> = {};
-      resultFields.forEach((field, index) => {
-        resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
-      });
-      
-      return { 
-        chartData: processedData,
-        fields: resultFields,
-        fieldColors: resultColors,
-        fieldTypes: resultFieldTypes
-      };
-    }
   }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy]);
 
   // Helper function to force reset the brush visual state
@@ -776,15 +798,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           return !hiddenSeriesState.includes(field) && !isNaN(value) && value !== 0;
         })
         .map(field => {
-          // Find the original YAxisConfig for this field to get the unit
-          let fieldUnit = undefined;
-          if (Array.isArray(yField)) {
-            const fieldConfig = yField.find(f => {
-              const fName = typeof f === 'string' ? f : f.field;
-              return fName === field;
-            });
-            fieldUnit = typeof fieldConfig === 'string' ? undefined : fieldConfig?.unit;
-          }
+          // Get the unit for this field from the fieldUnits structure
+          const fieldUnit = fieldUnits ? fieldUnits[field] : undefined;
 
           return {
             label: formatFieldName(field),
@@ -801,22 +816,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         const firstVisibleField = fields.find(field => !hiddenSeriesState.includes(field));
         
         if (firstVisibleField) {
-          // Find the unit for the first visible field
-        let firstFieldUnit = undefined;
-          if (Array.isArray(yField)) {
-          const firstFieldConfig = yField.find(f => {
-            const fName = typeof f === 'string' ? f : f.field;
-              return fName === firstVisibleField;
-          });
-          firstFieldUnit = typeof firstFieldConfig === 'string' ? undefined : firstFieldConfig?.unit;
-        }
+          // Get the unit for the first visible field from fieldUnits
+          const firstFieldUnit = fieldUnits ? fieldUnits[firstVisibleField] : undefined;
         
-        tooltipItems.push({
+          tooltipItems.push({
             label: formatFieldName(firstVisibleField),
-          value: formatWithUnit(0, firstFieldUnit),
+            value: formatWithUnit(0, firstFieldUnit),
             color: fieldColors[firstVisibleField] || blue,
             shape: fieldTypes[firstVisibleField] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
-        });
+          });
         }
       }
       
