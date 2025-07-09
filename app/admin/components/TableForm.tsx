@@ -1351,6 +1351,11 @@ const TableForm: React.FC<TableFormProps> = ({
                   <option key={index} value={column.field}>{column.header}</option>
                 ))}
               </select>
+              <p className="mt-1 text-xs text-gray-500">
+                {formData.orientation === 'horizontal' 
+                  ? "For horizontal tables, this affects time period column ordering" 
+                  : "Column to sort by when table first loads"}
+              </p>
             </div>
             
             <div>
@@ -1367,6 +1372,11 @@ const TableForm: React.FC<TableFormProps> = ({
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
+              <p className="mt-1 text-xs text-gray-500">
+                {formData.orientation === 'horizontal' 
+                  ? "Descending shows newest time periods first (right to left)" 
+                  : "Sort direction for the default column"}
+              </p>
             </div>
             
             <div>

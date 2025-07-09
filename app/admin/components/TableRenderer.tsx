@@ -198,7 +198,67 @@ const TableRenderer: React.FC<TableRendererProps> = ({
         const dataColumns = visibleColumns.filter(col => col.field !== timeField.field);
         
         // Get unique time periods
-        const timePeriods = [...new Set(data.map(row => row[timeField.field]))].sort();
+        let timePeriods = [...new Set(data.map(row => row[timeField.field]))];
+        
+        // Sort time periods properly using date/time aware sorting
+        timePeriods = timePeriods.sort((a, b) => {
+          const aPeriod = String(a);
+          const bPeriod = String(b);
+          
+          // Try to parse as dates for proper chronological sorting
+          const parseDate = (period: string) => {
+            // Handle quarterly formats: 2024-Q1, Q1-2024, 2024 Q1
+            const quarterMatch = period.match(/^(\d{4})[-_\s]*[qQ]([1-4])$/) || 
+                                period.match(/^[qQ]([1-4])[-_\s]*(\d{4})$/);
+            if (quarterMatch) {
+              const year = quarterMatch[1] || quarterMatch[2];
+              const quarter = quarterMatch[2] || quarterMatch[1];
+              return new Date(parseInt(year), (parseInt(quarter) - 1) * 3, 1);
+            }
+            
+            // Handle quarterly start dates: 2024-01-01, 2024-04-01, etc.
+            const quarterStartMatch = period.match(/^(\d{4})-(01|04|07|10)-01$/);
+            if (quarterStartMatch) {
+              return new Date(period);
+            }
+            
+            // Handle monthly formats: 2024-01, 2024-02, Jan-2024, etc.
+            const monthMatch = period.match(/^(\d{4})[-_](\d{1,2})$/);
+            if (monthMatch) {
+              return new Date(parseInt(monthMatch[1]), parseInt(monthMatch[2]) - 1, 1);
+            }
+            
+            // Handle yearly formats: 2024
+            const yearMatch = period.match(/^(\d{4})$/);
+            if (yearMatch) {
+              return new Date(parseInt(yearMatch[1]), 0, 1);
+            }
+            
+            // Try to parse as regular date
+            const date = new Date(period);
+            if (!isNaN(date.getTime())) {
+              return date;
+            }
+            
+            // Fallback to string comparison for unrecognized formats
+            return null;
+          };
+          
+          const dateA = parseDate(aPeriod);
+          const dateB = parseDate(bPeriod);
+          
+          if (dateA && dateB) {
+            return dateA.getTime() - dateB.getTime();
+          } else {
+            // Fallback to string comparison
+            return aPeriod.localeCompare(bPeriod);
+          }
+        });
+        
+        // Apply default sort direction if specified and this is likely a time-based sort
+        if (tableConfig.defaultSortDirection === 'desc') {
+          timePeriods.reverse();
+        }
         
         // Transform each metric into a row
         const horizontalData: any[] = [];
@@ -291,7 +351,67 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       
       if (timeFields.length > 0) {
         const timeField = timeFields[0];
-        const timePeriods = [...new Set(data.map(row => row[timeField.field]))].sort();
+        let timePeriods = [...new Set(data.map(row => row[timeField.field]))];
+        
+        // Sort time periods properly using date/time aware sorting
+        timePeriods = timePeriods.sort((a, b) => {
+          const aPeriod = String(a);
+          const bPeriod = String(b);
+          
+          // Try to parse as dates for proper chronological sorting
+          const parseDate = (period: string) => {
+            // Handle quarterly formats: 2024-Q1, Q1-2024, 2024 Q1
+            const quarterMatch = period.match(/^(\d{4})[-_\s]*[qQ]([1-4])$/) || 
+                                period.match(/^[qQ]([1-4])[-_\s]*(\d{4})$/);
+            if (quarterMatch) {
+              const year = quarterMatch[1] || quarterMatch[2];
+              const quarter = quarterMatch[2] || quarterMatch[1];
+              return new Date(parseInt(year), (parseInt(quarter) - 1) * 3, 1);
+            }
+            
+            // Handle quarterly start dates: 2024-01-01, 2024-04-01, etc.
+            const quarterStartMatch = period.match(/^(\d{4})-(01|04|07|10)-01$/);
+            if (quarterStartMatch) {
+              return new Date(period);
+            }
+            
+            // Handle monthly formats: 2024-01, 2024-02, Jan-2024, etc.
+            const monthMatch = period.match(/^(\d{4})[-_](\d{1,2})$/);
+            if (monthMatch) {
+              return new Date(parseInt(monthMatch[1]), parseInt(monthMatch[2]) - 1, 1);
+            }
+            
+            // Handle yearly formats: 2024
+            const yearMatch = period.match(/^(\d{4})$/);
+            if (yearMatch) {
+              return new Date(parseInt(yearMatch[1]), 0, 1);
+            }
+            
+            // Try to parse as regular date
+            const date = new Date(period);
+            if (!isNaN(date.getTime())) {
+              return date;
+            }
+            
+            // Fallback to string comparison for unrecognized formats
+            return null;
+          };
+          
+          const dateA = parseDate(aPeriod);
+          const dateB = parseDate(bPeriod);
+          
+          if (dateA && dateB) {
+            return dateA.getTime() - dateB.getTime();
+          } else {
+            // Fallback to string comparison
+            return aPeriod.localeCompare(bPeriod);
+          }
+        });
+        
+        // Apply default sort direction if specified and this is likely a time-based sort
+        if (tableConfig.defaultSortDirection === 'desc') {
+          timePeriods.reverse();
+        }
         
         const newColumns: TableColumnConfig[] = [
           {
@@ -799,31 +919,39 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               const num = Number(value);
               if (isNaN(num)) return value;
               
-             
-                return num.toLocaleString('en-US', { 
-                  minimumFractionDigits: Math.max(column.format.decimals || 0, 1),
-                  maximumFractionDigits: Math.max(column.format.decimals || 0, 1)
-                });
+              const formattedNumber = num.toLocaleString('en-US', { 
+                minimumFractionDigits: Math.max(column.format.decimals || 0, 1),
+                maximumFractionDigits: Math.max(column.format.decimals || 0, 1)
+              });
               
-              
-             
+              return num < 0 ? (
+                <span className="text-red-400">{formattedNumber}</span>
+              ) : formattedNumber;
               
             case 'currency':
               const currency = Number(value);
               if (isNaN(currency)) return value;
               const prefix = column.format.prefix || '$';
-              return `${prefix}${currency.toLocaleString('en-US', { 
+              const formattedCurrency = `${prefix}${currency.toLocaleString('en-US', { 
                 minimumFractionDigits: column.format.decimals || 2,
                 maximumFractionDigits: column.format.decimals || 2
               })}`;
               
+              return currency < 0 ? (
+                <span className="text-red-400">{formattedCurrency}</span>
+              ) : formattedCurrency;
+              
             case 'percentage':
               const percentage = Number(value);
               if (isNaN(percentage)) return value;
-              return `${percentage.toLocaleString('en-US', { 
+              const formattedPercentage = `${percentage.toLocaleString('en-US', { 
                 minimumFractionDigits: column.format.decimals || 1,
                 maximumFractionDigits: column.format.decimals || 1
               })}${column.format.suffix || '%'}`;
+              
+              return percentage < 0 ? (
+                <span className="text-red-400">{formattedPercentage}</span>
+              ) : formattedPercentage;
               
             case 'date':
               try {
@@ -841,6 +969,19 @@ const TableRenderer: React.FC<TableRendererProps> = ({
               } catch (e) {
                 return value;
               }
+          }
+        }
+        
+        // Handle unformatted numeric values
+        if (typeof value === 'number' && value < 0) {
+          return <span className="text-red-400">{value}</span>;
+        }
+        
+        // Try to parse string numbers for negative detection
+        if (typeof value === 'string') {
+          const numericValue = parseFloat(value);
+          if (!isNaN(numericValue) && numericValue < 0 && String(numericValue) === value.trim()) {
+            return <span className="text-red-400">{value}</span>;
           }
         }
         
