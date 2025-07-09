@@ -2,7 +2,7 @@
   "pageId": "raydium-competetive-landscape",
   "pageName": "Competetive Landscape",
   "chartCount": 5,
-  "lastUpdated": "2025-07-09T05:40:10.922Z",
+  "lastUpdated": "2025-07-09T12:23:36.219Z",
   "charts": [
     {
       "id": "chart_1749048844645_v08psl4",
@@ -19,7 +19,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "volume_usd",
-        "groupBy": "dex"
+        "groupBy": "dex",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "filters": {
@@ -36,7 +37,7 @@
         "enableTimeAggregation": true
       },
       "createdAt": "2025-06-04T14:54:04.645Z",
-      "updatedAt": "2025-07-07T13:42:16.194Z"
+      "updatedAt": "2025-07-09T10:29:24.020Z"
     },
     {
       "id": "chart_1749048959366_ej1oihq",
@@ -73,10 +74,11 @@
       "dataMapping": {
         "xAxis": "dex",
         "yAxis": "volume_usd",
-        "groupBy": "pool"
+        "groupBy": "pool",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-06-04T15:03:05.562Z",
-      "updatedAt": "2025-07-07T13:44:33.635Z"
+      "updatedAt": "2025-07-09T10:43:04.527Z"
     },
     {
       "id": "chart_1749196002241_89l5ku7",
@@ -120,18 +122,18 @@
       "page": "raydium-competetive-landscape",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13466/results.json",
-      "apiKey": "EdqThrwfgkFZ9jgQVh5BhiqsTf5Qg5xiyarLCdZN&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "volume_usd",
-        "groupBy": "platform"
+        "groupBy": "platform",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -139,14 +141,14 @@
               "D",
               "W",
               "M",
-              "Q",
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-06T07:51:47.652Z",
-      "updatedAt": "2025-07-07T12:23:41.412Z"
+      "updatedAt": "2025-07-09T10:32:37.510Z"
     }
   ]
 }

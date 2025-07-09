@@ -2,7 +2,7 @@
   "pageId": "raydium-traction",
   "pageName": "Traction",
   "chartCount": 6,
-  "lastUpdated": "2025-07-09T05:40:10.921Z",
+  "lastUpdated": "2025-07-09T12:23:36.219Z",
   "charts": [
     {
       "id": "chart_1748957184547_qexfnue",
@@ -19,7 +19,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "volume_usd",
-        "groupBy": "product"
+        "groupBy": "product",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -37,7 +38,7 @@
         }
       },
       "createdAt": "2025-06-03T13:26:24.546Z",
-      "updatedAt": "2025-07-07T13:31:58.727Z"
+      "updatedAt": "2025-07-09T09:48:54.120Z"
     },
     {
       "id": "chart_1748957917547_cucbb77",
@@ -89,7 +90,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "volume_usd",
-        "groupBy": "pool_type"
+        "groupBy": "pool_type",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -107,7 +109,7 @@
         }
       },
       "createdAt": "2025-06-04T08:45:20.264Z",
-      "updatedAt": "2025-07-07T13:33:26.420Z"
+      "updatedAt": "2025-07-09T09:50:47.044Z"
     },
     {
       "id": "chart_1749027349926_782ragi",

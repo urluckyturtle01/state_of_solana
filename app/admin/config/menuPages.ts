@@ -31,6 +31,7 @@ export const MENU_OPTIONS: MenuItem[] = [
   { id: 'stablecoins', name: 'Stablecoins', icon: 'coin' },
   { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' },
   { id: 'sf-dashboards', name: 'SF Dashboards', icon: 'chart-bar' },
+  { id: 'launchpads', name: 'Launchpads', icon: 'chart-bar' },
   {
     id: "compute-units",
     name: "Compute Units",
@@ -106,6 +107,10 @@ overview: [
     { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
     { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
     { id: 'depin', name: 'Depin', path: '/protocol-revenue/depin' }],
+  "launchpads": [
+    { id: 'launchpads-financials', name: 'Financials', path: '/launchpads/financials' },
+    { id: 'launchpads-traction', name: 'Traction', path: '/launchpads/traction' }
+  ],
   "compute-units": [
     {
       id: "transaction-bytes",

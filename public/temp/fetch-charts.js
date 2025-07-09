@@ -51,6 +51,10 @@ const MENU_PAGES = {
     { id: "transfers", name: "Transfers", path: "/wrapped-btc/transfers" },
     { id: "dex-activity", name: "DEX Activity", path: "/wrapped-btc/dex-activity" }
   ],
+  "launchpads": [
+    { id: "launchpads-financials", name: "Financials", path: "/launchpads/financials" },
+    { id: "launchpads-traction", name: "Traction", path: "/launchpads/traction" }
+  ],
   "sf-dashboards": [
     { id: "sf-overview", name: "Overview", path: "/sf-dashboards/overview" },
     { id: "sf-stablecoins", name: "Stablecoins", path: "/sf-dashboards/stablecoins" },
@@ -109,8 +113,8 @@ async function fetchAllCharts() {
   try {
     console.log('Fetching all charts from API...');
     
-    // Use environment variable or fallback to production URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://urluckyturtle01.github.io/state_of_solana';
+    // Use environment variable or fallback to local development URL
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3000';
     const apiUrl = `${baseUrl}/api/charts`;
     
     console.log(`Using API URL: ${apiUrl}`);

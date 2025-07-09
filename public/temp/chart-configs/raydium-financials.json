@@ -2,7 +2,7 @@
   "pageId": "raydium-financials",
   "pageName": "Financials",
   "chartCount": 9,
-  "lastUpdated": "2025-07-09T05:40:10.921Z",
+  "lastUpdated": "2025-07-09T12:23:36.218Z",
   "charts": [
     {
       "id": "chart_1748935655865_ysfoa3j",
@@ -75,7 +75,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "Protocol_fees",
-        "groupBy": "Product"
+        "groupBy": "Product",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -93,7 +94,7 @@
         }
       },
       "createdAt": "2025-06-03T07:36:29.726Z",
-      "updatedAt": "2025-06-20T11:56:48.451Z"
+      "updatedAt": "2025-07-09T09:04:38.917Z"
     },
     {
       "id": "chart_1748936586106_5qdpcxr",
@@ -112,32 +113,33 @@
         "yAxis": [
           {
             "field": "Swap Revenue",
-            "type": "bar"
+            "type": "bar",
+            "unit": "$"
           },
           {
-            "field": "Pool_Creation Revenue",
+            "field": "Pool Creation Revenue",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Launchlab Revenue",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Infrastructure Cost",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Total Revenue",
             "type": "line",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Gross Profit",
             "type": "line",
-            "unit": ""
+            "unit": "$"
           }
         ],
         "groupBy": ""
@@ -158,7 +160,7 @@
         }
       },
       "createdAt": "2025-06-03T07:43:06.106Z",
-      "updatedAt": "2025-06-20T11:59:22.156Z"
+      "updatedAt": "2025-07-09T09:46:21.598Z"
     },
     {
       "id": "chart_1748936802751_n6liytd",
@@ -211,7 +213,8 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "treasury_usd",
-        "groupBy": "product"
+        "groupBy": "product",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "enableTimeAggregation": true,
@@ -229,7 +232,7 @@
         }
       },
       "createdAt": "2025-06-03T07:49:25.692Z",
-      "updatedAt": "2025-06-25T08:46:27.682Z"
+      "updatedAt": "2025-07-09T09:36:16.175Z"
     },
     {
       "id": "chart_1748937346377_c452g0f",
@@ -248,22 +251,23 @@
         "yAxis": [
           {
             "field": "Launchlab Revenue",
-            "type": "bar"
+            "type": "bar",
+            "unit": "$"
           },
           {
             "field": "Ray_Buyback",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Treasury",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "Infrastructure Cost",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           }
         ],
         "groupBy": ""
@@ -284,7 +288,7 @@
         }
       },
       "createdAt": "2025-06-03T07:55:46.377Z",
-      "updatedAt": "2025-06-20T12:05:14.314Z"
+      "updatedAt": "2025-07-09T09:15:44.132Z"
     },
     {
       "id": "chart_1748937874895_ab9j7qj",
@@ -350,7 +354,7 @@
         "groupBy": "symbol"
       },
       "createdAt": "2025-06-03T08:09:38.401Z",
-      "updatedAt": "2025-07-07T13:30:56.947Z"
+      "updatedAt": "2025-07-09T09:39:34.554Z"
     }
   ]
 }
