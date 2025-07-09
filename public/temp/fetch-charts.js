@@ -108,7 +108,13 @@ const getAllPageIds = () => {
 async function fetchAllCharts() {
   try {
     console.log('Fetching all charts from API...');
-    const response = await fetch('http://127.0.0.1:3000/api/charts');
+    
+    // Use environment variable or fallback to production URL
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://urluckyturtle01.github.io/state_of_solana';
+    const apiUrl = `${baseUrl}/api/charts`;
+    
+    console.log(`Using API URL: ${apiUrl}`);
+    const response = await fetch(apiUrl);
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status} - ${response.statusText}`);

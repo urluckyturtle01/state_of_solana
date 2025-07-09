@@ -1,4 +1,4 @@
-name: Update Chart Data Temp Files
+name: Update Chart Data and Config Temp Files
 
 on:
   schedule:
@@ -9,6 +9,7 @@ on:
     paths:
       - '.github/workflows/update-temp-files.yml'
       - 'public/temp/fetch-chart-data.js'
+      - 'public/temp/fetch-charts.js'
 
 permissions:
   contents: write
@@ -40,13 +41,18 @@ jobs:
           cd public/temp
           node fetch-chart-data.js
           
+      - name: Run chart config fetching script
+        run: |
+          cd public/temp
+          node fetch-charts.js
+          
       - name: Check for changes
         id: verify-changed-files
         run: |
-          if [ -n "$(git status --porcelain public/temp/chart-data/)" ]; then
+          if [ -n "$(git status --porcelain public/temp/chart-data/ public/temp/chart-configs/)" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "Files changed:"
-            git status --porcelain public/temp/chart-data/
+            git status --porcelain public/temp/chart-data/ public/temp/chart-configs/
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "No changes detected"
@@ -57,14 +63,14 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add public/temp/chart-data/
-          git commit -m "🤖 Auto-update chart data temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git add public/temp/chart-data/ public/temp/chart-configs/
+          git commit -m "🤖 Auto-update chart data and config temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           git push
           
       - name: Log completion
         run: |
           if [ "${{ steps.verify-changed-files.outputs.changed }}" == "true" ]; then
-            echo "✅ Chart data updated and committed successfully"
+            echo "✅ Chart data and config updated and committed successfully"
           else
             echo "ℹ️ No changes detected - temp files are up to date"
           fi 
