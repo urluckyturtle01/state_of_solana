@@ -1,7 +1,294 @@
 {
   "pageId": "test",
   "pageName": "Test",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.852Z",
-  "charts": []
+  "chartCount": 7,
+  "lastUpdated": "2025-07-09T05:40:10.920Z",
+  "charts": [
+    {
+      "id": "chart_1750071753508_m9q12qm",
+      "title": "uhjnjbnj",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12901/results.json",
+      "apiKey": "UvWTVqG5CssnjosT1GlIBvGYedgy90PwJFfCSCws",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_sol",
+            "type": "line",
+            "unit": "",
+            "rightAxis": false
+          },
+          {
+            "field": "trades",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-16T11:02:33.508Z",
+      "updatedAt": "2025-06-16T11:02:33.687Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "volume_sol"
+        ],
+        "rightAxisFields": [
+          "trades"
+        ]
+      }
+    },
+    {
+      "id": "chart_1750071896395_cfz73ig",
+      "title": "ujnjkn",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12901/results.json",
+      "apiKey": "UvWTVqG5CssnjosT1GlIBvGYedgy90PwJFfCSCws",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          "volume_sol",
+          "trades"
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-16T11:04:56.395Z",
+      "updatedAt": "2025-06-16T11:04:56.478Z"
+    },
+    {
+      "id": "chart_1750147449305_i4qcjfm",
+      "title": "bhbhb",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "apiKey": "cogPDeFw7tEWNmdZPntjbxPBdgIChden1y9vHWGE",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "volume",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "trades",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-17T08:04:09.305Z",
+      "updatedAt": "2025-06-17T08:04:10.528Z"
+    },
+    {
+      "id": "chart_1750149212447_0wr07jg",
+      "title": "jbjhbhj",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "apiKey": "cogPDeFw7tEWNmdZPntjbxPBdgIChden1y9vHWGE",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "volume",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "trades",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-17T08:33:32.447Z",
+      "updatedAt": "2025-06-17T08:33:32.513Z"
+    },
+    {
+      "id": "chart_1750149462133_07lxmm7",
+      "title": "hjbhjb",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "apiKey": "cogPDeFw7tEWNmdZPntjbxPBdgIChden1y9vHWGE",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "program",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-17T08:37:42.133Z",
+      "updatedAt": "2025-06-17T08:37:42.208Z"
+    },
+    {
+      "id": "chart_1750237578490_wbk66ow",
+      "title": "fee",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12988/results.json",
+      "apiKey": "OQNRdRvcIdbJdDvfgyDqpCuz49FUuxaa08Bl2Rox",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_Date",
+        "yAxis": "fee_sol",
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-18T09:06:18.490Z",
+      "updatedAt": "2025-06-18T09:06:19.617Z"
+    },
+    {
+      "id": "chart_1750239227616_yqmrp7e",
+      "title": "jkn",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_volume",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-18T09:33:47.616Z",
+      "updatedAt": "2025-06-18T09:40:34.623Z"
+    }
+  ]
 }

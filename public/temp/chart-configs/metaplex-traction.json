@@ -1,7 +1,176 @@
 {
   "pageId": "metaplex-traction",
   "pageName": "Traction",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.853Z",
-  "charts": []
+  "chartCount": 6,
+  "lastUpdated": "2025-07-09T05:40:10.922Z",
+  "charts": [
+    {
+      "id": "chart_1749627736683_bchbaau",
+      "title": "Monthly Transactions",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13678/results.json",
+      "apiKey": "Naj2L3HNcc4l18ZMbf36CRrk6q8rdIHnwEGW77eL&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "transactions",
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-11T07:42:16.683Z",
+      "updatedAt": "2025-06-20T14:00:06.242Z"
+    },
+    {
+      "id": "chart_1749627922355_vt1yejy",
+      "title": "Monthly Active Wallets",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json",
+      "apiKey": "VZf0MMWDzNorkXuiJDJTNNysyCWOmoGdsKqgv7vu",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "#users",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T07:45:22.355Z",
+      "updatedAt": "2025-06-11T13:00:01.213Z"
+    },
+    {
+      "id": "chart_1749628211337_ts1ilil",
+      "title": "Monthly Transactions by Program",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/1270/results.json",
+      "apiKey": "hoPpzV4r0mHc4mw8NFU1ntFDdGkgIoABkf0CdmkE&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "total_txn",
+        "groupBy": "protocol"
+      },
+      "createdAt": "2025-06-11T07:50:11.337Z",
+      "updatedAt": "2025-06-11T07:50:11.732Z"
+    },
+    {
+      "id": "chart_1749628724126_z6sgnvd",
+      "title": "Monthly Digital Assets Minted",
+      "subtitle": "(excl cNFTs)",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/12052/results.json",
+      "apiKey": "WT7Xx5C911qhxntOaHeQt63wulSpwQ9NKESz1Ods&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "tm_fungible",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "tm_non_fungible",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "mpl_core",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T07:58:44.126Z",
+      "updatedAt": "2025-06-11T07:58:44.415Z"
+    },
+    {
+      "id": "chart_1749629023835_wd03h9z",
+      "title": "Monthly TM Fungible and Non-Fungible Mints",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/10247/results.json",
+      "apiKey": "KGgiS0vbj9YszS1lL6fwWEchjiRSseipp4EiqOCz&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "mints",
+        "groupBy": "token_type"
+      },
+      "createdAt": "2025-06-11T08:03:43.835Z",
+      "updatedAt": "2025-06-11T13:02:52.078Z"
+    },
+    {
+      "id": "chart_1749629260401_ack8uo5",
+      "title": "Monthly Total Mints by Program",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/2363/results.json",
+      "apiKey": "A70wQP2ArNcnqgKPjCEHLrdwmPyYwNuCQIjLy5IO&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "token_metadata_nfts",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "compressed_nfts",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Bubblegum_v2_cNFTs",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "core_nft",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T08:07:40.401Z",
+      "updatedAt": "2025-06-20T13:53:20.357Z"
+    }
+  ]
 }

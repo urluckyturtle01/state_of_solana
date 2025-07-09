@@ -1,7 +1,67 @@
 {
   "pageId": "aggregators",
   "pageName": "DEX Aggregators",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.844Z",
-  "charts": []
+  "chartCount": 3,
+  "lastUpdated": "2025-07-09T05:40:10.911Z",
+  "charts": [
+    {
+      "id": "chart_1748409095888_2vjpfgk",
+      "title": "Dex Volume Aggregator vs Direct Share",
+      "subtitle": "Aggregator vs Direct share Since Jan'25",
+      "page": "aggregators",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json",
+      "apiKey": "jes4jbtggmsezoHwIxltmSjmQxmExPOgnQNhFzZm&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "dex",
+        "yAxis": "Volume",
+        "groupBy": "medium"
+      },
+      "createdAt": "2025-05-28T05:11:35.888Z",
+      "updatedAt": "2025-06-06T08:44:21.726Z"
+    },
+    {
+      "id": "chart_1748410190579_48rs1yy",
+      "title": "DEX Volume Share",
+      "subtitle": "",
+      "page": "aggregators",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json",
+      "apiKey": "M50ElvuV9FtY3XlSVP2GtGfSTefJ13C8z4y742da&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "aggregator",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-28T05:29:50.578Z",
+      "updatedAt": "2025-05-28T05:29:50.783Z"
+    },
+    {
+      "id": "chart_1748410329808_dc35x9i",
+      "title": "Active traders' share",
+      "subtitle": "",
+      "page": "aggregators",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json",
+      "apiKey": "M50ElvuV9FtY3XlSVP2GtGfSTefJ13C8z4y742da&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "Traders",
+        "groupBy": "aggregator"
+      },
+      "createdAt": "2025-05-28T05:32:09.808Z",
+      "updatedAt": "2025-06-23T08:22:18.529Z"
+    }
+  ]
 }

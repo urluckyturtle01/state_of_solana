@@ -1,7 +1,102 @@
 {
   "pageId": "traders",
   "pageName": "Traders",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.844Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-09T05:40:10.911Z",
+  "charts": [
+    {
+      "id": "chart_1748409260362_xqmcvg4",
+      "title": "Daily traders",
+      "subtitle": "",
+      "page": "traders",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json",
+      "apiKey": "fLzwXGF8j4St6XvrckEAe1gjQRHKveWvvCafx2Zz&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "new_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-28T05:14:20.362Z",
+      "updatedAt": "2025-06-26T14:25:28.891Z"
+    },
+    {
+      "id": "chart_1748409468657_vw42ul3",
+      "title": "Distribution by traders' trade frequency",
+      "subtitle": "",
+      "page": "traders",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json",
+      "apiKey": "aSgz8ztgBg46FAoarkY8JGS5K0jxqm9t60sF3CDQ&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "Signers",
+        "groupBy": "monthly_transactions",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-28T05:17:48.657Z",
+      "updatedAt": "2025-06-23T08:19:04.611Z"
+    },
+    {
+      "id": "chart_1748409614960_75vxt6x",
+      "title": "DEX volume by traders' trade frequency",
+      "subtitle": "",
+      "page": "traders",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json",
+      "apiKey": "aSgz8ztgBg46FAoarkY8JGS5K0jxqm9t60sF3CDQ&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "monthly_transactions",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-28T05:20:14.960Z",
+      "updatedAt": "2025-06-23T08:19:40.819Z"
+    },
+    {
+      "id": "chart_1748409750208_kwnvucp",
+      "title": "Volume distribution by traders' lifetime trade volume",
+      "subtitle": "",
+      "page": "traders",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12422/results.json",
+      "apiKey": "pOuD9xaxsmquzZGOnUcR9disUQI3EeXNQKuKpO6l&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "wallet_lifetime_trade_vol",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-05-28T05:22:30.208Z",
+      "updatedAt": "2025-06-24T12:04:00.639Z"
+    }
+  ]
 }

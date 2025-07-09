@@ -1,7 +1,334 @@
 {
   "pageId": "sf-bitcoin-on-solana",
   "pageName": "Bitcoin on Solana",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.851Z",
-  "charts": []
+  "chartCount": 14,
+  "lastUpdated": "2025-07-09T05:40:10.919Z",
+  "charts": [
+    {
+      "id": "chart_1749650626858_8hnik36",
+      "title": "Daily supply",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json",
+      "apiKey": "WTIxKcHZ8XowFUSM5JX68aj7ATnmpQrygSeLlO7Q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "supply",
+        "groupBy": "symbol"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:03:46.858Z",
+      "updatedAt": "2025-06-26T12:13:11.582Z"
+    },
+    {
+      "id": "chart_1749650706852_lhbvd0q",
+      "title": "Daily holders",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json",
+      "apiKey": "WTIxKcHZ8XowFUSM5JX68aj7ATnmpQrygSeLlO7Q&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Holders",
+        "groupBy": "symbol"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:05:06.851Z",
+      "updatedAt": "2025-06-26T12:14:06.462Z"
+    },
+    {
+      "id": "chart_1749650929327_df6wahw",
+      "title": "Monthly transfer count",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "transfers",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:08:49.327Z",
+      "updatedAt": "2025-06-26T12:14:28.194Z"
+    },
+    {
+      "id": "chart_1749651134183_2cddhv7",
+      "title": "Monthly p2p transfer count",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_transfers",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:12:14.183Z",
+      "updatedAt": "2025-06-26T12:15:32.027Z"
+    },
+    {
+      "id": "chart_1749651471676_nx3qa1p",
+      "title": "Monthly fee payers",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "fee_payer",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:17:51.676Z",
+      "updatedAt": "2025-06-26T12:16:25.809Z"
+    },
+    {
+      "id": "chart_1749651677195_xcg2lf7",
+      "title": "Monthly p2p fee payers",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_fee_payer",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-11T14:21:17.195Z",
+      "updatedAt": "2025-06-26T12:16:56.410Z"
+    },
+    {
+      "id": "chart_1749711051311_22gef06",
+      "title": "Monthly average transfer size",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "avg_transfer_size",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint_name"
+      },
+      "createdAt": "2025-06-12T06:50:51.311Z",
+      "updatedAt": "2025-06-12T06:50:51.661Z"
+    },
+    {
+      "id": "chart_1749711357254_0c3xk81",
+      "title": "Monthly average p2p transfer size",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "p2p_avg_transfer_size",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "mint_name"
+      },
+      "createdAt": "2025-06-12T06:55:57.254Z",
+      "updatedAt": "2025-06-12T06:57:21.490Z"
+    },
+    {
+      "id": "chart_1749711887208_9untewx",
+      "title": "Monthly transfer volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:04:47.208Z",
+      "updatedAt": "2025-06-26T12:20:48.441Z"
+    },
+    {
+      "id": "chart_1749712005995_m1l5hko",
+      "title": "Monthly p2p transfer volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "p2p_volume",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:06:45.995Z",
+      "updatedAt": "2025-06-26T12:20:26.313Z"
+    },
+    {
+      "id": "chart_1749712161168_nv1pl1c",
+      "title": "Monthly program interactions",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "program_interacted",
+        "groupBy": "mint_name"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:09:21.168Z",
+      "updatedAt": "2025-06-26T12:19:54.836Z"
+    },
+    {
+      "id": "chart_1749712329662_66ts4s4",
+      "title": "Monthly Dex volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13272/results.json",
+      "apiKey": "R9x4XvkFCG8AsZc6TIs1CUPJtXOPfiZrpEt4Zv8G",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Volume",
+        "groupBy": "symbol"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:12:09.662Z",
+      "updatedAt": "2025-06-26T12:19:39.656Z"
+    },
+    {
+      "id": "chart_1749713825651_hctgm7g",
+      "title": "Top Program by Transfer Volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13278/results.json",
+      "apiKey": "pzR1VjgdcTiIYK3Wlld1V15GrWAY70tfYs2ItPGu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "volume_usd",
+        "groupBy": "program"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:37:05.651Z",
+      "updatedAt": "2025-06-26T12:19:20.546Z"
+    },
+    {
+      "id": "chart_1749714919202_ejdf6pu",
+      "title": "Top program by fee payer",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13279/results.json",
+      "apiKey": "kriv5dTlObAJM5jF2jWV7pep3W4Iov9Ze3q5rCMu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "fee_payer",
+        "groupBy": "program"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-06-12T07:55:19.202Z",
+      "updatedAt": "2025-06-26T12:18:00.376Z"
+    }
+  ]
 }

@@ -1,7 +1,356 @@
 {
   "pageId": "raydium-financials",
   "pageName": "Financials",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-08T19:14:13.852Z",
-  "charts": []
+  "chartCount": 9,
+  "lastUpdated": "2025-07-09T05:40:10.921Z",
+  "charts": [
+    {
+      "id": "chart_1748935655865_ysfoa3j",
+      "title": "Fee and revenue",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13467/results",
+      "apiKey": "NaP14nl0INqjE8maqOdu8cnDljAkhEaL5kgS0fZb&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Fees",
+            "type": "bar",
+            "unit": "$",
+            "rightAxis": false
+          },
+          {
+            "field": "Protocol fees",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:27:35.865Z",
+      "updatedAt": "2025-07-08T09:31:40.178Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Fees",
+          "Protocol fees"
+        ],
+        "rightAxisFields": []
+      }
+    },
+    {
+      "id": "chart_1748936189726_ie9crds",
+      "title": "Revenue by product",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13469/results.json",
+      "apiKey": "8OjepYHYg0MmjFxUawCs8Oc23t2jaui9j5V63soV&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Protocol_fees",
+        "groupBy": "Product"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:36:29.726Z",
+      "updatedAt": "2025-06-20T11:56:48.451Z"
+    },
+    {
+      "id": "chart_1748936586106_5qdpcxr",
+      "title": "Revenue sources",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13478/results.json",
+      "apiKey": "Paw3vNs4eZDwTa1a9rVcE87GK2PKRjZlelrzSAWF&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Swap Revenue",
+            "type": "bar"
+          },
+          {
+            "field": "Pool_Creation Revenue",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Launchlab Revenue",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Infrastructure Cost",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Total Revenue",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "Gross Profit",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:43:06.106Z",
+      "updatedAt": "2025-06-20T11:59:22.156Z"
+    },
+    {
+      "id": "chart_1748936802751_n6liytd",
+      "title": "Swap revenue by pool category",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13484/results.json",
+      "apiKey": "NaP14nl0INqjE8maqOdu8cnDljAkhEaL5kgS0fZb&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "revenue",
+        "groupBy": "pool_type",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:46:42.751Z",
+      "updatedAt": "2025-06-25T08:04:42.160Z"
+    },
+    {
+      "id": "chart_1748936965692_8woui2m",
+      "title": "Treasury revenue by product",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13486/results.json",
+      "apiKey": "tlXHCcnR79snuvaUzNrucCEtzo3wS4vamfZ7G0CG&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "treasury_usd",
+        "groupBy": "product"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:49:25.692Z",
+      "updatedAt": "2025-06-25T08:46:27.682Z"
+    },
+    {
+      "id": "chart_1748937346377_c452g0f",
+      "title": "Cashflow",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13487/results.json",
+      "apiKey": "pEwpYykPmexn5N4ZdAh0g3uWaFmnI34V6WzyHuwd&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Launchlab Revenue",
+            "type": "bar"
+          },
+          {
+            "field": "Ray_Buyback",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Treasury",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Infrastructure Cost",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-03T07:55:46.377Z",
+      "updatedAt": "2025-06-20T12:05:14.314Z"
+    },
+    {
+      "id": "chart_1748937874895_ab9j7qj",
+      "title": "Treasury fund flow",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13493/results.json",
+      "apiKey": "x0HQw1jNhU8oDakyCozhOdirFsNEZww3pC3Y8joC&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "flow",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-03T08:04:34.895Z",
+      "updatedAt": "2025-06-05T12:28:32.556Z"
+    },
+    {
+      "id": "chart_1748938023137_x9zvrad",
+      "title": "Treasury fund balance",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13493/results.json",
+      "apiKey": "x0HQw1jNhU8oDakyCozhOdirFsNEZww3pC3Y8joC&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Balance",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-03T08:07:03.137Z",
+      "updatedAt": "2025-06-05T10:24:10.822Z"
+    },
+    {
+      "id": "chart_1748938178401_36oxl80",
+      "title": "Raydium assets",
+      "subtitle": "RAY tokens here are from buyback mechanisms driven by Raydium’s economic activity",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13556/results.json",
+      "apiKey": "i6eHPqQYAMCJ2lpJiweVn9iRQE8eaRUbEuJJBy0m&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Balance",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-06-03T08:09:38.401Z",
+      "updatedAt": "2025-07-07T13:30:56.947Z"
+    }
+  ]
 }
