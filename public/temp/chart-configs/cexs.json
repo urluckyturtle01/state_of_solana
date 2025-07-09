@@ -1,73 +1,7 @@
 {
   "pageId": "cexs",
   "pageName": "CEXs",
-  "chartCount": 3,
-  "lastUpdated": "2025-07-08T09:32:33.980Z",
-  "charts": [
-    {
-      "id": "chart_1748004169908_o4wg56r",
-      "title": "Monthly stablecoin transfer to exchange",
-      "subtitle": "Volume of stablecoins transferred to centralized exchanges, indicating inflow and potential for market impact",
-      "page": "cexs",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12789/results.json",
-      "apiKey": "BxiXraSaVxbbTXg5pArmhmirBiErX2qiKogxOgAo",
-      "isStacked": true,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "volume",
-        "groupBy": "name",
-        "yAxisUnit": "$"
-      },
-      "createdAt": "2025-05-23T12:42:49.908Z",
-      "updatedAt": "2025-05-24T06:52:25.657Z"
-    },
-    {
-      "id": "chart_1748004357874_m3t7xi1",
-      "title": "Monthly stablecoin transfer from exchange",
-      "subtitle": "Volume of stablecoins transferred from exchanges, providing insights into liquidity outflow",
-      "page": "cexs",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12788/results.json",
-      "apiKey": "qtmqsLMWCpEH4EhFbgB8BYKBi8IcFJ47i1JKACaq&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "volume",
-        "groupBy": "name",
-        "yAxisUnit": "$"
-      },
-      "createdAt": "2025-05-23T12:45:57.874Z",
-      "updatedAt": "2025-05-24T06:53:09.785Z"
-    },
-    {
-      "id": "chart_1748070271641_iv8g409",
-      "title": "Stablecoin net inflow",
-      "subtitle": "Net stablecoin inflow from CEXs to Solana, showing adoption and capital movement",
-      "page": "cexs",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13457/results.json",
-      "apiKey": "iQAoodBhCz6kls9LrklUh8aG1tCwVjSVW8aaqJHu&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": [
-          {
-            "field": "monthly_inflow",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-24T07:04:31.641Z",
-      "updatedAt": "2025-05-24T08:45:08.171Z"
-    }
-  ]
+  "chartCount": 0,
+  "lastUpdated": "2025-07-09T05:10:34.811Z",
+  "charts": []
 }

@@ -1,54 +1,7 @@
 {
   "pageId": "rev-total-economic-value",
   "pageName": "Total Economic Value",
-  "chartCount": 1,
-  "lastUpdated": "2025-07-08T09:32:33.975Z",
-  "charts": [
-    {
-      "id": "chart_1748107463573_rl688e8",
-      "title": "Total economic value",
-      "subtitle": "Total economic value combines SOL Issuance and REV",
-      "page": "rev-total-economic-value",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13227/results",
-      "apiKey": "ic32Un4g6DkouRC8CKL6zvulzZH765l0iyLn5UEf",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": [
-          {
-            "field": "real_economic_value",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "sol_issuance",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "total_economic_value",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-24T17:24:23.573Z",
-      "updatedAt": "2025-05-26T09:13:29.026Z",
-      "additionalOptions": {
-        "filters": {
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ]
-          }
-        }
-      }
-    }
-  ]
+  "chartCount": 0,
+  "lastUpdated": "2025-07-09T05:10:34.809Z",
+  "charts": []
 }
