@@ -109,7 +109,8 @@ overview: [
     { id: 'depin', name: 'Depin', path: '/protocol-revenue/depin' }],
   "launchpads": [
     { id: 'launchpads-financials', name: 'Financials', path: '/launchpads/financials' },
-    { id: 'launchpads-traction', name: 'Traction', path: '/launchpads/traction' }
+    { id: 'launchpads-traction', name: 'Traction', path: '/launchpads/traction' },
+    { id: 'launchpads-tokenized-equities', name: 'Tokenized Equities', path: '/launchpads/tokenized-equities' }
   ],
   "compute-units": [
     {

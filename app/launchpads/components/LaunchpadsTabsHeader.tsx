@@ -19,6 +19,12 @@ export default function LaunchpadsTabsHeader({ activeTab = "financials" }: Launc
       path: "/launchpads/traction",
       key: "traction",
       icon: "M3 13a1 1 0 011-1h2a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1v-7zM9 9a1 1 0 011-1h2a1 1 0 011 1v11a1 1 0 01-1 1h-2a1 1 0 01-1-1V9zM15 5a1 1 0 011-1h2a1 1 0 011 1v15a1 1 0 01-1 1h-2a1 1 0 01-1-1V5z"
+    },
+    { 
+      name: "Tokenized Equities", 
+      path: "/launchpads/tokenized-equities",
+      key: "tokenized-equities",
+      icon: "M12 12m-1 0a1 1 0 102 0a1 1 0 10-2 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0"
     }
   ];
   

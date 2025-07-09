@@ -13,9 +13,9 @@ export default function LaunchpadsLayout({ children }: LaunchpadsLayoutProps) {
   const pathname = usePathname();
   
   // Extract the active tab from pathname
-  // /projects/raydium/overview -> overview, /projects/raydium/trading-volume -> trading-volume, etc.
+  // /launchpads/financials -> financials, /launchpads/traction -> traction, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 3 ? pathSegments[3] : "financials";
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "financials";
   
   return (
     <Layout>

@@ -53,7 +53,8 @@ const MENU_PAGES = {
   ],
   "launchpads": [
     { id: "launchpads-financials", name: "Financials", path: "/launchpads/financials" },
-    { id: "launchpads-traction", name: "Traction", path: "/launchpads/traction" }
+    { id: "launchpads-traction", name: "Traction", path: "/launchpads/traction" },
+    { id: "launchpads-tokenized-equities", name: "Tokenized Equities", path: "/launchpads/tokenized-equities" }
   ],
   "sf-dashboards": [
     { id: "sf-overview", name: "Overview", path: "/sf-dashboards/overview" },
