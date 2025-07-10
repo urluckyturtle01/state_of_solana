@@ -2,7 +2,7 @@
   "pageId": "sf-overview",
   "pageName": "Overview",
   "chartCount": 17,
-  "lastUpdated": "2025-07-10T12:01:24.426Z",
+  "lastUpdated": "2025-07-10T13:39:07.699Z",
   "charts": [
     {
       "id": "chart_1749809832495_hqam9lh",
@@ -11,8 +11,8 @@
       "page": "sf-overview",
       "section": "network-rev-gdp",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12586/results",
-      "apiKey": "mg6UPHhm8KrRroTWTQ5akk8MDWCAiD2unttPYRoy&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12523/results.json",
+      "apiKey": "w8mW0d9FND1BMpaRD3YkWmNTXeHPpOOEcGSIGti5&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
@@ -43,7 +43,7 @@
         "groupBy": ""
       },
       "additionalOptions": {
-        "showTooltipTotal": true,
+        "showTooltipTotal": false,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -54,10 +54,11 @@
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T10:17:12.495Z",
-      "updatedAt": "2025-06-25T18:22:47.460Z"
+      "updatedAt": "2025-07-10T12:24:49.685Z"
     },
     {
       "id": "chart_1749814251162_ip5x6ou",
@@ -73,11 +74,11 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "dapp_revenue",
+        "yAxis": "dapp revenue",
         "groupBy": "platform"
       },
       "additionalOptions": {
-        "showTooltipTotal": true,
+        "showTooltipTotal": false,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -88,10 +89,11 @@
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T11:30:51.162Z",
-      "updatedAt": "2025-06-25T18:21:25.394Z"
+      "updatedAt": "2025-07-10T12:34:41.379Z"
     },
     {
       "id": "chart_1749814557247_26tciwb",
@@ -152,8 +154,8 @@
       "page": "sf-overview",
       "section": "onchain-activity",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12588/results",
-      "apiKey": "xbjsbMLLu5eIjAFCoUAkjBWQqjR69FcGo4Kuv4d5&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json",
+      "apiKey": "pIZEY1uPvMeGVeS5BCLR90Unf9FxoQOVJVEEn3Wu&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
@@ -174,21 +176,22 @@
         "groupBy": ""
       },
       "additionalOptions": {
-        "showTooltipTotal": true,
+        "showTooltipTotal": false,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
             "options": [
-              "D",
+              "W",
               "M",
               "Q",
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T11:50:51.298Z",
-      "updatedAt": "2025-06-25T18:23:53.328Z"
+      "updatedAt": "2025-07-10T12:45:26.938Z"
     },
     {
       "id": "chart_1749815739707_3d289dj",
@@ -296,8 +299,7 @@
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "volume",
-        "groupBy": "",
-        "yAxisUnit": "$"
+        "groupBy": ""
       },
       "additionalOptions": {
         "filters": {
@@ -310,10 +312,11 @@
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T12:10:17.339Z",
-      "updatedAt": "2025-06-13T12:10:17.449Z"
+      "updatedAt": "2025-07-10T13:11:50.264Z"
     },
     {
       "id": "chart_1749816989671_pu4hbi2",
@@ -343,10 +346,11 @@
               "Y"
             ]
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T12:16:29.671Z",
-      "updatedAt": "2025-06-13T12:16:29.841Z"
+      "updatedAt": "2025-07-10T13:12:50.722Z"
     },
     {
       "id": "chart_1749817104717_rp8ajfg",
