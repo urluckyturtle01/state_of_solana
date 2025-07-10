@@ -1001,7 +1001,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
   }, [autoRetryIntervalId]);
 
   return (
-    <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
+    <div className="bg-black/80 backdrop-blur-sm p-4 rounded-xl border border-gray-900 shadow-lg hover:shadow-blue-900/20 transition-all duration-300" data-testid="table-container">
       {/* Header Section with Title and Action Buttons */}
       <div className="flex justify-between items-center mb-3">
         <div className="-mt-1">
