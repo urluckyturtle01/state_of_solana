@@ -5,6 +5,7 @@ import { getChartConfigsByPage, getCounterConfigsByPage, getTableConfigsByPage }
 import { ChartConfig, CounterConfig, TableConfig } from '../types';
 import dynamic from 'next/dynamic';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
+import { cleanCorruptedCache, detectCorruptedCache } from '@/app/utils/cacheUtils';
 
 // Dynamic imports for better bundle splitting and performance
 const DashboardRenderer = dynamic(() => import('./dashboard-renderer'), {
@@ -194,6 +195,15 @@ const preloadCounterConfigs = async (pageId: string, forceRefresh = false): Prom
   } catch (error) {
     console.error(`Error preloading counters for page ${pageId}:`, error);
     
+    // Check if error might be due to corrupted cache and clean it
+    if (typeof window !== 'undefined') {
+      const corruptedKeys = detectCorruptedCache();
+      if (corruptedKeys.length > 0) {
+        console.log(`🔧 Detected ${corruptedKeys.length} corrupted cache entries, cleaning...`);
+        cleanCorruptedCache();
+      }
+    }
+    
     // Return cached counters even if expired in case of error
     if (PAGE_COUNTERS_CACHE[pageId]) {
       return PAGE_COUNTERS_CACHE[pageId].counters;
@@ -256,6 +266,15 @@ const preloadTableConfigs = async (pageId: string, forceRefresh = false): Promis
     return tables;
   } catch (error) {
     console.error(`Error preloading tables for page ${pageId}:`, error);
+    
+    // Check if error might be due to corrupted cache and clean it
+    if (typeof window !== 'undefined') {
+      const corruptedKeys = detectCorruptedCache();
+      if (corruptedKeys.length > 0) {
+        console.log(`🔧 Detected ${corruptedKeys.length} corrupted cache entries, cleaning...`);
+        cleanCorruptedCache();
+      }
+    }
     
     // Return cached tables even if expired in case of error
     if (PAGE_TABLES_CACHE[pageId]) {
@@ -324,6 +343,14 @@ export default React.memo(function EnhancedDashboardRenderer({
 
   // Prefetch configuration data on component mount - reduce delay
   useEffect(() => {
+    // Auto-clean corrupted cache on component mount
+    if (typeof window !== 'undefined') {
+      const cleanedCount = cleanCorruptedCache();
+      if (cleanedCount > 0) {
+        console.log(`🧹 Auto-cleaned ${cleanedCount} corrupted cache entries for better performance`);
+      }
+    }
+
     // Prefetch next likely pages
     const prefetchRelatedPages = async () => {
       // Common navigation patterns - prefetch related pages

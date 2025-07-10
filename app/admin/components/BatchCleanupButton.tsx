@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Button from './Button';
+import { clearAllDashboardCaches } from '@/app/utils/cacheUtils';
 
 interface BatchCleanupButtonProps {
   className?: string;
@@ -36,36 +37,18 @@ const BatchCleanupButton: React.FC<BatchCleanupButtonProps> = ({ className }) =>
         throw new Error(data.error || 'Failed to delete batch files');
       }
 
+      // Clear localStorage caches using utility function
+      const cacheStats = clearAllDashboardCaches();
+
       setResult({
         success: true,
-        message: data.message || 'Successfully deleted batch files',
-        details: data.details,
+        message: `${data.message || 'Successfully deleted batch files'}${cacheStats.clearedEntries > 0 ? ` and cleared ${cacheStats.clearedEntries} cache entries` : ''}`,
+        details: {
+          ...data.details,
+          cacheCleared: cacheStats.clearedEntries,
+          cachePatterns: cacheStats.cachePatterns
+        },
       });
-
-      // Clear localStorage caches as well
-      if (typeof window !== 'undefined') {
-        // Clear all tables caches
-        const keys = Object.keys(localStorage);
-        keys.forEach(key => {
-          if (key.startsWith('tables_page_') || key === 'all_tables') {
-            localStorage.removeItem(key);
-          }
-        });
-        
-        // Clear all counters caches
-        keys.forEach(key => {
-          if (key.startsWith('counters_page_') || key === 'all_counters') {
-            localStorage.removeItem(key);
-          }
-        });
-        
-        // Clear all charts caches
-        keys.forEach(key => {
-          if (key.startsWith('charts_page_') || key === 'all_charts') {
-            localStorage.removeItem(key);
-          }
-        });
-      }
     } catch (error) {
       console.error('Error cleaning up batch files:', error);
       setResult({
