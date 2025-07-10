@@ -32,6 +32,7 @@ export const MENU_OPTIONS: MenuItem[] = [
   { id: 'protocol-revenue', name: 'Protocol Revenue', icon: 'chart-pie' },
   { id: 'sf-dashboards', name: 'SF Dashboards', icon: 'chart-bar' },
   { id: 'launchpads', name: 'Launchpads', icon: 'chart-bar' },
+  { id: 'xstocks', name: 'Xstocks', icon: 'chart-bar' },
   {
     id: "compute-units",
     name: "Compute Units",
@@ -111,6 +112,10 @@ overview: [
     { id: 'launchpads-financials', name: 'Financials', path: '/launchpads/financials' },
     { id: 'launchpads-traction', name: 'Traction', path: '/launchpads/traction' },
     { id: 'launchpads-tokenized-equities', name: 'Tokenized Equities', path: '/launchpads/tokenized-equities' }
+  ],
+  "xstocks": [
+    { id: 'xstocks-financials', name: 'Financials', path: '/xstocks/financials' },
+    { id: 'xstocks-traction', name: 'Traction', path: '/xstocks/traction' }
   ],
   "compute-units": [
     {

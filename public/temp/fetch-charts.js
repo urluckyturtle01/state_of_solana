@@ -56,6 +56,10 @@ const MENU_PAGES = {
     { id: "launchpads-traction", name: "Traction", path: "/launchpads/traction" },
     { id: "launchpads-tokenized-equities", name: "Tokenized Equities", path: "/launchpads/tokenized-equities" }
   ],
+  "xstocks": [
+    { id: "xstocks-financials", name: "Financials", path: "/xstocks/financials" },
+    { id: "xstocks-traction", name: "Traction", path: "/xstocks/traction" }
+  ],
   "sf-dashboards": [
     { id: "sf-overview", name: "Overview", path: "/sf-dashboards/overview" },
     { id: "sf-stablecoins", name: "Stablecoins", path: "/sf-dashboards/stablecoins" },
