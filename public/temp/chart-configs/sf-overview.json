@@ -2,7 +2,7 @@
   "pageId": "sf-overview",
   "pageName": "Overview",
   "chartCount": 17,
-  "lastUpdated": "2025-07-10T13:39:07.699Z",
+  "lastUpdated": "2025-07-10T13:49:25.243Z",
   "charts": [
     {
       "id": "chart_1749809832495_hqam9lh",
@@ -20,30 +20,29 @@
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "base_fees",
+            "field": "base_fee",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
-            "field": "priority_fees",
+            "field": "priority_fee",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "jito_total_tips",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           },
           {
             "field": "vote_fees",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
           }
         ],
         "groupBy": ""
       },
       "additionalOptions": {
-        "showTooltipTotal": false,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -58,7 +57,7 @@
         "enableTimeAggregation": true
       },
       "createdAt": "2025-06-13T10:17:12.495Z",
-      "updatedAt": "2025-07-10T12:24:49.685Z"
+      "updatedAt": "2025-07-10T13:48:26.822Z"
     },
     {
       "id": "chart_1749814251162_ip5x6ou",
