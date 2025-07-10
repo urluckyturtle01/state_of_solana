@@ -1,8 +1,8 @@
 {
   "pageId": "launchpads-traction",
   "pageName": "Traction",
-  "chartCount": 7,
-  "lastUpdated": "2025-07-10T08:48:43.119Z",
+  "chartCount": 11,
+  "lastUpdated": "2025-07-10T11:25:05.192Z",
   "charts": [
     {
       "id": "chart_1752070419859_srd21iq",
@@ -184,6 +184,146 @@
       },
       "createdAt": "2025-07-09T14:27:29.423Z",
       "updatedAt": "2025-07-09T14:27:29.614Z"
+    },
+    {
+      "id": "chart_1752146145988_qticvaa",
+      "title": "Trade volume",
+      "subtitle": "Daily trade volume across the launchpads in USD terms",
+      "page": "launchpads-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-10T11:15:45.988Z",
+      "updatedAt": "2025-07-10T11:15:46.968Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752146242095_i59jupv",
+      "title": "Marketshare by trade volume",
+      "subtitle": "",
+      "page": "launchpads-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_sol",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-10T11:17:22.095Z",
+      "updatedAt": "2025-07-10T11:17:22.337Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752146370014_jdwaa3q",
+      "title": "Daily trade stats",
+      "subtitle": "",
+      "page": "launchpads-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-10T11:19:30.014Z",
+      "updatedAt": "2025-07-10T11:19:30.431Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752146431065_r0z5mg1",
+      "title": "Daily traders stats",
+      "subtitle": "",
+      "page": "launchpads-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "traders",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-10T11:20:31.065Z",
+      "updatedAt": "2025-07-10T11:20:31.325Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
     }
   ]
 }
