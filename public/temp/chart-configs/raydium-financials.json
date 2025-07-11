@@ -1,8 +1,8 @@
 {
   "pageId": "raydium-financials",
   "pageName": "Financials",
-  "chartCount": 9,
-  "lastUpdated": "2025-07-11T13:19:57.114Z",
+  "chartCount": 11,
+  "lastUpdated": "2025-07-11T14:27:18.235Z",
   "charts": [
     {
       "id": "chart_1748935655865_ysfoa3j",
@@ -355,6 +355,47 @@
       },
       "createdAt": "2025-06-03T08:09:38.401Z",
       "updatedAt": "2025-07-11T08:41:03.530Z"
+    },
+    {
+      "id": "chart_1752242769758_z9ogk1s",
+      "title": "RAY Buyback",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/raydium/api/queries/11074/results.json",
+      "apiKey": "QDb0QHrGbrgwv46ZL3aUdEsnCYoxh56ZS3QclDow&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "usdc_amount",
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-11T14:06:09.758Z",
+      "updatedAt": "2025-07-11T14:26:52.232Z"
+    },
+    {
+      "id": "chart_1752242932993_6u5eh1s",
+      "title": "RAY Buyback Expenditure",
+      "subtitle": "Cumulative",
+      "page": "raydium-financials",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/raydium/api/queries/11074/results.json",
+      "apiKey": "QDb0QHrGbrgwv46ZL3aUdEsnCYoxh56ZS3QclDow&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "cumulative_usdc_spent",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-11T14:08:52.993Z",
+      "updatedAt": "2025-07-11T14:08:53.187Z"
     }
   ]
 }
