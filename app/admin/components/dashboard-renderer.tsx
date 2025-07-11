@@ -558,16 +558,7 @@ async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<st
     if (pageData.charts && Array.isArray(pageData.charts)) {
       pageData.charts.forEach((chartResult: any) => {
         if (chartResult.success && chartResult.data) {
-          // Check if this chart has multiple datasets (multi-parameter data)
-          if (chartResult.datasets && Array.isArray(chartResult.datasets) && chartResult.datasets.length > 0) {
-            console.log(`Chart ${chartResult.chartId} has ${chartResult.datasets.length} datasets for different parameters`);
-            
-            // Store the full chart result structure for ChartRenderer to handle dataset switching
-            chartDataMap[chartResult.chartId] = [chartResult]; // Wrap in array for consistency
-          } else {
-            // Single dataset - store data directly
-            chartDataMap[chartResult.chartId] = chartResult.data;
-          }
+          chartDataMap[chartResult.chartId] = chartResult.data;
         }
       });
     }
@@ -1135,21 +1126,8 @@ export default function DashboardRenderer({
     const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
     const isStackedChart = isStackedBarChart(chart);
     
-    // Check if we have datasets available for this chart (from temp files)
-    const chartCachedData = chartData[chartId];
-    const hasDatasets = chartCachedData && 
-                       Array.isArray(chartCachedData) && 
-                       chartCachedData.length === 1 && 
-                       chartCachedData[0] && 
-                       chartCachedData[0].datasets && 
-                       Array.isArray(chartCachedData[0].datasets);
-    
-    if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode') || (filterType === 'currencyFilter' && hasDatasets)) {
-      console.log(`Dashboard: Client-side filter processing for ${
-        isTimeAggregationEnabled ? 'time aggregation' : 
-        isStackedChart ? 'stacked chart' : 
-        'currency with datasets'
-      } - NO API CALL`);
+    if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode')) {
+      console.log(`Dashboard: Client-side filter processing for ${isTimeAggregationEnabled ? 'time aggregation' : 'stacked chart'} - NO API CALL`);
       
       // Update filter value only (ChartRenderer will handle the data processing)
       setFilterValues(prev => ({
@@ -1160,8 +1138,7 @@ export default function DashboardRenderer({
         }
       }));
       
-      // No API call needed - ChartRenderer handles time aggregation, StackedBarChart handles displayMode, 
-      // and currency switching uses cached datasets
+      // No API call needed - ChartRenderer handles time aggregation and StackedBarChart handles displayMode client-side
       return;
     }
 
