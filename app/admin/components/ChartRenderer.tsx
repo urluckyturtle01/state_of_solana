@@ -96,26 +96,69 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       console.log('ChartRenderer: Setting preloaded data for chart:', chartConfig.title);
       console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
       console.log('Preloaded data length:', preloadedData.length);
+      console.log('Preloaded data structure:', preloadedData[0]);
       
       const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
       
-      if (isTimeAggregationEnabled) {
-        // For time aggregation charts, store preloadedData as rawData
-        // and let the aggregation logic process it into data
-        setRawData(preloadedData);
-        console.log('ChartRenderer: Set rawData for time aggregation, length:', preloadedData.length);
+      // Check if this is the new datasets structure from temp files
+      if (preloadedData.length === 1 && preloadedData[0] && preloadedData[0].datasets && Array.isArray(preloadedData[0].datasets)) {
+        console.log('ChartRenderer: Detected datasets structure from temp files');
+        const dataStructure = preloadedData[0];
         
-        // Don't set data directly - let the time aggregation effect handle it
-        // The time aggregation effect will process rawData into data based on current filter values
+        // Get current currency filter value to select appropriate dataset
+        const currentCurrencyFilter = (externalFilterValues || internalFilterValues)['currencyFilter'];
+        
+        // Find the dataset that matches current currency, or use the first one as default
+        let selectedDataset = dataStructure.datasets[0]; // Default to first dataset
+        
+        if (currentCurrencyFilter) {
+          const matchingDataset = dataStructure.datasets.find((dataset: any) => 
+            dataset.parameters && dataset.parameters.currency === currentCurrencyFilter
+          );
+          if (matchingDataset) {
+            selectedDataset = matchingDataset;
+            console.log(`ChartRenderer: Using dataset for currency ${currentCurrencyFilter}`);
+          }
+        }
+        
+        if (selectedDataset && selectedDataset.data) {
+          console.log('ChartRenderer: Processing dataset with', selectedDataset.data.length, 'items');
+          
+          if (isTimeAggregationEnabled) {
+            // For time aggregation charts, store as rawData
+            setRawData(selectedDataset.data);
+            console.log('ChartRenderer: Set rawData for time aggregation from datasets');
+            
+            // Don't set data directly - let the time aggregation effect handle it
+            // The time aggregation effect will process rawData into data based on current filter values
+          } else {
+            // For regular charts, set as final data
+            setData(selectedDataset.data);
+            console.log('ChartRenderer: Set data directly for non-time-aggregation chart from datasets');
+          }
+        }
+        
+        setError(null);
       } else {
-        // For regular charts, set preloadedData as final data
-        setData(preloadedData);
-        console.log('ChartRenderer: Set data directly for non-time-aggregation chart');
+        // Original preloaded data handling for backward compatibility
+        if (isTimeAggregationEnabled) {
+          // For time aggregation charts, store preloadedData as rawData
+          // and let the aggregation logic process it into data
+          setRawData(preloadedData);
+          console.log('ChartRenderer: Set rawData for time aggregation, length:', preloadedData.length);
+          
+          // Don't set data directly - let the time aggregation effect handle it
+          // The time aggregation effect will process rawData into data based on current filter values
+        } else {
+          // For regular charts, set preloadedData as final data
+          setData(preloadedData);
+          console.log('ChartRenderer: Set data directly for non-time-aggregation chart');
+        }
+        
+        setError(null);
       }
-      
-      setError(null);
     }
-  }, [preloadedData, chartConfig.additionalOptions?.enableTimeAggregation, chartConfig.title]);
+  }, [preloadedData, chartConfig.additionalOptions?.enableTimeAggregation, chartConfig.title, externalFilterValues, internalFilterValues]);
 
   // Update legendColorMap when externalColorMap changes
   useEffect(() => {
@@ -387,7 +430,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   const handleFilterChange = (filterType: string, value: string) => {
     console.log(`ChartRenderer filter changed: ${filterType} = ${value}`);
     
-    // For time aggregation enabled charts, handle time filter changes immediately
+    // For time aggregation enabled charts, handle ALL filter changes client-side
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     
     if (isTimeAggregationEnabled && filterType === 'timeFilter') {
@@ -427,6 +470,97 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       }
       
       // Also call external handler if provided
+      if (onFilterChange) {
+        onFilterChange(filterType, value);
+      }
+    } else if (filterType === 'currencyFilter') {
+      console.log('ChartRenderer: Currency filter processing - checking for cached datasets');
+      
+      // Check if we have preloaded data with multiple datasets (from temp files)
+      if (preloadedData && Array.isArray(preloadedData) && preloadedData.length === 1) {
+        const dataStructure = preloadedData[0];
+        if (dataStructure && dataStructure.datasets && Array.isArray(dataStructure.datasets)) {
+          console.log('ChartRenderer: Found datasets in preloaded data, using cached currency data');
+          
+          // Find the dataset that matches the selected currency
+          const targetDataset = dataStructure.datasets.find((dataset: any) => 
+            dataset.parameters && dataset.parameters.currency === value
+          );
+          
+          if (targetDataset && targetDataset.data) {
+            console.log(`ChartRenderer: Found cached data for currency ${value}, updating immediately`);
+            
+            // Update internal state immediately
+            if (!externalFilterValues) {
+              setInternalFilterValues(prev => ({
+                ...prev,
+                [filterType]: value
+              }));
+            }
+            
+            // For time aggregation charts, store as rawData and apply aggregation
+            if (isTimeAggregationEnabled) {
+              setRawData(targetDataset.data);
+              
+              // Apply current time filter if set
+              const currentFilters = externalFilterValues || internalFilterValues;
+              const timeFilterValue = currentFilters['timeFilter'];
+              if (timeFilterValue) {
+                const { xAxis, yAxis } = chartConfig.dataMapping;
+                const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+                
+                let yFields: string[] = [];
+                if (Array.isArray(yAxis)) {
+                  yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+                } else {
+                  yFields = [getFieldFromYAxisConfig(yAxis)];
+                }
+                
+                const aggregatedData = aggregateDataByTimePeriod(targetDataset.data, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+                setData(aggregatedData);
+                
+                if (onDataLoaded) {
+                  onDataLoaded(aggregatedData);
+                }
+              } else {
+                setData(targetDataset.data);
+                if (onDataLoaded) {
+                  onDataLoaded(targetDataset.data);
+                }
+              }
+            } else {
+              // For non-time-aggregation charts, use data directly
+              setData(targetDataset.data);
+              if (onDataLoaded) {
+                onDataLoaded(targetDataset.data);
+              }
+            }
+            
+            // Call external handler if provided
+            if (onFilterChange) {
+              onFilterChange(filterType, value);
+            }
+            
+            return; // Exit early - no API call needed
+          } else {
+            console.log(`ChartRenderer: No cached data found for currency ${value}, falling back to API`);
+          }
+        }
+      }
+      
+      // Fallback to API call if no cached data found
+      console.log('ChartRenderer: No cached datasets found, using API call for currency filter');
+      
+      // Update internal state immediately for UI responsiveness
+      if (!externalFilterValues) {
+        setInternalFilterValues(prev => ({
+          ...prev,
+          [filterType]: value
+        }));
+        setIsFilterChanged(true);
+      }
+      
+      // Call external handler if provided
       if (onFilterChange) {
         onFilterChange(filterType, value);
       }
@@ -505,6 +639,57 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       }
     }
   }, [rawData, filterValues['timeFilter'], chartConfig.additionalOptions?.enableTimeAggregation]);
+
+  // Effect to handle currency filter changes when using datasets structure
+  useEffect(() => {
+    const currencyFilterValue = filterValues['currencyFilter'];
+    
+    // Only process if we have preloaded data with datasets structure and a currency filter
+    if (currencyFilterValue && preloadedData && Array.isArray(preloadedData) && preloadedData.length === 1) {
+      const dataStructure = preloadedData[0];
+      if (dataStructure && dataStructure.datasets && Array.isArray(dataStructure.datasets)) {
+        console.log('ChartRenderer: Currency filter effect triggered for:', currencyFilterValue);
+        
+        // Find the dataset that matches the selected currency
+        const targetDataset = dataStructure.datasets.find((dataset: any) => 
+          dataset.parameters && dataset.parameters.currency === currencyFilterValue
+        );
+        
+        if (targetDataset && targetDataset.data) {
+          console.log(`ChartRenderer: Switching to cached data for currency ${currencyFilterValue}`);
+          
+          const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+          
+          // For time aggregation charts, store as rawData and apply aggregation
+          if (isTimeAggregationEnabled) {
+            setRawData(targetDataset.data);
+            
+            // Apply current time filter if set
+            const timeFilterValue = filterValues['timeFilter'];
+            if (timeFilterValue) {
+              const { xAxis, yAxis } = chartConfig.dataMapping;
+              const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+              
+              let yFields: string[] = [];
+              if (Array.isArray(yAxis)) {
+                yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+              } else {
+                yFields = [getFieldFromYAxisConfig(yAxis)];
+              }
+              
+              const aggregatedData = aggregateDataByTimePeriod(targetDataset.data, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+              setData(aggregatedData);
+            } else {
+              setData(targetDataset.data);
+            }
+          } else {
+            // For non-time-aggregation charts, use data directly
+            setData(targetDataset.data);
+          }
+        }
+      }
+    }
+  }, [filterValues['currencyFilter'], preloadedData, chartConfig.additionalOptions?.enableTimeAggregation, filterValues['timeFilter']]);
 
   // Additional effect to ensure data is processed when rawData first becomes available
   useEffect(() => {
