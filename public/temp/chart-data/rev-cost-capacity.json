@@ -1,17 +1,46 @@
 {
   "pageId": "rev-cost-capacity",
   "pageName": "Cost & Capacity",
-  "fetchedAt": "2025-07-11T08:58:20.914Z",
+  "fetchedAt": "2025-07-11T09:31:01.946Z",
   "charts": [
     {
       "success": false,
       "error": "API error: 404",
       "chartId": "chart_1748007531839_4qciy9d",
-      "title": "Transaction fees + Jito tips"
+      "title": "Transaction Fees + Jito Tips"
     },
     {
       "success": true,
       "data": [
+        {
+          "block_date": "2025-07-10",
+          "total_transactions": 338487674,
+          "succeessful_transactions": 308930805,
+          "succeesful_transactions_perc": 91.27,
+          "non_vote_transactions_perc": 33.6,
+          "successful_non_vote_transactions_perc": 74.25,
+          "failed_transactions": 29556869,
+          "total_vote_transactions": 224753819,
+          "total_non_vote_transactions": 113733855,
+          "successful_vote_transactions": 224477846,
+          "successful_non_vote_transactions": 84452959,
+          "failed_vote_transactions": 275973,
+          "failed_non_vote_transactions": 29280896,
+          "total_Fees": 8763.91246477,
+          "non_vote_transactions_fees": 7640.137652714,
+          "vote_transactions_fees": 1123.774812056,
+          "priority_fees": 6996.553422714,
+          "successful_vote_transactions_fees": 1122.394947056,
+          "successful_non_vote_transactions_fees": 6165.124484816,
+          "failed_vote_transactions_fees": 1.379865,
+          "failed_non_vote_transactions_fees": 1475.013167898,
+          "successful_non_vote_transactions_priority_fees": 5672.155579816,
+          "failed_non_vote_transactions_priority_fees": 1324.397842898,
+          "total_tps": 3917,
+          "success_tps": 3575,
+          "failed_tps": 342,
+          "real_tps": 1316
+        },
         {
           "block_date": "2025-07-09",
           "total_transactions": 337590449,
@@ -16137,13 +16166,42 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1752224300914,
+      "timestamp": 1752226261944,
       "chartId": "chart_1748008463492_z8recfh",
-      "title": "Transactions summary"
+      "title": "Transactions Summary"
     },
     {
       "success": true,
       "data": [
+        {
+          "block_date": "2025-07-10",
+          "total_transactions": 338487674,
+          "succeessful_transactions": 308930805,
+          "succeesful_transactions_perc": 91.27,
+          "non_vote_transactions_perc": 33.6,
+          "successful_non_vote_transactions_perc": 74.25,
+          "failed_transactions": 29556869,
+          "total_vote_transactions": 224753819,
+          "total_non_vote_transactions": 113733855,
+          "successful_vote_transactions": 224477846,
+          "successful_non_vote_transactions": 84452959,
+          "failed_vote_transactions": 275973,
+          "failed_non_vote_transactions": 29280896,
+          "total_Fees": 8763.91246477,
+          "non_vote_transactions_fees": 7640.137652714,
+          "vote_transactions_fees": 1123.774812056,
+          "priority_fees": 6996.553422714,
+          "successful_vote_transactions_fees": 1122.394947056,
+          "successful_non_vote_transactions_fees": 6165.124484816,
+          "failed_vote_transactions_fees": 1.379865,
+          "failed_non_vote_transactions_fees": 1475.013167898,
+          "successful_non_vote_transactions_priority_fees": 5672.155579816,
+          "failed_non_vote_transactions_priority_fees": 1324.397842898,
+          "total_tps": 3917,
+          "success_tps": 3575,
+          "failed_tps": 342,
+          "real_tps": 1316
+        },
         {
           "block_date": "2025-07-09",
           "total_transactions": 337590449,
@@ -32269,9 +32327,9 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1752224300895,
+      "timestamp": 1752226261946,
       "chartId": "chart_1748009281407_ia1dy03",
-      "title": "TPS summary"
+      "title": "Tps Summary"
     }
   ],
   "summary": {
