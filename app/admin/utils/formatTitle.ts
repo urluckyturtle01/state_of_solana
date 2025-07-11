@@ -15,6 +15,11 @@ const customMap: Record<string, string> = {
   'defi': 'DeFi',
   'vc': 'VC', 
   'tev': 'TEV',
+  'usd': 'USD',
+  'tps': 'TPS',
+  'apy': 'APY',
+  'apr': 'APR',
+  'ray' : 'RAY'
 };
 
 export function formatTitle(title: string): string {
