@@ -1393,6 +1393,18 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     );
   };
 
+  // Handler for double-click: isolate series or restore all
+  const handleLegendDoubleClick = (fieldId: string) => {
+    const allFields = fields;
+    if (hiddenSeriesState.length === allFields.length - 1 && !hiddenSeriesState.includes(fieldId)) {
+      // Restore all
+      setHiddenSeriesState([]);
+    } else {
+      // Isolate this series
+      setHiddenSeriesState(allFields.filter(f => f !== fieldId));
+    }
+  };
+
   // Render content function
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
@@ -1951,6 +1963,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                       color={item.color}
                       shape={fieldTypes[item.id] === 'line' ? 'circle' : 'square'}
                       onClick={() => handleLegendClick(item.id)}
+                      onDoubleClick={() => handleLegendDoubleClick(item.id)}
                       inactive={hiddenSeriesState.includes(item.id)}
                     />
                   ))}

@@ -531,6 +531,18 @@ const PieChart: React.FC<PieChartProps> = ({
     );
   };
 
+  // Handler for double-click: isolate series or restore all
+  const handleLegendDoubleClick = (fieldId: string) => {
+    const allIds = legendItems.map(item => item.id);
+    if (hiddenSeriesState.length === allIds.length - 1 && !hiddenSeriesState.includes(fieldId)) {
+      // Restore all
+      setHiddenSeriesState([]);
+    } else {
+      // Isolate this series
+      setHiddenSeriesState(allIds.filter(id => id !== fieldId));
+    }
+  };
+
   // Render chart content
   const renderChartContent = useCallback((chartWidth: number, chartHeight: number, isModal = false) => {
     // Show error state or no data
@@ -845,6 +857,7 @@ const PieChart: React.FC<PieChartProps> = ({
                       color={item.color}
                       shape="square"
                       onClick={() => handleLegendClick(item.id)}
+                      onDoubleClick={() => handleLegendDoubleClick(item.id)}
                       inactive={hiddenSeriesState.includes(item.id)}
                     />
                   ))}

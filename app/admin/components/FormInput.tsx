@@ -11,6 +11,7 @@ interface FormInputProps {
   className?: string;
   error?: string;
   helpText?: string;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export default function FormInput({
@@ -24,6 +25,7 @@ export default function FormInput({
   className = '',
   error,
   helpText,
+  onBlur,
 }: FormInputProps) {
   return (
     <div className={`mb-4 ${className}`}>
@@ -41,6 +43,7 @@ export default function FormInput({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        onBlur={onBlur}
         className={`mt-1 block w-full px-3 py-2 bg-gray-700 border ${
           error ? 'border-red-500' : 'border-gray-600'
         } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-200 sm:text-sm transition-colors`}

@@ -60,12 +60,12 @@ export default function RaydiumFinancialsPage() {
 
       {/* Dashboard Content */}
       <div ref={tableRef} data-testid="enhanced-dashboard">
-        <Suspense fallback={<ChartLoading />}>
-          <EnhancedDashboardRenderer 
-            pageId="raydium-financials" 
-            enableCaching={true}
-          />
-        </Suspense>
+      <Suspense fallback={<ChartLoading />}>
+        <EnhancedDashboardRenderer 
+          pageId="raydium-financials" 
+          enableCaching={true}
+        />
+      </Suspense>
       </div>
     </div>
   );

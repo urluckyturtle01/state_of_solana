@@ -7,6 +7,7 @@ interface LegendItemProps {
   isLoading?: boolean;
   tooltipText?: string;
   onClick?: () => void;
+  onDoubleClick?: () => void;
   inactive?: boolean;
 }
 
@@ -17,13 +18,15 @@ const LegendItem: React.FC<LegendItemProps> = ({
   isLoading = false,
   tooltipText,
   onClick,
+  onDoubleClick,
   inactive = false,
 }) => {
   return (
     <div
-      className={`flex items-center whitespace-nowrap select-none ${onClick ? 'cursor-pointer' : ''}`}
+      className={`flex items-center whitespace-nowrap select-none ${onClick || onDoubleClick ? 'cursor-pointer' : ''}`}
       style={{ opacity: inactive ? 0.4 : 1 }}
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
       title={tooltipText || label}
     >
       <div 

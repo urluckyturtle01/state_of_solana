@@ -1705,6 +1705,35 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     setHiddenSeriesState(hiddenSeries);
   }, [hiddenSeries]);
 
+  // For allPossibleKeys
+
+  const isMultiYFieldsStacked = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked;
+  const hasGroupBy = groupByField && groupByField.trim() !== '';
+
+  const allPossibleKeys = useMemo(() => {
+    if (data.length === 0) return [];
+
+    if (isMultiYFieldsStacked) {
+      return Array.isArray(yField) ? yField.map(field => typeof field === 'string' ? field : field.field) : [];
+    } else if (!hasGroupBy) {
+      return [yKey];
+    } else {
+      return Array.from(new Set(data.map(d => d[groupByField]))).filter(key => key != null);
+    }
+  }, [data, isMultiYFieldsStacked, yField, hasGroupBy, yKey, groupByField]);
+
+  // Handler for double-click: isolate series or restore all
+  const handleLegendDoubleClick = (fieldId: string) => {
+    const allKeys = allPossibleKeys;
+    if (hiddenSeriesState.length === allKeys.length - 1 && !hiddenSeriesState.includes(fieldId)) {
+      // Restore all
+      setHiddenSeriesState([]);
+    } else {
+      // Isolate this series
+      setHiddenSeriesState(allKeys.filter(f => f !== fieldId));
+    }
+  };
+
   // When rendering the chart in expanded mode, use the Modal component
   if (isExpanded) {
     // Only render Modal on client-side to prevent hydration errors
@@ -1825,6 +1854,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                     color={item.color}
                     shape="square"
                     onClick={() => handleLegendClick(item.id)}
+                    onDoubleClick={() => handleLegendDoubleClick(item.id)}
                     inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}

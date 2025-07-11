@@ -1863,6 +1863,24 @@ export default function DashboardRenderer({
     });
   }, []);
 
+  // Add after handleLegendClick
+
+  const handleLegendDoubleClick = useCallback((chartId: string, fieldId: string) => {
+    setHiddenSeries(prev => {
+      const currentHidden = prev[chartId] || [];
+      const allKeys = legends[chartId]?.map(l => l.id || l.label) || [];
+      if (allKeys.length === 0) return prev;
+
+      if (currentHidden.length === allKeys.length - 1 && !currentHidden.includes(fieldId)) {
+        // Restore all
+        return { ...prev, [chartId]: [] };
+      } else {
+        // Isolate this series
+        return { ...prev, [chartId]: allKeys.filter(f => f !== fieldId) };
+      }
+    });
+  }, [legends]);
+
   // Filter charts by section if specified - must be before conditional returns
   const filteredCharts = useMemo(() => {
     if (!section) return charts;
@@ -2012,6 +2030,7 @@ export default function DashboardRenderer({
                       shape={legend.shape || 'square'}
                       tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
                       onClick={() => handleLegendClick(chart.id, legend.id || legend.label)}
+                      onDoubleClick={() => handleLegendDoubleClick(chart.id, legend.id || legend.label)}
                       inactive={(hiddenSeries[chart.id] || []).includes(legend.id || legend.label)}
                     />
                 ))

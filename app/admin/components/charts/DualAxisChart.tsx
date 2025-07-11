@@ -1285,6 +1285,18 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     );
   };
 
+  // Handler for double-click: isolate series or restore all
+  const handleLegendDoubleClick = (fieldId: string) => {
+    const allFields = fields;
+    if (hiddenSeriesState.length === allFields.length - 1 && !hiddenSeriesState.includes(fieldId)) {
+      // Restore all
+      setHiddenSeriesState([]);
+    } else {
+      // Isolate this series
+      setHiddenSeriesState(allFields.filter(f => f !== fieldId));
+    }
+  };
+
   // Update hidden series when prop changes
   useEffect(() => {
     console.log('DualAxisChart: hiddenSeries prop changed:', hiddenSeries);
@@ -1419,6 +1431,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                     color={item.color}
                     shape={shouldRenderAsLine(item.id) ? 'circle' : 'square'}
                     onClick={() => handleLegendClick(item.id)}
+                    onDoubleClick={() => handleLegendDoubleClick(item.id)}
                     inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}

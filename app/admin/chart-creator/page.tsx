@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType, YAxisConfig, DualAxisConfig } from '../types';
 import { formDataToConfig, validateApiEndpoint, saveChartConfig, getAllChartConfigs } from '../utils';
+import { formatTitle } from '../utils/formatTitle';
 import FormInput from '../components/FormInput';
 import FormSelect from '../components/FormSelect';
 import FormCheckbox from '../components/FormCheckbox';
@@ -1285,6 +1286,10 @@ export default function ChartCreatorPage() {
             label="Chart Title"
             value={formData.title}
             onChange={(e) => handleInputChange('title', e.target.value)}
+            onBlur={(e) => {
+              const formatted = formatTitle(e.target.value);
+              handleInputChange('title', formatted);
+            }}
             placeholder="E.g., Protocol Revenue by Category"
             required
             error={touched.title ? errors.title : undefined}

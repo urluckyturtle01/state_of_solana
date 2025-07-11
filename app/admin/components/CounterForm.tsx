@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
 import { saveCounterConfig } from '../utils';
 import { MENU_OPTIONS, MENU_PAGES, getPagesForMenu, findMenuForPage } from '../config/menuPages';
+import { formatTitle } from '../utils/formatTitle';
 
 interface CounterFormProps {
   initialData?: CounterConfig;
@@ -459,6 +460,10 @@ const CounterForm: React.FC<CounterFormProps> = ({
               className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Active Users"
               required
+              onBlur={(e) => {
+                const formatted = formatTitle(e.target.value);
+                setFormData(prev => ({ ...prev, title: formatted }));
+              }}
             />
           </div>
           

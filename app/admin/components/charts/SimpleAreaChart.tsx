@@ -1032,6 +1032,18 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     );
   };
 
+  // Handler for double-click: isolate series or restore all
+  const handleLegendDoubleClick = (fieldId: string) => {
+    const allFields = isMultiSeries ? yFields : [yKey];
+    if (hiddenSeriesState.length === allFields.length - 1 && !hiddenSeriesState.includes(fieldId)) {
+      // Restore all
+      setHiddenSeriesState([]);
+    } else {
+      // Isolate this series
+      setHiddenSeriesState(allFields.filter(f => f !== fieldId));
+    }
+  };
+
   // Update hidden series when prop changes
   useEffect(() => {
     console.log('SimpleAreaChart: hiddenSeries prop changed:', hiddenSeries);
@@ -1709,6 +1721,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
                     shape="circle"
                     tooltipText={item.value ? formatValue(item.value) : undefined}
                     onClick={() => handleLegendClick(item.id)}
+                    onDoubleClick={() => handleLegendDoubleClick(item.id)}
                     inactive={hiddenSeriesState.includes(item.id)}
                   />
                 ))}
