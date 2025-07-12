@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, startTransition, useRef } from 'react';
 import TabsNavigation, { Tab } from '../../components/shared/TabsNavigation';
 import VisualizationModal from './VisualizationModal';
+import NLPChartInput from './NLPChartInput';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
 import AddToDashboardModal from './AddToDashboardModal';
 import ChartCard from '@/app/components/shared/ChartCard';
@@ -88,6 +89,7 @@ interface ExplorerDataViewProps {
     apiGroups?: Record<string, ColumnData[]>;
   };
   detectDateColumns: (api: ApiConfig, data: any[]) => string[];
+  onToggleColumnSelection: (apiId: string, column: string) => void;
 }
 
 const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
@@ -97,25 +99,21 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
   onDateColumnMapping,
   generateJoinedTableData,
   detectDateColumns,
+  onToggleColumnSelection,
 }) => {
   const [activeTab, setActiveTab] = useState('table');
   const [isVisualizationModalOpen, setIsVisualizationModalOpen] = useState(false);
   const [isDashboardModalOpen, setIsDashboardModalOpen] = useState(false);
   const [selectedVisualizationForDashboard, setSelectedVisualizationForDashboard] = useState<SavedVisualization | null>(null);
   const [editingVisualization, setEditingVisualization] = useState<SavedVisualization | null>(null);
+  const [nlpGeneratedConfig, setNlpGeneratedConfig] = useState<any | null>(null);
+  const [nlpMatchingApis, setNlpMatchingApis] = useState<any[]>([]);
   
   // Use UserDataContext for user-specific data
   const { explorerData, addVisualization, updateVisualization, deleteVisualization, isLoading } = useUserData();
   const { isAuthenticated } = useAuth();
   const { addChartToDashboard } = useDashboards();
   const savedVisualizations = explorerData.savedVisualizations;
-
-  // Debug logging for dashboard context
-  useEffect(() => {
-    console.log('🔍 Explorer: Dashboard context check');
-    console.log('🔐 Is authenticated:', isAuthenticated);
-    console.log('📊 addChartToDashboard function available:', !!addChartToDashboard);
-  }, [isAuthenticated, addChartToDashboard]);
 
   // Legend-related state
   const [legends, setLegends] = useState<Record<string, Legend[]>>({});
@@ -557,6 +555,122 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
     }
   };
 
+  // Handle NLP chart generation
+  const handleNLPChartGenerated = useCallback((configuration: any, matchingApis: any[]) => {
+    console.log('🎯 NLP Chart Generated Callback called!');
+    console.log('📊 Configuration received:', configuration);
+    console.log('🔗 Matching APIs:', matchingApis);
+    
+    // Validate that we have the data we need
+    if (!configuration) {
+      console.error('❌ No configuration received from NLP API');
+      return;
+    }
+    
+    if (!matchingApis || matchingApis.length === 0) {
+      console.error('❌ No matching APIs received from NLP API');
+      return;
+    }
+    
+    console.log('✅ NLP response validation passed, proceeding with column selection...');
+    
+    // Automatically select relevant columns from matching APIs with AI suggestions
+    if (matchingApis && matchingApis.length > 0) {
+      console.log('🤖 Auto-selecting columns from AI-enhanced matching APIs...');
+      
+      matchingApis.forEach((api: any) => {
+        const suggestedColumns = api.suggestedColumns;
+        
+        if (suggestedColumns) {
+          // Use AI-suggested specific columns for this API
+          console.log(`🧠 AI suggested columns for ${api.name}:`, suggestedColumns);
+          
+          // Select X column
+          if (suggestedColumns.xColumn && api.columns.includes(suggestedColumns.xColumn)) {
+            console.log(`📅 Selecting AI-suggested X column: ${suggestedColumns.xColumn} from ${api.name}`);
+            onToggleColumnSelection(api.id, suggestedColumns.xColumn);
+          }
+          
+          // Select Y columns
+          if (suggestedColumns.yColumns && suggestedColumns.yColumns.length > 0) {
+            suggestedColumns.yColumns.forEach((yColumn: string) => {
+              if (api.columns.includes(yColumn)) {
+                console.log(`📊 Selecting AI-suggested Y column: ${yColumn} from ${api.name}`);
+                onToggleColumnSelection(api.id, yColumn);
+              }
+            });
+          }
+          
+          // Select groupBy column if suggested
+          if (suggestedColumns.groupBy && api.columns.includes(suggestedColumns.groupBy)) {
+            console.log(`🏷️ Selecting AI-suggested groupBy column: ${suggestedColumns.groupBy} from ${api.name}`);
+            onToggleColumnSelection(api.id, suggestedColumns.groupBy);
+          }
+        } else {
+          // Fallback: Use global configuration columns
+          console.log(`🔄 Fallback: Using global configuration for ${api.name}`);
+          
+          // Select the X column (usually date/time)
+          if (configuration.xColumn && api.columns.includes(configuration.xColumn)) {
+            console.log(`📅 Selecting X column: ${configuration.xColumn} from ${api.name}`);
+            onToggleColumnSelection(api.id, configuration.xColumn);
+          }
+          
+          // Select the Y columns (metrics)
+          if (configuration.yColumns && configuration.yColumns.length > 0) {
+            configuration.yColumns.forEach((yColumn: string) => {
+              if (api.columns.includes(yColumn)) {
+                console.log(`📊 Selecting Y column: ${yColumn} from ${api.name}`);
+                onToggleColumnSelection(api.id, yColumn);
+              }
+            });
+          }
+        }
+        
+        // If still no columns selected, auto-select smart defaults
+        const selectedFromApi = Object.keys(columnData).filter(key => key.startsWith(api.id + '_'));
+        if (selectedFromApi.length === 0) {
+          console.log(`🎯 Auto-selecting smart defaults for ${api.name}`);
+          
+          // Find date column
+          const dateColumn = api.columns.find((col: string) => 
+            col.toLowerCase().includes('date') || 
+            col.toLowerCase().includes('time') || 
+            col === 'partition_0'
+          );
+          
+          // Find metric columns
+          const metricColumns = api.columns.filter((col: string) => 
+            col.toLowerCase().includes('volume') ||
+            col.toLowerCase().includes('price') ||
+            col.toLowerCase().includes('revenue') ||
+            col.toLowerCase().includes('fee') ||
+            col.toLowerCase().includes('supply') ||
+            col.toLowerCase().includes('holders') ||
+            col.toLowerCase().includes('value')
+          );
+          
+          // Select date + first 2 metric columns
+          if (dateColumn) onToggleColumnSelection(api.id, dateColumn);
+          metricColumns.slice(0, 2).forEach((col: string) => {
+            onToggleColumnSelection(api.id, col);
+          });
+        }
+      });
+    }
+    
+    // Batch all state updates together using React's automatic batching
+    console.log('🔄 Setting state: opening visualization modal...');
+    startTransition(() => {
+      setNlpGeneratedConfig(configuration);
+      setNlpMatchingApis(matchingApis);
+      setIsVisualizationModalOpen(true);
+      console.log('🎉 Modal state set to open!');
+    });
+    
+    console.log('✅ State updates batched and submitted - Modal should be opening!');
+  }, [onToggleColumnSelection, columnData]);
+
   const renderVisualizationChart = (visualization: SavedVisualization) => {
     const { configuration, chartConfig, chartData } = visualization;
     
@@ -602,18 +716,34 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
   if (selectedData.length === 0 && loadingColumns.length === 0 && errorColumns.length === 0) {
     return (
       <div className="flex-1 bg-gray-950/50 flex flex-col">
-        {/* Empty State */}
+        {/* Empty State with NLP */}
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center max-w-md">
-            <div className="text-gray-600 mb-4">
+          <div className="text-center max-w-2xl px-6">
+            <div className="text-gray-600 mb-6">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-200 mb-2">Select columns to explore</h3>
-            <p className="text-gray-400 text-sm">
-              Choose columns from the APIs on the left to start exploring data and building visualizations
+            <h3 className="text-lg font-medium text-gray-200 mb-2">Explore Data with AI</h3>
+            <p className="text-gray-400 text-sm mb-8">
+              Create charts using natural language or select columns from the APIs on the left
             </p>
+            
+            {/* NLP Chart Input */}
+            <div className="mb-8">
+              <NLPChartInput
+                onChartGenerated={handleNLPChartGenerated}
+                availableApis={apis}
+              />
+            </div>
+            
+            <div className="text-center">
+              <div className="inline-flex items-center gap-3 text-sm text-gray-500">
+                <span>or</span>
+                <div className="h-px bg-gray-700 w-12"></div>
+                <span>manually select columns</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -864,8 +994,23 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
             <div>
               <h3 className="text-lg font-medium text-gray-200 mb-4">Create Visualization</h3>
               <p className="text-gray-400 text-sm mb-6">
-                Choose a chart type to visualize your selected data
+                Use AI to generate a chart from natural language or choose a chart type manually
               </p>
+            </div>
+
+            {/* NLP Chart Input */}
+            <div className="bg-gray-900/30 border border-gray-800/50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-gray-200 mb-3">Generate Chart with AI</h4>
+              <NLPChartInput
+                onChartGenerated={handleNLPChartGenerated}
+                availableApis={apis}
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px bg-gray-700 flex-1"></div>
+              <span className="text-sm text-gray-500">or choose manually</span>
+              <div className="h-px bg-gray-700 flex-1"></div>
             </div>
 
             {/* Chart Type Grid */}
@@ -923,12 +1068,16 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
         onClose={() => {
           setIsVisualizationModalOpen(false);
           setEditingVisualization(null);
+          setNlpGeneratedConfig(null);
+          setNlpMatchingApis([]);
         }}
         columnData={columnData}
         apis={apis}
         joinedTableData={{ headers, rows }}
         onSaveVisualization={handleSaveVisualization}
         editingVisualization={editingVisualization}
+        nlpGeneratedConfig={nlpGeneratedConfig}
+        nlpMatchingApis={nlpMatchingApis}
       />
 
       {/* Add to Dashboard Modal */}

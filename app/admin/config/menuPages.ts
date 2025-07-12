@@ -114,8 +114,9 @@ overview: [
     { id: 'launchpads-tokenized-equities', name: 'Tokenized Equities', path: '/launchpads/tokenized-equities' }
   ],
   "xstocks": [
-    { id: 'xstocks-financials', name: 'Financials', path: '/xstocks/financials' },
-    { id: 'xstocks-traction', name: 'Traction', path: '/xstocks/traction' }
+    { id: 'xstocks-fee-revenue', name: 'Fee Revenue', path: '/xstocks/fee-revenue' },
+    { id: 'xstocks-traction', name: 'Traction', path: '/xstocks/traction' },
+    { id: 'xstocks-tvl', name: 'TVL', path: '/xstocks/tvl' }
   ],
   "compute-units": [
     {
@@ -270,6 +271,11 @@ overview: [
       id: "helium-financials",
       name: "Financials",
       path: "/projects/helium/financials"
+    },
+    {
+      id: "helium-governance",
+      name: "Governance",
+      path: "/projects/helium/governance"
     },
     {
       id: "helium-traction",

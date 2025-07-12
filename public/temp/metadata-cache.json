@@ -1,0 +1,446 @@
+{
+  "2b48863f86ed21df699c61516c9df356": {
+    "id": "2b48863f86ed21df699c61516c9df356",
+    "normalizedQuery": "dex volume trends",
+    "originalQuery": "Show DEX volume trends",
+    "chartSpec": {
+      "title": "Show DEX volume trends",
+      "primary_api": "https://analytics.topledger.xyz/solanafm/api/queries/13559/results.json_GET",
+      "secondary_api": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json_GET",
+      "transform": "JOIN Top 5 pool volumes across DEXs AND Dex volume ON date/time column",
+      "chart_type": "bar",
+      "y_axis": {
+        "column": "dex",
+        "type": "metric",
+        "label": "Dex"
+      },
+      "series": [
+        {
+          "column": "dex",
+          "type": "metric",
+          "label": "Dex",
+          "color": "#3B82F6"
+        },
+        {
+          "column": "volume_usd",
+          "type": "volume",
+          "label": "Volume Usd",
+          "color": "#EF4444"
+        },
+        {
+          "column": "pool",
+          "type": "metric",
+          "label": "Pool",
+          "color": "#10B981"
+        }
+      ],
+      "metadata": {
+        "description": "bar chart showing Top 5 pool volumes across DEXs",
+        "domain": "raydium",
+        "keywords": [
+          "top",
+          "pool",
+          "volumes",
+          "across",
+          "dexs",
+          "dex",
+          "volume",
+          "usd",
+          "raydium competetive landscape"
+        ],
+        "suggested_columns": [
+          "dex",
+          "volume_usd",
+          "pool"
+        ],
+        "confidence_score": 0.9
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/solanafm/api/queries/13559/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/13192/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/13234/results.json_GET"
+    ],
+    "confidence": 0.9,
+    "timestamp": 1752318801254,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752318801254
+  },
+  "b35620993e53ef060c4346d7178e5fe7": {
+    "id": "b35620993e53ef060c4346d7178e5fe7",
+    "normalizedQuery": "stablecoin volume time_series",
+    "originalQuery": "Show stablecoin trading volume over time",
+    "chartSpec": {
+      "title": "Show stablecoin trading volume over time",
+      "primary_api": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "secondary_api": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "transform": "JOIN DEX Volume AND  SOL drained vs volume exposed ON date/time column",
+      "chart_type": "area",
+      "x_axis": {
+        "column": "month",
+        "type": "time",
+        "label": "Month"
+      },
+      "y_axis": {
+        "column": "Dex_Volume",
+        "type": "volume",
+        "label": "Dex  Volume"
+      },
+      "series": [
+        {
+          "column": "Dex_Volume",
+          "type": "volume",
+          "label": "Dex  Volume",
+          "color": "#3B82F6"
+        },
+        {
+          "column": "Symbol",
+          "type": "metric",
+          "label": "Symbol",
+          "color": "#EF4444"
+        }
+      ],
+      "metadata": {
+        "description": "area chart showing DEX Volume",
+        "domain": "overview",
+        "keywords": [
+          "dex",
+          "volume",
+          "month",
+          "symbol",
+          "sf stablecoins"
+        ],
+        "suggested_columns": [
+          "month",
+          "Dex_Volume",
+          "Symbol"
+        ],
+        "confidence_score": 0.9999999999999999
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "https://analytics.topledger.xyz/solana/api/queries/12595/results_GET",
+      "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12788/results.json_GET"
+    ],
+    "confidence": 0.9999999999999999,
+    "timestamp": 1752318801262,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752318801263
+  },
+  "0cfcc2ddf6d8d2e28a318707fdaab245": {
+    "id": "0cfcc2ddf6d8d2e28a318707fdaab245",
+    "normalizedQuery": "velocity dex program category",
+    "originalQuery": "Velocity By DEX Program Category",
+    "chartSpec": {
+      "title": "Velocity By DEX Program Category",
+      "primary_api": "https://analytics.topledger.xyz/tl/api/queries/12439/results.json_GET",
+      "secondary_api": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json_GET",
+      "transform": "JOIN Velocity By DEX Program Category AND DEX TVL Daily ON date/time column",
+      "chart_type": "line",
+      "x_axis": {
+        "column": "block_date",
+        "type": "time",
+        "label": "Block Date"
+      },
+      "y_axis": {
+        "column": "velocity",
+        "type": "metric",
+        "label": "Velocity"
+      },
+      "series": [
+        {
+          "column": "velocity",
+          "type": "metric",
+          "label": "Velocity",
+          "color": "#3B82F6"
+        },
+        {
+          "column": "program_type",
+          "type": "metric",
+          "label": "Program Type",
+          "color": "#EF4444"
+        }
+      ],
+      "metadata": {
+        "description": "line chart showing Velocity By DEX Program Category",
+        "domain": "dex",
+        "keywords": [
+          "velocity",
+          "dex",
+          "program",
+          "category",
+          "block",
+          "date",
+          "type",
+          "dex summary"
+        ],
+        "suggested_columns": [
+          "block_date",
+          "velocity",
+          "program_type"
+        ],
+        "confidence_score": 1
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/tl/api/queries/12439/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12435/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12401/results.json_GET"
+    ],
+    "confidence": 1,
+    "timestamp": 1752319121136,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752319121136
+  },
+  "984983a7f24a0786b43463012293aeab": {
+    "id": "984983a7f24a0786b43463012293aeab",
+    "normalizedQuery": "dex volume trends time_series",
+    "originalQuery": "Show DEX volume trends over time",
+    "chartSpec": {
+      "title": "Show DEX volume trends over time",
+      "primary_api": "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "secondary_api": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "transform": "JOIN DEX volume AND DEX Volume ON date/time column",
+      "chart_type": "area",
+      "x_axis": {
+        "column": "block_date",
+        "type": "time",
+        "label": "Block Date"
+      },
+      "y_axis": {
+        "column": "volume",
+        "type": "volume",
+        "label": "Volume"
+      },
+      "series": [
+        {
+          "column": "volume",
+          "type": "volume",
+          "label": "Volume",
+          "color": "#3B82F6"
+        }
+      ],
+      "metadata": {
+        "description": "area chart showing DEX volume",
+        "domain": "overview",
+        "keywords": [
+          "dex",
+          "volume",
+          "block",
+          "date",
+          "sf overview"
+        ],
+        "suggested_columns": [
+          "block_date",
+          "volume"
+        ],
+        "confidence_score": 0.8999999999999999
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "https://analytics.topledger.xyz/helium/api/queries/13604/results.json_GET"
+    ],
+    "confidence": 0.8999999999999999,
+    "timestamp": 1752319451491,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752319451491
+  },
+  "e393dfafddbf445abdf8a28c238296f1": {
+    "id": "e393dfafddbf445abdf8a28c238296f1",
+    "normalizedQuery": "compare usdc usdt stablecoin usage",
+    "originalQuery": "Compare USDC and USDT stablecoin usage",
+    "chartSpec": {
+      "title": "Compare USDC and USDT stablecoin usage",
+      "primary_api": "https://analytics.topledger.xyz/tl/api/queries/13409/results.json_GET",
+      "secondary_api": "https://analytics.topledger.xyz/tl/api/queries/12781/results.json_GET",
+      "transform": "JOIN Transfer volume AND Top stablecoins by holders ON date/time column",
+      "chart_type": "area",
+      "x_axis": {
+        "column": "block_date",
+        "type": "time",
+        "label": "Block Date"
+      },
+      "y_axis": {
+        "column": "volume_usd",
+        "type": "volume",
+        "label": "Volume Usd"
+      },
+      "series": [
+        {
+          "column": "volume_usd",
+          "type": "volume",
+          "label": "Volume Usd",
+          "color": "#3B82F6"
+        },
+        {
+          "column": "mint_name",
+          "type": "metric",
+          "label": "Mint Name",
+          "color": "#EF4444"
+        }
+      ],
+      "metadata": {
+        "description": "area chart showing Transfer volume",
+        "domain": "stablecoins",
+        "keywords": [
+          "transfer",
+          "volume",
+          "block",
+          "date",
+          "usd",
+          "mint",
+          "name",
+          "stablecoin usage"
+        ],
+        "suggested_columns": [
+          "block_date",
+          "volume_usd",
+          "mint_name"
+        ],
+        "confidence_score": 1
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/tl/api/queries/13409/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12781/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET"
+    ],
+    "confidence": 1,
+    "timestamp": 1752319507050,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752319507050
+  },
+  "a16cc1579a5b2ca8d0bab126e97a5b2f": {
+    "id": "a16cc1579a5b2ca8d0bab126e97a5b2f",
+    "normalizedQuery": "compare stablecoin volumes across different protocols",
+    "originalQuery": "Compare stablecoin volumes across different protocols",
+    "chartSpec": {
+      "title": "Compare stablecoin volumes across different protocols",
+      "primary_api": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "secondary_api": "https://analytics.topledger.xyz/tl/api/queries/12789/results.json_GET",
+      "transform": "JOIN  SOL drained vs volume exposed AND Monthly stablecoin transfer to exchange ON date/time column",
+      "chart_type": "area",
+      "x_axis": {
+        "column": "block_date",
+        "type": "time",
+        "label": "Block Date"
+      },
+      "y_axis": {
+        "column": "exposed_volume",
+        "type": "volume",
+        "label": "Exposed Volume"
+      },
+      "series": [
+        {
+          "column": "exposed_volume",
+          "type": "volume",
+          "label": "Exposed Volume",
+          "color": "#3B82F6"
+        },
+        {
+          "column": "sol_drained_pct",
+          "type": "percentage",
+          "label": "Sol Drained Pct",
+          "color": "#EF4444"
+        }
+      ],
+      "metadata": {
+        "description": "area chart showing  SOL drained vs volume exposed",
+        "domain": "mev",
+        "keywords": [
+          "sol",
+          "drained",
+          "volume",
+          "exposed",
+          "block",
+          "date",
+          "pct",
+          "total",
+          "extracted value pnl"
+        ],
+        "suggested_columns": [
+          "block_date",
+          "exposed_volume",
+          "sol_drained_pct"
+        ],
+        "confidence_score": 1
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12789/results.json_GET",
+      "https://analytics.topledger.xyz/tl/api/queries/12795/results.json_GET"
+    ],
+    "confidence": 1,
+    "timestamp": 1752322185808,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752322185808
+  },
+  "8e28e2b49404ef4639b2fa97e4fb39cc": {
+    "id": "8e28e2b49404ef4639b2fa97e4fb39cc",
+    "normalizedQuery": "dex volume trends time_series\"",
+    "originalQuery": "Show DEX volume trends over time\"",
+    "chartSpec": {
+      "title": "Show DEX volume trends over time\"",
+      "primary_api": "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "secondary_api": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "transform": "JOIN DEX volume AND DEX Volume ON date/time column",
+      "chart_type": "area",
+      "x_axis": {
+        "column": "block_date",
+        "type": "time",
+        "label": "Block Date"
+      },
+      "y_axis": {
+        "column": "volume",
+        "type": "volume",
+        "label": "Volume"
+      },
+      "series": [
+        {
+          "column": "volume",
+          "type": "volume",
+          "label": "Volume",
+          "color": "#3B82F6"
+        }
+      ],
+      "metadata": {
+        "description": "area chart showing DEX volume",
+        "domain": "overview",
+        "keywords": [
+          "dex",
+          "volume",
+          "block",
+          "date",
+          "sf overview"
+        ],
+        "suggested_columns": [
+          "block_date",
+          "volume"
+        ],
+        "confidence_score": 0.8999999999999999
+      }
+    },
+    "selectedApis": [
+      "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "https://analytics.topledger.xyz/helium/api/queries/13604/results.json_GET"
+    ],
+    "confidence": 0.8999999999999999,
+    "timestamp": 1752322437688,
+    "ttl": 86400000,
+    "hitCount": 0,
+    "lastAccessed": 1752322437688
+  }
+}

@@ -24,6 +24,8 @@ interface VisualizationModalProps {
   };
   onSaveVisualization: (name: string, configuration: ChartConfiguration, chartConfig: ChartConfig, chartData: any[]) => void;
   editingVisualization?: SavedVisualization | null;
+  nlpGeneratedConfig?: any | null;
+  nlpMatchingApis?: any[];
 }
 
 interface SavedVisualization {
@@ -117,7 +119,9 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
   apis,
   joinedTableData,
   onSaveVisualization,
-  editingVisualization
+  editingVisualization,
+  nlpGeneratedConfig,
+  nlpMatchingApis
 }) => {
   const [activeTab, setActiveTab] = useState('General');
   const [configuration, setConfiguration] = useState<ChartConfiguration>({
@@ -170,7 +174,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
     }
   }, [availableColumns, configuration.xColumn]);
 
-  // Initialize configuration when editing a visualization
+  // Initialize configuration when editing a visualization or using NLP
   useEffect(() => {
     if (editingVisualization && isOpen) {
       setConfiguration(editingVisualization.configuration);
@@ -180,7 +184,27 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
       setHiddenSeries([]);
       setLegendColorMap({});
       setLegends([]);
-    } else if (!editingVisualization && isOpen) {
+    } else if (nlpGeneratedConfig && isOpen) {
+      // Use NLP-generated configuration
+      setConfiguration({
+        name: nlpGeneratedConfig.name || 'AI Generated Chart',
+        description: nlpGeneratedConfig.description || 'Generated from natural language',
+        type: nlpGeneratedConfig.type || 'bar',
+        chartType: nlpGeneratedConfig.chartType || 'simple',
+        isHorizontal: false,
+        xColumn: nlpGeneratedConfig.xColumn || '',
+        yColumns: nlpGeneratedConfig.yColumns || [],
+        groupBy: nlpGeneratedConfig.groupBy || '',
+        isStacked: false,
+        series: [],
+        colors: {}
+      });
+      setActiveTab('General');
+      setDisplayMode('absolute');
+      setHiddenSeries([]);
+      setLegendColorMap({});
+      setLegends([]);
+    } else if (!editingVisualization && !nlpGeneratedConfig && isOpen) {
       // Reset to default configuration when creating new visualization
       setConfiguration({
         name: 'Chart',
@@ -201,7 +225,7 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
       setLegendColorMap({});
       setLegends([]);
     }
-  }, [editingVisualization, isOpen]);
+  }, [editingVisualization, nlpGeneratedConfig, isOpen]);
 
   // Auto-switch to stacked when isStacked is checked - modified to respect the checkbox
   useEffect(() => {
@@ -1046,6 +1070,26 @@ const VisualizationModal: React.FC<VisualizationModalProps> = ({
       onClose={onClose}
       title={editingVisualization ? "Edit Visualization" : "Create Visualization"}
     >
+      {/* NLP Generated Banner */}
+      {nlpGeneratedConfig && (
+        <div className="mb-4 p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="text-sm font-medium text-blue-300">AI Generated Chart</span>
+          </div>
+          <p className="text-xs text-blue-200 mb-2">
+            {nlpGeneratedConfig.reasoning || 'This chart was generated from your natural language description.'}
+          </p>
+          {nlpMatchingApis && nlpMatchingApis.length > 0 && (
+            <div className="text-xs text-blue-200">
+              <strong>Recommended APIs:</strong> {nlpMatchingApis.map((api: any) => api.chartTitle || api.name).join(', ')}
+            </div>
+          )}
+        </div>
+      )}
+      
       <div className="h-[80vh] flex">
         {/* Left Panel - Configuration */}
         <div className="w-1/3 border-r border-gray-900 pr-6">

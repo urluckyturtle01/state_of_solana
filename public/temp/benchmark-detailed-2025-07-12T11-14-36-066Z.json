@@ -1,0 +1,469 @@
+{
+  "timestamp": "2025-07-12T11:14:36.066Z",
+  "summary": {
+    "totalQueries": 20,
+    "oldSystem": {
+      "avgTokens": 19743.4,
+      "avgResponseTime": 3884.494370635851,
+      "successRate": 1,
+      "avgAccuracy": 1,
+      "totalCost": 6.31742
+    },
+    "ragSystem": {
+      "avgTokens": 659.4,
+      "avgResponseTime": 8.679377007484437,
+      "successRate": 1,
+      "avgAccuracy": 1,
+      "cacheHitRate": 0,
+      "totalCost": 0.21063844199999998
+    },
+    "improvements": {
+      "tokenReduction": 96.66014972091939,
+      "speedImprovement": 99.77656353235842,
+      "costSavings": 96.66575212665931,
+      "accuracyChange": 0
+    }
+  },
+  "detailedResults": [
+    {
+      "systemType": "old",
+      "query": "Show me DEX volume trends over the last month",
+      "tokenUsage": 19746,
+      "responseTimeMs": 3673.720254203443,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show me DEX volume trends over the last month",
+      "tokenUsage": 662,
+      "responseTimeMs": 103.13029193878174,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.9999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Compare USDC and USDT stablecoin usage",
+      "tokenUsage": 19744,
+      "responseTimeMs": 4526.840124845368,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Compare USDC and USDT stablecoin usage",
+      "tokenUsage": 660,
+      "responseTimeMs": 4.9280829429626465,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Display compute unit pricing trends",
+      "tokenUsage": 19743,
+      "responseTimeMs": 4800.742495040939,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display compute unit pricing trends",
+      "tokenUsage": 659,
+      "responseTimeMs": 4.279333114624023,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Show MEV extracted value by protocol",
+      "tokenUsage": 19743,
+      "responseTimeMs": 4895.481548792143,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show MEV extracted value by protocol",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.9855828285217285,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Plot wrapped Bitcoin transfer volume",
+      "tokenUsage": 19743,
+      "responseTimeMs": 3535.9719549129754,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Plot wrapped Bitcoin transfer volume",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.4574999809265137,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.9999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Display Raydium trading fees over time",
+      "tokenUsage": 19744,
+      "responseTimeMs": 3233.9572123875837,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display Raydium trading fees over time",
+      "tokenUsage": 660,
+      "responseTimeMs": 3.5213327407836914,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.7999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Show total protocol revenue trends",
+      "tokenUsage": 19743,
+      "responseTimeMs": 4939.060838296371,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show total protocol revenue trends",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.7816672325134277,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.7999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Compare different DEX aggregator volumes",
+      "tokenUsage": 19744,
+      "responseTimeMs": 3075.7293518996544,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Compare different DEX aggregator volumes",
+      "tokenUsage": 660,
+      "responseTimeMs": 4.096333026885986,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Display stablecoin mint and burn activity",
+      "tokenUsage": 19745,
+      "responseTimeMs": 4117.752193068137,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display stablecoin mint and burn activity",
+      "tokenUsage": 661,
+      "responseTimeMs": 4.86204195022583,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Show NFT marketplace transaction counts",
+      "tokenUsage": 19744,
+      "responseTimeMs": 4018.7373205781164,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show NFT marketplace transaction counts",
+      "tokenUsage": 660,
+      "responseTimeMs": 3.238457679748535,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Plot DePIN token performance metrics",
+      "tokenUsage": 19743,
+      "responseTimeMs": 3923.484440208179,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Plot DePIN token performance metrics",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.772292137145996,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.7999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Display cross-chain Bitcoin bridge activity",
+      "tokenUsage": 19745,
+      "responseTimeMs": 3991.7250970680107,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display cross-chain Bitcoin bridge activity",
+      "tokenUsage": 661,
+      "responseTimeMs": 3.5582499504089355,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Show validator performance metrics",
+      "tokenUsage": 19743,
+      "responseTimeMs": 3472.937632633516,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show validator performance metrics",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.7255420684814453,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Compare different stablecoin yields",
+      "tokenUsage": 19743,
+      "responseTimeMs": 3409.02887856212,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Compare different stablecoin yields",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.2659168243408203,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.9999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Display mempool congestion patterns",
+      "tokenUsage": 19743,
+      "responseTimeMs": 3298.2173403499746,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display mempool congestion patterns",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.6957077980041504,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Show protocol fee distribution",
+      "tokenUsage": 19742,
+      "responseTimeMs": 3125.6833098836905,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show protocol fee distribution",
+      "tokenUsage": 658,
+      "responseTimeMs": 3.3137078285217285,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.7999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Plot transaction success rates",
+      "tokenUsage": 19742,
+      "responseTimeMs": 3406.5186997952032,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Plot transaction success rates",
+      "tokenUsage": 658,
+      "responseTimeMs": 2.9258337020874023,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Display token holder concentration",
+      "tokenUsage": 19743,
+      "responseTimeMs": 4965.582340513886,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display token holder concentration",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.4368748664855957,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.9999999999999999
+    },
+    {
+      "systemType": "old",
+      "query": "Show liquidity pool utilization",
+      "tokenUsage": 19742,
+      "responseTimeMs": 3172.8679777009456,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show liquidity pool utilization",
+      "tokenUsage": 658,
+      "responseTimeMs": 3.3824167251586914,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Compare CEX vs DEX trading volumes",
+      "tokenUsage": 19743,
+      "responseTimeMs": 4105.848401976744,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Compare CEX vs DEX trading volumes",
+      "tokenUsage": 659,
+      "responseTimeMs": 3.230374813079834,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 0.9999999999999999
+    }
+  ]
+}

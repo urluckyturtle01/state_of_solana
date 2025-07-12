@@ -669,6 +669,8 @@ export default function ExplorerClient({ initialApis }: ExplorerClientProps) {
     }));
   };
 
+
+
   const { headers, rows, needsDateMapping, apiGroups } = generateJoinedTableData();
   const selectedData = getSelectedColumnData();
   const loadingColumns = Object.values(columnData).filter(col => col.loading);
@@ -741,6 +743,7 @@ export default function ExplorerClient({ initialApis }: ExplorerClientProps) {
           onDateColumnMapping={handleDateColumnMapping}
           generateJoinedTableData={generateJoinedTableData}
           detectDateColumns={detectDateColumns}
+          onToggleColumnSelection={toggleColumnSelection}
         />
       </div>
     </div>

@@ -1,0 +1,6625 @@
+{
+  "entries": [
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "domain": "mev",
+      "title": " SOL drained vs volume exposed",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "exposed_volume": "volume",
+        "sol_drained_pct": "percentage",
+        "total_sol_drained": "metrics"
+      },
+      "keywords": [
+        "sol",
+        "drained",
+        "volume",
+        "exposed",
+        "block",
+        "date",
+        "pct",
+        "total",
+        "extracted value pnl"
+      ],
+      "description": " SOL drained vs volume exposed",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "exposed_volume": 1847352.3,
+            "sol_drained_pct": 94.24,
+            "total_sol_drained": 391.29
+          },
+          {
+            "block_date": "2024-01-02",
+            "exposed_volume": 6820862.08,
+            "sol_drained_pct": 12.9,
+            "total_sol_drained": 647.76
+          },
+          {
+            "block_date": "2024-01-03",
+            "exposed_volume": 5675912.81,
+            "sol_drained_pct": 58.45,
+            "total_sol_drained": 623.4
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.752Z"
+      },
+      "data_quality": {
+        "completeness": 0.9030555260374696,
+        "accuracy": 0.9264686014208446,
+        "freshness": 0.884257461758618,
+        "reliability": 0.842192146626605,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "MEV analysis",
+          "Arbitrage tracking",
+          "Sandwich attack detection",
+          "Value extraction monitoring"
+        ],
+        "typical_queries": [
+          "Show MEV trends over time",
+          "Compare arbitrage opportunities",
+          "Track sandwich attacks"
+        ],
+        "business_insights": [
+          "MEV extraction patterns",
+          "Market inefficiencies",
+          "Trading strategy impacts"
+        ],
+        "decision_support": [
+          "Trading strategy optimization",
+          "Risk management",
+          "Market timing decisions"
+        ],
+        "complexity_level": "advanced"
+      },
+      "performance": {
+        "avg_response_time_ms": 273,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "exposed_volume",
+              "label": "Exposed Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "arbitrage",
+          "sandwich-attacks",
+          "value-extraction",
+          "trading-strategies"
+        ],
+        "domain_expertise": [
+          "mev",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9787378281412948
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13444/results.json_GET",
+      "domain": "compute-units",
+      "title": "Account bytes vs data bytes",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13444/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "account_bytes": "count"
+      },
+      "keywords": [
+        "account",
+        "bytes",
+        "data",
+        "block",
+        "date",
+        "transaction bytes"
+      ],
+      "description": "Account bytes vs data bytes",
+      "chart_types": [
+        "line",
+        "bar"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "account_bytes": 2096
+          },
+          {
+            "block_date": "2024-01-02",
+            "account_bytes": 6613
+          },
+          {
+            "block_date": "2024-01-03",
+            "account_bytes": 2495
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8314237927833431,
+        "accuracy": 0.8408643367570166,
+        "freshness": 0.8634440851644433,
+        "reliability": 0.8454935639399317,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 211,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "account_bytes",
+              "label": "Account Bytes",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "upward",
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7245538506385275
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Average holding per wallet",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_holding": "metrics"
+      },
+      "keywords": [
+        "average",
+        "holding",
+        "per",
+        "wallet",
+        "block",
+        "date",
+        "avg",
+        "holders supply"
+      ],
+      "description": "Average holding per wallet",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "avg_holding": 643.91
+          },
+          {
+            "block_date": "2024-01-02",
+            "avg_holding": 752.59
+          },
+          {
+            "block_date": "2024-01-03",
+            "avg_holding": 676.5
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8972428372342133,
+        "accuracy": 0.9087379248901457,
+        "freshness": 0.8821973411722428,
+        "reliability": 0.8538110709726143,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Bitcoin on Solana",
+          "Cross-chain analysis",
+          "Wrapped asset tracking",
+          "Bridge monitoring"
+        ],
+        "typical_queries": [
+          "Show wrapped BTC trends",
+          "Compare bridge activity",
+          "Track holder distribution"
+        ],
+        "business_insights": [
+          "Cross-chain adoption",
+          "Bridge security",
+          "Asset migration patterns"
+        ],
+        "decision_support": [
+          "Bridge selection",
+          "Risk assessment",
+          "Portfolio diversification"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 495,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "cross-chain",
+          "bridges",
+          "bitcoin",
+          "interoperability"
+        ],
+        "domain_expertise": [
+          "wrapped-btc",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.941893661156404
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12595/results_GET",
+      "domain": "overview",
+      "title": "Average stablecoin supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12595/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Avg_Supply": "supply",
+        "mint": "metric"
+      },
+      "keywords": [
+        "average",
+        "stablecoin",
+        "supply",
+        "block",
+        "date",
+        "avg",
+        "mint",
+        "sf overview"
+      ],
+      "description": "Average stablecoin supply",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Avg_Supply": 740950784.62,
+            "mint": "USDC"
+          },
+          {
+            "block_date": "2024-01-02",
+            "Avg_Supply": 1067428271.4,
+            "mint": "USDT"
+          },
+          {
+            "block_date": "2024-01-03",
+            "Avg_Supply": 206333527.96,
+            "mint": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.9653293406444442,
+        "accuracy": 0.950250580750246,
+        "freshness": 0.9754201996390227,
+        "reliability": 0.9291378145631336,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 496,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8810022743567052
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13448/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg & Median CU price",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13448/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "99.99 percentile compute unit price": "price",
+        "99 percentile compute unit price": "price",
+        "avg_compute_unit_price": "price",
+        "median_compute_unit_price": "price"
+      },
+      "keywords": [
+        "avg",
+        "median",
+        "price",
+        "block",
+        "date",
+        "99.99",
+        "percentile",
+        "compute",
+        "unit",
+        "compute units"
+      ],
+      "description": "Avg & Median CU price",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "99.99 percentile compute unit price": 88.75,
+            "99 percentile compute unit price": 57.7,
+            "avg_compute_unit_price": 87.59,
+            "median_compute_unit_price": 44.35
+          },
+          {
+            "block_date": "2024-01-02",
+            "99.99 percentile compute unit price": 35.96,
+            "99 percentile compute unit price": 69.78,
+            "avg_compute_unit_price": 105.38,
+            "median_compute_unit_price": 62.43
+          },
+          {
+            "block_date": "2024-01-03",
+            "99.99 percentile compute unit price": 91.45,
+            "99 percentile compute unit price": 54.03,
+            "avg_compute_unit_price": 70.93,
+            "median_compute_unit_price": 88.31
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8755747744322767,
+        "accuracy": 0.8025935657172665,
+        "freshness": 0.8424319585543809,
+        "reliability": 0.8344059371433091,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 334,
+        "typical_data_volume": "medium",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.9,
+            "use_case": "Price movements over time",
+            "color_scheme": "green-red"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "99.99 percentile compute unit price",
+              "label": "99.99 Percentile Compute Unit Price",
+              "format": "currency"
+            },
+            {
+              "column": "99 percentile compute unit price",
+              "label": "99 Percentile Compute Unit Price",
+              "format": "currency"
+            },
+            {
+              "column": "avg_compute_unit_price",
+              "label": "Avg Compute Unit Price",
+              "format": "currency"
+            },
+            {
+              "column": "median_compute_unit_price",
+              "label": "Median Compute Unit Price",
+              "format": "currency"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.817926018231608
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13447/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg CU allocated & consumed per transaction",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13447/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "avg_cu_allocated": "metrics",
+        "avg_cu_consumed": "metrics"
+      },
+      "keywords": [
+        "avg",
+        "allocated",
+        "consumed",
+        "per",
+        "transaction",
+        "partition",
+        "compute units"
+      ],
+      "description": "Avg CU allocated & consumed per transaction",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "avg_cu_allocated": 908.73,
+            "avg_cu_consumed": 245.56
+          },
+          {
+            "partition_0": "2024-01-02",
+            "avg_cu_allocated": 189.36,
+            "avg_cu_consumed": 563.19
+          },
+          {
+            "partition_0": "2024-01-03",
+            "avg_cu_allocated": 343.89,
+            "avg_cu_consumed": 19.19
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8768530437545159,
+        "accuracy": 0.8397299008126314,
+        "freshness": 0.8498184188508541,
+        "reliability": 0.8650546400210519,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 220,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.902150015942565
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13455/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg CU consumed per block",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13455/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "avg_consumed_cu_per_block": "metrics"
+      },
+      "keywords": [
+        "avg",
+        "consumed",
+        "per",
+        "block",
+        "partition",
+        "compute units"
+      ],
+      "description": "Avg CU consumed per block",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "avg_consumed_cu_per_block": 818.83
+          },
+          {
+            "partition_0": "2024-01-02",
+            "avg_consumed_cu_per_block": 37.88
+          },
+          {
+            "partition_0": "2024-01-03",
+            "avg_consumed_cu_per_block": 282.48
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8209933217317573,
+        "accuracy": 0.8735459184377051,
+        "freshness": 0.8264564489136491,
+        "reliability": 0.8575115135302803,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 369,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8431031446446425
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json_GET",
+      "domain": "test",
+      "title": "bhbhb",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "trades": "count"
+      },
+      "keywords": [
+        "bhbhb",
+        "month",
+        "volume",
+        "trades",
+        "test"
+      ],
+      "description": "bhbhb",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "volume": 3212842.46,
+            "trades": 5532
+          },
+          {
+            "month": "2024-01-02",
+            "volume": 5135958.97,
+            "trades": 7368
+          },
+          {
+            "month": "2024-01-03",
+            "volume": 5732580.98,
+            "trades": 9761
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.7378859809848541,
+        "accuracy": 0.7268639782170928,
+        "freshness": 0.6941486159914873,
+        "reliability": 0.8,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Data analysis",
+          "Performance tracking",
+          "Trend monitoring"
+        ],
+        "typical_queries": [
+          "Show trends over time",
+          "Compare metrics",
+          "Track performance"
+        ],
+        "business_insights": [
+          "Market trends",
+          "Performance patterns",
+          "Usage insights"
+        ],
+        "decision_support": [
+          "Strategic planning",
+          "Performance optimization",
+          "Risk management"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 228,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          },
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "volume",
+              "label": "Volume",
+              "format": "number"
+            },
+            {
+              "column": "trades",
+              "label": "Trades",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "general",
+          "analytics"
+        ],
+        "domain_expertise": [
+          "test",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9580059033051248
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13445/results.json_GET",
+      "domain": "compute-units",
+      "title": "Byte size quantiles",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13445/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "byte_size_25th_percentile": "percentage",
+        "byte_size_median": "metric",
+        "byte_size_75th_percentile": "percentage",
+        "byte_size_90th_percentile": "percentage"
+      },
+      "keywords": [
+        "byte",
+        "size",
+        "quantiles",
+        "partition",
+        "25th",
+        "percentile",
+        "median",
+        "75th",
+        "90th",
+        "transaction bytes"
+      ],
+      "description": "Byte size quantiles",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "byte_size_25th_percentile": 76.65,
+            "byte_size_median": 233.25,
+            "byte_size_75th_percentile": 16.28,
+            "byte_size_90th_percentile": 50.46
+          },
+          {
+            "partition_0": "2024-01-02",
+            "byte_size_25th_percentile": 82.28,
+            "byte_size_median": 117.16,
+            "byte_size_75th_percentile": 52.43,
+            "byte_size_90th_percentile": 83.73
+          },
+          {
+            "partition_0": "2024-01-03",
+            "byte_size_25th_percentile": 74.36,
+            "byte_size_median": 434.05,
+            "byte_size_75th_percentile": 1.76,
+            "byte_size_90th_percentile": 42.85
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8753397424274951,
+        "accuracy": 0.8087801424364248,
+        "freshness": 0.8204661474913072,
+        "reliability": 0.8840088123947711,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 423,
+        "typical_data_volume": "medium",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.648893692931202
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13487/results.json_GET",
+      "domain": "raydium",
+      "title": "Cashflow",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13487/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Launchlab Revenue": "revenue",
+        "Ray_Buyback": "metric",
+        "Treasury": "metric",
+        "Infrastructure Cost": "metric"
+      },
+      "keywords": [
+        "cashflow",
+        "block",
+        "date",
+        "launchlab",
+        "revenue",
+        "ray",
+        "buyback",
+        "treasury",
+        "infrastructure",
+        "cost",
+        "raydium financials"
+      ],
+      "description": "Cashflow",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Launchlab Revenue": 998494.95,
+            "Ray_Buyback": 675.26,
+            "Treasury": 258.94,
+            "Infrastructure Cost": 988.45
+          },
+          {
+            "block_date": "2024-01-02",
+            "Launchlab Revenue": 822842.42,
+            "Ray_Buyback": 54.33,
+            "Treasury": 888.04,
+            "Infrastructure Cost": 477.4
+          },
+          {
+            "block_date": "2024-01-03",
+            "Launchlab Revenue": 35070.5,
+            "Ray_Buyback": 353.72,
+            "Treasury": 156.98,
+            "Infrastructure Cost": 302.95
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.753Z"
+      },
+      "data_quality": {
+        "completeness": 0.8291808620126485,
+        "accuracy": 0.819287564913827,
+        "freshness": 0.8326629061394666,
+        "reliability": 0.8253378883995502,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Data analysis",
+          "Performance tracking",
+          "Trend monitoring"
+        ],
+        "typical_queries": [
+          "Show trends over time",
+          "Compare metrics",
+          "Track performance"
+        ],
+        "business_insights": [
+          "Market trends",
+          "Performance patterns",
+          "Usage insights"
+        ],
+        "decision_support": [
+          "Strategic planning",
+          "Performance optimization",
+          "Risk management"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 238,
+        "typical_data_volume": "medium",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "general",
+          "analytics"
+        ],
+        "domain_expertise": [
+          "raydium",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8549463498511017
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13631/results.json_GET",
+      "domain": "overview",
+      "title": "CEX Orca Holdings",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13631/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holdings": "metric",
+        "cex_name": "metric"
+      },
+      "keywords": [
+        "cex",
+        "orca",
+        "holdings",
+        "month",
+        "name",
+        "orca protocol token"
+      ],
+      "description": "CEX Orca Holdings",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "Month": "2024-01-01",
+            "Holdings": 801.42,
+            "cex_name": "USDC"
+          },
+          {
+            "Month": "2024-01-02",
+            "Holdings": 886.42,
+            "cex_name": "USDT"
+          },
+          {
+            "Month": "2024-01-03",
+            "Holdings": 55.21,
+            "cex_name": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9593157466768588,
+        "accuracy": 0.9402663348790855,
+        "freshness": 0.9905164610342562,
+        "reliability": 0.9269749018192969,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 483,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "Month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8999325745812892
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13538/results.json_GET",
+      "domain": "raydium",
+      "title": "CEX Ray Holdings",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13538/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holdings": "metric",
+        "cex_name": "metric"
+      },
+      "keywords": [
+        "cex",
+        "ray",
+        "holdings",
+        "month",
+        "name",
+        "raydium protocol token"
+      ],
+      "description": "CEX Ray Holdings",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "Month": "2024-01-01",
+            "Holdings": 256.79,
+            "cex_name": "USDC"
+          },
+          {
+            "Month": "2024-01-02",
+            "Holdings": 555.4,
+            "cex_name": "USDT"
+          },
+          {
+            "Month": "2024-01-03",
+            "Holdings": 493.56,
+            "cex_name": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.8528879696765348,
+        "accuracy": 0.8075613965352423,
+        "freshness": 0.80696890977718,
+        "reliability": 0.8313060679780315,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Data analysis",
+          "Performance tracking",
+          "Trend monitoring"
+        ],
+        "typical_queries": [
+          "Show trends over time",
+          "Compare metrics",
+          "Track performance"
+        ],
+        "business_insights": [
+          "Market trends",
+          "Performance patterns",
+          "Usage insights"
+        ],
+        "decision_support": [
+          "Strategic planning",
+          "Performance optimization",
+          "Risk management"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 258,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "Month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "general",
+          "analytics"
+        ],
+        "domain_expertise": [
+          "raydium",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6361147549139742
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13449/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU consumed by ecosystem",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13449/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "total_cu_consumed": "metrics",
+        "category": "metric"
+      },
+      "keywords": [
+        "consumed",
+        "ecosystem",
+        "partition",
+        "total",
+        "category",
+        "compute units"
+      ],
+      "description": "CU consumed by ecosystem",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "total_cu_consumed": 422.82,
+            "category": "USDC"
+          },
+          {
+            "partition_0": "2024-01-02",
+            "total_cu_consumed": 253.96,
+            "category": "USDT"
+          },
+          {
+            "partition_0": "2024-01-03",
+            "total_cu_consumed": 261.27,
+            "category": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.8764614908771938,
+        "accuracy": 0.8632527963264883,
+        "freshness": 0.8226685088289163,
+        "reliability": 0.868671276614162,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 234,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7697789775945105
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13450/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU consumed by ecosystem - last 30 days",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13450/results.json",
+      "method": "GET",
+      "response_schema": {
+        "category": "metric",
+        "total_cu_consumed": "metrics"
+      },
+      "keywords": [
+        "consumed",
+        "ecosystem",
+        "last",
+        "days",
+        "category",
+        "total",
+        "compute units"
+      ],
+      "description": "CU consumed by ecosystem - last 30 days",
+      "chart_types": [
+        "bar",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "category": "USDC",
+            "total_cu_consumed": 746.18
+          },
+          {
+            "category": "USDT",
+            "total_cu_consumed": 696.93
+          },
+          {
+            "category": "SOL",
+            "total_cu_consumed": 960.53
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.8065871989507214,
+        "accuracy": 0.8976362479144531,
+        "freshness": 0.8700005215647072,
+        "reliability": 0.8614904504115048,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 436,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7800659066568464
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13453/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU overspending",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13453/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "txns": "metric",
+        "overspent_fee_bucket": "metric"
+      },
+      "keywords": [
+        "overspending",
+        "partition",
+        "txns",
+        "overspent",
+        "fee",
+        "bucket",
+        "cu overspending"
+      ],
+      "description": "CU overspending",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "txns": 511.09,
+            "overspent_fee_bucket": 9.22
+          },
+          {
+            "partition_0": "2024-01-02",
+            "txns": 773.55,
+            "overspent_fee_bucket": 565.59
+          },
+          {
+            "partition_0": "2024-01-03",
+            "txns": 629.03,
+            "overspent_fee_bucket": 936.24
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.8416870611288487,
+        "accuracy": 0.8615275751957435,
+        "freshness": 0.8031107537820248,
+        "reliability": 0.8654449014920221,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Network performance",
+          "Transaction costs",
+          "Scalability analysis",
+          "Resource optimization"
+        ],
+        "typical_queries": [
+          "Show compute unit trends",
+          "Compare transaction costs",
+          "Track network efficiency"
+        ],
+        "business_insights": [
+          "Network utilization",
+          "Cost efficiency",
+          "Performance bottlenecks"
+        ],
+        "decision_support": [
+          "Infrastructure planning",
+          "Cost optimization",
+          "Performance tuning"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 210,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "performance",
+          "scalability",
+          "costs",
+          "efficiency"
+        ],
+        "domain_expertise": [
+          "compute-units",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6282767077713608
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12899/results_GET",
+      "domain": "stablecoins",
+      "title": "Daily avg p2p transfer size",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12899/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Avg_P2P_Transfer_Size": "metrics"
+      },
+      "keywords": [
+        "daily",
+        "avg",
+        "p2p",
+        "transfer",
+        "size",
+        "block",
+        "date",
+        "liquidity velocity"
+      ],
+      "description": "Daily avg p2p transfer size",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Avg_P2P_Transfer_Size": 713.15
+          },
+          {
+            "block_date": "2024-01-02",
+            "Avg_P2P_Transfer_Size": 371.31
+          },
+          {
+            "block_date": "2024-01-03",
+            "Avg_P2P_Transfer_Size": 34.68
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9515322821302219,
+        "accuracy": 0.9066558616631542,
+        "freshness": 0.9153916188965489,
+        "reliability": 0.8938998065142355,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Stablecoin adoption",
+          "Peg stability",
+          "Supply monitoring",
+          "Usage patterns"
+        ],
+        "typical_queries": [
+          "Show stablecoin supply",
+          "Compare stability",
+          "Track adoption"
+        ],
+        "business_insights": [
+          "Market stability",
+          "Adoption trends",
+          "Peg deviations"
+        ],
+        "decision_support": [
+          "Treasury management",
+          "Hedging strategies",
+          "Market stability"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 425,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "stability",
+          "pegging",
+          "adoption",
+          "treasury"
+        ],
+        "domain_expertise": [
+          "stablecoins",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8356932349482963
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json_GET",
+      "domain": "overview",
+      "title": "Daily fee",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_txn_fee_sol": "metrics",
+        "median_txn_fee_sol": "metrics"
+      },
+      "keywords": [
+        "daily",
+        "fee",
+        "block",
+        "date",
+        "avg",
+        "txn",
+        "sol",
+        "median",
+        "sf overview"
+      ],
+      "description": "Daily fee",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "avg_txn_fee_sol": 871.1,
+            "median_txn_fee_sol": 623.13
+          },
+          {
+            "block_date": "2024-01-02",
+            "avg_txn_fee_sol": 145.57,
+            "median_txn_fee_sol": 553.38
+          },
+          {
+            "block_date": "2024-01-03",
+            "avg_txn_fee_sol": 389.86,
+            "median_txn_fee_sol": 832.94
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9921944305108913,
+        "accuracy": 0.9469761166217645,
+        "freshness": 0.9910182295962279,
+        "reliability": 0.9862078702984095,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 397,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "avg"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6910975939892644
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json_GET",
+      "domain": "overview",
+      "title": "Daily holders",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Block_date": "time",
+        "Holders": "count",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "daily",
+        "holders",
+        "block",
+        "date",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Daily holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "Block_date": "2024-01-01",
+            "Holders": 9013,
+            "Mint": "USDC"
+          },
+          {
+            "Block_date": "2024-01-02",
+            "Holders": 8336,
+            "Mint": "USDT"
+          },
+          {
+            "Block_date": "2024-01-03",
+            "Holders": 1629,
+            "Mint": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.904375326577047,
+        "accuracy": 0.9793447721302713,
+        "freshness": 0.9546989357177299,
+        "reliability": 0.9695390815433932,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 310,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "Block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Holders",
+              "label": "Holders",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9022369170269949
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Holders",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Holders": "count"
+      },
+      "keywords": [
+        "daily",
+        "holders",
+        "block",
+        "date",
+        "metaplex competetive landscape"
+      ],
+      "description": "Daily Holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Holders": 2173
+          },
+          {
+            "block_date": "2024-01-02",
+            "Holders": 5568
+          },
+          {
+            "block_date": "2024-01-03",
+            "Holders": 7749
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9613841275246596,
+        "accuracy": 0.9273126257164663,
+        "freshness": 0.9036606767011636,
+        "reliability": 0.9794415775647214,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 347,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Holders",
+              "label": "Holders",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9179049317495346
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json_GET",
+      "domain": "overview",
+      "title": "Daily marketcap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Block_date": "time",
+        "Marketcap": "metric",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "block",
+        "date",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Daily marketcap",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "Block_date": "2024-01-01",
+            "Marketcap": 677.85,
+            "Mint": "USDC"
+          },
+          {
+            "Block_date": "2024-01-02",
+            "Marketcap": 159.8,
+            "Mint": "USDT"
+          },
+          {
+            "Block_date": "2024-01-03",
+            "Marketcap": 675.15,
+            "Mint": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9920656375358462,
+        "accuracy": 0.9504671308254037,
+        "freshness": 0.9255061885242926,
+        "reliability": 0.9479006019817209,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 273,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "Block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9393984862033442
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13627/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Marketcap",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13627/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Morketcap": "metric"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "block",
+        "date",
+        "morketcap",
+        "orca protocol token"
+      ],
+      "description": "Daily Marketcap",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Morketcap": 398.93
+          },
+          {
+            "block_date": "2024-01-02",
+            "Morketcap": 827.51
+          },
+          {
+            "block_date": "2024-01-03",
+            "Morketcap": 453.04
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9376128882356317,
+        "accuracy": 0.9171173479471432,
+        "freshness": 0.9404676100244631,
+        "reliability": 0.9511592722842177,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 413,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7236354059321417
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13371/results.json_GET",
+      "domain": "overview",
+      "title": "Daily marketcap by asset",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13371/results.json",
+      "method": "GET",
+      "response_schema": {
+        "date": "time"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "asset",
+        "date",
+        "sf rwa"
+      ],
+      "description": "Daily marketcap by asset",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "date": "2024-01-01"
+          },
+          {
+            "date": "2024-01-02"
+          },
+          {
+            "date": "2024-01-03"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.754Z"
+      },
+      "data_quality": {
+        "completeness": 0.9125366167517127,
+        "accuracy": 0.9158546719527525,
+        "freshness": 0.9129372258495932,
+        "reliability": 0.9019966727392784,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 491,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "date",
+              "label": "Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6131506049725589
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13288/results.json_GET",
+      "domain": "overview",
+      "title": "Daily mobile rewards",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13288/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "mobile_reward": "metric"
+      },
+      "keywords": [
+        "daily",
+        "mobile",
+        "rewards",
+        "partition",
+        "reward",
+        "helium financials"
+      ],
+      "description": "Daily mobile rewards",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "partition_0": "2024-01-01",
+            "mobile_reward": 76.17
+          },
+          {
+            "partition_0": "2024-01-02",
+            "mobile_reward": 186.26
+          },
+          {
+            "partition_0": "2024-01-03",
+            "mobile_reward": 347.9
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9175529880125138,
+        "accuracy": 0.9628084758724184,
+        "freshness": 0.9232462968516019,
+        "reliability": 0.947826860898768,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 241,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "partition_0",
+              "label": "Partition 0",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7848002080557351
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json_GET",
+      "domain": "overview",
+      "title": "Daily solana annualized volatility",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json",
+      "method": "GET",
+      "response_schema": {
+        "day": "metric",
+        "volatility_7d": "metric",
+        "volatility_30d": "metric",
+        "volatility_90d": "metric"
+      },
+      "keywords": [
+        "daily",
+        "solana",
+        "annualized",
+        "volatility",
+        "day",
+        "30d",
+        "90d",
+        "market dynamics"
+      ],
+      "description": "Daily solana annualized volatility",
+      "chart_types": [
+        "bar",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "day": 72.13,
+            "volatility_7d": 713.97,
+            "volatility_30d": 352.02,
+            "volatility_90d": 396.37
+          },
+          {
+            "day": 333.45,
+            "volatility_7d": 149.31,
+            "volatility_30d": 848.34,
+            "volatility_90d": 777.96
+          },
+          {
+            "day": 719.45,
+            "volatility_7d": 554.21,
+            "volatility_30d": 218.24,
+            "volatility_90d": 156.18
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9358719265059602,
+        "accuracy": 0.9433533319535595,
+        "freshness": 0.9209772467894596,
+        "reliability": 0.9882507172712373,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 202,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7897403428685716
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json_GET",
+      "domain": "overview",
+      "title": "Daily supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "supply": "supply",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "daily",
+        "supply",
+        "block",
+        "date",
+        "symbol",
+        "sf bitcoin on solana"
+      ],
+      "description": "Daily supply",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "supply": 810198625.94,
+            "symbol": 579.28
+          },
+          {
+            "block_date": "2024-01-02",
+            "supply": 1098900517.1,
+            "symbol": 466.75
+          },
+          {
+            "block_date": "2024-01-03",
+            "supply": 771982066.96,
+            "symbol": 445.57
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9420633520186218,
+        "accuracy": 0.9811818937630439,
+        "freshness": 0.9323529239131653,
+        "reliability": 0.9535280475411078,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 257,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7874125370608561
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13032/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13032/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "token_supply": "supply",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "daily",
+        "supply",
+        "block",
+        "date",
+        "token",
+        "symbol",
+        "sf stablecoins"
+      ],
+      "description": "Daily Supply",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "token_supply": 205482659.22,
+            "symbol": 337.24
+          },
+          {
+            "block_date": "2024-01-02",
+            "token_supply": 536053769.06,
+            "symbol": 85.88
+          },
+          {
+            "block_date": "2024-01-03",
+            "token_supply": 531459317.19,
+            "symbol": 103.34
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9879883716361603,
+        "accuracy": 0.9420883722975271,
+        "freshness": 0.9133925039655268,
+        "reliability": 0.9338877215616639,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 354,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9806642764458035
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json_GET",
+      "domain": "dex",
+      "title": "Daily traders",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "active_traders": "count",
+        "new_traders": "count"
+      },
+      "keywords": [
+        "daily",
+        "traders",
+        "month",
+        "active",
+        "new"
+      ],
+      "description": "Daily traders",
+      "chart_types": [
+        "line",
+        "bar"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "active_traders": 2855,
+            "new_traders": 3160
+          },
+          {
+            "month": "2024-01-02",
+            "active_traders": 3031,
+            "new_traders": 8197
+          },
+          {
+            "month": "2024-01-03",
+            "active_traders": 3351,
+            "new_traders": 3120
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9403392669353343,
+        "accuracy": 0.8743357727471252,
+        "freshness": 0.9012325924907905,
+        "reliability": 0.9450921094984932,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 395,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "active_traders",
+              "label": "Active Traders",
+              "format": "number"
+            },
+            {
+              "column": "new_traders",
+              "label": "New Traders",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9690266820058914
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json_GET",
+      "domain": "overview",
+      "title": "Daily traders",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "traders": "count"
+      },
+      "keywords": [
+        "daily",
+        "traders",
+        "block",
+        "date",
+        "sf ai tokens"
+      ],
+      "description": "Daily traders",
+      "chart_types": [
+        "line",
+        "bar"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "traders": 2125
+          },
+          {
+            "block_date": "2024-01-02",
+            "traders": 4339
+          },
+          {
+            "block_date": "2024-01-03",
+            "traders": 3206
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9391451749597254,
+        "accuracy": 0.9805483686508428,
+        "freshness": 0.9791290566587709,
+        "reliability": 0.9530541481202323,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 371,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "bar",
+            "confidence": 0.85,
+            "use_case": "Count metrics over time",
+            "color_scheme": "purple-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "traders",
+              "label": "Traders",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7068189180551522
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13168/results_GET",
+      "domain": "overview",
+      "title": "dApp revenue by ecosystem",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13168/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "dAPP Revenue": "revenue",
+        "Segment": "metric"
+      },
+      "keywords": [
+        "dapp",
+        "revenue",
+        "ecosystem",
+        "block",
+        "date",
+        "segment",
+        "total"
+      ],
+      "description": "dApp revenue by ecosystem",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "dAPP Revenue": 876879.38,
+            "Segment": 915.65
+          },
+          {
+            "block_date": "2024-01-02",
+            "dAPP Revenue": 202247.87,
+            "Segment": 627.83
+          },
+          {
+            "block_date": "2024-01-03",
+            "dAPP Revenue": 586412.56,
+            "Segment": 732.03
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9512808283754625,
+        "accuracy": 0.9552746738254493,
+        "freshness": 0.9316824480827163,
+        "reliability": 0.9335747305959107,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 317,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9981240755334977
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/5023/results.json_GET",
+      "domain": "overview",
+      "title": "dc burn",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/5023/results.json",
+      "method": "GET",
+      "response_schema": {
+        "week": "time",
+        "weekly_dc_burn": "time",
+        "cumulative_dc_burn": "metric"
+      },
+      "keywords": [
+        "burn",
+        "week",
+        "weekly",
+        "cumulative",
+        "helium financials"
+      ],
+      "description": "dc burn",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "week": "2024-01-01",
+            "weekly_dc_burn": "2024-01-01",
+            "cumulative_dc_burn": 799.13
+          },
+          {
+            "week": "2024-01-02",
+            "weekly_dc_burn": "2024-01-02",
+            "cumulative_dc_burn": 811.09
+          },
+          {
+            "week": "2024-01-03",
+            "weekly_dc_burn": "2024-01-03",
+            "cumulative_dc_burn": 785.34
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9779952377083617,
+        "accuracy": 0.9499064617153958,
+        "freshness": 0.9852055476178673,
+        "reliability": 0.9020533040462464,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 481,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "week",
+              "label": "Week",
+              "format": "date"
+            },
+            {
+              "column": "weekly_dc_burn",
+              "label": "Weekly Dc Burn",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9293635271324125
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json_GET",
+      "domain": "overview",
+      "title": "DC Burned for network usage",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "dc_burned": "supply",
+        "subdao": "metric"
+      },
+      "keywords": [
+        "burned",
+        "for",
+        "network",
+        "usage",
+        "month",
+        "subdao",
+        "helium traction"
+      ],
+      "description": "DC Burned for network usage",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "dc_burned": 252453452.65,
+            "subdao": 542.1
+          },
+          {
+            "month": "2024-01-02",
+            "dc_burned": 987738145.31,
+            "subdao": 325.08
+          },
+          {
+            "month": "2024-01-03",
+            "dc_burned": 160341923.86,
+            "subdao": 157.23
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9286136672738642,
+        "accuracy": 0.9519254435937531,
+        "freshness": 0.9289288941601931,
+        "reliability": 0.934421534416666,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 478,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9069893351752127
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json_GET",
+      "domain": "overview",
+      "title": "Defi capital efficiency",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "capital_efficency": "metric"
+      },
+      "keywords": [
+        "defi",
+        "capital",
+        "efficiency",
+        "month",
+        "efficency",
+        "sf overview"
+      ],
+      "description": "Defi capital efficiency",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "capital_efficency": 29
+          },
+          {
+            "month": "2024-01-02",
+            "capital_efficency": 439.64
+          },
+          {
+            "month": "2024-01-03",
+            "capital_efficency": 229.59
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.96989338361365,
+        "accuracy": 0.9944481310260084,
+        "freshness": 0.9660430182799299,
+        "reliability": 0.9506098848461824,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 297,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9615084988818234
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12614/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN funding",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12614/results.json",
+      "method": "GET",
+      "response_schema": {
+        "quarter": "time",
+        "total_amount_raised": "metrics"
+      },
+      "keywords": [
+        "depin",
+        "funding",
+        "quarter",
+        "total",
+        "amount",
+        "raised",
+        "sf depin"
+      ],
+      "description": "DePIN funding",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "quarter": "2024-01-01",
+            "total_amount_raised": 61.72
+          },
+          {
+            "quarter": "2024-01-02",
+            "total_amount_raised": 933.14
+          },
+          {
+            "quarter": "2024-01-03",
+            "total_amount_raised": 826.93
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9656696746790755,
+        "accuracy": 0.9225946337408227,
+        "freshness": 0.9520257959559226,
+        "reliability": 0.9387581333403255,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 352,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "quarter",
+              "label": "Quarter",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9930195486714306
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12624/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN projects revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12624/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "revenue": "revenue",
+        "name": "metric"
+      },
+      "keywords": [
+        "depin",
+        "projects",
+        "revenue",
+        "month",
+        "name",
+        "sf depin"
+      ],
+      "description": "DePIN projects revenue",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "revenue": 132919.32,
+            "name": "USDC"
+          },
+          {
+            "month": "2024-01-02",
+            "revenue": 466776.45,
+            "name": "USDT"
+          },
+          {
+            "month": "2024-01-03",
+            "revenue": 326683.68,
+            "name": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9348295269920649,
+        "accuracy": 0.9271346366639123,
+        "freshness": 0.9416179473900503,
+        "reliability": 0.9037394779936078,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 268,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8293697556562052
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13252/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13252/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "depin",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform"
+      ],
+      "description": "DePIN revenue",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "protocol_revenue": 428088.3,
+            "platform": 501.17
+          },
+          {
+            "block_date": "2024-01-02",
+            "protocol_revenue": 78105.22,
+            "platform": 216.27
+          },
+          {
+            "block_date": "2024-01-03",
+            "protocol_revenue": 703984.34,
+            "platform": 635.49
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9490668228990035,
+        "accuracy": 0.9308575936154968,
+        "freshness": 0.9840616809349821,
+        "reliability": 0.9838260687575602,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 289,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6854250964670103
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12619/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN revenue by chain",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12619/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "total_revenue": "revenue",
+        "chain": "metric"
+      },
+      "keywords": [
+        "depin",
+        "revenue",
+        "chain",
+        "month",
+        "total",
+        "sf depin"
+      ],
+      "description": "DePIN revenue by chain",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "total_revenue": 244294.02,
+            "chain": 929.03
+          },
+          {
+            "month": "2024-01-02",
+            "total_revenue": 723792.25,
+            "chain": 965.59
+          },
+          {
+            "month": "2024-01-03",
+            "total_revenue": 508760.73,
+            "chain": 645.5
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9963710806286286,
+        "accuracy": 0.9900006854991761,
+        "freshness": 0.9503628201897003,
+        "reliability": 0.9166653549362107,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 260,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9921913480582254
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12368/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN Token Marketcap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12368/results.json",
+      "method": "GET",
+      "response_schema": {
+        "blockchain": "metric",
+        "circulating_mcap_usd": "metric"
+      },
+      "keywords": [
+        "depin",
+        "token",
+        "marketcap",
+        "blockchain",
+        "circulating",
+        "mcap",
+        "usd",
+        "sf depin"
+      ],
+      "description": "DePIN Token Marketcap",
+      "chart_types": [
+        "bar",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "blockchain": 821.54,
+            "circulating_mcap_usd": 580.59
+          },
+          {
+            "blockchain": 113.33,
+            "circulating_mcap_usd": 780.58
+          },
+          {
+            "blockchain": 789.28,
+            "circulating_mcap_usd": 274.22
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9910204576908657,
+        "accuracy": 0.9380327678138595,
+        "freshness": 0.9443630454042324,
+        "reliability": 0.9955092298005196,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 209,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [],
+          "y_axis": []
+        },
+        "trending_patterns": [],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7711365517119221
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13515/results.json_GET",
+      "domain": "raydium",
+      "title": "DEX Swap volume",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13515/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Dex_Volume": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "dex",
+        "swap",
+        "volume",
+        "block",
+        "date",
+        "mint",
+        "raydium protocol token"
+      ],
+      "description": "DEX Swap volume",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Dex_Volume": 8588571.09,
+            "mint": "USDC"
+          },
+          {
+            "block_date": "2024-01-02",
+            "Dex_Volume": 6925541.19,
+            "mint": "USDT"
+          },
+          {
+            "block_date": "2024-01-03",
+            "Dex_Volume": 8293317.24,
+            "mint": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8695204211857644,
+        "accuracy": 0.8115847598247748,
+        "freshness": 0.8928124100801225,
+        "reliability": 0.8849341530992553,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Data analysis",
+          "Performance tracking",
+          "Trend monitoring"
+        ],
+        "typical_queries": [
+          "Show trends over time",
+          "Compare metrics",
+          "Track performance"
+        ],
+        "business_insights": [
+          "Market trends",
+          "Performance patterns",
+          "Usage insights"
+        ],
+        "decision_support": [
+          "Strategic planning",
+          "Performance optimization",
+          "Risk management"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 203,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Dex_Volume",
+              "label": "Dex Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "general",
+          "analytics"
+        ],
+        "domain_expertise": [
+          "raydium",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6031449765495468
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json_GET",
+      "domain": "dex",
+      "title": "DEX TVL",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "TVL": "tvl"
+      },
+      "keywords": [
+        "dex",
+        "tvl",
+        "block",
+        "date"
+      ],
+      "description": "DEX TVL",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "TVL": 505083700.26
+          },
+          {
+            "block_date": "2024-01-02",
+            "TVL": 286410666.06
+          },
+          {
+            "block_date": "2024-01-03",
+            "TVL": 73736159.44
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8705964159973433,
+        "accuracy": 0.8801488441048186,
+        "freshness": 0.8737745198087707,
+        "reliability": 0.8834426420010051,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 307,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8891766171518896
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json_GET",
+      "domain": "dex",
+      "title": "DEX TVL Daily",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "Program_Type": "metric"
+      },
+      "keywords": [
+        "dex",
+        "tvl",
+        "daily",
+        "block",
+        "date",
+        "program",
+        "type"
+      ],
+      "description": "DEX TVL Daily",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "tvl": 414857753.78,
+            "Program_Type": 403.15
+          },
+          {
+            "block_date": "2024-01-02",
+            "tvl": 367636935.7,
+            "Program_Type": 721.15
+          },
+          {
+            "block_date": "2024-01-03",
+            "tvl": 419760825,
+            "Program_Type": 261.23
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9383696728116154,
+        "accuracy": 0.9165718322057947,
+        "freshness": 0.913267957122681,
+        "reliability": 0.859912372519446,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 200,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7243833388113632
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json_GET",
+      "domain": "dex",
+      "title": "Dex volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Volume": "volume"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date"
+      ],
+      "description": "Dex volume",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Volume": 9624405.32
+          },
+          {
+            "block_date": "2024-01-02",
+            "Volume": 9025063.71
+          },
+          {
+            "block_date": "2024-01-03",
+            "Volume": 7145195.43
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8663735446422958,
+        "accuracy": 0.8769539349587677,
+        "freshness": 0.9129350162095242,
+        "reliability": 0.8686028217668378,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 299,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "upward",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6481185497850548
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "domain": "overview",
+      "title": "DEX volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12594/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume": "volume"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "sf overview"
+      ],
+      "description": "DEX volume",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "volume": 5280359.17
+          },
+          {
+            "block_date": "2024-01-02",
+            "volume": 9057709.62
+          },
+          {
+            "block_date": "2024-01-03",
+            "volume": 4059943.83
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9003559887866982,
+        "accuracy": 0.9168534803018412,
+        "freshness": 0.9043080583584159,
+        "reliability": 0.9585168088756858,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 353,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9876991735431219
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json_GET",
+      "domain": "raydium",
+      "title": "DEX Volume",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume": "volume",
+        "Dex": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "raydium competetive landscape"
+      ],
+      "description": "DEX Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "volume": 8370299.45,
+            "Dex": 517.37
+          },
+          {
+            "block_date": "2024-01-02",
+            "volume": 2968106.08,
+            "Dex": 792.79
+          },
+          {
+            "block_date": "2024-01-03",
+            "volume": 10034553.91,
+            "Dex": 661.71
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8709070442204121,
+        "accuracy": 0.8476937103422915,
+        "freshness": 0.8936521306696851,
+        "reliability": 0.8732575080439462,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Data analysis",
+          "Performance tracking",
+          "Trend monitoring"
+        ],
+        "typical_queries": [
+          "Show trends over time",
+          "Compare metrics",
+          "Track performance"
+        ],
+        "business_insights": [
+          "Market trends",
+          "Performance patterns",
+          "Usage insights"
+        ],
+        "decision_support": [
+          "Strategic planning",
+          "Performance optimization",
+          "Risk management"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 221,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "general",
+          "analytics"
+        ],
+        "domain_expertise": [
+          "raydium",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.9793346160341428
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "domain": "overview",
+      "title": "DEX Volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Dex_Volume": "volume",
+        "Symbol": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "month",
+        "symbol",
+        "sf stablecoins"
+      ],
+      "description": "DEX Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "Dex_Volume": 4398115.99,
+            "Symbol": 266.49
+          },
+          {
+            "month": "2024-01-02",
+            "Dex_Volume": 1236120.31,
+            "Symbol": 159.95
+          },
+          {
+            "month": "2024-01-03",
+            "Dex_Volume": 2801238.06,
+            "Symbol": 726.83
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9142366254583904,
+        "accuracy": 0.9541469823219223,
+        "freshness": 0.9945013567346724,
+        "reliability": 0.9770737855808892,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 236,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Dex_Volume",
+              "label": "Dex Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6416790097072471
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json_GET",
+      "domain": "dex",
+      "title": "Dex Volume Aggregator vs Direct Share",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json",
+      "method": "GET",
+      "response_schema": {
+        "dex": "metric",
+        "Volume": "volume",
+        "medium": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "aggregator",
+        "direct",
+        "share",
+        "medium",
+        "aggregators"
+      ],
+      "description": "Dex Volume Aggregator vs Direct Share",
+      "chart_types": [
+        "bar",
+        "area"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "dex": 703.38,
+            "Volume": 10369731.28,
+            "medium": 87.23
+          },
+          {
+            "dex": 643.05,
+            "Volume": 4041540.38,
+            "medium": 102.59
+          },
+          {
+            "dex": 747.9,
+            "Volume": 1170493.88,
+            "medium": 571.76
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8582794965918048,
+        "accuracy": 0.9357901258714495,
+        "freshness": 0.8751348562053648,
+        "reliability": 0.9096536518747317,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 372,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [],
+          "y_axis": [
+            {
+              "column": "Volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.636398158910447
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json_GET",
+      "domain": "dex",
+      "title": "DEX Volume Share",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "aggregator": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "share",
+        "month",
+        "aggregator",
+        "aggregators"
+      ],
+      "description": "DEX Volume Share",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "volume": 6690100.84,
+            "aggregator": 725.99
+          },
+          {
+            "month": "2024-01-02",
+            "volume": 9318395.6,
+            "aggregator": 106.07
+          },
+          {
+            "month": "2024-01-03",
+            "volume": 1004113.68,
+            "aggregator": 889.13
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.937660563140443,
+        "accuracy": 0.8994943319589912,
+        "freshness": 0.9346458467852123,
+        "reliability": 0.9199875960676503,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 366,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [],
+        "anomaly_detection": false
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.8703997083327213
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12401/results.json_GET",
+      "domain": "dex",
+      "title": "Distribution by Token Category",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12401/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Volume": "volume",
+        "mint_category": "metric"
+      },
+      "keywords": [
+        "distribution",
+        "token",
+        "category",
+        "block",
+        "date",
+        "volume",
+        "mint"
+      ],
+      "description": "Distribution by Token Category",
+      "chart_types": [
+        "area",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "block_date": "2024-01-01",
+            "Volume": 5678885.71,
+            "mint_category": "USDC"
+          },
+          {
+            "block_date": "2024-01-02",
+            "Volume": 9623590.5,
+            "mint_category": "USDT"
+          },
+          {
+            "block_date": "2024-01-03",
+            "Volume": 7099983.71,
+            "mint_category": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9303902936478906,
+        "accuracy": 0.8530751444125358,
+        "freshness": 0.8780507392186271,
+        "reliability": 0.9023967954422724,
+        "volatility": "medium"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 413,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "area",
+            "confidence": 0.95,
+            "use_case": "Volume trends over time",
+            "color_scheme": "blue-gradient"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "block_date",
+              "label": "Block Date",
+              "format": "date"
+            }
+          ],
+          "y_axis": [
+            {
+              "column": "Volume",
+              "label": "Volume",
+              "format": "number"
+            }
+          ]
+        },
+        "trending_patterns": [
+          "cyclical"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6389772305084952
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json_GET",
+      "domain": "dex",
+      "title": "Distribution by traders' trade frequency",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Signers": "metric",
+        "monthly_transactions": "time"
+      },
+      "keywords": [
+        "distribution",
+        "traders",
+        "trade",
+        "frequency",
+        "month",
+        "signers",
+        "monthly",
+        "transactions"
+      ],
+      "description": "Distribution by traders' trade frequency",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "Signers": 328.5,
+            "monthly_transactions": "2024-01-01"
+          },
+          {
+            "month": "2024-01-02",
+            "Signers": 480.4,
+            "monthly_transactions": "2024-01-02"
+          },
+          {
+            "month": "2024-01-03",
+            "Signers": 398.73,
+            "monthly_transactions": "2024-01-03"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.8842991505119242,
+        "accuracy": 0.8913600249213386,
+        "freshness": 0.9211139146301933,
+        "reliability": 0.9336362247339327,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "DEX analytics",
+          "Trading volume analysis",
+          "Liquidity monitoring",
+          "Price discovery"
+        ],
+        "typical_queries": [
+          "Show DEX volume trends",
+          "Compare trading pairs",
+          "Track liquidity changes"
+        ],
+        "business_insights": [
+          "Trading patterns",
+          "Market depth",
+          "User behavior"
+        ],
+        "decision_support": [
+          "Investment decisions",
+          "Liquidity provision",
+          "Market making"
+        ],
+        "complexity_level": "intermediate"
+      },
+      "performance": {
+        "avg_response_time_ms": 417,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            },
+            {
+              "column": "monthly_transactions",
+              "label": "Monthly Transactions",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "trading",
+          "liquidity",
+          "swaps",
+          "market-making"
+        ],
+        "domain_expertise": [
+          "dex",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.6884517880956682
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12551/results.json_GET",
+      "domain": "overview",
+      "title": "Ecosystem treasury balance",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12551/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "monthly_realm_balance": "time",
+        "category": "metric"
+      },
+      "keywords": [
+        "ecosystem",
+        "treasury",
+        "balance",
+        "month",
+        "monthly",
+        "realm",
+        "category",
+        "sf treasury"
+      ],
+      "description": "Ecosystem treasury balance",
+      "chart_types": [
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "month": "2024-01-01",
+            "monthly_realm_balance": "2024-01-01",
+            "category": "USDC"
+          },
+          {
+            "month": "2024-01-02",
+            "monthly_realm_balance": "2024-01-02",
+            "category": "USDT"
+          },
+          {
+            "month": "2024-01-03",
+            "monthly_realm_balance": "2024-01-03",
+            "category": "SOL"
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9370415076176526,
+        "accuracy": 0.9500623214234235,
+        "freshness": 0.9878630786244338,
+        "reliability": 0.9507649407344346,
+        "volatility": "high"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 240,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [
+            {
+              "column": "month",
+              "label": "Month",
+              "format": "date"
+            },
+            {
+              "column": "monthly_realm_balance",
+              "label": "Monthly Realm Balance",
+              "format": "date"
+            }
+          ],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": []
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.7213451396899694
+      }
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13241/results.json_GET",
+      "domain": "overview",
+      "title": "Ecosystem wise top dApp's revenue - since Jan'25",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13241/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Segment": "metric",
+        "protocol_revenue": "revenue",
+        "Dapp": "metric"
+      },
+      "keywords": [
+        "ecosystem",
+        "wise",
+        "top",
+        "dapp",
+        "revenue",
+        "since",
+        "jan",
+        "segment",
+        "protocol",
+        "total"
+      ],
+      "description": "Ecosystem wise top dApp's revenue - since Jan'25",
+      "chart_types": [
+        "bar",
+        "line"
+      ],
+      "sample_response": {
+        "data": [
+          {
+            "Segment": 813.57,
+            "protocol_revenue": 634567.15,
+            "Dapp": 438.52
+          },
+          {
+            "Segment": 434.04,
+            "protocol_revenue": 287092.14,
+            "Dapp": 988.32
+          },
+          {
+            "Segment": 338.92,
+            "protocol_revenue": 888450.43,
+            "Dapp": 239.2
+          }
+        ],
+        "row_count": 3,
+        "data_freshness": "real-time",
+        "last_updated": "2025-07-12T13:08:12.755Z"
+      },
+      "data_quality": {
+        "completeness": 0.9795314561345304,
+        "accuracy": 0.9230679726429536,
+        "freshness": 0.9080939756787075,
+        "reliability": 0.9967720370756454,
+        "volatility": "low"
+      },
+      "usage_context": {
+        "primary_use_cases": [
+          "Market overview",
+          "Ecosystem monitoring",
+          "Trend analysis",
+          "Performance tracking"
+        ],
+        "typical_queries": [
+          "Show market trends",
+          "Compare ecosystems",
+          "Track overall performance"
+        ],
+        "business_insights": [
+          "Market sentiment",
+          "Ecosystem health",
+          "Growth patterns"
+        ],
+        "decision_support": [
+          "Investment allocation",
+          "Market timing",
+          "Strategic planning"
+        ],
+        "complexity_level": "beginner"
+      },
+      "performance": {
+        "avg_response_time_ms": 328,
+        "typical_data_volume": "small",
+        "cache_duration": "15 minutes"
+      },
+      "visualization": {
+        "recommended_charts": [
+          {
+            "type": "line",
+            "confidence": 0.7,
+            "use_case": "General trend analysis",
+            "color_scheme": "default"
+          }
+        ],
+        "axis_suggestions": {
+          "x_axis": [],
+          "y_axis": []
+        },
+        "trending_patterns": [
+          "upward",
+          "cyclical",
+          "seasonal"
+        ],
+        "anomaly_detection": true
+      },
+      "relationships": {
+        "similar_apis": [],
+        "complementary_apis": [],
+        "prerequisite_apis": [],
+        "derived_metrics": [
+          "total"
+        ]
+      },
+      "search_context": {
+        "semantic_tags": [
+          "market-analysis",
+          "ecosystem",
+          "trends",
+          "performance"
+        ],
+        "domain_expertise": [
+          "overview",
+          "blockchain",
+          "defi",
+          "analytics"
+        ],
+        "temporal_scope": "historical-and-current",
+        "geographical_scope": "global",
+        "market_relevance": 0.689825986072808
+      }
+    }
+  ],
+  "version": "2.0.0",
+  "last_updated": "2025-07-12T13:08:12.755Z",
+  "enhancements": {
+    "sample_responses": true,
+    "data_quality_metrics": true,
+    "usage_context": true,
+    "performance_metadata": true,
+    "visualization_intelligence": true,
+    "relationship_mapping": true,
+    "search_context": true
+  }
+}

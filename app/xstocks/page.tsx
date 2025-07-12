@@ -8,7 +8,7 @@ export default function XStocksPage() {
   
   useEffect(() => {
     // Redirect to overview page
-    router.replace("/xstocks/financials");
+    router.replace("/xstocks/fee-revenue");
   }, [router]);
   
   // Show loading spinner while redirecting

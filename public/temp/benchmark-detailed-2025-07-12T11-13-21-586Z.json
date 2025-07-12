@@ -1,0 +1,95 @@
+{
+  "timestamp": "2025-07-12T11:13:21.586Z",
+  "summary": {
+    "totalQueries": 20,
+    "oldSystem": {
+      "avgTokens": 19740.333333333332,
+      "avgResponseTime": 3680.1355657586414,
+      "successRate": 1,
+      "avgAccuracy": 1,
+      "totalCost": 0.94752
+    },
+    "ragSystem": {
+      "avgTokens": 437.6666666666667,
+      "avgResponseTime": 2.945791562398275,
+      "successRate": 1,
+      "avgAccuracy": 0.964,
+      "cacheHitRate": 0.3333333333333333,
+      "totalCost": 0.020971836
+    },
+    "improvements": {
+      "tokenReduction": 97.78288107259249,
+      "speedImprovement": 99.9199542650057,
+      "costSavings": 97.78666033434651,
+      "accuracyChange": -3.600000000000003
+    }
+  },
+  "detailedResults": [
+    {
+      "systemType": "old",
+      "query": "Show DEX volume trends",
+      "tokenUsage": 19740,
+      "responseTimeMs": 4679.233440238452,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Show DEX volume trends",
+      "tokenUsage": 0,
+      "responseTimeMs": 1.2494587898254395,
+      "success": true,
+      "accuracy": 0.892,
+      "relevantApisFound": 3,
+      "totalApisSearched": 3,
+      "cacheHit": true,
+      "confidence": 0.9
+    },
+    {
+      "systemType": "old",
+      "query": "Compare stablecoin usage",
+      "tokenUsage": 19740,
+      "responseTimeMs": 3066.886056173193,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Compare stablecoin usage",
+      "tokenUsage": 656,
+      "responseTimeMs": 4.749000072479248,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    },
+    {
+      "systemType": "old",
+      "query": "Display compute unit pricing",
+      "tokenUsage": 19741,
+      "responseTimeMs": 3294.2872008642785,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 10,
+      "totalApisSearched": 185
+    },
+    {
+      "systemType": "rag",
+      "query": "Display compute unit pricing",
+      "tokenUsage": 657,
+      "responseTimeMs": 2.8389158248901367,
+      "success": true,
+      "accuracy": 1,
+      "relevantApisFound": 5,
+      "totalApisSearched": 5,
+      "cacheHit": false,
+      "confidence": 1
+    }
+  ]
+}

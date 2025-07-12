@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Layout from "../components/Layout";       
-import XStocksTabsHeader from "./components/xstocksTabsHeader";
+import XStocksTabsHeader from "./components/XStocksTabsHeader";
 import { usePathname } from "next/navigation";
 
 interface XStocksLayoutProps {
@@ -13,9 +13,9 @@ export default function XStocksLayout({ children }: XStocksLayoutProps) {
   const pathname = usePathname();
   
   // Extract the active tab from pathname
-  // /launchpads/financials -> financials, /launchpads/traction -> traction, etc.
+  // /xstocks/financials -> financials, /xstocks/traction -> traction, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "financials";
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "fee-revenue";
   
   return (
     <Layout>
