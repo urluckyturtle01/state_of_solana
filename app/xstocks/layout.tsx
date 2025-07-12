@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import Layout from "../components/Layout";       
-import XStocksTabsHeader from "./components/XStocksTabsHeader";
+import XStocksTabsHeader from "./components/xstocksTabsHeader";
 import { usePathname } from "next/navigation";
 
 interface XStocksLayoutProps {
