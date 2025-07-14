@@ -1584,28 +1584,82 @@ export default function DashboardRenderer({
           }];
         }
       } else {
-        // For non-date based charts, use data points as legend entries
-        // Don't limit to just 5 items, show all of them for consistency with BarChart
-        chartLegends = data
-          .map((item, index) => {
-            const label = String(item[xField]);
-            const id = label; // For non-date based, id and label are the same
-            newLabels.push(id);
+        // For non-date based charts, determine if we should show y-axis field or data points
+        // For simple single-series charts, show the y-axis field name
+        // For multi-series charts or when there are distinct categories to distinguish, show data points
+        
+        const isMultiSeries = Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1;
+        const hasGroupBy = !!chart.dataMapping.groupBy;
+        
+        if (isMultiSeries) {
+          // Multi-series chart - show y-axis field names as legends
+          chartLegends = yAxisFields.map((field, index) => {
+            // Calculate the total for this field across all data points
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            
+            newLabels.push(field); // Use raw field name
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[id] && isNewColorMap) {
-              colorMap[id] = getColorByIndex(index);
+            if (!colorMap[field] && isNewColorMap) {
+              colorMap[field] = getColorByIndex(index);
             }
             
+            // Determine if this field should be rendered as a line
+            const isLine = isLineType(chart, field);
+            
             return {
-              id,
-              label,
-              color: colorMap[id] || getColorByIndex(index),
-              value: Number(item[yAxisFields[0]]) || 0,
-              // Bar chart series are always squares
-              shape: chart.chartType === 'line' ? 'circle' as const : 'square' as const
+              id: field, // Add the raw field name as id
+              label: field, // Show API field name as-is without formatting
+              color: colorMap[field] || getColorByIndex(index),
+              value: total,
+              shape: isLine ? 'circle' as const : 'square' as const
             };
           });
+        } else if (!hasGroupBy) {
+          // Simple single-series chart without groupBy - show y-axis field name
+          const yFieldName = getFieldName(yAxisFields[0]);
+          const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
+          
+          newLabels.push(yFieldName); // Use raw field name
+          
+          // Use consistent color from our map, or generate a new one if needed
+          if (!colorMap[yFieldName] && isNewColorMap) {
+            colorMap[yFieldName] = getColorByIndex(0);
+          }
+          
+          // Determine if this field should be rendered as a line
+          const isLine = isLineType(chart, yFieldName);
+          
+          chartLegends = [{
+            id: yFieldName, // Add the raw field name as id
+            label: yFieldName, // Show API field name as-is without formatting
+            color: colorMap[yFieldName] || getColorByIndex(0),
+            value: total,
+            shape: isLine ? 'circle' as const : 'square' as const
+          }];
+        } else {
+          // Chart with groupBy but not stacked - show individual data points
+          chartLegends = data
+            .map((item, index) => {
+              const label = String(item[xField]);
+              const id = label; // For non-date based, id and label are the same
+              newLabels.push(id);
+              
+              // Use consistent color from our map, or generate a new one if needed
+              if (!colorMap[id] && isNewColorMap) {
+                colorMap[id] = getColorByIndex(index);
+              }
+              
+              return {
+                id,
+                label,
+                color: colorMap[id] || getColorByIndex(index),
+                value: Number(item[yAxisFields[0]]) || 0,
+                // Bar chart series are always squares
+                shape: chart.chartType === 'line' ? 'circle' as const : 'square' as const
+              };
+            });
+        }
       }
     }
     

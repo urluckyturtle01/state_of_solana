@@ -28,7 +28,7 @@ export const menuItems: MenuItem[] = [
   { name: "Wrapped BTC", path: "/wrapped-btc", icon: "M16.56 11.57C17.15 10.88 17.5 9.98 17.5 9C17.5 7.14 16.23 5.57 14.5 5.13V3H12.5V5H10.5V3H8.5V5H5.5V7H7.5V17H5.5V19H8.5V21H10.5V19H12.5V21H14.5V19C16.71 19 18.5 17.21 18.5 15C18.5 13.55 17.72 12.27 16.56 11.57ZM9.5 7H13.5C14.6 7 15.5 7.9 15.5 9C15.5 10.1 14.6 11 13.5 11H9.5V7ZM14.5 17H9.5V13H14.5C15.6 13 16.5 13.9 16.5 15C16.5 16.1 15.6 17 14.5 17Z" },  
   { name: "Compute Units", path: "/compute-units", icon: "M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" },
   //{ name: "Launchpads", path: "/launchpads", icon: "M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" },
-  //{ name: "Xstocks", path: "/xstocks", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+  { name: "Xstocks", path: "/xstocks", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
   { 
     name: "Projects", 
     path: "/projects", 
