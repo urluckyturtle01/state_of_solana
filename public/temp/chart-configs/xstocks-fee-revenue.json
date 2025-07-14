@@ -2,7 +2,7 @@
   "pageId": "xstocks-fee-revenue",
   "pageName": "Fee Revenue",
   "chartCount": 2,
-  "lastUpdated": "2025-07-14T11:18:35.251Z",
+  "lastUpdated": "2025-07-14T11:56:55.213Z",
   "charts": [
     {
       "id": "chart_1752485841165_7jk4s38",
@@ -13,17 +13,16 @@
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13814/results.json",
       "apiKey": "rP2DEyUTQ4xn7CFeS8nTO2eqXr8oBGZlwLmyppcx&max_age=86400",
-      "isStacked": false,
+      "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "total_fees",
-        "groupBy": "dex",
-        "yAxisUnit": "$"
+        "groupBy": "dex"
       },
       "createdAt": "2025-07-14T09:37:21.165Z",
-      "updatedAt": "2025-07-14T09:37:21.414Z"
+      "updatedAt": "2025-07-14T11:53:14.374Z"
     },
     {
       "id": "chart_1752485964588_c18rw75",
