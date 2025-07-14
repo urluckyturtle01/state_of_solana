@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "Issuance & Burn",
   "chartCount": 5,
-  "lastUpdated": "2025-07-14T12:17:46.049Z",
+  "lastUpdated": "2025-07-14T18:58:02.806Z",
   "charts": [
     {
       "id": "chart_1748090558074_b8llrdw",
@@ -188,6 +188,7 @@
       "apiKey": "OUAKufVU3UKpwQd06ZUu3lYqrEM2W7cowtH5IoGV&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
@@ -207,7 +208,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-24T14:52:39.787Z",
-      "updatedAt": "2025-07-11T08:40:30.617Z",
+      "updatedAt": "2025-07-14T18:57:23.469Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
@@ -219,7 +220,18 @@
         ]
       },
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
