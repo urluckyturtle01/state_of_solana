@@ -1,7 +1,29 @@
 {
   "pageId": "xstocks-tvl",
   "pageName": "TVL",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-12T14:09:16.322Z",
-  "charts": []
+  "chartCount": 1,
+  "lastUpdated": "2025-07-14T11:18:35.251Z",
+  "charts": [
+    {
+      "id": "chart_1752486109597_a62ko8d",
+      "title": "Asset Wise TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13811/results.json",
+      "apiKey": "wgLJTpxiFdZvIcBq0sWtxBblW0Keb7xTJQDUWfFf&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "asset",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-14T09:41:49.597Z",
+      "updatedAt": "2025-07-14T09:41:49.801Z"
+    }
+  ]
 }

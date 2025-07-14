@@ -1,7 +1,183 @@
 {
   "pageId": "xstocks-traction",
   "pageName": "Traction",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-12T14:09:16.322Z",
-  "charts": []
+  "chartCount": 8,
+  "lastUpdated": "2025-07-14T11:18:35.251Z",
+  "charts": [
+    {
+      "id": "chart_1752486222398_v7cmsr7",
+      "title": "Volume",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13798/results.json",
+      "apiKey": "20klT9XAM7tquzMqHrfWwcuZDzU8nABon5Nh9DCx&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-14T09:43:42.398Z",
+      "updatedAt": "2025-07-14T09:43:43.418Z"
+    },
+    {
+      "id": "chart_1752486294207_1hlhva0",
+      "title": "Trades",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13798/results.json",
+      "apiKey": "20klT9XAM7tquzMqHrfWwcuZDzU8nABon5Nh9DCx&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-14T09:44:54.207Z",
+      "updatedAt": "2025-07-14T09:44:54.408Z"
+    },
+    {
+      "id": "chart_1752486427191_pqc1bpr",
+      "title": "Daily Active And New Traders",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13798/results.json",
+      "apiKey": "20klT9XAM7tquzMqHrfWwcuZDzU8nABon5Nh9DCx&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "new_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-14T09:47:07.191Z",
+      "updatedAt": "2025-07-14T09:47:07.746Z"
+    },
+    {
+      "id": "chart_1752486715831_0cf8zfz",
+      "title": "Volume By Asset",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13800/results.json",
+      "apiKey": "D8qevDhHHS5wUoegABX72UQUsFYjBEzngJ8rjamR&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "mint",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-14T09:51:55.831Z",
+      "updatedAt": "2025-07-14T09:51:56.075Z"
+    },
+    {
+      "id": "chart_1752486788838_5hask29",
+      "title": "Traders By Asset",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13800/results.json",
+      "apiKey": "D8qevDhHHS5wUoegABX72UQUsFYjBEzngJ8rjamR&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "traders",
+        "groupBy": "mint"
+      },
+      "createdAt": "2025-07-14T09:53:08.838Z",
+      "updatedAt": "2025-07-14T09:53:09.088Z"
+    },
+    {
+      "id": "chart_1752486854131_9a62cde",
+      "title": "Trades By Asset",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13800/results.json",
+      "apiKey": "D8qevDhHHS5wUoegABX72UQUsFYjBEzngJ8rjamR&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": "mint"
+      },
+      "createdAt": "2025-07-14T09:54:14.131Z",
+      "updatedAt": "2025-07-14T09:54:14.343Z"
+    },
+    {
+      "id": "chart_1752487914985_zk78fao",
+      "title": "Volume By Hour",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13805/results.json",
+      "apiKey": "Fwa8vT15hbyRxbpLhOnQNQQ0HXN0LcNn8VTQ7pb4&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "hour",
+        "yAxis": "% volume",
+        "groupBy": "",
+        "yAxisUnit": "%"
+      },
+      "createdAt": "2025-07-14T10:11:54.985Z",
+      "updatedAt": "2025-07-14T10:11:56.651Z"
+    },
+    {
+      "id": "chart_1752487998859_7r1mzvj",
+      "title": "Volume By Day Of Week",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13820/results.json",
+      "apiKey": "91oZw6oUPyaDyz89IsoVYSxQ1vO4cVlmS78sEXpE&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "day_of_week",
+        "yAxis": "% volume",
+        "groupBy": "",
+        "yAxisUnit": "%"
+      },
+      "createdAt": "2025-07-14T10:13:18.859Z",
+      "updatedAt": "2025-07-14T10:13:19.337Z"
+    }
+  ]
 }
