@@ -19,7 +19,8 @@ const customMap: Record<string, string> = {
   'tps': 'TPS',
   'apy': 'APY',
   'apr': 'APR',
-  'ray' : 'RAY'
+  'ray' : 'RAY',
+  'xstocks': 'xStocks'
 };
 
 export function formatTitle(title: string): string {
