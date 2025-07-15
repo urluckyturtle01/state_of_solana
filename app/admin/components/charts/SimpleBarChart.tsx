@@ -111,7 +111,15 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   
   // Add state for filter values in modal
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
-  
+
+  // Sync modalFilterValues with filterValues when filterValues prop changes
+  useEffect(() => {
+    if (filterValues) {
+      console.log(`SimpleBarChart: Syncing filter values for ${chartConfig.title}`, filterValues);
+      setModalFilterValues(filterValues);
+    }
+  }, [filterValues, chartConfig.title]);
+
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 

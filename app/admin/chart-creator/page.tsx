@@ -91,6 +91,16 @@ export default function ChartCreatorPage() {
     }
   });
   
+  // Add state for currency filter type
+  const [currencyFilterType, setCurrencyFilterType] = useState<'parameter' | 'columns'>('parameter');
+  
+  // Add state for currency column mappings
+  const [currencyColumnMappings, setCurrencyColumnMappings] = useState<Record<string, string>>({
+    'USD': '',
+    'SOL': '',
+    'USDe': ''
+  });
+  
   // Add state for time aggregation feature
   const [enableTimeAggregation, setEnableTimeAggregation] = useState(false);
   
@@ -189,6 +199,19 @@ export default function ChartCreatorPage() {
                 }
                 
                 if (hasCurrencyFilter && filters.currencyFilter) {
+                  // Check if this is a column-based currency filter
+                  if (filters.currencyFilter.type === 'field_switcher' && filters.currencyFilter.columnMappings) {
+                    setCurrencyFilterType('columns');
+                    setCurrencyColumnMappings(filters.currencyFilter.columnMappings);
+                    setFilterParams(prev => ({
+                      ...prev,
+                      currencyFilter: {
+                        options: filters.currencyFilter?.options || ['USD', 'SOL', 'USDe'],
+                        paramName: 'currency' // Not used for column-based filters
+                      }
+                    }));
+                  } else {
+                    setCurrencyFilterType('parameter');
                   setFilterParams(prev => ({
                     ...prev,
                     currencyFilter: {
@@ -196,6 +219,7 @@ export default function ChartCreatorPage() {
                       paramName: filters.currencyFilter?.paramName || 'currency'
                     }
                   }));
+                  }
                 }
               }
               
@@ -563,10 +587,24 @@ export default function ChartCreatorPage() {
       
       if (!enableFilters[filterName]) {
         // Enabling the filter, add configuration
+        if (filterName === 'currencyFilter') {
+          // For currency filter, check the type
+          const currencyFilterConfig = currencyFilterType === 'columns' ? {
+            ...filterParams[filterName],
+            type: 'field_switcher' as const,
+            columnMappings: currencyColumnMappings
+          } : filterParams[filterName];
+          
+          additionalOptions.filters = {
+            ...(additionalOptions.filters || {}),
+            [filterName]: currencyFilterConfig
+          };
+        } else {
         additionalOptions.filters = {
           ...(additionalOptions.filters || {}),
           [filterName]: filterParams[filterName]
         };
+        }
       } else {
         // Disabling the filter, remove configuration
         if (additionalOptions.filters) {
@@ -616,6 +654,61 @@ export default function ChartCreatorPage() {
       }
         
       return updatedParams;
+      });
+  };
+
+  // Handle currency filter type change
+  const handleCurrencyFilterTypeChange = (type: 'parameter' | 'columns') => {
+    setCurrencyFilterType(type);
+    
+    // Update form data if currency filter is enabled
+    if (enableFilters.currencyFilter) {
+      const currencyFilterConfig = type === 'columns' ? {
+        ...filterParams.currencyFilter,
+        type: 'field_switcher' as const,
+        columnMappings: currencyColumnMappings
+      } : filterParams.currencyFilter;
+      
+      setFormData(prev => ({
+        ...prev,
+        additionalOptions: {
+          ...prev.additionalOptions,
+          filters: {
+            ...prev.additionalOptions?.filters,
+            currencyFilter: currencyFilterConfig
+          }
+        }
+      }));
+    }
+  };
+
+  // Handle currency column mapping changes
+  const handleCurrencyColumnMappingChange = (currency: string, columnName: string) => {
+    setCurrencyColumnMappings(prev => {
+      const updatedMappings = {
+        ...prev,
+        [currency]: columnName
+      };
+      
+      // Update form data if currency filter is enabled and type is columns
+      if (enableFilters.currencyFilter && currencyFilterType === 'columns') {
+        setFormData(formPrev => ({
+          ...formPrev,
+          additionalOptions: {
+            ...formPrev.additionalOptions,
+            filters: {
+              ...formPrev.additionalOptions?.filters,
+              currencyFilter: {
+                ...filterParams.currencyFilter,
+                type: 'field_switcher' as const,
+                columnMappings: updatedMappings
+              }
+            }
+          }
+        }));
+      }
+      
+      return updatedMappings;
       });
   };
   
@@ -1125,10 +1218,19 @@ export default function ChartCreatorPage() {
           }
           
           if (enableFilters.currencyFilter) {
+            if (currencyFilterType === 'columns') {
+              chartConfig.additionalOptions!.filters.currencyFilter = {
+                paramName: 'currency', // Not used for field switcher
+                options: filterParams.currencyFilter.options,
+                type: 'field_switcher',
+                columnMappings: currencyColumnMappings
+              };
+            } else {
             chartConfig.additionalOptions!.filters.currencyFilter = {
               paramName: filterParams.currencyFilter.paramName,
               options: filterParams.currencyFilter.options
             };
+            }
           }
         }
       }
@@ -1175,6 +1277,14 @@ export default function ChartCreatorPage() {
           setEnableFilters({
             timeFilter: false,
             currencyFilter: false
+          });
+          
+          // Reset currency filter specific state
+          setCurrencyFilterType('parameter');
+          setCurrencyColumnMappings({
+            'USD': '',
+            'SOL': '',
+            'USDe': ''
           });
           
           // Reset dual axis state
@@ -1726,23 +1836,93 @@ export default function ChartCreatorPage() {
             
             {enableFilters.currencyFilter && (
               <div className="pl-6 mt-2 space-y-4 border-l-2 border-indigo-800">
-                <FormInput
-                  id="currencyFilterParamName"
-                  label="API Parameter Name"
-                  value={filterParams.currencyFilter.paramName}
-                  onChange={(e) => handleFilterParamChange('currencyFilter', 'paramName', e.target.value)}
-                  placeholder="e.g., currency, denomination"
-                  helpText="Parameter name that will be sent to the API (case sensitive - must match exactly)"
-                />
-                
+                {/* Currency Filter Type Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Currency Filter Type
+                  </label>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="currencyFilterType"
+                        value="parameter"
+                        checked={currencyFilterType === 'parameter'}
+                        onChange={(e) => handleCurrencyFilterTypeChange(e.target.value as 'parameter' | 'columns')}
+                        className="mr-2 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-300">Use Parameter</span>
+                      <span className="ml-2 text-xs text-gray-400">(sends currency as API parameter)</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="currencyFilterType"
+                        value="columns"
+                        checked={currencyFilterType === 'columns'}
+                        onChange={(e) => handleCurrencyFilterTypeChange(e.target.value as 'parameter' | 'columns')}
+                        className="mr-2 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-300">Use Different Columns</span>
+                      <span className="ml-2 text-xs text-gray-400">(switches between different field names)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Currency Filter Options */}
                 <FormMultiInput
                   id="currencyFilterOptions"
                   label="Filter Options"
                   values={Array.isArray(filterParams.currencyFilter.options) ? filterParams.currencyFilter.options : []}
-                  onChange={(field, values) => handleFilterParamChange('currencyFilter', 'options', values)}
+                  onChange={(field, values) => {
+                    handleFilterParamChange('currencyFilter', 'options', values);
+                    // Update column mappings to match new options
+                    if (currencyFilterType === 'columns') {
+                      const newMappings: Record<string, string> = {};
+                      values.forEach(currency => {
+                        newMappings[currency] = currencyColumnMappings[currency] || '';
+                      });
+                      setCurrencyColumnMappings(newMappings);
+                    }
+                  }}
                   placeholder="USD, SOL, USDe"
                   helpText="Available currency options"
                 />
+
+                {currencyFilterType === 'parameter' ? (
+                  /* Parameter-based configuration */
+                  <FormInput
+                    id="currencyFilterParamName"
+                    label="API Parameter Name"
+                    value={filterParams.currencyFilter.paramName}
+                    onChange={(e) => handleFilterParamChange('currencyFilter', 'paramName', e.target.value)}
+                    placeholder="e.g., currency, denomination"
+                    helpText="Parameter name that will be sent to the API (case sensitive - must match exactly)"
+                  />
+                ) : (
+                  /* Column-based configuration */
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium text-gray-300">Column Mappings</div>
+                    <div className="text-xs text-gray-400 mb-2">
+                      Map each currency option to its corresponding column name in your data
+                    </div>
+                    {filterParams.currencyFilter.options.map((currency) => (
+                      <div key={currency} className="flex items-center space-x-2">
+                        <div className="w-16 text-sm text-gray-300 font-medium">{currency}:</div>
+                        <FormInput
+                          id={`currencyMapping_${currency}`}
+                          value={currencyColumnMappings[currency] || ''}
+                          onChange={(e) => handleCurrencyColumnMappingChange(currency, e.target.value)}
+                          placeholder={`e.g., value_${currency.toLowerCase()}, revenue_${currency.toLowerCase()}`}
+                          className="flex-1"
+                        />
+                      </div>
+                    ))}
+                    <div className="text-xs text-gray-400 mt-2">
+                      Example: USD → "revenue_usd", SOL → "revenue_sol"
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

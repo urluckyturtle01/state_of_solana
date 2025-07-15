@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
 
 import dynamic from 'next/dynamic';
@@ -306,9 +306,36 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     console.log('Current data length:', data.length);
     console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
     
-    // Don't initialize if we're using external filter values
+    // Always use external filter values when provided
     if (externalFilterValues) {
-      console.log('Using external filter values, skipping initialization');
+      console.log('Using external filter values, updating internal state');
+      setInternalFilterValues(externalFilterValues);
+      
+      // For time aggregation enabled charts, apply aggregation with external filter values
+      const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+      const timeFilterValue = externalFilterValues['timeFilter'];
+      
+      if (isTimeAggregationEnabled && timeFilterValue && rawData.length > 0) {
+        console.log('ChartRenderer: Applying time aggregation with external filter:', timeFilterValue);
+        
+        const { xAxis, yAxis } = chartConfig.dataMapping;
+        const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
+        
+        let yFields: string[] = [];
+        if (Array.isArray(yAxis)) {
+          yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
+        } else {
+          yFields = [getFieldFromYAxisConfig(yAxis)];
+        }
+        
+        const aggregatedData = aggregateDataByTimePeriod(rawData, timeFilterValue, xField, yFields, chartConfig.dataMapping.groupBy);
+        setData(aggregatedData);
+        
+        if (onDataLoaded) {
+          onDataLoaded(aggregatedData);
+        }
+      }
+      
       return;
     }
 
@@ -384,87 +411,24 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   }, [chartConfig.id, externalFilterValues, rawData]);
 
   // Handle filter change
-  const handleFilterChange = (filterType: string, value: string) => {
-    console.log(`ChartRenderer filter changed: ${filterType} = ${value}`);
+  const handleFilterChange = useCallback((key: string, value: string) => {
+    console.log(`ChartRenderer: Filter changed: ${key} = ${value}`);
     
-    // For time aggregation enabled charts, handle time filter changes immediately
-    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const updatedFilters = {
+      ...internalFilterValues,
+      [key]: value
+    };
     
-    if (isTimeAggregationEnabled && filterType === 'timeFilter') {
-      console.log('ChartRenderer: Immediate time filter processing for time aggregation');
-      
-      // Update internal state immediately
-      const updatedFilters = {
-        ...(externalFilterValues || internalFilterValues),
-        [filterType]: value
-      };
-      
-      if (!externalFilterValues) {
-        setInternalFilterValues(updatedFilters);
-        setIsFilterChanged(true);
-      }
-      
-      // Trigger immediate re-aggregation if we have raw data
-      if (rawData.length > 0) {
-        const { xAxis, yAxis } = chartConfig.dataMapping;
-        const xField = Array.isArray(xAxis) ? xAxis[0] : xAxis;
-        
-        let yFields: string[] = [];
-        if (Array.isArray(yAxis)) {
-          yFields = yAxis.map(field => getFieldFromYAxisConfig(field));
-        } else {
-          yFields = [getFieldFromYAxisConfig(yAxis)];
-        }
-        
-        console.log('ChartRenderer: Applying immediate time aggregation with filter:', value);
-        const aggregatedData = aggregateDataByTimePeriod(rawData, value, xField, yFields, chartConfig.dataMapping.groupBy);
-        setData(aggregatedData);
-        
-        // Call onDataLoaded callback immediately
-        if (onDataLoaded) {
-          onDataLoaded(aggregatedData);
-        }
-      }
-      
-      // Also call external handler if provided
-      if (onFilterChange) {
-        onFilterChange(filterType, value);
-      }
-    } else if (isTimeAggregationEnabled && (filterType === 'displayModeFilter' || filterType === 'displayMode')) {
-      console.log('ChartRenderer: Display mode filter for time aggregation - pass-through only');
-      
-      // For time aggregation charts, displayMode changes should only update state for StackedBarChart
-      // No re-aggregation needed, just pass through the filter value
-      if (!externalFilterValues) {
-        setInternalFilterValues(prev => ({
-          ...prev,
-          [filterType]: value
-        }));
-      }
-      
-      // Call external handler if provided
-      if (onFilterChange) {
-        onFilterChange(filterType, value);
-      }
-    } else {
-      // Standard filter handling for non-time filters (including displayMode)
-      console.log(`ChartRenderer: Standard filter processing for ${filterType}:`, value);
-      
-      // Update internal state immediately for UI responsiveness
-      if (!externalFilterValues) {
-      setInternalFilterValues(prev => ({
-        ...prev,
-        [filterType]: value
-      }));
-      setIsFilterChanged(true);
+    setInternalFilterValues(updatedFilters);
+    
+    if (onFilterChange) {
+      onFilterChange(key, value);
     }
-      
-      // Call external handler if provided
-      if (onFilterChange) {
-        onFilterChange(filterType, value);
-      }
+    
+    if (isExpanded && onModalFilterUpdate) {
+      onModalFilterUpdate(updatedFilters);
     }
-  };
+  }, [internalFilterValues, onFilterChange, isExpanded, onModalFilterUpdate]);
 
   // Effect to handle client-side time aggregation when time filter changes or rawData becomes available
   useEffect(() => {
@@ -811,6 +775,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           const filterConfig = chartConfig.additionalOptions?.filters;
           const hasFilters = filterConfig !== undefined;
           const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+          const isFieldSwitcherCurrency = filterConfig?.currencyFilter?.type === 'field_switcher';
           
           console.log('=== FILTER DEBUG INFO ===');
           console.log('Chart title:', chartConfig.title);
@@ -834,15 +799,18 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
               console.log('Skipping time filter parameter - using client-side time aggregation');
             }
             
-            // Add currency filter parameter
-            if (filterConfig.currencyFilter && filterValues['currencyFilter']) {
+            // Add currency filter parameter only if not field_switcher type
+            if (filterConfig.currencyFilter && filterValues['currencyFilter'] && filterConfig.currencyFilter.type !== 'field_switcher') {
               parameters[filterConfig.currencyFilter.paramName] = filterValues['currencyFilter'];
               console.log(`Setting currency filter: ${filterConfig.currencyFilter.paramName}=${filterValues['currencyFilter']}`);
             } else if (filterConfig.currencyFilter && 
                      Array.isArray(filterConfig.currencyFilter.options) && 
-                     filterConfig.currencyFilter.options.length > 0) {
+                     filterConfig.currencyFilter.options.length > 0 &&
+                     filterConfig.currencyFilter.type !== 'field_switcher') {
               parameters[filterConfig.currencyFilter.paramName] = filterConfig.currencyFilter.options[0];
               console.log(`Setting default currency filter: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
+            } else if (filterConfig.currencyFilter?.type === 'field_switcher') {
+              console.log('Skipping currency parameter for field_switcher type - fetching full data');
             }
             
             // Add display mode filter parameter (skip if time aggregation is enabled - client-side processing)
@@ -1156,9 +1124,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     chartConfig.apiKey, 
     chartConfig.title, 
     JSON.stringify(chartConfig.dataMapping), 
-    // For time aggregation charts, exclude time filter from dependencies
-    chartConfig.additionalOptions?.enableTimeAggregation 
-      ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => key !== 'timeFilter')))
+    // Conditionally exclude timeFilter and currencyFilter from dependencies based on config
+    (chartConfig.additionalOptions?.enableTimeAggregation || chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher')
+      ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => 
+          key !== (chartConfig.additionalOptions?.enableTimeAggregation ? 'timeFilter' : '') && 
+          key !== (chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher' ? 'currencyFilter' : '')
+        )))
       : JSON.stringify(filterValues), 
     isFilterChanged
   ]);
@@ -1297,22 +1268,41 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
 
   // Implement logic to extract the unit from yAxis when necessary
   const getYAxisUnit = (yAxis: string | YAxisConfig | (string | YAxisConfig)[]): string | undefined => {
+    let specifiedUnit: string | undefined;
+    
     // Check if we're using a dataMapping.yAxisUnit field (single field mode)
     if (chartConfig.dataMapping.yAxisUnit) {
-      return chartConfig.dataMapping.yAxisUnit;
+      specifiedUnit = chartConfig.dataMapping.yAxisUnit;
+    }
+    // Handle single YAxisConfig (non-array)
+    else if (typeof yAxis !== 'string' && !Array.isArray(yAxis)) {
+      specifiedUnit = yAxis.unit;
+    }
+    // For array configurations with multiple fields, check if it's a single-field case
+    else if (Array.isArray(yAxis) && yAxis.length === 1 && typeof yAxis[0] !== 'string') {
+      specifiedUnit = (yAxis[0] as YAxisConfig).unit;
     }
     
-    // Otherwise try to get unit from YAxisConfig objects if available
-    if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] !== 'string') {
-      return (yAxis[0] as YAxisConfig).unit;
+    // If unit is specified in Y axis config, use that regardless of currency filter
+    if (specifiedUnit) {
+      return specifiedUnit;
     }
     
-    // Handle single YAxisConfig
-    if (typeof yAxis !== 'string' && !Array.isArray(yAxis)) {
-      return yAxis.unit;
+    // Only apply currency filter fallback for single-field charts
+    // Multi-field charts (dual-axis, multi-series) handle their own unit logic per field
+    const isMultiFieldChart = Array.isArray(yAxis) && yAxis.length > 1;
+    const isDualAxisChart = chartConfig.chartType === 'dual-axis';
+    
+    if (!isMultiFieldChart && !isDualAxisChart) {
+      // If no unit specified in Y axis for single-field charts, fall back to currency filter
+      const currencyFilter = filterValues['currencyFilter'];
+      if (currencyFilter) {
+        return currencyFilter; // Use currency filter value as unit (USD, SOL, etc.)
+      }
     }
     
-    // No unit specified
+    // For multi-field charts or when no fallback applies, return undefined
+    // Let individual chart components handle their own unit logic
     return undefined;
   };
 

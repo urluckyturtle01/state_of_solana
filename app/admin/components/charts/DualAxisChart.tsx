@@ -80,26 +80,41 @@ function getYAxisField(field: string | YAxisConfig): string {
 }
 
 // Helper function to get unit from YAxisConfig or use a default
-function getYAxisUnit(field: string | YAxisConfig): string | undefined {
-  return typeof field === 'string' ? undefined : field.unit;
+function getYAxisUnit(field: string | YAxisConfig, currencyFilter?: string): string | undefined {
+  // If field has explicit unit specified, use that
+  const specifiedUnit = typeof field === 'string' ? undefined : field.unit;
+  if (specifiedUnit) {
+    return specifiedUnit;
+  }
+  
+  // If no unit specified, fall back to currency filter if available
+  if (currencyFilter) {
+    return currencyFilter;
+  }
+  
+  return undefined;
 }
 
 // Format value with appropriate units
 function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
-  // Get the unit symbol (use defaultUnit as fallback)
-  const unitSymbol = unit || defaultUnit || '';
+  // Get the unit symbol - explicit unit takes precedence, only use defaultUnit if unit is undefined/null
+  const unitSymbol = unit !== undefined ? unit : (defaultUnit || '');
   const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+  
+  // Handle negative values
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? '-' : '';
   
   // Format with appropriate scale
   let formattedValue: string;
-  if (value >= 1000000000) {
-    formattedValue = `${(value / 1000000000).toFixed(2)}B`;
-  } else if (value >= 1000000) {
-    formattedValue = `${(value / 1000000).toFixed(2)}M`;
-  } else if (value >= 1000) {
-    formattedValue = `${(value / 1000).toFixed(2)}K`;
+  if (absValue >= 1000000000) {
+    formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+  } else if (absValue >= 1000000) {
+    formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
+  } else if (absValue >= 1000) {
+    formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
   } else {
-    formattedValue = value.toFixed(2);
+    formattedValue = `${sign}${absValue.toFixed(2)}`;
   }
   
   // Return with correct unit placement (or no unit if not specified)
@@ -238,7 +253,15 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   
   // Add state for filter values in modal
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
-  
+
+  // Sync modalFilterValues with filterValues when filterValues prop changes
+  useEffect(() => {
+    if (filterValues) {
+      console.log(`DualAxisChart: Syncing filter values for ${chartConfig.title}`, filterValues);
+      setModalFilterValues(filterValues);
+    }
+  }, [filterValues, chartConfig.title]);
+
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
@@ -318,14 +341,17 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       return '$0.00';
     }
     
-    if (value >= 1000000000) {
-      return `$${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      return `${sign}$${(absValue / 1000000000).toFixed(2)}B`;
+    } else if (absValue >= 1000000) {
+      return `${sign}$${(absValue / 1000000).toFixed(2)}M`;
+    } else if (absValue >= 1000) {
+      return `${sign}$${(absValue / 1000).toFixed(2)}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      return `${sign}$${absValue.toFixed(2)}`;
     }
   }, []);
 
@@ -333,26 +359,29 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    if (value >= 1000000000) {
-      const formattedValue = (value / 1000000000).toFixed(1);
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000) {
+      const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}B` 
-        : `${formattedValue}B`;
-    } else if (value >= 1000000) {
-      const formattedValue = (value / 1000000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}B` 
+        : `${sign}${formattedValue}B`;
+    } else if (absValue >= 1000000) {
+      const formattedValue = (absValue / 1000000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}M` 
-        : `${formattedValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
+        ? `${sign}${formattedValue.slice(0, -2)}M` 
+        : `${sign}${formattedValue}M`;
+    } else if (absValue >= 1000) {
+      const formattedValue = (absValue / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
-    } else if (value < 1) {
+        ? `${sign}${formattedValue.slice(0, -2)}K` 
+        : `${sign}${formattedValue}K`;
+    } else if (absValue < 1) {
       // For values between 0 and 1, show decimal places
-      return value.toFixed(1);
+      return `${sign}${absValue.toFixed(1)}`;
     } else {
-      return value.toFixed(0);
+      return `${sign}${absValue.toFixed(0)}`;
     }
   }, []);
 
@@ -360,34 +389,37 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   const formatRightAxisTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
     
-    if (value >= 1000000000000) {
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    
+    if (absValue >= 1000000000000) {
       // Use T for trillions
-      const formattedValue = (value / 1000000000000).toFixed(2);
+      const formattedValue = (absValue / 1000000000000).toFixed(2);
       // Remove trailing zeros after decimal
       const cleanValue = parseFloat(formattedValue).toString();
-      return `${cleanValue}T`;
-    } else if (value >= 100000000) {
+      return `${sign}${cleanValue}T`;
+    } else if (absValue >= 100000000) {
       // Use B for values >= 100M (show as 0.1B instead of 100M)
-      const formattedValue = (value / 1000000000).toFixed(2);
+      const formattedValue = (absValue / 1000000000).toFixed(2);
       // Remove trailing zeros after decimal
       const cleanValue = parseFloat(formattedValue).toString();
-      return `${cleanValue}B`;
-    } else if (value >= 100000) {
+      return `${sign}${cleanValue}B`;
+    } else if (absValue >= 100000) {
       // Use M for values >= 100K (show as 0.1M instead of 100K)
-      const formattedValue = (value / 1000000).toFixed(2);
+      const formattedValue = (absValue / 1000000).toFixed(2);
       // Remove trailing zeros after decimal
       const cleanValue = parseFloat(formattedValue).toString();
-      return `${cleanValue}M`;
-    } else if (value >= 1000) {
-      const formattedValue = (value / 1000).toFixed(1);
+      return `${sign}${cleanValue}M`;
+    } else if (absValue >= 1000) {
+      const formattedValue = (absValue / 1000).toFixed(1);
       return formattedValue.endsWith('.0') 
-        ? `${formattedValue.slice(0, -2)}K` 
-        : `${formattedValue}K`;
-    } else if (value < 1) {
+        ? `${sign}${formattedValue.slice(0, -2)}K` 
+        : `${sign}${formattedValue}K`;
+    } else if (absValue < 1) {
       // For values between 0 and 1, show decimal places
-      return value.toFixed(1);
+      return `${sign}${absValue.toFixed(1)}`;
     } else {
-      return value.toFixed(0);
+      return `${sign}${absValue.toFixed(0)}`;
     }
   }, []);
 
@@ -578,11 +610,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
         })
         .map(field => {
           // Get the unit specific to this field only
-          const fieldUnit = getYAxisUnit(
-            Array.isArray(yField) 
-              ? yField.find(f => getYAxisField(f) === field) || field 
-              : field
-          );
+          const fieldConfig = Array.isArray(yField) 
+            ? yField.find(f => getYAxisField(f) === field) 
+            : yField;
+          
+          const fieldUnit = getYAxisUnit(fieldConfig || field, filterValues?.currencyFilter);
+          
           return {
             label: formatFieldName(field),
             value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit),
@@ -593,11 +626,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       // If no items passed the filter, show placeholder for first visible field
       if (tooltipItems.length === 0 && visibleFields.length > 0) {
         const firstVisibleField = visibleFields[0];
-        const firstFieldUnit = getYAxisUnit(
-          Array.isArray(yField) 
-            ? yField.find(f => getYAxisField(f) === firstVisibleField) || firstVisibleField 
-            : firstVisibleField
-        );
+        const firstFieldConfig = Array.isArray(yField) 
+          ? yField.find(f => getYAxisField(f) === firstVisibleField) 
+          : yField;
+        
+        const firstFieldUnit = getYAxisUnit(firstFieldConfig || firstVisibleField, filterValues?.currencyFilter);
+        
         tooltipItems = [{
           label: formatFieldName(firstVisibleField),
           value: formatWithUnit(0, firstFieldUnit),
@@ -812,21 +846,11 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       [key]: value
     };
     
-    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Clear existing timer
-    if (filterDebounceTimer.current) {
-      clearTimeout(filterDebounceTimer.current);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-    
-    // Debounce the actual filter change callback
-    filterDebounceTimer.current = setTimeout(() => {
-      // If onFilterChange exists in chartConfig, call it with updated filters
-      if (onFilterChange) {
-        onFilterChange(updatedFilters);
-      }
-    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
   
   // Update legend items based on chart data
@@ -933,7 +957,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       padding: 0.2,
     });
     
-    // Calculate max values for left and right axes
+    // Calculate min and max values for left and right axes
     const leftAxisFields = fields.filter(field => !isRightAxisField(field));
     const rightAxisFields = fields.filter(field => isRightAxisField(field));
     
@@ -942,21 +966,31 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       1
     );
     
+    const leftMin = Math.min(
+      ...currentData.flatMap(d => leftAxisFields.map(field => Number(d[field]) || 0)),
+      0
+    );
+    
     const rightMax = Math.max(
       ...currentData.flatMap(d => rightAxisFields.map(field => Number(d[field]) || 0)),
       1
     );
     
+    const rightMin = Math.min(
+      ...currentData.flatMap(d => rightAxisFields.map(field => Number(d[field]) || 0)),
+      0
+    );
+    
     // Create scales for left and right y-axes
     const leftYScale = scaleLinear<number>({
-      domain: [0, leftMax * 1.1],
+      domain: [leftMin * 1.1, leftMax * 1.1], // Add 10% padding on both sides
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
     });
     
     const rightYScale = scaleLinear<number>({
-      domain: [0, rightMax * 1.1],
+      domain: [rightMin * 1.1, rightMax * 1.1], // Add 10% padding on both sides
       range: [innerHeight, 0],
       nice: true,
       clamp: true,
@@ -1071,6 +1105,19 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
               strokeDasharray="2,3"
             />
             
+            {/* Zero line with special styling when we have negative values on left axis */}
+            {leftMin < 0 && (
+              <line
+                x1={0}
+                y1={leftYScale(0)}
+                x2={innerWidth}
+                y2={leftYScale(0)}
+                stroke="#374151"
+                strokeWidth={1}
+                strokeOpacity={0.8}
+              />
+            )}
+            
             {/* Left Y-axis */}
             <AxisLeft
               scale={leftYScale}
@@ -1184,9 +1231,13 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
                   // Calculate bar dimensions
                   const value = Number(d[field]) || 0;
                   const scale = isRightAxisField(field) ? rightYScale : leftYScale;
-                  const barHeight = innerHeight - scale(value);
+                  // For positive values, the bar starts at the value position and extends down to zero
+                  // For negative values, the bar starts at zero and extends down to the value position
+                  const barHeight = Math.abs(scale(0) - scale(value));
                   const barX = (xScale(d[xKey]) || 0) + (barFieldIndex * barWidth);
-                  const barY = innerHeight - barHeight;
+                  // For positive values, the bar's y position is at the value's y coordinate
+                  // For negative values, the bar's y position is at the zero line
+                  const barY = value >= 0 ? scale(value) : scale(0);
                   
                   return (
                     <Bar

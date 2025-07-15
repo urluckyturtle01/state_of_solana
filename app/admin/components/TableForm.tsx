@@ -589,26 +589,8 @@ const TableForm: React.FC<TableFormProps> = ({
     }
     
     try {
-      // Save table config
+      // Save table config (saveTableConfig now handles all cache clearing)
       const savedConfig = await saveTableConfig(formData);
-      
-      // Clear any caches for this page to ensure table appears
-      if (typeof window !== 'undefined' && formData.page) {
-        try {
-          // Clear localStorage cache for this page
-          localStorage.removeItem(`tables_page_${formData.page}`);
-          
-          // Also clear session storage if it exists
-          sessionStorage.removeItem(`tables_page_${formData.page}`);
-          
-          // Force browser to reload data by setting a flag
-          localStorage.setItem('tables_need_refresh', 'true');
-          localStorage.setItem('tables_refreshed_page', formData.page);
-          localStorage.setItem('tables_refresh_time', Date.now().toString());
-        } catch (e) {
-          console.warn('Error clearing cache:', e);
-        }
-      }
       
       // Call onSubmit callback if provided
       if (onSubmit) {

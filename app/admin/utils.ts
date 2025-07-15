@@ -1127,6 +1127,7 @@ export const saveTableConfig = async (tableConfig: TableConfig): Promise<TableCo
     
     // Also save to localStorage as backup (and for offline support)
     if (typeof window !== 'undefined') {
+      // Update the main tables storage
       const storedTables = localStorage.getItem('tableConfigs');
       const tables: TableConfig[] = storedTables ? JSON.parse(storedTables) : [];
       
@@ -1143,6 +1144,31 @@ export const saveTableConfig = async (tableConfig: TableConfig): Promise<TableCo
       
       // Save to localStorage
       localStorage.setItem('tableConfigs', JSON.stringify(tables));
+      
+      // Clear all page-specific caches to ensure table appears in correct location and is removed from old page
+      const keys = Object.keys(localStorage);
+      for (const key of keys) {
+        if (key.startsWith('tables_page_')) {
+          console.log(`Clearing table cache for ${key}`);
+          localStorage.removeItem(key);
+        }
+      }
+      
+      // Also clear session storage caches if any
+      if (typeof sessionStorage !== 'undefined') {
+        const sessionKeys = Object.keys(sessionStorage);
+        for (const key of sessionKeys) {
+          if (key.startsWith('tables_page_')) {
+            console.log(`Clearing session table cache for ${key}`);
+            sessionStorage.removeItem(key);
+          }
+        }
+      }
+      
+      // Set flags to force refresh
+      localStorage.setItem('tables_need_refresh', 'true');
+      localStorage.setItem('tables_refreshed_page', tableConfig.page);
+      localStorage.setItem('tables_refresh_time', Date.now().toString());
     }
     
     return tableWithTimestamps;
@@ -1178,6 +1204,31 @@ export const saveTableConfig = async (tableConfig: TableConfig): Promise<TableCo
       
       // Save to localStorage
       localStorage.setItem('tableConfigs', JSON.stringify(tables));
+      
+      // Clear all page-specific caches to ensure table appears in correct location and is removed from old page
+      const keys = Object.keys(localStorage);
+      for (const key of keys) {
+        if (key.startsWith('tables_page_')) {
+          console.log(`Clearing table cache for ${key} (fallback)`);
+          localStorage.removeItem(key);
+        }
+      }
+      
+      // Also clear session storage caches if any
+      if (typeof sessionStorage !== 'undefined') {
+        const sessionKeys = Object.keys(sessionStorage);
+        for (const key of sessionKeys) {
+          if (key.startsWith('tables_page_')) {
+            console.log(`Clearing session table cache for ${key} (fallback)`);
+            sessionStorage.removeItem(key);
+          }
+        }
+      }
+      
+      // Set flags to force refresh
+      localStorage.setItem('tables_need_refresh', 'true');
+      localStorage.setItem('tables_refreshed_page', tableConfig.page);
+      localStorage.setItem('tables_refresh_time', Date.now().toString());
       
       return tableWithTimestamps;
     }

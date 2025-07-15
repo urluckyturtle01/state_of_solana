@@ -1,211 +1,38 @@
 {
   "pageId": "launchpads-traction",
   "pageName": "Traction",
-  "chartCount": 11,
-  "lastUpdated": "2025-07-14T18:58:02.812Z",
+  "chartCount": 4,
+  "lastUpdated": "2025-07-15T14:07:33.371Z",
   "charts": [
     {
-      "id": "chart_1752070419859_srd21iq",
-      "title": "Daily Token Minted",
-      "subtitle": "",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13778/results.json",
-      "apiKey": "qEi5oOtLmYT44wWQnmBZg9Ggl0ZaKZN2qVQuPULy&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "token_minted",
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:13:39.858Z",
-      "updatedAt": "2025-07-11T08:42:21.449Z"
-    },
-    {
-      "id": "chart_1752070563589_otd6en3",
-      "title": "Tokens Migrated",
-      "subtitle": "",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13778/results.json",
-      "apiKey": "qEi5oOtLmYT44wWQnmBZg9Ggl0ZaKZN2qVQuPULy",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "token_migrated",
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:16:03.589Z",
-      "updatedAt": "2025-07-11T08:42:22.062Z"
-    },
-    {
-      "id": "chart_1752070761578_t1yltda",
-      "title": "Cumulative Tokens Minted",
-      "subtitle": "Visualise traction at aggregate level launchpad wise",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13778/results.json",
-      "apiKey": "qEi5oOtLmYT44wWQnmBZg9Ggl0ZaKZN2qVQuPULy",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": [
-          "block_date"
-        ],
-        "yAxis": [
-          {
-            "field": "cumulative_token_minted",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:19:21.578Z",
-      "updatedAt": "2025-07-11T08:42:22.676Z"
-    },
-    {
-      "id": "chart_1752070850890_cqplvs7",
-      "title": "Cumulative Tokens Migrated",
-      "subtitle": "Visualize cumulative count of tokens migrated launchpad wise",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13778/results.json",
-      "apiKey": "qEi5oOtLmYT44wWQnmBZg9Ggl0ZaKZN2qVQuPULy",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_token_migrated",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:20:50.890Z",
-      "updatedAt": "2025-07-11T08:42:23.296Z"
-    },
-    {
-      "id": "chart_1752070967862_vthsnsf",
-      "title": "Migration Percentage",
-      "subtitle": "Tokens migrated versus tokens created on any given day",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13778/results.json",
-      "apiKey": "qEi5oOtLmYT44wWQnmBZg9Ggl0ZaKZN2qVQuPULy",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "% migrated",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:22:47.862Z",
-      "updatedAt": "2025-07-11T08:42:23.901Z"
-    },
-    {
-      "id": "chart_1752071053938_nk8szwo",
-      "title": "Daily Creators",
-      "subtitle": "count of unique creators",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13785/results.json",
-      "apiKey": "SoaXaBcfMMuXGlh7FbR2H5tgE6Ebt4aCsToBvjGx",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "creators",
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:24:13.938Z",
-      "updatedAt": "2025-07-11T08:42:24.515Z",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": "chart_1752071249423_0b5ln7k",
-      "title": "Cumulative Creators",
-      "subtitle": "",
-      "page": "launchpads-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13785/results.json",
-      "apiKey": "SoaXaBcfMMuXGlh7FbR2H5tgE6Ebt4aCsToBvjGx",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_creators",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "launchpad"
-      },
-      "createdAt": "2025-07-09T14:27:29.423Z",
-      "updatedAt": "2025-07-11T08:42:25.133Z"
-    },
-    {
-      "id": "chart_1752146145988_qticvaa",
+      "id": "chart_1752584947218_w8ppmpm",
       "title": "Trade Volume",
-      "subtitle": "Daily trade volume across the launchpads in USD terms",
+      "subtitle": "",
       "page": "launchpads-traction",
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
-      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "volume_usd",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "volume_sol",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
         "groupBy": "platform"
       },
-      "createdAt": "2025-07-10T11:15:45.988Z",
-      "updatedAt": "2025-07-11T08:42:26.350Z",
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -216,29 +43,44 @@
               "Q",
               "Y"
             ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "volume_usd",
+              "SOL": "volume_sol"
+            }
           }
-        }
-      }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-07-15T13:09:07.218Z",
+      "updatedAt": "2025-07-15T13:11:36.042Z"
     },
     {
-      "id": "chart_1752146242095_i59jupv",
-      "title": "Marketshare By Trade Volume",
+      "id": "chart_1752586068571_ua2onei",
+      "title": "Traders",
       "subtitle": "",
       "page": "launchpads-traction",
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
-      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
-      "isStacked": false,
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
+      "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "volume_sol",
+        "yAxis": "traders",
         "groupBy": "platform"
       },
-      "createdAt": "2025-07-10T11:17:22.095Z",
-      "updatedAt": "2025-07-11T08:42:27.015Z",
+      "createdAt": "2025-07-15T13:27:48.571Z",
+      "updatedAt": "2025-07-15T13:27:48.701Z",
       "additionalOptions": {
         "enableTimeAggregation": true,
         "filters": {
@@ -256,14 +98,14 @@
       }
     },
     {
-      "id": "chart_1752146370014_jdwaa3q",
-      "title": "Daily Trade Stats",
+      "id": "chart_1752586177769_akko5pg",
+      "title": "Trades",
       "subtitle": "",
       "page": "launchpads-traction",
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
-      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
@@ -272,8 +114,8 @@
         "yAxis": "trades",
         "groupBy": "platform"
       },
-      "createdAt": "2025-07-10T11:19:30.014Z",
-      "updatedAt": "2025-07-11T08:42:27.628Z",
+      "createdAt": "2025-07-15T13:29:37.769Z",
+      "updatedAt": "2025-07-15T13:29:37.823Z",
       "additionalOptions": {
         "enableTimeAggregation": true,
         "filters": {
@@ -291,39 +133,51 @@
       }
     },
     {
-      "id": "chart_1752146431065_r0z5mg1",
-      "title": "Daily Traders Stats",
+      "id": "chart_1752586326152_jo1r6yp",
+      "title": "Cumulative Volume",
       "subtitle": "",
       "page": "launchpads-traction",
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
-      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "traders",
+        "yAxis": [
+          {
+            "field": "cumulative_volume_usd",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "cumulative_volume_sol",
+            "type": "line",
+            "unit": ""
+          }
+        ],
         "groupBy": "platform"
       },
-      "createdAt": "2025-07-10T11:20:31.065Z",
-      "updatedAt": "2025-07-11T08:42:28.251Z",
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
+          "currencyFilter": {
+            "paramName": "currency",
             "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "cumulative_volume_usd",
+              "SOL": "cumulative_volume_sol"
+            }
           }
         }
-      }
+      },
+      "createdAt": "2025-07-15T13:32:06.152Z",
+      "updatedAt": "2025-07-15T13:33:19.562Z"
     }
   ]
 }

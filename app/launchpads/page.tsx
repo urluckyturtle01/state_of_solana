@@ -8,7 +8,7 @@ export default function LaunchpadsPage() {
   
   useEffect(() => {
     // Redirect to overview page
-    router.replace("/launchpads/financials");
+    router.replace("/launchpads/token-launches");
   }, [router]);
   
   // Show loading spinner while redirecting

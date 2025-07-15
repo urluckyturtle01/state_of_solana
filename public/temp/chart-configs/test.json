@@ -1,8 +1,8 @@
 {
   "pageId": "test",
   "pageName": "Test",
-  "chartCount": 7,
-  "lastUpdated": "2025-07-14T18:58:02.817Z",
+  "chartCount": 8,
+  "lastUpdated": "2025-07-15T14:07:33.375Z",
   "charts": [
     {
       "id": "chart_1750071753508_m9q12qm",
@@ -289,6 +289,53 @@
       },
       "createdAt": "2025-06-18T09:33:47.616Z",
       "updatedAt": "2025-07-11T08:42:20.840Z"
+    },
+    {
+      "id": "chart_1752565832939_t1n3jqt",
+      "title": "H H M",
+      "subtitle": "",
+      "page": "test",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_sol",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "volume_usd",
+              "SOL": "volume_sol"
+            }
+          }
+        }
+      },
+      "createdAt": "2025-07-15T07:50:32.939Z",
+      "updatedAt": "2025-07-15T08:11:27.260Z"
     }
   ]
 }

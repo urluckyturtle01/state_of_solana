@@ -1,7 +1,140 @@
 {
   "pageId": "launchpads-tokenized-equities",
   "pageName": "Tokenized Equities",
-  "chartCount": 0,
-  "lastUpdated": "2025-07-14T18:58:02.813Z",
-  "charts": []
+  "chartCount": 4,
+  "lastUpdated": "2025-07-15T14:07:33.372Z",
+  "charts": [
+    {
+      "id": "chart_1752586748316_kejaeyu",
+      "title": "Daily Volume",
+      "subtitle": "",
+      "page": "launchpads-tokenized-equities",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13829/results.json",
+      "apiKey": "R9f8tpZVBUYtHUEbpXJVwkDCtjX0r5R7IDQvZGyu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-15T13:39:08.316Z",
+      "updatedAt": "2025-07-15T13:39:08.388Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752586900562_dvkojaj",
+      "title": "Daily Traders",
+      "subtitle": "",
+      "page": "launchpads-tokenized-equities",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13829/results.json",
+      "apiKey": "R9f8tpZVBUYtHUEbpXJVwkDCtjX0r5R7IDQvZGyu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "traders",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-15T13:41:40.562Z",
+      "updatedAt": "2025-07-15T13:41:40.633Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752586960568_2b3w250",
+      "title": "Daily Trades",
+      "subtitle": "",
+      "page": "launchpads-tokenized-equities",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13829/results.json",
+      "apiKey": "R9f8tpZVBUYtHUEbpXJVwkDCtjX0r5R7IDQvZGyu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "trades",
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-15T13:42:40.568Z",
+      "updatedAt": "2025-07-15T13:42:40.627Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1752587058074_1zvt66u",
+      "title": "Cumulative Volume",
+      "subtitle": "",
+      "page": "launchpads-tokenized-equities",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13829/results.json",
+      "apiKey": "R9f8tpZVBUYtHUEbpXJVwkDCtjX0r5R7IDQvZGyu&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_volume",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "createdAt": "2025-07-15T13:44:18.073Z",
+      "updatedAt": "2025-07-15T13:44:18.184Z"
+    }
+  ]
 }

@@ -387,8 +387,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             originalFieldType = typeof originalFieldConfig === 'string' ? 'bar' : originalFieldConfig.type;
             originalFieldUnit = typeof originalFieldConfig === 'string' ? undefined : originalFieldConfig.unit;
             
-            // Log the determined type for debugging
-            console.log('GroupBy: Using field type and unit for all groups:', originalFieldType, originalFieldUnit);
+            // Use the determined type for all groups
           } else {
             // Fallback to bar if structure is unexpected
             originalFieldConfig = yField[0] || '';
@@ -414,13 +413,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
           });
           
-          return { 
-            chartData: resultData,
-            fields: resultFields,
-            fieldColors: resultColors,
-            fieldTypes: resultFieldTypes,
-            fieldUnits: resultFieldUnits
-          };
+                  return { 
+          chartData: resultData,
+          fields: resultFields,
+          fieldColors: resultColors,
+          fieldTypes: resultFieldTypes,
+          fieldUnits: resultFieldUnits
+        };
               } else {
           // For multiple y-fields with groupBy, combine field and group
           const combinedFields: string[] = [];
@@ -638,21 +637,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       [key]: value
     };
     
-    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Clear existing timer
-    if (filterDebounceTimer.current) {
-      clearTimeout(filterDebounceTimer.current);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-    
-    // Debounce the actual filter change callback
-    filterDebounceTimer.current = setTimeout(() => {
-      // If onFilterChange exists in chartConfig, call it with updated filters
-      if (onFilterChange) {
-        onFilterChange(updatedFilters);
-      }
-    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
 
   // Handle mouse leave for tooltip
@@ -803,7 +792,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
           return {
             label: formatFieldName(field),
-            value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit),
+            value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit, filterValues?.currencyFilter),
             color: fieldColors[field] || blue,
             // Use different shape for bar vs line
             shape: fieldTypes[field] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
@@ -821,7 +810,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         
           tooltipItems.push({
             label: formatFieldName(firstVisibleField),
-            value: formatWithUnit(0, firstFieldUnit),
+            value: formatWithUnit(0, firstFieldUnit, filterValues?.currencyFilter),
             color: fieldColors[firstVisibleField] || blue,
             shape: fieldTypes[firstVisibleField] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
           });

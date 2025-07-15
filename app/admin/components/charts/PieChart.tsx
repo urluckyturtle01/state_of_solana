@@ -84,6 +84,14 @@ const PieChart: React.FC<PieChartProps> = ({
   // Add state for modal filter values
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
 
+  // Sync modalFilterValues with filterValues when filterValues prop changes
+  useEffect(() => {
+    if (filterValues) {
+      console.log(`PieChart: Syncing filter values for ${chartConfig.title}`, filterValues);
+      setModalFilterValues(filterValues);
+    }
+  }, [filterValues, chartConfig.title]);
+
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
@@ -475,28 +483,18 @@ const PieChart: React.FC<PieChartProps> = ({
 
   // Enhanced function to handle modal filter changes
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log('Modal filter change:', key, value);
+    console.log(`Modal filter changed: ${key} = ${value}`);
     
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
     
-    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Clear existing timer
-    if (filterDebounceTimer.current) {
-      clearTimeout(filterDebounceTimer.current);
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
     }
-    
-    // Debounce the actual filter change callback
-    filterDebounceTimer.current = setTimeout(() => {
-      // If onFilterChange exists in chartConfig, call it with updated filters
-      if (onFilterChange) {
-        onFilterChange(updatedFilters);
-      }
-    }, 300); // 300ms debounce delay
   }, [modalFilterValues, onFilterChange]);
   
   // Handle filter changes - for both modal and normal view

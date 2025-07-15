@@ -650,6 +650,80 @@ export default function DashboardRenderer({
   const wrappedBatchFetchChartData = useCallback((charts: ChartConfig[], filters: Record<string, Record<string, string>>) => {
     return batchFetchChartData(charts, filters, enableCaching);
   }, [enableCaching]);
+
+  // Helper function to transform chart config based on currency field-switching
+  const transformChartConfigForCurrency = useCallback((chart: ChartConfig, selectedCurrency: string): ChartConfig => {
+    const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+    
+    // Only transform if this is a field-switcher type currency filter
+    if (!currencyFilter || currencyFilter.type !== 'field_switcher' || !currencyFilter.columnMappings) {
+      return chart;
+    }
+    
+    const targetColumn = currencyFilter.columnMappings[selectedCurrency];
+    if (!targetColumn) {
+      console.warn(`No column mapping found for currency: ${selectedCurrency}`);
+      return chart;
+    }
+    
+    console.log(`Transforming chart ${chart.id} for currency ${selectedCurrency} -> column ${targetColumn}`);
+    
+    // Create a new chart config with transformed data mapping
+    const transformedChart = { 
+      ...chart,
+      // Deep clone additionalOptions to update the active currency filter value
+      additionalOptions: {
+        ...chart.additionalOptions,
+        filters: chart.additionalOptions?.filters ? {
+          ...chart.additionalOptions.filters,
+          currencyFilter: chart.additionalOptions.filters.currencyFilter ? {
+            ...chart.additionalOptions.filters.currencyFilter,
+            activeValue: selectedCurrency
+          } : undefined
+        } : undefined
+      }
+    };
+    
+    // For stacked charts with multiple y-fields, we need to replace all currency-related fields
+    // with the single field for the selected currency
+    if (Array.isArray(chart.dataMapping.yAxis)) {
+      // Check if yAxis contains currency-related fields
+      const currencyFields = Object.values(currencyFilter.columnMappings);
+      const hasCurrencyFields = (chart.dataMapping.yAxis as any[]).some(field => {
+        const fieldName = typeof field === 'string' ? field : field.field;
+        return currencyFields.includes(fieldName);
+      });
+      
+      if (hasCurrencyFields) {
+        // Replace all currency fields with the selected one
+        const nonCurrencyFields = (chart.dataMapping.yAxis as any[]).filter(field => {
+          const fieldName = typeof field === 'string' ? field : field.field;
+          return !currencyFields.includes(fieldName);
+        });
+        
+        // Add the selected currency field
+        const selectedField = typeof chart.dataMapping.yAxis[0] === 'string' 
+          ? targetColumn 
+          : { ...(chart.dataMapping.yAxis[0] as any), field: targetColumn };
+        
+        transformedChart.dataMapping = {
+          ...chart.dataMapping,
+          yAxis: [selectedField, ...nonCurrencyFields]
+        };
+      }
+    } else if (typeof chart.dataMapping.yAxis === 'string') {
+      // Single y-axis field - check if it's a currency field and replace it
+      const currencyFields = Object.values(currencyFilter.columnMappings);
+      if (currencyFields.includes(chart.dataMapping.yAxis)) {
+        transformedChart.dataMapping = {
+          ...chart.dataMapping,
+          yAxis: targetColumn
+        };
+      }
+    }
+    
+    return transformedChart;
+  }, []);
   
   // Screenshot functionality now handled directly in ChartCard
   
@@ -803,7 +877,8 @@ export default function DashboardRenderer({
     }
     
     try {
-      return await preloadChartConfigs(pageId);
+      const loadedCharts = await preloadChartConfigs(pageId);
+      return loadedCharts;
     } catch (error) {
       console.error(`Error loading charts for page ${pageId}:`, error);
       return [];
@@ -1112,6 +1187,7 @@ export default function DashboardRenderer({
 
   // Screenshot functionality now handled directly in ChartCard
 
+
   // Handle filter changes
   const handleFilterChange = async (chartId: string, filterType: string, value: string) => {
     console.log('Dashboard filter change:', { chartId, filterType, value });
@@ -1122,32 +1198,15 @@ export default function DashboardRenderer({
       return;
     }
     
+    // Check if this is a field-switching currency filter
+    const isFieldSwitchingCurrency = filterType === 'currencyFilter' && 
+      chart.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher';
+    
     // For time aggregation enabled charts, handle ALL filter changes client-side
     const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
     const isStackedChart = isStackedBarChart(chart);
     
-    if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode')) {
-      console.log(`Dashboard: Client-side filter processing for ${isTimeAggregationEnabled ? 'time aggregation' : 'stacked chart'} - NO API CALL`);
-      
-      // Update filter value only (ChartRenderer will handle the data processing)
-      setFilterValues(prev => ({
-        ...prev,
-        [chartId]: {
-          ...prev[chartId],
-          [filterType]: value
-        }
-      }));
-      
-      // No API call needed - ChartRenderer handles time aggregation and StackedBarChart handles displayMode client-side
-      return;
-    }
-
-    console.log('Dashboard: Server-side filter processing - will trigger API call');
-    
-    // Set loading state when filter changes (for non-time-aggregation cases)
-    updateChartState(chartId, { loading: true });
-    
-    // Update filter value
+    // Update filter values
     setFilterValues(prev => ({
       ...prev,
       [chartId]: {
@@ -1155,6 +1214,23 @@ export default function DashboardRenderer({
         [filterType]: value
       }
     }));
+    
+    if (isTimeAggregationEnabled || (isStackedChart && filterType === 'displayMode') || isFieldSwitchingCurrency) {
+      console.log(`Dashboard: Client-side filter processing for ${
+        isTimeAggregationEnabled ? 'time aggregation' : 
+        isStackedChart && filterType === 'displayMode' ? 'stacked chart' : 
+        'field-switching currency'
+      } - NO API CALL`);
+      
+      // No API call needed - ChartRenderer handles time aggregation, StackedBarChart handles displayMode, 
+      // and field-switching is handled during rendering
+      return;
+    }
+
+    console.log('Dashboard: Server-side filter processing - will trigger API call');
+    
+    // Set loading state when filter changes (for non-time-aggregation cases)
+    updateChartState(chartId, { loading: true });
 
     // Fetch updated data with the new filter (only for non-time-aggregation cases)
     await fetchChartDataWithFilters(chart);
@@ -1549,15 +1625,12 @@ export default function DashboardRenderer({
               colorMap[field] = getColorByIndex(index);
             }
             
-            // Determine if this field should be rendered as a line
-            const isLine = isLineType(chart, field);
-            
             return {
               id: field, // Add the raw field name as id
               label: field, // Show API field name as-is without formatting
               color: colorMap[field] || getColorByIndex(index),
               value: total,
-              shape: isLine ? 'circle' as const : 'square' as const
+              shape: isLineType(chart, field) ? 'circle' as const : 'square' as const
             };
           });
         } else {
@@ -1935,11 +2008,29 @@ export default function DashboardRenderer({
     });
   }, [legends]);
 
-  // Filter charts by section if specified - must be before conditional returns
+  // Section filter for enhanced-dashboard-renderer compatibility
   const filteredCharts = useMemo(() => {
     if (!section) return charts;
     return charts.filter(chart => chart.section === section);
   }, [charts, section]);
+
+  // Transform charts based on current filter values for field-switching
+  const transformedCharts = useMemo(() => {
+    return filteredCharts.map(chart => {
+      const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+      const selectedCurrency = (filterValues[chart.id] || {})['currencyFilter'];
+      
+      // Only transform if this is a field-switcher type with a selected currency
+      if (currencyFilter?.type === 'field_switcher' && selectedCurrency && currencyFilter.columnMappings) {
+        const currentData = chartData[chart.id];
+        if (currentData && currentData.length > 0) {
+          return transformChartConfigForCurrency(chart, selectedCurrency);
+        }
+      }
+      
+      return chart;
+    });
+  }, [filteredCharts, filterValues, chartData, transformChartConfigForCurrency]);
 
   // Memoize onDataLoaded callbacks for all charts to prevent recreating them
   const onDataLoadedCallbacks = useMemo(() => {
@@ -1994,7 +2085,7 @@ export default function DashboardRenderer({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-      {filteredCharts.map((chart) => (
+      {transformedCharts.map((chart) => (
         <div 
           key={chart.id}
           className={`${(chart.width || 2) === 2 ? 'md:col-span-1' : 'md:col-span-2'}`}
@@ -2033,7 +2124,7 @@ export default function DashboardRenderer({
               {/* Currency Filter */}
               {chart.additionalOptions?.filters?.currencyFilter && (
                 <MemoizedCurrencyFilter
-                  currency={filterValues[chart.id]?.['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.options[0]}
+                  currency={(filterValues[chart.id] || {})['currencyFilter'] || chart.additionalOptions.filters.currencyFilter.activeValue || chart.additionalOptions.filters.currencyFilter.options[0]}
                   options={chart.additionalOptions.filters.currencyFilter.options}
                   onChange={(value) => handleFilterChange(chart.id, 'currencyFilter', value)}
                 />
@@ -2098,16 +2189,13 @@ export default function DashboardRenderer({
             data-testid={`chart-container-${chart.id}`}
           >
             <ChartRenderer 
-              chartConfig={chart} 
+              key={chart.id}
+              chartConfig={chart}
               preloadedData={chartData[chart.id] || []}
               onDataLoaded={onDataLoadedCallbacks[chart.id]}
               isExpanded={expandedCharts[chart.id]}
               onCloseExpanded={() => toggleChartExpanded(chart.id)}
-              // Pass filter values and handlers to ChartRenderer
-              // Use modal filter values when chart is expanded for proper time aggregation
-              filterValues={expandedCharts[chart.id] && modalFilterValues[chart.id] ? 
-                modalFilterValues[chart.id] : 
-                filterValues[chart.id]}
+              filterValues={expandedCharts[chart.id] && modalFilterValues[chart.id] ? modalFilterValues[chart.id] : (filterValues[chart.id] || {})}
               onFilterChange={(filterType, value) => {
                 // Check if this chart is in modal mode
                 const isModal = expandedCharts[chart.id];
@@ -2170,18 +2258,11 @@ export default function DashboardRenderer({
                   console.warn('Unexpected onFilterChange call:', { filterType, value });
                 }
               }}
-              // Pass the color map to ensure consistent colors
               colorMap={legendColorMaps[chart.id]}
-              // Add a callback to receive colors from BarChart
               onColorsGenerated={(colorMap) => syncLegendColors(chart.id, colorMap)}
-              // Pass hidden series to ChartRenderer
               hiddenSeries={hiddenSeries[chart.id] || []}
-              // Pass loading state
               isLoading={loadingCharts[chart.id] || false}
-              // Pass modal filter update callback for expanded charts
-              onModalFilterUpdate={expandedCharts[chart.id] ? 
-                (filters) => handleModalFilterUpdate(chart.id, filters) : 
-                undefined}
+              onModalFilterUpdate={expandedCharts[chart.id] ? (filters) => handleModalFilterUpdate(chart.id, filters) : undefined}
             />
           </div>
         </MemoizedChartCard>

@@ -111,7 +111,8 @@ overview: [
   "launchpads": [
     { id: 'launchpads-financials', name: 'Financials', path: '/launchpads/financials' },
     { id: 'launchpads-traction', name: 'Traction', path: '/launchpads/traction' },
-    { id: 'launchpads-tokenized-equities', name: 'Tokenized Equities', path: '/launchpads/tokenized-equities' }
+    { id: 'launchpads-tokenized-equities', name: 'Tokenized Equities', path: '/launchpads/tokenized-equities' },
+    { id: 'launchpads-fee-revenue', name: 'Fee Revenue', path: '/launchpads/fee-revenue' }
   ],
   "xstocks": [
     { id: 'xstocks-fee-revenue', name: 'Fee Revenue', path: '/xstocks/fee-revenue' },

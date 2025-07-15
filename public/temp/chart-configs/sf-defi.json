@@ -1,8 +1,8 @@
 {
   "pageId": "sf-defi",
   "pageName": "DeFi",
-  "chartCount": 4,
-  "lastUpdated": "2025-07-14T18:58:02.815Z",
+  "chartCount": 7,
+  "lastUpdated": "2025-07-15T14:07:33.373Z",
   "charts": [
     {
       "id": "chart_1749632875612_y0s7hta",
@@ -99,6 +99,126 @@
       },
       "createdAt": "2025-06-11T09:26:28.142Z",
       "updatedAt": "2025-07-11T08:41:32.504Z"
+    },
+    {
+      "id": "chart_1752576416131_lbxjpcq",
+      "title": "DEX Volume",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13847/results.json",
+      "apiKey": "NVyk6jRuEoc7JW1XYh2CIKZVMmGg8gkaAz1WR41U&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "partition_0",
+        "yAxis": "volume",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q"
+            ]
+          }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-07-15T10:46:56.131Z",
+      "updatedAt": "2025-07-15T10:46:56.764Z"
+    },
+    {
+      "id": "chart_1752576912503_jewt8nr",
+      "title": "Rev ( DEX )",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13831/results.json",
+      "apiKey": "2IM0QITnr0eRDm5796VMH1mDQe9KOwHBAVBdrivT",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "partition_0",
+        "yAxis": "rev_usd",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-15T10:55:12.503Z",
+      "updatedAt": "2025-07-15T10:55:12.838Z"
+    },
+    {
+      "id": "chart_1752583713555_xnou5g5",
+      "title": "Rev(dex)",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13854/results.json",
+      "apiKey": "u3WYLPvkkDWGHM9xqZkLxhaIVg6rkO6AMM2CvEzJ",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "solana_rev",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": false
+          },
+          {
+            "field": "dex_rev",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": false
+          },
+          {
+            "field": "dex_rev_percentage",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q"
+            ]
+          }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-07-15T12:48:33.555Z",
+      "updatedAt": "2025-07-15T12:48:35.057Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "solana_rev",
+          "dex_rev"
+        ],
+        "rightAxisFields": [
+          "dex_rev_percentage"
+        ]
+      }
     }
   ]
 }

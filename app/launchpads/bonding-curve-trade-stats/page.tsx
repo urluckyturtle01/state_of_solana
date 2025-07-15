@@ -10,12 +10,12 @@ const ChartLoading = () => (
   </div>
 );
 
-export default function LaunchpadsFinancialsPage() {
+export default function LaunchpadsBondingCurveTradeStatsPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="launchpads-financials" 
+          pageId="launchpads-traction" 
           enableCaching={true}
         />
       </Suspense>

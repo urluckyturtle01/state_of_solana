@@ -1,8 +1,8 @@
 {
   "pageId": "xstocks-traction",
   "pageName": "Traction",
-  "chartCount": 8,
-  "lastUpdated": "2025-07-14T18:58:02.813Z",
+  "chartCount": 9,
+  "lastUpdated": "2025-07-15T14:07:33.372Z",
   "charts": [
     {
       "id": "chart_1752486222398_v7cmsr7",
@@ -178,6 +178,78 @@
       },
       "createdAt": "2025-07-14T10:13:18.859Z",
       "updatedAt": "2025-07-14T10:13:19.337Z"
+    },
+    {
+      "id": "chart_1752572568145_dm7r0kq",
+      "title": "Comparision Of Onchain & Offchain Prices",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13850/results",
+      "apiKey": "aAxjDBpoyWHsGtEB9qdMGKGbsPSOmARM3kSNxeTd&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "onchain_price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "offchain_close_price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "%_discount",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-15T09:42:48.145Z",
+      "updatedAt": "2025-07-15T10:31:17.896Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "onchain_price",
+          "offchain_close_price"
+        ],
+        "rightAxisFields": [
+          "%_discount"
+        ]
+      },
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "Symbol",
+            "options": [
+              "SPY",
+              "TSLA",
+              "MSTR",
+              "CRCL",
+              "AAPL",
+              "META",
+              "QQQ",
+              "COIN",
+              "NVDA",
+              "GOOGL",
+              "AMZN",
+              "MCD",
+              "HOOD",
+              "DFDV",
+              "AMBR"
+            ]
+          }
+        }
+      }
     }
   ]
 }

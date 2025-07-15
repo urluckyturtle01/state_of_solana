@@ -65,6 +65,9 @@ export interface FilterOption {
   paramName: string;
   activeValue?: string;
   options: string[];
+  // For currency filters that switch between different columns
+  type?: 'parameter' | 'field_switcher';
+  columnMappings?: Record<string, string>; // Maps currency option to column name
 }
 
 // Chart configuration type

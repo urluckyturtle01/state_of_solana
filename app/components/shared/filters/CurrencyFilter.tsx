@@ -126,11 +126,7 @@ const CurrencyFilter: React.FC<CurrencyFilterProps> = ({
   
   // Handle option selection
   const handleOptionSelect = useCallback((option: string) => {
-    console.log('Option selected:', option);
-    // Set timeout to ensure the click event is fully processed before onChange
-    setTimeout(() => {
-      onChange(option);
-    }, 0);
+    onChange(option);
     setIsOpen(false);
   }, [onChange]);
 

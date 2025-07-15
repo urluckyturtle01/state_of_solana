@@ -94,8 +94,8 @@ const formatTooltipTitle = (title: string, timeFilter?: string): string => {
 const formatValueWithCurrency = (value: string | number, currencyFilter?: string): string => {
   // If value is already a string (possibly pre-formatted), return it as is
   if (typeof value === 'string') {
-    // If a currency filter is selected and the value starts with a currency symbol
-    // that doesn't match the selected currency, replace it
+    // Only apply currency conversion for known currency codes
+    // If the currencyFilter is not a standard currency, don't override existing formatting
     if (currencyFilter) {
       // Common currency symbols to detect and replace
       const currencySymbols = {
@@ -107,34 +107,39 @@ const formatValueWithCurrency = (value: string | number, currencyFilter?: string
         'SOL': 'SOL'
       };
       
-      // Get the selected currency symbol
-      const selectedSymbol = currencySymbols[currencyFilter as keyof typeof currencySymbols] || currencyFilter;
+      // Only apply currency conversion if the currencyFilter is a known currency code
+      const isKnownCurrency = currencyFilter in currencySymbols;
       
-      // Handle SOL currency specially because it goes after the number
-      if (currencyFilter === 'SOL') {
-        // Check if value already has SOL
-        if (value.includes('SOL')) {
-          return value;
-        }
+      if (isKnownCurrency) {
+        // Get the selected currency symbol
+        const selectedSymbol = currencySymbols[currencyFilter as keyof typeof currencySymbols];
         
-        // Check for other currency symbols at the beginning and remove them
-        for (const [currency, symbol] of Object.entries(currencySymbols)) {
-          if (currency !== 'SOL' && value.startsWith(symbol)) {
-            // Remove the symbol and add SOL at the end with a space
-            return `${value.substring(symbol.length)} SOL`;
+        // Handle SOL currency specially because it goes after the number
+        if (currencyFilter === 'SOL') {
+          // Check if value already has SOL
+          if (value.includes('SOL')) {
+            return value;
           }
+          
+          // Check for other currency symbols at the beginning and remove them
+          for (const [currency, symbol] of Object.entries(currencySymbols)) {
+            if (currency !== 'SOL' && value.startsWith(symbol)) {
+              // Remove the symbol and add SOL at the end with a space
+              return `${value.substring(symbol.length)} SOL`;
+            }
+          }
+          
+          // If no currency symbol was found, just add SOL at the end
+          return `${value} SOL`;
         }
         
-        // If no currency symbol was found, just add SOL at the end
-        return `${value} SOL`;
-      }
-      
-      // For other currencies, use normal replacement
-      // Check if the value starts with a different currency symbol
-      for (const [currency, symbol] of Object.entries(currencySymbols)) {
-        if (value.startsWith(symbol) && currency !== currencyFilter) {
-          // Replace the symbol with the selected currency
-          return value.replace(symbol, selectedSymbol);
+        // For other currencies, use normal replacement
+        // Check if the value starts with a different currency symbol
+        for (const [currency, symbol] of Object.entries(currencySymbols)) {
+          if (value.startsWith(symbol) && currency !== currencyFilter) {
+            // Replace the symbol with the selected currency
+            return value.replace(symbol, selectedSymbol);
+          }
         }
       }
     }
@@ -144,25 +149,39 @@ const formatValueWithCurrency = (value: string | number, currencyFilter?: string
   // For numeric values without pre-formatting
   if (typeof value === 'number') {
     if (currencyFilter) {
-      // Apply the selected currency to the number
-      switch (currencyFilter) {
-        case 'USD':
-          return `$${value.toLocaleString()}`;
-        case 'EUR':
-          return `€${value.toLocaleString()}`;
-        case 'GBP':
-          return `£${value.toLocaleString()}`;
-        case 'JPY':
-        case 'CNY':
-          return `¥${value.toLocaleString()}`;
-        case 'SOL':
-          return `${value.toLocaleString()} SOL`;
-        default:
-          return `${currencyFilter}${value.toLocaleString()}`;
+      // Only apply currency formatting for known currency codes
+      const currencySymbols = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'JPY': '¥',
+        'CNY': '¥',
+        'SOL': 'SOL'
+      };
+      
+      const isKnownCurrency = currencyFilter in currencySymbols;
+      
+      if (isKnownCurrency) {
+        // Apply the selected currency to the number
+        switch (currencyFilter) {
+          case 'USD':
+            return `$${value.toLocaleString()}`;
+          case 'EUR':
+            return `€${value.toLocaleString()}`;
+          case 'GBP':
+            return `£${value.toLocaleString()}`;
+          case 'JPY':
+          case 'CNY':
+            return `¥${value.toLocaleString()}`;
+          case 'SOL':
+            return `${value.toLocaleString()} SOL`;
+          default:
+            return value.toLocaleString();
+        }
       }
     }
     
-    // Default formatting if no currency filter
+    // Default formatting if no currency filter or unknown currency
     return value.toLocaleString();
   }
   
@@ -251,20 +270,34 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
     
     // Apply currency formatting if needed
     if (currencyFilter) {
-      switch (currencyFilter) {
-        case 'USD':
-          return `$${formattedValue}`;
-        case 'EUR':
-          return `€${formattedValue}`;
-        case 'GBP':
-          return `£${formattedValue}`;
-        case 'JPY':
-        case 'CNY':
-          return `¥${formattedValue}`;
-        case 'SOL':
-          return `${formattedValue} SOL`;
-        default:
-          return `${currencyFilter}${formattedValue}`;
+      // Only apply currency formatting for known currency codes
+      const currencySymbols = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'JPY': '¥',
+        'CNY': '¥',
+        'SOL': 'SOL'
+      };
+      
+      const isKnownCurrency = currencyFilter in currencySymbols;
+      
+      if (isKnownCurrency) {
+        switch (currencyFilter) {
+          case 'USD':
+            return `$${formattedValue}`;
+          case 'EUR':
+            return `€${formattedValue}`;
+          case 'GBP':
+            return `£${formattedValue}`;
+          case 'JPY':
+          case 'CNY':
+            return `¥${formattedValue}`;
+          case 'SOL':
+            return `${formattedValue} SOL`;
+          default:
+            return formattedValue;
+        }
       }
     }
     

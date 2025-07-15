@@ -94,6 +94,34 @@ export default function ManageDashboardPage() {
       try {
         console.log(`[LOAD DATA] Loading ${activeTab} with filters - selectedMenu: '${selectedMenu}', selectedPage: '${selectedPage}'`);
         
+        // Check for refresh flags and clear cache if needed
+        if (typeof window !== 'undefined') {
+          const needsRefresh = localStorage.getItem(`${activeTab}_need_refresh`) === 'true';
+          const refreshTime = parseInt(localStorage.getItem(`${activeTab}_refresh_time`) || '0', 10);
+          
+          if (needsRefresh) {
+            // Check if the flag is not too old (less than 5 minutes)
+            const now = Date.now();
+            if (now - refreshTime < 5 * 60 * 1000) {
+              console.log(`[REFRESH] Clearing ${activeTab} caches due to refresh flag`);
+              
+              // Clear all page-specific caches for this type
+              const keys = Object.keys(localStorage);
+              for (const key of keys) {
+                if (key.startsWith(`${activeTab}_page_`)) {
+                  localStorage.removeItem(key);
+                }
+              }
+              
+              // Clear the refresh flag
+              localStorage.setItem(`${activeTab}_need_refresh`, 'false');
+            } else {
+              // Flag is too old, just clear it
+              localStorage.setItem(`${activeTab}_need_refresh`, 'false');
+            }
+          }
+        }
+        
         // Load charts or counters based on active tab
         if (activeTab === 'charts') {
           let allCharts;

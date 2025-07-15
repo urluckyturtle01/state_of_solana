@@ -149,7 +149,15 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   
   // Add state for filter values in modal
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
-  
+
+  // Sync modalFilterValues with filterValues when filterValues prop changes
+  useEffect(() => {
+    if (filterValues) {
+      console.log(`SimpleAreaChart: Syncing filter values for ${chartConfig.title}`, filterValues);
+      setModalFilterValues(filterValues);
+    }
+  }, [filterValues, chartConfig.title]);
+
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
@@ -1545,39 +1553,23 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       [key]: value
     };
     
-    // Update local state immediately for UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Update internal display mode if changed
     if (key === 'displayMode') {
       setInternalDisplayMode(value as DisplayMode);
     }
     
-    // Clear existing timer
-    if (filterDebounceTimer.current) {
-      clearTimeout(filterDebounceTimer.current);
-    }
-    
-    // For time aggregation enabled charts, we need special handling
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     
     if (isTimeAggregationEnabled && key === 'timeFilter') {
       console.log('SimpleAreaChart: Time aggregation enabled - delegating to ChartRenderer:', value);
-      
-      // For time aggregation, immediately call the parent filter change
-      // The ChartRenderer will handle the actual data re-aggregation
       if (onFilterChange) {
-        console.log('SimpleAreaChart: Calling onFilterChange with updated filters');
         onFilterChange(updatedFilters);
       }
     } else {
-      // Debounce other filter changes
-    filterDebounceTimer.current = setTimeout(() => {
-        console.log('SimpleAreaChart: Debounced filter change for:', key);
       if (onFilterChange) {
         onFilterChange(updatedFilters);
       }
-    }, 300); // 300ms debounce delay
     }
   }, [modalFilterValues, onFilterChange, chartConfig.additionalOptions?.enableTimeAggregation]);
 

@@ -366,60 +366,25 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   
   // Enhanced filter change handler for modal with debouncing
   const handleModalFilterChange = useCallback((key: string, value: string) => {
-    console.log(`StackedBarChart Modal filter changed: ${chartConfig.title} - ${key} = ${value}`);
-    
-    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
-    const isTimeFilter = key === 'timeFilter';
-    const isCurrencyFilter = key === 'currencyFilter';
-    
-    console.log(`StackedBarChart Modal filter analysis:`, {
-      key,
-      value,
-      isTimeAggregationEnabled,
-      isTimeFilter,
-      isCurrencyFilter,
-      shouldHandleLocally: isTimeAggregationEnabled && isTimeFilter,
-      shouldTriggerAPI: !isTimeAggregationEnabled || !isTimeFilter,
-      currentModalFilters: modalFilterValues
-    });
+    console.log(`Modal filter changed: ${key} = ${value}`);
     
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
     };
     
-    // Update local state first to ensure immediate UI responsiveness
     setModalFilterValues(updatedFilters);
     
-    // Notify dashboard of modal filter changes for ChartRenderer
-    if (onModalFilterUpdate && isExpanded) {
+    if (onModalFilterUpdate) {
       onModalFilterUpdate(updatedFilters);
     }
     
-    // Update internal display mode if needed
-    if (key === 'displayMode' || key === 'displayModeFilter') {
+    if (key === 'displayMode') {
       setInternalDisplayMode(value as DisplayMode);
-    }
-    
-    // Clear any existing timeout
-    if (filterChangeTimeoutRef.current) {
-      clearTimeout(filterChangeTimeoutRef.current);
-    }
-    
-    // Handle different filter types appropriately
-    if (isTimeAggregationEnabled) {
-      // For time aggregation charts, ALL filters are handled client-side - NO API CALLS
-      console.log(`StackedBarChart Modal: Time aggregation chart - NO API call for ${key}`);
-      // Don't call onFilterChange at all - only use onModalFilterUpdate for state sync
     } else if (onFilterChange) {
-      // For non-time-aggregation charts, allow API calls with debouncing
-      console.log(`StackedBarChart Modal: Non-time aggregation chart - allowing API call for ${key}`);
-      filterChangeTimeoutRef.current = setTimeout(() => {
-        console.log(`StackedBarChart Modal: Executing API call for non-time-aggregation chart`);
-        onFilterChange(updatedFilters);
-      }, 300);
+      onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, chartConfig.title, chartConfig.additionalOptions?.enableTimeAggregation]);
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate]);
   
   // Cleanup timeout on unmount
   useEffect(() => {
