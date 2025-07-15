@@ -1,24 +1,31 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "fetchedAt": "2025-07-15T00:58:16.106Z",
+  "fetchedAt": "2025-07-15T03:03:42.187Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-07-14",
+          "compute_txns": 26847328,
+          "total_txns": 27103404,
+          "non_compute_txns": 256076,
+          "percentage_txns_using_compute_budget": 99.1
+        },
+        {
           "block_date": "2025-07-13",
-          "compute_txns": 23366913,
-          "total_txns": 23657897,
-          "non_compute_txns": 290984,
-          "percentage_txns_using_compute_budget": 98.8
+          "compute_txns": 87748592,
+          "total_txns": 99582324,
+          "non_compute_txns": 11833732,
+          "percentage_txns_using_compute_budget": 88.1
         },
         {
           "block_date": "2025-07-12",
-          "compute_txns": 82068687,
-          "total_txns": 94417868,
-          "non_compute_txns": 12349181,
-          "percentage_txns_using_compute_budget": 86.9
+          "compute_txns": 92933803,
+          "total_txns": 107439441,
+          "non_compute_txns": 14505638,
+          "percentage_txns_using_compute_budget": 86.5
         },
         {
           "block_date": "2025-07-11",
@@ -208,16 +215,9 @@
           "total_txns": 90961035,
           "non_compute_txns": 10232255,
           "percentage_txns_using_compute_budget": 88.8
-        },
-        {
-          "block_date": "2025-06-14",
-          "compute_txns": 80728580,
-          "total_txns": 91948171,
-          "non_compute_txns": 11219591,
-          "percentage_txns_using_compute_budget": 87.8
         }
       ],
-      "timestamp": 1752541093746,
+      "timestamp": 1752548619748,
       "chartId": "chart_1748087823998_ru1ktw2",
       "title": "Transactions Using Compute Budget Program"
     },
@@ -225,18 +225,25 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-07-14",
+          "compute_txns": 26847328,
+          "total_txns": 27103404,
+          "non_compute_txns": 256076,
+          "percentage_txns_using_compute_budget": 99.1
+        },
+        {
           "block_date": "2025-07-13",
-          "compute_txns": 23366913,
-          "total_txns": 23657897,
-          "non_compute_txns": 290984,
-          "percentage_txns_using_compute_budget": 98.8
+          "compute_txns": 87748592,
+          "total_txns": 99582324,
+          "non_compute_txns": 11833732,
+          "percentage_txns_using_compute_budget": 88.1
         },
         {
           "block_date": "2025-07-12",
-          "compute_txns": 82068687,
-          "total_txns": 94417868,
-          "non_compute_txns": 12349181,
-          "percentage_txns_using_compute_budget": 86.9
+          "compute_txns": 92933803,
+          "total_txns": 107439441,
+          "non_compute_txns": 14505638,
+          "percentage_txns_using_compute_budget": 86.5
         },
         {
           "block_date": "2025-07-11",
@@ -426,16 +433,9 @@
           "total_txns": 90961035,
           "non_compute_txns": 10232255,
           "percentage_txns_using_compute_budget": 88.8
-        },
-        {
-          "block_date": "2025-06-14",
-          "compute_txns": 80728580,
-          "total_txns": 91948171,
-          "non_compute_txns": 11219591,
-          "percentage_txns_using_compute_budget": 87.8
         }
       ],
-      "timestamp": 1752541093742,
+      "timestamp": 1752548619759,
       "chartId": "chart_1748088263791_vfj94hw",
       "title": "Daily Compute Budget Usage - In Percentage"
     },
@@ -743,117 +743,13 @@
           "median_unused_cu": 200508
         }
       ],
-      "timestamp": 1752541093747,
+      "timestamp": 1752548619736,
       "chartId": "chart_1748088783904_hypf57i",
       "title": "Avg Cu Allocated & Consumed Per Transaction"
     },
     {
       "success": true,
       "data": [
-        {
-          "partition_0": "2025-06-29",
-          "avg_consumed_cu_per_block": 30026970.669900328
-        },
-        {
-          "partition_0": "2025-06-26",
-          "avg_consumed_cu_per_block": 36653699.993034944
-        },
-        {
-          "partition_0": "2025-07-01",
-          "avg_consumed_cu_per_block": 37001508.20990792
-        },
-        {
-          "partition_0": "2025-07-03",
-          "avg_consumed_cu_per_block": 38219849.44683236
-        },
-        {
-          "partition_0": "2025-07-10",
-          "avg_consumed_cu_per_block": 38107813.72663686
-        },
-        {
-          "partition_0": "2025-06-19",
-          "avg_consumed_cu_per_block": 35719903.66361056
-        },
-        {
-          "partition_0": "2025-06-18",
-          "avg_consumed_cu_per_block": 35856917.616413236
-        },
-        {
-          "partition_0": "2025-07-11",
-          "avg_consumed_cu_per_block": 39788677.70603491
-        },
-        {
-          "partition_0": "2025-07-05",
-          "avg_consumed_cu_per_block": 36165544.4712279
-        },
-        {
-          "partition_0": "2025-07-06",
-          "avg_consumed_cu_per_block": 38820742.74545857
-        },
-        {
-          "partition_0": "2025-07-13",
-          "avg_consumed_cu_per_block": 7942231.842197225
-        },
-        {
-          "partition_0": "2025-07-07",
-          "avg_consumed_cu_per_block": 38941874.995648764
-        },
-        {
-          "partition_0": "2025-07-08",
-          "avg_consumed_cu_per_block": 37615987.72803496
-        },
-        {
-          "partition_0": "2025-06-28",
-          "avg_consumed_cu_per_block": 32649164.795705214
-        },
-        {
-          "partition_0": "2025-06-16",
-          "avg_consumed_cu_per_block": 38130110.80549924
-        },
-        {
-          "partition_0": "2025-07-04",
-          "avg_consumed_cu_per_block": 34294558.6093096
-        },
-        {
-          "partition_0": "2025-07-02",
-          "avg_consumed_cu_per_block": 37885089.13928945
-        },
-        {
-          "partition_0": "2025-06-14",
-          "avg_consumed_cu_per_block": 33272102.420027286
-        },
-        {
-          "partition_0": "2025-07-09",
-          "avg_consumed_cu_per_block": 37202539.06035665
-        },
-        {
-          "partition_0": "2025-07-12",
-          "avg_consumed_cu_per_block": 32455194.742193643
-        },
-        {
-          "partition_0": "2025-06-25",
-          "avg_consumed_cu_per_block": 38296224.43330408
-        },
-        {
-          "partition_0": "2025-06-21",
-          "avg_consumed_cu_per_block": 36309902.644467585
-        },
-        {
-          "partition_0": "2025-06-20",
-          "avg_consumed_cu_per_block": 34975060.89818992
-        },
-        {
-          "partition_0": "2025-06-27",
-          "avg_consumed_cu_per_block": 37746547.97013987
-        },
-        {
-          "partition_0": "2025-06-23",
-          "avg_consumed_cu_per_block": 34124256.726482764
-        },
-        {
-          "partition_0": "2025-06-15",
-          "avg_consumed_cu_per_block": 32852327.575623333
-        },
         {
           "partition_0": "2025-06-30",
           "avg_consumed_cu_per_block": 35956216.744688176
@@ -869,9 +765,113 @@
         {
           "partition_0": "2025-06-24",
           "avg_consumed_cu_per_block": 34846498.952526286
+        },
+        {
+          "partition_0": "2025-06-23",
+          "avg_consumed_cu_per_block": 34124256.726482764
+        },
+        {
+          "partition_0": "2025-06-15",
+          "avg_consumed_cu_per_block": 32852327.575623333
+        },
+        {
+          "partition_0": "2025-07-01",
+          "avg_consumed_cu_per_block": 37001508.20990792
+        },
+        {
+          "partition_0": "2025-06-26",
+          "avg_consumed_cu_per_block": 36653699.993034944
+        },
+        {
+          "partition_0": "2025-06-29",
+          "avg_consumed_cu_per_block": 30026970.669900328
+        },
+        {
+          "partition_0": "2025-07-05",
+          "avg_consumed_cu_per_block": 36165544.4712279
+        },
+        {
+          "partition_0": "2025-07-06",
+          "avg_consumed_cu_per_block": 38820742.74545857
+        },
+        {
+          "partition_0": "2025-06-16",
+          "avg_consumed_cu_per_block": 38130110.80549924
+        },
+        {
+          "partition_0": "2025-07-04",
+          "avg_consumed_cu_per_block": 34294558.6093096
+        },
+        {
+          "partition_0": "2025-06-19",
+          "avg_consumed_cu_per_block": 35719903.66361056
+        },
+        {
+          "partition_0": "2025-06-18",
+          "avg_consumed_cu_per_block": 35856917.616413236
+        },
+        {
+          "partition_0": "2025-07-11",
+          "avg_consumed_cu_per_block": 39788677.70603491
+        },
+        {
+          "partition_0": "2025-06-25",
+          "avg_consumed_cu_per_block": 38296224.43330408
+        },
+        {
+          "partition_0": "2025-07-12",
+          "avg_consumed_cu_per_block": 36963976.209495
+        },
+        {
+          "partition_0": "2025-07-10",
+          "avg_consumed_cu_per_block": 38107813.72663686
+        },
+        {
+          "partition_0": "2025-07-03",
+          "avg_consumed_cu_per_block": 38219849.44683236
+        },
+        {
+          "partition_0": "2025-06-20",
+          "avg_consumed_cu_per_block": 34975060.89818992
+        },
+        {
+          "partition_0": "2025-06-21",
+          "avg_consumed_cu_per_block": 36309902.644467585
+        },
+        {
+          "partition_0": "2025-06-27",
+          "avg_consumed_cu_per_block": 37746547.97013987
+        },
+        {
+          "partition_0": "2025-07-02",
+          "avg_consumed_cu_per_block": 37885089.13928945
+        },
+        {
+          "partition_0": "2025-07-14",
+          "avg_consumed_cu_per_block": 11331536.30205356
+        },
+        {
+          "partition_0": "2025-07-09",
+          "avg_consumed_cu_per_block": 37202539.06035665
+        },
+        {
+          "partition_0": "2025-06-28",
+          "avg_consumed_cu_per_block": 32649164.795705214
+        },
+        {
+          "partition_0": "2025-07-08",
+          "avg_consumed_cu_per_block": 37615987.72803496
+        },
+        {
+          "partition_0": "2025-07-07",
+          "avg_consumed_cu_per_block": 38941874.995648764
+        },
+        {
+          "partition_0": "2025-07-13",
+          "avg_consumed_cu_per_block": 33790405.56484838
         }
       ],
-      "timestamp": 1752541094834,
+      "timestamp": 1752548620866,
       "chartId": "chart_1748088979907_8f6w6d2",
       "title": "Avg Cu Consumed Per Block"
     },
@@ -1239,7 +1239,7 @@
           "max_compute_unit_price_usd": 0.011387053367914575
         }
       ],
-      "timestamp": 1752541094895,
+      "timestamp": 1752548620936,
       "chartId": "chart_1748089483199_dzzkc0m",
       "title": "Avg & Median Cu Price"
     },
@@ -1607,7 +1607,7 @@
           "max_compute_unit_price_usd": 0.011387053367914575
         }
       ],
-      "timestamp": 1752541094886,
+      "timestamp": 1752548620936,
       "chartId": "chart_1748201111110_el5y1pn",
       "title": "Max Cu Price In Single Transaction - Lamports/cu"
     },
@@ -5233,7 +5233,7 @@
           "total_cu_consumed": 9765
         }
       ],
-      "timestamp": 1752541096106,
+      "timestamp": 1752548622187,
       "chartId": "chart_1748201257936_m7dwpx7",
       "title": "Cu Consumed By Ecosystem"
     },
@@ -5325,7 +5325,7 @@
           "total_cu_consumed": 72950653861752
         }
       ],
-      "timestamp": 1752541095995,
+      "timestamp": 1752548622034,
       "chartId": "chart_1748201444923_71ydpwe",
       "title": "Cu Consumed By Ecosystem - Last 30 Days"
     }
