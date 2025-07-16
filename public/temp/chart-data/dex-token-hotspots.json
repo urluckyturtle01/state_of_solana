@@ -1,7 +1,7 @@
 {
   "pageId": "dex-token-hotspots",
   "pageName": "DEX & Token Hotspots",
-  "fetchedAt": "2025-07-16T11:57:48.479Z",
+  "fetchedAt": "2025-07-16T13:00:12.361Z",
   "charts": [
     {
       "success": true,
@@ -57,7 +57,7 @@
           "total_sol_drained": 46.69838743499996
         }
       ],
-      "timestamp": 1752667067429,
+      "timestamp": 1752670811328,
       "chartId": "chart_1747914341226_ps3utjg",
       "title": "Top Tokens Attacked - By SOL Drained"
     },
@@ -115,100 +115,28 @@
           "total_sol_drained": 46.69838743499996
         }
       ],
-      "timestamp": 1752667067430,
+      "timestamp": 1752670811328,
       "chartId": "chart_1747936232766_dnjy7l0",
       "title": "Top Tokens Attacked - By Attacks"
     },
     {
-      "success": true,
-      "data": [
-        {
-          "dex": "Pump.fun AMM",
-          "attacks": 105668,
-          "total_sol_drained": 8306.795029530998
-        },
-        {
-          "dex": "Pump AMM",
-          "attacks": 105668,
-          "total_sol_drained": 8306.795029530998
-        },
-        {
-          "dex": "PUMP FUN",
-          "attacks": 57741,
-          "total_sol_drained": 7289.254239010997
-        },
-        {
-          "dex": "Raydium CPMM",
-          "attacks": 12120,
-          "total_sol_drained": 2101.9977473189997
-        },
-        {
-          "dex": "Raydium V4",
-          "attacks": 25141,
-          "total_sol_drained": 1872.8567660160008
-        },
-        {
-          "dex": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
-          "attacks": 2087,
-          "total_sol_drained": 636.9256565959998
-        },
-        {
-          "dex": "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
-          "attacks": 286,
-          "total_sol_drained": 158.27223855500006
-        }
-      ],
-      "timestamp": 1752667067430,
+      "success": false,
+      "error": "API error: 404",
       "chartId": "chart_1747936484816_kqdflfn",
-      "title": "Top Dexs Used - By SOL Drained"
+      "title": "Top Dexs Used - By SOL Drained",
+      "parameters": {}
     },
     {
-      "success": true,
-      "data": [
-        {
-          "dex": "Pump.fun AMM",
-          "attacks": 105668,
-          "total_sol_drained": 8306.795029530998
-        },
-        {
-          "dex": "Pump AMM",
-          "attacks": 105668,
-          "total_sol_drained": 8306.795029530998
-        },
-        {
-          "dex": "PUMP FUN",
-          "attacks": 57741,
-          "total_sol_drained": 7289.254239010997
-        },
-        {
-          "dex": "Raydium CPMM",
-          "attacks": 12120,
-          "total_sol_drained": 2101.9977473189997
-        },
-        {
-          "dex": "Raydium V4",
-          "attacks": 25141,
-          "total_sol_drained": 1872.8567660160008
-        },
-        {
-          "dex": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
-          "attacks": 2087,
-          "total_sol_drained": 636.9256565959998
-        },
-        {
-          "dex": "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
-          "attacks": 286,
-          "total_sol_drained": 158.27223855500006
-        }
-      ],
-      "timestamp": 1752667068479,
+      "success": false,
+      "error": "API error: 404",
       "chartId": "chart_1747936861655_4nzbmez",
-      "title": "Top Dexs Used - By Attacks"
+      "title": "Top Dexs Used - By Attacks",
+      "parameters": {}
     }
   ],
   "summary": {
     "totalCharts": 4,
-    "successfulFetches": 4,
-    "failedFetches": 0
+    "successfulFetches": 2,
+    "failedFetches": 2
   }
 }
