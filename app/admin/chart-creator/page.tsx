@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType, YAxisConfig, DualAxisConfig } from '../types';
+import { AVAILABLE_PAGES, CHART_TYPES, ChartFormData, ChartType, YAxisConfig, DualAxisConfig, PercentageFieldConfig } from '../types';
 import { formDataToConfig, validateApiEndpoint, saveChartConfig, getAllChartConfigs } from '../utils';
 import { formatTitle } from '../utils/formatTitle';
 import FormInput from '../components/FormInput';
@@ -106,6 +106,9 @@ export default function ChartCreatorPage() {
   
   // Add state for tooltip total feature
   const [showTooltipTotal, setShowTooltipTotal] = useState(false);
+  
+  // Add state for percentage field configuration
+  const [percentageFields, setPercentageFields] = useState<PercentageFieldConfig[]>([]);
   
   // Add state for menu selection
   const [selectedMenu, setSelectedMenu] = useState<string>('');
@@ -231,6 +234,11 @@ export default function ChartCreatorPage() {
               // Check for tooltip total feature
               if (chartToEdit.additionalOptions?.showTooltipTotal) {
                 setShowTooltipTotal(true);
+              }
+              
+              // Check for percentage field configuration
+              if (chartToEdit.additionalOptions?.percentageFields) {
+                setPercentageFields(chartToEdit.additionalOptions.percentageFields);
               }
             } else {
               console.error(`Chart with ID ${editId} not found`);
@@ -894,6 +902,75 @@ export default function ChartCreatorPage() {
     }));
   };
   
+  // Add percentage field configuration
+  const addPercentageField = () => {
+    const newPercentageField: PercentageFieldConfig = {
+      field: '',
+      numeratorField: '',
+      denominatorField: ''
+    };
+    setPercentageFields(prev => [...prev, newPercentageField]);
+  };
+  
+  // Update percentage field configuration
+  const updatePercentageField = (index: number, updates: Partial<PercentageFieldConfig>) => {
+    setPercentageFields(prev => 
+      prev.map((field, i) => 
+        i === index ? { ...field, ...updates } : field
+      )
+    );
+    
+    // Update form data
+    setFormData(prev => ({
+      ...prev,
+      additionalOptions: {
+        ...prev.additionalOptions,
+        percentageFields: percentageFields.map((field, i) => 
+          i === index ? { ...field, ...updates } : field
+        )
+      }
+    }));
+  };
+  
+  // Remove percentage field configuration
+  const removePercentageField = (index: number) => {
+    const updatedFields = percentageFields.filter((_, i) => i !== index);
+    setPercentageFields(updatedFields);
+    
+    // Update form data
+    setFormData(prev => ({
+      ...prev,
+      additionalOptions: {
+        ...prev.additionalOptions,
+        percentageFields: updatedFields.length > 0 ? updatedFields : undefined
+      }
+    }));
+  };
+  
+  // Get available fields for percentage configuration
+  const getAvailableFields = (): string[] => {
+    const fields: string[] = [];
+    
+    // Add Y-axis fields
+    if (Array.isArray(formData.dataMapping.yAxis)) {
+      formData.dataMapping.yAxis.forEach(field => {
+        if (typeof field === 'string') {
+          fields.push(field);
+        } else if (field && typeof field === 'object' && 'field' in field) {
+          fields.push((field as YAxisConfig).field);
+        }
+      });
+    } else if (formData.dataMapping.yAxis) {
+      if (typeof formData.dataMapping.yAxis === 'string') {
+        fields.push(formData.dataMapping.yAxis);
+      } else if (typeof formData.dataMapping.yAxis === 'object' && 'field' in formData.dataMapping.yAxis) {
+        fields.push((formData.dataMapping.yAxis as YAxisConfig).field);
+      }
+    }
+    
+    return fields.filter(field => field.trim() !== '');
+  };
+  
   // Validate form fields
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -1195,14 +1272,15 @@ export default function ChartCreatorPage() {
         };
       }
       
-      // Add additionalOptions for time aggregation, tooltip total, and filters
-      if (enableTimeAggregation || showTooltipTotal || enableFilters.timeFilter || enableFilters.currencyFilter) {
+      // Add additionalOptions for time aggregation, tooltip total, percentage fields, and filters
+      if (enableTimeAggregation || showTooltipTotal || percentageFields.length > 0 || enableFilters.timeFilter || enableFilters.currencyFilter) {
         chartConfig = {
           ...chartConfig,
           additionalOptions: {
             ...(chartConfig.additionalOptions || {}),
             ...(enableTimeAggregation && { enableTimeAggregation: true }),
             ...(showTooltipTotal && { showTooltipTotal: true }),
+            ...(percentageFields.length > 0 && { percentageFields: percentageFields }),
           }
         };
         
@@ -1307,6 +1385,9 @@ export default function ChartCreatorPage() {
           
           // Reset tooltip total state
           setShowTooltipTotal(false);
+          
+          // Reset percentage fields state
+          setPercentageFields([]);
         } else {
           // If in edit mode, redirect back to manage charts page
           router.push('/admin/manage-dashboard');
@@ -1685,7 +1766,7 @@ export default function ChartCreatorPage() {
                   placeholder="E.g., revenue, volume, count"
                   required
                   error={touched['dataMapping.yAxis'] ? errors['dataMapping.yAxis'] : undefined}
-                  helpText={`${isDualAxis ? 'Use → button to assign fields to right Y-axis. ' : ''}Click the chart icon to toggle between bar and line chart for each field.`}
+                  helpText={`${isDualAxis ? 'Use → button to assign fields to right Y-axis. ' : ''}Click the chart icon to toggle between bar and line chart for each field. Use "%" unit for percentage fields.`}
                   supportDualAxis={isDualAxis}
                 />
               ) : (
@@ -1733,7 +1814,7 @@ export default function ChartCreatorPage() {
                 <p className="mt-1 text-sm text-gray-400">
                   {formData.isStacked 
                     ? "For stacked charts with a single Y-axis, you must specify a Group By field below" 
-                    : "Field name for the y-axis (usually numeric values)"}
+                    : "Field name for the y-axis (usually numeric values). Use unit \"%\" for percentage fields to enable automatic percentage aggregation."}
                 </p>
                 {touched['dataMapping.yAxis'] && errors['dataMapping.yAxis'] && (
                   <p className="mt-1 text-sm text-red-400">{errors['dataMapping.yAxis']}</p>
@@ -1779,6 +1860,134 @@ export default function ChartCreatorPage() {
               onChange={toggleTooltipTotal}
               helpText="Display the sum of all values in the chart tooltip. Useful for charts with multiple data series to see the total across all categories."
             />
+          </div>
+          
+          {/* Percentage Fields Configuration */}
+          <div className="col-span-2 border-t border-gray-700 pt-6 mt-4">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-lg font-medium text-indigo-400">Percentage Fields Configuration</h3>
+                <p className="text-sm text-gray-400 mt-1">Configure fields that represent percentages for proper time aggregation calculations.</p>
+              </div>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={addPercentageField}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
+              >
+                Add Percentage Field
+              </Button>
+            </div>
+            
+            {percentageFields.length === 0 ? (
+              <div className="bg-gray-700 border border-gray-600 rounded-md p-4 text-center">
+                <p className="text-gray-400 text-sm">
+                  No percentage fields configured. Click "Add Percentage Field" to configure weighted average calculations for percentage fields.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {percentageFields.map((percentageField, index) => (
+                  <div key={index} className="bg-gray-700 border border-gray-600 rounded-md p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="text-md font-medium text-gray-300">Percentage Field #{index + 1}</h4>
+                      <button
+                        type="button"
+                        onClick={() => removePercentageField(index)}
+                        className="text-red-400 hover:text-red-300 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Percentage Field <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                          value={percentageField.field}
+                          onChange={(e) => updatePercentageField(index, { field: e.target.value })}
+                          className="block w-full rounded-md bg-gray-800 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-200 text-sm"
+                        >
+                          <option value="">Select percentage field...</option>
+                          {getAvailableFields().map(field => (
+                            <option key={field} value={field}>{field}</option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-400 mt-1">The field that contains percentage values</p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Numerator Field <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                          value={percentageField.numeratorField}
+                          onChange={(e) => updatePercentageField(index, { numeratorField: e.target.value })}
+                          className="block w-full rounded-md bg-gray-800 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-200 text-sm"
+                        >
+                          <option value="">Select numerator field...</option>
+                          {getAvailableFields().map(field => (
+                            <option key={field} value={field}>{field}</option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-400 mt-1">The field used as numerator in percentage calculation</p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Denominator Field <span className="text-red-400">*</span>
+                        </label>
+                        <select
+                          value={percentageField.denominatorField}
+                          onChange={(e) => updatePercentageField(index, { denominatorField: e.target.value })}
+                          className="block w-full rounded-md bg-gray-800 border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-200 text-sm"
+                        >
+                          <option value="">Select denominator field...</option>
+                          {getAvailableFields().map(field => (
+                            <option key={field} value={field}>{field}</option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-gray-400 mt-1">The field used as denominator in percentage calculation</p>
+                      </div>
+                    </div>
+                    
+                    {percentageField.field && percentageField.numeratorField && percentageField.denominatorField && (
+                      <div className="mt-3 p-3 bg-indigo-900/30 rounded-md border border-indigo-800">
+                        <p className="text-sm text-indigo-300">
+                          <strong>Calculation:</strong> {percentageField.field} = ({percentageField.numeratorField} / {percentageField.denominatorField}) × 100
+                        </p>
+                        <p className="text-xs text-indigo-400 mt-1">
+                          During time aggregation, this will calculate: (sum of {percentageField.numeratorField}) / (sum of {percentageField.denominatorField}) × 100
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-800 rounded-md">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-yellow-400">Percentage Field Detection</h3>
+                  <div className="mt-2 text-sm text-yellow-300">
+                    <p>Percentage fields are automatically detected based on their unit configuration:</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                      <li><strong>Case 1:</strong> Configure percentage fields here when they're calculated from other fields in the same dataset (e.g., dex_rev_percentage = dex_rev / solana_rev × 100) - these will use weighted average</li>
+                      <li><strong>Case 2:</strong> For standalone percentages (e.g., user satisfaction surveys), simply set their unit to "%" in the Y-Axis configuration above - these will use simple average</li>
+                      <li><strong>Unit Detection:</strong> Any field with unit "%" will be treated as a percentage field during time aggregation</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           {/* Filter Configuration Section */}

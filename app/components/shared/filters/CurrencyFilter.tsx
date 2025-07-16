@@ -126,7 +126,7 @@ const CurrencyFilter: React.FC<CurrencyFilterProps> = ({
   
   // Handle option selection
   const handleOptionSelect = useCallback((option: string) => {
-    onChange(option);
+      onChange(option);
     setIsOpen(false);
   }, [onChange]);
 

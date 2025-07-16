@@ -1,8 +1,8 @@
 {
   "pageId": "sf-defi",
   "pageName": "DeFi",
-  "chartCount": 7,
-  "lastUpdated": "2025-07-16T14:21:21.712Z",
+  "chartCount": 8,
+  "lastUpdated": "2025-07-16T22:10:22.312Z",
   "charts": [
     {
       "id": "chart_1749632875612_y0s7hta",
@@ -164,7 +164,7 @@
       "section": "",
       "chartType": "dual-axis",
       "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13854/results.json",
-      "apiKey": "u3WYLPvkkDWGHM9xqZkLxhaIVg6rkO6AMM2CvEzJ",
+      "apiKey": "u3WYLPvkkDWGHM9xqZkLxhaIVg6rkO6AMM2CvEzJ&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
       "width": 2,
@@ -174,25 +174,33 @@
           {
             "field": "solana_rev",
             "type": "bar",
-            "unit": "",
+            "unit": "$",
             "rightAxis": false
           },
           {
             "field": "dex_rev",
             "type": "bar",
-            "unit": "",
+            "unit": "$",
             "rightAxis": false
           },
           {
             "field": "dex_rev_percentage",
             "type": "line",
-            "unit": "",
+            "unit": "%",
             "rightAxis": true
           }
         ],
         "groupBy": ""
       },
       "additionalOptions": {
+        "percentageFields": [
+          {
+            "field": "dex_rev_percentage",
+            "numeratorField": "dex_rev",
+            "denominatorField": "solana_rev"
+          }
+        ],
+        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -200,14 +208,14 @@
               "D",
               "W",
               "M",
-              "Q"
+              "Q",
+              "Y"
             ]
           }
-        },
-        "enableTimeAggregation": true
+        }
       },
       "createdAt": "2025-07-15T12:48:33.555Z",
-      "updatedAt": "2025-07-15T12:48:35.057Z",
+      "updatedAt": "2025-07-16T21:52:42.064Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
@@ -219,6 +227,26 @@
           "dex_rev_percentage"
         ]
       }
+    },
+    {
+      "id": "chart_1752685146923_ks2ng1f",
+      "title": "DEX Traders",
+      "subtitle": "",
+      "page": "sf-defi",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13856/results.json",
+      "apiKey": "h22PHvfbLDCMAUmDk34RD3Z4L0s3fzcw6dqkpR5x",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "partition_0",
+        "yAxis": "traders",
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-16T16:59:06.923Z",
+      "updatedAt": "2025-07-16T16:59:07.646Z"
     }
   ]
 }

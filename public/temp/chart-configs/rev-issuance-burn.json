@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "Issuance & Burn",
   "chartCount": 5,
-  "lastUpdated": "2025-07-16T14:21:21.702Z",
+  "lastUpdated": "2025-07-16T22:10:22.299Z",
   "charts": [
     {
       "id": "chart_1748090558074_b8llrdw",
@@ -11,10 +11,11 @@
       "page": "rev-issuance-burn",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results.json",
       "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "backfilling_epoch_date",
         "yAxis": [
@@ -31,8 +32,6 @@
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-05-24T12:42:38.074Z",
-      "updatedAt": "2025-07-11T08:40:27.833Z",
       "additionalOptions": {
         "filters": {
           "currencyFilter": {
@@ -43,7 +42,9 @@
             ]
           }
         }
-      }
+      },
+      "createdAt": "2025-05-24T12:42:38.074Z",
+      "updatedAt": "2025-07-16T16:50:11.099Z"
     },
     {
       "id": "chart_1748096163584_3k0589a",

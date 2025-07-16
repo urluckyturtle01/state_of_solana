@@ -40,6 +40,13 @@ export const CHART_TYPES = [
 
 export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie';
 
+// Percentage field configuration for weighted average calculation
+export interface PercentageFieldConfig {
+  field: string; // The percentage field name
+  numeratorField: string; // Field used as numerator in percentage calculation
+  denominatorField: string; // Field used as denominator in percentage calculation
+}
+
 // Y-axis field configuration for mixed charts
 export interface YAxisConfig {
   field: string;
@@ -48,6 +55,8 @@ export interface YAxisConfig {
   unit?: string; // Optional unit for display purposes (e.g., "$", "%", "SOL")
   // Optional flag for dual-axis charts to indicate right y-axis
   rightAxis?: boolean;
+  // Optional flag to mark this field as a percentage
+  isPercentage?: boolean;
 }
 
 // Dual axis chart configuration
@@ -101,6 +110,8 @@ export interface ChartConfig {
     colors?: string[];
     enableTimeAggregation?: boolean;
     showTooltipTotal?: boolean;
+    // Configuration for percentage fields that need weighted average calculation
+    percentageFields?: PercentageFieldConfig[];
   };
   // For dual-axis charts, specify configuration
   dualAxisConfig?: DualAxisConfig;

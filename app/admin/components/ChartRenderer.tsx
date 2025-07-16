@@ -179,6 +179,28 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     const isStackedWithGroupBy = groupByField && chartConfig.isStacked;
     console.log('Time aggregation for stacked chart with groupBy:', isStackedWithGroupBy, 'groupBy field:', groupByField);
     
+    // Get percentage field configurations from chart config
+    const percentageFieldConfigs = chartConfig.additionalOptions?.percentageFields || [];
+    
+    // Helper function to get the unit for a field from chart configuration
+    const getFieldUnit = (fieldName: string): string | undefined => {
+      // Check single y-axis unit
+      if (typeof chartConfig.dataMapping.yAxis === 'string' && chartConfig.dataMapping.yAxis === fieldName) {
+        return chartConfig.dataMapping.yAxisUnit;
+      }
+      
+      // Check multi y-axis configurations
+      if (Array.isArray(chartConfig.dataMapping.yAxis)) {
+        for (const yAxisItem of chartConfig.dataMapping.yAxis) {
+          if (typeof yAxisItem === 'object' && yAxisItem.field === fieldName) {
+            return yAxisItem.unit;
+          }
+        }
+      }
+      
+      return undefined;
+    };
+
     // Group data by the appropriate time period (and groupBy field if stacked)
     const groupedData: Record<string, any> = {};
     
@@ -241,7 +263,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         });
       }
       
-      // Aggregate values - for cumulative data use max, for additive data use sum
+      // Aggregate values - for cumulative data use max, for percentage data use weighted average, for additive data use sum
       yFields.forEach(field => {
         if (item[field] !== undefined && item[field] !== null) {
           const value = Number(item[field]) || 0;
@@ -253,9 +275,35 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                               field.toLowerCase().includes('marketcap') ||
                               field.toLowerCase().includes('market_cap');
           
+          // Check if this field is configured as a percentage field with source fields
+          const percentageConfig = percentageFieldConfigs.find(config => config.field === field);
+          
+          // Check if this field has percentage unit (% symbol) - for standalone percentage fields
+          const fieldUnit = getFieldUnit(field);
+          const isStandalonePercentage = !percentageConfig && fieldUnit === '%';
+          
           if (isCumulative) {
             // For cumulative data, use the maximum (latest) value in the period
             groupedData[groupKey][field] = Math.max(groupedData[groupKey][field], value);
+          } else if (percentageConfig) {
+            // For configured percentage fields, store numerator and denominator sums
+            const numeratorValue = Number(item[percentageConfig.numeratorField]) || 0;
+            const denominatorValue = Number(item[percentageConfig.denominatorField]) || 0;
+            
+            if (!groupedData[groupKey][`_${field}_numerator_sum`]) {
+              groupedData[groupKey][`_${field}_numerator_sum`] = 0;
+              groupedData[groupKey][`_${field}_denominator_sum`] = 0;
+            }
+            groupedData[groupKey][`_${field}_numerator_sum`] += numeratorValue;
+            groupedData[groupKey][`_${field}_denominator_sum`] += denominatorValue;
+          } else if (isStandalonePercentage) {
+            // For standalone percentage fields (detected by % unit), use simple average
+            if (!groupedData[groupKey][`_${field}_sum`]) {
+              groupedData[groupKey][`_${field}_sum`] = 0;
+              groupedData[groupKey][`_${field}_count`] = 0;
+            }
+            groupedData[groupKey][`_${field}_sum`] += value;
+            groupedData[groupKey][`_${field}_count`] += 1;
           } else {
             // For additive data, sum the values
             groupedData[groupKey][field] += value;
@@ -288,8 +336,50 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         return 0;
       })
       .map(item => {
-        // Remove internal fields after sorting
-        const { _count, _firstDate, ...cleanItem } = item;
+        // Calculate averages for percentage fields
+        yFields.forEach(field => {
+          // Check if this field is configured as a percentage field with source fields
+          const percentageConfig = percentageFieldConfigs.find(config => config.field === field);
+          
+          // Check if this field has percentage unit (% symbol) - for standalone percentage fields
+          const fieldUnit = getFieldUnit(field);
+          const isStandalonePercentage = !percentageConfig && fieldUnit === '%';
+          
+          if (percentageConfig && item[`_${field}_denominator_sum`] > 0) {
+            // Calculate weighted average for configured percentage field
+            const numeratorSum = item[`_${field}_numerator_sum`];
+            const denominatorSum = item[`_${field}_denominator_sum`];
+            const weightedAverage = (numeratorSum / denominatorSum) * 100;
+            item[field] = Number(weightedAverage.toFixed(2));
+          } else if (isStandalonePercentage && item[`_${field}_count`] > 0) {
+            // Calculate simple average for standalone percentage field (detected by % unit)
+            const average = item[`_${field}_sum`] / item[`_${field}_count`];
+            item[field] = Number(average.toFixed(2));
+          }
+        });
+        
+        // Remove internal fields after sorting and percentage calculations
+        const fieldsToRemove = ['_count', '_firstDate'];
+        yFields.forEach(field => {
+          // Check if this field is configured as a percentage field with source fields
+          const percentageConfig = percentageFieldConfigs.find(config => config.field === field);
+          
+          // Check if this field has percentage unit (% symbol) - for standalone percentage fields
+          const fieldUnit = getFieldUnit(field);
+          const isStandalonePercentage = !percentageConfig && fieldUnit === '%';
+          
+          if (percentageConfig) {
+            fieldsToRemove.push(`_${field}_numerator_sum`, `_${field}_denominator_sum`);
+          } else if (isStandalonePercentage) {
+            fieldsToRemove.push(`_${field}_sum`, `_${field}_count`);
+          }
+        });
+        
+        const cleanItem = { ...item };
+        fieldsToRemove.forEach(fieldToRemove => {
+          delete cleanItem[fieldToRemove];
+        });
+        
         return cleanItem;
       });
     
@@ -429,16 +519,16 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   const handleFilterChange = useCallback((key: string, value: string) => {
     console.log(`ChartRenderer: Filter changed: ${key} = ${value}`);
     
-    const updatedFilters = {
+      const updatedFilters = {
       ...internalFilterValues,
       [key]: value
-    };
+      };
+      
+        setInternalFilterValues(updatedFilters);
     
-    setInternalFilterValues(updatedFilters);
-    
-    if (onFilterChange) {
+      if (onFilterChange) {
       onFilterChange(key, value);
-    }
+      }
     
     if (isExpanded && onModalFilterUpdate) {
       onModalFilterUpdate(updatedFilters);

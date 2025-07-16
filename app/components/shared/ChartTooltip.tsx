@@ -111,34 +111,34 @@ const formatValueWithCurrency = (value: string | number, currencyFilter?: string
       const isKnownCurrency = currencyFilter in currencySymbols;
       
       if (isKnownCurrency) {
-        // Get the selected currency symbol
+      // Get the selected currency symbol
         const selectedSymbol = currencySymbols[currencyFilter as keyof typeof currencySymbols];
-        
-        // Handle SOL currency specially because it goes after the number
-        if (currencyFilter === 'SOL') {
-          // Check if value already has SOL
-          if (value.includes('SOL')) {
-            return value;
-          }
-          
-          // Check for other currency symbols at the beginning and remove them
-          for (const [currency, symbol] of Object.entries(currencySymbols)) {
-            if (currency !== 'SOL' && value.startsWith(symbol)) {
-              // Remove the symbol and add SOL at the end with a space
-              return `${value.substring(symbol.length)} SOL`;
-            }
-          }
-          
-          // If no currency symbol was found, just add SOL at the end
-          return `${value} SOL`;
+      
+      // Handle SOL currency specially because it goes after the number
+      if (currencyFilter === 'SOL') {
+        // Check if value already has SOL
+        if (value.includes('SOL')) {
+          return value;
         }
         
-        // For other currencies, use normal replacement
-        // Check if the value starts with a different currency symbol
+        // Check for other currency symbols at the beginning and remove them
         for (const [currency, symbol] of Object.entries(currencySymbols)) {
-          if (value.startsWith(symbol) && currency !== currencyFilter) {
-            // Replace the symbol with the selected currency
-            return value.replace(symbol, selectedSymbol);
+          if (currency !== 'SOL' && value.startsWith(symbol)) {
+            // Remove the symbol and add SOL at the end with a space
+            return `${value.substring(symbol.length)} SOL`;
+          }
+        }
+        
+        // If no currency symbol was found, just add SOL at the end
+        return `${value} SOL`;
+      }
+      
+      // For other currencies, use normal replacement
+      // Check if the value starts with a different currency symbol
+      for (const [currency, symbol] of Object.entries(currencySymbols)) {
+        if (value.startsWith(symbol) && currency !== currencyFilter) {
+          // Replace the symbol with the selected currency
+          return value.replace(symbol, selectedSymbol);
           }
         }
       }
@@ -162,20 +162,20 @@ const formatValueWithCurrency = (value: string | number, currencyFilter?: string
       const isKnownCurrency = currencyFilter in currencySymbols;
       
       if (isKnownCurrency) {
-        // Apply the selected currency to the number
-        switch (currencyFilter) {
-          case 'USD':
-            return `$${value.toLocaleString()}`;
-          case 'EUR':
-            return `€${value.toLocaleString()}`;
-          case 'GBP':
-            return `£${value.toLocaleString()}`;
-          case 'JPY':
-          case 'CNY':
-            return `¥${value.toLocaleString()}`;
-          case 'SOL':
-            return `${value.toLocaleString()} SOL`;
-          default:
+      // Apply the selected currency to the number
+      switch (currencyFilter) {
+        case 'USD':
+          return `$${value.toLocaleString()}`;
+        case 'EUR':
+          return `€${value.toLocaleString()}`;
+        case 'GBP':
+          return `£${value.toLocaleString()}`;
+        case 'JPY':
+        case 'CNY':
+          return `¥${value.toLocaleString()}`;
+        case 'SOL':
+          return `${value.toLocaleString()} SOL`;
+        default:
             return value.toLocaleString();
         }
       }
@@ -283,19 +283,19 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
       const isKnownCurrency = currencyFilter in currencySymbols;
       
       if (isKnownCurrency) {
-        switch (currencyFilter) {
-          case 'USD':
-            return `$${formattedValue}`;
-          case 'EUR':
-            return `€${formattedValue}`;
-          case 'GBP':
-            return `£${formattedValue}`;
-          case 'JPY':
-          case 'CNY':
-            return `¥${formattedValue}`;
-          case 'SOL':
-            return `${formattedValue} SOL`;
-          default:
+      switch (currencyFilter) {
+        case 'USD':
+          return `$${formattedValue}`;
+        case 'EUR':
+          return `€${formattedValue}`;
+        case 'GBP':
+          return `£${formattedValue}`;
+        case 'JPY':
+        case 'CNY':
+          return `¥${formattedValue}`;
+        case 'SOL':
+          return `${formattedValue} SOL`;
+        default:
             return formattedValue;
         }
       }
