@@ -49,6 +49,7 @@ export interface SimpleBarChartProps {
   yAxisUnit?: string;
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
+  onModalFilterUpdate?: (newFilters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -73,7 +74,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   filterValues,
   yAxisUnit,
   hiddenSeries,
-  onFilterChange
+  onFilterChange,
+  onModalFilterUpdate
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -1321,6 +1323,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
 
   // Add back the handleFilterChange function
   const handleFilterChange = useCallback((key: string, value: string) => {
+    console.log(`SimpleBarChart filter changed: ${key} = ${value}`);
+    
     const updatedFilters = {
       ...modalFilterValues,
       [key]: value
@@ -1329,11 +1333,25 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     // Update local state
     setModalFilterValues(updatedFilters);
     
-    // If onFilterChange exists in chartConfig, call it with updated filters
-    if (onFilterChange) {
+    // For time aggregation charts, use onModalFilterUpdate for internal state management
+    // and only call onFilterChange for non-time filters that need API calls
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (onModalFilterUpdate) {
+      onModalFilterUpdate(updatedFilters);
+    }
+    
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, time filter changes are handled client-side
+      // Only call onFilterChange for currency filters that might need API calls
+      if (key === 'currencyFilter' && onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    } else if (onFilterChange) {
+      // For non-time aggregation charts, all filter changes trigger API calls
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange]);
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {

@@ -72,6 +72,7 @@ export interface DualAxisChartProps {
   yAxisUnit?: string;
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
+  onModalFilterUpdate?: (newFilters: Record<string, string>) => void;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
@@ -215,7 +216,8 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
   filterValues,
   yAxisUnit,
   hiddenSeries = [],
-  onFilterChange
+  onFilterChange,
+  onModalFilterUpdate
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -848,10 +850,25 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     
     setModalFilterValues(updatedFilters);
     
-    if (onFilterChange) {
+    // For time aggregation charts, use onModalFilterUpdate for internal state management
+    // and only call onFilterChange for non-time filters that need API calls
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (onModalFilterUpdate) {
+      onModalFilterUpdate(updatedFilters);
+    }
+    
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, time filter changes are handled client-side
+      // Only call onFilterChange for currency filters that might need API calls
+      if (key === 'currencyFilter' && onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    } else if (onFilterChange) {
+      // For non-time aggregation charts, all filter changes trigger API calls
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange]);
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation]);
   
   // Update legend items based on chart data
   const updateLegendItems = useCallback(() => {

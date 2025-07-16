@@ -381,10 +381,23 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     if (key === 'displayMode') {
       setInternalDisplayMode(value as DisplayMode);
+    }
+    
+    // For time aggregation charts, use onModalFilterUpdate for internal state management
+    // and only call onFilterChange for non-time filters that need API calls
+    const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, time filter changes are handled client-side
+      // Only call onFilterChange for currency filters that might need API calls
+      if (key === 'currencyFilter' && onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
     } else if (onFilterChange) {
+      // For non-time aggregation charts, all filter changes trigger API calls
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, onModalFilterUpdate]);
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation]);
   
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -437,7 +450,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, [filterValues, onFilterChange]);
 
   // Process data for the chart - use filtered data when available
-  const { chartData, keys, groupColors } = useMemo(() => {
+  const { chartData, keys, groupColors, fieldUnits } = useMemo(() => {
     // Use appropriate filtered data depending on context
     const currentData: any[] = 
       (isExpanded && isModalBrushActive && modalFilteredData.length > 0) ? modalFilteredData :
@@ -493,7 +506,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return { 
         chartData: [] as ChartDataItem[],
         keys: [] as string[],
-        groupColors: {} as Record<string, string>
+        groupColors: {} as Record<string, string>,
+        fieldUnits: {} as Record<string, string | undefined>
       };
     }
 
@@ -583,10 +597,20 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         colorsByField[field] = preferredColorMap[field] || getColorByIndex(i % allColorsArray.length);
       });
       
+      // Create unit mapping for each y-field
+      const fieldUnitsMap: Record<string, string | undefined> = {};
+      if (Array.isArray(yField)) {
+        yField.forEach(field => {
+          const fieldName = typeof field === 'string' ? field : field.field;
+          fieldUnitsMap[fieldName] = typeof field === 'string' ? undefined : field.unit;
+        });
+      }
+      
       return {
         chartData: Object.values(groupedData),
         keys: stackKeys,
-        groupColors: colorsByField
+        groupColors: colorsByField,
+        fieldUnits: fieldUnitsMap
       };
     }
     
@@ -629,7 +653,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       return {
         chartData: Object.values(groupedData),
         keys: [yKey], // Single key for the y-axis field
-        groupColors: { [yKey]: singleColor }
+        groupColors: { [yKey]: singleColor },
+        fieldUnits: { [yKey]: typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit }
       };
     }
     
@@ -705,7 +730,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     return { 
       chartData: uniqueProcessedData,
       keys: stackKeys,
-      groupColors: colorsByGroup
+      groupColors: colorsByGroup,
+      fieldUnits: { [yKey]: typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit }
     };
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
 
@@ -877,12 +903,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
           const value = Number(dataPoint[key]);
           return !isNaN(value) && value !== 0 && !hiddenSeriesState.includes(key);
         })
-        .map(key => ({
-          label: formatFieldName(key),
-          value: formatValue(Number(dataPoint[key]) || 0, yAxisUnit),
-          color: groupColors[key] || blue,
-          shape: 'square' as 'square'
-        }))
+        .map(key => {
+          // Get the unit for this field from the fieldUnits structure
+          const fieldUnit = fieldUnits ? fieldUnits[key] : undefined;
+          
+          return {
+            label: formatFieldName(key),
+            value: formatValue(Number(dataPoint[key]) || 0, fieldUnit || yAxisUnit),
+            color: groupColors[key] || blue,
+            shape: 'square' as 'square'
+          };
+        })
         .sort((a, b) => {
           // Sort by absolute value (descending)
           const aVal = typeof a.value === 'string' 
@@ -917,7 +948,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       }));
     }
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, chartData, xKey, keys, groupColors, formatValue, 
-      tooltip.visible, tooltip.key, yAxisUnit, hiddenSeriesState]);
+      tooltip.visible, tooltip.key, yAxisUnit, hiddenSeriesState, fieldUnits]);
 
   // For backward compatibility
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, isModal = false) => {
@@ -1058,7 +1089,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const yMax = Math.max(
       ...chartData.map(d => {
         // Sum all values in the stack
-        return keys.reduce((total: number, key) => total + (Number(d[key]) || 0), 0);
+        return keys.reduce((total: number, key: string) => total + (Number(d[key]) || 0), 0);
       }),
       1 // Ensure minimum of 1 to avoid scaling issues
     );
@@ -1067,7 +1098,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const yMin = Math.min(
       ...chartData.map(d => {
         // Find the most negative value in each stack
-        return keys.reduce((min: number, key) => {
+        return keys.reduce((min: number, key: string) => {
           const value = Number(d[key]) || 0;
           return value < min ? value : min;
         }, 0);
@@ -1607,7 +1638,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // For stacked charts, use the sum of all values in each stack
     return Math.max(
       ...chartData.map(d => {
-        return keys.reduce((total: number, key) => total + (Number(d[key]) || 0), 0);
+        return keys.reduce((total: number, key: string) => total + (Number(d[key]) || 0), 0);
       }),
       1
     );

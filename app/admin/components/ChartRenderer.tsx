@@ -241,10 +241,25 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         });
       }
       
-      // Sum the values for aggregation
+      // Aggregate values - for cumulative data use max, for additive data use sum
       yFields.forEach(field => {
         if (item[field] !== undefined && item[field] !== null) {
-          groupedData[groupKey][field] += Number(item[field]) || 0;
+          const value = Number(item[field]) || 0;
+          
+          // Detect cumulative fields by name patterns
+          const isCumulative = field.toLowerCase().includes('cumulative') || 
+                              field.toLowerCase().includes('total') ||
+                              field.toLowerCase().includes('supply') ||
+                              field.toLowerCase().includes('marketcap') ||
+                              field.toLowerCase().includes('market_cap');
+          
+          if (isCumulative) {
+            // For cumulative data, use the maximum (latest) value in the period
+            groupedData[groupKey][field] = Math.max(groupedData[groupKey][field], value);
+          } else {
+            // For additive data, sum the values
+            groupedData[groupKey][field] += value;
+          }
         }
       });
       
@@ -1208,6 +1223,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                 handleFilterChange(key, value);
               });
             }}
+            onModalFilterUpdate={onModalFilterUpdate}
           />;
         }
         
@@ -1221,6 +1237,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
               handleFilterChange(key, value);
             });
           }}
+          onModalFilterUpdate={onModalFilterUpdate}
         />;
         
       case 'dual-axis': // Handle dual-axis with the enhanced BarChart
@@ -1232,6 +1249,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
               handleFilterChange(key, value);
             });
           }}
+          onModalFilterUpdate={onModalFilterUpdate}
         />;
         
       case 'pie':
@@ -1243,6 +1261,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
               handleFilterChange(key, value);
             });
           }}
+          onModalFilterUpdate={onModalFilterUpdate}
         />;
         
       case 'area':
@@ -1258,6 +1277,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
               handleFilterChange(key, value);
             });
           }}
+          onModalFilterUpdate={onModalFilterUpdate}
         />;
         
       default:

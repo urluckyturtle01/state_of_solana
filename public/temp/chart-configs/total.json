@@ -2,7 +2,7 @@
   "pageId": "total",
   "pageName": "Total",
   "chartCount": 4,
-  "lastUpdated": "2025-07-15T14:53:12.437Z",
+  "lastUpdated": "2025-07-16T14:21:21.706Z",
   "charts": [
     {
       "id": "chart_1747996370344_q23bnxz",
@@ -10,7 +10,7 @@
       "subtitle": "Network revenue = (Base + Priority + Vote) × 0.5 + Jito × 0.95, accounting for fee burns and Jito tips",
       "page": "total",
       "section": "",
-      "chartType": "area",
+      "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13163/results.json",
       "apiKey": "S8KkuOqLoYqCIPGstMYVC7zxl84uW7c16KT4nNLH&max_age=86400",
       "isStacked": false,
@@ -18,14 +18,26 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": [
-          "dApp Revenue",
-          "Network Revenue"
-        ],
+        "yAxis": "dApp Revenue",
         "groupBy": ""
       },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
       "createdAt": "2025-05-23T10:32:50.344Z",
-      "updatedAt": "2025-06-20T05:57:55.749Z"
+      "updatedAt": "2025-07-16T14:01:30.832Z"
     },
     {
       "id": "chart_1747996534384_lz5aaxw",
@@ -79,6 +91,7 @@
       "apiKey": "AhoU1Wq4NS9iHdyeJy6VejNkCIZE5PVSsL2Xg0MM&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "dAPP Revenue",
@@ -86,10 +99,12 @@
         "yAxisUnit": "$"
       },
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
             "options": [
+              "D",
               "W",
               "M",
               "Q",
@@ -99,7 +114,7 @@
         }
       },
       "createdAt": "2025-05-23T11:03:25.364Z",
-      "updatedAt": "2025-07-11T08:40:07.349Z"
+      "updatedAt": "2025-07-16T08:02:06.520Z"
     }
   ]
 }

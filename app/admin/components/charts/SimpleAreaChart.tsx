@@ -75,6 +75,7 @@ export interface SimpleAreaChartProps {
   isStacked?: boolean;
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
+  onModalFilterUpdate?: (newFilters: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -100,7 +101,8 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   yAxisUnit,
   isStacked = false,
   hiddenSeries = [],
-  onFilterChange
+  onFilterChange,
+  onModalFilterUpdate
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -1559,19 +1561,25 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       setInternalDisplayMode(value as DisplayMode);
     }
     
+    // For time aggregation charts, use onModalFilterUpdate for internal state management
+    // and only call onFilterChange for non-time filters that need API calls
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
     
-    if (isTimeAggregationEnabled && key === 'timeFilter') {
-      console.log('SimpleAreaChart: Time aggregation enabled - delegating to ChartRenderer:', value);
-      if (onFilterChange) {
-        onFilterChange(updatedFilters);
-      }
-    } else {
-      if (onFilterChange) {
-        onFilterChange(updatedFilters);
-      }
+    if (onModalFilterUpdate) {
+      onModalFilterUpdate(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, chartConfig.additionalOptions?.enableTimeAggregation]);
+    
+    if (isTimeAggregationEnabled) {
+      // For time aggregation charts, time filter changes are handled client-side
+      // Only call onFilterChange for currency filters that might need API calls
+      if (key === 'currencyFilter' && onFilterChange) {
+        onFilterChange(updatedFilters);
+      }
+    } else if (onFilterChange) {
+      // For non-time aggregation charts, all filter changes trigger API calls
+      onFilterChange(updatedFilters);
+    }
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation]);
 
   // Helper function to format field names for display
   const formatFieldName = (fieldName: string): string => {

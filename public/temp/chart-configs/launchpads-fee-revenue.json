@@ -1,8 +1,8 @@
 {
   "pageId": "launchpads-fee-revenue",
   "pageName": "Fee Revenue",
-  "chartCount": 1,
-  "lastUpdated": "2025-07-15T14:53:12.440Z",
+  "chartCount": 2,
+  "lastUpdated": "2025-07-16T14:21:21.710Z",
   "charts": [
     {
       "id": "chart_1752587302617_joe36xr",
@@ -39,6 +39,42 @@
       },
       "createdAt": "2025-07-15T13:48:22.617Z",
       "updatedAt": "2025-07-15T14:53:03.796Z"
+    },
+    {
+      "id": "chart_1752593381031_q9l1vrz",
+      "title": "Revenue",
+      "subtitle": "",
+      "page": "launchpads-fee-revenue",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13843/results.json",
+      "apiKey": "xqFztHCpLEqootvUoAnZ5AgMbhcqrBzCFOPmpPAd&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-15T15:29:41.031Z",
+      "updatedAt": "2025-07-15T15:29:41.321Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
     }
   ]
 }

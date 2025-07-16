@@ -2,7 +2,7 @@
   "pageId": "liquidity-velocity",
   "pageName": "Liquidity Velocity",
   "chartCount": 4,
-  "lastUpdated": "2025-07-15T14:53:12.436Z",
+  "lastUpdated": "2025-07-16T14:21:21.705Z",
   "charts": [
     {
       "id": "chart_1747824579836_0u7ghq5",
@@ -12,9 +12,10 @@
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/12899/results",
-      "apiKey": "PDO9L8zUfu9YfUaqvNXTW13Zwz9jJiYYB2HmjAyN",
+      "apiKey": "PDO9L8zUfu9YfUaqvNXTW13Zwz9jJiYYB2HmjAyN&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
@@ -26,29 +27,9 @@
         ],
         "groupBy": ""
       },
+      "additionalOptions": {},
       "createdAt": "2025-05-21T10:49:39.836Z",
-      "updatedAt": "2025-07-11T08:39:56.690Z",
-      "additionalOptions": {
-        "filters": {
-          "currencyFilter": {
-            "paramName": "mint_name",
-            "options": [
-              "USDC",
-              "USDT",
-              "PYUSD",
-              "EURC",
-              "EUROe",
-              "USDe",
-              "USDY",
-              "sUSD",
-              "USDS",
-              "FDUSD",
-              "AUSD",
-              "USDG"
-            ]
-          }
-        }
-      }
+      "updatedAt": "2025-07-16T14:15:44.603Z"
     },
     {
       "id": "chart_1747824765077_nku8z38",

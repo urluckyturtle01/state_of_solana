@@ -2,7 +2,7 @@
   "pageId": "dex-activity",
   "pageName": "DEX Activity",
   "chartCount": 4,
-  "lastUpdated": "2025-07-15T14:53:12.439Z",
+  "lastUpdated": "2025-07-16T14:21:21.709Z",
   "charts": [
     {
       "id": "chart_1748259147791_23e706f",
@@ -12,17 +12,18 @@
       "section": "",
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13427/results.json",
-      "apiKey": "CAdciqVpawenBLQE4T4l7YeVMauInYbZfMdfbqyF",
+      "apiKey": "CAdciqVpawenBLQE4T4l7YeVMauInYbZfMdfbqyF&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": "volume_usd",
-        "groupBy": "symbol"
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
       },
       "createdAt": "2025-05-26T11:32:27.791Z",
-      "updatedAt": "2025-07-11T08:40:49.194Z"
+      "updatedAt": "2025-07-16T13:00:36.368Z"
     },
     {
       "id": "chart_1748259383072_6lmaf4b",
@@ -71,9 +72,10 @@
       "section": "",
       "chartType": "pie",
       "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13422/results.json",
-      "apiKey": "TnJOTkKLkqBU3cEoK8uQtfOyzd7g5Cgcpxymu6oV",
+      "apiKey": "TnJOTkKLkqBU3cEoK8uQtfOyzd7g5Cgcpxymu6oV&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "pair",
         "yAxis": "volume",
@@ -81,7 +83,7 @@
         "yAxisUnit": "$"
       },
       "createdAt": "2025-05-26T11:39:41.838Z",
-      "updatedAt": "2025-07-11T08:40:51.014Z"
+      "updatedAt": "2025-07-16T13:01:39.968Z"
     }
   ]
 }

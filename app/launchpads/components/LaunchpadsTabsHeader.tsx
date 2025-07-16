@@ -27,7 +27,7 @@ export default function LaunchpadsTabsHeader({ activeTab = "financials" }: Launc
       icon: "M12 12m-1 0a1 1 0 102 0a1 1 0 10-2 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0"
     },
     { 
-      name: "Fee Revenue", 
+      name: "Fees and Revenue", 
       path: "/launchpads/fee-revenue",
       key: "fee-revenue",
       icon: "M12 12m-1 0a1 1 0 102 0a1 1 0 10-2 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0M12 12m-7 0a7 7 0 1014 0a7 7 0 10-14 0"
