@@ -1313,8 +1313,62 @@ export default function DashboardRenderer({
       const leftAxisFields = chart.dualAxisConfig.leftAxisFields;
       const rightAxisFields = chart.dualAxisConfig.rightAxisFields;
       
-      // Process all fields from both axes
-      const allFields = [...leftAxisFields, ...rightAxisFields];
+      // Apply currency field filtering before processing fields
+      let filteredLeftAxisFields = leftAxisFields;
+      let filteredRightAxisFields = rightAxisFields;
+      
+      // Check for currency field filtering
+      const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+      const selectedCurrency = (filterValues[chartId] || {})['currencyFilter'];
+      
+      if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+        console.log('Applying currency field filtering to dual axis chart legends:', {
+          selectedCurrency,
+          columnMappings: currencyFilter.columnMappings
+        });
+        
+        const currencyFields = Object.values(currencyFilter.columnMappings);
+        const targetFields = currencyFilter.columnMappings[selectedCurrency];
+        
+        if (targetFields) {
+          const targetFieldList = targetFields.split(',').map(f => f.trim());
+          
+          // Filter left axis fields
+          filteredLeftAxisFields = leftAxisFields.filter(field => {
+            // Include if it's a target field for the selected currency
+            if (targetFieldList.includes(field)) {
+              return true;
+            }
+            // Include if it's not a currency field at all
+            if (!currencyFields.some(mapping => {
+              const mappingFields = mapping.split(',').map(f => f.trim());
+              return mappingFields.includes(field);
+            })) {
+              return true;
+            }
+            return false;
+          });
+          
+          // Filter right axis fields
+          filteredRightAxisFields = rightAxisFields.filter(field => {
+            // Include if it's a target field for the selected currency
+            if (targetFieldList.includes(field)) {
+              return true;
+            }
+            // Include if it's not a currency field at all
+            if (!currencyFields.some(mapping => {
+              const mappingFields = mapping.split(',').map(f => f.trim());
+              return mappingFields.includes(field);
+            })) {
+              return true;
+            }
+            return false;
+          });
+        }
+      }
+      
+      // Process all filtered fields from both axes
+      const allFields = [...filteredLeftAxisFields, ...filteredRightAxisFields];
       
       // Calculate totals for each field for tooltips
       const fieldTotals: Record<string, number> = {};
@@ -1328,20 +1382,20 @@ export default function DashboardRenderer({
         // Assign colors if creating a new color map
         if (isNewColorMap && !colorMap[field]) {
           // Left axis fields get blue-ish colors, right axis fields get purple-ish colors
-          const isRightAxis = rightAxisFields.includes(field);
+          const isRightAxis = filteredRightAxisFields.includes(field);
           const index = isRightAxis 
-            ? rightAxisFields.indexOf(field)
-            : leftAxisFields.indexOf(field);
+            ? filteredRightAxisFields.indexOf(field)
+            : filteredLeftAxisFields.indexOf(field);
           
           colorMap[field] = isRightAxis 
-            ? getColorByIndex(index + leftAxisFields.length) // Offset to avoid color conflicts
+            ? getColorByIndex(index + filteredLeftAxisFields.length) // Offset to avoid color conflicts
             : getColorByIndex(index);
         }
       });
       
       // Create legend items for all fields - show API field names as-is
       chartLegends = allFields.map(field => {
-        const isRightAxis = rightAxisFields.includes(field);
+        const isRightAxis = filteredRightAxisFields.includes(field);
         
         return {
           id: field, // Add the raw field name as id
@@ -1502,6 +1556,43 @@ export default function DashboardRenderer({
         yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
       }
       
+      // Apply currency field filtering
+      const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+      const selectedCurrency = (filterValues[chartId] || {})['currencyFilter'];
+      
+      if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+        console.log('Applying currency field filtering to area chart legends:', {
+          selectedCurrency,
+          columnMappings: currencyFilter.columnMappings,
+          originalFields: yAxisFields
+        });
+        
+        const currencyFields = Object.values(currencyFilter.columnMappings);
+        const targetFields = currencyFilter.columnMappings[selectedCurrency];
+        
+        if (targetFields) {
+          const targetFieldList = targetFields.split(',').map(f => f.trim());
+          
+          // Filter yAxis fields
+          yAxisFields = yAxisFields.filter(field => {
+            // Include if it's a target field for the selected currency
+            if (targetFieldList.includes(field)) {
+              return true;
+            }
+            // Include if it's not a currency field at all
+            if (!currencyFields.some(mapping => {
+              const mappingFields = mapping.split(',').map(f => f.trim());
+              return mappingFields.includes(field);
+            })) {
+              return true;
+            }
+            return false;
+          });
+          
+          console.log('Filtered yAxisFields for area chart:', yAxisFields);
+        }
+      }
+      
       const isDateBased = data.length > 0 && 
         (xField.toLowerCase().includes('date') || 
          xField.toLowerCase().includes('time') || 
@@ -1595,6 +1686,43 @@ export default function DashboardRenderer({
         yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
       } else {
         yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+      }
+      
+      // Apply currency field filtering
+      const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+      const selectedCurrency = (filterValues[chartId] || {})['currencyFilter'];
+      
+      if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+        console.log('Applying currency field filtering to bar/line chart legends:', {
+          selectedCurrency,
+          columnMappings: currencyFilter.columnMappings,
+          originalFields: yAxisFields
+        });
+        
+        const currencyFields = Object.values(currencyFilter.columnMappings);
+        const targetFields = currencyFilter.columnMappings[selectedCurrency];
+        
+        if (targetFields) {
+          const targetFieldList = targetFields.split(',').map(f => f.trim());
+          
+          // Filter yAxis fields
+          yAxisFields = yAxisFields.filter(field => {
+            // Include if it's a target field for the selected currency
+            if (targetFieldList.includes(field)) {
+              return true;
+            }
+            // Include if it's not a currency field at all
+            if (!currencyFields.some(mapping => {
+              const mappingFields = mapping.split(',').map(f => f.trim());
+              return mappingFields.includes(field);
+            })) {
+              return true;
+            }
+            return false;
+          });
+          
+          console.log('Filtered yAxisFields for bar/line chart:', yAxisFields);
+        }
       }
       
       const isDateBased = data.length > 0 && 
@@ -1778,7 +1906,7 @@ export default function DashboardRenderer({
       ...prev,
       [chartId]: chartLegends
     }));
-  }, [charts, legendColorMaps]);
+  }, [charts, legendColorMaps, filterValues]);
 
   // Add a function to directly pass chart colors to ChartRenderer
   const syncLegendColors = useCallback((chartId: string, chartColorMap: Record<string, string>) => {

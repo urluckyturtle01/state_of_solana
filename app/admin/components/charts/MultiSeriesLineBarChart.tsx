@@ -221,7 +221,7 @@ function getBaseFieldName(fieldName: string): string {
   // Remove suffix if found
   for (const suffix of suffixesToRemove) {
     if (baseName.endsWith(suffix)) {
-      baseName = baseName.replace(suffix, '');
+      baseName = baseName.substring(0, baseName.length - suffix.length);
       break;
     }
   }
@@ -265,17 +265,21 @@ function createSmartColorMapping(
   // Strategy 1: If we have currency suffixes, use base field mapping for consistency
   if (hasCurrencySuffixes) {
     // First pass: Analyze ALL original fields to establish consistent base field color indices
-    const allBaseFields = new Set<string>();
+    // Maintain order based on first appearance in original fields
+    const seenBaseFields = new Set<string>();
+    const orderedBaseFields: string[] = [];
+    
     allOriginalFields.forEach(field => {
       const baseFieldName = getBaseFieldName(field);
-      allBaseFields.add(baseFieldName);
+      if (!seenBaseFields.has(baseFieldName)) {
+        seenBaseFields.add(baseFieldName);
+        orderedBaseFields.push(baseFieldName);
+      }
     });
     
-    // Sort base fields for consistent ordering
-    const sortedBaseFields = Array.from(allBaseFields).sort();
-    console.log('Sorted base fields:', sortedBaseFields);
+    console.log('Ordered base fields (by first appearance):', orderedBaseFields);
     
-    sortedBaseFields.forEach((baseField, index) => {
+    orderedBaseFields.forEach((baseField, index) => {
       baseFieldToColorIndex[baseField] = index;
     });
     
@@ -633,13 +637,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           // Assign colors to each field using smart color mapping
           const resultColors = createSmartColorMapping(resultFields, allOriginalFields, preferredColorMap);
           
-                  return { 
-          chartData: resultData,
-          fields: resultFields,
-          fieldColors: resultColors,
-          fieldTypes: resultFieldTypes,
-          fieldUnits: resultFieldUnits
-        };
+          return { 
+            chartData: resultData,
+            fields: resultFields,
+            fieldColors: resultColors,
+            fieldTypes: resultFieldTypes,
+            fieldUnits: resultFieldUnits
+          };
               } else {
           // For multiple y-fields with groupBy, combine field and group
           const combinedFields: string[] = [];

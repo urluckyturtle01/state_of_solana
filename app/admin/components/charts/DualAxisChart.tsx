@@ -151,14 +151,15 @@ function getBaseFieldName(fieldName: string): string {
   
   let baseName = fieldName.toLowerCase();
   
-  // Remove suffix if found
+  // Remove suffix if found AT THE END (not in the middle)
   for (const suffix of suffixesToRemove) {
     if (baseName.endsWith(suffix)) {
-      baseName = baseName.replace(suffix, '');
+      baseName = baseName.substring(0, baseName.length - suffix.length);
       break;
     }
   }
   
+  console.log(`getBaseFieldName: "${fieldName}" -> "${baseName}"`);
   return baseName;
 }
 
@@ -388,7 +389,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       setModalFilterValues(filterValues);
     }
   }, [filterValues, chartConfig.title]);
-
+  
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
 
@@ -699,7 +700,7 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       if (!seenBaseFields.has(baseFieldName)) {
         baseFieldToColorIndex[baseFieldName] = colorIndex; // Use colors[0], colors[1], colors[2], colors[3]...
         seenBaseFields.add(baseFieldName);
-        colorIndex++;
+      colorIndex++;
       }
     });
     
@@ -717,16 +718,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     const colorMapping: Record<string, string> = {};
     
     // Assign colors based on base field name (consistent across currencies)
+    // Ignore preferredColorMap to ensure consistent base field coloring
     allFields.forEach((field) => {
-      if (preferredColorMap[field]) {
-        colorMapping[field] = preferredColorMap[field];
-        console.log(`Field "${field}" using preferred color: ${preferredColorMap[field]}`);
-      } else {
-        const baseFieldName = getBaseFieldName(field);
-        const colorIdx = baseFieldToColorIndex[baseFieldName] ?? 0;
-        colorMapping[field] = getColorByIndex(colorIdx);
-        console.log(`Field "${field}" -> base:"${baseFieldName}" -> color[${colorIdx}] = ${colorMapping[field]}`);
-      }
+      const baseFieldName = getBaseFieldName(field);
+      const colorIdx = baseFieldToColorIndex[baseFieldName] ?? 0;
+      colorMapping[field] = getColorByIndex(colorIdx);
+      console.log(`Field "${field}" -> base:"${baseFieldName}" -> color[${colorIdx}] = ${colorMapping[field]} (ignoring preferred: ${preferredColorMap[field] || 'none'})`);
     });
     
     console.log('Final color mapping:', colorMapping);

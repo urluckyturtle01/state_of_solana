@@ -2,7 +2,7 @@
   "pageId": "rev-cost-capacity",
   "pageName": "Cost & Capacity",
   "chartCount": 3,
-  "lastUpdated": "2025-07-17T13:08:33.183Z",
+  "lastUpdated": "2025-07-17T17:55:52.151Z",
   "charts": [
     {
       "id": "chart_1748007531839_4qciy9d",
@@ -11,7 +11,7 @@
       "page": "rev-cost-capacity",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13207/results",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13207/results.json",
       "apiKey": "9zbkGgIfDrhCnAhfd5OMJe4z4JxJiB0d4SuO3ynF&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
@@ -82,8 +82,8 @@
             ],
             "type": "field_switcher",
             "columnMappings": {
-              "USD": "base_fee_usd,priority_fee_usd,jito_total_tips_usd,vote_fee_usd",
-              "SOL": "base_fee_sol,priority_fee_sol,jito_total_tips_sol,vote_fee_sol",
+              "USD": "base_fee_usd, priority_fee_usd, jito_total_tips_usd, vote_fee_usd",
+              "SOL": "base_fee_sol, priority_fee_sol, jito_total_tips_sol, vote_fee_sol",
               "USDe": ""
             }
           }
@@ -91,7 +91,7 @@
         "enableTimeAggregation": true
       },
       "createdAt": "2025-05-23T13:38:51.839Z",
-      "updatedAt": "2025-07-17T08:06:02.039Z"
+      "updatedAt": "2025-07-17T14:31:45.555Z"
     },
     {
       "id": "chart_1748008463492_z8recfh",

@@ -64,6 +64,135 @@ interface ChartDataItem {
 
 type ColorResult = string | Record<string, string>;
 
+// Helper function to extract base field name for consistent coloring
+function getBaseFieldName(fieldName: string): string {
+  // Remove common currency/chain suffixes to group similar fields together
+  const suffixesToRemove = ['_usd', '_sol', '_btc', '_eth', '_usdc', '_usdt'];
+  
+  let baseName = fieldName.toLowerCase();
+  
+  // Remove suffix if found
+  for (const suffix of suffixesToRemove) {
+    if (baseName.endsWith(suffix)) {
+      baseName = baseName.substring(0, baseName.length - suffix.length);
+      break;
+    }
+  }
+  
+  return baseName;
+}
+
+// Helper function to create smart color mapping for fields
+function createSmartColorMapping(
+  visibleFields: string[], 
+  allOriginalFields: string[], 
+  preferredColorMap: Record<string, string>
+): Record<string, string> {
+  const resultColors: Record<string, string> = {};
+  const baseFieldToColorIndex: Record<string, number> = {};
+  
+  console.log('=== STACKED CHART SMART COLOR MAPPING DEBUG ===');
+  console.log('All original fields:', allOriginalFields);
+  console.log('Visible fields:', visibleFields);
+  console.log('Preferred color map:', preferredColorMap);
+  
+  // Check if we have currency suffixes in any of the fields
+  const hasCurrencySuffixes = allOriginalFields.some(field => {
+    const baseFieldName = getBaseFieldName(field);
+    return field.toLowerCase() !== baseFieldName;
+  });
+  
+  console.log('Has currency suffixes in dataset:', hasCurrencySuffixes);
+  
+  // Strategy 1: If we have currency suffixes, use base field mapping for consistency
+  if (hasCurrencySuffixes) {
+    // First pass: Analyze ALL original fields to establish consistent base field color indices
+    // Maintain order based on first appearance in original fields
+    const seenBaseFields = new Set<string>();
+    const orderedBaseFields: string[] = [];
+    
+    allOriginalFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      if (!seenBaseFields.has(baseFieldName)) {
+        seenBaseFields.add(baseFieldName);
+        orderedBaseFields.push(baseFieldName);
+      }
+    });
+    
+    console.log('Ordered base fields (by first appearance):', orderedBaseFields);
+    
+    orderedBaseFields.forEach((baseField, index) => {
+      baseFieldToColorIndex[baseField] = index;
+    });
+    
+    console.log('Base field color mapping:', baseFieldToColorIndex);
+    
+    // Assign colors to visible fields based on base field mapping
+    visibleFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      const fieldHasCurrencySuffix = field.toLowerCase() !== baseFieldName;
+      
+      console.log(`\n--- Processing field: ${field} ---`);
+      console.log(`Base field name: ${baseFieldName}`);
+      console.log(`Has currency suffix: ${fieldHasCurrencySuffix}`);
+      
+      // For currency suffix fields, always use smart mapping for consistency
+      if (fieldHasCurrencySuffix) {
+        const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (smart): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+      } else {
+        // For non-currency fields, prefer external color map
+        if (preferredColorMap[field]) {
+          resultColors[field] = preferredColorMap[field];
+          console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+        } else {
+          const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+          resultColors[field] = getColorByIndex(colorIndex);
+          console.log(`✓ Color assignment (smart fallback): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+        }
+      }
+    });
+  } else {
+    // Strategy 2: No currency suffixes detected - use ALL original fields for consistent color assignment
+    console.log('No currency suffixes detected - using field position mapping for consistency');
+    
+    // Sort all original fields to establish consistent color indices
+    const sortedOriginalFields = [...allOriginalFields].sort();
+    console.log('Sorted original fields:', sortedOriginalFields);
+    
+    // Create color mapping based on position in sorted original fields
+    const originalFieldColorMap: Record<string, number> = {};
+    sortedOriginalFields.forEach((field, index) => {
+      originalFieldColorMap[field] = index;
+    });
+    
+    console.log('Original field color mapping:', originalFieldColorMap);
+    
+    // Assign colors to visible fields based on their position in original field list
+    visibleFields.forEach(field => {
+      console.log(`\n--- Processing field: ${field} ---`);
+      
+      // Check if we have a preferred color first
+      if (preferredColorMap[field]) {
+        resultColors[field] = preferredColorMap[field];
+        console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+      } else {
+        // Use the field's position in the original sorted list for consistency
+        const colorIndex = originalFieldColorMap[field] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (position-based): ${field} -> color[${colorIndex}] = ${resultColors[field]}`);
+      }
+    });
+  }
+  
+  console.log('\n=== STACKED CHART FINAL COLOR MAPPING RESULT ===');
+  console.log('Result colors:', resultColors);
+  console.log('======================================================');
+  
+  return resultColors;
+}
+
 const StackedBarChart: React.FC<StackedBarChartProps> = ({ 
   chartConfig, 
   data, 
@@ -386,6 +515,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // For time aggregation charts, use onModalFilterUpdate for internal state management
     // and only call onFilterChange for non-time filters that need API calls
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const isCurrencyFieldSwitcher = chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher';
+    
+    // For field-switcher currency filters, don't trigger API calls as they're handled client-side
+    if (key === 'currencyFilter' && isCurrencyFieldSwitcher) {
+      console.log('Currency field-switcher changed in modal - handled client-side only');
+      return; // Don't call onFilterChange for field-switcher currency filters
+    }
     
     if (isTimeAggregationEnabled) {
       // For time aggregation charts, time filter changes are handled client-side
@@ -428,6 +564,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     }
     
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const isCurrencyFieldSwitcher = chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher';
+    
+    // For field-switcher currency filters, don't trigger API calls as they're handled client-side
+    if (key === 'currencyFilter' && isCurrencyFieldSwitcher) {
+      console.log('Currency field-switcher changed - handled client-side only');
+      return; // Don't call onFilterChange for field-switcher currency filters
+    }
     
     if (isTimeAggregationEnabled) {
       // For time aggregation charts, ALL filters are handled client-side - NO API CALLS
@@ -545,9 +688,80 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     if (isMultiYFieldsStacked) {
       console.log('Processing multi-y-field stacked chart');
       
+      // Apply currency field filtering for field-switcher type currency filters
+      let filteredYField: string | YAxisConfig | (string | YAxisConfig)[] = yField;
+      const currencyFilter = chartConfig.additionalOptions?.filters?.currencyFilter;
+      
+      // Get the correct currency filter value based on context
+      let selectedCurrency: string | undefined;
+      if (isExpanded) {
+        selectedCurrency = modalFilterValues?.currencyFilter || filterValues?.currencyFilter;
+      } else {
+        selectedCurrency = filterValues?.currencyFilter;
+      }
+      
+      // Handle initial state: if no currency is selected but we have a currency filter, default to first option
+      if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && !selectedCurrency) {
+        const availableCurrencies = Object.keys(currencyFilter.columnMappings);
+        if (availableCurrencies.length > 0) {
+          selectedCurrency = availableCurrencies[0];
+          console.log('No currency selected for stacked chart, defaulting to first available:', selectedCurrency);
+        }
+      }
+      
+      console.log('Currency filter context for stacked chart:', { selectedCurrency, isExpanded, currencyFilterType: currencyFilter?.type });
+      
+      if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+        console.log('Applying currency field filtering to stacked chart:', {
+          selectedCurrency,
+          columnMappings: currencyFilter.columnMappings,
+          originalFields: Array.isArray(yField) ? yField.map((f: string | YAxisConfig) => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : (yField as YAxisConfig).field]
+        });
+        
+        // Get all currency-related fields from the column mappings
+        const currencyFields = Object.values(currencyFilter.columnMappings);
+        const targetFields = currencyFilter.columnMappings[selectedCurrency];
+        
+        if (targetFields && Array.isArray(yField)) {
+          // Parse target fields (could be comma-separated)
+          const targetFieldList = targetFields.split(',').map(f => f.trim());
+          
+          // Filter yAxis to only include:
+          // 1. Fields that match the selected currency's target fields
+          // 2. Non-currency fields (fields not in any currency mapping)
+          if (Array.isArray(yField)) {
+            filteredYField = yField.filter(field => {
+              const fieldName = typeof field === 'string' ? field : field.field;
+              
+              // Include if it's a target field for the selected currency
+              if (targetFieldList.includes(fieldName)) {
+                return true;
+              }
+              
+              // Include if it's not a currency field at all (not in any mapping)
+              if (!currencyFields.some(mapping => {
+                const mappingFields = mapping.split(',').map(f => f.trim());
+                return mappingFields.includes(fieldName);
+              })) {
+                return true;
+              }
+              
+              // Exclude currency fields that don't match the selected currency
+              return false;
+            });
+          }
+          
+          console.log('Filtered yField result for stacked chart:', {
+            originalCount: Array.isArray(yField) ? yField.length : 1,
+            filteredCount: Array.isArray(filteredYField) ? filteredYField.length : 1,
+            filteredFields: Array.isArray(filteredYField) ? filteredYField.map((f: string | YAxisConfig) => typeof f === 'string' ? f : f.field) : 'single field'
+          });
+        }
+      }
+      
       // Get all y-fields as keys for stacking (excluding hidden ones)
-      const stackKeys = Array.isArray(yField) 
-        ? yField
+      const stackKeys = Array.isArray(filteredYField) 
+        ? filteredYField
             .map(field => typeof field === 'string' ? field : field.field)
             .filter(key => !hiddenSeriesState.includes(key))
         : [yKey];
@@ -591,16 +805,31 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         });
       }
       
-      // Create color map for each y-field
+      // Calculate total values for each field to determine color assignment by magnitude
+      const fieldTotals: Record<string, number> = {};
+      stackKeys.forEach(field => {
+        fieldTotals[field] = Object.values(groupedData).reduce((sum, dataPoint) => {
+          return sum + (Number(dataPoint[field]) || 0);
+        }, 0);
+      });
+      
+      // Sort fields by total value (descending) to assign colors by magnitude
+      const sortedFieldsByValue = [...stackKeys].sort((a, b) => fieldTotals[b] - fieldTotals[a]);
+      
+      console.log('Field totals for color assignment:', fieldTotals);
+      console.log('Fields sorted by value (descending):', sortedFieldsByValue);
+      
+      // Create color map based on value ranking - highest value gets colors[0], etc.
       const colorsByField: Record<string, string> = {};
-      stackKeys.forEach((field, i) => {
-        colorsByField[field] = preferredColorMap[field] || getColorByIndex(i % allColorsArray.length);
+      sortedFieldsByValue.forEach((field, index) => {
+        colorsByField[field] = getColorByIndex(index);
+        console.log(`Color assignment by value: ${field} (total: ${fieldTotals[field]}) -> colors[${index}] = ${colorsByField[field]}`);
       });
       
       // Create unit mapping for each y-field
       const fieldUnitsMap: Record<string, string | undefined> = {};
-      if (Array.isArray(yField)) {
-        yField.forEach(field => {
+      if (Array.isArray(filteredYField)) {
+        filteredYField.forEach(field => {
           const fieldName = typeof field === 'string' ? field : field.field;
           fieldUnitsMap[fieldName] = typeof field === 'string' ? undefined : field.unit;
         });
@@ -1409,15 +1638,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         }
       });
 
-      // Get all possible keys (including hidden ones)
-      const allKeys = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
-        ? yField.map(field => typeof field === 'string' ? field : field.field)
-        : hasGroupBy 
-          ? Array.from(new Set(data.map(item => String(item[groupByField]))))
-          : [yKey]; // Simple bar chart has only one key
+      // Use the filtered keys from chart processing instead of all original keys
+      // This ensures legend only shows fields that are actually displayed in the chart
+      const legendKeys = keys.length > 0 ? keys : 
+        Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
+          ? yField.map(field => typeof field === 'string' ? field : field.field)
+          : hasGroupBy 
+            ? Array.from(new Set(data.map(item => String(item[groupByField]))))
+            : [yKey]; // Simple bar chart has only one key
       
       // Create and sort legend items by total value (descending)
-      const newLegendItems = allKeys
+      const newLegendItems = legendKeys
         .map(key => ({
           id: key,
           label: formatFieldName(key),
@@ -1709,6 +1940,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const allPossibleKeys = useMemo(() => {
     if (data.length === 0) return [];
 
+    // Use the current keys from chart processing which respects currency filtering
+    if (keys.length > 0) {
+      return keys;
+    }
+
+    // Fallback to original logic if keys are not available yet
     if (isMultiYFieldsStacked) {
       return Array.isArray(yField) ? yField.map(field => typeof field === 'string' ? field : field.field) : [];
     } else if (!hasGroupBy) {
@@ -1716,7 +1953,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     } else {
       return Array.from(new Set(data.map(d => d[groupByField]))).filter(key => key != null);
     }
-  }, [data, isMultiYFieldsStacked, yField, hasGroupBy, yKey, groupByField]);
+  }, [data, isMultiYFieldsStacked, yField, hasGroupBy, yKey, groupByField, keys]);
 
   // Handler for double-click: isolate series or restore all
   const handleLegendDoubleClick = (fieldId: string) => {
