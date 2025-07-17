@@ -1,47 +1,438 @@
 {
   "pageId": "sf-treasury",
   "pageName": "Treasury",
-  "fetchedAt": "2025-07-17T19:44:52.331Z",
+  "fetchedAt": "2025-07-17T19:58:58.267Z",
   "charts": [
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "month": "2025-07-01",
+          "monthly_realm_balance": 680884223.1549044,
+          "category": "realm"
+        },
+        {
+          "month": "2025-06-01",
+          "monthly_realm_balance": 661781000.0208753,
+          "category": "realm"
+        },
+        {
+          "month": "2025-05-01",
+          "monthly_realm_balance": 636392894.8665135,
+          "category": "realm"
+        },
+        {
+          "month": "2025-04-01",
+          "monthly_realm_balance": 541165934.1306547,
+          "category": "realm"
+        },
+        {
+          "month": "2025-03-01",
+          "monthly_realm_balance": 649769689.8334972,
+          "category": "realm"
+        },
+        {
+          "month": "2025-02-01",
+          "monthly_realm_balance": 820757463.9997987,
+          "category": "realm"
+        },
+        {
+          "month": "2025-01-01",
+          "monthly_realm_balance": 1048996355.6041297,
+          "category": "realm"
+        },
+        {
+          "month": "2024-12-01",
+          "monthly_realm_balance": 1250149702.0534809,
+          "category": "realm"
+        },
+        {
+          "month": "2024-11-01",
+          "monthly_realm_balance": 1122861300.9580293,
+          "category": "realm"
+        },
+        {
+          "month": "2024-10-01",
+          "monthly_realm_balance": 826439019.5147344,
+          "category": "realm"
+        },
+        {
+          "month": "2024-09-01",
+          "monthly_realm_balance": 792968733.2669721,
+          "category": "realm"
+        },
+        {
+          "month": "2024-08-01",
+          "monthly_realm_balance": 900311963.1350977,
+          "category": "realm"
+        },
+        {
+          "month": "2024-07-01",
+          "monthly_realm_balance": 1002117004.975029,
+          "category": "realm"
+        },
+        {
+          "month": "2025-07-01",
+          "monthly_realm_balance": 6801915298.561013,
+          "category": "squads"
+        },
+        {
+          "month": "2025-06-01",
+          "monthly_realm_balance": 12445611490.31477,
+          "category": "squads"
+        },
+        {
+          "month": "2025-05-01",
+          "monthly_realm_balance": 7456785918.209009,
+          "category": "squads"
+        },
+        {
+          "month": "2025-04-01",
+          "monthly_realm_balance": 6552697680.103134,
+          "category": "squads"
+        },
+        {
+          "month": "2025-03-01",
+          "monthly_realm_balance": 7736154881.963229,
+          "category": "squads"
+        },
+        {
+          "month": "2025-02-01",
+          "monthly_realm_balance": 10658245453.163076,
+          "category": "squads"
+        },
+        {
+          "month": "2025-01-01",
+          "monthly_realm_balance": 17864682700.296898,
+          "category": "squads"
+        },
+        {
+          "month": "2024-12-01",
+          "monthly_realm_balance": 18444517801.077694,
+          "category": "squads"
+        },
+        {
+          "month": "2024-11-01",
+          "monthly_realm_balance": 15040229345.305487,
+          "category": "squads"
+        },
+        {
+          "month": "2024-10-01",
+          "monthly_realm_balance": 11528141766.68957,
+          "category": "squads"
+        },
+        {
+          "month": "2024-09-01",
+          "monthly_realm_balance": 10215538193.960224,
+          "category": "squads"
+        },
+        {
+          "month": "2024-08-01",
+          "monthly_realm_balance": 9963978367.522429,
+          "category": "squads"
+        },
+        {
+          "month": "2024-07-01",
+          "monthly_realm_balance": 10568911990.131104,
+          "category": "squads"
+        }
+      ],
+      "timestamp": 1752782337160,
       "chartId": "chart_1749803264043_8cf9l45",
-      "title": "Ecosystem Treasury Balance",
-      "parameters": {}
+      "title": "Ecosystem Treasury Balance"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "month": "2025-07-01",
+          "balance_usd": 6801915298.561015
+        },
+        {
+          "month": "2025-06-01",
+          "balance_usd": 12445611490.314764
+        },
+        {
+          "month": "2025-05-01",
+          "balance_usd": 7456785918.209017
+        },
+        {
+          "month": "2025-04-01",
+          "balance_usd": 6552697680.103136
+        },
+        {
+          "month": "2025-03-01",
+          "balance_usd": 7736154881.963227
+        },
+        {
+          "month": "2025-02-01",
+          "balance_usd": 10658245453.16307
+        },
+        {
+          "month": "2025-01-01",
+          "balance_usd": 17864682700.296894
+        },
+        {
+          "month": "2024-12-01",
+          "balance_usd": 18444517801.077705
+        },
+        {
+          "month": "2024-11-01",
+          "balance_usd": 15040229345.305487
+        },
+        {
+          "month": "2024-10-01",
+          "balance_usd": 11528141766.689577
+        },
+        {
+          "month": "2024-09-01",
+          "balance_usd": 10215538193.960226
+        },
+        {
+          "month": "2024-08-01",
+          "balance_usd": 9963978367.522429
+        },
+        {
+          "month": "2024-07-01",
+          "balance_usd": 10568911990.131098
+        }
+      ],
+      "timestamp": 1752782337156,
       "chartId": "chart_1749803507206_nf527wm",
-      "title": "Squads Treasury Balance",
-      "parameters": {}
+      "title": "Squads Treasury Balance"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "month": "2025-07-01",
+          "monthly_realm_balance": 680884223.1549044
+        },
+        {
+          "month": "2025-06-01",
+          "monthly_realm_balance": 661781000.0208753
+        },
+        {
+          "month": "2025-05-01",
+          "monthly_realm_balance": 636392894.8665135
+        },
+        {
+          "month": "2025-04-01",
+          "monthly_realm_balance": 541165934.1306547
+        },
+        {
+          "month": "2025-03-01",
+          "monthly_realm_balance": 649769689.8334972
+        },
+        {
+          "month": "2025-02-01",
+          "monthly_realm_balance": 820757463.9997987
+        },
+        {
+          "month": "2025-01-01",
+          "monthly_realm_balance": 1048996355.6041297
+        },
+        {
+          "month": "2024-12-01",
+          "monthly_realm_balance": 1250149702.0534809
+        },
+        {
+          "month": "2024-11-01",
+          "monthly_realm_balance": 1122861300.9580293
+        },
+        {
+          "month": "2024-10-01",
+          "monthly_realm_balance": 826439019.5147344
+        },
+        {
+          "month": "2024-09-01",
+          "monthly_realm_balance": 792968733.2669721
+        },
+        {
+          "month": "2024-08-01",
+          "monthly_realm_balance": 900311963.1350977
+        },
+        {
+          "month": "2024-07-01",
+          "monthly_realm_balance": 1002117004.975029
+        }
+      ],
+      "timestamp": 1752782337148,
       "chartId": "chart_1749803601908_s49diq9",
-      "title": "Realms Treasury Balance",
-      "parameters": {}
+      "title": "Realms Treasury Balance"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "team": "Jupiter",
+          "tvl": 2502216506.9926634
+        },
+        {
+          "team": "Jito",
+          "tvl": 445411105.9348767
+        },
+        {
+          "team": "OTOY",
+          "tvl": 427956881.3026175
+        },
+        {
+          "team": "Grass",
+          "tvl": 231811788.4649747
+        },
+        {
+          "team": "Kamino",
+          "tvl": 205490013.68881646
+        },
+        {
+          "team": "Bonk",
+          "tvl": 143456326.4390701
+        },
+        {
+          "team": "Raydium",
+          "tvl": 91528507.92020673
+        },
+        {
+          "team": "Access Protocol",
+          "tvl": 54673670.190909125
+        },
+        {
+          "team": "Tensor",
+          "tvl": 48850631.058161296
+        },
+        {
+          "team": "Marinade",
+          "tvl": 45536246.613918684
+        },
+        {
+          "team": "Hivemapper",
+          "tvl": 34788892.72071671
+        },
+        {
+          "team": "Psysis",
+          "tvl": 31923568.75352067
+        },
+        {
+          "team": "Metaplex",
+          "tvl": 29948683.05379547
+        },
+        {
+          "team": "Ondo",
+          "tvl": 29360555.058969103
+        },
+        {
+          "team": "bloXroute",
+          "tvl": 26212441.24970743
+        },
+        {
+          "team": "Star Atlas",
+          "tvl": 18865998.267511915
+        },
+        {
+          "team": "Photo Finish",
+          "tvl": 17504364.99453152
+        },
+        {
+          "team": "Render",
+          "tvl": 11718561.647375379
+        },
+        {
+          "team": "Helium",
+          "tvl": 9748775.196935732
+        },
+        {
+          "team": "Pump Fun",
+          "tvl": 8069843.908074298
+        },
+        {
+          "team": "Nosana",
+          "tvl": 6276960.490677724
+        },
+        {
+          "team": "Backpack",
+          "tvl": 6112177.99263203
+        },
+        {
+          "team": "Drift",
+          "tvl": 3114174.0371322613
+        },
+        {
+          "team": "Primordium Labs",
+          "tvl": 1109218.0520152
+        },
+        {
+          "team": "Psy Finance",
+          "tvl": 648279.8754519074
+        },
+        {
+          "team": "Solblaze",
+          "tvl": 169149.66385527575
+        },
+        {
+          "team": "Solend",
+          "tvl": 92133.45702714226
+        },
+        {
+          "team": "Deans",
+          "tvl": 5644.1024800763635
+        },
+        {
+          "team": "Epicentral",
+          "tvl": 0.999621702618104
+        },
+        {
+          "team": "Mira",
+          "tvl": 0
+        }
+      ],
+      "timestamp": 1752782338267,
       "chartId": "chart_1749803822181_4ao6zl3",
-      "title": "Top Teams By Treasury Balance",
-      "parameters": {}
+      "title": "Top Teams By Treasury Balance"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "ecosystem": "DeFi",
+          "tvl": 3155636673.2207723
+        },
+        {
+          "ecosystem": "Infrastructure",
+          "tvl": 698123562.0872492
+        },
+        {
+          "ecosystem": "NFT",
+          "tvl": 486951877.2827062
+        },
+        {
+          "ecosystem": "Staking",
+          "tvl": 468620875.5646212
+        },
+        {
+          "ecosystem": "SocialFi",
+          "tvl": 87955182.38312705
+        },
+        {
+          "ecosystem": "DePIN",
+          "tvl": 44553786.32395844
+        },
+        {
+          "ecosystem": "Gaming",
+          "tvl": 38079529.52617738
+        },
+        {
+          "ecosystem": "Wallet",
+          "tvl": 5552024.871673087
+        }
+      ],
+      "timestamp": 1752782338260,
       "chartId": "chart_1749804221462_c9twspv",
-      "title": "Top Ecosystem Categories By Treasury Net Worth",
-      "parameters": {}
+      "title": "Top Ecosystem Categories By Treasury Net Worth"
     }
   ],
   "summary": {
     "totalCharts": 5,
-    "successfulFetches": 0,
-    "failedFetches": 5
+    "successfulFetches": 5,
+    "failedFetches": 0
   }
 }
