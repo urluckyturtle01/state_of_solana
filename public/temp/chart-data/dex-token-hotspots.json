@@ -1,134 +1,32 @@
 {
   "pageId": "dex-token-hotspots",
   "pageName": "DEX & Token Hotspots",
-  "fetchedAt": "2025-07-17T18:38:08.536Z",
+  "fetchedAt": "2025-07-17T18:59:42.984Z",
   "charts": [
     {
-      "success": true,
-      "data": [
-        {
-          "token": "GOR",
-          "attacks": 695,
-          "total_sol_drained": 163.72822969400013
-        },
-        {
-          "token": "AMERICA",
-          "attacks": 218,
-          "total_sol_drained": 74.206339623
-        },
-        {
-          "token": "USDP",
-          "attacks": 351,
-          "total_sol_drained": 70.90344443499998
-        },
-        {
-          "token": "PUMP",
-          "attacks": 670,
-          "total_sol_drained": 58.96923751700001
-        },
-        {
-          "token": "shiyo",
-          "attacks": 203,
-          "total_sol_drained": 57.209622082000074
-        },
-        {
-          "token": "solami",
-          "attacks": 344,
-          "total_sol_drained": 56.22489204600004
-        },
-        {
-          "token": "ALT",
-          "attacks": 119,
-          "total_sol_drained": 55.922735569999965
-        },
-        {
-          "token": "america",
-          "attacks": 349,
-          "total_sol_drained": 52.55880829799994
-        },
-        {
-          "token": "T1DW",
-          "attacks": 140,
-          "total_sol_drained": 46.96383094199997
-        },
-        {
-          "token": "BUNKER",
-          "attacks": 60,
-          "total_sol_drained": 46.69838743499996
-        }
-      ],
-      "timestamp": 1752777487503,
+      "success": false,
+      "error": "API error: 503",
       "chartId": "chart_1747914341226_ps3utjg",
-      "title": "Top Tokens Attacked - By SOL Drained"
-    },
-    {
-      "success": true,
-      "data": [
-        {
-          "token": "GOR",
-          "attacks": 695,
-          "total_sol_drained": 163.72822969400013
-        },
-        {
-          "token": "AMERICA",
-          "attacks": 218,
-          "total_sol_drained": 74.206339623
-        },
-        {
-          "token": "USDP",
-          "attacks": 351,
-          "total_sol_drained": 70.90344443499998
-        },
-        {
-          "token": "PUMP",
-          "attacks": 670,
-          "total_sol_drained": 58.96923751700001
-        },
-        {
-          "token": "shiyo",
-          "attacks": 203,
-          "total_sol_drained": 57.209622082000074
-        },
-        {
-          "token": "solami",
-          "attacks": 344,
-          "total_sol_drained": 56.22489204600004
-        },
-        {
-          "token": "ALT",
-          "attacks": 119,
-          "total_sol_drained": 55.922735569999965
-        },
-        {
-          "token": "america",
-          "attacks": 349,
-          "total_sol_drained": 52.55880829799994
-        },
-        {
-          "token": "T1DW",
-          "attacks": 140,
-          "total_sol_drained": 46.96383094199997
-        },
-        {
-          "token": "BUNKER",
-          "attacks": 60,
-          "total_sol_drained": 46.69838743499996
-        }
-      ],
-      "timestamp": 1752777487504,
-      "chartId": "chart_1747936232766_dnjy7l0",
-      "title": "Top Tokens Attacked - By Attacks"
+      "title": "Top Tokens Attacked - By SOL Drained",
+      "parameters": {}
     },
     {
       "success": false,
-      "error": "API error: 404",
+      "error": "API error: 503",
+      "chartId": "chart_1747936232766_dnjy7l0",
+      "title": "Top Tokens Attacked - By Attacks",
+      "parameters": {}
+    },
+    {
+      "success": false,
+      "error": "API error: 503",
       "chartId": "chart_1747936484816_kqdflfn",
       "title": "Top Dexs Used - By SOL Drained",
       "parameters": {}
     },
     {
       "success": false,
-      "error": "API error: 404",
+      "error": "API error: 503",
       "chartId": "chart_1747936861655_4nzbmez",
       "title": "Top Dexs Used - By Attacks",
       "parameters": {}
@@ -136,7 +34,7 @@
   ],
   "summary": {
     "totalCharts": 4,
-    "successfulFetches": 2,
-    "failedFetches": 2
+    "successfulFetches": 0,
+    "failedFetches": 4
   }
 }
