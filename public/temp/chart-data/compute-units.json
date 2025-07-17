@@ -1,68 +1,5338 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "fetchedAt": "2025-07-17T18:59:37.593Z",
+  "fetchedAt": "2025-07-17T19:25:19.813Z",
   "charts": [
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "block_date": "2025-07-16",
+          "compute_txns": 28252321,
+          "total_txns": 28529120,
+          "non_compute_txns": 276799,
+          "percentage_txns_using_compute_budget": 99
+        },
+        {
+          "block_date": "2025-07-15",
+          "compute_txns": 103094729,
+          "total_txns": 115721833,
+          "non_compute_txns": 12627104,
+          "percentage_txns_using_compute_budget": 89.1
+        },
+        {
+          "block_date": "2025-07-14",
+          "compute_txns": 102239186,
+          "total_txns": 116057870,
+          "non_compute_txns": 13818684,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-13",
+          "compute_txns": 95238371,
+          "total_txns": 108540683,
+          "non_compute_txns": 13302312,
+          "percentage_txns_using_compute_budget": 87.7
+        },
+        {
+          "block_date": "2025-07-12",
+          "compute_txns": 92933803,
+          "total_txns": 107439441,
+          "non_compute_txns": 14505638,
+          "percentage_txns_using_compute_budget": 86.5
+        },
+        {
+          "block_date": "2025-07-11",
+          "compute_txns": 103059201,
+          "total_txns": 117251505,
+          "non_compute_txns": 14192304,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-07-10",
+          "compute_txns": 101768054,
+          "total_txns": 113733855,
+          "non_compute_txns": 11965801,
+          "percentage_txns_using_compute_budget": 89.5
+        },
+        {
+          "block_date": "2025-07-09",
+          "compute_txns": 99576744,
+          "total_txns": 113005805,
+          "non_compute_txns": 13429061,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-08",
+          "compute_txns": 101010897,
+          "total_txns": 113431608,
+          "non_compute_txns": 12420711,
+          "percentage_txns_using_compute_budget": 89.1
+        },
+        {
+          "block_date": "2025-07-07",
+          "compute_txns": 103146542,
+          "total_txns": 115086118,
+          "non_compute_txns": 11939576,
+          "percentage_txns_using_compute_budget": 89.6
+        },
+        {
+          "block_date": "2025-07-06",
+          "compute_txns": 104106296,
+          "total_txns": 116607348,
+          "non_compute_txns": 12501052,
+          "percentage_txns_using_compute_budget": 89.3
+        },
+        {
+          "block_date": "2025-07-05",
+          "compute_txns": 94080334,
+          "total_txns": 104271273,
+          "non_compute_txns": 10190939,
+          "percentage_txns_using_compute_budget": 90.2
+        },
+        {
+          "block_date": "2025-07-04",
+          "compute_txns": 87301455,
+          "total_txns": 99298183,
+          "non_compute_txns": 11996728,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-07-03",
+          "compute_txns": 96501782,
+          "total_txns": 111487380,
+          "non_compute_txns": 14985598,
+          "percentage_txns_using_compute_budget": 86.6
+        },
+        {
+          "block_date": "2025-07-02",
+          "compute_txns": 98678384,
+          "total_txns": 111964175,
+          "non_compute_txns": 13285791,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-01",
+          "compute_txns": 96042483,
+          "total_txns": 109257723,
+          "non_compute_txns": 13215240,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-06-30",
+          "compute_txns": 91962545,
+          "total_txns": 104647569,
+          "non_compute_txns": 12685024,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-06-29",
+          "compute_txns": 77233111,
+          "total_txns": 88458710,
+          "non_compute_txns": 11225599,
+          "percentage_txns_using_compute_budget": 87.3
+        },
+        {
+          "block_date": "2025-06-28",
+          "compute_txns": 79891889,
+          "total_txns": 94088681,
+          "non_compute_txns": 14196792,
+          "percentage_txns_using_compute_budget": 84.9
+        },
+        {
+          "block_date": "2025-06-27",
+          "compute_txns": 93138669,
+          "total_txns": 107506489,
+          "non_compute_txns": 14367820,
+          "percentage_txns_using_compute_budget": 86.6
+        },
+        {
+          "block_date": "2025-06-26",
+          "compute_txns": 98030567,
+          "total_txns": 110816833,
+          "non_compute_txns": 12786266,
+          "percentage_txns_using_compute_budget": 88.5
+        },
+        {
+          "block_date": "2025-06-25",
+          "compute_txns": 98929620,
+          "total_txns": 111184669,
+          "non_compute_txns": 12255049,
+          "percentage_txns_using_compute_budget": 89
+        },
+        {
+          "block_date": "2025-06-24",
+          "compute_txns": 89523644,
+          "total_txns": 101579843,
+          "non_compute_txns": 12056199,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-06-23",
+          "compute_txns": 86175940,
+          "total_txns": 97343243,
+          "non_compute_txns": 11167303,
+          "percentage_txns_using_compute_budget": 88.5
+        },
+        {
+          "block_date": "2025-06-22",
+          "compute_txns": 85561962,
+          "total_txns": 95405239,
+          "non_compute_txns": 9843277,
+          "percentage_txns_using_compute_budget": 89.7
+        },
+        {
+          "block_date": "2025-06-21",
+          "compute_txns": 89312682,
+          "total_txns": 102836229,
+          "non_compute_txns": 13523547,
+          "percentage_txns_using_compute_budget": 86.8
+        },
+        {
+          "block_date": "2025-06-20",
+          "compute_txns": 87344385,
+          "total_txns": 100645424,
+          "non_compute_txns": 13301039,
+          "percentage_txns_using_compute_budget": 86.8
+        },
+        {
+          "block_date": "2025-06-19",
+          "compute_txns": 88008307,
+          "total_txns": 100327149,
+          "non_compute_txns": 12318842,
+          "percentage_txns_using_compute_budget": 87.7
+        },
+        {
+          "block_date": "2025-06-18",
+          "compute_txns": 87796253,
+          "total_txns": 98856617,
+          "non_compute_txns": 11060364,
+          "percentage_txns_using_compute_budget": 88.8
+        },
+        {
+          "block_date": "2025-06-17",
+          "compute_txns": 86577214,
+          "total_txns": 99271731,
+          "non_compute_txns": 12694517,
+          "percentage_txns_using_compute_budget": 87.2
+        }
+      ],
+      "timestamp": 1752780317728,
       "chartId": "chart_1748087823998_ru1ktw2",
-      "title": "Transactions Using Compute Budget Program",
-      "parameters": {}
+      "title": "Transactions Using Compute Budget Program"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "block_date": "2025-07-16",
+          "compute_txns": 28252321,
+          "total_txns": 28529120,
+          "non_compute_txns": 276799,
+          "percentage_txns_using_compute_budget": 99
+        },
+        {
+          "block_date": "2025-07-15",
+          "compute_txns": 103094729,
+          "total_txns": 115721833,
+          "non_compute_txns": 12627104,
+          "percentage_txns_using_compute_budget": 89.1
+        },
+        {
+          "block_date": "2025-07-14",
+          "compute_txns": 102239186,
+          "total_txns": 116057870,
+          "non_compute_txns": 13818684,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-13",
+          "compute_txns": 95238371,
+          "total_txns": 108540683,
+          "non_compute_txns": 13302312,
+          "percentage_txns_using_compute_budget": 87.7
+        },
+        {
+          "block_date": "2025-07-12",
+          "compute_txns": 92933803,
+          "total_txns": 107439441,
+          "non_compute_txns": 14505638,
+          "percentage_txns_using_compute_budget": 86.5
+        },
+        {
+          "block_date": "2025-07-11",
+          "compute_txns": 103059201,
+          "total_txns": 117251505,
+          "non_compute_txns": 14192304,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-07-10",
+          "compute_txns": 101768054,
+          "total_txns": 113733855,
+          "non_compute_txns": 11965801,
+          "percentage_txns_using_compute_budget": 89.5
+        },
+        {
+          "block_date": "2025-07-09",
+          "compute_txns": 99576744,
+          "total_txns": 113005805,
+          "non_compute_txns": 13429061,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-08",
+          "compute_txns": 101010897,
+          "total_txns": 113431608,
+          "non_compute_txns": 12420711,
+          "percentage_txns_using_compute_budget": 89.1
+        },
+        {
+          "block_date": "2025-07-07",
+          "compute_txns": 103146542,
+          "total_txns": 115086118,
+          "non_compute_txns": 11939576,
+          "percentage_txns_using_compute_budget": 89.6
+        },
+        {
+          "block_date": "2025-07-06",
+          "compute_txns": 104106296,
+          "total_txns": 116607348,
+          "non_compute_txns": 12501052,
+          "percentage_txns_using_compute_budget": 89.3
+        },
+        {
+          "block_date": "2025-07-05",
+          "compute_txns": 94080334,
+          "total_txns": 104271273,
+          "non_compute_txns": 10190939,
+          "percentage_txns_using_compute_budget": 90.2
+        },
+        {
+          "block_date": "2025-07-04",
+          "compute_txns": 87301455,
+          "total_txns": 99298183,
+          "non_compute_txns": 11996728,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-07-03",
+          "compute_txns": 96501782,
+          "total_txns": 111487380,
+          "non_compute_txns": 14985598,
+          "percentage_txns_using_compute_budget": 86.6
+        },
+        {
+          "block_date": "2025-07-02",
+          "compute_txns": 98678384,
+          "total_txns": 111964175,
+          "non_compute_txns": 13285791,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-07-01",
+          "compute_txns": 96042483,
+          "total_txns": 109257723,
+          "non_compute_txns": 13215240,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-06-30",
+          "compute_txns": 91962545,
+          "total_txns": 104647569,
+          "non_compute_txns": 12685024,
+          "percentage_txns_using_compute_budget": 87.9
+        },
+        {
+          "block_date": "2025-06-29",
+          "compute_txns": 77233111,
+          "total_txns": 88458710,
+          "non_compute_txns": 11225599,
+          "percentage_txns_using_compute_budget": 87.3
+        },
+        {
+          "block_date": "2025-06-28",
+          "compute_txns": 79891889,
+          "total_txns": 94088681,
+          "non_compute_txns": 14196792,
+          "percentage_txns_using_compute_budget": 84.9
+        },
+        {
+          "block_date": "2025-06-27",
+          "compute_txns": 93138669,
+          "total_txns": 107506489,
+          "non_compute_txns": 14367820,
+          "percentage_txns_using_compute_budget": 86.6
+        },
+        {
+          "block_date": "2025-06-26",
+          "compute_txns": 98030567,
+          "total_txns": 110816833,
+          "non_compute_txns": 12786266,
+          "percentage_txns_using_compute_budget": 88.5
+        },
+        {
+          "block_date": "2025-06-25",
+          "compute_txns": 98929620,
+          "total_txns": 111184669,
+          "non_compute_txns": 12255049,
+          "percentage_txns_using_compute_budget": 89
+        },
+        {
+          "block_date": "2025-06-24",
+          "compute_txns": 89523644,
+          "total_txns": 101579843,
+          "non_compute_txns": 12056199,
+          "percentage_txns_using_compute_budget": 88.1
+        },
+        {
+          "block_date": "2025-06-23",
+          "compute_txns": 86175940,
+          "total_txns": 97343243,
+          "non_compute_txns": 11167303,
+          "percentage_txns_using_compute_budget": 88.5
+        },
+        {
+          "block_date": "2025-06-22",
+          "compute_txns": 85561962,
+          "total_txns": 95405239,
+          "non_compute_txns": 9843277,
+          "percentage_txns_using_compute_budget": 89.7
+        },
+        {
+          "block_date": "2025-06-21",
+          "compute_txns": 89312682,
+          "total_txns": 102836229,
+          "non_compute_txns": 13523547,
+          "percentage_txns_using_compute_budget": 86.8
+        },
+        {
+          "block_date": "2025-06-20",
+          "compute_txns": 87344385,
+          "total_txns": 100645424,
+          "non_compute_txns": 13301039,
+          "percentage_txns_using_compute_budget": 86.8
+        },
+        {
+          "block_date": "2025-06-19",
+          "compute_txns": 88008307,
+          "total_txns": 100327149,
+          "non_compute_txns": 12318842,
+          "percentage_txns_using_compute_budget": 87.7
+        },
+        {
+          "block_date": "2025-06-18",
+          "compute_txns": 87796253,
+          "total_txns": 98856617,
+          "non_compute_txns": 11060364,
+          "percentage_txns_using_compute_budget": 88.8
+        },
+        {
+          "block_date": "2025-06-17",
+          "compute_txns": 86577214,
+          "total_txns": 99271731,
+          "non_compute_txns": 12694517,
+          "percentage_txns_using_compute_budget": 87.2
+        }
+      ],
+      "timestamp": 1752780317727,
       "chartId": "chart_1748088263791_vfj94hw",
-      "title": "Daily Compute Budget Usage - In Percentage",
-      "parameters": {}
+      "title": "Daily Compute Budget Usage - In Percentage"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-06-18",
+          "avg_cu_allocated": 354153.6157621902,
+          "avg_cu_consumed": 78120.04766089658,
+          "max_unused_cu_single_txn": 2999939237,
+          "max_cu_allocated_single_txn": 3000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 276033.56810129364,
+          "median_unused_cu": 198177
+        },
+        {
+          "partition_0": "2025-06-19",
+          "avg_cu_allocated": 354646.49169089814,
+          "avg_cu_consumed": 76268.23805392896,
+          "max_unused_cu_single_txn": 299967192,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 278378.2536369692,
+          "median_unused_cu": 201258
+        },
+        {
+          "partition_0": "2025-07-11",
+          "avg_cu_allocated": 323957.9576267699,
+          "avg_cu_consumed": 73925.9052545381,
+          "max_unused_cu_single_txn": 4003999400,
+          "max_cu_allocated_single_txn": 4004000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 250032.05237223182,
+          "median_unused_cu": 179322
+        },
+        {
+          "partition_0": "2025-07-03",
+          "avg_cu_allocated": 337400.78606361547,
+          "avg_cu_consumed": 74924.18402874836,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 262476.6020348671,
+          "median_unused_cu": 199538
+        },
+        {
+          "partition_0": "2025-07-10",
+          "avg_cu_allocated": 323952.728417717,
+          "avg_cu_consumed": 73051.74073058546,
+          "max_unused_cu_single_txn": 999996059,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 250900.9876871315,
+          "median_unused_cu": 179732
+        },
+        {
+          "partition_0": "2025-07-14",
+          "avg_cu_allocated": 328982.29218982736,
+          "avg_cu_consumed": 76033.34940512867,
+          "max_unused_cu_single_txn": 299995056,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252948.9427846987,
+          "median_unused_cu": 183666
+        },
+        {
+          "partition_0": "2025-06-25",
+          "avg_cu_allocated": 335966.5698401009,
+          "avg_cu_consumed": 74172.31109570511,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261794.25874439577,
+          "median_unused_cu": 209179
+        },
+        {
+          "partition_0": "2025-07-12",
+          "avg_cu_allocated": 342312.4796670247,
+          "avg_cu_consumed": 74831.11049944871,
+          "max_unused_cu_single_txn": 999945344,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 267481.369167576,
+          "median_unused_cu": 190486
+        },
+        {
+          "partition_0": "2025-07-15",
+          "avg_cu_allocated": 314397.1068120309,
+          "avg_cu_consumed": 76679.48192021811,
+          "max_unused_cu_single_txn": 999923068,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 237717.62489181277,
+          "median_unused_cu": 167200
+        },
+        {
+          "partition_0": "2025-06-21",
+          "avg_cu_allocated": 351251.7779956906,
+          "avg_cu_consumed": 75624.74775402354,
+          "max_unused_cu_single_txn": 299967192,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 275627.03024166706,
+          "median_unused_cu": 205379
+        },
+        {
+          "partition_0": "2025-06-20",
+          "avg_cu_allocated": 354890.6219397317,
+          "avg_cu_consumed": 74566.81455572188,
+          "max_unused_cu_single_txn": 999933211,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 280323.8073840098,
+          "median_unused_cu": 207299
+        },
+        {
+          "partition_0": "2025-06-27",
+          "avg_cu_allocated": 356791.29702759616,
+          "avg_cu_consumed": 75959.72817004562,
+          "max_unused_cu_single_txn": 299976480,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 280831.56885755056,
+          "median_unused_cu": 206312
+        },
+        {
+          "partition_0": "2025-07-02",
+          "avg_cu_allocated": 337226.14337371755,
+          "avg_cu_consumed": 73678.94587623229,
+          "max_unused_cu_single_txn": 2684279182,
+          "max_cu_allocated_single_txn": 2684354560,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 263547.19749748526,
+          "median_unused_cu": 195583
+        },
+        {
+          "partition_0": "2025-07-09",
+          "avg_cu_allocated": 328214.12741572876,
+          "avg_cu_consumed": 71796.22441569263,
+          "max_unused_cu_single_txn": 999996059,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 256417.90300003614,
+          "median_unused_cu": 192872
+        },
+        {
+          "partition_0": "2025-07-05",
+          "avg_cu_allocated": 327461.7748627371,
+          "avg_cu_consumed": 75209.67922037357,
+          "max_unused_cu_single_txn": 299967192,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252252.09564236354,
+          "median_unused_cu": 204129
+        },
+        {
+          "partition_0": "2025-07-06",
+          "avg_cu_allocated": 334148.829794191,
+          "avg_cu_consumed": 72189.04759498518,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261959.78219920583,
+          "median_unused_cu": 211273
+        },
+        {
+          "partition_0": "2025-07-04",
+          "avg_cu_allocated": 335762.9414051413,
+          "avg_cu_consumed": 75502.25104579204,
+          "max_unused_cu_single_txn": 3525108426,
+          "max_cu_allocated_single_txn": 3525113520,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 260260.69035934928,
+          "median_unused_cu": 195142
+        },
+        {
+          "partition_0": "2025-06-29",
+          "avg_cu_allocated": 336468.9704271744,
+          "avg_cu_consumed": 73935.78950589489,
+          "max_unused_cu_single_txn": 2818568529,
+          "max_cu_allocated_single_txn": 2818572288,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 262533.18092127953,
+          "median_unused_cu": 194263
+        },
+        {
+          "partition_0": "2025-06-26",
+          "avg_cu_allocated": 353189.5327075445,
+          "avg_cu_consumed": 71327.5851882358,
+          "max_unused_cu_single_txn": 2684300579,
+          "max_cu_allocated_single_txn": 2684354560,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 281861.9475193087,
+          "median_unused_cu": 217026
+        },
+        {
+          "partition_0": "2025-07-16",
+          "avg_cu_allocated": 293996.4989044177,
+          "avg_cu_consumed": 79560.4220512585,
+          "max_unused_cu_single_txn": 4026528081,
+          "max_cu_allocated_single_txn": 4026531840,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 214436.07685315915,
+          "median_unused_cu": 188145
+        },
+        {
+          "partition_0": "2025-07-01",
+          "avg_cu_allocated": 346704.3529756153,
+          "avg_cu_consumed": 73817.27825308056,
+          "max_unused_cu_single_txn": 299990412,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 272887.07472253474,
+          "median_unused_cu": 207759
+        },
+        {
+          "partition_0": "2025-06-30",
+          "avg_cu_allocated": 333002.9366717444,
+          "avg_cu_consumed": 74872.4434376015,
+          "max_unused_cu_single_txn": 268435306,
+          "max_cu_allocated_single_txn": 268435456,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 258130.49323414286,
+          "median_unused_cu": 191427
+        },
+        {
+          "partition_0": "2025-06-22",
+          "avg_cu_allocated": 330618.453326059,
+          "avg_cu_consumed": 78022.08123440684,
+          "max_unused_cu_single_txn": 2999940737,
+          "max_cu_allocated_single_txn": 3000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252596.37209165213,
+          "median_unused_cu": 192377
+        },
+        {
+          "partition_0": "2025-06-24",
+          "avg_cu_allocated": 339300.74295684823,
+          "avg_cu_consumed": 73510.17190526667,
+          "max_unused_cu_single_txn": 999930116,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 265790.5710515816,
+          "median_unused_cu": 203296
+        },
+        {
+          "partition_0": "2025-06-17",
+          "avg_cu_allocated": 362520.9312179013,
+          "avg_cu_consumed": 76840.87237694082,
+          "max_unused_cu_single_txn": 2999940738,
+          "max_cu_allocated_single_txn": 3000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 285680.0588409605,
+          "median_unused_cu": 196448
+        },
+        {
+          "partition_0": "2025-07-07",
+          "avg_cu_allocated": 335126.1367616466,
+          "avg_cu_consumed": 73331.89524263039,
+          "max_unused_cu_single_txn": 999968777,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261794.2415190162,
+          "median_unused_cu": 199247
+        },
+        {
+          "partition_0": "2025-07-13",
+          "avg_cu_allocated": 337619.53292078513,
+          "avg_cu_consumed": 74248.24476163468,
+          "max_unused_cu_single_txn": 299990412,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 263371.28815915046,
+          "median_unused_cu": 182780
+        },
+        {
+          "partition_0": "2025-06-28",
+          "avg_cu_allocated": 359964.08138187206,
+          "avg_cu_consumed": 75350.91482356947,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 284613.1665583026,
+          "median_unused_cu": 200564
+        },
+        {
+          "partition_0": "2025-07-08",
+          "avg_cu_allocated": 336531.1510303195,
+          "avg_cu_consumed": 71785.06406697506,
+          "max_unused_cu_single_txn": 536870612,
+          "max_cu_allocated_single_txn": 536870912,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 264746.0869633445,
+          "median_unused_cu": 202044
+        },
+        {
+          "partition_0": "2025-06-23",
+          "avg_cu_allocated": 329403.9975370145,
+          "avg_cu_consumed": 75116.78655594,
+          "max_unused_cu_single_txn": 999933261,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 254287.21098107446,
+          "median_unused_cu": 197241
+        }
+      ],
+      "timestamp": 1752780317729,
       "chartId": "chart_1748088783904_hypf57i",
-      "title": "Avg Cu Allocated & Consumed Per Transaction",
-      "parameters": {}
+      "title": "Avg Cu Allocated & Consumed Per Transaction"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-07-01",
+          "avg_consumed_cu_per_block": 37001508.20990792
+        },
+        {
+          "partition_0": "2025-06-23",
+          "avg_consumed_cu_per_block": 34124256.726482764
+        },
+        {
+          "partition_0": "2025-06-17",
+          "avg_consumed_cu_per_block": 35455745.71758117
+        },
+        {
+          "partition_0": "2025-06-30",
+          "avg_consumed_cu_per_block": 35956216.744688176
+        },
+        {
+          "partition_0": "2025-06-24",
+          "avg_consumed_cu_per_block": 34846498.952526286
+        },
+        {
+          "partition_0": "2025-06-22",
+          "avg_consumed_cu_per_block": 34731132.80568672
+        },
+        {
+          "partition_0": "2025-07-06",
+          "avg_consumed_cu_per_block": 38820742.74545857
+        },
+        {
+          "partition_0": "2025-07-04",
+          "avg_consumed_cu_per_block": 34294558.6093096
+        },
+        {
+          "partition_0": "2025-07-05",
+          "avg_consumed_cu_per_block": 36165544.4712279
+        },
+        {
+          "partition_0": "2025-07-16",
+          "avg_consumed_cu_per_block": 11296584.470733153
+        },
+        {
+          "partition_0": "2025-06-26",
+          "avg_consumed_cu_per_block": 36653699.993034944
+        },
+        {
+          "partition_0": "2025-06-29",
+          "avg_consumed_cu_per_block": 30026970.669900328
+        },
+        {
+          "partition_0": "2025-06-21",
+          "avg_consumed_cu_per_block": 36309902.644467585
+        },
+        {
+          "partition_0": "2025-06-20",
+          "avg_consumed_cu_per_block": 34975060.89818992
+        },
+        {
+          "partition_0": "2025-07-15",
+          "avg_consumed_cu_per_block": 40864354.23932395
+        },
+        {
+          "partition_0": "2025-07-12",
+          "avg_consumed_cu_per_block": 36963976.209495
+        },
+        {
+          "partition_0": "2025-06-25",
+          "avg_consumed_cu_per_block": 38296224.43330408
+        },
+        {
+          "partition_0": "2025-06-27",
+          "avg_consumed_cu_per_block": 37746547.97013987
+        },
+        {
+          "partition_0": "2025-07-09",
+          "avg_consumed_cu_per_block": 37202539.06035665
+        },
+        {
+          "partition_0": "2025-07-14",
+          "avg_consumed_cu_per_block": 40522536.4431122
+        },
+        {
+          "partition_0": "2025-07-02",
+          "avg_consumed_cu_per_block": 37885089.13928945
+        },
+        {
+          "partition_0": "2025-07-11",
+          "avg_consumed_cu_per_block": 39788677.70603491
+        },
+        {
+          "partition_0": "2025-07-10",
+          "avg_consumed_cu_per_block": 38107813.72663686
+        },
+        {
+          "partition_0": "2025-07-03",
+          "avg_consumed_cu_per_block": 38219849.44683236
+        },
+        {
+          "partition_0": "2025-07-13",
+          "avg_consumed_cu_per_block": 36920771.304255605
+        },
+        {
+          "partition_0": "2025-07-07",
+          "avg_consumed_cu_per_block": 38941874.995648764
+        },
+        {
+          "partition_0": "2025-06-19",
+          "avg_consumed_cu_per_block": 35719903.66361056
+        },
+        {
+          "partition_0": "2025-07-08",
+          "avg_consumed_cu_per_block": 37615987.72803496
+        },
+        {
+          "partition_0": "2025-06-18",
+          "avg_consumed_cu_per_block": 35856917.616413236
+        },
+        {
+          "partition_0": "2025-06-28",
+          "avg_consumed_cu_per_block": 32649164.795705214
+        }
+      ],
+      "timestamp": 1752780318769,
       "chartId": "chart_1748088979907_8f6w6d2",
-      "title": "Avg Cu Consumed Per Block",
-      "parameters": {}
+      "title": "Avg Cu Consumed Per Block"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-07-07",
+          "max_compute_unit_price": 75555.56,
+          "median_compute_unit_price": 0.005941795,
+          "99 percentile compute unit price": 10.695292,
+          "99.99 percentile compute unit price": 358.55157,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-07",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.71099159234038,
+          "max_compute_unit_price_usd": 0.011387053367914568
+        },
+        {
+          "partition_0": "2025-07-16",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.010016397,
+          "99 percentile compute unit price": 7.001299,
+          "99.99 percentile compute unit price": 343.91675,
+          "avg_compute_unit_price": 0.62,
+          "block_date": "2025-07-16",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 168.3104908951357,
+          "max_compute_unit_price_usd": 0.014025873680226338
+        },
+        {
+          "partition_0": "2025-07-15",
+          "max_compute_unit_price": 21996.99,
+          "median_compute_unit_price": 0.005592128,
+          "99 percentile compute unit price": 10.814927,
+          "99.99 percentile compute unit price": 332.3046,
+          "avg_compute_unit_price": 0.93,
+          "block_date": "2025-07-15",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.54402598996518,
+          "max_compute_unit_price_usd": 0.0035314853342610043
+        },
+        {
+          "partition_0": "2025-06-23",
+          "max_compute_unit_price": 28571.36,
+          "median_compute_unit_price": 0.004218251,
+          "99 percentile compute unit price": 11.313123,
+          "99.99 percentile compute unit price": 359.98624,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-06-23",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.4462538653701,
+          "max_compute_unit_price_usd": 0.00395559775983888
+        },
+        {
+          "partition_0": "2025-06-26",
+          "max_compute_unit_price": 11895.29,
+          "median_compute_unit_price": 0.002120511,
+          "99 percentile compute unit price": 10.656196,
+          "99.99 percentile compute unit price": 291.60458,
+          "avg_compute_unit_price": 0.74,
+          "block_date": "2025-06-26",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.46826691546116,
+          "max_compute_unit_price_usd": 0.0017065966407568162
+        },
+        {
+          "partition_0": "2025-07-08",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.004481877,
+          "99 percentile compute unit price": 10.345822,
+          "99.99 percentile compute unit price": 356.0723,
+          "avg_compute_unit_price": 0.87,
+          "block_date": "2025-07-08",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.41253324196896,
+          "max_compute_unit_price_usd": 0.030082506648393792
+        },
+        {
+          "partition_0": "2025-07-09",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0026868673,
+          "99 percentile compute unit price": 10.091003,
+          "99.99 percentile compute unit price": 301.31104,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-09",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.29463526661482,
+          "max_compute_unit_price_usd": 0.0033688783240893843
+        },
+        {
+          "partition_0": "2025-07-02",
+          "max_compute_unit_price": 22156.27,
+          "median_compute_unit_price": 0.0037839208,
+          "99 percentile compute unit price": 11.22783,
+          "99.99 percentile compute unit price": 339.87946,
+          "avg_compute_unit_price": 0.84,
+          "block_date": "2025-07-02",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.80000656182912,
+          "max_compute_unit_price_usd": 0.0033411656613856577
+        },
+        {
+          "partition_0": "2025-07-11",
+          "max_compute_unit_price": 21545.3,
+          "median_compute_unit_price": 0.0022211897,
+          "99 percentile compute unit price": 9.983894,
+          "99.99 percentile compute unit price": 329.5879,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-11",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 163.87885627462637,
+          "max_compute_unit_price_usd": 0.0035308191220937073
+        },
+        {
+          "partition_0": "2025-07-12",
+          "max_compute_unit_price": 66682.43,
+          "median_compute_unit_price": 0.0027761962,
+          "99 percentile compute unit price": 9.586916,
+          "99.99 percentile compute unit price": 251.26976,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-12",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.99749460116794,
+          "max_compute_unit_price_usd": 0.010735704163917758
+        },
+        {
+          "partition_0": "2025-06-28",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0019560272,
+          "99 percentile compute unit price": 10.144982,
+          "99.99 percentile compute unit price": 239.95909,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-28",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.41471639968606,
+          "max_compute_unit_price_usd": 0.00321866176275373
+        },
+        {
+          "partition_0": "2025-06-18",
+          "max_compute_unit_price": 134512.16,
+          "median_compute_unit_price": 0.0021313876,
+          "99 percentile compute unit price": 12.052907,
+          "99.99 percentile compute unit price": 308.50046,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-18",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 146.31207768654807,
+          "max_compute_unit_price_usd": 0.019680753603705383
+        },
+        {
+          "partition_0": "2025-07-14",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.003887793,
+          "99 percentile compute unit price": 10.651873,
+          "99.99 percentile compute unit price": 352.4118,
+          "avg_compute_unit_price": 0.92,
+          "block_date": "2025-07-14",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 165.2238570967048,
+          "max_compute_unit_price_usd": 0.013768654207312542
+        },
+        {
+          "partition_0": "2025-07-03",
+          "max_compute_unit_price": 1600000,
+          "median_compute_unit_price": 0.0028626502,
+          "99 percentile compute unit price": 10.461073,
+          "99.99 percentile compute unit price": 309.10806,
+          "avg_compute_unit_price": 0.79,
+          "block_date": "2025-07-03",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 153.34383413713323,
+          "max_compute_unit_price_usd": 0.24535013461941316
+        },
+        {
+          "partition_0": "2025-06-22",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00393618,
+          "99 percentile compute unit price": 10.503723,
+          "99.99 percentile compute unit price": 230.01862,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-22",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 131.63410928118572,
+          "max_compute_unit_price_usd": 0.0028741070400919656
+        },
+        {
+          "partition_0": "2025-06-24",
+          "max_compute_unit_price": 140127.26,
+          "median_compute_unit_price": 0.0030115654,
+          "99 percentile compute unit price": 11.106894,
+          "99.99 percentile compute unit price": 287.04822,
+          "avg_compute_unit_price": 0.79,
+          "block_date": "2025-06-24",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 144.4851435118334,
+          "max_compute_unit_price_usd": 0.020246307271019993
+        },
+        {
+          "partition_0": "2025-07-05",
+          "max_compute_unit_price": 80000,
+          "median_compute_unit_price": 0.0055239354,
+          "99 percentile compute unit price": 10.129989,
+          "99.99 percentile compute unit price": 356.23544,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-07-05",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.56323877227777,
+          "max_compute_unit_price_usd": 0.011805059101782221
+        },
+        {
+          "partition_0": "2025-07-01",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002517348,
+          "99 percentile compute unit price": 10.651783,
+          "99.99 percentile compute unit price": 319.84384,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-01",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.34363650521408,
+          "max_compute_unit_price_usd": 0.0032607779200730345
+        },
+        {
+          "partition_0": "2025-06-30",
+          "max_compute_unit_price": 32989.69,
+          "median_compute_unit_price": 0.0031029093,
+          "99 percentile compute unit price": 10.946312,
+          "99.99 percentile compute unit price": 347.63898,
+          "avg_compute_unit_price": 0.85,
+          "block_date": "2025-06-30",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.44001760144874,
+          "max_compute_unit_price_usd": 0.005094928304266338
+        },
+        {
+          "partition_0": "2025-06-29",
+          "max_compute_unit_price": 25000,
+          "median_compute_unit_price": 0.0021984128,
+          "99 percentile compute unit price": 10.071917,
+          "99.99 percentile compute unit price": 237.29948,
+          "avg_compute_unit_price": 0.7,
+          "block_date": "2025-06-29",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 151.6992194749125,
+          "max_compute_unit_price_usd": 0.0037924804868728124
+        },
+        {
+          "partition_0": "2025-07-04",
+          "max_compute_unit_price": 40000,
+          "median_compute_unit_price": 0.0032730491,
+          "99 percentile compute unit price": 10.0842285,
+          "99.99 percentile compute unit price": 274.0309,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-04",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.44902008975427,
+          "max_compute_unit_price_usd": 0.005977960803590171
+        },
+        {
+          "partition_0": "2025-06-17",
+          "max_compute_unit_price": 85598.64,
+          "median_compute_unit_price": 0.0022212805,
+          "99 percentile compute unit price": 12.083854,
+          "99.99 percentile compute unit price": 289.63995,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-17",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.9861832524408,
+          "max_compute_unit_price_usd": 0.012838613305199711
+        },
+        {
+          "partition_0": "2025-06-20",
+          "max_compute_unit_price": 22222.22,
+          "median_compute_unit_price": 0.0016603372,
+          "99 percentile compute unit price": 10.219909,
+          "99.99 percentile compute unit price": 268.3127,
+          "avg_compute_unit_price": 0.76,
+          "block_date": "2025-06-20",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.15959210382542,
+          "max_compute_unit_price_usd": 0.0031813239508414718
+        },
+        {
+          "partition_0": "2025-06-25",
+          "max_compute_unit_price": 83228.31,
+          "median_compute_unit_price": 0.002553589,
+          "99 percentile compute unit price": 10.837708,
+          "99.99 percentile compute unit price": 325.88013,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-25",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 145.2651794105914,
+          "max_compute_unit_price_usd": 0.012090175384190317
+        },
+        {
+          "partition_0": "2025-07-13",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002511115,
+          "99 percentile compute unit price": 9.298417,
+          "99.99 percentile compute unit price": 250.84998,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-07-13",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 161.97517615562822,
+          "max_compute_unit_price_usd": 0.003536575714692556
+        },
+        {
+          "partition_0": "2025-07-10",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0043340926,
+          "99 percentile compute unit price": 10.393276,
+          "99.99 percentile compute unit price": 349.34467,
+          "avg_compute_unit_price": 0.9,
+          "block_date": "2025-07-10",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 159.6128407729684,
+          "max_compute_unit_price_usd": 0.003484996342207439
+        },
+        {
+          "partition_0": "2025-06-27",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0022212614,
+          "99 percentile compute unit price": 10.078436,
+          "99.99 percentile compute unit price": 265.56415,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-27",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 142.04039351167054,
+          "max_compute_unit_price_usd": 0.02840807870233411
+        },
+        {
+          "partition_0": "2025-06-19",
+          "max_compute_unit_price": 22222.22,
+          "median_compute_unit_price": 0.0017468754,
+          "99 percentile compute unit price": 11.499711,
+          "99.99 percentile compute unit price": 354.60953,
+          "avg_compute_unit_price": 0.96,
+          "block_date": "2025-06-19",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 145.46872872170198,
+          "max_compute_unit_price_usd": 0.0032326380927739803
+        },
+        {
+          "partition_0": "2025-07-06",
+          "max_compute_unit_price": 39873.47,
+          "median_compute_unit_price": 0.005422447,
+          "99 percentile compute unit price": 10.143416,
+          "99.99 percentile compute unit price": 339.6234,
+          "avg_compute_unit_price": 0.72,
+          "block_date": "2025-07-06",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.77232623411976,
+          "max_compute_unit_price_usd": 0.006011815826926388
+        },
+        {
+          "partition_0": "2025-06-21",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002271342,
+          "99 percentile compute unit price": 9.840169,
+          "99.99 percentile compute unit price": 219.87617,
+          "avg_compute_unit_price": 0.6,
+          "block_date": "2025-06-21",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.0643933499308,
+          "max_compute_unit_price_usd": 0.0030145062482659904
+        }
+      ],
+      "timestamp": 1752780318776,
       "chartId": "chart_1748089483199_dzzkc0m",
-      "title": "Avg & Median Cu Price",
-      "parameters": {}
+      "title": "Avg & Median Cu Price"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-07-07",
+          "max_compute_unit_price": 75555.56,
+          "median_compute_unit_price": 0.005941795,
+          "99 percentile compute unit price": 10.695292,
+          "99.99 percentile compute unit price": 358.55157,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-07",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.71099159234038,
+          "max_compute_unit_price_usd": 0.011387053367914568
+        },
+        {
+          "partition_0": "2025-07-16",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.010016397,
+          "99 percentile compute unit price": 7.001299,
+          "99.99 percentile compute unit price": 343.91675,
+          "avg_compute_unit_price": 0.62,
+          "block_date": "2025-07-16",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 168.3104908951357,
+          "max_compute_unit_price_usd": 0.014025873680226338
+        },
+        {
+          "partition_0": "2025-07-15",
+          "max_compute_unit_price": 21996.99,
+          "median_compute_unit_price": 0.005592128,
+          "99 percentile compute unit price": 10.814927,
+          "99.99 percentile compute unit price": 332.3046,
+          "avg_compute_unit_price": 0.93,
+          "block_date": "2025-07-15",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.54402598996518,
+          "max_compute_unit_price_usd": 0.0035314853342610043
+        },
+        {
+          "partition_0": "2025-06-23",
+          "max_compute_unit_price": 28571.36,
+          "median_compute_unit_price": 0.004218251,
+          "99 percentile compute unit price": 11.313123,
+          "99.99 percentile compute unit price": 359.98624,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-06-23",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.4462538653701,
+          "max_compute_unit_price_usd": 0.00395559775983888
+        },
+        {
+          "partition_0": "2025-06-26",
+          "max_compute_unit_price": 11895.29,
+          "median_compute_unit_price": 0.002120511,
+          "99 percentile compute unit price": 10.656196,
+          "99.99 percentile compute unit price": 291.60458,
+          "avg_compute_unit_price": 0.74,
+          "block_date": "2025-06-26",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.46826691546116,
+          "max_compute_unit_price_usd": 0.0017065966407568162
+        },
+        {
+          "partition_0": "2025-07-08",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.004481877,
+          "99 percentile compute unit price": 10.345822,
+          "99.99 percentile compute unit price": 356.0723,
+          "avg_compute_unit_price": 0.87,
+          "block_date": "2025-07-08",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.41253324196896,
+          "max_compute_unit_price_usd": 0.030082506648393792
+        },
+        {
+          "partition_0": "2025-07-09",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0026868673,
+          "99 percentile compute unit price": 10.091003,
+          "99.99 percentile compute unit price": 301.31104,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-09",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.29463526661482,
+          "max_compute_unit_price_usd": 0.0033688783240893843
+        },
+        {
+          "partition_0": "2025-07-02",
+          "max_compute_unit_price": 22156.27,
+          "median_compute_unit_price": 0.0037839208,
+          "99 percentile compute unit price": 11.22783,
+          "99.99 percentile compute unit price": 339.87946,
+          "avg_compute_unit_price": 0.84,
+          "block_date": "2025-07-02",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.80000656182912,
+          "max_compute_unit_price_usd": 0.0033411656613856577
+        },
+        {
+          "partition_0": "2025-07-11",
+          "max_compute_unit_price": 21545.3,
+          "median_compute_unit_price": 0.0022211897,
+          "99 percentile compute unit price": 9.983894,
+          "99.99 percentile compute unit price": 329.5879,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-11",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 163.87885627462637,
+          "max_compute_unit_price_usd": 0.0035308191220937073
+        },
+        {
+          "partition_0": "2025-07-12",
+          "max_compute_unit_price": 66682.43,
+          "median_compute_unit_price": 0.0027761962,
+          "99 percentile compute unit price": 9.586916,
+          "99.99 percentile compute unit price": 251.26976,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-12",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.99749460116794,
+          "max_compute_unit_price_usd": 0.010735704163917758
+        },
+        {
+          "partition_0": "2025-06-28",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0019560272,
+          "99 percentile compute unit price": 10.144982,
+          "99.99 percentile compute unit price": 239.95909,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-28",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.41471639968606,
+          "max_compute_unit_price_usd": 0.00321866176275373
+        },
+        {
+          "partition_0": "2025-06-18",
+          "max_compute_unit_price": 134512.16,
+          "median_compute_unit_price": 0.0021313876,
+          "99 percentile compute unit price": 12.052907,
+          "99.99 percentile compute unit price": 308.50046,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-18",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 146.31207768654807,
+          "max_compute_unit_price_usd": 0.019680753603705383
+        },
+        {
+          "partition_0": "2025-07-14",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.003887793,
+          "99 percentile compute unit price": 10.651873,
+          "99.99 percentile compute unit price": 352.4118,
+          "avg_compute_unit_price": 0.92,
+          "block_date": "2025-07-14",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 165.2238570967048,
+          "max_compute_unit_price_usd": 0.013768654207312542
+        },
+        {
+          "partition_0": "2025-07-03",
+          "max_compute_unit_price": 1600000,
+          "median_compute_unit_price": 0.0028626502,
+          "99 percentile compute unit price": 10.461073,
+          "99.99 percentile compute unit price": 309.10806,
+          "avg_compute_unit_price": 0.79,
+          "block_date": "2025-07-03",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 153.34383413713323,
+          "max_compute_unit_price_usd": 0.24535013461941316
+        },
+        {
+          "partition_0": "2025-06-22",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00393618,
+          "99 percentile compute unit price": 10.503723,
+          "99.99 percentile compute unit price": 230.01862,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-22",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 131.63410928118572,
+          "max_compute_unit_price_usd": 0.0028741070400919656
+        },
+        {
+          "partition_0": "2025-06-24",
+          "max_compute_unit_price": 140127.26,
+          "median_compute_unit_price": 0.0030115654,
+          "99 percentile compute unit price": 11.106894,
+          "99.99 percentile compute unit price": 287.04822,
+          "avg_compute_unit_price": 0.79,
+          "block_date": "2025-06-24",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 144.4851435118334,
+          "max_compute_unit_price_usd": 0.020246307271019993
+        },
+        {
+          "partition_0": "2025-07-05",
+          "max_compute_unit_price": 80000,
+          "median_compute_unit_price": 0.0055239354,
+          "99 percentile compute unit price": 10.129989,
+          "99.99 percentile compute unit price": 356.23544,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-07-05",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.56323877227777,
+          "max_compute_unit_price_usd": 0.011805059101782221
+        },
+        {
+          "partition_0": "2025-07-01",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002517348,
+          "99 percentile compute unit price": 10.651783,
+          "99.99 percentile compute unit price": 319.84384,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-01",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.34363650521408,
+          "max_compute_unit_price_usd": 0.0032607779200730345
+        },
+        {
+          "partition_0": "2025-06-30",
+          "max_compute_unit_price": 32989.69,
+          "median_compute_unit_price": 0.0031029093,
+          "99 percentile compute unit price": 10.946312,
+          "99.99 percentile compute unit price": 347.63898,
+          "avg_compute_unit_price": 0.85,
+          "block_date": "2025-06-30",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.44001760144874,
+          "max_compute_unit_price_usd": 0.005094928304266338
+        },
+        {
+          "partition_0": "2025-06-29",
+          "max_compute_unit_price": 25000,
+          "median_compute_unit_price": 0.0021984128,
+          "99 percentile compute unit price": 10.071917,
+          "99.99 percentile compute unit price": 237.29948,
+          "avg_compute_unit_price": 0.7,
+          "block_date": "2025-06-29",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 151.6992194749125,
+          "max_compute_unit_price_usd": 0.0037924804868728124
+        },
+        {
+          "partition_0": "2025-07-04",
+          "max_compute_unit_price": 40000,
+          "median_compute_unit_price": 0.0032730491,
+          "99 percentile compute unit price": 10.0842285,
+          "99.99 percentile compute unit price": 274.0309,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-04",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.44902008975427,
+          "max_compute_unit_price_usd": 0.005977960803590171
+        },
+        {
+          "partition_0": "2025-06-17",
+          "max_compute_unit_price": 85598.64,
+          "median_compute_unit_price": 0.0022212805,
+          "99 percentile compute unit price": 12.083854,
+          "99.99 percentile compute unit price": 289.63995,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-17",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.9861832524408,
+          "max_compute_unit_price_usd": 0.012838613305199711
+        },
+        {
+          "partition_0": "2025-06-20",
+          "max_compute_unit_price": 22222.22,
+          "median_compute_unit_price": 0.0016603372,
+          "99 percentile compute unit price": 10.219909,
+          "99.99 percentile compute unit price": 268.3127,
+          "avg_compute_unit_price": 0.76,
+          "block_date": "2025-06-20",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.15959210382542,
+          "max_compute_unit_price_usd": 0.0031813239508414718
+        },
+        {
+          "partition_0": "2025-06-25",
+          "max_compute_unit_price": 83228.31,
+          "median_compute_unit_price": 0.002553589,
+          "99 percentile compute unit price": 10.837708,
+          "99.99 percentile compute unit price": 325.88013,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-25",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 145.2651794105914,
+          "max_compute_unit_price_usd": 0.012090175384190317
+        },
+        {
+          "partition_0": "2025-07-13",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002511115,
+          "99 percentile compute unit price": 9.298417,
+          "99.99 percentile compute unit price": 250.84998,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-07-13",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 161.97517615562822,
+          "max_compute_unit_price_usd": 0.003536575714692556
+        },
+        {
+          "partition_0": "2025-07-10",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0043340926,
+          "99 percentile compute unit price": 10.393276,
+          "99.99 percentile compute unit price": 349.34467,
+          "avg_compute_unit_price": 0.9,
+          "block_date": "2025-07-10",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 159.6128407729684,
+          "max_compute_unit_price_usd": 0.003484996342207439
+        },
+        {
+          "partition_0": "2025-06-27",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0022212614,
+          "99 percentile compute unit price": 10.078436,
+          "99.99 percentile compute unit price": 265.56415,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-27",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 142.04039351167054,
+          "max_compute_unit_price_usd": 0.02840807870233411
+        },
+        {
+          "partition_0": "2025-06-19",
+          "max_compute_unit_price": 22222.22,
+          "median_compute_unit_price": 0.0017468754,
+          "99 percentile compute unit price": 11.499711,
+          "99.99 percentile compute unit price": 354.60953,
+          "avg_compute_unit_price": 0.96,
+          "block_date": "2025-06-19",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 145.46872872170198,
+          "max_compute_unit_price_usd": 0.0032326380927739803
+        },
+        {
+          "partition_0": "2025-07-06",
+          "max_compute_unit_price": 39873.47,
+          "median_compute_unit_price": 0.005422447,
+          "99 percentile compute unit price": 10.143416,
+          "99.99 percentile compute unit price": 339.6234,
+          "avg_compute_unit_price": 0.72,
+          "block_date": "2025-07-06",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.77232623411976,
+          "max_compute_unit_price_usd": 0.006011815826926388
+        },
+        {
+          "partition_0": "2025-06-21",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002271342,
+          "99 percentile compute unit price": 9.840169,
+          "99.99 percentile compute unit price": 219.87617,
+          "avg_compute_unit_price": 0.6,
+          "block_date": "2025-06-21",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.0643933499308,
+          "max_compute_unit_price_usd": 0.0030145062482659904
+        }
+      ],
+      "timestamp": 1752780318775,
       "chartId": "chart_1748201111110_el5y1pn",
-      "title": "Max Cu Price In Single Transaction - Lamports/cu",
-      "parameters": {}
+      "title": "Max Cu Price In Single Transaction - Lamports/cu"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-07-06",
+          "category": "others",
+          "total_cu_requested": 14204898765512,
+          "total_cu_consumed": 3037099824586
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "others",
+          "total_cu_requested": 14158913250466,
+          "total_cu_consumed": 3138851425572
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "DeFi",
+          "total_cu_requested": 14095199125325,
+          "total_cu_consumed": 4497127150603
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "DeFi",
+          "total_cu_requested": 13875806664930,
+          "total_cu_consumed": 4704579243936
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "DeFi",
+          "total_cu_requested": 13842754919968,
+          "total_cu_consumed": 4261394699109
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "DeFi",
+          "total_cu_requested": 13699230353526,
+          "total_cu_consumed": 4484379602365
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "others",
+          "total_cu_requested": 13555672784185,
+          "total_cu_consumed": 2739596287006
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "DeFi",
+          "total_cu_requested": 13504438900006,
+          "total_cu_consumed": 4599446014619
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "DeFi",
+          "total_cu_requested": 13400649083095,
+          "total_cu_consumed": 4456693578608
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "DeFi",
+          "total_cu_requested": 12977364277558,
+          "total_cu_consumed": 4516283468734
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "DeFi",
+          "total_cu_requested": 12926567668697,
+          "total_cu_consumed": 4465691775875
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "DeFi",
+          "total_cu_requested": 12850093482230,
+          "total_cu_consumed": 4294193750118
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "DeFi",
+          "total_cu_requested": 12688907096141,
+          "total_cu_consumed": 4493760668763
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "DeFi",
+          "total_cu_requested": 12679096561402,
+          "total_cu_consumed": 4084489036986
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "DeFi",
+          "total_cu_requested": 12555891072727,
+          "total_cu_consumed": 4481375598977
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "DeFi",
+          "total_cu_requested": 12400815185487,
+          "total_cu_consumed": 4301662714766
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "others",
+          "total_cu_requested": 12322088017248,
+          "total_cu_consumed": 2927043680850
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "DeFi",
+          "total_cu_requested": 12286588850907,
+          "total_cu_consumed": 4105075755897
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "others",
+          "total_cu_requested": 12261412309663,
+          "total_cu_consumed": 2701840046877
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "others",
+          "total_cu_requested": 11932803704847,
+          "total_cu_consumed": 2648302766874
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "DeFi",
+          "total_cu_requested": 11775856839607,
+          "total_cu_consumed": 4470552992545
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "DeFi",
+          "total_cu_requested": 11730435841577,
+          "total_cu_consumed": 4245251425538
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "DeFi",
+          "total_cu_requested": 11667162728851,
+          "total_cu_consumed": 3906148338816
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "others",
+          "total_cu_requested": 11658602875062,
+          "total_cu_consumed": 2631512844097
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "others",
+          "total_cu_requested": 11622022300719,
+          "total_cu_consumed": 2554201113132
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "DeFi",
+          "total_cu_requested": 11596949495165,
+          "total_cu_consumed": 4181051275244
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "DeFi",
+          "total_cu_requested": 11512072200107,
+          "total_cu_consumed": 4339781619414
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "others",
+          "total_cu_requested": 11511654802184,
+          "total_cu_consumed": 2734195730476
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "DeFi",
+          "total_cu_requested": 11392176871711,
+          "total_cu_consumed": 4333954789299
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "DeFi",
+          "total_cu_requested": 11367978623190,
+          "total_cu_consumed": 4272609832962
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "DeFi",
+          "total_cu_requested": 11264209679380,
+          "total_cu_consumed": 4392419652600
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "others",
+          "total_cu_requested": 11015942429311,
+          "total_cu_consumed": 2454552369340
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "DeFi",
+          "total_cu_requested": 10881327635868,
+          "total_cu_consumed": 3847671018755
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "others",
+          "total_cu_requested": 10821877328356,
+          "total_cu_consumed": 2405182045402
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "others",
+          "total_cu_requested": 10794433993486,
+          "total_cu_consumed": 2755933951614
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "others",
+          "total_cu_requested": 10756826956946,
+          "total_cu_consumed": 2518808794579
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "DeFi",
+          "total_cu_requested": 10718808394029,
+          "total_cu_consumed": 4193749431568
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "others",
+          "total_cu_requested": 10661687090670,
+          "total_cu_consumed": 2582650848663
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "DeFi",
+          "total_cu_requested": 10428357265913,
+          "total_cu_consumed": 4083176450469
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "others",
+          "total_cu_requested": 10390624447895,
+          "total_cu_consumed": 2386318589919
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "DeFi",
+          "total_cu_requested": 10163629073013,
+          "total_cu_consumed": 3774770365669
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "others",
+          "total_cu_requested": 10057442113596,
+          "total_cu_consumed": 2384574984295
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "DeFi",
+          "total_cu_requested": 10055572848671,
+          "total_cu_consumed": 4107070350839
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "others",
+          "total_cu_requested": 10038878170139,
+          "total_cu_consumed": 2479662211097
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "others",
+          "total_cu_requested": 9928768308771,
+          "total_cu_consumed": 2510800186208
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "others",
+          "total_cu_requested": 9917921873650,
+          "total_cu_consumed": 2380610985818
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "others",
+          "total_cu_requested": 9745120937533,
+          "total_cu_consumed": 2228467276669
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "others",
+          "total_cu_requested": 9725606217733,
+          "total_cu_consumed": 2252523899770
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "DeFi",
+          "total_cu_requested": 9724677039882,
+          "total_cu_consumed": 3507000706001
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "DeFi",
+          "total_cu_requested": 9691006029350,
+          "total_cu_consumed": 3996507617163
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "others",
+          "total_cu_requested": 9650244033855,
+          "total_cu_consumed": 2457850896952
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "others",
+          "total_cu_requested": 9565100834142,
+          "total_cu_consumed": 2219400434203
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "others",
+          "total_cu_requested": 9532802718086,
+          "total_cu_consumed": 2197646473709
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "others",
+          "total_cu_requested": 9197153162219,
+          "total_cu_consumed": 2201626916210
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "others",
+          "total_cu_requested": 9163492484623,
+          "total_cu_consumed": 2273600712225
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "others",
+          "total_cu_requested": 9105895141342,
+          "total_cu_consumed": 2236015313640
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "others",
+          "total_cu_requested": 8858301263560,
+          "total_cu_consumed": 2181964769531
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "others",
+          "total_cu_requested": 8384345544506,
+          "total_cu_consumed": 1925992545576
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "MEV",
+          "total_cu_requested": 5706018211199,
+          "total_cu_consumed": 876240848739
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "MEV",
+          "total_cu_requested": 5172387352152,
+          "total_cu_consumed": 815583279503
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "MEV",
+          "total_cu_requested": 5091142910292,
+          "total_cu_consumed": 817444885547
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "MEV",
+          "total_cu_requested": 5063378136382,
+          "total_cu_consumed": 768115991437
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "MEV",
+          "total_cu_requested": 4679301316636,
+          "total_cu_consumed": 775624966676
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "MEV",
+          "total_cu_requested": 4515885208521,
+          "total_cu_consumed": 836830483974
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "MEV",
+          "total_cu_requested": 4288575092390,
+          "total_cu_consumed": 743639761530
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "MEV",
+          "total_cu_requested": 4227000421608,
+          "total_cu_consumed": 713274568282
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "MEV",
+          "total_cu_requested": 4150727776513,
+          "total_cu_consumed": 705874502877
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "MEV",
+          "total_cu_requested": 4149344915171,
+          "total_cu_consumed": 714939050067
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "MEV",
+          "total_cu_requested": 4006736204565,
+          "total_cu_consumed": 717945161366
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "MEV",
+          "total_cu_requested": 3944931438491,
+          "total_cu_consumed": 673007691993
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "MEV",
+          "total_cu_requested": 3942990060731,
+          "total_cu_consumed": 631408811334
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "MEV",
+          "total_cu_requested": 3811229482270,
+          "total_cu_consumed": 641034529137
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "MEV",
+          "total_cu_requested": 3793154725689,
+          "total_cu_consumed": 666770754467
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "MEV",
+          "total_cu_requested": 3776158785973,
+          "total_cu_consumed": 609155853675
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "MEV",
+          "total_cu_requested": 3748027006651,
+          "total_cu_consumed": 570847340236
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "MEV",
+          "total_cu_requested": 3743498503947,
+          "total_cu_consumed": 551894635703
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "MEV",
+          "total_cu_requested": 3737868028814,
+          "total_cu_consumed": 559641288079
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "MEV",
+          "total_cu_requested": 3615171516551,
+          "total_cu_consumed": 616161718429
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "MEV",
+          "total_cu_requested": 3567852946793,
+          "total_cu_consumed": 606304588296
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "MEV",
+          "total_cu_requested": 3487063549122,
+          "total_cu_consumed": 610560492113
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "MEV",
+          "total_cu_requested": 3477766571667,
+          "total_cu_consumed": 621600776807
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "MEV",
+          "total_cu_requested": 3475090144520,
+          "total_cu_consumed": 548982662843
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "MEV",
+          "total_cu_requested": 3382059389233,
+          "total_cu_consumed": 547290669835
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "MEV",
+          "total_cu_requested": 3319459394761,
+          "total_cu_consumed": 542559603345
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "others",
+          "total_cu_requested": 3075271017704,
+          "total_cu_consumed": 803825936862
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "MEV",
+          "total_cu_requested": 2900458890515,
+          "total_cu_consumed": 481443489620
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "DeFi",
+          "total_cu_requested": 2406280640228,
+          "total_cu_consumed": 712119797014
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "MEV",
+          "total_cu_requested": 2332711986909,
+          "total_cu_consumed": 375813507330
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "MEV",
+          "total_cu_requested": 2133623347999,
+          "total_cu_consumed": 328498022240
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Oracle",
+          "total_cu_requested": 1490721936589,
+          "total_cu_consumed": 159611141313
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Oracle",
+          "total_cu_requested": 1461931140947,
+          "total_cu_consumed": 168606257580
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Oracle",
+          "total_cu_requested": 1442898712200,
+          "total_cu_consumed": 166055453827
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Oracle",
+          "total_cu_requested": 1398461601504,
+          "total_cu_consumed": 170340585384
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Oracle",
+          "total_cu_requested": 1349331755795,
+          "total_cu_consumed": 154905702754
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Oracle",
+          "total_cu_requested": 1321610203863,
+          "total_cu_consumed": 156226864041
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Oracle",
+          "total_cu_requested": 1309283447296,
+          "total_cu_consumed": 160059592933
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Oracle",
+          "total_cu_requested": 1308750081353,
+          "total_cu_consumed": 159625722611
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "MEV",
+          "total_cu_requested": 1307750565605,
+          "total_cu_consumed": 238003944209
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Oracle",
+          "total_cu_requested": 1306513356597,
+          "total_cu_consumed": 158112171727
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Oracle",
+          "total_cu_requested": 1305751613961,
+          "total_cu_consumed": 158697622123
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Oracle",
+          "total_cu_requested": 1298595319980,
+          "total_cu_consumed": 153195903683
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Oracle",
+          "total_cu_requested": 1298100169773,
+          "total_cu_consumed": 154409179824
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Oracle",
+          "total_cu_requested": 1288390766949,
+          "total_cu_consumed": 151832548593
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Oracle",
+          "total_cu_requested": 1284889228974,
+          "total_cu_consumed": 153384935628
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Oracle",
+          "total_cu_requested": 1274374092886,
+          "total_cu_consumed": 127915072168
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Oracle",
+          "total_cu_requested": 1270054914946,
+          "total_cu_consumed": 153611641116
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Oracle",
+          "total_cu_requested": 1250945621522,
+          "total_cu_consumed": 152929065986
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Oracle",
+          "total_cu_requested": 1244778879847,
+          "total_cu_consumed": 149224562899
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Oracle",
+          "total_cu_requested": 1226273646329,
+          "total_cu_consumed": 157966311802
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Oracle",
+          "total_cu_requested": 1197404331584,
+          "total_cu_consumed": 164421566767
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Oracle",
+          "total_cu_requested": 1194821341363,
+          "total_cu_consumed": 159860184484
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Oracle",
+          "total_cu_requested": 1193006863715,
+          "total_cu_consumed": 167701354429
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Oracle",
+          "total_cu_requested": 1159958882385,
+          "total_cu_consumed": 157847301092
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Oracle",
+          "total_cu_requested": 1147039023343,
+          "total_cu_consumed": 155907214139
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Oracle",
+          "total_cu_requested": 1116365748955,
+          "total_cu_consumed": 158015154136
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Oracle",
+          "total_cu_requested": 1082798489208,
+          "total_cu_consumed": 155524237501
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Oracle",
+          "total_cu_requested": 1032635125915,
+          "total_cu_consumed": 151526694861
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Oracle",
+          "total_cu_requested": 1013707983311,
+          "total_cu_consumed": 145533674177
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Oracle",
+          "total_cu_requested": 941341242373,
+          "total_cu_consumed": 32532628892
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Oracle",
+          "total_cu_requested": 882075468018,
+          "total_cu_consumed": 137904324853
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Gaming",
+          "total_cu_requested": 568120061708,
+          "total_cu_consumed": 120525206308
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Gaming",
+          "total_cu_requested": 567379980754,
+          "total_cu_consumed": 118795601400
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Gaming",
+          "total_cu_requested": 560406077697,
+          "total_cu_consumed": 120726623792
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Gaming",
+          "total_cu_requested": 558126274790,
+          "total_cu_consumed": 120857683294
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Gaming",
+          "total_cu_requested": 552221629670,
+          "total_cu_consumed": 119853883200
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Gaming",
+          "total_cu_requested": 551609238221,
+          "total_cu_consumed": 118827923614
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Gaming",
+          "total_cu_requested": 550324887993,
+          "total_cu_consumed": 114815146814
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Gaming",
+          "total_cu_requested": 546841686610,
+          "total_cu_consumed": 118253697744
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Gaming",
+          "total_cu_requested": 546129877489,
+          "total_cu_consumed": 116076757609
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Gaming",
+          "total_cu_requested": 544483165506,
+          "total_cu_consumed": 113757433478
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Gaming",
+          "total_cu_requested": 544303634796,
+          "total_cu_consumed": 118888882389
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Gaming",
+          "total_cu_requested": 543361099102,
+          "total_cu_consumed": 117812090661
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Gaming",
+          "total_cu_requested": 542283424529,
+          "total_cu_consumed": 112581970087
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Gaming",
+          "total_cu_requested": 541152144767,
+          "total_cu_consumed": 115420823572
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Gaming",
+          "total_cu_requested": 540261978888,
+          "total_cu_consumed": 115551351894
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Gaming",
+          "total_cu_requested": 539875539272,
+          "total_cu_consumed": 117579230815
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Gaming",
+          "total_cu_requested": 539316649153,
+          "total_cu_consumed": 117250369230
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Gaming",
+          "total_cu_requested": 536086869550,
+          "total_cu_consumed": 114921142859
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Gaming",
+          "total_cu_requested": 534601786845,
+          "total_cu_consumed": 112965060125
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Gaming",
+          "total_cu_requested": 534438758208,
+          "total_cu_consumed": 114878151948
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Gaming",
+          "total_cu_requested": 530193846347,
+          "total_cu_consumed": 114362234901
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Gaming",
+          "total_cu_requested": 528511372842,
+          "total_cu_consumed": 114018586473
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Gaming",
+          "total_cu_requested": 528478441780,
+          "total_cu_consumed": 113269340612
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Gaming",
+          "total_cu_requested": 524583921998,
+          "total_cu_consumed": 113107174042
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Gaming",
+          "total_cu_requested": 523779545759,
+          "total_cu_consumed": 111375313178
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Gaming",
+          "total_cu_requested": 522044546087,
+          "total_cu_consumed": 112575549865
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Gaming",
+          "total_cu_requested": 520175696243,
+          "total_cu_consumed": 112015341354
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Gaming",
+          "total_cu_requested": 510463325600,
+          "total_cu_consumed": 110615235836
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Gaming",
+          "total_cu_requested": 476862651438,
+          "total_cu_consumed": 93848574323
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "NFT",
+          "total_cu_requested": 127631576123,
+          "total_cu_consumed": 43886729134
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "NFT",
+          "total_cu_requested": 123164663451,
+          "total_cu_consumed": 31281674272
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "NFT",
+          "total_cu_requested": 117004387364,
+          "total_cu_consumed": 40328796995
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "NFT",
+          "total_cu_requested": 113621231512,
+          "total_cu_consumed": 41574477403
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "NFT",
+          "total_cu_requested": 110086252152,
+          "total_cu_consumed": 39456781134
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "NFT",
+          "total_cu_requested": 108186579227,
+          "total_cu_consumed": 31950096253
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "NFT",
+          "total_cu_requested": 104834596906,
+          "total_cu_consumed": 33166727212
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "NFT",
+          "total_cu_requested": 102568665668,
+          "total_cu_consumed": 34534083222
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "NFT",
+          "total_cu_requested": 101973018088,
+          "total_cu_consumed": 31272842951
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "NFT",
+          "total_cu_requested": 100626642412,
+          "total_cu_consumed": 29779381479
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "NFT",
+          "total_cu_requested": 96078025745,
+          "total_cu_consumed": 27898523060
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "NFT",
+          "total_cu_requested": 92336572747,
+          "total_cu_consumed": 33544195139
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "NFT",
+          "total_cu_requested": 92059133837,
+          "total_cu_consumed": 26473214370
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "NFT",
+          "total_cu_requested": 90985014866,
+          "total_cu_consumed": 27806548613
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "NFT",
+          "total_cu_requested": 90801161902,
+          "total_cu_consumed": 26708214865
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "NFT",
+          "total_cu_requested": 90220386965,
+          "total_cu_consumed": 30765603989
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "NFT",
+          "total_cu_requested": 89796041285,
+          "total_cu_consumed": 25290428945
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "NFT",
+          "total_cu_requested": 89634449423,
+          "total_cu_consumed": 25565844061
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "NFT",
+          "total_cu_requested": 86144488862,
+          "total_cu_consumed": 26717918609
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "NFT",
+          "total_cu_requested": 85310460618,
+          "total_cu_consumed": 26234735815
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "NFT",
+          "total_cu_requested": 84873151409,
+          "total_cu_consumed": 24105717366
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "NFT",
+          "total_cu_requested": 80812298563,
+          "total_cu_consumed": 25912262590
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "NFT",
+          "total_cu_requested": 79860834162,
+          "total_cu_consumed": 22915600926
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "NFT",
+          "total_cu_requested": 77709005968,
+          "total_cu_consumed": 23729329756
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "NFT",
+          "total_cu_requested": 76673473410,
+          "total_cu_consumed": 25453523219
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "NFT",
+          "total_cu_requested": 75514498386,
+          "total_cu_consumed": 24537635915
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "NFT",
+          "total_cu_requested": 70079151983,
+          "total_cu_consumed": 21062276657
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "NFT",
+          "total_cu_requested": 69767889284,
+          "total_cu_consumed": 20605832893
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "NFT",
+          "total_cu_requested": 56987728860,
+          "total_cu_consumed": 19572348523
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Infrastructure",
+          "total_cu_requested": 34835331511,
+          "total_cu_consumed": 31548098979
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Infrastructure",
+          "total_cu_requested": 33904006442,
+          "total_cu_consumed": 30665573668
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Infrastructure",
+          "total_cu_requested": 32330048230,
+          "total_cu_consumed": 29327914140
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Infrastructure",
+          "total_cu_requested": 32267438109,
+          "total_cu_consumed": 29193963482
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Infrastructure",
+          "total_cu_requested": 31549235241,
+          "total_cu_consumed": 28429613641
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Infrastructure",
+          "total_cu_requested": 31542283114,
+          "total_cu_consumed": 28391375067
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Infrastructure",
+          "total_cu_requested": 30709548148,
+          "total_cu_consumed": 27588836695
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Infrastructure",
+          "total_cu_requested": 29259524228,
+          "total_cu_consumed": 26255706458
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Infrastructure",
+          "total_cu_requested": 27830498231,
+          "total_cu_consumed": 25312208929
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Infrastructure",
+          "total_cu_requested": 25841030475,
+          "total_cu_consumed": 23608854159
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Infrastructure",
+          "total_cu_requested": 24420172940,
+          "total_cu_consumed": 22520871680
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Infrastructure",
+          "total_cu_requested": 24349587937,
+          "total_cu_consumed": 22321084191
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Infrastructure",
+          "total_cu_requested": 21598814518,
+          "total_cu_consumed": 20070616340
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "DePIN",
+          "total_cu_requested": 17914603122,
+          "total_cu_consumed": 7063948873
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "DePIN",
+          "total_cu_requested": 17281445978,
+          "total_cu_consumed": 7028415630
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "DePIN",
+          "total_cu_requested": 17170635977,
+          "total_cu_consumed": 7184151164
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "DePIN",
+          "total_cu_requested": 16238213028,
+          "total_cu_consumed": 6815586368
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "DePIN",
+          "total_cu_requested": 16111999207,
+          "total_cu_consumed": 5734115284
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Infrastructure",
+          "total_cu_requested": 15948415016,
+          "total_cu_consumed": 14685100057
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "DePIN",
+          "total_cu_requested": 15717716597,
+          "total_cu_consumed": 5605367465
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "DePIN",
+          "total_cu_requested": 15623539415,
+          "total_cu_consumed": 5655243615
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "DePIN",
+          "total_cu_requested": 15556840918,
+          "total_cu_consumed": 5911615082
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "DePIN",
+          "total_cu_requested": 15471540403,
+          "total_cu_consumed": 5497378532
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "DePIN",
+          "total_cu_requested": 15241068470,
+          "total_cu_consumed": 5265890164
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "DePIN",
+          "total_cu_requested": 14927239448,
+          "total_cu_consumed": 5096793183
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "DePIN",
+          "total_cu_requested": 14864053022,
+          "total_cu_consumed": 5657194128
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "DePIN",
+          "total_cu_requested": 14798715389,
+          "total_cu_consumed": 5150589200
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "DePIN",
+          "total_cu_requested": 14737858025,
+          "total_cu_consumed": 5558679702
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "DePIN",
+          "total_cu_requested": 14692740672,
+          "total_cu_consumed": 5215514777
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "DePIN",
+          "total_cu_requested": 14549568191,
+          "total_cu_consumed": 6420091609
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "DePIN",
+          "total_cu_requested": 14488657436,
+          "total_cu_consumed": 4853727966
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "DePIN",
+          "total_cu_requested": 14456622047,
+          "total_cu_consumed": 4779191470
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "DePIN",
+          "total_cu_requested": 14416484039,
+          "total_cu_consumed": 4862942904
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "DePIN",
+          "total_cu_requested": 14274740128,
+          "total_cu_consumed": 4829270200
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "DePIN",
+          "total_cu_requested": 13969715703,
+          "total_cu_consumed": 4480881146
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "DePIN",
+          "total_cu_requested": 13774700894,
+          "total_cu_consumed": 4331189577
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "DePIN",
+          "total_cu_requested": 13692355237,
+          "total_cu_consumed": 5057100202
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "DePIN",
+          "total_cu_requested": 13612063124,
+          "total_cu_consumed": 4961696950
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "DePIN",
+          "total_cu_requested": 13508359079,
+          "total_cu_consumed": 4615587515
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "DePIN",
+          "total_cu_requested": 13383551439,
+          "total_cu_consumed": 4350949277
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "DePIN",
+          "total_cu_requested": 13050110191,
+          "total_cu_consumed": 3930161210
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "DePIN",
+          "total_cu_requested": 12876537723,
+          "total_cu_consumed": 4005785417
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "DePIN",
+          "total_cu_requested": 12743197723,
+          "total_cu_consumed": 4177291968
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Bridge",
+          "total_cu_requested": 8329450407,
+          "total_cu_consumed": 2395064461
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Bridge",
+          "total_cu_requested": 7973647936,
+          "total_cu_consumed": 2479685097
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Bridge",
+          "total_cu_requested": 7382049689,
+          "total_cu_consumed": 1375236798
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Bridge",
+          "total_cu_requested": 7276181580,
+          "total_cu_consumed": 2120467363
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Bridge",
+          "total_cu_requested": 7157005742,
+          "total_cu_consumed": 1808493477
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Bridge",
+          "total_cu_requested": 7031521191,
+          "total_cu_consumed": 1894428565
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Bridge",
+          "total_cu_requested": 6849554297,
+          "total_cu_consumed": 1729227072
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Bridge",
+          "total_cu_requested": 6809734214,
+          "total_cu_consumed": 1860312510
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Bridge",
+          "total_cu_requested": 6784213480,
+          "total_cu_consumed": 1786246411
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Infrastructure",
+          "total_cu_requested": 6690917003,
+          "total_cu_consumed": 6341212835
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Bridge",
+          "total_cu_requested": 6597100312,
+          "total_cu_consumed": 1655810996
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Bridge",
+          "total_cu_requested": 6111174284,
+          "total_cu_consumed": 1451713323
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Infrastructure",
+          "total_cu_requested": 6087131379,
+          "total_cu_consumed": 5674300678
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Bridge",
+          "total_cu_requested": 6081753025,
+          "total_cu_consumed": 1476911845
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Bridge",
+          "total_cu_requested": 6044600898,
+          "total_cu_consumed": 1328995308
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Bridge",
+          "total_cu_requested": 5945679942,
+          "total_cu_consumed": 1319150140
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Bridge",
+          "total_cu_requested": 5908143285,
+          "total_cu_consumed": 1634095771
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Bridge",
+          "total_cu_requested": 5886476998,
+          "total_cu_consumed": 1364543694
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Bridge",
+          "total_cu_requested": 5877663655,
+          "total_cu_consumed": 1592003423
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Bridge",
+          "total_cu_requested": 5819318199,
+          "total_cu_consumed": 1448973095
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Bridge",
+          "total_cu_requested": 5705559054,
+          "total_cu_consumed": 1491812282
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Bridge",
+          "total_cu_requested": 5664366755,
+          "total_cu_consumed": 1490373342
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Bridge",
+          "total_cu_requested": 5663480719,
+          "total_cu_consumed": 1547629584
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Bridge",
+          "total_cu_requested": 5538157818,
+          "total_cu_consumed": 1392510186
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Bridge",
+          "total_cu_requested": 5352943342,
+          "total_cu_consumed": 1284561502
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Bridge",
+          "total_cu_requested": 5351872669,
+          "total_cu_consumed": 1442738314
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Bridge",
+          "total_cu_requested": 5310008992,
+          "total_cu_consumed": 1370073388
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Bridge",
+          "total_cu_requested": 5184037254,
+          "total_cu_consumed": 1327459310
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "NFT",
+          "total_cu_requested": 5152348919,
+          "total_cu_consumed": 664479120
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Infrastructure",
+          "total_cu_requested": 5017293534,
+          "total_cu_consumed": 4799017846
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Infrastructure",
+          "total_cu_requested": 4991482246,
+          "total_cu_consumed": 4714680008
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Bridge",
+          "total_cu_requested": 4987615929,
+          "total_cu_consumed": 1007948084
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Bridge",
+          "total_cu_requested": 4974185667,
+          "total_cu_consumed": 1347258701
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Infrastructure",
+          "total_cu_requested": 4894732185,
+          "total_cu_consumed": 4703919263
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Infrastructure",
+          "total_cu_requested": 4812189476,
+          "total_cu_consumed": 4490472145
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Infrastructure",
+          "total_cu_requested": 4745492106,
+          "total_cu_consumed": 4504123146
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Infrastructure",
+          "total_cu_requested": 4730180821,
+          "total_cu_consumed": 4527375092
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Infrastructure",
+          "total_cu_requested": 4708610935,
+          "total_cu_consumed": 4513524659
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Infrastructure",
+          "total_cu_requested": 4697185173,
+          "total_cu_consumed": 4485758200
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Bridge",
+          "total_cu_requested": 4685320775,
+          "total_cu_consumed": 1301433408
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Infrastructure",
+          "total_cu_requested": 4642886077,
+          "total_cu_consumed": 4435313422
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Infrastructure",
+          "total_cu_requested": 4569578837,
+          "total_cu_consumed": 4349841085
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Infrastructure",
+          "total_cu_requested": 4465294507,
+          "total_cu_consumed": 4286767549
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Infrastructure",
+          "total_cu_requested": 4422133366,
+          "total_cu_consumed": 4242022391
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Infrastructure",
+          "total_cu_requested": 4343788971,
+          "total_cu_consumed": 4158122144
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Payments",
+          "total_cu_requested": 3313628763,
+          "total_cu_consumed": 2313163643
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Payments",
+          "total_cu_requested": 3043176058,
+          "total_cu_consumed": 2277847014
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Payments",
+          "total_cu_requested": 2935080416,
+          "total_cu_consumed": 1998642879
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Mining",
+          "total_cu_requested": 2713747814,
+          "total_cu_consumed": 1717678675
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Payments",
+          "total_cu_requested": 2524449347,
+          "total_cu_consumed": 1720632660
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Payments",
+          "total_cu_requested": 2510284257,
+          "total_cu_consumed": 1693493690
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Gaming",
+          "total_cu_requested": 2483538669,
+          "total_cu_consumed": 263975230
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Payments",
+          "total_cu_requested": 2433618207,
+          "total_cu_consumed": 1701160726
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Payments",
+          "total_cu_requested": 2181869091,
+          "total_cu_consumed": 1474941210
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Payments",
+          "total_cu_requested": 2170521940,
+          "total_cu_consumed": 1188722887
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Payments",
+          "total_cu_requested": 2153143275,
+          "total_cu_consumed": 1131801474
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Payments",
+          "total_cu_requested": 2099988534,
+          "total_cu_consumed": 1405885265
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Mining",
+          "total_cu_requested": 1983455846,
+          "total_cu_consumed": 1697185412
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Mining",
+          "total_cu_requested": 1977052674,
+          "total_cu_consumed": 1724021124
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Mining",
+          "total_cu_requested": 1882584617,
+          "total_cu_consumed": 1669395255
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Mining",
+          "total_cu_requested": 1866912526,
+          "total_cu_consumed": 1587461306
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Payments",
+          "total_cu_requested": 1866321375,
+          "total_cu_consumed": 1109032316
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Music",
+          "total_cu_requested": 1864606790,
+          "total_cu_consumed": 331128179
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Payments",
+          "total_cu_requested": 1816727104,
+          "total_cu_consumed": 1034749879
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Music",
+          "total_cu_requested": 1786106381,
+          "total_cu_consumed": 232241225
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Payments",
+          "total_cu_requested": 1772436052,
+          "total_cu_consumed": 979384380
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Payments",
+          "total_cu_requested": 1757208804,
+          "total_cu_consumed": 1142935753
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Mining",
+          "total_cu_requested": 1753145931,
+          "total_cu_consumed": 1138756936
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Payments",
+          "total_cu_requested": 1744024560,
+          "total_cu_consumed": 1054012984
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Payments",
+          "total_cu_requested": 1686652936,
+          "total_cu_consumed": 984574666
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Payments",
+          "total_cu_requested": 1645238369,
+          "total_cu_consumed": 950139286
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Payments",
+          "total_cu_requested": 1618096789,
+          "total_cu_consumed": 924894206
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Payments",
+          "total_cu_requested": 1609713270,
+          "total_cu_consumed": 965309470
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Payments",
+          "total_cu_requested": 1608437014,
+          "total_cu_consumed": 911534489
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Mining",
+          "total_cu_requested": 1591841944,
+          "total_cu_consumed": 1033527277
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Mining",
+          "total_cu_requested": 1585663774,
+          "total_cu_consumed": 1411003041
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Mining",
+          "total_cu_requested": 1584715468,
+          "total_cu_consumed": 631166210
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Mining",
+          "total_cu_requested": 1559630058,
+          "total_cu_consumed": 1023736175
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Mining",
+          "total_cu_requested": 1554091117,
+          "total_cu_consumed": 1453336205
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Payments",
+          "total_cu_requested": 1540424338,
+          "total_cu_consumed": 897402862
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Payments",
+          "total_cu_requested": 1530138591,
+          "total_cu_consumed": 916548443
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Payments",
+          "total_cu_requested": 1505465488,
+          "total_cu_consumed": 917750775
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Mining",
+          "total_cu_requested": 1460581093,
+          "total_cu_consumed": 1388246861
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Mining",
+          "total_cu_requested": 1452775000,
+          "total_cu_consumed": 1381882103
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Mining",
+          "total_cu_requested": 1449756979,
+          "total_cu_consumed": 1321402839
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Mining",
+          "total_cu_requested": 1447390448,
+          "total_cu_consumed": 1390792250
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Mining",
+          "total_cu_requested": 1445916301,
+          "total_cu_consumed": 1388649868
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Mining",
+          "total_cu_requested": 1443320808,
+          "total_cu_consumed": 1387985865
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Payments",
+          "total_cu_requested": 1419087965,
+          "total_cu_consumed": 938508525
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Payments",
+          "total_cu_requested": 1351153804,
+          "total_cu_consumed": 787021576
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Mining",
+          "total_cu_requested": 1344754123,
+          "total_cu_consumed": 1261760920
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Payments",
+          "total_cu_requested": 1344383179,
+          "total_cu_consumed": 829265407
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Mining",
+          "total_cu_requested": 1343850000,
+          "total_cu_consumed": 883654702
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Payments",
+          "total_cu_requested": 1339710922,
+          "total_cu_consumed": 810540679
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Payments",
+          "total_cu_requested": 1337936434,
+          "total_cu_consumed": 869957475
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Infrastructure",
+          "total_cu_requested": 1328420000,
+          "total_cu_consumed": 1318283404
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Mining",
+          "total_cu_requested": 1297150000,
+          "total_cu_consumed": 846179815
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Mining",
+          "total_cu_requested": 1296631501,
+          "total_cu_consumed": 1221595518
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Mining",
+          "total_cu_requested": 1289154165,
+          "total_cu_consumed": 1220473432
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Payments",
+          "total_cu_requested": 1243508350,
+          "total_cu_consumed": 747933450
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Mining",
+          "total_cu_requested": 1232952048,
+          "total_cu_consumed": 795298405
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Mining",
+          "total_cu_requested": 1215200000,
+          "total_cu_consumed": 781527619
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Music",
+          "total_cu_requested": 1127071309,
+          "total_cu_consumed": 167964889
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Mining",
+          "total_cu_requested": 1090000546,
+          "total_cu_consumed": 722086868
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Mining",
+          "total_cu_requested": 1083872450,
+          "total_cu_consumed": 723202616
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Mining",
+          "total_cu_requested": 1065200805,
+          "total_cu_consumed": 702663147
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Mining",
+          "total_cu_requested": 1027550000,
+          "total_cu_consumed": 680433906
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Gambling",
+          "total_cu_requested": 1022045748,
+          "total_cu_consumed": 984103391
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Music",
+          "total_cu_requested": 723495362,
+          "total_cu_consumed": 152901986
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Name Service",
+          "total_cu_requested": 715487147,
+          "total_cu_consumed": 489954239
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Music",
+          "total_cu_requested": 684977700,
+          "total_cu_consumed": 138466194
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Mining",
+          "total_cu_requested": 636484109,
+          "total_cu_consumed": 611889201
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Gambling",
+          "total_cu_requested": 626308137,
+          "total_cu_consumed": 595753816
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Gambling",
+          "total_cu_requested": 622391329,
+          "total_cu_consumed": 599031052
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Gambling",
+          "total_cu_requested": 617422847,
+          "total_cu_consumed": 588712810
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Gambling",
+          "total_cu_requested": 598690534,
+          "total_cu_consumed": 571391148
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Name Service",
+          "total_cu_requested": 588654776,
+          "total_cu_consumed": 388260681
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Gambling",
+          "total_cu_requested": 562468087,
+          "total_cu_consumed": 537752024
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Gambling",
+          "total_cu_requested": 546911812,
+          "total_cu_consumed": 518812285
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Music",
+          "total_cu_requested": 520886082,
+          "total_cu_consumed": 114295756
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Gambling",
+          "total_cu_requested": 508577656,
+          "total_cu_consumed": 489136326
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Music",
+          "total_cu_requested": 492741960,
+          "total_cu_consumed": 118253306
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Music",
+          "total_cu_requested": 475456302,
+          "total_cu_consumed": 106284939
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Music",
+          "total_cu_requested": 461402852,
+          "total_cu_consumed": 107964561
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Music",
+          "total_cu_requested": 451789313,
+          "total_cu_consumed": 99269819
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Music",
+          "total_cu_requested": 448040419,
+          "total_cu_consumed": 100645188
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Music",
+          "total_cu_requested": 444954591,
+          "total_cu_consumed": 98223072
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Music",
+          "total_cu_requested": 444599505,
+          "total_cu_consumed": 104649341
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Music",
+          "total_cu_requested": 431924027,
+          "total_cu_consumed": 68594867
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Music",
+          "total_cu_requested": 431227753,
+          "total_cu_consumed": 88978970
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Gambling",
+          "total_cu_requested": 424228678,
+          "total_cu_consumed": 403203464
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Music",
+          "total_cu_requested": 419921084,
+          "total_cu_consumed": 93824891
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Music",
+          "total_cu_requested": 406428951,
+          "total_cu_consumed": 89491119
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "DePIN",
+          "total_cu_requested": 402294508,
+          "total_cu_consumed": 18395873
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Music",
+          "total_cu_requested": 401453090,
+          "total_cu_consumed": 88640485
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Music",
+          "total_cu_requested": 400371831,
+          "total_cu_consumed": 92549699
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Gambling",
+          "total_cu_requested": 394232868,
+          "total_cu_consumed": 374302844
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Music",
+          "total_cu_requested": 393880830,
+          "total_cu_consumed": 90165566
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Name Service",
+          "total_cu_requested": 385163457,
+          "total_cu_consumed": 263464664
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Gambling",
+          "total_cu_requested": 380022975,
+          "total_cu_consumed": 363232402
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Music",
+          "total_cu_requested": 377541777,
+          "total_cu_consumed": 84296462
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Music",
+          "total_cu_requested": 375516148,
+          "total_cu_consumed": 83186912
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Governance",
+          "total_cu_requested": 361627058,
+          "total_cu_consumed": 20154751
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Music",
+          "total_cu_requested": 358175597,
+          "total_cu_consumed": 82365730
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Music",
+          "total_cu_requested": 351113380,
+          "total_cu_consumed": 77044156
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Gambling",
+          "total_cu_requested": 344324135,
+          "total_cu_consumed": 330423937
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Name Service",
+          "total_cu_requested": 343190487,
+          "total_cu_consumed": 241191602
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Music",
+          "total_cu_requested": 339604419,
+          "total_cu_consumed": 76230534
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Gambling",
+          "total_cu_requested": 333734539,
+          "total_cu_consumed": 320612038
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Music",
+          "total_cu_requested": 330822730,
+          "total_cu_consumed": 73212139
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Music",
+          "total_cu_requested": 327103145,
+          "total_cu_consumed": 74512029
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Gambling",
+          "total_cu_requested": 323043052,
+          "total_cu_consumed": 309676428
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Name Service",
+          "total_cu_requested": 310928659,
+          "total_cu_consumed": 212731456
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Gambling",
+          "total_cu_requested": 309440083,
+          "total_cu_consumed": 297010671
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Governance",
+          "total_cu_requested": 307803326,
+          "total_cu_consumed": 17647705
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Name Service",
+          "total_cu_requested": 301889018,
+          "total_cu_consumed": 205683230
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Gambling",
+          "total_cu_requested": 301009143,
+          "total_cu_consumed": 289675943
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Gambling",
+          "total_cu_requested": 299624569,
+          "total_cu_consumed": 288296685
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Gambling",
+          "total_cu_requested": 295703184,
+          "total_cu_consumed": 281122335
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Name Service",
+          "total_cu_requested": 289502648,
+          "total_cu_consumed": 190698287
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Governance",
+          "total_cu_requested": 281836171,
+          "total_cu_consumed": 23226602
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Music",
+          "total_cu_requested": 281217730,
+          "total_cu_consumed": 61788720
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Name Service",
+          "total_cu_requested": 279789600,
+          "total_cu_consumed": 174705999
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Gambling",
+          "total_cu_requested": 276341740,
+          "total_cu_consumed": 252829243
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Name Service",
+          "total_cu_requested": 251814426,
+          "total_cu_consumed": 172469194
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Governance",
+          "total_cu_requested": 250219992,
+          "total_cu_consumed": 20822336
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Name Service",
+          "total_cu_requested": 244756783,
+          "total_cu_consumed": 169113436
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Name Service",
+          "total_cu_requested": 244482263,
+          "total_cu_consumed": 155323320
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Gambling",
+          "total_cu_requested": 226490680,
+          "total_cu_consumed": 216781571
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Gambling",
+          "total_cu_requested": 207950305,
+          "total_cu_consumed": 197878798
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Gambling",
+          "total_cu_requested": 194861039,
+          "total_cu_consumed": 183663598
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Governance",
+          "total_cu_requested": 194524472,
+          "total_cu_consumed": 14019661
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Name Service",
+          "total_cu_requested": 191378937,
+          "total_cu_consumed": 130123242
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Name Service",
+          "total_cu_requested": 190370534,
+          "total_cu_consumed": 134356794
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Name Service",
+          "total_cu_requested": 187151978,
+          "total_cu_consumed": 125985065
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Creator",
+          "total_cu_requested": 186348526,
+          "total_cu_consumed": 37601882
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Name Service",
+          "total_cu_requested": 178452056,
+          "total_cu_consumed": 123323407
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Mining",
+          "total_cu_requested": 178000000,
+          "total_cu_consumed": 2550321
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Governance",
+          "total_cu_requested": 170600000,
+          "total_cu_consumed": 11442286
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Name Service",
+          "total_cu_requested": 170476341,
+          "total_cu_consumed": 111955850
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Name Service",
+          "total_cu_requested": 164433539,
+          "total_cu_consumed": 112758091
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Creator",
+          "total_cu_requested": 159305003,
+          "total_cu_consumed": 49883740
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Governance",
+          "total_cu_requested": 158715093,
+          "total_cu_consumed": 9506137
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Governance",
+          "total_cu_requested": 155298236,
+          "total_cu_consumed": 14902134
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Name Service",
+          "total_cu_requested": 154202471,
+          "total_cu_consumed": 94455363
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Name Service",
+          "total_cu_requested": 153898614,
+          "total_cu_consumed": 107839627
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Name Service",
+          "total_cu_requested": 150991613,
+          "total_cu_consumed": 94062526
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Governance",
+          "total_cu_requested": 146380406,
+          "total_cu_consumed": 9753858
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Governance",
+          "total_cu_requested": 146316788,
+          "total_cu_consumed": 10334413
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Governance",
+          "total_cu_requested": 143239980,
+          "total_cu_consumed": 13620695
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Encryption",
+          "total_cu_requested": 138600000,
+          "total_cu_consumed": 109330848
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Name Service",
+          "total_cu_requested": 129849459,
+          "total_cu_consumed": 85560718
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Gambling",
+          "total_cu_requested": 128167974,
+          "total_cu_consumed": 123191696
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Name Service",
+          "total_cu_requested": 126142027,
+          "total_cu_consumed": 85736849
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Governance",
+          "total_cu_requested": 125369554,
+          "total_cu_consumed": 8669438
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Name Service",
+          "total_cu_requested": 122649456,
+          "total_cu_consumed": 85560817
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Governance",
+          "total_cu_requested": 122149402,
+          "total_cu_consumed": 8134428
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Governance",
+          "total_cu_requested": 120811956,
+          "total_cu_consumed": 12194788
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Gambling",
+          "total_cu_requested": 118331195,
+          "total_cu_consumed": 113022725
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Name Service",
+          "total_cu_requested": 116333928,
+          "total_cu_consumed": 69060594
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Governance",
+          "total_cu_requested": 114899986,
+          "total_cu_consumed": 6867513
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Creator",
+          "total_cu_requested": 113880692,
+          "total_cu_consumed": 74065811
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Governance",
+          "total_cu_requested": 110177850,
+          "total_cu_consumed": 6671628
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Governance",
+          "total_cu_requested": 106496859,
+          "total_cu_consumed": 9597263
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Music",
+          "total_cu_requested": 105768176,
+          "total_cu_consumed": 5735122
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Name Service",
+          "total_cu_requested": 101781829,
+          "total_cu_consumed": 67030523
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Governance",
+          "total_cu_requested": 100757878,
+          "total_cu_consumed": 7595905
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Gambling",
+          "total_cu_requested": 100232771,
+          "total_cu_consumed": 96120486
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Governance",
+          "total_cu_requested": 98788166,
+          "total_cu_consumed": 7415390
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Governance",
+          "total_cu_requested": 91747497,
+          "total_cu_consumed": 6816827
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Name Service",
+          "total_cu_requested": 87279390,
+          "total_cu_consumed": 59471712
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Gambling",
+          "total_cu_requested": 85153562,
+          "total_cu_consumed": 81833229
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Name Service",
+          "total_cu_requested": 82164555,
+          "total_cu_consumed": 50803690
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Governance",
+          "total_cu_requested": 79220026,
+          "total_cu_consumed": 5691444
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Gambling",
+          "total_cu_requested": 78881521,
+          "total_cu_consumed": 75502298
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Creator",
+          "total_cu_requested": 75933987,
+          "total_cu_consumed": 65033684
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Governance",
+          "total_cu_requested": 75233158,
+          "total_cu_consumed": 4784001
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Creator",
+          "total_cu_requested": 68795945,
+          "total_cu_consumed": 58525042
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Creator",
+          "total_cu_requested": 68170946,
+          "total_cu_consumed": 44813467
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Creator",
+          "total_cu_requested": 67250557,
+          "total_cu_consumed": 54610504
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Creator",
+          "total_cu_requested": 65417195,
+          "total_cu_consumed": 57177602
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Creator",
+          "total_cu_requested": 63034567,
+          "total_cu_consumed": 51487637
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Creator",
+          "total_cu_requested": 61356160,
+          "total_cu_consumed": 54409565
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Wallet",
+          "total_cu_requested": 61334346,
+          "total_cu_consumed": 42967072
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Creator",
+          "total_cu_requested": 61186275,
+          "total_cu_consumed": 50709862
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Creator",
+          "total_cu_requested": 59712805,
+          "total_cu_consumed": 54265482
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Governance",
+          "total_cu_requested": 59327704,
+          "total_cu_consumed": 3978571
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Payments",
+          "total_cu_requested": 58206473,
+          "total_cu_consumed": 29355259
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Creator",
+          "total_cu_requested": 56535765,
+          "total_cu_consumed": 47347481
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Creator",
+          "total_cu_requested": 56039705,
+          "total_cu_consumed": 46516460
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Creator",
+          "total_cu_requested": 54714769,
+          "total_cu_consumed": 46588250
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Creator",
+          "total_cu_requested": 53892788,
+          "total_cu_consumed": 46739019
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Creator",
+          "total_cu_requested": 53303838,
+          "total_cu_consumed": 44378094
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Creator",
+          "total_cu_requested": 52208029,
+          "total_cu_consumed": 46667686
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Wallet",
+          "total_cu_requested": 52036714,
+          "total_cu_consumed": 34052791
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Creator",
+          "total_cu_requested": 51083810,
+          "total_cu_consumed": 45096613
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Creator",
+          "total_cu_requested": 50715679,
+          "total_cu_consumed": 43818591
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Creator",
+          "total_cu_requested": 49249058,
+          "total_cu_consumed": 33128507
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Wallet",
+          "total_cu_requested": 47773604,
+          "total_cu_consumed": 33675651
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Creator",
+          "total_cu_requested": 45713234,
+          "total_cu_consumed": 40197548
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Wallet",
+          "total_cu_requested": 45602272,
+          "total_cu_consumed": 31595585
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Wallet",
+          "total_cu_requested": 45589843,
+          "total_cu_consumed": 31593768
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Creator",
+          "total_cu_requested": 45551616,
+          "total_cu_consumed": 41801024
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Creator",
+          "total_cu_requested": 44838108,
+          "total_cu_consumed": 39375397
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Creator",
+          "total_cu_requested": 44383398,
+          "total_cu_consumed": 37223147
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Gambling",
+          "total_cu_requested": 43167790,
+          "total_cu_consumed": 41410547
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Wallet",
+          "total_cu_requested": 43022574,
+          "total_cu_consumed": 30551348
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Creator",
+          "total_cu_requested": 41993109,
+          "total_cu_consumed": 37634935
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Governance",
+          "total_cu_requested": 41754968,
+          "total_cu_consumed": 3179837
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Governance",
+          "total_cu_requested": 40976876,
+          "total_cu_consumed": 2922279
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Governance",
+          "total_cu_requested": 40809132,
+          "total_cu_consumed": 2590225
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Creator",
+          "total_cu_requested": 40673970,
+          "total_cu_consumed": 33806569
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Creator",
+          "total_cu_requested": 40157915,
+          "total_cu_consumed": 34216916
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Wallet",
+          "total_cu_requested": 40087381,
+          "total_cu_consumed": 28076667
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Creator",
+          "total_cu_requested": 39083958,
+          "total_cu_consumed": 33253448
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Wallet",
+          "total_cu_requested": 38815303,
+          "total_cu_consumed": 27291319
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Governance",
+          "total_cu_requested": 37890360,
+          "total_cu_consumed": 2835479
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Wallet",
+          "total_cu_requested": 37216357,
+          "total_cu_consumed": 26542111
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Wallet",
+          "total_cu_requested": 37209703,
+          "total_cu_consumed": 24734204
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Gambling",
+          "total_cu_requested": 36457388,
+          "total_cu_consumed": 35021226
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Wallet",
+          "total_cu_requested": 36338399,
+          "total_cu_consumed": 23841112
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Name service",
+          "total_cu_requested": 35843606,
+          "total_cu_consumed": 25066966
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Governance",
+          "total_cu_requested": 35377312,
+          "total_cu_consumed": 2357547
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Wallet",
+          "total_cu_requested": 34368453,
+          "total_cu_consumed": 24367004
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Wallet",
+          "total_cu_requested": 34218347,
+          "total_cu_consumed": 23968568
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Social Platform",
+          "total_cu_requested": 33680000,
+          "total_cu_consumed": 25203449
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Wallet",
+          "total_cu_requested": 32338629,
+          "total_cu_consumed": 23208422
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Name service",
+          "total_cu_requested": 31938332,
+          "total_cu_consumed": 22573012
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Social Platform",
+          "total_cu_requested": 31700000,
+          "total_cu_consumed": 22231030
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Wallet",
+          "total_cu_requested": 30910049,
+          "total_cu_consumed": 18332675
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Wallet",
+          "total_cu_requested": 30682715,
+          "total_cu_consumed": 21978453
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Wallet",
+          "total_cu_requested": 30040738,
+          "total_cu_consumed": 20979817
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Wallet",
+          "total_cu_requested": 29657282,
+          "total_cu_consumed": 19347196
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Wallet",
+          "total_cu_requested": 29217132,
+          "total_cu_consumed": 18861184
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Wallet",
+          "total_cu_requested": 28288961,
+          "total_cu_consumed": 17572399
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Name Service",
+          "total_cu_requested": 27679087,
+          "total_cu_consumed": 18542099
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Wallet",
+          "total_cu_requested": 26216253,
+          "total_cu_consumed": 17461307
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Music",
+          "total_cu_requested": 25841668,
+          "total_cu_consumed": 358446
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Governance",
+          "total_cu_requested": 25834482,
+          "total_cu_consumed": 2617716
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Social Platform",
+          "total_cu_requested": 25200000,
+          "total_cu_consumed": 17779660
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Name service",
+          "total_cu_requested": 23040135,
+          "total_cu_consumed": 14773316
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Wallet",
+          "total_cu_requested": 22981935,
+          "total_cu_consumed": 14818879
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Social Platform",
+          "total_cu_requested": 22639376,
+          "total_cu_consumed": 17551359
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Betting",
+          "total_cu_requested": 21761298,
+          "total_cu_consumed": 20522954
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Name Service",
+          "total_cu_requested": 21306799,
+          "total_cu_consumed": 14684405
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Wallet",
+          "total_cu_requested": 20849003,
+          "total_cu_consumed": 13347935
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Wallet",
+          "total_cu_requested": 19152938,
+          "total_cu_consumed": 13716957
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Wallet",
+          "total_cu_requested": 18496773,
+          "total_cu_consumed": 12167829
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Betting",
+          "total_cu_requested": 18069148,
+          "total_cu_consumed": 17026160
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Wallet",
+          "total_cu_requested": 17977774,
+          "total_cu_consumed": 11807557
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Betting",
+          "total_cu_requested": 17791950,
+          "total_cu_consumed": 16731163
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Bridge",
+          "total_cu_requested": 17606177,
+          "total_cu_consumed": 2714019
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Betting",
+          "total_cu_requested": 17351372,
+          "total_cu_consumed": 16355653
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Betting",
+          "total_cu_requested": 17183697,
+          "total_cu_consumed": 16187414
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Social Platform",
+          "total_cu_requested": 16640000,
+          "total_cu_consumed": 11992877
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Social Platform",
+          "total_cu_requested": 16400000,
+          "total_cu_consumed": 11675960
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Name Service",
+          "total_cu_requested": 15380900,
+          "total_cu_consumed": 2373988
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Betting",
+          "total_cu_requested": 15362272,
+          "total_cu_consumed": 14475496
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Betting",
+          "total_cu_requested": 14972035,
+          "total_cu_consumed": 14111015
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Wallet",
+          "total_cu_requested": 14930794,
+          "total_cu_consumed": 10434281
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Betting",
+          "total_cu_requested": 14529069,
+          "total_cu_consumed": 13696635
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Betting",
+          "total_cu_requested": 14310554,
+          "total_cu_consumed": 13496216
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Social Platform",
+          "total_cu_requested": 14212536,
+          "total_cu_consumed": 9127206
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Betting",
+          "total_cu_requested": 13923906,
+          "total_cu_consumed": 13116323
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Betting",
+          "total_cu_requested": 13915083,
+          "total_cu_consumed": 12459198
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Betting",
+          "total_cu_requested": 13845717,
+          "total_cu_consumed": 13055193
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Betting",
+          "total_cu_requested": 13804345,
+          "total_cu_consumed": 13014099
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Betting",
+          "total_cu_requested": 13394187,
+          "total_cu_consumed": 12610616
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Betting",
+          "total_cu_requested": 13014217,
+          "total_cu_consumed": 12269367
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Betting",
+          "total_cu_requested": 12644588,
+          "total_cu_consumed": 11916534
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Social Platform",
+          "total_cu_requested": 12200000,
+          "total_cu_consumed": 7932782
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Social Platform",
+          "total_cu_requested": 12040000,
+          "total_cu_consumed": 8000535
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Betting",
+          "total_cu_requested": 12015259,
+          "total_cu_consumed": 11337149
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Social Platform",
+          "total_cu_requested": 11700000,
+          "total_cu_consumed": 7898856
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Name service",
+          "total_cu_requested": 11688961,
+          "total_cu_consumed": 7854302
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Betting",
+          "total_cu_requested": 11687813,
+          "total_cu_consumed": 11008907
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Name service",
+          "total_cu_requested": 11399352,
+          "total_cu_consumed": 7397653
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Betting",
+          "total_cu_requested": 11260079,
+          "total_cu_consumed": 10613120
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Betting",
+          "total_cu_requested": 11254709,
+          "total_cu_consumed": 10600567
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Betting",
+          "total_cu_requested": 11126831,
+          "total_cu_consumed": 10497143
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Betting",
+          "total_cu_requested": 11092453,
+          "total_cu_consumed": 10457888
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Betting",
+          "total_cu_requested": 10404306,
+          "total_cu_consumed": 9815522
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Betting",
+          "total_cu_requested": 10403049,
+          "total_cu_consumed": 9805048
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Betting",
+          "total_cu_requested": 10355011,
+          "total_cu_consumed": 9760449
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Name service",
+          "total_cu_requested": 10270008,
+          "total_cu_consumed": 6975506
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Betting",
+          "total_cu_requested": 10247321,
+          "total_cu_consumed": 9661728
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Betting",
+          "total_cu_requested": 10245700,
+          "total_cu_consumed": 9698734
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Governance",
+          "total_cu_requested": 9800000,
+          "total_cu_consumed": 350441
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Wallet",
+          "total_cu_requested": 9234327,
+          "total_cu_consumed": 5788256
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Betting",
+          "total_cu_requested": 9092459,
+          "total_cu_consumed": 8568272
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Betting",
+          "total_cu_requested": 8783458,
+          "total_cu_consumed": 8286391
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Social Platform",
+          "total_cu_requested": 8587601,
+          "total_cu_consumed": 5896029
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Social Platform",
+          "total_cu_requested": 8546325,
+          "total_cu_consumed": 4379177
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Social Platform",
+          "total_cu_requested": 8517409,
+          "total_cu_consumed": 3782410
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Social Platform",
+          "total_cu_requested": 7871116,
+          "total_cu_consumed": 2716264
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Wallet",
+          "total_cu_requested": 7791669,
+          "total_cu_consumed": 5582051
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Name service",
+          "total_cu_requested": 7697614,
+          "total_cu_consumed": 4054197
+        },
+        {
+          "partition_0": "2025-06-10",
+          "category": "Name service",
+          "total_cu_requested": 6816685,
+          "total_cu_consumed": 2910434
+        },
+        {
+          "partition_0": "2025-06-29",
+          "category": "Social Platform",
+          "total_cu_requested": 5837171,
+          "total_cu_consumed": 3286064
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Name service",
+          "total_cu_requested": 5782050,
+          "total_cu_consumed": 2668890
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Social Platform",
+          "total_cu_requested": 5711192,
+          "total_cu_consumed": 2252622
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Name service",
+          "total_cu_requested": 5691133,
+          "total_cu_consumed": 1807759
+        },
+        {
+          "partition_0": "2025-07-02",
+          "category": "Name service",
+          "total_cu_requested": 5554810,
+          "total_cu_consumed": 3262553
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Social Platform",
+          "total_cu_requested": 5364893,
+          "total_cu_consumed": 4108839
+        },
+        {
+          "partition_0": "2025-07-03",
+          "category": "Social Platform",
+          "total_cu_requested": 5100000,
+          "total_cu_consumed": 2677393
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Social Platform",
+          "total_cu_requested": 4670397,
+          "total_cu_consumed": 1924099
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Social Platform",
+          "total_cu_requested": 4157684,
+          "total_cu_consumed": 2806043
+        },
+        {
+          "partition_0": "2025-06-14",
+          "category": "Name service",
+          "total_cu_requested": 4079301,
+          "total_cu_consumed": 2179749
+        },
+        {
+          "partition_0": "2025-06-26",
+          "category": "Social Platform",
+          "total_cu_requested": 4000000,
+          "total_cu_consumed": 892750
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Name service",
+          "total_cu_requested": 3972518,
+          "total_cu_consumed": 2635629
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Name service",
+          "total_cu_requested": 3933099,
+          "total_cu_consumed": 2753564
+        },
+        {
+          "partition_0": "2025-06-15",
+          "category": "Name service",
+          "total_cu_requested": 3854947,
+          "total_cu_consumed": 2583895
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Social Platform",
+          "total_cu_requested": 3800000,
+          "total_cu_consumed": 556583
+        },
+        {
+          "partition_0": "2025-06-27",
+          "category": "Social Platform",
+          "total_cu_requested": 3698467,
+          "total_cu_consumed": 2547337
+        },
+        {
+          "partition_0": "2025-06-20",
+          "category": "Social Platform",
+          "total_cu_requested": 3648888,
+          "total_cu_consumed": 2272237
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Name service",
+          "total_cu_requested": 3375929,
+          "total_cu_consumed": 1766592
+        },
+        {
+          "partition_0": "2025-07-04",
+          "category": "Name service",
+          "total_cu_requested": 3141394,
+          "total_cu_consumed": 2108813
+        },
+        {
+          "partition_0": "2025-06-16",
+          "category": "Name service",
+          "total_cu_requested": 2960684,
+          "total_cu_consumed": 1360639
+        },
+        {
+          "partition_0": "2025-07-08",
+          "category": "Name service",
+          "total_cu_requested": 2934861,
+          "total_cu_consumed": 1912081
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Wallet",
+          "total_cu_requested": 2910475,
+          "total_cu_consumed": 210273
+        },
+        {
+          "partition_0": "2025-06-13",
+          "category": "Name service",
+          "total_cu_requested": 2831377,
+          "total_cu_consumed": 1766355
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Name service",
+          "total_cu_requested": 2800000,
+          "total_cu_consumed": 16204
+        },
+        {
+          "partition_0": "2025-07-06",
+          "category": "Name service",
+          "total_cu_requested": 2743161,
+          "total_cu_consumed": 1895660
+        },
+        {
+          "partition_0": "2025-07-07",
+          "category": "Name service",
+          "total_cu_requested": 2734023,
+          "total_cu_consumed": 1729334
+        },
+        {
+          "partition_0": "2025-06-24",
+          "category": "Name service",
+          "total_cu_requested": 2708612,
+          "total_cu_consumed": 1484412
+        },
+        {
+          "partition_0": "2025-06-28",
+          "category": "Social Platform",
+          "total_cu_requested": 2400000,
+          "total_cu_consumed": 1788510
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Name service",
+          "total_cu_requested": 2331796,
+          "total_cu_consumed": 1420207
+        },
+        {
+          "partition_0": "2025-07-05",
+          "category": "Social Platform",
+          "total_cu_requested": 2300810,
+          "total_cu_consumed": 1772735
+        },
+        {
+          "partition_0": "2025-06-19",
+          "category": "Name service",
+          "total_cu_requested": 2234928,
+          "total_cu_consumed": 1412994
+        },
+        {
+          "partition_0": "2025-07-01",
+          "category": "Social Platform",
+          "total_cu_requested": 2200000,
+          "total_cu_consumed": 537813
+        },
+        {
+          "partition_0": "2025-06-22",
+          "category": "Name service",
+          "total_cu_requested": 1821112,
+          "total_cu_consumed": 1199432
+        },
+        {
+          "partition_0": "2025-06-21",
+          "category": "Name service",
+          "total_cu_requested": 1649671,
+          "total_cu_consumed": 1099466
+        },
+        {
+          "partition_0": "2025-06-23",
+          "category": "Name service",
+          "total_cu_requested": 1534183,
+          "total_cu_consumed": 997917
+        },
+        {
+          "partition_0": "2025-06-11",
+          "category": "Name service",
+          "total_cu_requested": 1474190,
+          "total_cu_consumed": 824190
+        },
+        {
+          "partition_0": "2025-06-25",
+          "category": "Encryption",
+          "total_cu_requested": 1260000,
+          "total_cu_consumed": 14826
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Gambling",
+          "total_cu_requested": 1163039,
+          "total_cu_consumed": 1007216
+        },
+        {
+          "partition_0": "2025-06-18",
+          "category": "Social Platform",
+          "total_cu_requested": 940000,
+          "total_cu_consumed": 528889
+        },
+        {
+          "partition_0": "2025-06-12",
+          "category": "Social Platform",
+          "total_cu_requested": 800000,
+          "total_cu_consumed": 145320
+        },
+        {
+          "partition_0": "2025-06-17",
+          "category": "Encryption",
+          "total_cu_requested": 200000,
+          "total_cu_consumed": 16709
+        },
+        {
+          "partition_0": "2025-06-30",
+          "category": "Encryption",
+          "total_cu_requested": 200000,
+          "total_cu_consumed": 3517
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Betting",
+          "total_cu_requested": 31148,
+          "total_cu_consumed": 31148
+        },
+        {
+          "partition_0": "2025-07-09",
+          "category": "Creator",
+          "total_cu_requested": 9765,
+          "total_cu_consumed": 9765
+        }
+      ],
+      "timestamp": 1752780319813,
       "chartId": "chart_1748201257936_m7dwpx7",
-      "title": "Cu Consumed By Ecosystem",
-      "parameters": {}
+      "title": "Cu Consumed By Ecosystem"
     },
     {
-      "success": false,
-      "error": "API error: 503",
+      "success": true,
+      "data": [
+        {
+          "category": "Betting",
+          "total_cu_consumed": 361186102
+        },
+        {
+          "category": "Bridge",
+          "total_cu_consumed": 45727871469
+        },
+        {
+          "category": "Creator",
+          "total_cu_consumed": 1350383728
+        },
+        {
+          "category": "DeFi",
+          "total_cu_consumed": 124109988723252
+        },
+        {
+          "category": "DePIN",
+          "total_cu_consumed": 154114746451
+        },
+        {
+          "category": "Encryption",
+          "total_cu_consumed": 109365900
+        },
+        {
+          "category": "Gambling",
+          "total_cu_consumed": 9560512232
+        },
+        {
+          "category": "Gaming",
+          "total_cu_consumed": 3335790356647
+        },
+        {
+          "category": "Governance",
+          "total_cu_consumed": 270701298
+        },
+        {
+          "category": "Infrastructure",
+          "total_cu_consumed": 431464551353
+        },
+        {
+          "category": "MEV",
+          "total_cu_consumed": 18906493879689
+        },
+        {
+          "category": "Mining",
+          "total_cu_consumed": 33799543872
+        },
+        {
+          "category": "Music",
+          "total_cu_consumed": 3103264302
+        },
+        {
+          "category": "NFT",
+          "total_cu_consumed": 842795824486
+        },
+        {
+          "category": "Name Service",
+          "total_cu_consumed": 4237281468
+        },
+        {
+          "category": "Name service",
+          "total_cu_consumed": 130491721
+        },
+        {
+          "category": "Oracle",
+          "total_cu_consumed": 4553484671323
+        },
+        {
+          "category": "Payments",
+          "total_cu_consumed": 34707143328
+        },
+        {
+          "category": "Social Platform",
+          "total_cu_consumed": 184264828
+        },
+        {
+          "category": "Wallet",
+          "total_cu_consumed": 628872671
+        },
+        {
+          "category": "others",
+          "total_cu_consumed": 72950653861752
+        }
+      ],
+      "timestamp": 1752780319806,
       "chartId": "chart_1748201444923_71ydpwe",
-      "title": "Cu Consumed By Ecosystem - Last 30 Days",
-      "parameters": {}
+      "title": "Cu Consumed By Ecosystem - Last 30 Days"
     }
   ],
   "summary": {
     "totalCharts": 8,
-    "successfulFetches": 0,
-    "failedFetches": 8
+    "successfulFetches": 8,
+    "failedFetches": 0
   }
 }
