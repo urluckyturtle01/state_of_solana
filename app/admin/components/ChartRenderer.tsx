@@ -200,7 +200,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       
       return undefined;
     };
-
+    
     // Group data by the appropriate time period (and groupBy field if stacked)
     const groupedData: Record<string, any> = {};
     

@@ -144,6 +144,131 @@ const formatFieldName = (fieldName: string): string => {
     .join(' ');
 };
 
+// Helper function to extract base field name for consistent coloring
+function getBaseFieldName(fieldName: string): string {
+  // Remove common currency/chain suffixes to group similar fields together
+  const suffixesToRemove = ['_usd', '_sol', '_btc', '_eth', '_usdc', '_usdt'];
+  
+  let baseName = fieldName.toLowerCase();
+  
+  // Remove suffix if found
+  for (const suffix of suffixesToRemove) {
+    if (baseName.endsWith(suffix)) {
+      baseName = baseName.replace(suffix, '');
+      break;
+    }
+  }
+  
+  return baseName;
+}
+
+// Helper function to create smart color mapping for fields
+function createSmartColorMapping(
+  visibleFields: string[], 
+  allOriginalFields: string[], 
+  preferredColorMap: Record<string, string>
+): Record<string, string> {
+  const resultColors: Record<string, string> = {};
+  const baseFieldToColorIndex: Record<string, number> = {};
+  
+  console.log('=== DUAL AXIS SMART COLOR MAPPING DEBUG ===');
+  console.log('All original fields:', allOriginalFields);
+  console.log('Visible fields:', visibleFields);
+  console.log('Preferred color map:', preferredColorMap);
+  
+  // Check if we have currency suffixes in any of the fields
+  const hasCurrencySuffixes = allOriginalFields.some(field => {
+    const baseFieldName = getBaseFieldName(field);
+    return field.toLowerCase() !== baseFieldName;
+  });
+  
+  console.log('Has currency suffixes in dataset:', hasCurrencySuffixes);
+  
+  // Strategy 1: If we have currency suffixes, use base field mapping for consistency
+  if (hasCurrencySuffixes) {
+    // First pass: Analyze ALL original fields to establish consistent base field color indices
+    const allBaseFields = new Set<string>();
+    allOriginalFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      allBaseFields.add(baseFieldName);
+    });
+    
+    // Sort base fields for consistent ordering
+    const sortedBaseFields = Array.from(allBaseFields).sort();
+    console.log('Sorted base fields:', sortedBaseFields);
+    
+    sortedBaseFields.forEach((baseField, index) => {
+      baseFieldToColorIndex[baseField] = index;
+    });
+    
+    console.log('Base field color mapping:', baseFieldToColorIndex);
+    
+    // Assign colors to visible fields based on base field mapping
+    visibleFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      const fieldHasCurrencySuffix = field.toLowerCase() !== baseFieldName;
+      
+      console.log(`\n--- Processing field: ${field} ---`);
+      console.log(`Base field name: ${baseFieldName}`);
+      console.log(`Has currency suffix: ${fieldHasCurrencySuffix}`);
+      
+      // For currency suffix fields, always use smart mapping for consistency
+      if (fieldHasCurrencySuffix) {
+        const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (smart): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+      } else {
+        // For non-currency fields, prefer external color map
+        if (preferredColorMap[field]) {
+          resultColors[field] = preferredColorMap[field];
+          console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+        } else {
+          const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+          resultColors[field] = getColorByIndex(colorIndex);
+          console.log(`✓ Color assignment (smart fallback): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+        }
+      }
+    });
+  } else {
+    // Strategy 2: No currency suffixes detected - use ALL original fields for consistent color assignment
+    console.log('No currency suffixes detected - using field position mapping for consistency');
+    
+    // Sort all original fields to establish consistent color indices
+    const sortedOriginalFields = [...allOriginalFields].sort();
+    console.log('Sorted original fields:', sortedOriginalFields);
+    
+    // Create color mapping based on position in sorted original fields
+    const originalFieldColorMap: Record<string, number> = {};
+    sortedOriginalFields.forEach((field, index) => {
+      originalFieldColorMap[field] = index;
+    });
+    
+    console.log('Original field color mapping:', originalFieldColorMap);
+    
+    // Assign colors to visible fields based on their position in original field list
+    visibleFields.forEach(field => {
+      console.log(`\n--- Processing field: ${field} ---`);
+      
+      // Check if we have a preferred color first
+      if (preferredColorMap[field]) {
+        resultColors[field] = preferredColorMap[field];
+        console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+      } else {
+        // Use the field's position in the original sorted list for consistency
+        const colorIndex = originalFieldColorMap[field] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (position-based): ${field} -> color[${colorIndex}] = ${resultColors[field]}`);
+      }
+    });
+  }
+  
+  console.log('\n=== DUAL AXIS FINAL COLOR MAPPING RESULT ===');
+  console.log('Result colors:', resultColors);
+  console.log('================================================');
+  
+  return resultColors;
+}
+
 // Helper function to calculate safe tooltip position for mobile
 const calculateSafeTooltipPosition = (
   mouseX: number, 
@@ -471,40 +596,148 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       }
     }
     
-    // Get all field names that should appear in the chart
-    let allFields: string[] = [];
-    if (Array.isArray(yField)) {
-      allFields = yField.map(field => getYAxisField(field));
+    // Apply currency field filtering for field-switcher type currency filters
+    let filteredYField = yField;
+    const currencyFilter = chartConfig.additionalOptions?.filters?.currencyFilter;
+    
+    // Get the correct currency filter value based on context
+    let selectedCurrency: string | undefined;
+    if (isExpanded) {
+      // In modal: prioritize modalFilterValues, but ensure it's properly set
+      selectedCurrency = modalFilterValues?.currencyFilter || filterValues?.currencyFilter;
+      console.log('DualAxis Modal currency selection:', {
+        modalCurrency: modalFilterValues?.currencyFilter,
+        fallbackCurrency: filterValues?.currencyFilter,
+        selectedCurrency,
+        isExpanded
+      });
     } else {
-      allFields = [getYAxisField(yField)];
+      // In regular view: use filterValues
+      selectedCurrency = filterValues?.currencyFilter;
     }
     
-    // Separate fields by axis for sequential color assignment
+    // Handle initial state: if no currency is selected but we have a currency filter, default to first option
+    if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && !selectedCurrency) {
+      const availableCurrencies = Object.keys(currencyFilter.columnMappings);
+      if (availableCurrencies.length > 0) {
+        selectedCurrency = availableCurrencies[0];
+        console.log('DualAxis: No currency selected, defaulting to first available:', selectedCurrency);
+      }
+    }
+    
+    console.log('DualAxis Currency filter context:', { selectedCurrency, isExpanded, currencyFilterType: currencyFilter?.type });
+    
+    if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+      console.log('DualAxis: Applying currency field filtering:', {
+        selectedCurrency,
+        columnMappings: currencyFilter.columnMappings,
+        originalFields: Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field]
+      });
+      
+      // Get all currency-related fields from the column mappings
+      const currencyFields = Object.values(currencyFilter.columnMappings);
+      const targetFields = currencyFilter.columnMappings[selectedCurrency];
+      
+      if (targetFields && Array.isArray(yField)) {
+        // Parse target fields (could be comma-separated)
+        const targetFieldList = targetFields.split(',').map(f => f.trim());
+        
+        // Filter yAxis to only include:
+        // 1. Fields that match the selected currency's target fields
+        // 2. Non-currency fields (fields not in any currency mapping)
+        filteredYField = yField.filter(field => {
+          const fieldName = typeof field === 'string' ? field : field.field;
+          
+          // Include if it's a target field for the selected currency
+          if (targetFieldList.includes(fieldName)) {
+            return true;
+          }
+          
+          // Include if it's not a currency field at all (not in any mapping)
+          if (!currencyFields.some(mapping => {
+            const mappingFields = mapping.split(',').map(f => f.trim());
+            return mappingFields.includes(fieldName);
+          })) {
+            return true;
+          }
+          
+          // Exclude currency fields that don't match the selected currency
+          return false;
+        });
+        
+        console.log('DualAxis: Filtered yField result:', {
+          originalCount: yField.length,
+          filteredCount: filteredYField.length,
+          filteredFields: filteredYField.map(f => typeof f === 'string' ? f : f.field)
+        });
+      }
+    }
+    
+    // Get all field names that should appear in the chart
+    let allFields: string[] = [];
+    if (Array.isArray(filteredYField)) {
+      allFields = filteredYField.map(field => getYAxisField(field));
+    } else {
+      allFields = [getYAxisField(filteredYField)];
+    }
+    
+    // Separate fields by axis for sequential color assignment using first two colors
     const leftAxisFields = allFields.filter(field => !chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
     const rightAxisFields = allFields.filter(field => chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
     
-    // Prepare color mapping for fields with axis-based sequential assignment
-    const colorMapping: Record<string, string> = {};
+    // Get all original field names to determine consistent base field mapping
+    const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
+    
+    // Create base field mapping for consistent colors across currency switches
+    const baseFieldToColorIndex: Record<string, number> = {};
+    const seenBaseFields = new Set<string>();
     let colorIndex = 0;
     
-    // Assign colors to left axis fields first (colors 0, 1, 2, ...)
-    leftAxisFields.forEach((field) => {
-      colorMapping[field] = preferredColorMap[field] || getColorByIndex(colorIndex);
-      colorIndex++;
+    // First pass: establish base field color indices from ALL original fields
+    allOriginalFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      if (!seenBaseFields.has(baseFieldName)) {
+        baseFieldToColorIndex[baseFieldName] = colorIndex; // Use colors[0], colors[1], colors[2], colors[3]...
+        seenBaseFields.add(baseFieldName);
+        colorIndex++;
+      }
     });
     
-    // Then assign colors to right axis fields (continuing the sequence)
-    rightAxisFields.forEach((field) => {
-      colorMapping[field] = preferredColorMap[field] || getColorByIndex(colorIndex);
-      colorIndex++;
+    console.log('=== DUAL AXIS COLOR ASSIGNMENT DEBUG ===');
+    console.log('All original fields:', allOriginalFields);
+    console.log('Current visible fields:', allFields);
+    console.log('Base field to color index mapping:', baseFieldToColorIndex);
+    console.log('Left axis fields:', leftAxisFields);
+    console.log('Right axis fields:', rightAxisFields);
+    console.log('Preferred color map:', preferredColorMap);
+    console.log('getColorByIndex(0):', getColorByIndex(0));
+    console.log('getColorByIndex(1):', getColorByIndex(1));
+    
+    // Prepare color mapping using base field names for consistency
+    const colorMapping: Record<string, string> = {};
+    
+    // Assign colors based on base field name (consistent across currencies)
+    allFields.forEach((field) => {
+      if (preferredColorMap[field]) {
+        colorMapping[field] = preferredColorMap[field];
+        console.log(`Field "${field}" using preferred color: ${preferredColorMap[field]}`);
+      } else {
+        const baseFieldName = getBaseFieldName(field);
+        const colorIdx = baseFieldToColorIndex[baseFieldName] ?? 0;
+        colorMapping[field] = getColorByIndex(colorIdx);
+        console.log(`Field "${field}" -> base:"${baseFieldName}" -> color[${colorIdx}] = ${colorMapping[field]}`);
+      }
     });
+    
+    console.log('Final color mapping:', colorMapping);
+    console.log('==========================================');
     
     return { 
       chartData: processedData,
       fields: allFields,
       fieldColors: colorMapping
     };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yField, externalColorMap, isExpanded]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yField, externalColorMap, isExpanded, filterValues?.currencyFilter, modalFilterValues?.currencyFilter, chartConfig.additionalOptions?.filters?.currencyFilter]);
 
   // Utility to determine if a field belongs to the right axis
   const isRightAxisField = useCallback((field: string): boolean => {

@@ -211,6 +211,143 @@ const parseAggregatedDate = (dateString: string): Date => {
   }
 };
 
+// Helper function to extract base field name for consistent coloring
+function getBaseFieldName(fieldName: string): string {
+  // Remove common currency/chain suffixes to group similar fields together
+  const suffixesToRemove = ['_usd', '_sol', '_btc', '_eth', '_usdc', '_usdt'];
+  
+  let baseName = fieldName.toLowerCase();
+  
+  // Remove suffix if found
+  for (const suffix of suffixesToRemove) {
+    if (baseName.endsWith(suffix)) {
+      baseName = baseName.replace(suffix, '');
+      break;
+    }
+  }
+  
+  return baseName;
+}
+
+// Helper function to create smart color mapping for fields
+function createSmartColorMapping(
+  visibleFields: string[], 
+  allOriginalFields: string[], 
+  preferredColorMap: Record<string, string>
+): Record<string, string> {
+  const resultColors: Record<string, string> = {};
+  const baseFieldToColorIndex: Record<string, number> = {};
+  
+  console.log('=== SMART COLOR MAPPING DEBUG ===');
+  console.log('All original fields:', allOriginalFields);
+  console.log('Visible fields:', visibleFields);
+  console.log('Preferred color map:', preferredColorMap);
+  
+  // First, let's debug getBaseFieldName for each field
+  console.log('=== BASE FIELD NAME EXTRACTION ===');
+  visibleFields.forEach(field => {
+    const baseFieldName = getBaseFieldName(field);
+    console.log(`${field} -> base: "${baseFieldName}"`);
+  });
+  allOriginalFields.forEach(field => {
+    const baseFieldName = getBaseFieldName(field);
+    console.log(`${field} (original) -> base: "${baseFieldName}"`);
+  });
+  
+  // Check if we have currency suffixes in any of the fields
+  const hasCurrencySuffixes = allOriginalFields.some(field => {
+    const baseFieldName = getBaseFieldName(field);
+    return field.toLowerCase() !== baseFieldName;
+  });
+  
+  console.log('Has currency suffixes in dataset:', hasCurrencySuffixes);
+  
+  // Strategy 1: If we have currency suffixes, use base field mapping for consistency
+  if (hasCurrencySuffixes) {
+    // First pass: Analyze ALL original fields to establish consistent base field color indices
+    const allBaseFields = new Set<string>();
+    allOriginalFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      allBaseFields.add(baseFieldName);
+    });
+    
+    // Sort base fields for consistent ordering
+    const sortedBaseFields = Array.from(allBaseFields).sort();
+    console.log('Sorted base fields:', sortedBaseFields);
+    
+    sortedBaseFields.forEach((baseField, index) => {
+      baseFieldToColorIndex[baseField] = index;
+    });
+    
+    console.log('Base field color mapping:', baseFieldToColorIndex);
+    
+    // Assign colors to visible fields based on base field mapping
+    visibleFields.forEach(field => {
+      const baseFieldName = getBaseFieldName(field);
+      const fieldHasCurrencySuffix = field.toLowerCase() !== baseFieldName;
+      
+      console.log(`\n--- Processing field: ${field} ---`);
+      console.log(`Base field name: ${baseFieldName}`);
+      console.log(`Has currency suffix: ${fieldHasCurrencySuffix}`);
+      
+      // For currency suffix fields, always use smart mapping for consistency
+      if (fieldHasCurrencySuffix) {
+        const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (smart): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+      } else {
+        // For non-currency fields, prefer external color map
+        if (preferredColorMap[field]) {
+          resultColors[field] = preferredColorMap[field];
+          console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+        } else {
+          const colorIndex = baseFieldToColorIndex[baseFieldName] ?? 0;
+          resultColors[field] = getColorByIndex(colorIndex);
+          console.log(`✓ Color assignment (smart fallback): ${field} -> base:"${baseFieldName}" -> color[${colorIndex}] = ${resultColors[field]}`);
+        }
+      }
+    });
+  } else {
+    // Strategy 2: No currency suffixes detected - use ALL original fields for consistent color assignment
+    // This handles cases like currency filters where different field sets are shown but we want consistency
+    console.log('No currency suffixes detected - using field position mapping for consistency');
+    
+    // Sort all original fields to establish consistent color indices
+    const sortedOriginalFields = [...allOriginalFields].sort();
+    console.log('Sorted original fields:', sortedOriginalFields);
+    
+    // Create color mapping based on position in sorted original fields
+    const originalFieldColorMap: Record<string, number> = {};
+    sortedOriginalFields.forEach((field, index) => {
+      originalFieldColorMap[field] = index;
+    });
+    
+    console.log('Original field color mapping:', originalFieldColorMap);
+    
+    // Assign colors to visible fields based on their position in original field list
+    visibleFields.forEach(field => {
+      console.log(`\n--- Processing field: ${field} ---`);
+      
+      // Check if we have a preferred color first
+      if (preferredColorMap[field]) {
+        resultColors[field] = preferredColorMap[field];
+        console.log(`✓ Color assignment (preferred): ${field} -> ${preferredColorMap[field]}`);
+      } else {
+        // Use the field's position in the original sorted list for consistency
+        const colorIndex = originalFieldColorMap[field] ?? 0;
+        resultColors[field] = getColorByIndex(colorIndex);
+        console.log(`✓ Color assignment (position-based): ${field} -> color[${colorIndex}] = ${resultColors[field]}`);
+      }
+    });
+  }
+  
+  console.log('\n=== FINAL COLOR MAPPING RESULT ===');
+  console.log('Result colors:', resultColors);
+  console.log('===================================');
+  
+  return resultColors;
+}
+
 const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({ 
   chartConfig, 
   data, 
@@ -242,8 +379,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const [isModalBrushActive, setIsModalBrushActive] = useState(false);
   const [modalBrushDomain, setModalBrushDomain] = useState<[Date, Date] | null>(null);
   
-  // Add state for filter values in modal
-  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
+  // Add state for filter values in modal - initialize with current filterValues
+  const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(() => {
+    console.log('Initializing modalFilterValues with:', filterValues);
+    return filterValues || {};
+  });
   
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
@@ -297,6 +437,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
     // Use external color map if available
     const preferredColorMap = externalColorMap || {};
+    console.log('External color map received:', externalColorMap);
     
     // Filter data first to remove any undefined x values
     const processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
@@ -315,6 +456,83 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           const dateA = new Date(a[xKey]);
           const dateB = new Date(b[xKey]);
           return dateA.getTime() - dateB.getTime();
+        });
+      }
+    }
+    
+    // Apply currency field filtering for field-switcher type currency filters
+    let filteredYField = yField;
+    const currencyFilter = chartConfig.additionalOptions?.filters?.currencyFilter;
+    
+    // Get the correct currency filter value based on context
+    let selectedCurrency: string | undefined;
+    if (isExpanded) {
+      // In modal: prioritize modalFilterValues, but ensure it's properly set
+      selectedCurrency = modalFilterValues?.currencyFilter || filterValues?.currencyFilter;
+      console.log('Modal currency selection:', {
+        modalCurrency: modalFilterValues?.currencyFilter,
+        fallbackCurrency: filterValues?.currencyFilter,
+        selectedCurrency,
+        isExpanded
+      });
+    } else {
+      // In regular view: use filterValues
+      selectedCurrency = filterValues?.currencyFilter;
+    }
+    
+    // Handle initial state: if no currency is selected but we have a currency filter, default to first option
+    if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && !selectedCurrency) {
+      const availableCurrencies = Object.keys(currencyFilter.columnMappings);
+      if (availableCurrencies.length > 0) {
+        selectedCurrency = availableCurrencies[0];
+        console.log('No currency selected, defaulting to first available:', selectedCurrency);
+      }
+    }
+    
+    console.log('Currency filter context:', { selectedCurrency, isExpanded, currencyFilterType: currencyFilter?.type });
+    
+    if (currencyFilter?.type === 'field_switcher' && currencyFilter.columnMappings && selectedCurrency) {
+      console.log('Applying currency field filtering:', {
+        selectedCurrency,
+        columnMappings: currencyFilter.columnMappings,
+        originalFields: Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field]
+      });
+      
+      // Get all currency-related fields from the column mappings
+      const currencyFields = Object.values(currencyFilter.columnMappings);
+      const targetFields = currencyFilter.columnMappings[selectedCurrency];
+      
+      if (targetFields && Array.isArray(yField)) {
+        // Parse target fields (could be comma-separated)
+        const targetFieldList = targetFields.split(',').map(f => f.trim());
+        
+        // Filter yAxis to only include:
+        // 1. Fields that match the selected currency's target fields
+        // 2. Non-currency fields (fields not in any currency mapping)
+        filteredYField = yField.filter(field => {
+          const fieldName = typeof field === 'string' ? field : field.field;
+          
+          // Include if it's a target field for the selected currency
+          if (targetFieldList.includes(fieldName)) {
+            return true;
+          }
+          
+          // Include if it's not a currency field at all (not in any mapping)
+          if (!currencyFields.some(mapping => {
+            const mappingFields = mapping.split(',').map(f => f.trim());
+            return mappingFields.includes(fieldName);
+          })) {
+            return true;
+          }
+          
+          // Exclude currency fields that don't match the selected currency
+          return false;
+        });
+        
+        console.log('Filtered yField result:', {
+          originalCount: yField.length,
+          filteredCount: filteredYField.length,
+          filteredFields: filteredYField.map(f => typeof f === 'string' ? f : f.field)
         });
       }
     }
@@ -341,15 +559,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
           
           // For single y-field with groupBy, store the value for each group
-          if (typeof yField === 'string') {
-            groupedByX[xValue][groupValue] = Number(item[yField]) || 0;
-          } else if (Array.isArray(yField) && yField.length === 1) {
+          if (typeof filteredYField === 'string') {
+            groupedByX[xValue][groupValue] = Number(item[filteredYField]) || 0;
+          } else if (Array.isArray(filteredYField) && filteredYField.length === 1) {
             // For array with single y-field
-            const singleField = typeof yField[0] === 'string' ? yField[0] : yField[0].field;
+            const singleField = typeof filteredYField[0] === 'string' ? filteredYField[0] : filteredYField[0].field;
             groupedByX[xValue][groupValue] = Number(item[singleField]) || 0;
           } else {
             // For multiple y-fields with groupBy, store all field values
-            Array.isArray(yField) && yField.forEach(field => {
+            Array.isArray(filteredYField) && filteredYField.forEach(field => {
               const fieldName = typeof field === 'string' ? field : field.field;
               if (!groupedByX[xValue][fieldName]) {
                 groupedByX[xValue][fieldName] = {};
@@ -362,7 +580,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         // Transform to array format
         const uniqueGroupsArray = Array.from(uniqueGroups);
         
-        if (typeof yField === 'string' || (Array.isArray(yField) && yField.length === 1)) {
+        if (typeof filteredYField === 'string' || (Array.isArray(filteredYField) && filteredYField.length === 1)) {
           // For single y-field with groupBy, each group becomes a field
           const resultFields = uniqueGroupsArray;
           const resultData = Object.entries(groupedByX).map(([xVal, groups]) => {
@@ -378,21 +596,21 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           let originalFieldType: 'bar' | 'line';
           let originalFieldUnit: string | undefined;
           
-          if (typeof yField === 'string') {
-            // If yField is a string, use the chart's default type (bar)
-            originalFieldConfig = yField;
+          if (typeof filteredYField === 'string') {
+            // If filteredYField is a string, use the chart's default type (bar)
+            originalFieldConfig = filteredYField;
             originalFieldType = 'bar';
             originalFieldUnit = undefined;
-          } else if (Array.isArray(yField) && yField.length === 1) {
+          } else if (Array.isArray(filteredYField) && filteredYField.length === 1) {
             // For a single field in an array, use its specified type and unit
-            originalFieldConfig = yField[0];
+            originalFieldConfig = filteredYField[0];
             originalFieldType = typeof originalFieldConfig === 'string' ? 'bar' : originalFieldConfig.type;
             originalFieldUnit = typeof originalFieldConfig === 'string' ? undefined : originalFieldConfig.unit;
             
             // Use the determined type for all groups
           } else {
             // Fallback to bar if structure is unexpected
-            originalFieldConfig = yField[0] || '';
+            originalFieldConfig = filteredYField[0] || '';
             originalFieldType = 'bar';
             originalFieldUnit = undefined;
           }
@@ -409,11 +627,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             resultFieldUnits[group] = originalFieldUnit;
           });
           
-          // Assign colors to each field
-          const resultColors: Record<string, string> = {};
-          resultFields.forEach((field, index) => {
-            resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
-          });
+          // Get all original field names for consistent color mapping
+          const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
+          
+          // Assign colors to each field using smart color mapping
+          const resultColors = createSmartColorMapping(resultFields, allOriginalFields, preferredColorMap);
           
                   return { 
           chartData: resultData,
@@ -428,7 +646,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
           const resultFieldUnits: Record<string, string | undefined> = {};
           
-          Array.isArray(yField) && yField.forEach(field => {
+          Array.isArray(filteredYField) && filteredYField.forEach(field => {
             const fieldName = typeof field === 'string' ? field : field.field;
             const fieldType = typeof field === 'string' ? 'bar' : field.type;
             const fieldUnit = typeof field === 'string' ? undefined : field.unit;
@@ -444,7 +662,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           const resultData = Object.entries(groupedByX).map(([xVal, fieldGroups]) => {
             const entry: any = { [xKey]: xVal };
             
-            Array.isArray(yField) && yField.forEach(field => {
+            Array.isArray(filteredYField) && filteredYField.forEach(field => {
               const fieldName = typeof field === 'string' ? field : field.field;
               
               uniqueGroupsArray.forEach(group => {
@@ -456,11 +674,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             return entry;
           });
           
-          // Assign colors to each field
-          const resultColors: Record<string, string> = {};
-          combinedFields.forEach((field, index) => {
-            resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
-          });
+          // Get all original field names for consistent color mapping
+          const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
+          
+          // Assign colors to each field using smart color mapping
+          const resultColors = createSmartColorMapping(combinedFields, allOriginalFields, preferredColorMap);
           
           return { 
             chartData: resultData,
@@ -476,26 +694,26 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
         const resultFieldUnits: Record<string, string | undefined> = {};
         
-        if (Array.isArray(yField)) {
-          resultFields = yField.map(field => getYAxisField(field));
+        if (Array.isArray(filteredYField)) {
+          resultFields = filteredYField.map(field => getYAxisField(field));
           
           // Create mapping of field types and units
-          yField.forEach(field => {
+          filteredYField.forEach(field => {
             const fieldName = getYAxisField(field);
             resultFieldTypes[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
             resultFieldUnits[fieldName] = typeof field === 'string' ? undefined : (field as YAxisConfig).unit;
           });
         } else {
-          resultFields = [getYAxisField(yField)];
-          resultFieldTypes[getYAxisField(yField)] = typeof yField === 'string' ? 'bar' : (yField as YAxisConfig).type;
-          resultFieldUnits[getYAxisField(yField)] = typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit;
+          resultFields = [getYAxisField(filteredYField)];
+          resultFieldTypes[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? 'bar' : (filteredYField as YAxisConfig).type;
+          resultFieldUnits[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? undefined : (filteredYField as YAxisConfig).unit;
         }
         
-        // Prepare color mapping for fields
-        const resultColors: Record<string, string> = {};
-        resultFields.forEach((field, index) => {
-          resultColors[field] = preferredColorMap[field] || getColorByIndex(index);
-        });
+        // Get all original field names for consistent color mapping
+        const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
+        
+        // Prepare color mapping for fields using smart color mapping
+        const resultColors = createSmartColorMapping(resultFields, allOriginalFields, preferredColorMap);
         
         return { 
           chartData: processedData,
@@ -505,7 +723,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           fieldUnits: resultFieldUnits
         };
       }
-  }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy]);
+  }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
 
   // Helper function to force reset the brush visual state
   const forceBrushVisualReset = useCallback((inModal = false) => {
@@ -582,10 +800,16 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   // Sync modal brush domain with main brush domain when modal opens
   useEffect(() => {
     if (isExpanded) {
-      console.log('Modal opened, syncing brush domains');
+      console.log('Modal opened, syncing brush domains and filter values');
       // When modal opens, sync the brush domains
       setModalBrushDomain(brushDomain);
       setIsModalBrushActive(isBrushActive);
+      
+      // Ensure modal filter values are properly synced when modal opens
+      if (filterValues) {
+        console.log('Syncing filter values to modal on open:', filterValues);
+        setModalFilterValues(filterValues);
+      }
       
       // Also sync filtered data
       if (isBrushActive && filteredData.length > 0) {
@@ -593,7 +817,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         setModalFilteredData(filteredData);
       }
     }
-  }, [isExpanded, brushDomain, isBrushActive, filteredData]);
+  }, [isExpanded, brushDomain, isBrushActive, filteredData, filterValues]);
   
   // Update the direct filter change handler to remove the brush visual reset
   useEffect(() => {
@@ -639,14 +863,22 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       [key]: value
     };
     
+    console.log('Setting updated modal filters:', updatedFilters);
     setModalFilterValues(updatedFilters);
     
     // For time aggregation charts, use onModalFilterUpdate for internal state management
     // and only call onFilterChange for non-time filters that need API calls
     const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
+    const isCurrencyFieldSwitcher = chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher';
     
     if (onModalFilterUpdate) {
       onModalFilterUpdate(updatedFilters);
+    }
+    
+    // For field-switcher currency filters, don't trigger API calls as they're handled client-side
+    if (key === 'currencyFilter' && isCurrencyFieldSwitcher) {
+      console.log('Currency field-switcher changed in modal - handled client-side only');
+      return; // Don't call onFilterChange for field-switcher currency filters
     }
     
     if (isTimeAggregationEnabled) {
@@ -659,7 +891,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // For non-time aggregation charts, all filter changes trigger API calls
       onFilterChange(updatedFilters);
     }
-  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation]);
+  }, [modalFilterValues, onFilterChange, onModalFilterUpdate, chartConfig.additionalOptions?.enableTimeAggregation, chartConfig.additionalOptions?.filters?.currencyFilter?.type]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {

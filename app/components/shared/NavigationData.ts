@@ -44,7 +44,7 @@ export const menuItems: MenuItem[] = [
         name: "Helium", 
         path: "/projects/helium",
         logo: "https://framerusercontent.com/images/6TFcIJwmOq1tPat18K1XwdNNgdA.png",
-        status: "soon"
+        //status: "soon"
       },
       { 
         name: "Metaplex", 

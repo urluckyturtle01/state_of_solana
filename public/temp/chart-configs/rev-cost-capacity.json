@@ -2,7 +2,7 @@
   "pageId": "rev-cost-capacity",
   "pageName": "Cost & Capacity",
   "chartCount": 3,
-  "lastUpdated": "2025-07-16T22:10:22.297Z",
+  "lastUpdated": "2025-07-17T13:08:33.183Z",
   "charts": [
     {
       "id": "chart_1748007531839_4qciy9d",
@@ -20,30 +20,49 @@
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "jito_total_tips",
+            "field": "base_fee_sol",
             "type": "bar",
-            "unit": "$"
+            "unit": ""
           },
           {
-            "field": "base_fee",
+            "field": "priority_fee_sol",
             "type": "bar",
-            "unit": "$"
+            "unit": ""
           },
           {
-            "field": "priority_fee",
+            "field": "jito_total_tips_sol",
             "type": "bar",
-            "unit": "$"
+            "unit": ""
           },
           {
-            "field": "vote_fees",
+            "field": "vote_fee_sol",
             "type": "bar",
-            "unit": "$"
+            "unit": ""
+          },
+          {
+            "field": "base_fee_usd",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "priority_fee_usd",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "jito_total_tips_usd",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "vote_fee_usd",
+            "type": "bar",
+            "unit": ""
           }
         ],
         "groupBy": ""
       },
       "additionalOptions": {
-        "enableTimeAggregation": true,
         "filters": {
           "timeFilter": {
             "paramName": "Date Part",
@@ -60,12 +79,19 @@
             "options": [
               "USD",
               "SOL"
-            ]
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "base_fee_usd,priority_fee_usd,jito_total_tips_usd,vote_fee_usd",
+              "SOL": "base_fee_sol,priority_fee_sol,jito_total_tips_sol,vote_fee_sol",
+              "USDe": ""
+            }
           }
-        }
+        },
+        "enableTimeAggregation": true
       },
       "createdAt": "2025-05-23T13:38:51.839Z",
-      "updatedAt": "2025-07-11T08:40:15.444Z"
+      "updatedAt": "2025-07-17T08:06:02.039Z"
     },
     {
       "id": "chart_1748008463492_z8recfh",
