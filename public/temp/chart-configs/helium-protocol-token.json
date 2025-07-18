@@ -2,7 +2,7 @@
   "pageId": "helium-protocol-token",
   "pageName": "Protocol Token",
   "chartCount": 4,
-  "lastUpdated": "2025-07-18T11:43:47.688Z",
+  "lastUpdated": "2025-07-18T13:00:07.121Z",
   "charts": [
     {
       "id": "chart_1749492571657_xjkcc6l",
@@ -86,25 +86,44 @@
       "subtitle": "",
       "page": "helium-protocol-token",
       "section": "",
-      "chartType": "bar",
+      "chartType": "dual-axis",
       "apiEndpoint": "https://analytics.topledger.xyz/helium/api/queries/13604/results.json",
       "apiKey": "TdJ1aLhP0Wn2fwIIn7P16BPJuqShDUmIYC69Jamd&max_age=86400",
       "isStacked": false,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": [
+          "block_date"
+        ],
         "yAxis": [
           {
             "field": "Dex_Volume",
+            "type": "bar",
+            "unit": "$",
+            "rightAxis": false
+          },
+          {
+            "field": "cumulative_Dex_Volume",
             "type": "line",
-            "unit": "$"
+            "unit": "$",
+            "rightAxis": true
           }
         ],
         "groupBy": "symbol"
       },
       "createdAt": "2025-06-09T18:21:12.485Z",
-      "updatedAt": "2025-07-11T08:49:26.548Z"
+      "updatedAt": "2025-07-18T12:59:51.032Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Dex_Volume"
+        ],
+        "rightAxisFields": [
+          "cumulative_Dex_Volume"
+        ]
+      }
     }
   ]
 }
