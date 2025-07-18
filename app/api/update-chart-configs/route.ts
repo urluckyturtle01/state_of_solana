@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     console.log('🔄 Starting chart config regeneration...');
     
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     // Path to the chart config generation script
     const scriptPath = path.join(process.cwd(), 'public', 'temp', 'fetch-charts.js');
     
-    return new Promise((resolve) => {
+    return new Promise<Response>((resolve) => {
       const childProcess = spawn('node', [scriptPath], {
         cwd: path.join(process.cwd(), 'public', 'temp'),
         stdio: ['pipe', 'pipe', 'pipe']
