@@ -50,7 +50,7 @@ export const menuItems: MenuItem[] = [
         name: "Metaplex", 
         path: "/projects/metaplex",
         logo: "https://www.metaplex.com/images/favicon.png",
-        status: "soon"
+        //status: "soon"
       },
       { 
         name: "Orca", 
