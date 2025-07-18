@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "Issuance & Burn",
   "chartCount": 5,
-  "lastUpdated": "2025-07-17T17:55:52.152Z",
+  "lastUpdated": "2025-07-18T07:37:07.129Z",
   "charts": [
     {
       "id": "chart_1748090558074_b8llrdw",
@@ -292,7 +292,8 @@
           {
             "field": "sol_burn_usd",
             "type": "bar",
-            "rightAxis": false
+            "rightAxis": false,
+            "unit": "$"
           },
           {
             "field": "cumulative_sol_burn_sol",
@@ -302,7 +303,8 @@
           {
             "field": "cumulative_sol_burn_usd",
             "type": "line",
-            "rightAxis": true
+            "rightAxis": true,
+            "unit": "$"
           }
         ],
         "groupBy": ""
@@ -335,6 +337,8 @@
         },
         "enableTimeAggregation": true
       },
+      "createdAt": "2025-05-24T14:52:39.787Z",
+      "updatedAt": "2025-07-18T07:36:39.902Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
@@ -346,9 +350,7 @@
           "cumulative_sol_burn_sol",
           "cumulative_sol_burn_usd"
         ]
-      },
-      "createdAt": "2025-05-24T14:52:39.787Z",
-      "updatedAt": "2025-07-17T13:08:03.455Z"
+      }
     }
   ]
 }
