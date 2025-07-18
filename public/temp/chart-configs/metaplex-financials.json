@@ -1,8 +1,8 @@
 {
   "pageId": "metaplex-financials",
   "pageName": "Financials",
-  "chartCount": 4,
-  "lastUpdated": "2025-07-18T11:02:00.101Z",
+  "chartCount": 5,
+  "lastUpdated": "2025-07-18T11:43:47.686Z",
   "charts": [
     {
       "id": "chart_1749625280929_87ubkll",
@@ -134,6 +134,32 @@
       },
       "createdAt": "2025-06-11T07:39:35.498Z",
       "updatedAt": "2025-07-11T08:41:26.593Z"
+    },
+    {
+      "id": "chart_1752838202795_r7y5gmo",
+      "title": "Metaplex DAO $mplx Balance",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13873/results.json",
+      "apiKey": "aF4IhZDHQ1fGBffKBTRe2Ve5e5ycT1iyoyNneHtS&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Balance",
+            "type": "line",
+            "unit": "MPLX"
+          }
+        ],
+        "groupBy": "Category"
+      },
+      "createdAt": "2025-07-18T11:30:02.795Z",
+      "updatedAt": "2025-07-18T11:30:03.298Z"
     }
   ]
 }

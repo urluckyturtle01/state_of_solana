@@ -474,7 +474,22 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   try {
     // Get all charts and filter by page
     const allCharts = await getAllChartConfigs();
-    return allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+    const pageCharts = allCharts.filter((chart: ChartConfig) => chart.page === pageId);
+    
+    // Sort by position if available, otherwise by creation date
+    return pageCharts.sort((a, b) => {
+      const positionA = a.position ?? 999999;
+      const positionB = b.position ?? 999999;
+      
+      if (positionA !== positionB) {
+        return positionA - positionB;
+      }
+      
+      // Fallback to creation date if positions are equal
+      const dateA = new Date(a.createdAt || '').getTime();
+      const dateB = new Date(b.createdAt || '').getTime();
+      return dateA - dateB;
+    });
   } catch (error) {
     console.error('Error fetching charts:', error);
     return [];

@@ -94,6 +94,7 @@ export interface ChartConfig {
   useDistinctColors?: boolean;
   colorScheme?: string;
   width?: number; // 2 for half width (1/2), 3 for full width (2/2) (defaults to 2)
+  position?: number; // Order/position for chart display
   dataMapping: {
     xAxis: string | string[];
     yAxis: string | YAxisConfig | (string | YAxisConfig)[];

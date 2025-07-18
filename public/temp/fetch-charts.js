@@ -178,20 +178,35 @@ async function createPageConfigs() {
     
     // Create individual JSON files for each page
     for (const [pageId, charts] of Object.entries(chartsByPage)) {
+      // Sort charts by position if available, otherwise by creation date
+      const sortedCharts = charts.sort((a, b) => {
+        const positionA = a.position ?? 999999;
+        const positionB = b.position ?? 999999;
+        
+        if (positionA !== positionB) {
+          return positionA - positionB;
+        }
+        
+        // Fallback to creation date if positions are equal
+        const dateA = new Date(a.createdAt || '').getTime();
+        const dateB = new Date(b.createdAt || '').getTime();
+        return dateA - dateB;
+      });
+      
       const filename = path.join(configDir, `${pageId}.json`);
       const pageConfig = {
         pageId,
         pageName: getPageName(pageId),
-        chartCount: charts.length,
+        chartCount: sortedCharts.length,
         lastUpdated: new Date().toISOString(),
-        charts: charts
+        charts: sortedCharts
       };
       
       fs.writeFileSync(filename, JSON.stringify(pageConfig, null, 2));
-      console.log(`Created ${filename} with ${charts.length} charts`);
+      console.log(`Created ${filename} with ${sortedCharts.length} charts (sorted by position)`);
       
       // Log Topledger APIs used in this page
-      const topledgerApis = charts
+      const topledgerApis = sortedCharts
         .map(chart => chart.apiEndpoint)
         .filter(endpoint => endpoint && endpoint.includes('topledger'))
         .map(endpoint => {

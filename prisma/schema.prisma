@@ -15,6 +15,7 @@ model Chart {
   title     String
   page      String
   config    String   // Stores the JSON chart config
+  position  Int      @default(0) // Order/position for chart display
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 } 

@@ -60,6 +60,34 @@ const formatYAxisValue = (yAxis: string | string[] | any[] | { field: string } |
   return 'unknown';
 };
 
+// Add function to update chart positions
+const updateChartsOrder = async (charts: ChartConfig[]): Promise<boolean> => {
+  try {
+    // Update positions for all charts
+    const updatePromises = charts.map(async (chart, index) => {
+      const updatedChart = { ...chart, position: index };
+      const response = await fetch(`/api/charts/${chart.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedChart)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to update chart ${chart.id}`);
+      }
+      
+      return response.json();
+    });
+    
+    await Promise.all(updatePromises);
+    console.log('Successfully updated chart order');
+    return true;
+  } catch (error) {
+    console.error('Error updating chart order:', error);
+    return false;
+  }
+};
+
 export default function ManageDashboardPage() {
   const [activeTab, setActiveTab] = useState<'charts' | 'counters' | 'tables'>('charts');
   const [charts, setCharts] = useState<ChartConfig[]>([]);
@@ -70,6 +98,10 @@ export default function ManageDashboardPage() {
   const [availablePages, setAvailablePages] = useState<Array<{id: string, name: string, path: string}>>([]);
   const [isClient, setIsClient] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState<Record<string, boolean>>({});
+  
+  // Add drag and drop state
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
 
   // Update available pages when menu selection changes
   useEffect(() => {
@@ -85,6 +117,55 @@ export default function ManageDashboardPage() {
     // Reset the page selection when menu changes
     setSelectedPage('all');
   }, [selectedMenu]);
+
+  // Add drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    
+    // Add visual feedback
+    const target = e.target as HTMLElement;
+    target.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    const target = e.target as HTMLElement;
+    target.style.opacity = '1';
+    setDraggedIndex(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === null || draggedIndex === index) return;
+    
+    const newCharts = [...charts];
+    const draggedChart = newCharts[draggedIndex];
+    
+    // Remove the dragged item
+    newCharts.splice(draggedIndex, 1);
+    
+    // Insert at new position
+    newCharts.splice(index, 0, draggedChart);
+    
+    setCharts(newCharts);
+    setDraggedIndex(index);
+  };
+
+  const handleSaveOrder = async () => {
+    if (charts.length === 0) return;
+    
+    setIsReordering(true);
+    const success = await updateChartsOrder(charts);
+    
+    if (success) {
+      alert('Chart order updated successfully in S3! Please regenerate config files locally and push to deploy.');
+    } else {
+      alert('Failed to update chart order. Please try again.');
+    }
+    
+    setIsReordering(false);
+  };
 
   // Load data from local storage when component mounts or filters change
   useEffect(() => {
@@ -144,7 +225,22 @@ export default function ManageDashboardPage() {
           }
           
           // Ensure we're always setting an array, even if the API returns something else
-          setCharts(Array.isArray(allCharts) ? allCharts : []);
+          const sortedCharts = Array.isArray(allCharts) ? allCharts.sort((a, b) => {
+            // Sort by position if available, otherwise by creation date
+            const positionA = a.position ?? 999999;
+            const positionB = b.position ?? 999999;
+            
+            if (positionA !== positionB) {
+              return positionA - positionB;
+            }
+            
+            // Fallback to creation date if positions are equal
+            const dateA = new Date(a.createdAt || '').getTime();
+            const dateB = new Date(b.createdAt || '').getTime();
+            return dateA - dateB;
+          }) : [];
+          
+          setCharts(sortedCharts);
         } else if (activeTab === 'counters') {
           let allCounters;
           if (selectedPage === 'all' && !selectedMenu) {
@@ -393,6 +489,24 @@ export default function ManageDashboardPage() {
       {activeTab === 'charts' ? (
         // Charts list
         <div className="space-y-4">
+          {/* Chart reordering controls */}
+          {charts.length > 0 && selectedPage !== 'all' && (
+            <div className="flex justify-between items-center p-4 bg-blue-900/20 border border-blue-800/50 rounded-lg">
+              <div>
+                <p className="text-sm text-blue-300 font-medium">Drag & Drop to Reorder Charts</p>
+                <p className="text-xs text-blue-400/70 mt-1">Saves positions to S3. Run config script locally and push to deploy changes.</p>
+              </div>
+              <Button 
+                variant="primary" 
+                onClick={handleSaveOrder}
+                disabled={isReordering}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isReordering ? 'Saving...' : 'Save Order'}
+              </Button>
+            </div>
+          )}
+          
           {charts.length === 0 ? (
             <div className="text-center p-8 bg-gray-800/30 rounded-lg border border-gray-800">
               <p className="text-gray-400">No charts found matching the selected criteria.</p>
@@ -404,8 +518,18 @@ export default function ManageDashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6">
-              {charts.map((chart) => (
-                <div key={chart.id} className="bg-gray-800/40 rounded-lg overflow-hidden border border-gray-800 transition-all">
+              {charts.map((chart, index) => (
+                <div
+                  key={chart.id}
+                  className={`bg-gray-800/40 rounded-lg overflow-hidden border border-gray-800 transition-all cursor-move ${
+                    draggedIndex === index ? 'opacity-50' : 'hover:border-gray-700'
+                  }`}
+                  draggable={selectedPage !== 'all'}
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDrop={(e) => handleDragOver(e, index)}
+                >
                   <div className="p-4">
                     <div className="flex justify-between items-start">
                       <div>
