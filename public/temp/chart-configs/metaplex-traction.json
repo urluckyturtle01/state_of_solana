@@ -2,7 +2,7 @@
   "pageId": "metaplex-traction",
   "pageName": "Traction",
   "chartCount": 6,
-  "lastUpdated": "2025-07-19T19:00:20.330Z",
+  "lastUpdated": "2025-07-19T19:16:00.133Z",
   "charts": [
     {
       "id": "chart_1749629023835_wd03h9z",
@@ -59,26 +59,6 @@
       "createdAt": "2025-06-11T07:58:44.126Z",
       "updatedAt": "2025-07-19T17:28:18.867Z",
       "position": 1
-    },
-    {
-      "id": "chart_1749627922355_vt1yejy",
-      "title": "Monthly Active Wallets",
-      "subtitle": "",
-      "page": "metaplex-traction",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json",
-      "apiKey": "VZf0MMWDzNorkXuiJDJTNNysyCWOmoGdsKqgv7vu",
-      "isStacked": false,
-      "colorScheme": "default",
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "#users",
-        "groupBy": ""
-      },
-      "createdAt": "2025-06-11T07:45:22.355Z",
-      "updatedAt": "2025-07-19T17:28:18.818Z",
-      "position": 2
     },
     {
       "id": "chart_1749629260401_ack8uo5",
@@ -177,6 +157,26 @@
       "createdAt": "2025-06-11T07:50:11.337Z",
       "updatedAt": "2025-07-19T17:28:18.858Z",
       "position": 5
+    },
+    {
+      "id": "chart_1749627922355_vt1yejy",
+      "title": "Monthly Active Wallets",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json",
+      "apiKey": "VZf0MMWDzNorkXuiJDJTNNysyCWOmoGdsKqgv7vu",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "active-wallets",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-11T07:45:22.355Z",
+      "updatedAt": "2025-07-19T19:15:40.559Z"
     }
   ]
 }
