@@ -1,4 +1,4 @@
-name: Chart Data Update with Compression
+name: Update Chart Data
 
 on:
   schedule:
@@ -11,203 +11,66 @@ on:
         required: false
         default: 'false'
         type: boolean
-      performance_test:
-        description: 'Run performance benchmarks'
-        required: false
-        default: 'true'
-        type: boolean
+
+permissions:
+  contents: write
+  actions: read
 
 jobs:
   update-chart-data:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm install --legacy-peer-deps
-      
-    - name: Create temp directories
-      run: |
-        mkdir -p public/temp/chart-data
-        mkdir -p public/temp/performance-test-results
         
     - name: Fetch Chart Data
-      id: fetch_data
       run: |
-        echo "🚀 Starting chart data fetch..."
-        
-        # Call the data update API
-        RESPONSE=$(curl -s -X POST "${{ secrets.SITE_URL }}/api/update-temp-data" \
-          -H "Content-Type: application/json" \
-          -d '{"scheduled": true, "force": "${{ github.event.inputs.force_update || false }}"}')
-        
-        echo "API Response: $RESPONSE"
-        
-        # Check if fetch was successful
-        if echo "$RESPONSE" | grep -q "success"; then
-          echo "✅ Chart data fetch completed successfully"
-          echo "fetch_status=success" >> $GITHUB_OUTPUT
-        else
-          echo "❌ Chart data fetch failed"
-          echo "fetch_status=failed" >> $GITHUB_OUTPUT
-          exit 1
-        fi
-        
-    - name: Verify Data Files
-      run: |
-        echo "📊 Verifying fetched data..."
-        
-        # Count chart data files
-        CHART_FILES=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" | wc -l)
-        echo "Chart data files found: $CHART_FILES"
-        
-        if [ $CHART_FILES -lt 50 ]; then
-          echo "❌ Too few chart files found ($CHART_FILES). Expected at least 50."
-          exit 1
-        fi
-        
-        echo "✅ Data verification passed"
-        
-
-        
-    - name: Performance Benchmarking
-      if: ${{ github.event.inputs.performance_test == 'true' }}
-      id: performance_test
-      run: |
-        echo "🏃‍♂️ Running performance benchmarks..."
-        
+        echo "🚀 Fetching fresh chart data..."
         cd public/temp
+        node fetch-chart-data.js
         
-        if node performance-test.js; then
-          echo "✅ Performance testing completed"
-          echo "performance_status=success" >> $GITHUB_OUTPUT
-          
-          # Extract key metrics
-          if [ -f performance-test-results/latest-summary.md ]; then
-            echo "📊 Performance Results:"
-            grep -E "(Load Time|File Size|Memory Usage|Render Time)" performance-test-results/latest-summary.md || true
-          fi
+    - name: Compress Chart Data
+      run: |
+        echo "🗜️ Compressing chart data files..."
+        cd public/temp
+        node compress-chart-data.js
+        
+    - name: Check for changes
+      id: verify-changed-files
+      run: |
+        if [ -n "$(git status --porcelain public/temp/chart-data/)" ]; then
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "📊 Files changed:"
+          git status --porcelain public/temp/chart-data/
         else
-          echo "❌ Performance testing failed"
-          echo "performance_status=failed" >> $GITHUB_OUTPUT
+          echo "changed=false" >> $GITHUB_OUTPUT
+          echo "ℹ️ No changes detected"
         fi
         
-    - name: Cleanup Old Data
+    - name: Commit and push changes
+      if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
-        echo "🧹 Cleaning up old data files..."
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add public/temp/chart-data/
+        git commit -m "🤖 Auto-update chart data - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        git push
         
-        # Remove data files older than 7 days
-        find public/temp/chart-data -name "*.json" -mtime +7 -delete 2>/dev/null || true
-        
-        # Remove performance test results older than 30 days
-        find public/temp/performance-test-results -name "*.json" -mtime +30 -delete 2>/dev/null || true
-        
-        echo "✅ Cleanup completed"
-        
-    - name: Generate Status Report
-      if: always()
+    - name: Summary
       run: |
-        echo "📋 Generating status report..."
-        
-        # Create status report
-        cat > workflow-status.md << EOF
-        # Chart Data Update Status Report
-        
-        **Workflow Run**: ${{ github.run_number }}  
-        **Triggered**: ${{ github.event_name }}  
-        **Time**: $(date -u)
-        
-        ## Status Summary
-        
-        | Step | Status |
-        |------|--------|
-        | Data Fetch | ${{ steps.fetch_data.outputs.fetch_status || 'skipped' }} |
-        | Aggregation | ${{ steps.aggregate_data.outputs.aggregation_status || 'skipped' }} |
-        | Performance Test | ${{ steps.performance_test.outputs.performance_status || 'skipped' }} |
-        
-        ## File Counts
-        
-        EOF
-        
-        # Add file statistics
-        ORIGINAL_FILES=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" 2>/dev/null | wc -l)
-        AGGREGATED_FILES=$(find public/temp/chart-data/aggregated -name "*.json*" 2>/dev/null | wc -l)
-        
-        echo "- **Original Files**: $ORIGINAL_FILES" >> workflow-status.md
-        echo "- **Aggregated Files**: $AGGREGATED_FILES" >> workflow-status.md
-        
-        # Add optimization results if available
-        if [ -f public/temp/chart-data/aggregated/_optimization_summary.json ]; then
-          echo "" >> workflow-status.md
-          echo "## Optimization Results" >> workflow-status.md
-          echo "" >> workflow-status.md
-          echo '```json' >> workflow-status.md
-          cat public/temp/chart-data/aggregated/_optimization_summary.json | jq '.summary' >> workflow-status.md
-          echo '```' >> workflow-status.md
-        fi
-        
-        echo "📊 Status report generated"
-        cat workflow-status.md
-        
-    - name: Health Check API
-      run: |
-        echo "🏥 Running health check..."
-        
-        # Test the API health
-        if curl -f -s "${{ secrets.SITE_URL }}/api/health" > /dev/null; then
-          echo "✅ API health check passed"
+        if [ "${{ steps.verify-changed-files.outputs.changed }}" == "true" ]; then
+          echo "✅ Chart data updated and compressed successfully!"
+          echo "📊 Files updated in public/temp/chart-data/"
+          echo "🚀 Deploy workflow will pick up changes automatically"
         else
-          echo "⚠️ API health check failed"
-        fi
-        
-        # Test a sample data endpoint
-        if curl -f -s "${{ secrets.SITE_URL }}/api/temp-data-compressed/dashboard" > /dev/null; then
-          echo "✅ Chart data API working"
-        else
-          echo "⚠️ Chart data API not responding"
-        fi
-        
-    - name: Notification on Failure
-      if: failure()
-      run: |
-        echo "❌ Workflow failed - sending notification"
-        
-        # Create failure summary
-        FAILURE_MSG="🚨 Chart Data Update Failed
-        
-        **Workflow**: ${{ github.workflow }}
-        **Run**: ${{ github.run_number }}
-        **Time**: $(date -u)
-        **Repository**: ${{ github.repository }}
-        
-        Please check the workflow logs for details."
-        
-        echo "$FAILURE_MSG"
-        
-        # If webhook URL is configured, send notification
-        if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{\"content\":\"$FAILURE_MSG\"}" \
-            "${{ secrets.DISCORD_WEBHOOK_URL }}" || true
-        fi
-        
-    - name: Success Summary
-      if: success()
-      run: |
-        echo "🎉 Chart data update workflow completed successfully!"
-        echo ""
-        echo "📊 Summary:"
-        echo "- Data fetch: ✅"
-        echo "- Performance test: ✅"
-        echo "- Health check: ✅"
-        echo ""
-        echo "🚀 Compressed chart data is ready for loading!" 
+          echo "ℹ️ No changes detected - data is already up to date"
+        fi 
