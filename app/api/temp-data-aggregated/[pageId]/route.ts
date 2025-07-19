@@ -18,8 +18,8 @@ export async function GET(
     const preferPerformance = url.searchParams.get('performance') === 'true'; // prioritize performance over detail
     
     // Paths to aggregated and fallback files
-    const aggregatedFilePath = path.join(process.cwd(), 'public', 'temp', 'chart-data', 'aggregated', `${pageId}.json.gz`);
-    const aggregatedUncompressedPath = path.join(process.cwd(), 'public', 'temp', 'chart-data', 'aggregated', `${pageId}.json`);
+    const aggregatedFilePath = path.join(process.cwd(), 'public', 'api-cache', 'aggregated', `${pageId}.json.gz`);
+    const aggregatedUncompressedPath = path.join(process.cwd(), 'public', 'api-cache', 'aggregated', `${pageId}.json`);
     const fallbackCompressedPath = path.join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json.gz`);
     const fallbackUncompressedPath = path.join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json`);
     

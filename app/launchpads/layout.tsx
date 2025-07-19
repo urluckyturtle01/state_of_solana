@@ -13,9 +13,9 @@ export default function LaunchpadsLayout({ children }: LaunchpadsLayoutProps) {
   const pathname = usePathname();
   
   // Extract the active tab from pathname
-  // /launchpads/financials -> financials, /launchpads/traction -> traction, etc.
+  // /launchpads/token-launches -> token-launches, /launchpads/bonding-curve-trade-stats -> bonding-curve-trade-stats, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "financials";
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "token-launches";
   
   return (
     <Layout>

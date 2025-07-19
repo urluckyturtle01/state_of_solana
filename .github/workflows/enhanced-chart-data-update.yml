@@ -45,6 +45,7 @@ jobs:
         mkdir -p public/temp/chart-data
         mkdir -p public/temp/chart-data/aggregated
         mkdir -p public/temp/performance-test-results
+        mkdir -p public/api-cache/aggregated
         
     - name: Fetch Chart Data
       id: fetch_data
@@ -86,12 +87,14 @@ jobs:
     - name: Generate Aggregated Data
       if: ${{ github.event.inputs.skip_aggregation != 'true' }}
       id: aggregate_data
+      env:
+        AGGREGATION_OUTPUT_DIR: '../../../api-cache/aggregated/'
       run: |
         echo "🔄 Starting data aggregation optimization..."
         
         cd public/temp/chart-data
         
-        # Run the aggregation optimizer
+        # Run the aggregation optimizer (outputs directly to static cache)
         if node ../data-aggregation-optimizer.js; then
           echo "✅ Data aggregation completed successfully"
           echo "aggregation_status=success" >> $GITHUB_OUTPUT
@@ -106,12 +109,12 @@ jobs:
       run: |
         echo "🔍 Validating aggregated data quality..."
         
-        # Count aggregated files
-        AGGREGATED_COUNT=$(find public/temp/chart-data/aggregated -name "*.json*" | wc -l)
+        # Count aggregated files in static cache
+        AGGREGATED_COUNT=$(find public/api-cache/aggregated -name "*.json*" | wc -l)
         ORIGINAL_COUNT=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" | wc -l)
         
         echo "Original files: $ORIGINAL_COUNT"
-        echo "Aggregated files: $AGGREGATED_COUNT"
+        echo "Aggregated files in static cache: $AGGREGATED_COUNT"
         
         # Expect at least 80% success rate for aggregation
         MIN_EXPECTED=$(($ORIGINAL_COUNT * 8 / 10))
@@ -122,9 +125,9 @@ jobs:
         fi
         
         # Check optimization summary exists
-        if [ -f public/temp/chart-data/aggregated/_optimization_summary.json ]; then
+        if [ -f public/api-cache/aggregated/_optimization_summary.json ]; then
           echo "📊 Optimization summary found"
-          cat public/temp/chart-data/aggregated/_optimization_summary.json | jq -r '.totalSizeSavings'
+          cat public/api-cache/aggregated/_optimization_summary.json | jq -r '.totalSizeSavings'
         else
           echo "⚠️ Optimization summary not found"
         fi

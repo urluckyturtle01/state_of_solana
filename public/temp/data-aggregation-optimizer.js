@@ -15,7 +15,7 @@ const zlib = require('zlib');
 
 // Configuration
 const TEMP_DIR = './';
-const OUTPUT_DIR = './aggregated/';
+const OUTPUT_DIR = process.env.AGGREGATION_OUTPUT_DIR || (process.env.NODE_ENV === 'production' ? '../api-cache/aggregated/' : './aggregated/');
 const CHART_CONFIGS_DIR = '../chart-configs/';
 
 // Aggregation levels with their configurations
