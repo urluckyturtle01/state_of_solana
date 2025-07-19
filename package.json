@@ -14,7 +14,9 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "compress": "cd public/temp && node compress-chart-data.js",
+    "compress:info": "echo 'Compresses large chart data files (1MB+) to reduce loading times by ~90%'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",

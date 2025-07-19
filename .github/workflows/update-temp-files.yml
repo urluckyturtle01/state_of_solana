@@ -1,4 +1,4 @@
-name: Update Chart Data Temp Files
+name: Update & Compress Chart Data
 
 on:
   schedule:
@@ -41,6 +41,12 @@ jobs:
           echo "🔄 Fetching chart data..."
           node fetch-chart-data.js
           
+      - name: Compress large chart data files
+        run: |
+          cd public/temp
+          echo "🗜️  Compressing large files for faster loading..."
+          node compress-chart-data.js
+          
       - name: Check for changes
         id: verify-changed-files
         run: |
@@ -59,13 +65,13 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add public/temp/chart-data/
-          git commit -m "🤖 Auto-update chart data temp files - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          git commit -m "🤖 Auto-update chart data temp files + compression - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           git push
           
       - name: Log completion
         run: |
           if [ "${{ steps.verify-changed-files.outputs.changed }}" == "true" ]; then
-            echo "✅ Chart data updated and committed successfully"
+            echo "✅ Chart data updated, compressed, and committed successfully"
           else
-            echo "ℹ️ No changes detected - temp files are up to date"
+            echo "ℹ️ No changes detected - temp files and compression are up to date"
           fi 

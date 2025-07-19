@@ -538,17 +538,31 @@ async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[
   }
 }
 
-// New function to load cached chart data from temp files
+// New function to load cached chart data from temp files (with compression support)
 async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<string, any[]>> {
   try {
     console.log(`Getting cached chart data for page from temp file: ${pageId}`);
     
-    // Fetch the chart data from temp API route
-    const response = await fetch(`/api/temp-data/${pageId}`);
+    // Try compressed API route first, then fallback to regular route
+    let response = await fetch(`/api/temp-data-compressed/${pageId}`);
+    let usedCompression = true;
     
     if (!response.ok) {
-      console.warn(`Temp data not found for page ${pageId}`);
+      console.log(`Compressed data not available for page ${pageId}, falling back to uncompressed`);
+      response = await fetch(`/api/temp-data/${pageId}`);
+      usedCompression = false;
+    }
+    
+    if (!response.ok) {
+      console.warn(`No temp data found for page ${pageId}`);
       return {};
+    }
+    
+    // Log compression info if available
+    const compressionInfo = response.headers.get('X-Compression-Info');
+    if (compressionInfo && usedCompression) {
+      const info = JSON.parse(compressionInfo);
+      console.log(`🗜️  Loaded compressed data for ${pageId}:`, info);
     }
     
     const pageData = await response.json();
@@ -563,7 +577,7 @@ async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<st
       });
     }
     
-    console.log(`Loaded cached data for ${Object.keys(chartDataMap).length} charts from temp file for page: ${pageId}`);
+    console.log(`✅ Loaded cached data for ${Object.keys(chartDataMap).length} charts from temp file for page: ${pageId} ${usedCompression ? '(compressed)' : '(uncompressed)'}`);
     return chartDataMap;
   } catch (error) {
     console.warn(`Error loading cached data from temp file for page ${pageId}:`, error);
