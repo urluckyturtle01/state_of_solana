@@ -98,29 +98,13 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
     formattedValue = `${(value / 1000000000000).toFixed(1)}T`;
   }
   else if (value >= 1000000000) {
-    const billions = value / 1000000000;
-    // Convert 1000B to 1T, 1000M to 1B, etc.
-    if (billions >= 1000) {
-      formattedValue = `${(billions / 1000).toFixed(1)}T`;
-    } else {
-      formattedValue = `${billions.toFixed(1)}B`;
-    }
+    formattedValue = `${(value / 1000000000).toFixed(1)}B`;
   }
   else if (value >= 1000000) {
-    const millions = value / 1000000;
-    if (millions >= 1000) {
-      formattedValue = `${(millions / 1000).toFixed(1)}B`;
-    } else {
-      formattedValue = `${millions.toFixed(1)}M`;
-    }
+    formattedValue = `${(value / 1000000).toFixed(1)}M`;
   }
   else if (value >= 1000) {
-    const thousands = value / 1000;
-    if (thousands >= 1000) {
-      formattedValue = `${(thousands / 1000).toFixed(1)}M`;
-    } else {
-      formattedValue = `${thousands.toFixed(1)}K`;
-    }
+    formattedValue = `${(value / 1000).toFixed(1)}K`;
   }
   // For percentages
   else if (targetValue.includes('%')) {
@@ -133,6 +117,27 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
   // Default format - also use one decimal place
   else {
     formattedValue = value.toFixed(1);
+  }
+
+  // Handle unit conversions: 1000.0B -> 1.0T, 1000.0M -> 1.0B, etc.
+  const unitConversions: Record<string, string> = {
+    'K': 'M',
+    'M': 'B', 
+    'B': 'T'
+  };
+  
+  // Check if we need to convert units (e.g., 1000.0B to 1.0T)
+  // Look for pattern: number + unit (without prefix yet)
+  const unitMatch = formattedValue.match(/^(\d+(?:\.\d+)?)([KMBT])$/);
+  if (unitMatch) {
+    const [, numberPart, unit] = unitMatch;
+    const number = parseFloat(numberPart);
+    
+    if (number >= 1000.0 && unitConversions[unit]) {
+      const newUnit = unitConversions[unit];
+      const newNumber = (number / 1000).toFixed(1);
+      formattedValue = `${newNumber}${newUnit}`;
+    }
   }
 
   // Add prefix if it exists
