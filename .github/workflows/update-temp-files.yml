@@ -41,10 +41,10 @@ jobs:
           echo "🔄 Fetching chart data..."
           node fetch-chart-data.js
           
-      - name: Compress large chart data files
+      - name: Compress chart data files
         run: |
           cd public/temp
-          echo "🗜️  Compressing large files for faster loading..."
+          echo "🗜️  Compressing all files for faster loading..."
           node compress-chart-data.js
           
       - name: Check for changes

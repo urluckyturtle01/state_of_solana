@@ -5,8 +5,8 @@ const path = require('path');
 // Directory containing chart data files
 const chartDataDir = './chart-data';
 
-// Minimum file size to compress (in bytes) - 1MB
-const MIN_SIZE_TO_COMPRESS = 1024 * 1024;
+// Compress all JSON files regardless of size
+const MIN_SIZE_TO_COMPRESS = 0; // No minimum size - compress everything
 
 async function compressFile(filePath) {
   return new Promise((resolve, reject) => {
@@ -34,9 +34,9 @@ async function compressFile(filePath) {
   });
 }
 
-async function compressLargeFiles() {
+async function compressAllFiles() {
   try {
-    console.log('🗜️  Starting compression of large chart data files...\n');
+    console.log('🗜️  Starting compression of all chart data files...\n');
     
     if (!fs.existsSync(chartDataDir)) {
       console.log('❌ Chart data directory not found');
@@ -54,11 +54,11 @@ async function compressLargeFiles() {
       .sort((a, b) => b.size - a.size); // Sort by size (largest first)
 
     if (files.length === 0) {
-      console.log('✅ No files found that meet the compression threshold (1MB+)');
+      console.log('✅ No JSON files found to compress');
       return;
     }
 
-    console.log(`📊 Found ${files.length} large files to compress:\n`);
+    console.log(`📊 Found ${files.length} files to compress:\n`);
     
     const results = [];
     
@@ -102,7 +102,7 @@ async function compressLargeFiles() {
 }
 
 // Run the compression
-compressLargeFiles().then(() => {
+compressAllFiles().then(() => {
   console.log('\n✅ Compression complete!');
 }).catch((error) => {
   console.error('❌ Compression failed:', error);
