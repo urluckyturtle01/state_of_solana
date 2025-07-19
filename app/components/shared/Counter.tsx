@@ -98,13 +98,29 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
     formattedValue = `${(value / 1000000000000).toFixed(1)}T`;
   }
   else if (value >= 1000000000) {
-    formattedValue = `${(value / 1000000000).toFixed(1)}B`;
+    const billions = value / 1000000000;
+    // Convert 1000B to 1T, 1000M to 1B, etc.
+    if (billions >= 1000) {
+      formattedValue = `${(billions / 1000).toFixed(1)}T`;
+    } else {
+      formattedValue = `${billions.toFixed(1)}B`;
+    }
   }
   else if (value >= 1000000) {
-    formattedValue = `${(value / 1000000).toFixed(1)}M`;
+    const millions = value / 1000000;
+    if (millions >= 1000) {
+      formattedValue = `${(millions / 1000).toFixed(1)}B`;
+    } else {
+      formattedValue = `${millions.toFixed(1)}M`;
+    }
   }
   else if (value >= 1000) {
-    formattedValue = `${(value / 1000).toFixed(1)}K`;
+    const thousands = value / 1000;
+    if (thousands >= 1000) {
+      formattedValue = `${(thousands / 1000).toFixed(1)}M`;
+    } else {
+      formattedValue = `${thousands.toFixed(1)}K`;
+    }
   }
   // For percentages
   else if (targetValue.includes('%')) {
