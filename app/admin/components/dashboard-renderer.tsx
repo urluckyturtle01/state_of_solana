@@ -538,31 +538,45 @@ async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[
   }
 }
 
-// New function to load cached chart data from temp files (with compression support)
-async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<string, any[]>> {
+// Enhanced function to load optimized aggregated chart data
+async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Record<string, string>): Promise<Record<string, any[]>> {
   try {
-    console.log(`Getting cached chart data for page from temp file: ${pageId}`);
+    console.log(`🚀 Getting optimized chart data for page: ${pageId}`);
     
-    // Try compressed API route first, then fallback to regular route
-    let response = await fetch(`/api/temp-data-compressed/${pageId}`);
-    let usedCompression = true;
+    // Build query parameters for intelligent aggregation level selection
+    const queryParams = new URLSearchParams();
+    if (filterValues?.timeFilter) {
+      queryParams.set('timeRange', filterValues.timeFilter);
+    }
+    
+    // Try aggregated API route first (Option 3: Data Aggregation)
+    let response = await fetch(`/api/temp-data-aggregated/${pageId}?${queryParams.toString()}`);
+    let usedAggregation = true;
     
     if (!response.ok) {
-      console.log(`Compressed data not available for page ${pageId}, falling back to uncompressed`);
-      response = await fetch(`/api/temp-data/${pageId}`);
-      usedCompression = false;
+      console.log(`🔄 Aggregated data not available for page ${pageId}, falling back to compressed`);
+      // Try compressed API route as fallback
+      response = await fetch(`/api/temp-data-compressed/${pageId}`);
+      usedAggregation = false;
     }
     
     if (!response.ok) {
-      console.warn(`No temp data found for page ${pageId}`);
+      console.log(`🔄 Compressed data not available for page ${pageId}, falling back to uncompressed`);
+      response = await fetch(`/api/temp-data/${pageId}`);
+    }
+    
+    if (!response.ok) {
+      console.warn(`❌ No temp data found for page ${pageId}`);
       return {};
     }
     
-    // Log compression info if available
-    const compressionInfo = response.headers.get('X-Compression-Info');
-    if (compressionInfo && usedCompression) {
-      const info = JSON.parse(compressionInfo);
-      console.log(`🗜️  Loaded compressed data for ${pageId}:`, info);
+    // Log aggregation info if available
+    const aggregationInfo = response.headers.get('X-Aggregation-Info');
+    const dataType = response.headers.get('X-Data-Type');
+    
+    if (aggregationInfo && usedAggregation) {
+      const info = JSON.parse(aggregationInfo);
+      console.log(`📊 Loaded aggregated data for ${pageId}:`, info);
     }
     
     const pageData = await response.json();
@@ -573,14 +587,21 @@ async function getCachedChartDataFromTempFile(pageId: string): Promise<Record<st
       pageData.charts.forEach((chartResult: any) => {
         if (chartResult.success && chartResult.data) {
           chartDataMap[chartResult.chartId] = chartResult.data;
+          
+          // Log aggregation level selection for debugging
+          if (chartResult.selectedAggregationLevel) {
+            console.log(`  📈 Chart ${chartResult.chartId}: using '${chartResult.selectedAggregationLevel}' level (${chartResult.data.length} points)`);
+          }
         }
       });
     }
     
-    console.log(`✅ Loaded cached data for ${Object.keys(chartDataMap).length} charts from temp file for page: ${pageId} ${usedCompression ? '(compressed)' : '(uncompressed)'}`);
+    const performanceType = usedAggregation ? 'aggregated' : dataType || 'compressed';
+    console.log(`✅ Loaded ${performanceType} data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
+    
     return chartDataMap;
   } catch (error) {
-    console.warn(`Error loading cached data from temp file for page ${pageId}:`, error);
+    console.warn(`❌ Error loading optimized data for page ${pageId}:`, error);
     return {};
   }
 }
@@ -922,11 +943,19 @@ export default function DashboardRenderer({
           initialChartData[chart.id] = [];
         });
         
-        // Try to load cached data first for instant display
-        const cachedData = await getCachedChartDataFromTempFile(pageId);
+        // Try to load cached data first for instant display with intelligent aggregation
+        // Extract current filter values for aggregation level selection
+        const currentFilters: Record<string, string> = {};
+        Object.entries(filterValues).forEach(([chartId, filters]) => {
+          // Use the first chart's filters as a representative for page-level aggregation
+          if (Object.keys(currentFilters).length === 0) {
+            Object.assign(currentFilters, filters);
+          }
+        });
+        const cachedData = await getCachedChartDataFromTempFile(pageId, currentFilters);
         
         if (Object.keys(cachedData).length > 0) {
-          console.log(`🚀 Using ${Object.keys(cachedData).length} cached charts for instant display`);
+          console.log(`🚀 Using ${Object.keys(cachedData).length} aggregated charts for instant display`);
           
           // Merge cached data with initial data
           initialChartData = { ...initialChartData, ...cachedData };
@@ -940,7 +969,7 @@ export default function DashboardRenderer({
           setChartData(initialChartData);
           batchUpdateChartStates(initialChartStates);
           
-          // Show the page immediately with cached data
+          // Show the page immediately with optimized data
           setIsPageLoading(false);
           setAllChartsLoaded(Object.keys(cachedData).length === loadedCharts.length);
         } else {

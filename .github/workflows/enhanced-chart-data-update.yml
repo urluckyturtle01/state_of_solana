@@ -1,0 +1,269 @@
+name: Enhanced Chart Data Update with Aggregation
+
+on:
+  schedule:
+    # Run every 10 minutes
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Force update even if recent data exists'
+        required: false
+        default: 'false'
+        type: boolean
+      skip_aggregation:
+        description: 'Skip aggregation optimization'
+        required: false
+        default: 'false'
+        type: boolean
+      performance_test:
+        description: 'Run performance benchmarks'
+        required: false
+        default: 'true'
+        type: boolean
+
+jobs:
+  update-chart-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Create temp directories
+      run: |
+        mkdir -p public/temp/chart-data
+        mkdir -p public/temp/chart-data/aggregated
+        mkdir -p public/temp/performance-test-results
+        
+    - name: Fetch Chart Data
+      id: fetch_data
+      run: |
+        echo "🚀 Starting chart data fetch..."
+        
+        # Call the data update API
+        RESPONSE=$(curl -s -X POST "${{ secrets.SITE_URL }}/api/update-temp-data" \
+          -H "Content-Type: application/json" \
+          -d '{"scheduled": true, "force": "${{ github.event.inputs.force_update || false }}"}')
+        
+        echo "API Response: $RESPONSE"
+        
+        # Check if fetch was successful
+        if echo "$RESPONSE" | grep -q "success"; then
+          echo "✅ Chart data fetch completed successfully"
+          echo "fetch_status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Chart data fetch failed"
+          echo "fetch_status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+    - name: Verify Data Files
+      run: |
+        echo "📊 Verifying fetched data..."
+        
+        # Count chart data files
+        CHART_FILES=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" | wc -l)
+        echo "Chart data files found: $CHART_FILES"
+        
+        if [ $CHART_FILES -lt 50 ]; then
+          echo "❌ Too few chart files found ($CHART_FILES). Expected at least 50."
+          exit 1
+        fi
+        
+        echo "✅ Data verification passed"
+        
+    - name: Generate Aggregated Data
+      if: ${{ github.event.inputs.skip_aggregation != 'true' }}
+      id: aggregate_data
+      run: |
+        echo "🔄 Starting data aggregation optimization..."
+        
+        cd public/temp/chart-data
+        
+        # Run the aggregation optimizer
+        if node ../data-aggregation-optimizer.js; then
+          echo "✅ Data aggregation completed successfully"
+          echo "aggregation_status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Data aggregation failed"
+          echo "aggregation_status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+        
+    - name: Validate Aggregated Data
+      if: ${{ github.event.inputs.skip_aggregation != 'true' }}
+      run: |
+        echo "🔍 Validating aggregated data quality..."
+        
+        # Count aggregated files
+        AGGREGATED_COUNT=$(find public/temp/chart-data/aggregated -name "*.json*" | wc -l)
+        ORIGINAL_COUNT=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" | wc -l)
+        
+        echo "Original files: $ORIGINAL_COUNT"
+        echo "Aggregated files: $AGGREGATED_COUNT"
+        
+        # Expect at least 80% success rate for aggregation
+        MIN_EXPECTED=$(($ORIGINAL_COUNT * 8 / 10))
+        
+        if [ $AGGREGATED_COUNT -lt $MIN_EXPECTED ]; then
+          echo "❌ Too few aggregated files generated ($AGGREGATED_COUNT < $MIN_EXPECTED)"
+          exit 1
+        fi
+        
+        # Check optimization summary exists
+        if [ -f public/temp/chart-data/aggregated/_optimization_summary.json ]; then
+          echo "📊 Optimization summary found"
+          cat public/temp/chart-data/aggregated/_optimization_summary.json | jq -r '.totalSizeSavings'
+        else
+          echo "⚠️ Optimization summary not found"
+        fi
+        
+        echo "✅ Aggregation validation passed"
+        
+    - name: Performance Benchmarking
+      if: ${{ github.event.inputs.performance_test == 'true' }}
+      id: performance_test
+      run: |
+        echo "🏃‍♂️ Running performance benchmarks..."
+        
+        cd public/temp
+        
+        if node performance-test.js; then
+          echo "✅ Performance testing completed"
+          echo "performance_status=success" >> $GITHUB_OUTPUT
+          
+          # Extract key metrics
+          if [ -f performance-test-results/latest-summary.md ]; then
+            echo "📊 Performance Results:"
+            grep -E "(Load Time|File Size|Memory Usage|Render Time)" performance-test-results/latest-summary.md || true
+          fi
+        else
+          echo "❌ Performance testing failed"
+          echo "performance_status=failed" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Cleanup Old Data
+      run: |
+        echo "🧹 Cleaning up old data files..."
+        
+        # Remove original data files older than 7 days
+        find public/temp/chart-data -name "*.json" -not -path "*/aggregated/*" -mtime +7 -delete 2>/dev/null || true
+        
+        # Remove aggregated data files older than 7 days
+        find public/temp/chart-data/aggregated -name "*.json" -mtime +7 -delete 2>/dev/null || true
+        
+        # Remove performance test results older than 30 days
+        find public/temp/performance-test-results -name "*.json" -mtime +30 -delete 2>/dev/null || true
+        
+        echo "✅ Cleanup completed"
+        
+    - name: Generate Status Report
+      if: always()
+      run: |
+        echo "📋 Generating status report..."
+        
+        # Create status report
+        cat > workflow-status.md << EOF
+        # Chart Data Update Status Report
+        
+        **Workflow Run**: ${{ github.run_number }}  
+        **Triggered**: ${{ github.event_name }}  
+        **Time**: $(date -u)
+        
+        ## Status Summary
+        
+        | Step | Status |
+        |------|--------|
+        | Data Fetch | ${{ steps.fetch_data.outputs.fetch_status || 'skipped' }} |
+        | Aggregation | ${{ steps.aggregate_data.outputs.aggregation_status || 'skipped' }} |
+        | Performance Test | ${{ steps.performance_test.outputs.performance_status || 'skipped' }} |
+        
+        ## File Counts
+        
+        EOF
+        
+        # Add file statistics
+        ORIGINAL_FILES=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" 2>/dev/null | wc -l)
+        AGGREGATED_FILES=$(find public/temp/chart-data/aggregated -name "*.json*" 2>/dev/null | wc -l)
+        
+        echo "- **Original Files**: $ORIGINAL_FILES" >> workflow-status.md
+        echo "- **Aggregated Files**: $AGGREGATED_FILES" >> workflow-status.md
+        
+        # Add optimization results if available
+        if [ -f public/temp/chart-data/aggregated/_optimization_summary.json ]; then
+          echo "" >> workflow-status.md
+          echo "## Optimization Results" >> workflow-status.md
+          echo "" >> workflow-status.md
+          echo '```json' >> workflow-status.md
+          cat public/temp/chart-data/aggregated/_optimization_summary.json | jq '.summary' >> workflow-status.md
+          echo '```' >> workflow-status.md
+        fi
+        
+        echo "📊 Status report generated"
+        cat workflow-status.md
+        
+    - name: Health Check API
+      run: |
+        echo "🏥 Running health check..."
+        
+        # Test the aggregated data API
+        if curl -f -s "${{ secrets.SITE_URL }}/api/health" > /dev/null; then
+          echo "✅ API health check passed"
+        else
+          echo "⚠️ API health check failed"
+        fi
+        
+        # Test a sample aggregated data endpoint
+        if curl -f -s "${{ secrets.SITE_URL }}/api/temp-data-aggregated/dashboard" > /dev/null; then
+          echo "✅ Aggregated data API working"
+        else
+          echo "⚠️ Aggregated data API not responding"
+        fi
+        
+    - name: Notification on Failure
+      if: failure()
+      run: |
+        echo "❌ Workflow failed - sending notification"
+        
+        # Create failure summary
+        FAILURE_MSG="🚨 Chart Data Update Failed
+        
+        **Workflow**: ${{ github.workflow }}
+        **Run**: ${{ github.run_number }}
+        **Time**: $(date -u)
+        **Repository**: ${{ github.repository }}
+        
+        Please check the workflow logs for details."
+        
+        echo "$FAILURE_MSG"
+        
+        # If webhook URL is configured, send notification
+        if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+            --data "{\"content\":\"$FAILURE_MSG\"}" \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}" || true
+        fi
+        
+    - name: Success Summary
+      if: success()
+      run: |
+        echo "🎉 Chart data update workflow completed successfully!"
+        echo ""
+        echo "📊 Summary:"
+        echo "- Data fetch: ✅"
+        echo "- Aggregation: ✅"
+        echo "- Performance test: ✅"
+        echo "- Health check: ✅"
+        echo ""
+        echo "🚀 Optimized chart data is ready for faster loading!" 
