@@ -1,0 +1,15 @@
+# Exclude large temp files from serverless function bundles
+public/temp/chart-data/**
+public/temp/chart-configs/**
+public/temp/*.json
+public/temp/*.js
+public/temp/*.md
+
+# Exclude development files
+public/temp/benchmark-*
+public/temp/integration-test-*
+public/temp/metadata-cache.json
+public/temp/query-analytics.jsonl
+
+# Keep the static cache files (these are served as static assets)
+!public/api-cache/** 
