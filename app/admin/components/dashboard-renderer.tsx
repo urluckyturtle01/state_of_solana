@@ -538,20 +538,50 @@ async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[
   }
 }
 
-// Enhanced function to load optimized aggregated chart data
+// Enhanced function to load optimized aggregated chart data with direct CDN static file access
 async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Record<string, string>): Promise<Record<string, any[]>> {
   try {
     console.log(`🚀 Getting optimized chart data for page: ${pageId}`);
     
-    // Build query parameters for intelligent aggregation level selection
+    let response: Response;
+    let usedAggregation = false;
+    
+    // PRIORITY 1: Try direct static uncompressed file (fastest CDN delivery)
+    try {
+      console.log(`🌍 Trying direct CDN static file: /api-cache/aggregated/${pageId}.json`);
+      response = await fetch(`/api-cache/aggregated/${pageId}.json`);
+      if (response.ok) {
+        console.log(`⚡ SUCCESS: Direct CDN static file served for ${pageId}`);
+        usedAggregation = true;
+        const pageData = await response.json();
+        
+        const chartDataMap: Record<string, any[]> = {};
+        if (pageData.charts && Array.isArray(pageData.charts)) {
+          pageData.charts.forEach((chartResult: any) => {
+            if (chartResult.success && chartResult.data) {
+              chartDataMap[chartResult.chartId] = chartResult.data;
+              if (chartResult.selectedAggregationLevel) {
+                console.log(`  📈 Chart ${chartResult.chartId}: using '${chartResult.selectedAggregationLevel}' level (${chartResult.data.length} points)`);
+              }
+            }
+          });
+        }
+        
+        console.log(`✅ Loaded static CDN data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
+        return chartDataMap;
+      }
+    } catch (staticError) {
+      console.log(`🔄 Static CDN file not available, falling back to API routes...`);
+    }
+    
+    // PRIORITY 2: Fallback to aggregated API route (serverless function)
     const queryParams = new URLSearchParams();
     if (filterValues?.timeFilter) {
       queryParams.set('timeRange', filterValues.timeFilter);
     }
     
-    // Try aggregated API route first (Option 3: Data Aggregation)
-    let response = await fetch(`/api/temp-data-aggregated/${pageId}?${queryParams.toString()}`);
-    let usedAggregation = true;
+    response = await fetch(`/api/temp-data-aggregated/${pageId}?${queryParams.toString()}`);
+    usedAggregation = true;
     
     if (!response.ok) {
       console.log(`🔄 Aggregated data not available for page ${pageId}, falling back to compressed`);
