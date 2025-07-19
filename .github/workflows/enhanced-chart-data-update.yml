@@ -1,4 +1,4 @@
-name: Enhanced Chart Data Update with Aggregation
+name: Chart Data Update with Compression
 
 on:
   schedule:
@@ -8,11 +8,6 @@ on:
     inputs:
       force_update:
         description: 'Force update even if recent data exists'
-        required: false
-        default: 'false'
-        type: boolean
-      skip_aggregation:
-        description: 'Skip aggregation optimization'
         required: false
         default: 'false'
         type: boolean
@@ -43,9 +38,7 @@ jobs:
     - name: Create temp directories
       run: |
         mkdir -p public/temp/chart-data
-        mkdir -p public/temp/chart-data/aggregated
         mkdir -p public/temp/performance-test-results
-        mkdir -p public/api-cache/aggregated
         
     - name: Fetch Chart Data
       id: fetch_data
@@ -84,55 +77,7 @@ jobs:
         
         echo "✅ Data verification passed"
         
-    - name: Generate Aggregated Data
-      if: ${{ github.event.inputs.skip_aggregation != 'true' }}
-      id: aggregate_data
-      env:
-        AGGREGATION_OUTPUT_DIR: '../../../api-cache/aggregated/'
-      run: |
-        echo "🔄 Starting data aggregation optimization..."
-        
-        cd public/temp/chart-data
-        
-        # Run the aggregation optimizer (outputs directly to static cache)
-        if node ../data-aggregation-optimizer.js; then
-          echo "✅ Data aggregation completed successfully"
-          echo "aggregation_status=success" >> $GITHUB_OUTPUT
-        else
-          echo "❌ Data aggregation failed"
-          echo "aggregation_status=failed" >> $GITHUB_OUTPUT
-          exit 1
-        fi
-        
-    - name: Validate Aggregated Data
-      if: ${{ github.event.inputs.skip_aggregation != 'true' }}
-      run: |
-        echo "🔍 Validating aggregated data quality..."
-        
-        # Count aggregated files in static cache
-        AGGREGATED_COUNT=$(find public/api-cache/aggregated -name "*.json*" | wc -l)
-        ORIGINAL_COUNT=$(find public/temp/chart-data -name "*.json*" -not -path "*/aggregated/*" | wc -l)
-        
-        echo "Original files: $ORIGINAL_COUNT"
-        echo "Aggregated files in static cache: $AGGREGATED_COUNT"
-        
-        # Expect at least 80% success rate for aggregation
-        MIN_EXPECTED=$(($ORIGINAL_COUNT * 8 / 10))
-        
-        if [ $AGGREGATED_COUNT -lt $MIN_EXPECTED ]; then
-          echo "❌ Too few aggregated files generated ($AGGREGATED_COUNT < $MIN_EXPECTED)"
-          exit 1
-        fi
-        
-        # Check optimization summary exists
-        if [ -f public/api-cache/aggregated/_optimization_summary.json ]; then
-          echo "📊 Optimization summary found"
-          cat public/api-cache/aggregated/_optimization_summary.json | jq -r '.totalSizeSavings'
-        else
-          echo "⚠️ Optimization summary not found"
-        fi
-        
-        echo "✅ Aggregation validation passed"
+
         
     - name: Performance Benchmarking
       if: ${{ github.event.inputs.performance_test == 'true' }}
@@ -160,11 +105,8 @@ jobs:
       run: |
         echo "🧹 Cleaning up old data files..."
         
-        # Remove original data files older than 7 days
-        find public/temp/chart-data -name "*.json" -not -path "*/aggregated/*" -mtime +7 -delete 2>/dev/null || true
-        
-        # Remove aggregated data files older than 7 days
-        find public/temp/chart-data/aggregated -name "*.json" -mtime +7 -delete 2>/dev/null || true
+        # Remove data files older than 7 days
+        find public/temp/chart-data -name "*.json" -mtime +7 -delete 2>/dev/null || true
         
         # Remove performance test results older than 30 days
         find public/temp/performance-test-results -name "*.json" -mtime +30 -delete 2>/dev/null || true
@@ -220,18 +162,18 @@ jobs:
       run: |
         echo "🏥 Running health check..."
         
-        # Test the aggregated data API
+        # Test the API health
         if curl -f -s "${{ secrets.SITE_URL }}/api/health" > /dev/null; then
           echo "✅ API health check passed"
         else
           echo "⚠️ API health check failed"
         fi
         
-        # Test a sample aggregated data endpoint
-        if curl -f -s "${{ secrets.SITE_URL }}/api/temp-data-aggregated/dashboard" > /dev/null; then
-          echo "✅ Aggregated data API working"
+        # Test a sample data endpoint
+        if curl -f -s "${{ secrets.SITE_URL }}/api/temp-data-compressed/dashboard" > /dev/null; then
+          echo "✅ Chart data API working"
         else
-          echo "⚠️ Aggregated data API not responding"
+          echo "⚠️ Chart data API not responding"
         fi
         
     - name: Notification on Failure
@@ -265,8 +207,7 @@ jobs:
         echo ""
         echo "📊 Summary:"
         echo "- Data fetch: ✅"
-        echo "- Aggregation: ✅"
         echo "- Performance test: ✅"
         echo "- Health check: ✅"
         echo ""
-        echo "🚀 Optimized chart data is ready for faster loading!" 
+        echo "🚀 Compressed chart data is ready for loading!" 

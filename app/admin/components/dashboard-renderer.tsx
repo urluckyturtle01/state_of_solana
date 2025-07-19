@@ -538,57 +538,13 @@ async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[
   }
 }
 
-// Enhanced function to load optimized aggregated chart data with direct CDN static file access
+// Function to load compressed chart data (aggregation removed)
 async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Record<string, string>): Promise<Record<string, any[]>> {
   try {
-    console.log(`🚀 Getting optimized chart data for page: ${pageId}`);
+    console.log(`🚀 Getting compressed chart data for page: ${pageId}`);
     
-    let response: Response;
-    let usedAggregation = false;
-    
-    // PRIORITY 1: Try direct static uncompressed file (fastest CDN delivery)
-    try {
-      console.log(`🌍 Trying direct CDN static file: /api-cache/aggregated/${pageId}.json`);
-      response = await fetch(`/api-cache/aggregated/${pageId}.json`);
-      if (response.ok) {
-        console.log(`⚡ SUCCESS: Direct CDN static file served for ${pageId}`);
-        usedAggregation = true;
-        const pageData = await response.json();
-        
-        const chartDataMap: Record<string, any[]> = {};
-        if (pageData.charts && Array.isArray(pageData.charts)) {
-          pageData.charts.forEach((chartResult: any) => {
-            if (chartResult.success && chartResult.data) {
-              chartDataMap[chartResult.chartId] = chartResult.data;
-              if (chartResult.selectedAggregationLevel) {
-                console.log(`  📈 Chart ${chartResult.chartId}: using '${chartResult.selectedAggregationLevel}' level (${chartResult.data.length} points)`);
-              }
-            }
-          });
-        }
-        
-        console.log(`✅ Loaded static CDN data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
-        return chartDataMap;
-      }
-    } catch (staticError) {
-      console.log(`🔄 Static CDN file not available, falling back to API routes...`);
-    }
-    
-    // PRIORITY 2: Fallback to aggregated API route (serverless function)
-    const queryParams = new URLSearchParams();
-    if (filterValues?.timeFilter) {
-      queryParams.set('timeRange', filterValues.timeFilter);
-    }
-    
-    response = await fetch(`/api/temp-data-aggregated/${pageId}?${queryParams.toString()}`);
-    usedAggregation = true;
-    
-    if (!response.ok) {
-      console.log(`🔄 Aggregated data not available for page ${pageId}, falling back to compressed`);
-      // Try compressed API route as fallback
-      response = await fetch(`/api/temp-data-compressed/${pageId}`);
-      usedAggregation = false;
-    }
+    // Try compressed API route first
+    let response = await fetch(`/api/temp-data-compressed/${pageId}`);
     
     if (!response.ok) {
       console.log(`🔄 Compressed data not available for page ${pageId}, falling back to uncompressed`);
@@ -600,14 +556,7 @@ async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Rec
       return {};
     }
     
-    // Log aggregation info if available
-    const aggregationInfo = response.headers.get('X-Aggregation-Info');
-    const dataType = response.headers.get('X-Data-Type');
-    
-    if (aggregationInfo && usedAggregation) {
-      const info = JSON.parse(aggregationInfo);
-      console.log(`📊 Loaded aggregated data for ${pageId}:`, info);
-    }
+    console.log(`✅ Loaded compressed data for page: ${pageId}`);
     
     const pageData = await response.json();
     const chartDataMap: Record<string, any[]> = {};
@@ -618,20 +567,15 @@ async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Rec
         if (chartResult.success && chartResult.data) {
           chartDataMap[chartResult.chartId] = chartResult.data;
           
-          // Log aggregation level selection for debugging
-          if (chartResult.selectedAggregationLevel) {
-            console.log(`  📈 Chart ${chartResult.chartId}: using '${chartResult.selectedAggregationLevel}' level (${chartResult.data.length} points)`);
-          }
         }
       });
     }
     
-    const performanceType = usedAggregation ? 'aggregated' : dataType || 'compressed';
-    console.log(`✅ Loaded ${performanceType} data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
+    console.log(`✅ Loaded compressed data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
     
     return chartDataMap;
   } catch (error) {
-    console.warn(`❌ Error loading optimized data for page ${pageId}:`, error);
+    console.warn(`❌ Error loading compressed data for page ${pageId}:`, error);
     return {};
   }
 }
@@ -973,19 +917,11 @@ export default function DashboardRenderer({
           initialChartData[chart.id] = [];
         });
         
-        // Try to load cached data first for instant display with intelligent aggregation
-        // Extract current filter values for aggregation level selection
-        const currentFilters: Record<string, string> = {};
-        Object.entries(filterValues).forEach(([chartId, filters]) => {
-          // Use the first chart's filters as a representative for page-level aggregation
-          if (Object.keys(currentFilters).length === 0) {
-            Object.assign(currentFilters, filters);
-          }
-        });
-        const cachedData = await getCachedChartDataFromTempFile(pageId, currentFilters);
+        // Try to load cached compressed data first for instant display
+        const cachedData = await getCachedChartDataFromTempFile(pageId);
         
         if (Object.keys(cachedData).length > 0) {
-          console.log(`🚀 Using ${Object.keys(cachedData).length} aggregated charts for instant display`);
+          console.log(`🚀 Using ${Object.keys(cachedData).length} compressed charts for instant display`);
           
           // Merge cached data with initial data
           initialChartData = { ...initialChartData, ...cachedData };
@@ -999,7 +935,7 @@ export default function DashboardRenderer({
           setChartData(initialChartData);
           batchUpdateChartStates(initialChartStates);
           
-          // Show the page immediately with optimized data
+          // Show the page immediately with compressed data
           setIsPageLoading(false);
           setAllChartsLoaded(Object.keys(cachedData).length === loadedCharts.length);
         } else {
