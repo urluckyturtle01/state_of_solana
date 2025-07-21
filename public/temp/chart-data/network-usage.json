@@ -1,7 +1,7 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "fetchedAt": "2025-07-21T10:20:23.259Z",
+  "fetchedAt": "2025-07-21T10:46:42.602Z",
   "charts": [
     {
       "success": true,
@@ -16305,7 +16305,7 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1753093222812,
+      "timestamp": 1753094801945,
       "chartId": "chart_1748252444149_tkcgszd",
       "title": "Transactions Summary"
     },
@@ -17720,7 +17720,7 @@
           "median_priority_fee_sol": 354
         }
       ],
-      "timestamp": 1753093222448,
+      "timestamp": 1753094801899,
       "chartId": "chart_1748255554567_w4iy4xx",
       "title": "Non-vote Transaction Fees"
     },
@@ -18189,7 +18189,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1753093222452
+          "timestamp": 1753094801906
         },
         {
           "data": [
@@ -18349,7 +18349,63 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1753093222750
+          "timestamp": 1753094802156
+        },
+        {
+          "data": [
+            {
+              "block_date": "2025-01-01",
+              "total_transactions": 64667410332,
+              "total_vote_transactions": 47957643325,
+              "total_non_vote_Transactions": 16709767007,
+              "succeesful_transactions_perc": 89.85757003051903,
+              "successful_non_vote_transactiosn_perc": 61.2585249495813
+            },
+            {
+              "block_date": "2024-01-01",
+              "total_transactions": 96782119718,
+              "total_vote_transactions": 70874601701,
+              "total_non_vote_Transactions": 25907518017,
+              "succeesful_transactions_perc": 86.9883386934561,
+              "successful_non_vote_transactiosn_perc": 51.674723550188396
+            },
+            {
+              "block_date": "2023-01-01",
+              "total_transactions": 129343470461,
+              "total_vote_transactions": 117002067629,
+              "total_non_vote_Transactions": 12341402832,
+              "succeesful_transactions_perc": 86.2604629699043,
+              "successful_non_vote_transactiosn_perc": 59.580046896568234
+            },
+            {
+              "block_date": "2022-01-01",
+              "total_transactions": 97866516934,
+              "total_vote_transactions": 83477909979,
+              "total_non_vote_Transactions": 14388606955,
+              "succeesful_transactions_perc": 82.11113306116059,
+              "successful_non_vote_transactiosn_perc": 73.4922572078834
+            },
+            {
+              "block_date": "2021-01-01",
+              "total_transactions": 47096652304,
+              "total_vote_transactions": 35067221962,
+              "total_non_vote_Transactions": 12029430342,
+              "succeesful_transactions_perc": 85.79363625292801,
+              "successful_non_vote_transactiosn_perc": 81.96786304646112
+            },
+            {
+              "block_date": "2020-01-01",
+              "total_transactions": 5405154305,
+              "total_vote_transactions": 4351589815,
+              "total_non_vote_Transactions": 1053564490,
+              "succeesful_transactions_perc": 88.68925524597026,
+              "successful_non_vote_transactiosn_perc": 88.23727363856008
+            }
+          ],
+          "parameters": {
+            "Date Part": "Y"
+          },
+          "timestamp": 1753094802402
         }
       ],
       "data": [
@@ -18810,21 +18866,24 @@
           "successful_non_vote_transactiosn_perc": 90.26263070458863
         }
       ],
-      "timestamp": 1753093223258,
+      "timestamp": 1753094802602,
       "chartId": "chart_1748255787490_ud2wzln",
       "title": "Transaction Count",
       "parameters": {
         "Date Part": "M"
       },
       "totalCombinations": 3,
-      "successfulCombinations": 2,
-      "failedCombinations": 1,
+      "successfulCombinations": 3,
+      "failedCombinations": 0,
       "availableParameters": [
         {
           "Date Part": "M"
         },
         {
           "Date Part": "Q"
+        },
+        {
+          "Date Part": "Y"
         }
       ]
     }
