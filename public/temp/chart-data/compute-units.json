@@ -1,17 +1,24 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "fetchedAt": "2025-07-20T23:57:12.824Z",
+  "fetchedAt": "2025-07-21T01:58:57.787Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-07-20",
+          "compute_txns": 24476033,
+          "total_txns": 24674240,
+          "non_compute_txns": 198207,
+          "percentage_txns_using_compute_budget": 99.2
+        },
+        {
           "block_date": "2025-07-19",
-          "compute_txns": 21550057,
-          "total_txns": 21742014,
-          "non_compute_txns": 191957,
-          "percentage_txns_using_compute_budget": 99.1
+          "compute_txns": 85237408,
+          "total_txns": 94318071,
+          "non_compute_txns": 9080663,
+          "percentage_txns_using_compute_budget": 90.4
         },
         {
           "block_date": "2025-07-18",
@@ -208,16 +215,9 @@
           "total_txns": 102836229,
           "non_compute_txns": 13523547,
           "percentage_txns_using_compute_budget": 86.8
-        },
-        {
-          "block_date": "2025-06-20",
-          "compute_txns": 87344385,
-          "total_txns": 100645424,
-          "non_compute_txns": 13301039,
-          "percentage_txns_using_compute_budget": 86.8
         }
       ],
-      "timestamp": 1753055830686,
+      "timestamp": 1753063135711,
       "chartId": "chart_1748087823998_ru1ktw2",
       "title": "Transactions Using Compute Budget Program"
     },
@@ -225,11 +225,18 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-07-20",
+          "compute_txns": 24476033,
+          "total_txns": 24674240,
+          "non_compute_txns": 198207,
+          "percentage_txns_using_compute_budget": 99.2
+        },
+        {
           "block_date": "2025-07-19",
-          "compute_txns": 21550057,
-          "total_txns": 21742014,
-          "non_compute_txns": 191957,
-          "percentage_txns_using_compute_budget": 99.1
+          "compute_txns": 85237408,
+          "total_txns": 94318071,
+          "non_compute_txns": 9080663,
+          "percentage_txns_using_compute_budget": 90.4
         },
         {
           "block_date": "2025-07-18",
@@ -426,16 +433,9 @@
           "total_txns": 102836229,
           "non_compute_txns": 13523547,
           "percentage_txns_using_compute_budget": 86.8
-        },
-        {
-          "block_date": "2025-06-20",
-          "compute_txns": 87344385,
-          "total_txns": 100645424,
-          "non_compute_txns": 13301039,
-          "percentage_txns_using_compute_budget": 86.8
         }
       ],
-      "timestamp": 1753055830686,
+      "timestamp": 1753063135704,
       "chartId": "chart_1748088263791_vfj94hw",
       "title": "Daily Compute Budget Usage - In Percentage"
     },
@@ -443,74 +443,14 @@
       "success": true,
       "data": [
         {
-          "partition_0": "2025-07-11",
-          "avg_cu_allocated": 323957.9576267699,
-          "avg_cu_consumed": 73925.9052545381,
-          "max_unused_cu_single_txn": 4003999400,
-          "max_cu_allocated_single_txn": 4004000000,
+          "partition_0": "2025-06-29",
+          "avg_cu_allocated": 336468.9704271744,
+          "avg_cu_consumed": 73935.78950589489,
+          "max_unused_cu_single_txn": 2818568529,
+          "max_cu_allocated_single_txn": 2818572288,
           "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 250032.05237223182,
-          "median_unused_cu": 176838
-        },
-        {
-          "partition_0": "2025-07-14",
-          "avg_cu_allocated": 328982.29218982736,
-          "avg_cu_consumed": 76033.34940512867,
-          "max_unused_cu_single_txn": 299995056,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 252948.9427846987,
-          "median_unused_cu": 184213
-        },
-        {
-          "partition_0": "2025-07-03",
-          "avg_cu_allocated": 337400.78606361547,
-          "avg_cu_consumed": 74924.18402874836,
-          "max_unused_cu_single_txn": 299971836,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 262476.6020348671,
-          "median_unused_cu": 198556
-        },
-        {
-          "partition_0": "2025-07-10",
-          "avg_cu_allocated": 323952.728417717,
-          "avg_cu_consumed": 73051.74073058546,
-          "max_unused_cu_single_txn": 999996059,
-          "max_cu_allocated_single_txn": 999999999,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 250900.9876871315,
-          "median_unused_cu": 183153
-        },
-        {
-          "partition_0": "2025-07-18",
-          "avg_cu_allocated": 298548.89724928373,
-          "avg_cu_consumed": 74895.8071794041,
-          "max_unused_cu_single_txn": 299995056,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 223653.09006987963,
-          "median_unused_cu": 161167
-        },
-        {
-          "partition_0": "2025-07-16",
-          "avg_cu_allocated": 316618.3211643701,
-          "avg_cu_consumed": 76262.32121869063,
-          "max_unused_cu_single_txn": 4026528081,
-          "max_cu_allocated_single_txn": 4026531840,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 240355.99994567948,
-          "median_unused_cu": 168194
-        },
-        {
-          "partition_0": "2025-07-01",
-          "avg_cu_allocated": 346704.3529756153,
-          "avg_cu_consumed": 73817.27825308056,
-          "max_unused_cu_single_txn": 299990412,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 272887.07472253474,
-          "median_unused_cu": 207967
+          "avg_unused_cu": 262533.18092127953,
+          "median_unused_cu": 191564
         },
         {
           "partition_0": "2025-06-26",
@@ -520,67 +460,7 @@
           "max_cu_allocated_single_txn": 2684354560,
           "max_cu_consumed_single_txn": 1400000,
           "avg_unused_cu": 281861.9475193087,
-          "median_unused_cu": 215720
-        },
-        {
-          "partition_0": "2025-06-29",
-          "avg_cu_allocated": 336468.9704271744,
-          "avg_cu_consumed": 73935.78950589489,
-          "max_unused_cu_single_txn": 2818568529,
-          "max_cu_allocated_single_txn": 2818572288,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 262533.18092127953,
-          "median_unused_cu": 190457
-        },
-        {
-          "partition_0": "2025-07-13",
-          "avg_cu_allocated": 337619.53292078513,
-          "avg_cu_consumed": 74248.24476163468,
-          "max_unused_cu_single_txn": 299990412,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 263371.28815915046,
-          "median_unused_cu": 183261
-        },
-        {
-          "partition_0": "2025-07-07",
-          "avg_cu_allocated": 335126.1367616466,
-          "avg_cu_consumed": 73331.89524263039,
-          "max_unused_cu_single_txn": 999968777,
-          "max_cu_allocated_single_txn": 999999999,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 261794.2415190162,
-          "median_unused_cu": 203162
-        },
-        {
-          "partition_0": "2025-06-30",
-          "avg_cu_allocated": 333002.9366717444,
-          "avg_cu_consumed": 74872.4434376015,
-          "max_unused_cu_single_txn": 268435306,
-          "max_cu_allocated_single_txn": 268435456,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 258130.49323414286,
-          "median_unused_cu": 194991
-        },
-        {
-          "partition_0": "2025-06-22",
-          "avg_cu_allocated": 330618.453326059,
-          "avg_cu_consumed": 78022.08123440684,
-          "max_unused_cu_single_txn": 2999940737,
-          "max_cu_allocated_single_txn": 3000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 252596.37209165213,
-          "median_unused_cu": 193088
-        },
-        {
-          "partition_0": "2025-07-19",
-          "avg_cu_allocated": 316721.21381837025,
-          "avg_cu_consumed": 85386.50733078361,
-          "max_unused_cu_single_txn": 76913950,
-          "max_cu_allocated_single_txn": 76923077,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 231334.70648758666,
-          "median_unused_cu": 198083
+          "median_unused_cu": 215795
         },
         {
           "partition_0": "2025-06-24",
@@ -590,17 +470,107 @@
           "max_cu_allocated_single_txn": 1000000000,
           "max_cu_consumed_single_txn": 1400000,
           "avg_unused_cu": 265790.5710515816,
-          "median_unused_cu": 204850
+          "median_unused_cu": 203921
         },
         {
-          "partition_0": "2025-06-28",
-          "avg_cu_allocated": 359964.08138187206,
-          "avg_cu_consumed": 75350.91482356947,
+          "partition_0": "2025-06-22",
+          "avg_cu_allocated": 330618.453326059,
+          "avg_cu_consumed": 78022.08123440684,
+          "max_unused_cu_single_txn": 2999940737,
+          "max_cu_allocated_single_txn": 3000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252596.37209165213,
+          "median_unused_cu": 195008
+        },
+        {
+          "partition_0": "2025-07-19",
+          "avg_cu_allocated": 314722.733193674,
+          "avg_cu_consumed": 78535.1990554175,
+          "max_unused_cu_single_txn": 1073618630,
+          "max_cu_allocated_single_txn": 1073741824,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 236187.5341382565,
+          "median_unused_cu": 182637
+        },
+        {
+          "partition_0": "2025-07-16",
+          "avg_cu_allocated": 316618.3211643701,
+          "avg_cu_consumed": 76262.32121869063,
+          "max_unused_cu_single_txn": 4026528081,
+          "max_cu_allocated_single_txn": 4026531840,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 240355.99994567948,
+          "median_unused_cu": 169536
+        },
+        {
+          "partition_0": "2025-07-18",
+          "avg_cu_allocated": 298548.89724928373,
+          "avg_cu_consumed": 74895.8071794041,
+          "max_unused_cu_single_txn": 299995056,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 223653.09006987963,
+          "median_unused_cu": 163309
+        },
+        {
+          "partition_0": "2025-07-01",
+          "avg_cu_allocated": 346704.3529756153,
+          "avg_cu_consumed": 73817.27825308056,
+          "max_unused_cu_single_txn": 299990412,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 272887.07472253474,
+          "median_unused_cu": 208507
+        },
+        {
+          "partition_0": "2025-07-14",
+          "avg_cu_allocated": 328982.29218982736,
+          "avg_cu_consumed": 76033.34940512867,
+          "max_unused_cu_single_txn": 299995056,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252948.9427846987,
+          "median_unused_cu": 182370
+        },
+        {
+          "partition_0": "2025-07-10",
+          "avg_cu_allocated": 323952.728417717,
+          "avg_cu_consumed": 73051.74073058546,
+          "max_unused_cu_single_txn": 999996059,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 250900.9876871315,
+          "median_unused_cu": 181785
+        },
+        {
+          "partition_0": "2025-07-03",
+          "avg_cu_allocated": 337400.78606361547,
+          "avg_cu_consumed": 74924.18402874836,
           "max_unused_cu_single_txn": 299971836,
           "max_cu_allocated_single_txn": 300000000,
           "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 284613.1665583026,
-          "median_unused_cu": 201148
+          "avg_unused_cu": 262476.6020348671,
+          "median_unused_cu": 200973
+        },
+        {
+          "partition_0": "2025-07-07",
+          "avg_cu_allocated": 335126.1367616466,
+          "avg_cu_consumed": 73331.89524263039,
+          "max_unused_cu_single_txn": 999968777,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261794.2415190162,
+          "median_unused_cu": 201757
+        },
+        {
+          "partition_0": "2025-07-13",
+          "avg_cu_allocated": 337619.53292078513,
+          "avg_cu_consumed": 74248.24476163468,
+          "max_unused_cu_single_txn": 299990412,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 263371.28815915046,
+          "median_unused_cu": 183617
         },
         {
           "partition_0": "2025-07-08",
@@ -610,127 +580,17 @@
           "max_cu_allocated_single_txn": 536870912,
           "max_cu_consumed_single_txn": 1400000,
           "avg_unused_cu": 264746.0869633445,
-          "median_unused_cu": 206285
+          "median_unused_cu": 203641
         },
         {
-          "partition_0": "2025-07-17",
-          "avg_cu_allocated": 300514.70675021975,
-          "avg_cu_consumed": 74379.1453338815,
-          "max_unused_cu_single_txn": 999931325,
-          "max_cu_allocated_single_txn": 1000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 226135.56141633826,
-          "median_unused_cu": 154218
-        },
-        {
-          "partition_0": "2025-06-23",
-          "avg_cu_allocated": 329403.9975370145,
-          "avg_cu_consumed": 75116.78655594,
-          "max_unused_cu_single_txn": 999933261,
-          "max_cu_allocated_single_txn": 1000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 254287.21098107446,
-          "median_unused_cu": 197812
-        },
-        {
-          "partition_0": "2025-07-12",
-          "avg_cu_allocated": 342312.4796670247,
-          "avg_cu_consumed": 74831.11049944871,
-          "max_unused_cu_single_txn": 999945344,
-          "max_cu_allocated_single_txn": 1000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 267481.369167576,
-          "median_unused_cu": 189122
-        },
-        {
-          "partition_0": "2025-07-15",
-          "avg_cu_allocated": 314397.1068120309,
-          "avg_cu_consumed": 76679.48192021811,
-          "max_unused_cu_single_txn": 999923068,
-          "max_cu_allocated_single_txn": 1000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 237717.62489181277,
-          "median_unused_cu": 165886
-        },
-        {
-          "partition_0": "2025-06-25",
-          "avg_cu_allocated": 335966.5698401009,
-          "avg_cu_consumed": 74172.31109570511,
+          "partition_0": "2025-06-28",
+          "avg_cu_allocated": 359964.08138187206,
+          "avg_cu_consumed": 75350.91482356947,
           "max_unused_cu_single_txn": 299971836,
           "max_cu_allocated_single_txn": 300000000,
           "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 261794.25874439577,
-          "median_unused_cu": 206384
-        },
-        {
-          "partition_0": "2025-06-27",
-          "avg_cu_allocated": 356791.29702759616,
-          "avg_cu_consumed": 75959.72817004562,
-          "max_unused_cu_single_txn": 299976480,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 280831.56885755056,
-          "median_unused_cu": 209619
-        },
-        {
-          "partition_0": "2025-06-21",
-          "avg_cu_allocated": 351251.7779956906,
-          "avg_cu_consumed": 75624.74775402354,
-          "max_unused_cu_single_txn": 299967192,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 275627.03024166706,
-          "median_unused_cu": 209241
-        },
-        {
-          "partition_0": "2025-06-20",
-          "avg_cu_allocated": 354890.6219397317,
-          "avg_cu_consumed": 74566.81455572188,
-          "max_unused_cu_single_txn": 999933211,
-          "max_cu_allocated_single_txn": 1000000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 280323.8073840098,
-          "median_unused_cu": 204462
-        },
-        {
-          "partition_0": "2025-07-02",
-          "avg_cu_allocated": 337226.14337371755,
-          "avg_cu_consumed": 73678.94587623229,
-          "max_unused_cu_single_txn": 2684279182,
-          "max_cu_allocated_single_txn": 2684354560,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 263547.19749748526,
-          "median_unused_cu": 198263
-        },
-        {
-          "partition_0": "2025-07-09",
-          "avg_cu_allocated": 328214.12741572876,
-          "avg_cu_consumed": 71796.22441569263,
-          "max_unused_cu_single_txn": 999996059,
-          "max_cu_allocated_single_txn": 999999999,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 256417.90300003614,
-          "median_unused_cu": 190313
-        },
-        {
-          "partition_0": "2025-07-06",
-          "avg_cu_allocated": 334148.829794191,
-          "avg_cu_consumed": 72189.04759498518,
-          "max_unused_cu_single_txn": 299971836,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 261959.78219920583,
-          "median_unused_cu": 214750
-        },
-        {
-          "partition_0": "2025-07-05",
-          "avg_cu_allocated": 327461.7748627371,
-          "avg_cu_consumed": 75209.67922037357,
-          "max_unused_cu_single_txn": 299967192,
-          "max_cu_allocated_single_txn": 300000000,
-          "max_cu_consumed_single_txn": 1400000,
-          "avg_unused_cu": 252252.09564236354,
-          "median_unused_cu": 203556
+          "avg_unused_cu": 284613.1665583026,
+          "median_unused_cu": 201069
         },
         {
           "partition_0": "2025-07-04",
@@ -740,10 +600,150 @@
           "max_cu_allocated_single_txn": 3525113520,
           "max_cu_consumed_single_txn": 1400000,
           "avg_unused_cu": 260260.69035934928,
-          "median_unused_cu": 202184
+          "median_unused_cu": 200612
+        },
+        {
+          "partition_0": "2025-07-11",
+          "avg_cu_allocated": 323957.9576267699,
+          "avg_cu_consumed": 73925.9052545381,
+          "max_unused_cu_single_txn": 4003999400,
+          "max_cu_allocated_single_txn": 4004000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 250032.05237223182,
+          "median_unused_cu": 180087
+        },
+        {
+          "partition_0": "2025-07-05",
+          "avg_cu_allocated": 327461.7748627371,
+          "avg_cu_consumed": 75209.67922037357,
+          "max_unused_cu_single_txn": 299967192,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 252252.09564236354,
+          "median_unused_cu": 203885
+        },
+        {
+          "partition_0": "2025-07-06",
+          "avg_cu_allocated": 334148.829794191,
+          "avg_cu_consumed": 72189.04759498518,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261959.78219920583,
+          "median_unused_cu": 214783
+        },
+        {
+          "partition_0": "2025-07-02",
+          "avg_cu_allocated": 337226.14337371755,
+          "avg_cu_consumed": 73678.94587623229,
+          "max_unused_cu_single_txn": 2684279182,
+          "max_cu_allocated_single_txn": 2684354560,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 263547.19749748526,
+          "median_unused_cu": 198450
+        },
+        {
+          "partition_0": "2025-07-15",
+          "avg_cu_allocated": 314397.1068120309,
+          "avg_cu_consumed": 76679.48192021811,
+          "max_unused_cu_single_txn": 999923068,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 237717.62489181277,
+          "median_unused_cu": 165189
+        },
+        {
+          "partition_0": "2025-07-12",
+          "avg_cu_allocated": 342312.4796670247,
+          "avg_cu_consumed": 74831.11049944871,
+          "max_unused_cu_single_txn": 999945344,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 267481.369167576,
+          "median_unused_cu": 187042
+        },
+        {
+          "partition_0": "2025-07-09",
+          "avg_cu_allocated": 328214.12741572876,
+          "avg_cu_consumed": 71796.22441569263,
+          "max_unused_cu_single_txn": 999996059,
+          "max_cu_allocated_single_txn": 999999999,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 256417.90300003614,
+          "median_unused_cu": 190774
+        },
+        {
+          "partition_0": "2025-06-25",
+          "avg_cu_allocated": 335966.5698401009,
+          "avg_cu_consumed": 74172.31109570511,
+          "max_unused_cu_single_txn": 299971836,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 261794.25874439577,
+          "median_unused_cu": 208106
+        },
+        {
+          "partition_0": "2025-07-20",
+          "avg_cu_allocated": 306681.2495287798,
+          "avg_cu_consumed": 81186.69376681917,
+          "max_unused_cu_single_txn": 76913950,
+          "max_cu_allocated_single_txn": 76923077,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 225494.55576196066,
+          "median_unused_cu": 194984
+        },
+        {
+          "partition_0": "2025-06-27",
+          "avg_cu_allocated": 356791.29702759616,
+          "avg_cu_consumed": 75959.72817004562,
+          "max_unused_cu_single_txn": 299976480,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 280831.56885755056,
+          "median_unused_cu": 207182
+        },
+        {
+          "partition_0": "2025-07-17",
+          "avg_cu_allocated": 300514.70675021975,
+          "avg_cu_consumed": 74379.1453338815,
+          "max_unused_cu_single_txn": 999931325,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 226135.56141633826,
+          "median_unused_cu": 152251
+        },
+        {
+          "partition_0": "2025-06-21",
+          "avg_cu_allocated": 351251.7779956906,
+          "avg_cu_consumed": 75624.74775402354,
+          "max_unused_cu_single_txn": 299967192,
+          "max_cu_allocated_single_txn": 300000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 275627.03024166706,
+          "median_unused_cu": 209156
+        },
+        {
+          "partition_0": "2025-06-30",
+          "avg_cu_allocated": 333002.9366717444,
+          "avg_cu_consumed": 74872.4434376015,
+          "max_unused_cu_single_txn": 268435306,
+          "max_cu_allocated_single_txn": 268435456,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 258130.49323414286,
+          "median_unused_cu": 196595
+        },
+        {
+          "partition_0": "2025-06-23",
+          "avg_cu_allocated": 329403.9975370145,
+          "avg_cu_consumed": 75116.78655594,
+          "max_unused_cu_single_txn": 999933261,
+          "max_cu_allocated_single_txn": 1000000000,
+          "max_cu_consumed_single_txn": 1400000,
+          "avg_unused_cu": 254287.21098107446,
+          "median_unused_cu": 196482
         }
       ],
-      "timestamp": 1753055830721,
+      "timestamp": 1753063135716,
       "chartId": "chart_1748088783904_hypf57i",
       "title": "Avg Cu Allocated & Consumed Per Transaction"
     },
@@ -751,20 +751,12 @@
       "success": true,
       "data": [
         {
-          "partition_0": "2025-07-05",
-          "avg_consumed_cu_per_block": 36165544.4712279
+          "partition_0": "2025-07-01",
+          "avg_consumed_cu_per_block": 37001508.20990792
         },
         {
-          "partition_0": "2025-07-06",
-          "avg_consumed_cu_per_block": 38820742.74545857
-        },
-        {
-          "partition_0": "2025-07-04",
-          "avg_consumed_cu_per_block": 34294558.6093096
-        },
-        {
-          "partition_0": "2025-07-11",
-          "avg_consumed_cu_per_block": 39788677.70603491
+          "partition_0": "2025-07-14",
+          "avg_consumed_cu_per_block": 40522536.4431122
         },
         {
           "partition_0": "2025-07-16",
@@ -775,20 +767,20 @@
           "avg_consumed_cu_per_block": 40947328.032456055
         },
         {
-          "partition_0": "2025-07-08",
-          "avg_consumed_cu_per_block": 37615987.72803496
+          "partition_0": "2025-06-24",
+          "avg_consumed_cu_per_block": 34846498.952526286
         },
         {
-          "partition_0": "2025-06-28",
-          "avg_consumed_cu_per_block": 32649164.795705214
+          "partition_0": "2025-06-22",
+          "avg_consumed_cu_per_block": 34731132.80568672
         },
         {
-          "partition_0": "2025-07-07",
-          "avg_consumed_cu_per_block": 38941874.995648764
+          "partition_0": "2025-07-19",
+          "avg_consumed_cu_per_block": 33950977.56172998
         },
         {
-          "partition_0": "2025-07-13",
-          "avg_consumed_cu_per_block": 36920771.304255605
+          "partition_0": "2025-06-30",
+          "avg_consumed_cu_per_block": 35956216.744688176
         },
         {
           "partition_0": "2025-06-26",
@@ -799,8 +791,40 @@
           "avg_consumed_cu_per_block": 30026970.669900328
         },
         {
-          "partition_0": "2025-07-01",
-          "avg_consumed_cu_per_block": 37001508.20990792
+          "partition_0": "2025-07-07",
+          "avg_consumed_cu_per_block": 38941874.995648764
+        },
+        {
+          "partition_0": "2025-07-13",
+          "avg_consumed_cu_per_block": 36920771.304255605
+        },
+        {
+          "partition_0": "2025-07-12",
+          "avg_consumed_cu_per_block": 36963976.209495
+        },
+        {
+          "partition_0": "2025-07-15",
+          "avg_consumed_cu_per_block": 40864354.23932395
+        },
+        {
+          "partition_0": "2025-07-09",
+          "avg_consumed_cu_per_block": 37202539.06035665
+        },
+        {
+          "partition_0": "2025-07-08",
+          "avg_consumed_cu_per_block": 37615987.72803496
+        },
+        {
+          "partition_0": "2025-06-28",
+          "avg_consumed_cu_per_block": 32649164.795705214
+        },
+        {
+          "partition_0": "2025-07-02",
+          "avg_consumed_cu_per_block": 37885089.13928945
+        },
+        {
+          "partition_0": "2025-06-21",
+          "avg_consumed_cu_per_block": 36309902.644467585
         },
         {
           "partition_0": "2025-07-17",
@@ -811,67 +835,43 @@
           "avg_consumed_cu_per_block": 34124256.726482764
         },
         {
-          "partition_0": "2025-06-30",
-          "avg_consumed_cu_per_block": 35956216.744688176
+          "partition_0": "2025-07-04",
+          "avg_consumed_cu_per_block": 34294558.6093096
         },
         {
-          "partition_0": "2025-07-19",
-          "avg_consumed_cu_per_block": 8992064.390149038
+          "partition_0": "2025-07-05",
+          "avg_consumed_cu_per_block": 36165544.4712279
         },
         {
-          "partition_0": "2025-06-22",
-          "avg_consumed_cu_per_block": 34731132.80568672
+          "partition_0": "2025-07-06",
+          "avg_consumed_cu_per_block": 38820742.74545857
         },
         {
-          "partition_0": "2025-06-24",
-          "avg_consumed_cu_per_block": 34846498.952526286
+          "partition_0": "2025-07-11",
+          "avg_consumed_cu_per_block": 39788677.70603491
         },
         {
-          "partition_0": "2025-07-02",
-          "avg_consumed_cu_per_block": 37885089.13928945
+          "partition_0": "2025-06-27",
+          "avg_consumed_cu_per_block": 37746547.97013987
         },
         {
-          "partition_0": "2025-07-14",
-          "avg_consumed_cu_per_block": 40522536.4431122
-        },
-        {
-          "partition_0": "2025-07-09",
-          "avg_consumed_cu_per_block": 37202539.06035665
-        },
-        {
-          "partition_0": "2025-06-25",
-          "avg_consumed_cu_per_block": 38296224.43330408
-        },
-        {
-          "partition_0": "2025-07-10",
-          "avg_consumed_cu_per_block": 38107813.72663686
+          "partition_0": "2025-07-20",
+          "avg_consumed_cu_per_block": 9630818.923029216
         },
         {
           "partition_0": "2025-07-03",
           "avg_consumed_cu_per_block": 38219849.44683236
         },
         {
-          "partition_0": "2025-06-21",
-          "avg_consumed_cu_per_block": 36309902.644467585
+          "partition_0": "2025-07-10",
+          "avg_consumed_cu_per_block": 38107813.72663686
         },
         {
-          "partition_0": "2025-06-20",
-          "avg_consumed_cu_per_block": 34975060.89818992
-        },
-        {
-          "partition_0": "2025-07-15",
-          "avg_consumed_cu_per_block": 40864354.23932395
-        },
-        {
-          "partition_0": "2025-07-12",
-          "avg_consumed_cu_per_block": 36963976.209495
-        },
-        {
-          "partition_0": "2025-06-27",
-          "avg_consumed_cu_per_block": 37746547.97013987
+          "partition_0": "2025-06-25",
+          "avg_consumed_cu_per_block": 38296224.43330408
         }
       ],
-      "timestamp": 1753055831756,
+      "timestamp": 1753063136746,
       "chartId": "chart_1748088979907_8f6w6d2",
       "title": "Avg Cu Consumed Per Block"
     },
@@ -879,215 +879,71 @@
       "success": true,
       "data": [
         {
-          "partition_0": "2025-06-27",
-          "max_compute_unit_price": 200000,
-          "median_compute_unit_price": 0.0022332398,
-          "99 percentile compute unit price": 10.216331,
-          "99.99 percentile compute unit price": 264.89438,
+          "partition_0": "2025-06-22",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00382861,
+          "99 percentile compute unit price": 10.552249,
+          "99.99 percentile compute unit price": 228.82411,
           "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-27",
+          "block_date": "2025-06-22",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 142.04039351167054,
-          "max_compute_unit_price_usd": 0.02840807870233411
-        },
-        {
-          "partition_0": "2025-07-10",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.004364505,
-          "99 percentile compute unit price": 10.292073,
-          "99.99 percentile compute unit price": 348.9037,
-          "avg_compute_unit_price": 0.9,
-          "block_date": "2025-07-10",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 159.61284077296853,
-          "max_compute_unit_price_usd": 0.0034849963422074414
-        },
-        {
-          "partition_0": "2025-07-18",
-          "max_compute_unit_price": 134308.67,
-          "median_compute_unit_price": 0.0074401703,
-          "99 percentile compute unit price": 11.652387,
-          "99.99 percentile compute unit price": 409.40628,
-          "avg_compute_unit_price": 1,
-          "block_date": "2025-07-18",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 178.53337932388956,
-          "max_compute_unit_price_usd": 0.02397858072759711
-        },
-        {
-          "partition_0": "2025-06-25",
-          "max_compute_unit_price": 83228.31,
-          "median_compute_unit_price": 0.002629767,
-          "99 percentile compute unit price": 10.874571,
-          "99.99 percentile compute unit price": 326.96,
-          "avg_compute_unit_price": 0.81,
-          "block_date": "2025-06-25",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 145.26517941059151,
-          "max_compute_unit_price_usd": 0.012090175384190329
-        },
-        {
-          "partition_0": "2025-06-20",
-          "max_compute_unit_price": 22222.22,
-          "median_compute_unit_price": 0.0016483748,
-          "99 percentile compute unit price": 10.256581,
-          "99.99 percentile compute unit price": 267.26004,
-          "avg_compute_unit_price": 0.76,
-          "block_date": "2025-06-20",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 143.15959210382542,
-          "max_compute_unit_price_usd": 0.0031813239508414718
-        },
-        {
-          "partition_0": "2025-06-26",
-          "max_compute_unit_price": 11895.29,
-          "median_compute_unit_price": 0.0020938644,
-          "99 percentile compute unit price": 10.56837,
-          "99.99 percentile compute unit price": 293.04126,
-          "avg_compute_unit_price": 0.74,
-          "block_date": "2025-06-26",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 143.46826691546138,
-          "max_compute_unit_price_usd": 0.0017065966407568186
-        },
-        {
-          "partition_0": "2025-07-08",
-          "max_compute_unit_price": 200000,
-          "median_compute_unit_price": 0.0043829298,
-          "99 percentile compute unit price": 10.299685,
-          "99.99 percentile compute unit price": 356.8765,
-          "avg_compute_unit_price": 0.87,
-          "block_date": "2025-07-08",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.41253324196887,
-          "max_compute_unit_price_usd": 0.030082506648393775
-        },
-        {
-          "partition_0": "2025-07-09",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025366205,
-          "99 percentile compute unit price": 10.293899,
-          "99.99 percentile compute unit price": 308.5285,
-          "avg_compute_unit_price": 0.81,
-          "block_date": "2025-07-09",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 154.2946352666149,
-          "max_compute_unit_price_usd": 0.003368878324089386
-        },
-        {
-          "partition_0": "2025-06-23",
-          "max_compute_unit_price": 28571.36,
-          "median_compute_unit_price": 0.004309345,
-          "99 percentile compute unit price": 11.647223,
-          "99.99 percentile compute unit price": 353.5315,
-          "avg_compute_unit_price": 0.78,
-          "block_date": "2025-06-23",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 138.4462538653699,
-          "max_compute_unit_price_usd": 0.003955597759838875
-        },
-        {
-          "partition_0": "2025-07-15",
-          "max_compute_unit_price": 21996.99,
-          "median_compute_unit_price": 0.0055123535,
-          "99 percentile compute unit price": 10.730204,
-          "99.99 percentile compute unit price": 330.73132,
-          "avg_compute_unit_price": 0.93,
-          "block_date": "2025-07-15",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 160.54402598996515,
-          "max_compute_unit_price_usd": 0.003531485334261004
-        },
-        {
-          "partition_0": "2025-07-02",
-          "max_compute_unit_price": 22156.27,
-          "median_compute_unit_price": 0.0037599285,
-          "99 percentile compute unit price": 11.394816,
-          "99.99 percentile compute unit price": 336.8392,
-          "avg_compute_unit_price": 0.84,
-          "block_date": "2025-07-02",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.80000656182892,
-          "max_compute_unit_price_usd": 0.0033411656613856534
-        },
-        {
-          "partition_0": "2025-06-28",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.002102519,
-          "99 percentile compute unit price": 10.175826,
-          "99.99 percentile compute unit price": 240.61853,
-          "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-28",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 147.414716399686,
-          "max_compute_unit_price_usd": 0.0032186617627537285
+          "price_in_usd": 131.63410928118589,
+          "max_compute_unit_price_usd": 0.0028741070400919696
         },
         {
           "partition_0": "2025-06-24",
           "max_compute_unit_price": 140127.26,
-          "median_compute_unit_price": 0.002932591,
-          "99 percentile compute unit price": 11.129037,
-          "99.99 percentile compute unit price": 286.83884,
+          "median_compute_unit_price": 0.002968823,
+          "99 percentile compute unit price": 11.128308,
+          "99.99 percentile compute unit price": 288.27496,
           "avg_compute_unit_price": 0.79,
           "block_date": "2025-06-24",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 144.4851435118332,
-          "max_compute_unit_price_usd": 0.020246307271019965
-        },
-        {
-          "partition_0": "2025-06-22",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0039414535,
-          "99 percentile compute unit price": 10.690992,
-          "99.99 percentile compute unit price": 227.05476,
-          "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-22",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 131.6341092811857,
-          "max_compute_unit_price_usd": 0.002874107040091965
-        },
-        {
-          "partition_0": "2025-07-05",
-          "max_compute_unit_price": 80000,
-          "median_compute_unit_price": 0.0054312996,
-          "99 percentile compute unit price": 10.219056,
-          "99.99 percentile compute unit price": 348.42816,
-          "avg_compute_unit_price": 0.78,
-          "block_date": "2025-07-05",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 147.5632387722777,
-          "max_compute_unit_price_usd": 0.011805059101782218
+          "price_in_usd": 144.48514351183331,
+          "max_compute_unit_price_usd": 0.02024630727101998
         },
         {
           "partition_0": "2025-07-03",
           "max_compute_unit_price": 1600000,
-          "median_compute_unit_price": 0.002949688,
-          "99 percentile compute unit price": 10.430774,
-          "99.99 percentile compute unit price": 307.99957,
+          "median_compute_unit_price": 0.0028744286,
+          "99 percentile compute unit price": 10.441958,
+          "99.99 percentile compute unit price": 307.80978,
           "avg_compute_unit_price": 0.79,
           "block_date": "2025-07-03",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 153.34383413713306,
-          "max_compute_unit_price_usd": 0.2453501346194129
+          "price_in_usd": 153.34383413713326,
+          "max_compute_unit_price_usd": 0.24535013461941318
         },
         {
-          "partition_0": "2025-06-29",
-          "max_compute_unit_price": 25000,
-          "median_compute_unit_price": 0.0021268034,
-          "99 percentile compute unit price": 10.042965,
-          "99.99 percentile compute unit price": 235.30083,
-          "avg_compute_unit_price": 0.7,
-          "block_date": "2025-06-29",
+          "partition_0": "2025-07-20",
+          "max_compute_unit_price": 13333.33,
+          "median_compute_unit_price": 0.004749634,
+          "99 percentile compute unit price": 6.0755124,
+          "99.99 percentile compute unit price": 227.84892,
+          "avg_compute_unit_price": 0.41,
+          "block_date": "2025-07-20",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 151.69921947491233,
-          "max_compute_unit_price_usd": 0.003792480486872808
+          "price_in_usd": 179.9408546214175,
+          "max_compute_unit_price_usd": 0.0023992107951493844
+        },
+        {
+          "partition_0": "2025-07-05",
+          "max_compute_unit_price": 80000,
+          "median_compute_unit_price": 0.0054364232,
+          "99 percentile compute unit price": 10.103616,
+          "99.99 percentile compute unit price": 357.07562,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-07-05",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.56323877227746,
+          "max_compute_unit_price_usd": 0.011805059101782197
         },
         {
           "partition_0": "2025-07-01",
           "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025020272,
-          "99 percentile compute unit price": 10.850878,
-          "99.99 percentile compute unit price": 319.25922,
+          "median_compute_unit_price": 0.002570051,
+          "99 percentile compute unit price": 10.8330345,
+          "99.99 percentile compute unit price": 320.13815,
           "avg_compute_unit_price": 0.81,
           "block_date": "2025-07-01",
           "mint": "So11111111111111111111111111111111111111112",
@@ -1095,151 +951,295 @@
           "max_compute_unit_price_usd": 0.003260777920073035
         },
         {
-          "partition_0": "2025-07-12",
-          "max_compute_unit_price": 66682.43,
-          "median_compute_unit_price": 0.002504721,
-          "99 percentile compute unit price": 9.634297,
-          "99.99 percentile compute unit price": 250.66951,
-          "avg_compute_unit_price": 0.73,
-          "block_date": "2025-07-12",
+          "partition_0": "2025-07-18",
+          "max_compute_unit_price": 134308.67,
+          "median_compute_unit_price": 0.0075685997,
+          "99 percentile compute unit price": 11.8618965,
+          "99.99 percentile compute unit price": 408.37006,
+          "avg_compute_unit_price": 1,
+          "block_date": "2025-07-18",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 160.99749460116792,
-          "max_compute_unit_price_usd": 0.010735704163917757
+          "price_in_usd": 178.53337932388945,
+          "max_compute_unit_price_usd": 0.023978580727597096
         },
         {
-          "partition_0": "2025-07-11",
-          "max_compute_unit_price": 21545.3,
-          "median_compute_unit_price": 0.0022495885,
-          "99 percentile compute unit price": 9.813519,
-          "99.99 percentile compute unit price": 340.29178,
-          "avg_compute_unit_price": 0.83,
-          "block_date": "2025-07-11",
+          "partition_0": "2025-06-25",
+          "max_compute_unit_price": 83228.31,
+          "median_compute_unit_price": 0.002580429,
+          "99 percentile compute unit price": 10.763098,
+          "99.99 percentile compute unit price": 324.63925,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-25",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 163.87885627462657,
-          "max_compute_unit_price_usd": 0.0035308191220937116
+          "price_in_usd": 145.26517941059134,
+          "max_compute_unit_price_usd": 0.012090175384190313
         },
         {
-          "partition_0": "2025-07-14",
-          "max_compute_unit_price": 83333.33,
-          "median_compute_unit_price": 0.00391571,
-          "99 percentile compute unit price": 10.379196,
-          "99.99 percentile compute unit price": 353.31427,
-          "avg_compute_unit_price": 0.92,
-          "block_date": "2025-07-14",
+          "partition_0": "2025-06-27",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0020837702,
+          "99 percentile compute unit price": 10.53461,
+          "99.99 percentile compute unit price": 265.78604,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-27",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 165.22385709670468,
-          "max_compute_unit_price_usd": 0.013768654207312533
+          "price_in_usd": 142.04039351167035,
+          "max_compute_unit_price_usd": 0.02840807870233407
         },
         {
-          "partition_0": "2025-07-16",
-          "max_compute_unit_price": 83333.33,
-          "median_compute_unit_price": 0.006681136,
-          "99 percentile compute unit price": 12.850827,
-          "99.99 percentile compute unit price": 473.17273,
-          "avg_compute_unit_price": 1.06,
-          "block_date": "2025-07-16",
+          "partition_0": "2025-06-29",
+          "max_compute_unit_price": 25000,
+          "median_compute_unit_price": 0.0021809367,
+          "99 percentile compute unit price": 10.071664,
+          "99.99 percentile compute unit price": 234.95541,
+          "avg_compute_unit_price": 0.7,
+          "block_date": "2025-06-29",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 168.42485144649356,
-          "max_compute_unit_price_usd": 0.014035403725791625
+          "price_in_usd": 151.6992194749125,
+          "max_compute_unit_price_usd": 0.0037924804868728124
         },
         {
           "partition_0": "2025-07-07",
           "max_compute_unit_price": 75555.56,
-          "median_compute_unit_price": 0.0059596607,
-          "99 percentile compute unit price": 10.56797,
-          "99.99 percentile compute unit price": 362.1416,
+          "median_compute_unit_price": 0.0060264855,
+          "99 percentile compute unit price": 10.338158,
+          "99.99 percentile compute unit price": 364.0198,
           "avg_compute_unit_price": 0.83,
           "block_date": "2025-07-07",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.71099159234046,
-          "max_compute_unit_price_usd": 0.011387053367914575
+          "price_in_usd": 150.71099159234012,
+          "max_compute_unit_price_usd": 0.01138705336791455
         },
         {
-          "partition_0": "2025-07-19",
-          "max_compute_unit_price": 12552.45,
-          "median_compute_unit_price": 0.0026064478,
-          "99 percentile compute unit price": 6.093825,
-          "99.99 percentile compute unit price": 219.38246,
-          "avg_compute_unit_price": 0.39,
-          "block_date": "2025-07-19",
+          "partition_0": "2025-07-16",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.006625033,
+          "99 percentile compute unit price": 12.81433,
+          "99.99 percentile compute unit price": 471.1183,
+          "avg_compute_unit_price": 1.06,
+          "block_date": "2025-07-16",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 176.6839592914563,
-          "max_compute_unit_price_usd": 0.0022178165648080407
+          "price_in_usd": 168.4248514464935,
+          "max_compute_unit_price_usd": 0.01403540372579162
         },
         {
-          "partition_0": "2025-07-04",
-          "max_compute_unit_price": 40000,
-          "median_compute_unit_price": 0.0032689937,
-          "99 percentile compute unit price": 10.101117,
-          "99.99 percentile compute unit price": 275.74075,
-          "avg_compute_unit_price": 0.73,
-          "block_date": "2025-07-04",
+          "partition_0": "2025-07-14",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.0038236398,
+          "99 percentile compute unit price": 10.658141,
+          "99.99 percentile compute unit price": 351.05585,
+          "avg_compute_unit_price": 0.92,
+          "block_date": "2025-07-14",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 149.44902008975444,
-          "max_compute_unit_price_usd": 0.005977960803590178
-        },
-        {
-          "partition_0": "2025-07-06",
-          "max_compute_unit_price": 39873.47,
-          "median_compute_unit_price": 0.0054106554,
-          "99 percentile compute unit price": 9.971671,
-          "99.99 percentile compute unit price": 339.7677,
-          "avg_compute_unit_price": 0.72,
-          "block_date": "2025-07-06",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.77232623411996,
-          "max_compute_unit_price_usd": 0.006011815826926396
-        },
-        {
-          "partition_0": "2025-06-21",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0022296447,
-          "99 percentile compute unit price": 9.987532,
-          "99.99 percentile compute unit price": 219.4556,
-          "avg_compute_unit_price": 0.6,
-          "block_date": "2025-06-21",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 138.06439334993084,
-          "max_compute_unit_price_usd": 0.003014506248265991
-        },
-        {
-          "partition_0": "2025-07-17",
-          "max_compute_unit_price": 60451.23,
-          "median_compute_unit_price": 0.0064681005,
-          "99 percentile compute unit price": 11.476272,
-          "99.99 percentile compute unit price": 392.88785,
-          "avg_compute_unit_price": 1,
-          "block_date": "2025-07-17",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 174.06451821759933,
-          "max_compute_unit_price_usd": 0.010522414225611287
+          "price_in_usd": 165.22385709670465,
+          "max_compute_unit_price_usd": 0.01376865420731253
         },
         {
           "partition_0": "2025-07-13",
           "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025828523,
-          "99 percentile compute unit price": 9.3517275,
-          "99.99 percentile compute unit price": 250.08865,
+          "median_compute_unit_price": 0.002543246,
+          "99 percentile compute unit price": 9.381575,
+          "99.99 percentile compute unit price": 250.5023,
           "avg_compute_unit_price": 0.69,
           "block_date": "2025-07-13",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 161.97517615562816,
-          "max_compute_unit_price_usd": 0.003536575714692555
+          "price_in_usd": 161.9751761556284,
+          "max_compute_unit_price_usd": 0.00353657571469256
+        },
+        {
+          "partition_0": "2025-06-28",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0018446095,
+          "99 percentile compute unit price": 10.075281,
+          "99.99 percentile compute unit price": 239.38094,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-28",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.41471639968606,
+          "max_compute_unit_price_usd": 0.00321866176275373
+        },
+        {
+          "partition_0": "2025-07-10",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00440601,
+          "99 percentile compute unit price": 10.2575445,
+          "99.99 percentile compute unit price": 350.9132,
+          "avg_compute_unit_price": 0.9,
+          "block_date": "2025-07-10",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 159.6128407729685,
+          "max_compute_unit_price_usd": 0.0034849963422074405
+        },
+        {
+          "partition_0": "2025-07-19",
+          "max_compute_unit_price": 110000,
+          "median_compute_unit_price": 0.004158321,
+          "99 percentile compute unit price": 9.358814,
+          "99.99 percentile compute unit price": 274.9055,
+          "avg_compute_unit_price": 0.71,
+          "block_date": "2025-07-19",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 176.76136122945053,
+          "max_compute_unit_price_usd": 0.019443749735239556
+        },
+        {
+          "partition_0": "2025-07-02",
+          "max_compute_unit_price": 22156.27,
+          "median_compute_unit_price": 0.003801654,
+          "99 percentile compute unit price": 11.455648,
+          "99.99 percentile compute unit price": 337.0723,
+          "avg_compute_unit_price": 0.84,
+          "block_date": "2025-07-02",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.80000656182892,
+          "max_compute_unit_price_usd": 0.0033411656613856534
+        },
+        {
+          "partition_0": "2025-06-26",
+          "max_compute_unit_price": 11895.29,
+          "median_compute_unit_price": 0.0022031434,
+          "99 percentile compute unit price": 10.572861,
+          "99.99 percentile compute unit price": 292.34467,
+          "avg_compute_unit_price": 0.74,
+          "block_date": "2025-06-26",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.4682669154615,
+          "max_compute_unit_price_usd": 0.0017065966407568201
+        },
+        {
+          "partition_0": "2025-06-23",
+          "max_compute_unit_price": 28571.36,
+          "median_compute_unit_price": 0.0041822926,
+          "99 percentile compute unit price": 11.63992,
+          "99.99 percentile compute unit price": 354.15338,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-06-23",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.44625386536993,
+          "max_compute_unit_price_usd": 0.003955597759838876
+        },
+        {
+          "partition_0": "2025-07-15",
+          "max_compute_unit_price": 21996.99,
+          "median_compute_unit_price": 0.005535792,
+          "99 percentile compute unit price": 10.496119,
+          "99.99 percentile compute unit price": 328.9133,
+          "avg_compute_unit_price": 0.93,
+          "block_date": "2025-07-15",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.544025989965,
+          "max_compute_unit_price_usd": 0.003531485334261001
+        },
+        {
+          "partition_0": "2025-07-09",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0027201686,
+          "99 percentile compute unit price": 10.192957,
+          "99.99 percentile compute unit price": 304.29572,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-09",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.29463526661496,
+          "max_compute_unit_price_usd": 0.0033688783240893873
+        },
+        {
+          "partition_0": "2025-07-08",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0043598837,
+          "99 percentile compute unit price": 10.402378,
+          "99.99 percentile compute unit price": 352.28946,
+          "avg_compute_unit_price": 0.87,
+          "block_date": "2025-07-08",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.41253324196884,
+          "max_compute_unit_price_usd": 0.030082506648393768
+        },
+        {
+          "partition_0": "2025-07-04",
+          "max_compute_unit_price": 40000,
+          "median_compute_unit_price": 0.00326988,
+          "99 percentile compute unit price": 10.06861,
+          "99.99 percentile compute unit price": 275.61038,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-04",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.4490200897543,
+          "max_compute_unit_price_usd": 0.005977960803590172
         },
         {
           "partition_0": "2025-06-30",
           "max_compute_unit_price": 32989.69,
-          "median_compute_unit_price": 0.0030539453,
-          "99 percentile compute unit price": 11.050766,
-          "99.99 percentile compute unit price": 352.15106,
+          "median_compute_unit_price": 0.0031025927,
+          "99 percentile compute unit price": 11.053766,
+          "99.99 percentile compute unit price": 352.83145,
           "avg_compute_unit_price": 0.85,
           "block_date": "2025-06-30",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 154.44001760144894,
-          "max_compute_unit_price_usd": 0.005094928304266345
+          "price_in_usd": 154.4400176014492,
+          "max_compute_unit_price_usd": 0.005094928304266353
+        },
+        {
+          "partition_0": "2025-07-11",
+          "max_compute_unit_price": 21545.3,
+          "median_compute_unit_price": 0.002229805,
+          "99 percentile compute unit price": 10.040562,
+          "99.99 percentile compute unit price": 333.92612,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-11",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 163.87885627462632,
+          "max_compute_unit_price_usd": 0.0035308191220937064
+        },
+        {
+          "partition_0": "2025-07-12",
+          "max_compute_unit_price": 66682.43,
+          "median_compute_unit_price": 0.0027415452,
+          "99 percentile compute unit price": 9.578021,
+          "99.99 percentile compute unit price": 253.48763,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-12",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.99749460116806,
+          "max_compute_unit_price_usd": 0.010735704163917765
+        },
+        {
+          "partition_0": "2025-07-17",
+          "max_compute_unit_price": 60451.23,
+          "median_compute_unit_price": 0.0062842914,
+          "99 percentile compute unit price": 11.6586685,
+          "99.99 percentile compute unit price": 391.41232,
+          "avg_compute_unit_price": 1,
+          "block_date": "2025-07-17",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 174.0645182175992,
+          "max_compute_unit_price_usd": 0.010522414225611279
+        },
+        {
+          "partition_0": "2025-06-21",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002249599,
+          "99 percentile compute unit price": 9.894356,
+          "99.99 percentile compute unit price": 221.1163,
+          "avg_compute_unit_price": 0.6,
+          "block_date": "2025-06-21",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.0643933499309,
+          "max_compute_unit_price_usd": 0.0030145062482659925
+        },
+        {
+          "partition_0": "2025-07-06",
+          "max_compute_unit_price": 39873.47,
+          "median_compute_unit_price": 0.005380894,
+          "99 percentile compute unit price": 10.019196,
+          "99.99 percentile compute unit price": 338.85562,
+          "avg_compute_unit_price": 0.72,
+          "block_date": "2025-07-06",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.77232623411982,
+          "max_compute_unit_price_usd": 0.0060118158269263896
         }
       ],
-      "timestamp": 1753055831764,
+      "timestamp": 1753063136751,
       "chartId": "chart_1748089483199_dzzkc0m",
       "title": "Avg & Median Cu Price"
     },
@@ -1247,215 +1247,71 @@
       "success": true,
       "data": [
         {
-          "partition_0": "2025-06-27",
-          "max_compute_unit_price": 200000,
-          "median_compute_unit_price": 0.0022332398,
-          "99 percentile compute unit price": 10.216331,
-          "99.99 percentile compute unit price": 264.89438,
+          "partition_0": "2025-06-22",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00382861,
+          "99 percentile compute unit price": 10.552249,
+          "99.99 percentile compute unit price": 228.82411,
           "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-27",
+          "block_date": "2025-06-22",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 142.04039351167054,
-          "max_compute_unit_price_usd": 0.02840807870233411
-        },
-        {
-          "partition_0": "2025-07-10",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.004364505,
-          "99 percentile compute unit price": 10.292073,
-          "99.99 percentile compute unit price": 348.9037,
-          "avg_compute_unit_price": 0.9,
-          "block_date": "2025-07-10",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 159.61284077296853,
-          "max_compute_unit_price_usd": 0.0034849963422074414
-        },
-        {
-          "partition_0": "2025-07-18",
-          "max_compute_unit_price": 134308.67,
-          "median_compute_unit_price": 0.0074401703,
-          "99 percentile compute unit price": 11.652387,
-          "99.99 percentile compute unit price": 409.40628,
-          "avg_compute_unit_price": 1,
-          "block_date": "2025-07-18",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 178.53337932388956,
-          "max_compute_unit_price_usd": 0.02397858072759711
-        },
-        {
-          "partition_0": "2025-06-25",
-          "max_compute_unit_price": 83228.31,
-          "median_compute_unit_price": 0.002629767,
-          "99 percentile compute unit price": 10.874571,
-          "99.99 percentile compute unit price": 326.96,
-          "avg_compute_unit_price": 0.81,
-          "block_date": "2025-06-25",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 145.26517941059151,
-          "max_compute_unit_price_usd": 0.012090175384190329
-        },
-        {
-          "partition_0": "2025-06-20",
-          "max_compute_unit_price": 22222.22,
-          "median_compute_unit_price": 0.0016483748,
-          "99 percentile compute unit price": 10.256581,
-          "99.99 percentile compute unit price": 267.26004,
-          "avg_compute_unit_price": 0.76,
-          "block_date": "2025-06-20",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 143.15959210382542,
-          "max_compute_unit_price_usd": 0.0031813239508414718
-        },
-        {
-          "partition_0": "2025-06-26",
-          "max_compute_unit_price": 11895.29,
-          "median_compute_unit_price": 0.0020938644,
-          "99 percentile compute unit price": 10.56837,
-          "99.99 percentile compute unit price": 293.04126,
-          "avg_compute_unit_price": 0.74,
-          "block_date": "2025-06-26",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 143.46826691546138,
-          "max_compute_unit_price_usd": 0.0017065966407568186
-        },
-        {
-          "partition_0": "2025-07-08",
-          "max_compute_unit_price": 200000,
-          "median_compute_unit_price": 0.0043829298,
-          "99 percentile compute unit price": 10.299685,
-          "99.99 percentile compute unit price": 356.8765,
-          "avg_compute_unit_price": 0.87,
-          "block_date": "2025-07-08",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.41253324196887,
-          "max_compute_unit_price_usd": 0.030082506648393775
-        },
-        {
-          "partition_0": "2025-07-09",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025366205,
-          "99 percentile compute unit price": 10.293899,
-          "99.99 percentile compute unit price": 308.5285,
-          "avg_compute_unit_price": 0.81,
-          "block_date": "2025-07-09",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 154.2946352666149,
-          "max_compute_unit_price_usd": 0.003368878324089386
-        },
-        {
-          "partition_0": "2025-06-23",
-          "max_compute_unit_price": 28571.36,
-          "median_compute_unit_price": 0.004309345,
-          "99 percentile compute unit price": 11.647223,
-          "99.99 percentile compute unit price": 353.5315,
-          "avg_compute_unit_price": 0.78,
-          "block_date": "2025-06-23",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 138.4462538653699,
-          "max_compute_unit_price_usd": 0.003955597759838875
-        },
-        {
-          "partition_0": "2025-07-15",
-          "max_compute_unit_price": 21996.99,
-          "median_compute_unit_price": 0.0055123535,
-          "99 percentile compute unit price": 10.730204,
-          "99.99 percentile compute unit price": 330.73132,
-          "avg_compute_unit_price": 0.93,
-          "block_date": "2025-07-15",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 160.54402598996515,
-          "max_compute_unit_price_usd": 0.003531485334261004
-        },
-        {
-          "partition_0": "2025-07-02",
-          "max_compute_unit_price": 22156.27,
-          "median_compute_unit_price": 0.0037599285,
-          "99 percentile compute unit price": 11.394816,
-          "99.99 percentile compute unit price": 336.8392,
-          "avg_compute_unit_price": 0.84,
-          "block_date": "2025-07-02",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.80000656182892,
-          "max_compute_unit_price_usd": 0.0033411656613856534
-        },
-        {
-          "partition_0": "2025-06-28",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.002102519,
-          "99 percentile compute unit price": 10.175826,
-          "99.99 percentile compute unit price": 240.61853,
-          "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-28",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 147.414716399686,
-          "max_compute_unit_price_usd": 0.0032186617627537285
+          "price_in_usd": 131.63410928118589,
+          "max_compute_unit_price_usd": 0.0028741070400919696
         },
         {
           "partition_0": "2025-06-24",
           "max_compute_unit_price": 140127.26,
-          "median_compute_unit_price": 0.002932591,
-          "99 percentile compute unit price": 11.129037,
-          "99.99 percentile compute unit price": 286.83884,
+          "median_compute_unit_price": 0.002968823,
+          "99 percentile compute unit price": 11.128308,
+          "99.99 percentile compute unit price": 288.27496,
           "avg_compute_unit_price": 0.79,
           "block_date": "2025-06-24",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 144.4851435118332,
-          "max_compute_unit_price_usd": 0.020246307271019965
-        },
-        {
-          "partition_0": "2025-06-22",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0039414535,
-          "99 percentile compute unit price": 10.690992,
-          "99.99 percentile compute unit price": 227.05476,
-          "avg_compute_unit_price": 0.69,
-          "block_date": "2025-06-22",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 131.6341092811857,
-          "max_compute_unit_price_usd": 0.002874107040091965
-        },
-        {
-          "partition_0": "2025-07-05",
-          "max_compute_unit_price": 80000,
-          "median_compute_unit_price": 0.0054312996,
-          "99 percentile compute unit price": 10.219056,
-          "99.99 percentile compute unit price": 348.42816,
-          "avg_compute_unit_price": 0.78,
-          "block_date": "2025-07-05",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 147.5632387722777,
-          "max_compute_unit_price_usd": 0.011805059101782218
+          "price_in_usd": 144.48514351183331,
+          "max_compute_unit_price_usd": 0.02024630727101998
         },
         {
           "partition_0": "2025-07-03",
           "max_compute_unit_price": 1600000,
-          "median_compute_unit_price": 0.002949688,
-          "99 percentile compute unit price": 10.430774,
-          "99.99 percentile compute unit price": 307.99957,
+          "median_compute_unit_price": 0.0028744286,
+          "99 percentile compute unit price": 10.441958,
+          "99.99 percentile compute unit price": 307.80978,
           "avg_compute_unit_price": 0.79,
           "block_date": "2025-07-03",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 153.34383413713306,
-          "max_compute_unit_price_usd": 0.2453501346194129
+          "price_in_usd": 153.34383413713326,
+          "max_compute_unit_price_usd": 0.24535013461941318
         },
         {
-          "partition_0": "2025-06-29",
-          "max_compute_unit_price": 25000,
-          "median_compute_unit_price": 0.0021268034,
-          "99 percentile compute unit price": 10.042965,
-          "99.99 percentile compute unit price": 235.30083,
-          "avg_compute_unit_price": 0.7,
-          "block_date": "2025-06-29",
+          "partition_0": "2025-07-20",
+          "max_compute_unit_price": 13333.33,
+          "median_compute_unit_price": 0.004749634,
+          "99 percentile compute unit price": 6.0755124,
+          "99.99 percentile compute unit price": 227.84892,
+          "avg_compute_unit_price": 0.41,
+          "block_date": "2025-07-20",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 151.69921947491233,
-          "max_compute_unit_price_usd": 0.003792480486872808
+          "price_in_usd": 179.9408546214175,
+          "max_compute_unit_price_usd": 0.0023992107951493844
+        },
+        {
+          "partition_0": "2025-07-05",
+          "max_compute_unit_price": 80000,
+          "median_compute_unit_price": 0.0054364232,
+          "99 percentile compute unit price": 10.103616,
+          "99.99 percentile compute unit price": 357.07562,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-07-05",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.56323877227746,
+          "max_compute_unit_price_usd": 0.011805059101782197
         },
         {
           "partition_0": "2025-07-01",
           "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025020272,
-          "99 percentile compute unit price": 10.850878,
-          "99.99 percentile compute unit price": 319.25922,
+          "median_compute_unit_price": 0.002570051,
+          "99 percentile compute unit price": 10.8330345,
+          "99.99 percentile compute unit price": 320.13815,
           "avg_compute_unit_price": 0.81,
           "block_date": "2025-07-01",
           "mint": "So11111111111111111111111111111111111111112",
@@ -1463,151 +1319,295 @@
           "max_compute_unit_price_usd": 0.003260777920073035
         },
         {
-          "partition_0": "2025-07-12",
-          "max_compute_unit_price": 66682.43,
-          "median_compute_unit_price": 0.002504721,
-          "99 percentile compute unit price": 9.634297,
-          "99.99 percentile compute unit price": 250.66951,
-          "avg_compute_unit_price": 0.73,
-          "block_date": "2025-07-12",
+          "partition_0": "2025-07-18",
+          "max_compute_unit_price": 134308.67,
+          "median_compute_unit_price": 0.0075685997,
+          "99 percentile compute unit price": 11.8618965,
+          "99.99 percentile compute unit price": 408.37006,
+          "avg_compute_unit_price": 1,
+          "block_date": "2025-07-18",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 160.99749460116792,
-          "max_compute_unit_price_usd": 0.010735704163917757
+          "price_in_usd": 178.53337932388945,
+          "max_compute_unit_price_usd": 0.023978580727597096
         },
         {
-          "partition_0": "2025-07-11",
-          "max_compute_unit_price": 21545.3,
-          "median_compute_unit_price": 0.0022495885,
-          "99 percentile compute unit price": 9.813519,
-          "99.99 percentile compute unit price": 340.29178,
-          "avg_compute_unit_price": 0.83,
-          "block_date": "2025-07-11",
+          "partition_0": "2025-06-25",
+          "max_compute_unit_price": 83228.31,
+          "median_compute_unit_price": 0.002580429,
+          "99 percentile compute unit price": 10.763098,
+          "99.99 percentile compute unit price": 324.63925,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-06-25",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 163.87885627462657,
-          "max_compute_unit_price_usd": 0.0035308191220937116
+          "price_in_usd": 145.26517941059134,
+          "max_compute_unit_price_usd": 0.012090175384190313
         },
         {
-          "partition_0": "2025-07-14",
-          "max_compute_unit_price": 83333.33,
-          "median_compute_unit_price": 0.00391571,
-          "99 percentile compute unit price": 10.379196,
-          "99.99 percentile compute unit price": 353.31427,
-          "avg_compute_unit_price": 0.92,
-          "block_date": "2025-07-14",
+          "partition_0": "2025-06-27",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0020837702,
+          "99 percentile compute unit price": 10.53461,
+          "99.99 percentile compute unit price": 265.78604,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-27",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 165.22385709670468,
-          "max_compute_unit_price_usd": 0.013768654207312533
+          "price_in_usd": 142.04039351167035,
+          "max_compute_unit_price_usd": 0.02840807870233407
         },
         {
-          "partition_0": "2025-07-16",
-          "max_compute_unit_price": 83333.33,
-          "median_compute_unit_price": 0.006681136,
-          "99 percentile compute unit price": 12.850827,
-          "99.99 percentile compute unit price": 473.17273,
-          "avg_compute_unit_price": 1.06,
-          "block_date": "2025-07-16",
+          "partition_0": "2025-06-29",
+          "max_compute_unit_price": 25000,
+          "median_compute_unit_price": 0.0021809367,
+          "99 percentile compute unit price": 10.071664,
+          "99.99 percentile compute unit price": 234.95541,
+          "avg_compute_unit_price": 0.7,
+          "block_date": "2025-06-29",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 168.42485144649356,
-          "max_compute_unit_price_usd": 0.014035403725791625
+          "price_in_usd": 151.6992194749125,
+          "max_compute_unit_price_usd": 0.0037924804868728124
         },
         {
           "partition_0": "2025-07-07",
           "max_compute_unit_price": 75555.56,
-          "median_compute_unit_price": 0.0059596607,
-          "99 percentile compute unit price": 10.56797,
-          "99.99 percentile compute unit price": 362.1416,
+          "median_compute_unit_price": 0.0060264855,
+          "99 percentile compute unit price": 10.338158,
+          "99.99 percentile compute unit price": 364.0198,
           "avg_compute_unit_price": 0.83,
           "block_date": "2025-07-07",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.71099159234046,
-          "max_compute_unit_price_usd": 0.011387053367914575
+          "price_in_usd": 150.71099159234012,
+          "max_compute_unit_price_usd": 0.01138705336791455
         },
         {
-          "partition_0": "2025-07-19",
-          "max_compute_unit_price": 12552.45,
-          "median_compute_unit_price": 0.0026064478,
-          "99 percentile compute unit price": 6.093825,
-          "99.99 percentile compute unit price": 219.38246,
-          "avg_compute_unit_price": 0.39,
-          "block_date": "2025-07-19",
+          "partition_0": "2025-07-16",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.006625033,
+          "99 percentile compute unit price": 12.81433,
+          "99.99 percentile compute unit price": 471.1183,
+          "avg_compute_unit_price": 1.06,
+          "block_date": "2025-07-16",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 176.6839592914563,
-          "max_compute_unit_price_usd": 0.0022178165648080407
+          "price_in_usd": 168.4248514464935,
+          "max_compute_unit_price_usd": 0.01403540372579162
         },
         {
-          "partition_0": "2025-07-04",
-          "max_compute_unit_price": 40000,
-          "median_compute_unit_price": 0.0032689937,
-          "99 percentile compute unit price": 10.101117,
-          "99.99 percentile compute unit price": 275.74075,
-          "avg_compute_unit_price": 0.73,
-          "block_date": "2025-07-04",
+          "partition_0": "2025-07-14",
+          "max_compute_unit_price": 83333.33,
+          "median_compute_unit_price": 0.0038236398,
+          "99 percentile compute unit price": 10.658141,
+          "99.99 percentile compute unit price": 351.05585,
+          "avg_compute_unit_price": 0.92,
+          "block_date": "2025-07-14",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 149.44902008975444,
-          "max_compute_unit_price_usd": 0.005977960803590178
-        },
-        {
-          "partition_0": "2025-07-06",
-          "max_compute_unit_price": 39873.47,
-          "median_compute_unit_price": 0.0054106554,
-          "99 percentile compute unit price": 9.971671,
-          "99.99 percentile compute unit price": 339.7677,
-          "avg_compute_unit_price": 0.72,
-          "block_date": "2025-07-06",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 150.77232623411996,
-          "max_compute_unit_price_usd": 0.006011815826926396
-        },
-        {
-          "partition_0": "2025-06-21",
-          "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0022296447,
-          "99 percentile compute unit price": 9.987532,
-          "99.99 percentile compute unit price": 219.4556,
-          "avg_compute_unit_price": 0.6,
-          "block_date": "2025-06-21",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 138.06439334993084,
-          "max_compute_unit_price_usd": 0.003014506248265991
-        },
-        {
-          "partition_0": "2025-07-17",
-          "max_compute_unit_price": 60451.23,
-          "median_compute_unit_price": 0.0064681005,
-          "99 percentile compute unit price": 11.476272,
-          "99.99 percentile compute unit price": 392.88785,
-          "avg_compute_unit_price": 1,
-          "block_date": "2025-07-17",
-          "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 174.06451821759933,
-          "max_compute_unit_price_usd": 0.010522414225611287
+          "price_in_usd": 165.22385709670465,
+          "max_compute_unit_price_usd": 0.01376865420731253
         },
         {
           "partition_0": "2025-07-13",
           "max_compute_unit_price": 21834.06,
-          "median_compute_unit_price": 0.0025828523,
-          "99 percentile compute unit price": 9.3517275,
-          "99.99 percentile compute unit price": 250.08865,
+          "median_compute_unit_price": 0.002543246,
+          "99 percentile compute unit price": 9.381575,
+          "99.99 percentile compute unit price": 250.5023,
           "avg_compute_unit_price": 0.69,
           "block_date": "2025-07-13",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 161.97517615562816,
-          "max_compute_unit_price_usd": 0.003536575714692555
+          "price_in_usd": 161.9751761556284,
+          "max_compute_unit_price_usd": 0.00353657571469256
+        },
+        {
+          "partition_0": "2025-06-28",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0018446095,
+          "99 percentile compute unit price": 10.075281,
+          "99.99 percentile compute unit price": 239.38094,
+          "avg_compute_unit_price": 0.69,
+          "block_date": "2025-06-28",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 147.41471639968606,
+          "max_compute_unit_price_usd": 0.00321866176275373
+        },
+        {
+          "partition_0": "2025-07-10",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.00440601,
+          "99 percentile compute unit price": 10.2575445,
+          "99.99 percentile compute unit price": 350.9132,
+          "avg_compute_unit_price": 0.9,
+          "block_date": "2025-07-10",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 159.6128407729685,
+          "max_compute_unit_price_usd": 0.0034849963422074405
+        },
+        {
+          "partition_0": "2025-07-19",
+          "max_compute_unit_price": 110000,
+          "median_compute_unit_price": 0.004158321,
+          "99 percentile compute unit price": 9.358814,
+          "99.99 percentile compute unit price": 274.9055,
+          "avg_compute_unit_price": 0.71,
+          "block_date": "2025-07-19",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 176.76136122945053,
+          "max_compute_unit_price_usd": 0.019443749735239556
+        },
+        {
+          "partition_0": "2025-07-02",
+          "max_compute_unit_price": 22156.27,
+          "median_compute_unit_price": 0.003801654,
+          "99 percentile compute unit price": 11.455648,
+          "99.99 percentile compute unit price": 337.0723,
+          "avg_compute_unit_price": 0.84,
+          "block_date": "2025-07-02",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.80000656182892,
+          "max_compute_unit_price_usd": 0.0033411656613856534
+        },
+        {
+          "partition_0": "2025-06-26",
+          "max_compute_unit_price": 11895.29,
+          "median_compute_unit_price": 0.0022031434,
+          "99 percentile compute unit price": 10.572861,
+          "99.99 percentile compute unit price": 292.34467,
+          "avg_compute_unit_price": 0.74,
+          "block_date": "2025-06-26",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 143.4682669154615,
+          "max_compute_unit_price_usd": 0.0017065966407568201
+        },
+        {
+          "partition_0": "2025-06-23",
+          "max_compute_unit_price": 28571.36,
+          "median_compute_unit_price": 0.0041822926,
+          "99 percentile compute unit price": 11.63992,
+          "99.99 percentile compute unit price": 354.15338,
+          "avg_compute_unit_price": 0.78,
+          "block_date": "2025-06-23",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.44625386536993,
+          "max_compute_unit_price_usd": 0.003955597759838876
+        },
+        {
+          "partition_0": "2025-07-15",
+          "max_compute_unit_price": 21996.99,
+          "median_compute_unit_price": 0.005535792,
+          "99 percentile compute unit price": 10.496119,
+          "99.99 percentile compute unit price": 328.9133,
+          "avg_compute_unit_price": 0.93,
+          "block_date": "2025-07-15",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.544025989965,
+          "max_compute_unit_price_usd": 0.003531485334261001
+        },
+        {
+          "partition_0": "2025-07-09",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.0027201686,
+          "99 percentile compute unit price": 10.192957,
+          "99.99 percentile compute unit price": 304.29572,
+          "avg_compute_unit_price": 0.81,
+          "block_date": "2025-07-09",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 154.29463526661496,
+          "max_compute_unit_price_usd": 0.0033688783240893873
+        },
+        {
+          "partition_0": "2025-07-08",
+          "max_compute_unit_price": 200000,
+          "median_compute_unit_price": 0.0043598837,
+          "99 percentile compute unit price": 10.402378,
+          "99.99 percentile compute unit price": 352.28946,
+          "avg_compute_unit_price": 0.87,
+          "block_date": "2025-07-08",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.41253324196884,
+          "max_compute_unit_price_usd": 0.030082506648393768
+        },
+        {
+          "partition_0": "2025-07-04",
+          "max_compute_unit_price": 40000,
+          "median_compute_unit_price": 0.00326988,
+          "99 percentile compute unit price": 10.06861,
+          "99.99 percentile compute unit price": 275.61038,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-04",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 149.4490200897543,
+          "max_compute_unit_price_usd": 0.005977960803590172
         },
         {
           "partition_0": "2025-06-30",
           "max_compute_unit_price": 32989.69,
-          "median_compute_unit_price": 0.0030539453,
-          "99 percentile compute unit price": 11.050766,
-          "99.99 percentile compute unit price": 352.15106,
+          "median_compute_unit_price": 0.0031025927,
+          "99 percentile compute unit price": 11.053766,
+          "99.99 percentile compute unit price": 352.83145,
           "avg_compute_unit_price": 0.85,
           "block_date": "2025-06-30",
           "mint": "So11111111111111111111111111111111111111112",
-          "price_in_usd": 154.44001760144894,
-          "max_compute_unit_price_usd": 0.005094928304266345
+          "price_in_usd": 154.4400176014492,
+          "max_compute_unit_price_usd": 0.005094928304266353
+        },
+        {
+          "partition_0": "2025-07-11",
+          "max_compute_unit_price": 21545.3,
+          "median_compute_unit_price": 0.002229805,
+          "99 percentile compute unit price": 10.040562,
+          "99.99 percentile compute unit price": 333.92612,
+          "avg_compute_unit_price": 0.83,
+          "block_date": "2025-07-11",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 163.87885627462632,
+          "max_compute_unit_price_usd": 0.0035308191220937064
+        },
+        {
+          "partition_0": "2025-07-12",
+          "max_compute_unit_price": 66682.43,
+          "median_compute_unit_price": 0.0027415452,
+          "99 percentile compute unit price": 9.578021,
+          "99.99 percentile compute unit price": 253.48763,
+          "avg_compute_unit_price": 0.73,
+          "block_date": "2025-07-12",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 160.99749460116806,
+          "max_compute_unit_price_usd": 0.010735704163917765
+        },
+        {
+          "partition_0": "2025-07-17",
+          "max_compute_unit_price": 60451.23,
+          "median_compute_unit_price": 0.0062842914,
+          "99 percentile compute unit price": 11.6586685,
+          "99.99 percentile compute unit price": 391.41232,
+          "avg_compute_unit_price": 1,
+          "block_date": "2025-07-17",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 174.0645182175992,
+          "max_compute_unit_price_usd": 0.010522414225611279
+        },
+        {
+          "partition_0": "2025-06-21",
+          "max_compute_unit_price": 21834.06,
+          "median_compute_unit_price": 0.002249599,
+          "99 percentile compute unit price": 9.894356,
+          "99.99 percentile compute unit price": 221.1163,
+          "avg_compute_unit_price": 0.6,
+          "block_date": "2025-06-21",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 138.0643933499309,
+          "max_compute_unit_price_usd": 0.0030145062482659925
+        },
+        {
+          "partition_0": "2025-07-06",
+          "max_compute_unit_price": 39873.47,
+          "median_compute_unit_price": 0.005380894,
+          "99 percentile compute unit price": 10.019196,
+          "99.99 percentile compute unit price": 338.85562,
+          "avg_compute_unit_price": 0.72,
+          "block_date": "2025-07-06",
+          "mint": "So11111111111111111111111111111111111111112",
+          "price_in_usd": 150.77232623411982,
+          "max_compute_unit_price_usd": 0.0060118158269263896
         }
       ],
-      "timestamp": 1753055831766,
+      "timestamp": 1753063136751,
       "chartId": "chart_1748201111110_el5y1pn",
       "title": "Max Cu Price In Single Transaction - Lamports/cu"
     },
@@ -5233,7 +5233,7 @@
           "total_cu_consumed": 9765
         }
       ],
-      "timestamp": 1753055832824,
+      "timestamp": 1753063137787,
       "chartId": "chart_1748201257936_m7dwpx7",
       "title": "Cu Consumed By Ecosystem"
     },
@@ -5325,7 +5325,7 @@
           "total_cu_consumed": 72950653861752
         }
       ],
-      "timestamp": 1753055832807,
+      "timestamp": 1753063137782,
       "chartId": "chart_1748201444923_71ydpwe",
       "title": "Cu Consumed By Ecosystem - Last 30 Days"
     }
