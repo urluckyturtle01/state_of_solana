@@ -23,6 +23,12 @@ interface ButtonConfig {
   type?: 'primary' | 'secondary';
 }
 
+interface SearchConfig {
+  placeholder?: string;
+  onSearch: (term: string) => void;
+  initialValue?: string;
+}
+
 export interface TabsNavigationProps {
   tabs?: Tab[];
   activeTab?: string;
@@ -40,6 +46,7 @@ export interface TabsNavigationProps {
   editable?: boolean;
   onTitleChange?: (newTitle: string) => void;
   onDescriptionChange?: (newDescription: string) => void;
+  search?: SearchConfig;
 }
 
 const TabsNavigation: React.FC<TabsNavigationProps> = ({
@@ -58,6 +65,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   editable = false,
   onTitleChange,
   onDescriptionChange,
+  search,
 }) => {
   // Edit state for editable mode
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -67,6 +75,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   const [isHoveringTitle, setIsHoveringTitle] = useState(false);
   const [isHoveringDescription, setIsHoveringDescription] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null); // Add hover state for tabs
+  const [searchTerm, setSearchTerm] = useState(search?.initialValue || '');
   
   // Refs for auto-focus
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -233,17 +242,84 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
     );
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (search?.onSearch) {
+      search.onSearch(value);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    if (search?.onSearch) {
+      search.onSearch('');
+    }
+  };
+
+  const renderSearchField = () => {
+    if (!search) return null;
+
+    return (
+      <div className="relative w-40 md:max-w-xs">
+        <div className="relative">
+          {/* Search Icon */}
+          <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+            <svg 
+              className="h-3 w-3 text-gray-400" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              />
+            </svg>
+          </div>
+          
+          {/* Input Field */}
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="block w-full pl-8 pr-7 py-1.5 text-xs border border-gray-700 rounded-md bg-gray-900/50 backdrop-blur text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+            placeholder={search.placeholder || "Search..."}
+          />
+          
+          {/* Clear Button */}
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="absolute inset-y-0 right-0 pr-1.5 flex items-center text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div>
       {(title || description || button || secondaryButton || tertiaryButton || quaternaryButton) && (
         <div className="mt-0 mb-3">
-          <div className="flex items-start justify-between">
+          {/* Desktop Layout */}
+          <div className="hidden md:flex items-start justify-between">
             <div className="flex-1">
               {renderEditableTitle()}
               {renderEditableDescription()}
             </div>
-            {(button || secondaryButton || tertiaryButton || quaternaryButton) && (
-              <div className="ml-4 flex items-center space-x-2">
+            {(button || secondaryButton || tertiaryButton || quaternaryButton || search) && (
+              <div className="ml-4 flex items-center space-x-3">
+                {/* Search Field - Desktop */}
+                {renderSearchField()}
                 {tertiaryButton && (
                   <div>
                     {tertiaryButton.type === 'primary' ? (
@@ -344,6 +420,125 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
               </div>
             )}
           </div>
+          
+          {/* Mobile Layout */}
+          <div className="md:hidden">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                {renderEditableTitle()}
+                {renderEditableDescription()}
+              </div>
+              {(button || secondaryButton || tertiaryButton || quaternaryButton) && (
+                <div className="ml-4 flex items-center space-x-3">
+                  {tertiaryButton && (
+                    <div>
+                      {tertiaryButton.type === 'primary' ? (
+                        <ButtonPrimary
+                          onClick={tertiaryButton.onClick}
+                          disabled={tertiaryButton.disabled}
+                          className={tertiaryButton.className}
+                          icon={tertiaryButton.icon}
+                        >
+                          {tertiaryButton.label}
+                        </ButtonPrimary>
+                      ) : (
+                        <ButtonSecondary
+                          onClick={tertiaryButton.onClick}
+                          disabled={tertiaryButton.disabled}
+                          className={tertiaryButton.className}
+                        >
+                          {tertiaryButton.icon && (
+                            <span className="flex items-center mr-1">
+                              {tertiaryButton.icon}
+                            </span>
+                          )}
+                          {tertiaryButton.label}
+                        </ButtonSecondary>
+                      )}
+                    </div>
+                  )}
+                  {secondaryButton && (
+                    <div>
+                      {secondaryButton.type === 'primary' ? (
+                        <ButtonPrimary
+                          onClick={secondaryButton.onClick}
+                          disabled={secondaryButton.disabled}
+                          className={secondaryButton.className}
+                          icon={secondaryButton.icon}
+                        >
+                          {secondaryButton.label}
+                        </ButtonPrimary>
+                      ) : (
+                        <ButtonSecondary
+                          onClick={secondaryButton.onClick}
+                          disabled={secondaryButton.disabled}
+                          className={secondaryButton.className}
+                        >
+                          {secondaryButton.icon && (
+                            <span className="flex items-center mr-1">
+                              {secondaryButton.icon}
+                            </span>
+                          )}
+                          {secondaryButton.label}
+                        </ButtonSecondary>
+                      )}
+                    </div>
+                  )}
+                  {button && (
+                    <div>
+                      {button.type === 'secondary' ? (
+                        <ButtonSecondary
+                          onClick={button.onClick}
+                          disabled={button.disabled}
+                          className={button.className}
+                        >
+                          {button.icon && (
+                            <span className="flex items-center mr-1">
+                              {button.icon}
+                            </span>
+                          )}
+                          {button.label}
+                        </ButtonSecondary>
+                      ) : (
+                        <ButtonPrimary
+                          onClick={button.onClick}
+                          disabled={button.disabled}
+                          className={button.className}
+                          icon={button.icon}
+                        >
+                          {button.label}
+                        </ButtonPrimary>
+                      )}
+                    </div>
+                  )}
+                  {quaternaryButton && (
+                    <div>
+                      <ButtonSecondary
+                        onClick={quaternaryButton.onClick}
+                        disabled={quaternaryButton.disabled}
+                        className={quaternaryButton.className}
+                      >
+                        {quaternaryButton.icon && (
+                          <span className="flex items-center mr-1">
+                            {quaternaryButton.icon}
+                          </span>
+                        )}
+                        {quaternaryButton.label}
+                      </ButtonSecondary>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Search Field - Mobile (below subheadline) */}
+            {search && (
+              <div className="mt-4 mb-4 flex justify-start">
+                {renderSearchField()}
+              </div>
+            )}
+          </div>
+          
           {showDivider && <div className="h-px bg-gradient-to-r from-gray-900 via-gray-800 to-transparent mb-1"></div>}
         </div>
       )}
