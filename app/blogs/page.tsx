@@ -54,7 +54,7 @@ export default function BlogsPage() {
       <div className="mb-8">
         <TabsNavigation
           title="Latest Articles"
-          description="Discover insights, development guides, and ecosystem updates from the Solana community"
+          description="Analytics‑Driven Stories Shaping the Solana Ecosystem."
           tabs={filters}
           activeTab={activeFilter}
           onTabClick={handleTabClick}

@@ -5,7 +5,7 @@ import { BlogPost } from '../data/sampleData';
 
 interface SocialSharingProps {
   post: BlogPost;
-  position: 'top' | 'bottom';
+  position: 'top' | 'bottom' | 'floating' | 'mobile';
   url: string;
 }
 
@@ -23,7 +23,7 @@ export default function SocialSharing({ post, position, url }: SocialSharingProp
   };
 
   const shareOnX = () => {
-    const text = encodeURIComponent(`${post.title} by ${post.author}`);
+    const text = encodeURIComponent(`${post.title}`);
     const shareUrl = encodeURIComponent(url);
     window.open(`https://x.com/intent/tweet?text=${text}&url=${shareUrl}`, '_blank');
   };
@@ -33,23 +33,52 @@ export default function SocialSharing({ post, position, url }: SocialSharingProp
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`, '_blank');
   };
 
+  const getContainerStyles = () => {
+    switch (position) {
+      case 'floating':
+        return 'flex flex-col items-center gap-3 bg-gray-900/80 backdrop-blur-md border border-gray-700/50 rounded-lg p-3 shadow-lg';
+      case 'mobile':
+        return 'flex items-center gap-4 justify-start';
+      case 'top':
+        return 'flex items-center gap-4 justify-start';
+      case 'bottom':
+        return 'flex items-center gap-4 justify-center';
+      default:
+        return 'flex items-center gap-4 justify-start';
+    }
+  };
+
+  const getButtonStyles = () => {
+    if (position === 'floating') {
+      return 'flex items-center justify-center w-10 h-10 rounded-lg border transition-colors';
+    }
+    return 'flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors';
+  };
+
   return (
-    <div className={`flex items-center gap-4 ${position === 'top' ? 'justify-start' : 'justify-center'}`}>
+    <div className={getContainerStyles()}>
+      {position === 'floating' && (
+        <div className="flex items-center gap-2 mb-1">
+          
+          <span className="text-[10px] font-medium text-gray-300 uppercase tracking-wide">Share</span>
+        </div>
+      )}
+      
       {position === 'bottom' && (
         <p className="text-gray-400 text-sm mr-4">Share this article:</p>
       )}
       
-      <div className="flex items-center gap-3">
+      <div className={`flex items-center ${position === 'floating' ? 'flex-col gap-3' : 'gap-3'}`}>
         {/* X (formerly Twitter) */}
         <button
           onClick={shareOnX}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
+          className={`${getButtonStyles()} bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20`}
           title="Share on X"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
           </svg>
-          {position === 'bottom'}
+          {(position === 'bottom' || position === 'mobile') && <span className="text-sm">X</span>}
         </button>
 
         {/* LinkedIn 
@@ -67,7 +96,7 @@ export default function SocialSharing({ post, position, url }: SocialSharingProp
         {/* Copy Link */}
         <button
           onClick={handleCopyLink}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
+          className={`${getButtonStyles()} ${
             copied 
               ? 'bg-green-500/10 text-green-400 border-green-500/20' 
               : 'bg-gray-500/10 text-gray-400 border-gray-500/20 hover:bg-gray-500/20'
@@ -83,7 +112,7 @@ export default function SocialSharing({ post, position, url }: SocialSharingProp
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
           )}
-          {position === 'bottom' && (
+          {(position === 'bottom' || position === 'mobile') && (
             <span className="text-sm">{copied ? 'Copied!' : 'Copy Link'}</span>
           )}
         </button>

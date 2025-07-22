@@ -1,8 +1,8 @@
 {
   "pageId": "xstocks-tvl",
   "pageName": "TVL",
-  "chartCount": 1,
-  "lastUpdated": "2025-07-19T19:21:52.113Z",
+  "chartCount": 2,
+  "lastUpdated": "2025-07-22T13:23:29.339Z",
   "charts": [
     {
       "id": "chart_1752486109597_a62ko8d",
@@ -24,6 +24,27 @@
       },
       "createdAt": "2025-07-14T09:41:49.597Z",
       "updatedAt": "2025-07-14T09:41:49.801Z"
+    },
+    {
+      "id": "chart_1753190539117_irop5i9",
+      "title": "Total Daily TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13851/results.json",
+      "apiKey": "hujPcxW5PDHBBscbjjjINceulhhIB5TBrAo2Nt3U&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-22T13:22:19.117Z",
+      "updatedAt": "2025-07-22T13:22:19.536Z"
     }
   ]
 }

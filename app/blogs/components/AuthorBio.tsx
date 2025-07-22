@@ -10,7 +10,7 @@ export default function AuthorBio({ author }: AuthorBioProps) {
     const authors = {
       'Soham': {
         name: 'Soham Agarwal',
-        bio: 'Blockchain enthusiast',
+        bio: 'Product, Top Ledger',
         avatar: '',
         social: {
           x: '@sohamska',
@@ -52,8 +52,9 @@ export default function AuthorBio({ author }: AuthorBioProps) {
   const authorData = getAuthorData(author);
 
   return (
-    <div className="border-t border-b border-gray-800 py-8 my-12">
-      <div className="flex items-start gap-6">
+    <div className="border-t border-b border-gray-900 py-8 my-12">
+      {/* Author Section */}
+      <div className="flex items-center gap-6">
         {/* Author Avatar */}
         <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
           <span className="text-xl font-bold text-white">
@@ -132,6 +133,21 @@ export default function AuthorBio({ author }: AuthorBioProps) {
               </a>
             )}
           </div>
+        </div>
+        
+        {/* Follow Top Ledger Button */}
+        <div className="flex items-center">
+          <a
+            href="https://x.com/ledger_top"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:from-blue-500/20 hover:to-purple-500/20 transition-all duration-200"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            <span className="text-sm font-medium">Follow Top Ledger on X</span>
+          </a>
         </div>
       </div>
     </div>

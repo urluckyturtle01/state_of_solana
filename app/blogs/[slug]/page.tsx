@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       type: 'article',
       publishedTime: post.date,
       authors: [post.author],
+      url: `https://research.topledger.xyz/blogs/${post.slug}`,
     },
     twitter: {
       card: 'summary_large_image',
@@ -60,7 +61,16 @@ export default function ArticlePage({ params }: ArticlePageProps) {
     <>
       <ReadingProgress />
       
-      <div className="min-h-screen">
+      <div className="min-h-screen relative">
+        {/* Floating Social Sharing - Top Right Corner */}
+        <div className="fixed top-20 right-6 z-50 hidden md:block">
+          <SocialSharing 
+            post={post} 
+            position="floating"
+            url={`https://research.topledger.xyz/blogs/${post.slug}`}
+          />
+        </div>
+
         <div className="max-w-4xl mx-auto py-8">
           
           {/* Back to Blogs Button */}
@@ -69,26 +79,17 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           {/* Article Header */}
           <ArticleHeader post={post} />
           
-          {/* Social Sharing - Top */}
-          <div className="mb-8">
+          {/* Mobile Social Sharing - Inline */}
+          <div className="mb-8 md:hidden">
             <SocialSharing 
               post={post} 
-              position="top"
-              url={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/blogs/${post.slug}`}
+              position="mobile"
+              url={`https://research.topledger.xyz/blogs/${post.slug}`}
             />
           </div>
           
           {/* Article Content */}
           <ArticleContent content={articleContent} />
-          
-          {/* Social Sharing - Bottom */}
-          <div className="mt-12 mb-8">
-            <SocialSharing 
-              post={post} 
-              position="bottom"
-              url={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/blogs/${post.slug}`}
-            />
-          </div>
           
           {/* Author Bio */}
           <AuthorBio author={post.author} />

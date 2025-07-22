@@ -8,6 +8,10 @@ export interface BlogPost {
   image: string;
   slug: string;
   readTime?: string;
+  company?: {
+    name: string;
+    handle: string; // Twitter handle without @
+  };
 }
 
 export const sampleBlogPosts: BlogPost[] = [
@@ -20,7 +24,11 @@ export const sampleBlogPosts: BlogPost[] = [
     category: 'depin',
     image: 'https://99bitcoins.com/wp-content/uploads/2024/04/Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Monochromatic-New-York-City-Lifestyle-Quote-Facebook-Cover-2024-04-30T110613.103-1024x666.jpg',
     slug: 'introduction-to-helium-network',
-    readTime: '8 min read'
+    readTime: '8 min read',
+    company: {
+      name: 'Helium',
+      handle: 'helium'
+    }
   }
 ];
 

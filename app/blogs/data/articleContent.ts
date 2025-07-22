@@ -376,7 +376,7 @@ export function getArticleContent(slug: string): ArticleSection[] {
       },
       {
         type: 'paragraph',
-        content: 'Link to the public dashboard: [https://analytics.topledger.xyz/helium/public/dashboards/YVbtuFC6pQgrvLaJWDAjLS3VnpYAW1mpZlIA0lkv](https://analytics.topledger.xyz/helium/public/dashboards/YVbtuFC6pQgrvLaJWDAjLS3VnpYAW1mpZlIA0lkv)'
+        content: 'Detailed stats: [Public dashboard](https://research.topledger.xyz/projects/helium/)'
       },
       {
         type: 'divider'

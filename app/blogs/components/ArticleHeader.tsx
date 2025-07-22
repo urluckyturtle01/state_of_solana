@@ -20,11 +20,27 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
 
   return (
     <header className="mb-12">
-      {/* Category Badge */}
-      <div className="mb-6">
+      {/* Category and Company Badges */}
+      <div className="mb-6 flex items-center gap-3 flex-wrap">
         <span className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${getCategoryColor(post.category)}`}>
           {post.category.toUpperCase()}
         </span>
+        
+        {/* post.company && (
+          <a
+            href={`https://x.com/${post.company.handle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-0 bg-gray-900/50 border border-gray-700/50 rounded-full hover:bg-gray-800/50 hover:border-gray-600/50 transition-all duration-200 group"
+          >
+            
+            <span className="text-white font-medium">{post.company.name}</span>
+            <svg className="w-4 h-4 text-blue-400 group-hover:text-blue-300 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            <span className="text-blue-400 text-sm group-hover:text-blue-300 transition-colors">@{post.company.handle}</span>
+          </a>
+        )*/}
       </div>
       
       {/* Title */}
@@ -47,7 +63,7 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
           </div>
           <div>
             <p className="text-white font-medium">{post.author}</p>
-            <p className="text-gray-400 text-sm">Blockchain enthusiast</p>
+            <p className="text-gray-400 text-sm">Product, Top Ledger</p>
           </div>
         </div>
         
