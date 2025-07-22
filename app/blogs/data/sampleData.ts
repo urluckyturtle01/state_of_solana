@@ -22,7 +22,7 @@ export const sampleBlogPosts: BlogPost[] = [
     author: 'Soham',
     date: 'JUL 22, 2025',
     category: 'depin',
-    image: 'https://99bitcoins.com/wp-content/uploads/2024/04/Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Copy-of-Monochromatic-New-York-City-Lifestyle-Quote-Facebook-Cover-2024-04-30T110613.103-1024x666.jpg',
+    image: '/helium-card.png',
     slug: 'introduction-to-helium-network',
     readTime: '8 min read',
     company: {

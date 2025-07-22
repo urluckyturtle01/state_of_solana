@@ -16,6 +16,16 @@ interface ArticlePageProps {
   };
 }
 
+// Helper function to get author Twitter handle
+function getAuthorTwitterHandle(authorName: string): string {
+  const authorHandles: Record<string, string> = {
+    'Soham': '@sohamska',
+    'Decal': '@decal_dev',
+    'Helius Team': '@helius_labs',
+  };
+  return authorHandles[authorName] || '@ledger_top';
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const post = sampleBlogPosts.find(p => p.slug === params.slug);
@@ -25,6 +35,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       title: 'Article Not Found | State of Solana',
     };
   }
+
+  const authorTwitterHandle = getAuthorTwitterHandle(post.author);
 
   return {
     title: `${post.title} | State of Solana`,
@@ -36,11 +48,22 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       publishedTime: post.date,
       authors: [post.author],
       url: `https://research.topledger.xyz/blogs/${post.slug}`,
+      images: [
+        {
+          url: post.image,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
+      images: [post.image],
+      creator: authorTwitterHandle,
+      site: '@ledger_top',
     },
   };
 }
