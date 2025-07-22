@@ -22,7 +22,7 @@ export const sampleBlogPosts: BlogPost[] = [
     author: 'Soham',
     date: 'JUL 22, 2025',
     category: 'depin',
-    image: '/helium-card.png',
+    image: 'https://research.topledger.xyz/helium-card.png',
     slug: 'introduction-to-helium-network',
     readTime: '8 min read',
     company: {

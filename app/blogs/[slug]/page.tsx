@@ -10,6 +10,8 @@ import BackToBlogsButton from '../components/BackToBlogsButton';
 import { sampleBlogPosts, BlogPost } from '../data/sampleData';
 import { getArticleContent } from '../data/articleContent';
 
+import TwitterCardMeta from '../components/TwitterCardMeta';
+
 interface ArticlePageProps {
   params: {
     slug: string;
@@ -56,12 +58,16 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
           alt: post.title,
         },
       ],
+      siteName: 'State of Solana',
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.excerpt,
-      images: [post.image],
+      images: {
+        url: post.image,
+        alt: post.title,
+      },
       creator: authorTwitterHandle,
       site: '@ledger_top',
     },
@@ -82,6 +88,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <>
+      <TwitterCardMeta post={post} />
       <ReadingProgress />
       
       <div className="min-h-screen relative">
@@ -124,6 +131,8 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           
         </div>
       </div>
+      
+      
     </>
   );
 }
