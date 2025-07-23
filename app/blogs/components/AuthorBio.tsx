@@ -135,8 +135,8 @@ export default function AuthorBio({ author }: AuthorBioProps) {
           </div>
         </div>
         
-        {/* Follow Top Ledger Button */}
-        <div className="flex items-center">
+        {/* Follow Top Ledger Button - Desktop Only */}
+        <div className="hidden md:flex items-center">
           <a
             href="https://x.com/ledger_top"
             target="_blank"
@@ -149,6 +149,21 @@ export default function AuthorBio({ author }: AuthorBioProps) {
             <span className="text-sm font-medium">Follow Top Ledger</span>
           </a>
         </div>
+      </div>
+      
+      {/* Follow Top Ledger Button - Mobile Only */}
+      <div className="md:hidden mt-6 pt-6 border-t border-gray-800/50">
+        <a
+          href="https://x.com/ledger_top"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:from-blue-500/20 hover:to-purple-500/20 transition-all duration-200"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          <span className="text-sm font-medium">Follow Top Ledger</span>
+        </a>
       </div>
     </div>
   );
