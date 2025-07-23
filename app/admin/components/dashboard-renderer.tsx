@@ -922,7 +922,7 @@ export default function DashboardRenderer({
         const cachedData = await getCachedChartDataFromTempFile(pageId);
         
         if (Object.keys(cachedData).length > 0) {
-          console.log(`🚀 Using ${Object.keys(cachedData).length} compressed charts for instant display`);
+          console.log(`🚀 Using ${Object.keys(cachedData).length} cached charts for instant display from temp files`);
           
           // Merge cached data with initial data
           initialChartData = { ...initialChartData, ...cachedData };
@@ -947,11 +947,14 @@ export default function DashboardRenderer({
         
         // Now fetch fresh data in the background for charts that need updates
         const chartsToRefresh = loadedCharts.filter(chart => {
-          const hasCachedData = cachedData[chart.id];
-          if (!hasCachedData) return true;
+          const hasCachedData = cachedData[chart.id] && cachedData[chart.id].length > 0;
+          if (!hasCachedData) {
+            console.log(`Chart ${chart.id} needs refresh - no temp data available`);
+            return true;
+          }
           
           // Only refresh if no cached data exists - prioritize speed over freshness
-          // Background refresh will happen automatically when cache expires (1 hour)
+          console.log(`Chart ${chart.id} has temp data - skipping API refresh`);
           return false; // Changed: Don't refresh in background by default
         });
         

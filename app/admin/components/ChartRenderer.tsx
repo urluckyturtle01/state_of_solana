@@ -1213,11 +1213,13 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       }
     };
     
-    // Only fetch if we have a valid endpoint
-    if (chartConfig.apiEndpoint) {
+    // Only fetch if we have a valid endpoint AND no preloaded data is available
+    if (chartConfig.apiEndpoint && (!preloadedData || preloadedData.length === 0)) {
       fetchData();
-    } else {
+    } else if (!chartConfig.apiEndpoint) {
       setError("No API endpoint provided");
+    } else {
+      console.log(`Skipping API fetch for ${chartConfig.title} - using preloaded data`);
     }
     
     // Cleanup function to cancel pending requests when component unmounts
@@ -1236,7 +1238,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           key !== (chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher' ? 'currencyFilter' : '')
         )))
       : JSON.stringify(filterValues), 
-    isFilterChanged
+    isFilterChanged,
+    preloadedData // Add preloadedData to dependencies to prevent unnecessary re-runs
   ]);
 
   // Clear stale cache on component mount to ensure fresh data processing

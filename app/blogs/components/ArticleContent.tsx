@@ -3,11 +3,16 @@
 import ChartCard from '@/app/components/shared/ChartCard';
 import ArticleChartRenderer from './ArticleChartRenderer';
 
+export interface ListItem {
+  text: string;
+  nested?: ListItem[]; // For nested list items
+}
+
 export interface ArticleSection {
   type: 'paragraph' | 'heading' | 'list' | 'quote' | 'chart' | 'image' | 'code' | 'divider';
   content?: string | any;
   level?: number; // For headings
-  items?: string[]; // For lists
+  items?: (string | ListItem)[]; // For lists - supports both simple strings and nested objects
   chartData?: any; // For charts
   chartConfig?: any; // For charts
   language?: string; // For code blocks
@@ -52,19 +57,38 @@ export default function ArticleContent({ content }: ArticleContentProps) {
         );
 
       case 'list':
-        return (
-          <ul key={index} className="space-y-4 text-gray-300 my-8 ml-4">
-            {section.items?.map((item, itemIndex) => (
-              <li key={itemIndex} className="flex items-start leading-relaxed">
-                <span className="text-gray-400 mr-4 mt-1 flex-shrink-0">•</span>
+        const renderListItem = (item: string | ListItem, itemIndex: number, level: number = 0) => {
+          const isString = typeof item === 'string';
+          const text = isString ? item : item.text;
+          const nested = isString ? undefined : item.nested;
+          
+          return (
+            <li key={itemIndex} className="flex items-start leading-relaxed">
+              <span className="text-gray-400 mr-4 mt-1 flex-shrink-0">•</span>
+              <div className="flex-1">
                 <span 
                   className="text-[16px] leading-relaxed"
                   dangerouslySetInnerHTML={{ 
-                    __html: item.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-200">$1</strong>') 
+                    __html: text
+                      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-200">$1</strong>')
+                      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline transition-colors duration-200" target="_blank" rel="noopener noreferrer">$1</a>')
                   }}
                 />
-              </li>
-            ))}
+                {nested && nested.length > 0 && (
+                  <ul className="space-y-2 mt-3 ml-6">
+                    {nested.map((nestedItem, nestedIndex) => 
+                      renderListItem(nestedItem, nestedIndex, level + 1)
+                    )}
+                  </ul>
+                )}
+              </div>
+            </li>
+          );
+        };
+
+        return (
+          <ul key={index} className="space-y-4 text-gray-300 my-8 ml-4">
+            {section.items?.map((item, itemIndex) => renderListItem(item, itemIndex))}
           </ul>
         );
 
