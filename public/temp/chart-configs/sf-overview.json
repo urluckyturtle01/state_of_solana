@@ -1,8 +1,8 @@
 {
   "pageId": "sf-overview",
   "pageName": "Overview",
-  "chartCount": 17,
-  "lastUpdated": "2025-07-23T16:46:31.639Z",
+  "chartCount": 18,
+  "lastUpdated": "2025-07-23T18:35:47.933Z",
   "charts": [
     {
       "id": "chart_1749809832495_hqam9lh",
@@ -528,6 +528,82 @@
       },
       "createdAt": "2025-06-13T13:10:03.812Z",
       "updatedAt": "2025-06-13T13:10:03.999Z"
+    },
+    {
+      "id": "chart_1753295488291_8vevawb",
+      "title": "Total Economic Value",
+      "subtitle": "Total economic value combines SOL Issuance and REV",
+      "page": "sf-overview",
+      "section": "network-rev-gdp",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13227/results.json",
+      "apiKey": "ic32Un4g6DkouRC8CKL6zvulzZH765l0iyLn5UEf&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "real_economic_value",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "total_economic_value",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "sol_issuance",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "real_economic_value_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "total_economic_value_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "sol_issuance_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "M",
+              "Q",
+              "Y"
+            ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "real_economic_value_usd, total_economic_value_usd, sol_issuance_usd",
+              "SOL": "real_economic_value, total_economic_value, sol_issuance"
+            }
+          }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-07-23T18:31:28.291Z",
+      "updatedAt": "2025-07-23T18:31:28.389Z"
     }
   ]
 }

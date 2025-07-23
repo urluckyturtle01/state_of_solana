@@ -461,6 +461,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     console.log('Current raw data length:', rawData.length);
     console.log('Current data length:', data.length);
     console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
+    console.log('Has preloaded data:', !!preloadedData && preloadedData.length > 0);
     
     // Always use external filter values when provided
     if (externalFilterValues) {
@@ -468,6 +469,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       setInternalFilterValues(externalFilterValues);
       
       // For time aggregation enabled charts, apply aggregation with external filter values
+      // BUT ONLY if we have rawData (don't trigger API calls)
       const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
       const timeFilterValue = externalFilterValues['timeFilter'];
       
@@ -717,9 +719,9 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
 
   // Fetch data from API when component mounts or filters change
   useEffect(() => {
-    // Handle preloaded data with field normalization
+    // PRIORITY CHECK: Handle preloaded data with field normalization - NO API CALLS
     if (preloadedData && preloadedData.length > 0) {
-      console.log(`⚡ USING PRELOADED DATA: ${chartConfig.title} (${preloadedData.length} rows) - NO API CALLS`);
+      console.log(`✅ PRELOADED DATA: ${chartConfig.title} (${preloadedData.length} rows) - SKIPPING ALL API CALLS`);
       
       // Apply the same field normalization logic as for API data
       const normalizePreloadedData = () => {
@@ -1269,11 +1271,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     
     // Only fetch if we have a valid endpoint AND no preloaded data is available
     if (chartConfig.apiEndpoint && (!preloadedData || preloadedData.length === 0)) {
+      console.log(`🌐 API CALL: Fetching data for ${chartConfig.title} - no preloaded data available`);
       fetchData();
     } else if (!chartConfig.apiEndpoint) {
       setError("No API endpoint provided");
     } else {
-      console.log(`⚡ OPTIMIZED: Skipping API fetch for ${chartConfig.title} - using preloaded data (${preloadedData?.length || 0} rows)`);
+      console.log(`✅ NO API CALL: Skipping API fetch for ${chartConfig.title} - using preloaded data (${preloadedData?.length || 0} rows)`);
     }
     
     // Cleanup function to cancel pending requests when component unmounts
@@ -1281,12 +1284,18 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       controller.abort();
     };
   }, [
-    chartConfig.apiEndpoint, 
-    chartConfig.apiKey, 
-    chartConfig.title, 
-    JSON.stringify(chartConfig.dataMapping), 
-    // Only include filter dependencies if we actually need to make API calls (no preloaded data)
-    ...((!preloadedData || preloadedData.length === 0) ? [
+    // CRITICAL: When preloaded data exists, minimize dependencies to prevent API calls
+    ...(preloadedData && preloadedData.length > 0 ? [
+      // For preloaded data, only depend on chart config changes, NOT filters
+      chartConfig.id,
+      chartConfig.title,
+      preloadedData.length
+    ] : [
+      // For API fetching, include all necessary dependencies
+      chartConfig.apiEndpoint, 
+      chartConfig.apiKey, 
+      chartConfig.title, 
+      JSON.stringify(chartConfig.dataMapping),
       (chartConfig.additionalOptions?.enableTimeAggregation || chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher')
         ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => 
             key !== (chartConfig.additionalOptions?.enableTimeAggregation ? 'timeFilter' : '') && 
@@ -1294,8 +1303,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           )))
         : JSON.stringify(filterValues), 
       isFilterChanged
-    ] : []),
-    preloadedData?.length // Only watch length changes to avoid unnecessary re-runs
+    ])
   ]);
 
   // Note: Removed cache clearing on mount as it was destroying performance

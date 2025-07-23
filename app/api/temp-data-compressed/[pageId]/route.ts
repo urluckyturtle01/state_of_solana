@@ -7,8 +7,11 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { pageId: string } }
 ): Promise<Response> {
+  const startTime = performance.now();
+  
   try {
     const { pageId } = params;
+    console.log(`🚀 TEMP API: Processing request for page: ${pageId}`);
     
     // Path to the compressed file
     const compressedFilePath = path.join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json.gz`);
@@ -19,14 +22,15 @@ export async function GET(
     let isCompressed = false;
     
     if (fs.existsSync(compressedFilePath)) {
-      console.log(`📦 Serving compressed data for page: ${pageId}`);
+      console.log(`📦 TEMP API: Serving compressed data for page: ${pageId}`);
       fileData = fs.readFileSync(compressedFilePath);
       isCompressed = true;
     } else if (fs.existsSync(originalFilePath)) {
-      console.log(`📄 Serving original data for page: ${pageId} (no compressed version)`);
+      console.log(`📄 TEMP API: Serving original data for page: ${pageId} (no compressed version)`);
       fileData = fs.readFileSync(originalFilePath);
     } else {
-      console.log(`❌ No data found for page: ${pageId}`);
+      const loadTime = performance.now() - startTime;
+      console.log(`❌ TEMP API: No data found for page: ${pageId} (checked in ${loadTime.toFixed(2)}ms)`);
       return NextResponse.json({ error: 'Page data not found' }, { status: 404 });
     }
     
@@ -59,12 +63,14 @@ export async function GET(
         size: `${(fileData.length / 1024).toFixed(1)}KB`
       };
       
-      console.log(`✅ Successfully served data for page ${pageId}:`, compressionInfo);
+      const totalTime = performance.now() - startTime;
+      console.log(`✅ TEMP API SUCCESS: Served data for page ${pageId} in ${totalTime.toFixed(2)}ms:`, compressionInfo);
       
       return NextResponse.json(pageData, {
         headers: {
           'Cache-Control': 'public, max-age=1800, s-maxage=1800', // Cache for 30 minutes
           'X-Compression-Info': JSON.stringify(compressionInfo),
+          'X-Response-Time': `${totalTime.toFixed(2)}ms`,
           'Content-Type': 'application/json',
         },
       });

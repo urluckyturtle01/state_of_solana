@@ -505,22 +505,24 @@ async function getChartConfigsFromTempFile(pageId: string): Promise<ChartConfig[
 // Function to load compressed chart data (aggregation removed)
 async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Record<string, string>): Promise<Record<string, any[]>> {
   try {
-    console.log(`🚀 Getting compressed chart data for page: ${pageId}`);
+    console.log(`🚀 TEMP DATA FETCH: Getting chart data for page: ${pageId}`);
     
     // Try compressed API route first
+    const startTime = performance.now();
     let response = await fetch(`/api/temp-data-compressed/${pageId}`);
     
     if (!response.ok) {
-      console.log(`🔄 Compressed data not available for page ${pageId}, falling back to uncompressed`);
+      console.log(`🔄 TEMP DATA FETCH: Compressed data not available for page ${pageId} (${response.status}), falling back to uncompressed`);
       response = await fetch(`/api/temp-data/${pageId}`);
     }
     
     if (!response.ok) {
-      console.warn(`❌ No temp data found for page ${pageId}`);
+      console.warn(`❌ TEMP DATA FETCH: No temp data found for page ${pageId} (${response.status})`);
       return {};
     }
     
-    console.log(`✅ Loaded compressed data for page: ${pageId}`);
+    const fetchTime = performance.now() - startTime;
+    console.log(`✅ TEMP DATA FETCH: Loaded data for page ${pageId} in ${fetchTime.toFixed(2)}ms`);
     
     const pageData = await response.json();
     const chartDataMap: Record<string, any[]> = {};
@@ -530,16 +532,20 @@ async function getCachedChartDataFromTempFile(pageId: string, filterValues?: Rec
       pageData.charts.forEach((chartResult: any) => {
         if (chartResult.success && chartResult.data) {
           chartDataMap[chartResult.chartId] = chartResult.data;
-          
+          console.log(`✅ TEMP DATA: Chart ${chartResult.chartId} loaded with ${chartResult.data.length} rows`);
+        } else {
+          console.warn(`❌ TEMP DATA: Chart ${chartResult.chartId} failed or has no data`, chartResult);
         }
       });
+    } else {
+      console.warn(`❌ TEMP DATA: Invalid page data format for ${pageId}:`, Object.keys(pageData));
     }
     
-    console.log(`✅ Loaded compressed data for ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
+    console.log(`✅ TEMP DATA RESULT: Loaded ${Object.keys(chartDataMap).length} charts from page: ${pageId}`);
     
     return chartDataMap;
   } catch (error) {
-    console.warn(`❌ Error loading compressed data for page ${pageId}:`, error);
+    console.error(`❌ TEMP DATA ERROR: Failed to load data for page ${pageId}:`, error);
     return {};
   }
 }
@@ -913,12 +919,12 @@ export default function DashboardRenderer({
         const chartsToRefresh = loadedCharts.filter(chart => {
           const hasCachedData = cachedData[chart.id] && cachedData[chart.id].length > 0;
           if (!hasCachedData) {
-            console.log(`Chart ${chart.id} needs refresh - no temp data available`);
+            console.log(`🔄 Chart ${chart.id} needs refresh - no temp data available`);
             return true;
           }
           
           // Skip all background refresh if temp data exists - prioritize speed over freshness
-          console.log(`Chart ${chart.id} has temp data (${cachedData[chart.id].length} rows) - completely skipping API calls`);
+          console.log(`✅ TEMP DATA EXISTS: Chart ${chart.id} has temp data (${cachedData[chart.id].length} rows) - completely skipping API calls`);
           return false;
         });
         
@@ -1071,6 +1077,16 @@ export default function DashboardRenderer({
   // Simplified fetchChartDataWithFilters for individual chart updates
   const fetchChartDataWithFilters = useCallback(async (chart: ChartConfig, skipLoadingState = false) => {
     try {
+      // Check if we already have temp data for this chart - if so, skip API call
+      const hasExistingData = chartData[chart.id] && chartData[chart.id].length > 0;
+      const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
+      const isFieldSwitchingCurrency = chart.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher';
+      
+      if (hasExistingData && (isTimeAggregationEnabled || isFieldSwitchingCurrency)) {
+        console.log(`✅ SKIP API: Chart ${chart.id} has temp data and uses client-side processing - no API call needed`);
+        return chartData[chart.id];
+      }
+      
       if (!skipLoadingState && isMounted.current) {
         updateChartState(chart.id, { loading: true });
       }
