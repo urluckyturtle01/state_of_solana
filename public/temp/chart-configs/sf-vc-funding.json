@@ -2,115 +2,8 @@
   "pageId": "sf-vc-funding",
   "pageName": "VC Funding",
   "chartCount": 10,
-  "lastUpdated": "2025-07-23T19:48:37.950Z",
+  "lastUpdated": "2025-07-23T20:58:55.528Z",
   "charts": [
-    {
-      "id": "chart_1749800049034_ord93fs",
-      "title": "Cross-chain VC Funding Flow",
-      "subtitle": "",
-      "page": "sf-vc-funding",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13304/results.json",
-      "apiKey": "bifkJW7dwRuzqxbHurxm5ibkhllzh4I1UeXweA9l&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "amount",
-        "groupBy": ""
-      },
-      "createdAt": "2025-06-13T07:34:09.034Z",
-      "updatedAt": "2025-07-23T19:26:32.540Z"
-    },
-    {
-      "id": "chart_1749800210473_f03zukz",
-      "title": "Cross-chain VC Funding By Sector",
-      "subtitle": "",
-      "page": "sf-vc-funding",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13308/results.json",
-      "apiKey": "aukJcWr92PuC222CQeHtuSNNx4mHpBpB8DexkVgu&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "amount",
-        "groupBy": "sector"
-      },
-      "createdAt": "2025-06-13T07:36:50.473Z",
-      "updatedAt": "2025-07-23T19:27:49.733Z",
-      "additionalOptions": {
-        "showTooltipTotal": true
-      }
-    },
-    {
-      "id": "chart_1749800806658_0n06su2",
-      "title": "Cross-chain Funding By Protocol Category",
-      "subtitle": "",
-      "page": "sf-vc-funding",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13307/results.json",
-      "apiKey": "SsmXGcQTSoyyNYrOt7R5FmIBGP0243vraEpQWRvH&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": "amount",
-        "groupBy": "subsector",
-        "yAxisUnit": "$"
-      },
-      "createdAt": "2025-06-13T07:46:46.658Z",
-      "updatedAt": "2025-07-23T19:34:02.794Z",
-      "additionalOptions": {
-        "showTooltipTotal": true
-      }
-    },
-    {
-      "id": "chart_1749801025765_h3e15g0",
-      "title": "Cross-chain Funding By Sectors",
-      "subtitle": "",
-      "page": "sf-vc-funding",
-      "section": "",
-      "chartType": "pie",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13305/results.json",
-      "apiKey": "3FbUeKUurce34RlUavPUQVTu6eFAwyVcu1o0XH21&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "sector",
-        "yAxis": "amount",
-        "groupBy": ""
-      },
-      "createdAt": "2025-06-13T07:50:25.765Z",
-      "updatedAt": "2025-07-23T19:41:11.354Z"
-    },
-    {
-      "id": "chart_1749801154521_hxcebiw",
-      "title": "Cross-chain Funding By Protocol Category",
-      "subtitle": "",
-      "page": "sf-vc-funding",
-      "section": "",
-      "chartType": "pie",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13309/results.json",
-      "apiKey": "iUDxkNvbcBZOSLJNkFhv8hnibN8iUOxZDPldXJVf&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "subsector",
-        "yAxis": "amount",
-        "groupBy": ""
-      },
-      "createdAt": "2025-06-13T07:52:34.521Z",
-      "updatedAt": "2025-07-23T19:43:37.975Z"
-    },
     {
       "id": "chart_1753298727523_du7e6iz",
       "title": "Solana VC Funding Flow",
@@ -135,7 +28,29 @@
         "groupBy": ""
       },
       "createdAt": "2025-07-23T19:25:27.523Z",
-      "updatedAt": "2025-07-23T19:25:27.983Z"
+      "updatedAt": "2025-07-23T20:55:21.928Z",
+      "position": 0
+    },
+    {
+      "id": "chart_1749800049034_ord93fs",
+      "title": "Cross-chain VC Funding Flow",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13304/results.json",
+      "apiKey": "bifkJW7dwRuzqxbHurxm5ibkhllzh4I1UeXweA9l&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "amount",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T07:34:09.034Z",
+      "updatedAt": "2025-07-23T20:55:20.984Z",
+      "position": 1
     },
     {
       "id": "chart_1753298982450_drq1x5w",
@@ -159,7 +74,74 @@
         "showTooltipTotal": true
       },
       "createdAt": "2025-07-23T19:29:42.450Z",
-      "updatedAt": "2025-07-23T19:29:42.720Z"
+      "updatedAt": "2025-07-23T20:55:21.988Z",
+      "position": 2
+    },
+    {
+      "id": "chart_1749800210473_f03zukz",
+      "title": "Cross-chain VC Funding By Sector",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13308/results.json",
+      "apiKey": "aukJcWr92PuC222CQeHtuSNNx4mHpBpB8DexkVgu&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "amount",
+        "groupBy": "sector"
+      },
+      "createdAt": "2025-06-13T07:36:50.473Z",
+      "updatedAt": "2025-07-23T20:55:20.991Z",
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "position": 3
+    },
+    {
+      "id": "chart_1753299780950_hay8k3s",
+      "title": "Solana VC Funding By Sector",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13909/results.json",
+      "apiKey": "UxqtXyk8cg1F1CtzVsNkHwwrDiVcXQeU9y2j4Nhm&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "sector",
+        "yAxis": "amount",
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-23T19:43:00.950Z",
+      "updatedAt": "2025-07-23T20:55:21.983Z",
+      "position": 4
+    },
+    {
+      "id": "chart_1749801025765_h3e15g0",
+      "title": "Cross-chain Funding By Sectors",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13305/results.json",
+      "apiKey": "3FbUeKUurce34RlUavPUQVTu6eFAwyVcu1o0XH21&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "sector",
+        "yAxis": "amount",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T07:50:25.765Z",
+      "updatedAt": "2025-07-23T20:55:21.955Z",
+      "position": 5
     },
     {
       "id": "chart_1753299417961_rj972ot",
@@ -183,27 +165,33 @@
         "showTooltipTotal": true
       },
       "createdAt": "2025-07-23T19:36:57.961Z",
-      "updatedAt": "2025-07-23T19:36:58.148Z"
+      "updatedAt": "2025-07-23T20:55:21.898Z",
+      "position": 6
     },
     {
-      "id": "chart_1753299780950_hay8k3s",
-      "title": "Solana VC Funding By Sector",
+      "id": "chart_1749800806658_0n06su2",
+      "title": "Cross-chain Funding By Protocol Category",
       "subtitle": "",
       "page": "sf-vc-funding",
       "section": "",
-      "chartType": "pie",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13909/results.json",
-      "apiKey": "UxqtXyk8cg1F1CtzVsNkHwwrDiVcXQeU9y2j4Nhm&max_age=86400",
-      "isStacked": false,
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13307/results.json",
+      "apiKey": "SsmXGcQTSoyyNYrOt7R5FmIBGP0243vraEpQWRvH&max_age=86400",
+      "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
-        "xAxis": "sector",
+        "xAxis": "month",
         "yAxis": "amount",
-        "groupBy": ""
+        "groupBy": "subsector",
+        "yAxisUnit": "$"
       },
-      "createdAt": "2025-07-23T19:43:00.950Z",
-      "updatedAt": "2025-07-23T19:43:01.223Z"
+      "createdAt": "2025-06-13T07:46:46.658Z",
+      "updatedAt": "2025-07-23T20:55:21.947Z",
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "position": 7
     },
     {
       "id": "chart_1753299962493_b59lwm4",
@@ -223,7 +211,29 @@
         "groupBy": ""
       },
       "createdAt": "2025-07-23T19:46:02.493Z",
-      "updatedAt": "2025-07-23T19:46:02.674Z"
+      "updatedAt": "2025-07-23T20:55:21.031Z",
+      "position": 8
+    },
+    {
+      "id": "chart_1749801154521_hxcebiw",
+      "title": "Cross-chain Funding By Protocol Category",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13309/results.json",
+      "apiKey": "iUDxkNvbcBZOSLJNkFhv8hnibN8iUOxZDPldXJVf&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "subsector",
+        "yAxis": "amount",
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-13T07:52:34.521Z",
+      "updatedAt": "2025-07-23T20:55:21.897Z",
+      "position": 9
     }
   ]
 }
