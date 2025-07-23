@@ -1,12 +1,14 @@
-# Exclude large temp files from serverless function bundles
-public/temp/chart-data/**
-public/temp/chart-configs/**
-public/temp/*.json
+# Exclude only development and testing files - ALLOW chart data and configs for fast loading
 public/temp/*.js
 public/temp/*.md
 
-# Exclude development files
+# Exclude development files but ALLOW chart-data and chart-configs for production performance  
 public/temp/benchmark-*
 public/temp/integration-test-*
 public/temp/metadata-cache.json
-public/temp/query-analytics.jsonl 
+public/temp/query-analytics.jsonl
+public/temp/performance-test.js
+public/temp/fetch-*.js*
+public/temp/compress-*.js
+public/temp/IMPLEMENTATION_SUMMARY.md
+public/temp/.DS_Store 
