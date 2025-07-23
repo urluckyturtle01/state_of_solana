@@ -194,44 +194,7 @@ const fetchChartData = async (
 ) => {
   const cacheKey = `chart_data_${chart.id}_${chart.apiEndpoint}_${JSON.stringify(chartFilters)}`;
   
-  // First try to get from localStorage for instant rendering
-  if (typeof window !== 'undefined' && cacheEnabled) {
-    try {
-      const cachedData = localStorage.getItem(cacheKey);
-      
-      if (cachedData) {
-        const parsedCache = JSON.parse(cachedData);
-        const now = Date.now();
-        
-        if (parsedCache.expires > now) {
-          console.log(`Using localStorage cache for chart ${chart.id}`);
-          
-          // Update memory cache too
-          const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
-          CHART_DATA_CACHE[memoryCacheKey] = {
-            data: parsedCache.data,
-            timestamp: parsedCache.timestamp,
-            expiresIn: parsedCache.expires - parsedCache.timestamp
-          };
-          
-          // If data is less than 1 hour old, just return it
-          if (now - parsedCache.timestamp < BACKGROUND_REFRESH_THRESHOLD) {
-            return parsedCache.data;
-          }
-          
-          // Otherwise refresh in background after returning cached data (only if older than 1 hour)
-          setTimeout(() => {
-            fetchFromApi(chart, chartFilters, cacheKey, cacheEnabled).catch(console.error);
-          }, 500); // Increased delay to reduce immediate background processing
-          
-          return parsedCache.data;
-        }
-      }
-    } catch (e) {
-      console.warn('Error reading from localStorage:', e);
-      // Continue to API fetch on error
-    }
-  }
+  // Skip localStorage check - temp files are faster and more reliable
   
   // Not in localStorage, try memory cache
   const memoryCacheKey = `${chart.id}-${chart.apiEndpoint}-${JSON.stringify(chartFilters)}`;
@@ -922,7 +885,8 @@ export default function DashboardRenderer({
         const cachedData = await getCachedChartDataFromTempFile(pageId);
         
         if (Object.keys(cachedData).length > 0) {
-          console.log(`🚀 Using ${Object.keys(cachedData).length} cached charts for instant display from temp files`);
+          console.log(`🚀 INSTANT DISPLAY: Using ${Object.keys(cachedData).length} charts from temp files (${loadedCharts.length} total charts)`);
+          console.log(`🚀 Cached chart IDs: ${Object.keys(cachedData).join(', ')}`);
           
           // Merge cached data with initial data
           initialChartData = { ...initialChartData, ...cachedData };
@@ -953,9 +917,9 @@ export default function DashboardRenderer({
             return true;
           }
           
-          // Only refresh if no cached data exists - prioritize speed over freshness
-          console.log(`Chart ${chart.id} has temp data - skipping API refresh`);
-          return false; // Changed: Don't refresh in background by default
+          // Skip all background refresh if temp data exists - prioritize speed over freshness
+          console.log(`Chart ${chart.id} has temp data (${cachedData[chart.id].length} rows) - completely skipping API calls`);
+          return false;
         });
         
         if (chartsToRefresh.length > 0) {

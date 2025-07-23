@@ -668,7 +668,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   useEffect(() => {
     // Handle preloaded data with field normalization
     if (preloadedData && preloadedData.length > 0) {
-      console.log(`Using preloaded data for chart ${chartConfig.title}, skipping API fetch`);
+      console.log(`⚡ USING PRELOADED DATA: ${chartConfig.title} (${preloadedData.length} rows) - NO API CALLS`);
       
       // Apply the same field normalization logic as for API data
       const normalizePreloadedData = () => {
@@ -842,10 +842,13 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           );
         }
         const cacheKey = `${chartConfig.apiEndpoint}-${dataMappingKey}-${JSON.stringify(cacheFilterValues)}`;
-        const cachedData = !isFilterChanged ? sessionStorage.getItem(cacheKey) : null;
+        // Skip sessionStorage cache check if we have preloaded data - it's faster and more reliable
+        const cachedData = (!preloadedData || preloadedData.length === 0) && !isFilterChanged 
+          ? sessionStorage.getItem(cacheKey) 
+          : null;
         
         if (cachedData) {
-          console.log('Using cached data for', chartConfig.title);
+          console.log('Using sessionStorage cached data for', chartConfig.title);
           parsedData = JSON.parse(cachedData);
         } else {
           // Create URL with API key if provided
@@ -1219,7 +1222,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     } else if (!chartConfig.apiEndpoint) {
       setError("No API endpoint provided");
     } else {
-      console.log(`Skipping API fetch for ${chartConfig.title} - using preloaded data`);
+      console.log(`⚡ OPTIMIZED: Skipping API fetch for ${chartConfig.title} - using preloaded data (${preloadedData?.length || 0} rows)`);
     }
     
     // Cleanup function to cancel pending requests when component unmounts
@@ -1231,32 +1234,21 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     chartConfig.apiKey, 
     chartConfig.title, 
     JSON.stringify(chartConfig.dataMapping), 
-    // Conditionally exclude timeFilter and currencyFilter from dependencies based on config
-    (chartConfig.additionalOptions?.enableTimeAggregation || chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher')
-      ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => 
-          key !== (chartConfig.additionalOptions?.enableTimeAggregation ? 'timeFilter' : '') && 
-          key !== (chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher' ? 'currencyFilter' : '')
-        )))
-      : JSON.stringify(filterValues), 
-    isFilterChanged,
-    preloadedData // Add preloadedData to dependencies to prevent unnecessary re-runs
+    // Only include filter dependencies if we actually need to make API calls (no preloaded data)
+    ...((!preloadedData || preloadedData.length === 0) ? [
+      (chartConfig.additionalOptions?.enableTimeAggregation || chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher')
+        ? JSON.stringify(Object.fromEntries(Object.entries(filterValues).filter(([key]) => 
+            key !== (chartConfig.additionalOptions?.enableTimeAggregation ? 'timeFilter' : '') && 
+            key !== (chartConfig.additionalOptions?.filters?.currencyFilter?.type === 'field_switcher' ? 'currencyFilter' : '')
+          )))
+        : JSON.stringify(filterValues), 
+      isFilterChanged
+    ] : []),
+    preloadedData?.length // Only watch length changes to avoid unnecessary re-runs
   ]);
 
-  // Clear stale cache on component mount to ensure fresh data processing
-  useEffect(() => {
-    console.log('=== CACHE CLEARING EFFECT ===');
-    console.log('Clearing stale cache for chart:', chartConfig.title);
-    
-    // Clear any cached data for this endpoint to ensure fresh processing
-    const keys = Object.keys(sessionStorage);
-    const endpointPrefix = chartConfig.apiEndpoint;
-    keys.forEach(key => {
-      if (key.startsWith(endpointPrefix)) {
-        console.log('Clearing cached data for key:', key);
-        sessionStorage.removeItem(key);
-      }
-    });
-  }, []); // Empty dependency array - only run on mount
+  // Note: Removed cache clearing on mount as it was destroying performance
+  // Temp file data should take precedence over cache anyway // Empty dependency array - only run on mount
 
   // Memoize the chart rendering to prevent unnecessary re-renders
   const renderChart = React.useCallback(() => {
