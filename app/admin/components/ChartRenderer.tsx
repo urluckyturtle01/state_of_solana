@@ -177,7 +177,22 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     
     // Check if this is a stacked chart with groupBy field
     const isStackedWithGroupBy = groupByField && chartConfig.isStacked;
+    // Check if this is a stacked chart with multiple y-fields but no groupBy field
+    const isMultiYFieldStacked = chartConfig.isStacked && yFields.length > 1 && !groupByField;
     console.log('Time aggregation for stacked chart with groupBy:', isStackedWithGroupBy, 'groupBy field:', groupByField);
+    console.log('Time aggregation for multi y-field stacked chart:', isMultiYFieldStacked, 'yFields count:', yFields.length);
+    
+    // Debug logging for the problematic case
+    if (isMultiYFieldStacked) {
+      console.log('🔧 MULTI Y-FIELD STACKED CHART DEBUG:', {
+        chartTitle: chartConfig.title,
+        timePeriod,
+        yFields,
+        rawDataSample: rawData.slice(0, 3),
+        xField,
+        isStacked: chartConfig.isStacked
+      });
+    }
     
     // Get percentage field configurations from chart config
     const percentageFieldConfigs = chartConfig.additionalOptions?.percentageFields || [];
@@ -236,6 +251,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       }
       
       // For stacked charts with groupBy, create composite key: time + groupBy value
+      // For stacked charts with multiple y-fields but no groupBy, use just time key (data will be properly aggregated)
       // For non-stacked charts, use just the time key
       let groupKey: string;
       if (isStackedWithGroupBy) {
@@ -268,12 +284,35 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         if (item[field] !== undefined && item[field] !== null) {
           const value = Number(item[field]) || 0;
           
-          // Detect cumulative fields by name patterns
-          const isCumulative = field.toLowerCase().includes('cumulative') || 
-                              field.toLowerCase().includes('total') ||
-                              field.toLowerCase().includes('supply') ||
-                              field.toLowerCase().includes('marketcap') ||
-                              field.toLowerCase().includes('market_cap');
+          // Detect cumulative fields by name patterns - be more specific to avoid false positives
+          const fieldLower = field.toLowerCase();
+          const isCumulative = fieldLower.includes('cumulative') || 
+                              (fieldLower.includes('supply') && !fieldLower.includes('revenue') && !fieldLower.includes('volume') && !fieldLower.includes('fees')) ||
+                              fieldLower.includes('marketcap') ||
+                              fieldLower.includes('market_cap') ||
+                              fieldLower === 'total' ||  // Only exact 'total' field, not fields containing 'total'
+                              fieldLower.endsWith('_total') ||  // Fields ending with _total
+                              fieldLower.startsWith('total_supply') ||  // Total supply fields
+                              fieldLower.startsWith('total_market'); // Total market fields
+          
+          // Debug logging for field classification in multi y-field stacked charts
+          if (isMultiYFieldStacked && timePeriod !== 'D') {
+            console.log(`🔧 Field classification for "${field}":`, {
+              isCumulative,
+              fieldLower,
+              matchedPatterns: {
+                cumulative: fieldLower.includes('cumulative'),
+                supply: fieldLower.includes('supply') && !fieldLower.includes('revenue') && !fieldLower.includes('volume') && !fieldLower.includes('fees'),
+                marketcap: fieldLower.includes('marketcap') || fieldLower.includes('market_cap'),
+                exactTotal: fieldLower === 'total',
+                endsWithTotal: fieldLower.endsWith('_total'),
+                totalSupply: fieldLower.startsWith('total_supply'),
+                totalMarket: fieldLower.startsWith('total_market')
+              },
+              value,
+              aggregationMethod: isCumulative ? 'MAX' : 'SUM'
+            });
+          }
           
           // Check if this field is configured as a percentage field with source fields
           const percentageConfig = percentageFieldConfigs.find(config => config.field === field);
@@ -390,6 +429,18 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
         uniqueTimeValues: [...new Set(aggregatedData.map(item => item[xField]))].length,
         uniqueGroupValues: [...new Set(aggregatedData.map(item => item[groupByField]))].length,
         sample: aggregatedData.slice(0, 3)
+      });
+    }
+    
+    // Debug logging for multi y-field stacked charts
+    if (isMultiYFieldStacked && aggregatedData.length > 0) {
+      console.log(`🔧 MULTI Y-FIELD STACKED aggregation result (${timePeriod}):`, {
+        totalRows: aggregatedData.length,
+        uniqueTimeValues: [...new Set(aggregatedData.map(item => item[xField]))].length,
+        yFields: yFields,
+        sample: aggregatedData.slice(0, 3),
+        firstItemFields: Object.keys(aggregatedData[0]),
+        originalDataLength: rawData.length
       });
     }
     
