@@ -17,7 +17,7 @@ interface BlogHeroProps {
 
 export default function BlogHero({ featuredPost }: BlogHeroProps) {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-800">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/50 via-gray-900/50 to-gray-900/20 border border-[0.5px] border-gray-900">
       <div className="absolute inset-0 bg-black/20"></div>
       
       <div className="relative px-8 py-12 lg:px-12 lg:py-16">

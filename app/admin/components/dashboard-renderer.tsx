@@ -53,7 +53,8 @@ interface Legend {
 
 // Increase parallel batch size for better performance
 const PARALLEL_BATCH_SIZE = 8; // Increased from 4 to 8 charts at a time
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const CACHE_DURATION = 2 * 60 * 60 * 1000; // 2 hours (reduced from 4 hours)
+const BACKGROUND_REFRESH_THRESHOLD = 60 * 60 * 1000; // 1 hour - only refresh if data is older than this
 
 // Add a global cache for chart data - shared across all instances
 const CHART_DATA_CACHE: Record<string, {
@@ -213,15 +214,15 @@ const fetchChartData = async (
             expiresIn: parsedCache.expires - parsedCache.timestamp
           };
           
-          // If data is less than 5 minutes old, just return it
-          if (now - parsedCache.timestamp < 5 * 60 * 1000) {
+          // If data is less than 1 hour old, just return it
+          if (now - parsedCache.timestamp < BACKGROUND_REFRESH_THRESHOLD) {
             return parsedCache.data;
           }
           
-          // Otherwise refresh in background after returning cached data
+          // Otherwise refresh in background after returning cached data (only if older than 1 hour)
           setTimeout(() => {
             fetchFromApi(chart, chartFilters, cacheKey, cacheEnabled).catch(console.error);
-          }, 100);
+          }, 500); // Increased delay to reduce immediate background processing
           
           return parsedCache.data;
         }
@@ -241,15 +242,15 @@ const fetchChartData = async (
     if (now - cachedItem.timestamp < cachedItem.expiresIn) {
       console.log(`Using memory cache for chart ${chart.id}`);
       
-      // If data is less than 5 minutes old, just return it
-      if (now - cachedItem.timestamp < 5 * 60 * 1000) {
+      // If data is less than 1 hour old, just return it
+      if (now - cachedItem.timestamp < BACKGROUND_REFRESH_THRESHOLD) {
         return cachedItem.data;
       }
       
-      // Otherwise refresh in background after returning cached data
+      // Otherwise refresh in background after returning cached data (only if older than 1 hour)
       setTimeout(() => {
         fetchFromApi(chart, chartFilters, memoryCacheKey, cacheEnabled).catch(console.error);
-      }, 500);
+      }, 1000); // Increased delay to reduce immediate background processing
       
       return cachedItem.data;
     }
@@ -312,7 +313,7 @@ const fetchFromApi = async (
     // Set up request options with performance optimizations
     const hasParameters = Object.keys(parameters).length > 0;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // Reduced from 8s to 5s for faster failure
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // Reduced to 3s for faster failure and better UX
     
     const options: RequestInit = {
       method: hasParameters ? 'POST' : 'GET',
@@ -946,19 +947,18 @@ export default function DashboardRenderer({
         
         // Now fetch fresh data in the background for charts that need updates
         const chartsToRefresh = loadedCharts.filter(chart => {
-          // Always refresh if no cached data, or if cached data is older than 1 hour
           const hasCachedData = cachedData[chart.id];
           if (!hasCachedData) return true;
           
-          // For now, always refresh in background to ensure data freshness
-          // In the future, we could check timestamps and only refresh if needed
-          return true;
+          // Only refresh if no cached data exists - prioritize speed over freshness
+          // Background refresh will happen automatically when cache expires (1 hour)
+          return false; // Changed: Don't refresh in background by default
         });
         
         if (chartsToRefresh.length > 0) {
-          console.log(`🔄 Refreshing ${chartsToRefresh.length} charts in background`);
+          console.log(`🔄 Loading ${chartsToRefresh.length} charts without cached data`);
           
-          // Set loading states only for charts being refreshed
+          // Set loading states only for charts that truly need data (no cache available)
           const refreshingStates: Record<string, Partial<{ expanded: boolean; downloading: boolean; screenshotting: boolean; loading: boolean }>> = {};
           chartsToRefresh.forEach(chart => {
             refreshingStates[chart.id] = { loading: true };
@@ -996,7 +996,7 @@ export default function DashboardRenderer({
           
           if (allLoaded) {
             setIsPageLoading(false);
-            console.log(`✅ All charts refreshed and loaded`);
+            console.log(`✅ All missing charts loaded (cached charts displayed immediately)`);
           }
         }
         

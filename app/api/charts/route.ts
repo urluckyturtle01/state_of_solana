@@ -27,8 +27,8 @@ const ALL_CHARTS_CACHE: CacheEntry = {
 
 const PAGE_CHARTS_CACHE: Record<string, CacheEntry> = {};
 
-// Cache TTL (5 minutes)
-const CACHE_TTL = 5 * 60 * 1000;
+// Cache TTL (2 hours - reduced for fresher data)
+const CACHE_TTL = 2 * 60 * 60 * 1000;
 
 // Performance metrics tracking
 const startTimer = () => {
@@ -244,8 +244,8 @@ export async function GET(req: NextRequest) {
       timestamp: new Date().toISOString()
     });
     
-    // Add caching headers
-    response.headers.set('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300');
+    // Add caching headers (updated for 2-hour cache duration)
+    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=7200');
     response.headers.set('ETag', etag);
     response.headers.set('X-Response-Time', `${endTimer(overallStart, "Total GET request time").toFixed(2)}ms`);
     
