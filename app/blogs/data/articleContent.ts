@@ -6,38 +6,81 @@ export function getArticleContent(slug: string): ArticleSection[] {
       
       {
         type: 'paragraph',
-        content: 'Helium is revolutionizing the way we connect devices to the internet, offering a decentralized global network that delivers faster and more affordable connectivity. When Helium first launched, it created an IoT network built on its custom blockchain. Hotspot operators provided wireless coverage and earned HNT tokens using the Proof-of-Coverage (PoC) system. This ensured that the network was being properly maintained and expanded, while LoRaWAN connectivity was offered for IoT devices like smart collars and scooters. The PoC rewards played a key role in building the network, but data transfer rewards have been essential for the long-term sustainability of Helium’s ecosystem.'
+        content: 'Helium is a global, decentralized network enabling individuals and organizations to build and operate wireless infrastructure for mobile cellular traffic and the Internet of Things (IoT). Participants deploy Hotspots—plug-and-play devices that act as miniature cell towers—to provide coverage and earn HNT rewards. The Helium Network offers a new approach to connectivity by distributing infrastructure ownership and incentivizing participation, resulting in a model that is more cost-effective and community-driven than the traditional telecom industry.'
       },
       {
         type: 'quote',
         content: 'Helium has engaged Top Ledger as their data analysis partner for both their on-chain as well as oracle data since January 2024.'
       },
       {
+        type: 'divider'
+      },
+      
+      {
+        type: 'heading',
+        level: 2,
+        content: 'Use Cases'
+      },
+      {
+        type: 'heading',
+        level: 3,
+        content: 'Mobile Coverage'
+      },
+      {
+        type: 'paragraph',
+        content: '[Helium Mobile](https://heliummobile.com/) is a U.S.-based mobile carrier (MVNO) that combines the Helium Network’s decentralized mobile coverage with nationwide 5G. This hybrid model enables broader coverage while dramatically reducing infrastructure deployment costs.'
+      },
+      {
+        type: 'heading',
+        level: 3,
+        content: 'Telecom Partnerships'
+      },
+      {
+        type: 'paragraph',
+        content: 'Major providers like [AT&T](https://www.fierce-network.com/newswire/att-partners-helium-better-wi-fi-offload) now use the Helium Network for offloading user data in high-traffic venues (urban centers, stadiums), leveraging decentralized infrastructure for efficient scaling.'
+      },
+      {
+        type: 'heading',
+        level: 3,
+        content: 'Enterprise Deployments'
+      },
+      {
+        type: 'paragraph',
+        content: 'Individuals and businesses can easily extend Helium Network coverage via existing Wi-Fi equipment (Ubiquiti, Aruba, Cisco Meraki, Ruckus, etc.). Deployments in malls, campuses, and offices can enable automatic mobile device connections, earning token rewards for supporting network usage.'
+      },
+      {
+        type: 'heading',
+        level: 3,
+        content: 'IoT Applications'
+      },
+      {
+        type: 'paragraph',
+        content: 'Helium supports a diversity of sensor-based use-cases (asset tracking, environmental monitoring, agriculture, flood detection), leveraging decentralized LoRaWAN coverage for cost-effective data backhaul.'
+      },
+      {
+        type: 'divider'
+      },
+      {
         type:'heading',
         level: 2,
-        content: 'Transition to Solana and SubDAO Framework'
+        content: 'Helium’s Network Structure: SubDAOs & Migration'
       },
       {
         type: 'paragraph',
-        content: 'Helium has evolved into a network of wireless networks after migrating to the Solana blockchain. This shift has allowed Helium to support multiple wireless networks such as LoRaWAN and 5G-offload, with the flexibility to add more in the future. This new structure makes Helium more scalable and adaptable, positioning it as a decentralized solution for various communication needs.'
+        content: 'Following approval of HIPs 51, 52, and 53 in Jan 2022, Helium migrated to a subDAO framework alongside its transition to the Solana blockchain in April 2023. This enabled Helium to support multiple wireless networks, namely:'
       },
-      {
-        type: 'paragraph',
-        content: 'Key milestones:'
-      },
+      
       {
         type: 'list',
         items: [
-          '**April 2023:** Migration to Solana, with core operations and protocol state on-chain.',
-          {
-            text: '**SubDAO Framework** (HIPs 51, 52, 53 - Jan 2022):',
-            nested: [
-              { text: '**Helium IoT:** LoRaWAN connectivity, rewards in IOT tokens.' },
-              { text: '**Helium Mobile:** 5G/CBRS connectivity, rewards in MOBILE tokens.' }
-            ]
-          },
-          '**HIP-138 & HIP-141:** Restored unified HNT rewards (via veHNT voting), increasing token utility and streamlining protocol incentives for all participants.'
+          '**Mobile Network:** Decentralized mobile connectivity (cellular and Wi-Fi coverage), previously rewarded in the MOBILE token.',
+          
+          '**IoT Network:** Decentralized LoRaWAN infrastructure for IoT use-cases, previously rewarded in the IOT token.'
         ]
+      },
+      {
+        type: 'paragraph',
+        content: 'As of January 2025 (HIP-138, HIP-141), all rewards for both Mobile and IoT Networks are now denominated in HNT. This streamlines network economics, aligns incentives, and increases HNT utility across the ecosystem.'
       },
       {
         type: 'paragraph',
@@ -66,6 +109,55 @@ export function getArticleContent(slug: string): ArticleSection[] {
           title: 'Daily IOT Rewards',
           description: 'Since 29 January 2025, the iOT rewards have been paid out in HNT following implementation of HIP 138'
         }
+      },
+      {
+        type: 'quote',
+        content: 'As of January 2025, all network rewards are paid out in HNT, not IOT or MOBILE tokens.'
+      },
+      {
+        type: 'divider'
+      },
+      {
+        type: 'heading',
+        level: 2,
+        content: 'Mobile Network (Cellular/Wi-Fi Coverage, HNT Rewards)'
+      },
+      {
+        type: 'paragraph',
+        content: 'The Mobile Network on Helium enables decentralized cellular connectivity using distributed Hotspots (mini cell towers/Wi-Fi APs). Network participants provide coverage and receive HNT rewards proportional to their contribution. Helium Mobile (the consumer MVNO service) leverages the Mobile Network’s decentralized infrastructure to offer users mobile coverage, with seamless fallback to national carriers when Helium coverage is insufficient.'
+      },
+      {
+        type: 'list',
+        items: [
+          '"Daily HNT rewards to Mobile Network" (now all HNT post-Jan 2025)'
+        ]
+      },
+      {
+        type: 'quote',
+        content: 'For charts labeled “Mobile rewards”: these represent HNT rewards post-Jan 2025.'
+      },
+      {
+        type: 'divider'
+      },
+      {
+        type: 'heading',
+        level: 2,
+        content: 'IoT Network (LoRaWAN Coverage, HNT Rewards)'
+      },
+      {
+        type: 'paragraph',
+        content: 'The IoT Network provides global LoRaWAN data connectivity for low-cost, low-power devices. Anyone can deploy Hotspots to extend coverage, participating in Proof-of-Coverage and Data Transfer activities.'
+      },
+      {
+        type: 'list',
+        items: [
+          '"Daily HNT rewards to IoT Network" (now all HNT post-Jan 2025)',
+          'Note: For charts labeled “IoT rewards”: these represent HNT rewards post-Jan 2025.'
+        ]
+      },
+      {
+        type: 'paragraph',
+        content: 'Reference: [Proof-of-Coverage Roadmap](https://docs.helium.com/iot/proof-of-coverage-roadmap/)'
       },
       {
         type: 'divider'
@@ -172,6 +264,10 @@ export function getArticleContent(slug: string): ArticleSection[] {
         content: 'Lions’ share of IOT rewards have gone to the witness’ group. Lions’ share of mobile rewards go to the radio rewards. Interesting side note: despite starting late, mobile rewards have already climbed above 60M USD on a cumulative basis to be over the iOT rewards at a cumulative level.'
       },
       {
+        type: 'quote',
+        content: 'As of January 2025, all network rewards are paid out in HNT, not IOT or MOBILE tokens.'
+      },
+      {
         type: 'divider'
       },
               {
@@ -221,22 +317,35 @@ export function getArticleContent(slug: string): ArticleSection[] {
       {
         type: 'heading',
         level: 2,
-        content: 'Helium Network: Data Credits (DCs) Overview'
+        content: 'Data Credits (DCs): The Billing Backbone.'
+      },
+      
+      {
+        type: 'paragraph',
+        content: 'Helium leverages Data Credits (DCs) as a metered billing token for all network usage across both the IoT and Mobile Networks.'
       },
       {
-        type: 'heading',
-        level: 3,
-        content: 'What are Data Credits (DCs)?'
+        type: 'list',
+        items: [
+          '**IoT Network:** Data transfer costs $0.00001 per 24-byte message.',
+          '**Mobile Network:** Data transfer costs $0.50 per 1GB (50,000 DCs).'
+        ]
       },
       {
         type: 'paragraph',
-        content: 'DCs are the payment method for all services on the Helium network, including IoT and Mobile data transfers, Hotspot onboarding, and other network-related actions. Each DC is fixed at $0.00001 USD, and the number of DCs generated from burning HNT depends on HNTs market price. DCs are non-transferable but can be delegated for data use.'
+        content: 'All DCs are created by burning HNT—tying real-world usage directly to token demand and supply.'
       },
-              {
-          type: 'heading',
-          level: 3,
-          content: 'Data Credits and Network Pricing'
-        },
+      {
+        type: 'paragraph',
+        content: 'More background: [How Data Credits Work](https://docs.helium.com/tokens/data-credit/)'
+      },
+      
+      {
+        type: 'heading',
+        level: 3,
+        content: 'Data Credits and Network Pricing'
+      },
+           
         {
           type: 'list',
           items: [
@@ -343,9 +452,9 @@ export function getArticleContent(slug: string): ArticleSection[] {
       {
 type:'list',
 items: [
-  '**HNT Emissions:** 41,400 HNT/day as of 2024–25, halving every two years.',
-  '**Net Emissions Cap:** 1,643 HNT/day—excess burns above this threshold are permanently removed from supply.',
-  '**HIP-141:** 100% of emissions now go to network participants, enforcing true on-chain supply discipline.'
+  'As of Jan 29, 2025, network emissions are 41,095 HNT/day; after the Aug 1, 2025 biannual halving, emissions become 20,548 HNT/day.',
+  '**Net Emissions Cap:** 1,643 HNT/day – HNT burns above this threshold are permanently removed from supply. Burns below are re-emitted.',
+  'Scheduled HNT emissions to Mobile/IoT treasuries ceased Jan 29, 2025; all HNT is now emitted directly to network participants (HIP-141)'
 ]
       },
       
@@ -357,6 +466,57 @@ items: [
           //description: 'Daily emissions and net burn trends under the Burn-Mint Equilibrium (BME) system.'
         }
       },
+      {
+        type: 'divider'
+      },
+      {
+          type: 'heading',
+          level: 2,
+          content: 'Proof-of-Coverage: Network Trust'
+        },
+        {
+          type: 'paragraph',
+          content: 'The network validates coverage via Proof-of-Coverage (PoC), where Hotspots beacon, other Hotspots witness, consensus is determined, and rewards (now HNT) are distributed according to performance in these protocols.'
+        },
+        {
+          type: 'paragraph',
+          content: '(Any previous reward splits in IOT/MOBILE tokens are obsolete. All rewards in HNT from Jan 2025.)'
+        },
+        {
+          type: 'heading',
+          level: 2,
+          content: 'Subscriber Growth & Blockchain Integration'
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'paragraph',
+          content: 'Subscribers to Helium Mobile receive NFTs as proof of membership, an innovative use of blockchain for telco “digital certificates.”'
+        },
+        {
+          type: 'paragraph',
+          content: 'Subscriber growth for Helium Mobile (the consumer brand) is distinct from that of the Mobile Network (the underlying decentralized infrastructure).'
+        },
+        {
+          type: 'divider'
+        },
+        {
+          type: 'heading',
+          level: 2,
+          content: 'Recent Developments / News'
+        },
+        {
+          type: 'list',
+          items: [
+            '[AT&T partners with Helium for Wi-Fi offload](https://www.fierce-network.com/newswire/att-partners-helium-better-wi-fi-offload)',
+            '[Telefónica brings Helium Network to Mexico](https://www.telefonica.com/en/communication-room/press-room/telefonica-mexico-bringing-helium-network-2-million-subscribers-mexico/)',
+            '[Helium Mobile launches first-ever free phone plan](https://www.bgr.com/tech/helium-mobile-launched-the-first-ever-free-phone-plan-with-5g-data-and-voice-for-0/)'
+          ]
+        },
+        {
+          type: 'divider'
+        },
       {
         type: 'heading',
         level: 3,
