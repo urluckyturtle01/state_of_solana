@@ -51,6 +51,7 @@ export interface StackedBarChartProps {
   onFilterChange?: (newFilters: Record<string, string>) => void;
   displayMode?: DisplayMode;
   onModalFilterUpdate?: (filters: Record<string, string>) => void;
+  maxXAxisTicks?: number;
 }
 
 interface DateBrushPoint {
@@ -206,7 +207,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   hiddenSeries = [],
   onFilterChange,
   displayMode: propDisplayMode,
-  onModalFilterUpdate
+  onModalFilterUpdate,
+  maxXAxisTicks
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -1353,7 +1355,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       range: keys.map(key => groupColors[key] || blue)
     });
 
-    // Calculate x-axis tick values - limit to 8 for date data, 5 for mobile
+    // Calculate x-axis tick values - limit for dates/integers, show all for text strings
     const xTickValues = (() => {
       // Check if the data contains dates
       const isDateData = chartData.length > 0 && 
@@ -1364,27 +1366,32 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
          /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
          /^\d{4}$/.test(chartData[0][xKey]));
       
+      // Check if all values are integers
+      const areAllIntegers = chartData.every(item => {
+        const num = Number(item[xKey]);
+        return Number.isInteger(num) && !isNaN(num);
+      });
+      
       // Detect mobile screen size
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const maxTicks = isMobile ? 5 : 8;
       
-      // For date data, limit ticks based on screen size
-      if (isDateData && chartData.length > maxTicks) {
+      // For text strings (non-dates, non-integers), always show all ticks
+      if (!isDateData && !areAllIntegers) {
+        return chartData.map(d => d[xKey]);
+      }
+      
+      // Use maxXAxisTicks if provided (for integer sequences/dates), otherwise use default limits
+      const maxTicks = maxXAxisTicks || (isMobile ? 5 : 8);
+      
+      // For date data or integers, limit ticks based on configuration
+      if (chartData.length > maxTicks) {
         const tickInterval = Math.ceil(chartData.length / maxTicks);
         return chartData
           .filter((_, i) => i % tickInterval === 0)
           .map(d => d[xKey]);
       }
       
-      // For other data types on mobile, also limit to 5 ticks
-      if (isMobile && chartData.length > 5) {
-        const tickInterval = Math.ceil(chartData.length / 5);
-        return chartData
-          .filter((_, i) => i % tickInterval === 0)
-          .map(d => d[xKey]);
-      }
-      
-      // For other data types on desktop, show all values
+      // Show all values if under the limit
       return chartData.map(d => d[xKey]);
     })();
 
@@ -1457,6 +1464,22 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
                       
                       // Default format if no timeFilter is specified
                       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                  }
+                  
+                  // For other text strings (non-dates), truncate to 3 letters + ellipsis
+                  if (typeof value === 'string') {
+                    // Check if it's NOT a date format and NOT an integer
+                    const isDate = /^\d{4}-\d{2}-\d{2}/.test(value) || 
+                                  /^\d{2}\/\d{2}\/\d{4}/.test(value) ||
+                                  /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(value) ||
+                                  /^[A-Za-z]{3}\s\d{4}$/.test(value) || 
+                                  /^\d{4}$/.test(value);
+                    
+                    const isInteger = Number.isInteger(Number(value)) && !isNaN(Number(value));
+                    
+                    if (!isDate && !isInteger && value.length > 3) {
+                      return value.substring(0, 3) + '...';
                     }
                   }
                   

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import BlogHero from './components/BlogHero';
 import BlogCard from './components/BlogCard';
 import TabsNavigation from '@/app/components/shared/TabsNavigation';
+import PrettyLoader from '@/app/components/shared/PrettyLoader';
 
 interface BlogPost {
   id: string;
@@ -91,10 +92,11 @@ export default function BlogsPage() {
 
   if (loading) {
     return (
-      <div className="py-12 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-400">Loading blog posts...</p>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="text-center">
+        <PrettyLoader size="md" />
       </div>
+    </div>
     );
   }
 

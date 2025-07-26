@@ -47,6 +47,7 @@ export interface PieChartProps {
   hiddenSeries?: string[];
   onFilterChange?: (newFilters: Record<string, string>) => void;
   onModalFilterUpdate?: (newFilters: Record<string, string>) => void;
+  maxXAxisTicks?: number;
 }
 
 interface PieDataPoint {
@@ -67,7 +68,8 @@ const PieChart: React.FC<PieChartProps> = ({
   yAxisUnit,
   hiddenSeries = [],
   onFilterChange,
-  onModalFilterUpdate
+  onModalFilterUpdate,
+  maxXAxisTicks
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);

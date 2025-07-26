@@ -57,6 +57,13 @@ const extractSuffix = (value: string): string => {
   return match ? match[1].trim() : '';
 };
 
+// Helper function to extract SOL-related suffix (jitoSOL, mSOL, SOL, etc.)
+const extractSOLSuffix = (value: string): string => {
+  // Match any suffix that contains "SOL" (case insensitive)
+  const match = value.match(/[\d,.\s]*([a-zA-Z]*SOL[a-zA-Z]*)/i);
+  return match ? match[1] : '';
+};
+
 // Helper function to parse numeric values from formatted strings like "$1.95T" or "$950B" or "1,364"
 const parseNumericValue = (value: string): number => {
   if (!value) return 0;
@@ -64,8 +71,8 @@ const parseNumericValue = (value: string): number => {
   // Remove any commas first
   const cleanValue = value.replace(/,/g, '');
   
-  // Extract numeric part and multiplier (B, M, T, K)
-  const match = cleanValue.match(/([^\d]*)?([\d.]+)\s*([BMTK])?\s*(SOL)?/);
+  // Extract numeric part and multiplier (B, M, T, K), ignoring any SOL-related suffix
+  const match = cleanValue.match(/([^\d]*)?([\d.]+)\s*([BMTK])?\s*([a-zA-Z]*SOL[a-zA-Z]*)?/i);
   if (!match) return 0;
   
   const number = parseFloat(match[2]);
@@ -83,8 +90,8 @@ const parseNumericValue = (value: string): number => {
 
 // Format numbers based on their value range
 const formatAnimatedValue = (value: number, targetValue: string): string => {
-  // Check if the target value contains SOL and extract prefix
-  const isSOL = targetValue.includes('SOL');
+  // Check if the target value contains SOL and extract the actual SOL suffix
+  const solSuffix = extractSOLSuffix(targetValue);
   const prefixMatch = targetValue.match(/^([^\d]*)/);
   const prefix = prefixMatch ? prefixMatch[1] : '';
   let formattedValue: string;
@@ -145,9 +152,9 @@ const formatAnimatedValue = (value: number, targetValue: string): string => {
     formattedValue = `${prefix}${formattedValue}`;
   }
 
-  // Add SOL suffix if present in target value
-  if (isSOL) {
-    formattedValue = `${formattedValue} SOL`;
+  // Add the actual SOL suffix if present in target value (jitoSOL, mSOL, SOL, etc.)
+  if (solSuffix) {
+    formattedValue = `${formattedValue} ${solSuffix}`;
   }
 
   return formattedValue;

@@ -67,6 +67,42 @@ function getFieldFromYAxisConfig(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
 }
 
+// Add utility function to detect if x-axis values are integers in order OR dates
+function shouldLimitXAxisTicks(data: any[], xField: string): boolean {
+  if (!data || data.length < 2) return false;
+  
+  const xValues = data.map(item => item[xField]);
+  const firstValue = xValues[0];
+  
+  // Check if data contains dates
+  if (typeof firstValue === 'string') {
+    const isDateData = /^\d{4}-\d{2}-\d{2}/.test(firstValue) || 
+                      /^\d{2}\/\d{2}\/\d{4}/.test(firstValue) ||
+                      /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(firstValue) ||
+                      /^[A-Za-z]{3}\s\d{4}$/.test(firstValue) || 
+                      /^\d{4}$/.test(firstValue);
+    
+    if (isDateData) {
+      return true; // Limit ticks for date data
+    }
+  }
+  
+  // Check if all x-axis values are integers in order
+  const areAllIntegers = xValues.every(value => {
+    const num = Number(value);
+    return Number.isInteger(num) && !isNaN(num);
+  });
+  
+  if (!areAllIntegers) return false; // Don't limit for text strings
+  
+  // Check if values are in order (ascending or descending)
+  const numericValues = xValues.map(val => Number(val));
+  const isAscending = numericValues.every((val, i) => i === 0 || val >= numericValues[i - 1]);
+  const isDescending = numericValues.every((val, i) => i === 0 || val <= numericValues[i - 1]);
+  
+  return isAscending || isDescending; // Limit ticks for integer sequences
+}
+
 const ChartRenderer = React.memo<ChartRendererProps>(({ 
   chartConfig, 
   onDataLoaded,
@@ -1326,6 +1362,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     // Get the unit from the chart config for use with all chart types
     const yAxisUnit = getYAxisUnit(chartConfig.dataMapping.yAxis);
     
+    // Detect if x-axis values are integers in order OR dates to limit ticks to 7
+    const xField = Array.isArray(chartConfig.dataMapping.xAxis) 
+      ? chartConfig.dataMapping.xAxis[0] 
+      : chartConfig.dataMapping.xAxis;
+    const shouldLimitTicks = shouldLimitXAxisTicks(data, xField);
+    
     const commonProps = {
       chartConfig,
       data,
@@ -1334,7 +1376,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       colorMap: legendColorMap,
       filterValues,
       hiddenSeries,
-      yAxisUnit
+      yAxisUnit,
+      maxXAxisTicks: shouldLimitTicks ? 7 : undefined
     };
     
     switch (chartConfig.chartType) {

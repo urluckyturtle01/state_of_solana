@@ -1,0 +1,71 @@
+{
+  "pageId": "sol-strategies-revenue",
+  "pageName": "Revenue",
+  "chartCount": 3,
+  "lastUpdated": "2025-07-26T12:56:20.605Z",
+  "charts": [
+    {
+      "id": "chart_1753533570775_hylj6ty",
+      "title": "Block Reward By Validator",
+      "subtitle": "",
+      "page": "sol-strategies-revenue",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13924/results.json",
+      "apiKey": "V12RwFH3j528JtqRCl0xudwK0nWozKaHgsGX2hbr&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": "block_reward",
+        "groupBy": "validator",
+        "yAxisUnit": "SOL"
+      },
+      "createdAt": "2025-07-26T12:39:30.775Z",
+      "updatedAt": "2025-07-26T12:39:30.965Z"
+    },
+    {
+      "id": "chart_1753533725928_4ua904n",
+      "title": "Inflation Reward By Validator",
+      "subtitle": "",
+      "page": "sol-strategies-revenue",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13924/results.json",
+      "apiKey": "V12RwFH3j528JtqRCl0xudwK0nWozKaHgsGX2hbr&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": "Inflation_reward",
+        "groupBy": "validator",
+        "yAxisUnit": "SOL"
+      },
+      "createdAt": "2025-07-26T12:42:05.928Z",
+      "updatedAt": "2025-07-26T12:42:06.119Z"
+    },
+    {
+      "id": "chart_1753533946812_r2vmj3g",
+      "title": "Jito Tips By Validator",
+      "subtitle": "",
+      "page": "sol-strategies-revenue",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13924/results.json",
+      "apiKey": "V12RwFH3j528JtqRCl0xudwK0nWozKaHgsGX2hbr&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": "jito_tips",
+        "groupBy": "validator",
+        "yAxisUnit": "SOL"
+      },
+      "createdAt": "2025-07-26T12:45:46.812Z",
+      "updatedAt": "2025-07-26T12:45:47.788Z"
+    }
+  ]
+}
