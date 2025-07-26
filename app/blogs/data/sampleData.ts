@@ -14,8 +14,7 @@ export interface BlogPost {
   };
 }
 
-export const sampleBlogPosts: BlogPost[] = [
-  {
+export const sampleBlogPosts: BlogPost[] = [{
     id: '1',
     title: 'Introduction to the Helium Network',
     excerpt: 'How Helium is building a decentralized, scalable wireless network with IoT, 5G, and blockchain-powered rewards.',
@@ -28,6 +27,21 @@ export const sampleBlogPosts: BlogPost[] = [
     company: {
       name: 'Helium',
       handle: 'helium'
+    }
+  },
+  {
+    id: '1753478115424',
+    title: 'hjbjh',
+    excerpt: 'hb jbn ',
+    author: 'lokesh',
+    date: 'JUL 26, 2025',
+    category: 'defi',
+    image: '',
+    slug: 'hjbjh',
+    readTime: '5 min read',
+    company: {
+      name: 'tl',
+      handle: '@tol'
     }
   }
 ];

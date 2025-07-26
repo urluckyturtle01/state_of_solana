@@ -101,6 +101,11 @@ const MENU_PAGES = {
     { id: "orca-traction", name: "Traction", path: "/projects/orca/traction" },
     { id: "orca-protocol-token", name: "Protocol Token", path: "/projects/orca/protocol-token" },
     { id: "orca-competetive-landscape", name: "Competetive Landscape", path: "/projects/orca/competetive-landscape" }
+  ],
+  "sol-strategies": [
+    { id: "sol-strategies-overview", name: "Overview", path: "/projects/sol-strategies/overview" },
+    { id: "sol-strategies-financials", name: "Financials", path: "/projects/sol-strategies/financials" },
+    { id: "sol-strategies-revenue", name: "Revenue", path: "/projects/sol-strategies/revenue" }
   ]
 };
 

@@ -64,6 +64,11 @@ export const MENU_OPTIONS: MenuItem[] = [
     icon: "chart-bar"
   },
   {
+    id: "sol-strategies",
+    name: "Sol Strategies",
+    icon: "chart-bar"
+  },
+  {
     id: "test",
     name: "Test",
     icon: "chart-bar"
@@ -316,7 +321,24 @@ overview: [
         name: "Competitive Landscape",
         path: "/projects/orca/competitive-landscape"
       }
-    ]
+    ],
+    "sol-strategies": [
+      {
+        id: "sol-strategies-overview",
+        name: "Overview",
+        path: "/projects/sol-strategies/overview"
+      },
+      {
+        id: "sol-strategies-financials",
+        name: "Financials",
+        path: "/projects/sol-strategies/financials"
+      },
+      {
+        id: "sol-strategies-revenue",
+        name: "Revenue",
+        path: "/projects/sol-strategies/revenue"
+      }
+    ] 
 };
 
 // Helper function to get pages for a specific menu

@@ -2,7 +2,7 @@ import { ArticleSection } from '../components/ArticleContent';
 
 export function getArticleContent(slug: string): ArticleSection[] {
   const articleContents: Record<string, ArticleSection[]> = {
-    'introduction-to-helium-network': [
+'introduction-to-helium-network': [
       
       {
         type: 'paragraph',
@@ -560,7 +560,57 @@ items: [
       }
         
     ],
-    
+    'hjbjh': [
+      {
+        type: 'paragraph',
+        content: 'kjnjknjk'
+      },
+      {
+        type: 'heading',
+        level: 3,
+        content: 'hbjhnjjk'
+      },
+      {
+        type: 'quote',
+        content: 'kjbjkbjkbjk'
+      },
+      {
+        type: 'divider'
+      },
+      {
+        type: 'divider'
+      },
+      {
+        type: 'list',
+        items: [{
+                    text: 'hbjhbj',
+                    nested: [{
+                    text: 'kjnjknkj',
+                    nested: []
+                  }, {
+                    text: 'knlknln',
+                    nested: []
+                  }, {
+                    text: 'kjnkn',
+                    nested: []
+                  }]
+                  }, {
+                    text: 'kjbjkn',
+                    nested: []
+                  }, {
+                    text: 'ljnjk',
+                    nested: []
+                  }]
+      },
+      {
+        type: 'chart',
+        chartConfig: {
+          chartId: 'chart_1748087042364_phdzeam',
+          title: 'Account Bytes Vs Data Bytes',
+          description: 'Solana\'s max transaction size is 1232 bytes'
+        }
+      }
+    ]
   };
 
   // Return the content for the specific slug, or a default if not found

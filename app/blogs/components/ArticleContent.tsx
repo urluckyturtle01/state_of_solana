@@ -16,6 +16,8 @@ export interface ArticleSection {
   chartData?: any; // For charts
   chartConfig?: any; // For charts
   language?: string; // For code blocks
+  src?: string; // For images
+  alt?: string; // For images
   caption?: string; // For images
 }
 
@@ -141,8 +143,8 @@ export default function ArticleContent({ content }: ArticleContentProps) {
           <div key={index} className="my-12">
             <figure className="w-full">
               <img
-                src={section.content}
-                alt={section.caption || 'Article image'}
+                src={section.src}
+                alt={section.alt || section.caption || 'Article image'}
                 className="w-full rounded-lg border border-gray-800 shadow-lg"
               />
               {section.caption && (

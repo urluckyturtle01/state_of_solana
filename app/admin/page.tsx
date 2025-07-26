@@ -69,6 +69,30 @@ export default function AdminDashboard() {
               </svg>
             }
           />
+          
+          <ActionCard 
+            title="Blog Editor" 
+            description="Write and publish blog posts with a Medium-like editor" 
+            link="/admin/blog-editor"
+            accentColor="rose"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            }
+          />
+          
+          <ActionCard 
+            title="Blog Manager" 
+            description="View, manage and delete existing blog articles" 
+            link="/admin/blog-manager"
+            accentColor="teal"
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            }
+          />
         </div>
       </div>
     </div>
@@ -90,6 +114,8 @@ function ActionCard({ title, description, link, accentColor, icon }: ActionCardP
     blue: 'from-blue-500 to-cyan-500',
     purple: 'from-purple-500 to-pink-500',
     amber: 'from-amber-500 to-orange-500',
+    rose: 'from-rose-500 to-pink-500',
+    teal: 'from-teal-500 to-cyan-500',
   };
   
   const gradientClass = accentColorMap[accentColor] || 'from-indigo-500 to-purple-500';

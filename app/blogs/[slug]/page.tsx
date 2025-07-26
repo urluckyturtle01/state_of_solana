@@ -7,10 +7,140 @@ import SocialSharing from '../components/SocialSharing';
 import AuthorBio from '../components/AuthorBio';
 import RelatedArticles from '../components/RelatedArticles';
 import BackToBlogsButton from '../components/BackToBlogsButton';
-import { sampleBlogPosts, BlogPost } from '../data/sampleData';
-import { getArticleContent } from '../data/articleContent';
-
 import TwitterCardMeta from '../components/TwitterCardMeta';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  category: string;
+  image: string;
+  slug: string;
+  readTime?: string;
+  company?: {
+    name: string;
+    handle: string;
+  };
+}
+
+// Fetch article from S3 directly
+async function getArticleFromS3(slug: string) {
+  try {
+    // Check if AWS credentials are configured
+    const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
+    const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+    const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
+    const S3_BUCKET = process.env.S3_BUCKET_NAME;
+
+    if (!AWS_ACCESS_KEY || !AWS_SECRET_KEY || !S3_BUCKET) {
+      console.error('S3 credentials not configured');
+      return null;
+    }
+
+    const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+    
+    const s3Client = new S3Client({
+      region: AWS_REGION,
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY,
+        secretAccessKey: AWS_SECRET_KEY,
+      },
+    });
+
+    const key = `blog-articles/${slug}.json`;
+
+    const command = new GetObjectCommand({
+      Bucket: S3_BUCKET,
+      Key: key,
+    });
+
+    const result = await s3Client.send(command);
+    const body = await result.Body?.transformToString();
+    
+    if (!body) {
+      return null;
+    }
+
+    const articleData = JSON.parse(body);
+    return articleData;
+  } catch (error: any) {
+    // Check if it's a NoSuchKey error
+    if (error.name === 'NoSuchKey' || error.Code === 'NoSuchKey') {
+      return null;
+    }
+    console.error('Error fetching article from S3:', error);
+    return null;
+  }
+}
+
+// Fetch all articles for related posts
+async function getAllArticlesFromS3() {
+  try {
+    // Check if AWS credentials are configured
+    const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
+    const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+    const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
+    const S3_BUCKET = process.env.S3_BUCKET_NAME;
+
+    if (!AWS_ACCESS_KEY || !AWS_SECRET_KEY || !S3_BUCKET) {
+      return [];
+    }
+
+    const { S3Client, ListObjectsV2Command, GetObjectCommand } = await import('@aws-sdk/client-s3');
+    
+    const s3Client = new S3Client({
+      region: AWS_REGION,
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY,
+        secretAccessKey: AWS_SECRET_KEY,
+      },
+    });
+
+    // List all objects in the blog-articles folder
+    const listCommand = new ListObjectsV2Command({
+      Bucket: S3_BUCKET,
+      Prefix: 'blog-articles/',
+      MaxKeys: 100
+    });
+
+    const listResult = await s3Client.send(listCommand);
+    const objects = listResult.Contents || [];
+
+    // Fetch each blog post metadata
+    const articles = [];
+    
+    for (const object of objects) {
+      if (object.Key && object.Key.endsWith('.json')) {
+        try {
+          const getCommand = new GetObjectCommand({
+            Bucket: S3_BUCKET,
+            Key: object.Key,
+          });
+
+          const getResult = await s3Client.send(getCommand);
+          const body = await getResult.Body?.transformToString();
+          
+          if (body) {
+            const articleData = JSON.parse(body);
+            articles.push(articleData.blogPost);
+          }
+        } catch (fileError) {
+          console.error(`Error reading ${object.Key}:`, fileError);
+          // Continue with other files
+        }
+      }
+    }
+
+    // Sort by date (newest first)
+    articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return articles;
+  } catch (error) {
+    console.error('Error fetching articles from S3:', error);
+    return [];
+  }
+}
 
 interface ArticlePageProps {
   params: {
@@ -30,14 +160,15 @@ function getAuthorTwitterHandle(authorName: string): string {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const post = sampleBlogPosts.find(p => p.slug === params.slug);
+  const articleData = await getArticleFromS3(params.slug);
   
-  if (!post) {
+  if (!articleData || !articleData.blogPost) {
     return {
       title: 'Article Not Found | State of Solana',
     };
   }
 
+  const post = articleData.blogPost;
   const authorTwitterHandle = getAuthorTwitterHandle(post.author);
 
   return {
@@ -74,16 +205,20 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   };
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const post = sampleBlogPosts.find(p => p.slug === params.slug);
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const articleData = await getArticleFromS3(params.slug);
   
-  if (!post) {
+  if (!articleData || !articleData.blogPost) {
     notFound();
   }
 
-  const articleContent = getArticleContent(post.slug);
-  const relatedPosts = sampleBlogPosts
-    .filter(p => p.id !== post.id && p.category === post.category)
+  const post = articleData.blogPost;
+  const articleContent = articleData.content || [];
+  
+  // Get related posts
+  const allPosts = await getAllArticlesFromS3();
+  const relatedPosts = allPosts
+    .filter((p: BlogPost) => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
 
   return (
@@ -138,8 +273,14 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 }
 
 // Generate static params for all blog posts
-export function generateStaticParams() {
-  return sampleBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+export async function generateStaticParams() {
+  try {
+    const allPosts = await getAllArticlesFromS3();
+    return allPosts.map((post: BlogPost) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 } 
