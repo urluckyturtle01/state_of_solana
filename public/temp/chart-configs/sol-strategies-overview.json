@@ -2,7 +2,7 @@
   "pageId": "sol-strategies-overview",
   "pageName": "Overview",
   "chartCount": 3,
-  "lastUpdated": "2025-07-26T12:56:20.604Z",
+  "lastUpdated": "2025-07-26T13:14:11.227Z",
   "charts": [
     {
       "id": "chart_1753529700192_s5m9a81",
@@ -51,7 +51,7 @@
       "subtitle": "",
       "page": "sol-strategies-overview",
       "section": "",
-      "chartType": "line",
+      "chartType": "dual-axis",
       "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13920/results.json",
       "apiKey": "im5YtWd4pxcxak6hESCGSWuj4IZdyvPhsosq2kU8&max_age=86400",
       "isStacked": false,
@@ -63,18 +63,30 @@
           {
             "field": "Stakers",
             "type": "bar",
-            "unit": ""
+            "unit": "",
+            "rightAxis": false
           },
           {
             "field": "new_stakers",
             "type": "line",
-            "unit": ""
+            "unit": "",
+            "rightAxis": true
           }
         ],
         "groupBy": ""
       },
       "createdAt": "2025-07-26T11:40:38.543Z",
-      "updatedAt": "2025-07-26T11:40:38.733Z"
+      "updatedAt": "2025-07-26T13:12:31.419Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Stakers"
+        ],
+        "rightAxisFields": [
+          "new_stakers"
+        ]
+      }
     }
   ]
 }
