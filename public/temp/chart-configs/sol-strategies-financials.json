@@ -2,7 +2,7 @@
   "pageId": "sol-strategies-financials",
   "pageName": "Financials",
   "chartCount": 2,
-  "lastUpdated": "2025-07-26T13:14:11.227Z",
+  "lastUpdated": "2025-07-26T15:09:25.888Z",
   "charts": [
     {
       "id": "chart_1753531456410_my1lp1v",
@@ -19,11 +19,13 @@
       "dataMapping": {
         "xAxis": "epoch",
         "yAxis": "Revenue",
-        "groupBy": "validator",
-        "yAxisUnit": "SOL"
+        "groupBy": "validator"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-07-26T12:04:16.410Z",
-      "updatedAt": "2025-07-26T12:04:16.608Z"
+      "updatedAt": "2025-07-26T14:56:10.162Z"
     },
     {
       "id": "chart_1753531928533_bynrkwp",

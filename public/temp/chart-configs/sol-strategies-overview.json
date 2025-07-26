@@ -2,7 +2,7 @@
   "pageId": "sol-strategies-overview",
   "pageName": "Overview",
   "chartCount": 3,
-  "lastUpdated": "2025-07-26T13:14:11.227Z",
+  "lastUpdated": "2025-07-26T15:09:25.888Z",
   "charts": [
     {
       "id": "chart_1753529700192_s5m9a81",
@@ -19,11 +19,13 @@
       "dataMapping": {
         "xAxis": "epoch",
         "yAxis": "stake",
-        "groupBy": "validator",
-        "yAxisUnit": "SOL"
+        "groupBy": "validator"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
       },
       "createdAt": "2025-07-26T11:35:00.192Z",
-      "updatedAt": "2025-07-26T11:35:00.381Z"
+      "updatedAt": "2025-07-26T14:54:40.448Z"
     },
     {
       "id": "chart_1753529859238_rwf27bh",
@@ -42,8 +44,11 @@
         "yAxis": "stakers",
         "groupBy": "validator"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-07-26T11:37:39.238Z",
-      "updatedAt": "2025-07-26T11:37:39.439Z"
+      "updatedAt": "2025-07-26T14:55:32.105Z"
     },
     {
       "id": "chart_1753530038543_blf1f8q",
