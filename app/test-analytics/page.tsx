@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 import { useEffect, useState } from 'react';
@@ -147,4 +146,3 @@ export default function TestAnalyticsPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/test-analytics');

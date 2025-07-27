@@ -1,5 +1,3 @@
-"use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";

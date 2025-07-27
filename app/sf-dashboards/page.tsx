@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 
@@ -38,4 +37,3 @@ export default function SFDashboardsPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/sf-dashboards');

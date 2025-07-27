@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 import { useEffect } from "react";
@@ -44,4 +43,3 @@ export default function WrappedBtcIndexPage() {
   );
 }
 
-export const metadata = generateNextMetadata('/wrapped-btc');

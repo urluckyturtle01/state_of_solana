@@ -1,5 +1,3 @@
-"use client";
-
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
@@ -11,7 +9,6 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
-
 
 // SEO Structured Data
 const structuredData = generateStructuredData('/compute-units/compute-units');

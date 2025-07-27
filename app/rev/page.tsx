@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 
@@ -40,4 +39,3 @@ export default function RevPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/rev');

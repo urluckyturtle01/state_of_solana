@@ -96,8 +96,6 @@ const testimonials = [
   }
 ];
 
-export const metadata = generateNextMetadata('/home');
-
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);

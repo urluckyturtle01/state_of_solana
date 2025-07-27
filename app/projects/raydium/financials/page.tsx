@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../../../seo-metadata';
 import React, { Suspense, useRef } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
@@ -77,4 +76,3 @@ export default function RaydiumFinancialsPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/projects/raydium/financials');

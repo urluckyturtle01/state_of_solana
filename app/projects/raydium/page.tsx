@@ -1,5 +1,6 @@
 "use client";
 
+
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 
 import { useEffect } from "react";
@@ -38,4 +39,3 @@ export default function RaydiumPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/projects/raydium');

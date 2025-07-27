@@ -1,7 +1,5 @@
 "use client";
 
-import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
-
 import { useState, useMemo, useEffect } from 'react';
 import BlogHero from './components/BlogHero';
 import BlogCard from './components/BlogCard';
@@ -31,8 +29,7 @@ const filters = [
 ];
 
 
-// SEO Structured Data
-const structuredData = generateStructuredData('/blogs');
+// Note: SEO metadata is handled in layout.tsx for this client component
 
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,5 +178,3 @@ export default function BlogsPage() {
     </div>
   );
 } 
-
-export const metadata = generateNextMetadata('/blogs');

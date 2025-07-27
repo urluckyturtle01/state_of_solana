@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 import { useEffect } from "react";
@@ -36,4 +35,3 @@ export default function MevIndexPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/mev');

@@ -206,72 +206,39 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   };
 }
 
-export const metadata = generateNextMetadata('/blogs/[slug]');
-
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const articleData = await getArticleFromS3(params.slug);
-  
-  if (!articleData || !articleData.blogPost) {
+
+  if (!articleData) {
     notFound();
   }
 
-  const post = articleData.blogPost;
-  const articleContent = articleData.content || [];
-  
-  // Get related posts
-  const allPosts = await getAllArticlesFromS3();
-  const relatedPosts = allPosts
-    .filter((p: BlogPost) => p.id !== post.id && p.category === post.category)
-    .slice(0, 3);
-
   return (
-    <>
-      <TwitterCardMeta post={post} />
-      <ReadingProgress />
-      
-      <div className="min-h-screen relative">
-        {/* Floating Social Sharing - Top Right Corner */}
-        <div className="fixed top-20 right-6 z-50 hidden md:block">
-          <SocialSharing 
-            post={post} 
-            position="floating"
-            url={`https://research.topledger.xyz/blogs/${post.slug}`}
-          />
+    <article className="max-w-4xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-white">{articleData.title}</h1>
+        <div className="flex items-center gap-4 text-gray-400 mb-6">
+          <span>{articleData.author}</span>
+          <span>•</span>
+          <span>{new Date(articleData.date).toLocaleDateString()}</span>
+          <span>•</span>
+          <span>{articleData.readTime || '5 min read'}</span>
         </div>
-
-        <div className="max-w-4xl mx-auto py-8">
-          
-          {/* Back to Blogs Button */}
-          <BackToBlogsButton />
-          
-          {/* Article Header */}
-          <ArticleHeader post={post} />
-          
-          {/* Mobile Social Sharing - Inline */}
-          <div className="mb-8 md:hidden">
-            <SocialSharing 
-              post={post} 
-              position="mobile"
-              url={`https://research.topledger.xyz/blogs/${post.slug}`}
+        {articleData.image && (
+          <div className="mb-8">
+            <img 
+              src={articleData.image} 
+              alt={articleData.title}
+              className="w-full h-64 object-cover rounded-lg"
             />
           </div>
-          
-          {/* Article Content */}
-          <ArticleContent content={articleContent} />
-          
-          {/* Author Bio */}
-          <AuthorBio author={post.author} />
-          
-          {/* Related Articles */}
-          {relatedPosts.length > 0 && (
-            <RelatedArticles posts={relatedPosts} />
-          )}
-          
-        </div>
+        )}
       </div>
       
-      
-    </>
+      <div className="prose prose-lg max-w-none text-gray-300">
+        <div dangerouslySetInnerHTML={{ __html: articleData.content }} />
+      </div>
+    </article>
   );
 }
 

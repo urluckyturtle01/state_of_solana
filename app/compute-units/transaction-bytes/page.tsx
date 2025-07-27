@@ -1,5 +1,3 @@
-"use client";
-
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
@@ -12,11 +10,10 @@ const ChartLoading = () => (
   </div>
 );
 
-
 // SEO Structured Data
 const structuredData = generateStructuredData('/compute-units/transaction-bytes');
 
-export default function ComputeUnitsTransactionBytesPage() {
+export default function TransactionBytesPage() {
   return (
     <div className="space-y-6">
       <Suspense fallback={<ChartLoading />}>

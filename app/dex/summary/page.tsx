@@ -1,5 +1,3 @@
-"use client";
-
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
@@ -12,16 +10,15 @@ const ChartLoading = () => (
   </div>
 );
 
-
 // SEO Structured Data
 const structuredData = generateStructuredData('/dex/summary');
 
-export default function DexSummaryPage() {
+export default function SummaryPage() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="dex-summary" 
+          pageId="summary" 
           enableCaching={true}
         />
       </Suspense>

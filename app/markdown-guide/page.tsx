@@ -1,5 +1,3 @@
-"use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 import React from 'react';

@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 
 import React, { Suspense, useState, useEffect, useRef } from 'react';
@@ -206,4 +205,3 @@ export default function SFDepinPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/sf-dashboards/depin');

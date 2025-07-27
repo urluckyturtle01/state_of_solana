@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
+import { generateNextMetadata } from '../seo-metadata';
 import Layout from '@/app/components/Layout';
 
-export const metadata: Metadata = {
-  title: 'Blogs | State of Solana',
-  description: 'Explore insights, development updates, research, and cultural content from the Solana ecosystem',
-};
+export const metadata: Metadata = generateNextMetadata('/blogs');
 
 export default function BlogsLayout({
   children,

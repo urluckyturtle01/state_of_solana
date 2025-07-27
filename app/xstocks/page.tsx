@@ -1,5 +1,4 @@
 "use client";
-
 import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 import { useEffect } from "react";
@@ -38,4 +37,3 @@ export default function XStocksPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/xstocks');
