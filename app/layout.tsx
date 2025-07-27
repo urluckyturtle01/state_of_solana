@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     "DeFi",
     "Cryptocurrency",
   ],
+  verification: {
+    google: "lzejPBZ2R1K7N81KQzA5Tdl_JNVlY-yNzkTpRca3Q0U",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", type: "image/x-icon" },

@@ -1,0 +1,38 @@
+
+Google Search Console Verification Template
+==========================================
+
+Option 1: Meta Tag Method (Recommended)
+Add this to your main layout component in the <head> section:
+
+<meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
+
+Example locations to add this:
+- app/layout.tsx (if using app router)
+- pages/_document.js (if using pages router)
+- app/share/chart/[chartId]/page.tsx (for specific pages)
+
+Option 2: HTML File Method
+1. Download the verification file from Google Search Console
+2. Place it in: public/google[verification-code].html
+3. Verify it's accessible at: https://research.topledger.xyz/google[verification-code].html
+
+Important URLs to Verify:
+https://research.topledger.xyz/
+https://research.topledger.xyz/overview
+https://research.topledger.xyz/dex/summary
+https://research.topledger.xyz/protocol-revenue/summary
+https://research.topledger.xyz/stablecoins
+https://research.topledger.xyz/rev
+https://research.topledger.xyz/mev/summary
+https://research.topledger.xyz/sf-dashboards/overview
+https://research.topledger.xyz/blogs
+
+Chart URL Pattern:
+https://research.topledger.xyz/share/chart/[chart-id]
+
+Next Steps:
+1. Verify ownership in Google Search Console
+2. Submit sitemap: https://research.topledger.xyz/sitemap.xml
+3. Use URL Inspection tool for priority pages
+4. Monitor indexing status daily
