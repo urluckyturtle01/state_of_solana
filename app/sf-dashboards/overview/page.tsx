@@ -1,5 +1,7 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
+
 import React, { Suspense, useState, useEffect, useRef } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -100,6 +102,10 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   );
 };
 
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/sf-dashboards/overview');
+
 export default function SFOverviewPage() {
   const [activeSection, setActiveSection] = useState<string>(OVERVIEW_SECTIONS[0].id);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -197,3 +203,5 @@ export default function SFOverviewPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/sf-dashboards/overview');

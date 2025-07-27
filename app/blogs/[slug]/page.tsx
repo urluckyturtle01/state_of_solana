@@ -8,6 +8,7 @@ import AuthorBio from '../components/AuthorBio';
 import RelatedArticles from '../components/RelatedArticles';
 import BackToBlogsButton from '../components/BackToBlogsButton';
 import TwitterCardMeta from '../components/TwitterCardMeta';
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 
 interface BlogPost {
   id: string;
@@ -204,6 +205,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     },
   };
 }
+
+export const metadata = generateNextMetadata('/blogs/[slug]');
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const articleData = await getArticleFromS3(params.slug);

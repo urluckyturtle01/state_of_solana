@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import ServerChartRenderer from "@/app/components/ServerChartRenderer";
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 
 // Create a loading component for Suspense fallback
 const ChartLoading = () => (
@@ -7,6 +8,8 @@ const ChartLoading = () => (
     <div className="w-6 h-6 border-2 border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
   </div>
 );
+
+export const metadata = generateNextMetadata('/overview/market-dynamics');
 
 export default function MarketDynamicsPage() {
   return (

@@ -10,8 +10,8 @@ export async function generateMetadata(
   
   // Get SEO metadata for this chart
   const chartMeta = getChartMetadata(chartId) || defaultChartMetadata;
-  
-  return {
+        
+        return {
     title: chartMeta.title,
     description: chartMeta.description,
     keywords: chartMeta.keywords,
@@ -130,7 +130,7 @@ export default async function SharedChartPage({
       ]
     }
   };
-  
+
   return (
     <>
       {/* Structured Data for Google */}

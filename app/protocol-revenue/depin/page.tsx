@@ -1,4 +1,6 @@
 "use client";
+
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -10,6 +12,10 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/protocol-revenue/depin');
 
 export default function ProtocolRevenueDepinPage() {
   return (
@@ -23,3 +29,5 @@ export default function ProtocolRevenueDepinPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/protocol-revenue/depin');

@@ -1,5 +1,7 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useState, useMemo, useEffect } from 'react';
 import BlogHero from './components/BlogHero';
 import BlogCard from './components/BlogCard';
@@ -27,6 +29,10 @@ const filters = [
   { name: 'All', path: '/blogs', key: 'all', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
   { name: 'DePIN', path: '/blogs', key: 'depin', icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
 ];
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/blogs');
 
 export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -175,3 +181,5 @@ export default function BlogsPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/blogs');

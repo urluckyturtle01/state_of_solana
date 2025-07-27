@@ -1,4 +1,6 @@
 "use client";
+
+import { generateNextMetadata, generateStructuredData } from '../../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -10,6 +12,10 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/projects/sol-strategies/revenue');
 
     export default function SolStrategiesRevenuePage() {
   return (
@@ -23,3 +29,5 @@ const ChartLoading = () => (
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/projects/sol-strategies/revenue');

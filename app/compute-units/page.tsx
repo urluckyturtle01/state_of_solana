@@ -1,8 +1,14 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getPagesForMenu } from "@/app/admin/config/menuPages";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/compute-units');
 
 export default function ComputeUnitsIndexPage() {
   const router = useRouter();
@@ -37,3 +43,5 @@ export default function ComputeUnitsIndexPage() {
   </div>
   );
 }
+
+export const metadata = generateNextMetadata('/compute-units');

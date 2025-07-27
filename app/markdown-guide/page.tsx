@@ -1,5 +1,7 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -389,4 +391,10 @@ analytics.track('dashboard_view', {
   );
 };
 
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/markdown-guide');
+
 export default MarkdownGuide; 
+
+export const metadata = generateNextMetadata('/markdown-guide');

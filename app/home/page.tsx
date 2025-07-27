@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Link from 'next/link';
 import { LandingPageChart, sampleChartData } from '../components/LandingPageChart';
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -94,6 +95,8 @@ const testimonials = [
     role: "Blockchain Infrastructure"
   }
 ];
+
+export const metadata = generateNextMetadata('/home');
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState(0);

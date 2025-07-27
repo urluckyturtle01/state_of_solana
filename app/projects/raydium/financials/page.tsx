@@ -1,4 +1,6 @@
 "use client";
+
+import { generateNextMetadata, generateStructuredData } from '../../../seo-metadata';
 import React, { Suspense, useRef } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -10,6 +12,10 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/projects/raydium/financials');
 
 export default function RaydiumFinancialsPage() {
   const tableRef = useRef<HTMLDivElement>(null);
@@ -70,3 +76,5 @@ export default function RaydiumFinancialsPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/projects/raydium/financials');

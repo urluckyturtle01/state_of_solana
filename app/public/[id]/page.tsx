@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import PublicDashboardClient from './PublicDashboardClient';
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 
 interface SavedChart {
   id: string;
@@ -80,6 +81,8 @@ interface PublicDashboardPageProps {
     id: string;
   };
 }
+
+export const metadata = generateNextMetadata('/public/[id]');
 
 export default async function PublicDashboardPage({ params }: PublicDashboardPageProps) {
   const dashboardId = params.id;

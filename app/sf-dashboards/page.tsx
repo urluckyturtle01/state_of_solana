@@ -1,9 +1,15 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/sf-dashboards');
 
 export default function SFDashboardsPage() {
   const router = useRouter();
@@ -31,3 +37,5 @@ export default function SFDashboardsPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/sf-dashboards');

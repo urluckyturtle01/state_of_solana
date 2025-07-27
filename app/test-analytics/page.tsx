@@ -1,6 +1,12 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useEffect, useState } from 'react';
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/test-analytics');
 
 export default function TestAnalyticsPage() {
   const [gaStatus, setGaStatus] = useState<{
@@ -140,3 +146,5 @@ export default function TestAnalyticsPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/test-analytics');

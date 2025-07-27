@@ -1,4 +1,6 @@
 "use client";
+
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -9,6 +11,10 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/launchpads/post-migration-trade-stats');
 
 export default function LaunchpadsPostMigrationTradeStatsPage() {
   return (
@@ -22,3 +28,5 @@ export default function LaunchpadsPostMigrationTradeStatsPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/launchpads/post-migration-trade-stats');

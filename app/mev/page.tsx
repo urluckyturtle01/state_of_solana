@@ -1,7 +1,13 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/mev');
 
 export default function MevIndexPage() {
   const router = useRouter();
@@ -29,3 +35,5 @@ export default function MevIndexPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/mev');

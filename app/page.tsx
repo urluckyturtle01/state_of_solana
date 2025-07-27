@@ -1,8 +1,14 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from './seo-metadata';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/');
 
 export default function RootPage() {
   const router = useRouter();
@@ -19,3 +25,5 @@ export default function RootPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/');

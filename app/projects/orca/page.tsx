@@ -1,7 +1,13 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/projects/orca');
 
 export default function OrcaPage() {
   const router = useRouter();
@@ -31,3 +37,5 @@ export default function OrcaPage() {
   </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/projects/orca');

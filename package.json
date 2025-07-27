@@ -16,7 +16,13 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "compress": "cd public/temp && node compress-chart-data.js",
-    "compress:info": "echo 'Compresses all chart data files to reduce loading times by ~90%'"
+    "compress:info": "echo 'Compresses all chart data files to reduce loading times by ~90%'",
+    "seo:update": "node scripts/update-all-seo.js",
+    "seo:check": "node scripts/update-all-seo.js --dry-run",
+    "seo:pages": "node scripts/update-all-seo.js --pages-only",
+    "seo:charts": "node scripts/update-all-seo.js --charts-only",
+    "seo:sitemap": "node scripts/generate-sitemap.js",
+    "seo:help": "node scripts/update-all-seo.js --help"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.821.0",

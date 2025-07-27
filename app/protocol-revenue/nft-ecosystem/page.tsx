@@ -1,4 +1,6 @@
 "use client";
+
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -9,6 +11,10 @@ const ChartLoading = () => (
     <PrettyLoader size="sm" />
   </div>
 );
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/protocol-revenue/nft-ecosystem');
 
 export default function ProtocolRevenueNftEcosystemPage() {
   return (
@@ -22,3 +28,5 @@ export default function ProtocolRevenueNftEcosystemPage() {
     </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/protocol-revenue/nft-ecosystem');

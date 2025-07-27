@@ -1,8 +1,14 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getPagesForMenu } from "@/app/admin/config/menuPages";
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/wrapped-btc');
 
 export default function WrappedBtcIndexPage() {
   const router = useRouter();
@@ -37,3 +43,5 @@ export default function WrappedBtcIndexPage() {
     </div>
   );
 }
+
+export const metadata = generateNextMetadata('/wrapped-btc');

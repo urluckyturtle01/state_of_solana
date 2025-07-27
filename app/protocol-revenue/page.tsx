@@ -1,8 +1,14 @@
 "use client";
 
+import { generateNextMetadata, generateStructuredData } from '../seo-metadata';
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/protocol-revenue');
 
 export default function ProtocolRevenueRedirectPage() {
   const router = useRouter();
@@ -30,3 +36,5 @@ export default function ProtocolRevenueRedirectPage() {
   </div>
   );
 } 
+
+export const metadata = generateNextMetadata('/protocol-revenue');
