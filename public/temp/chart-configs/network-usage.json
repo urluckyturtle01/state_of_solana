@@ -2,7 +2,7 @@
   "pageId": "network-usage",
   "pageName": "Network Usage",
   "chartCount": 4,
-  "lastUpdated": "2025-07-28T10:36:19.473Z",
+  "lastUpdated": "2025-07-28T11:41:26.644Z",
   "charts": [
     {
       "id": "chart_1748252444149_tkcgszd",
@@ -170,27 +170,25 @@
           },
           {
             "field": "avg_fee_lamport",
-            "type": "bar",
+            "type": "line",
             "unit": "",
             "rightAxis": true
           },
           {
             "field": "median_fee_lamport",
-            "type": "bar",
+            "type": "line",
             "unit": "",
             "rightAxis": true
           },
           {
             "field": "avg_priority_fee_lamport",
-            "type": "bar",
+            "type": "line",
             "unit": "",
             "rightAxis": true
           }
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-07-28T10:28:48.577Z",
-      "updatedAt": "2025-07-28T10:28:48.947Z",
       "dualAxisConfig": {
         "leftAxisType": "bar",
         "rightAxisType": "line",
@@ -202,7 +200,9 @@
           "median_fee_lamport",
           "avg_priority_fee_lamport"
         ]
-      }
+      },
+      "createdAt": "2025-07-28T10:28:48.577Z",
+      "updatedAt": "2025-07-28T11:40:57.360Z"
     }
   ]
 }
