@@ -1386,18 +1386,25 @@ export default function DashboardRenderer({
       });
       
       // Create legend items for all fields - show API field names as-is
-      chartLegends = allFields.map(field => {
-        const isRightAxis = filteredRightAxisFields.includes(field);
-        
-        return {
-          id: field, // Add the raw field name as id
-          label: field, // Show API field name as-is without formatting
-          color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
-          value: fieldTotals[field] || 0,
-          // Determine shape based on axis (typically lines for right axis)
-          shape: isRightAxis ? 'circle' as const : 'square' as const
-        };
-      }).sort((a, b) => b.value - a.value); // Sort by value in descending order
+      // Filter out fields with zero or near-zero total values
+      chartLegends = allFields
+        .filter(field => {
+          const totalValue = fieldTotals[field] || 0;
+          // Filter out fields with zero or very small values (to handle floating point precision)
+          return Math.abs(totalValue) > 0.001;
+        })
+        .map(field => {
+          const isRightAxis = filteredRightAxisFields.includes(field);
+          
+          return {
+            id: field, // Add the raw field name as id
+            label: field, // Show API field name as-is without formatting
+            color: colorMap[field] || getColorByIndex(allFields.indexOf(field)),
+            value: fieldTotals[field] || 0,
+            // Determine shape based on axis (typically lines for right axis)
+            shape: isRightAxis ? 'circle' as const : 'square' as const
+          };
+        }).sort((a, b) => b.value - a.value); // Sort by value in descending order
     }
     // First, we need to determine if this is truly a stacked chart with valid data
     // OR a regular chart with groupBy - both need to display the group items in legends
@@ -1461,8 +1468,14 @@ export default function DashboardRenderer({
         chart.dataMapping.yAxis[0].type === 'line';
       
       // Now create legend items using the color map
+      // Filter out groups with zero or near-zero total values
       chartLegends = uniqueGroups
         .filter(group => group !== null && group !== undefined)
+        .filter(group => {
+          const totalValue = groupTotals[String(group)] || 0;
+          // Filter out groups with zero or very small values (to handle floating point precision)
+          return Math.abs(totalValue) > 0.001;
+        })
         .map((group) => {
           const groupStr = String(group);
           return {
@@ -1512,23 +1525,30 @@ export default function DashboardRenderer({
       }
       
       // Generate legends with appropriate colors
-      chartLegends = pieItems.map((item, index) => {
-        const { label, value } = item;
-        newLabels.push(label);
-        
-        // Assign colors if creating a new color map
-        if (isNewColorMap && !colorMap[label]) {
-          colorMap[label] = getColorByIndex(index);
-        }
-        
-        return {
-          label,
-          color: colorMap[label] || getColorByIndex(index),
-          value,
-          // Pie charts always use square/block shape
-          shape: 'square' as const
-        };
-      });
+      // Filter out pie segments with zero or near-zero values
+      chartLegends = pieItems
+        .filter(item => {
+          const totalValue = item.value || 0;
+          // Filter out items with zero or very small values (to handle floating point precision)
+          return Math.abs(totalValue) > 0.001;
+        })
+        .map((item, index) => {
+          const { label, value } = item;
+          newLabels.push(label);
+          
+          // Assign colors if creating a new color map
+          if (isNewColorMap && !colorMap[label]) {
+            colorMap[label] = getColorByIndex(index);
+          }
+          
+          return {
+            label,
+            color: colorMap[label] || getColorByIndex(index),
+            value,
+            // Pie charts always use square/block shape
+            shape: 'square' as const
+          };
+        });
       
       console.log(`Generated ${chartLegends.length} legend items for pie chart`);
     }
@@ -1601,67 +1621,86 @@ export default function DashboardRenderer({
         // Check if we have multiple y-axis fields (multi-series)
         if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
           // For multi-series area charts, use the y-axis field names as legends - show API names as-is
-          chartLegends = yAxisFields.map((field, index) => {
-            // Calculate the total for this field across all data points
-            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-            
-            newLabels.push(field); // Use raw field name
-            
-            // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[field] && isNewColorMap) {
-              colorMap[field] = getColorByIndex(index);
-            }
-            
-            return {
-              id: field, // Add the raw field name as id
-              label: field, // Show API field name as-is without formatting
-              color: colorMap[field] || getColorByIndex(index),
-              value: total,
-              shape: 'square' as const // Area charts use square shapes
-            };
-          });
+          // Filter out fields with zero or near-zero total values
+          chartLegends = yAxisFields
+            .filter(field => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              // Filter out fields with zero or very small values (to handle floating point precision)
+              return Math.abs(total) > 0.001;
+            })
+            .map((field, index) => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              
+              newLabels.push(field); // Use raw field name
+              
+              // Use consistent color from our map, or generate a new one if needed
+              if (!colorMap[field] && isNewColorMap) {
+                colorMap[field] = getColorByIndex(index);
+              }
+              
+              return {
+                id: field, // Add the raw field name as id
+                label: field, // Show API field name as-is without formatting
+                color: colorMap[field] || getColorByIndex(index),
+                value: total,
+                shape: 'square' as const // Area charts use square shapes
+              };
+            });
         } else {
           // For single-series area charts, use a single legend entry with the y-axis name - show API name as-is
           const yFieldName = getFieldName(yAxisFields[0]);
           const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
           
-          newLabels.push(yFieldName); // Use raw field name
-          
-          // Use consistent color from our map, or generate a new one if needed
-          if (!colorMap[yFieldName] && isNewColorMap) {
-            colorMap[yFieldName] = getColorByIndex(0);
-          }
-          
-          chartLegends = [{
-            id: yFieldName, // Add the raw field name as id
-            label: yFieldName, // Show API field name as-is without formatting
-            color: colorMap[yFieldName] || getColorByIndex(0),
-            value: total,
-            shape: 'square' as const // Area charts use square shapes
-          }];
-        }
-      } else {
-        // For non-date based area charts, use data points as legend entries
-        chartLegends = data
-          .map((item, index) => {
-            const label = String(item[xField]);
-            const id = label; // For non-date based, id and label are the same
-            newLabels.push(id);
+          // Only create legend if the total value is non-zero
+          if (Math.abs(total) > 0.001) {
+            newLabels.push(yFieldName); // Use raw field name
             
             // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[id] && isNewColorMap) {
-              colorMap[id] = getColorByIndex(index);
+            if (!colorMap[yFieldName] && isNewColorMap) {
+              colorMap[yFieldName] = getColorByIndex(0);
             }
             
-            return {
-              id,
-              label,
-              color: colorMap[id] || getColorByIndex(index),
-              value: Number(item[yAxisFields[0]]) || 0,
+            chartLegends = [{
+              id: yFieldName, // Add the raw field name as id
+              label: yFieldName, // Show API field name as-is without formatting
+              color: colorMap[yFieldName] || getColorByIndex(0),
+              value: total,
               shape: 'square' as const // Area charts use square shapes
-            };
-          });
-      }
+            }];
+          } else {
+            chartLegends = []; // No legend if no data
+          }
+        }
+              } else {
+          // For non-date based area charts, use data points as legend entries
+          // Filter out items with zero or near-zero values
+          chartLegends = data
+            .filter(item => {
+              const value = Number(item[yAxisFields[0]]) || 0;
+              // Filter out items with zero or very small values (to handle floating point precision)
+              return Math.abs(value) > 0.001;
+            })
+            .map((item, index) => {
+              const label = String(item[xField]);
+              const id = label; // For non-date based, id and label are the same
+              newLabels.push(id);
+              
+              // Use consistent color from our map, or generate a new one if needed
+              if (!colorMap[id] && isNewColorMap) {
+                colorMap[id] = getColorByIndex(index);
+              }
+              
+              return {
+                id,
+                label,
+                color: colorMap[id] || getColorByIndex(index),
+                value: Number(item[yAxisFields[0]]) || 0,
+                shape: 'square' as const // Area charts use square shapes
+              };
+            });
+        }
       
       console.log(`Generated ${chartLegends.length} legend items for area chart`);
     }
@@ -1734,47 +1773,60 @@ export default function DashboardRenderer({
         // Check if we have multiple y-axis fields (multi-series)
         if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
           // For multi-series charts, use the y-axis field names as legends - show API names as-is
-          chartLegends = yAxisFields.map((field, index) => {
-            // Calculate the total for this field across all data points
-            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-            
-            newLabels.push(field); // Use raw field name
-            
-            // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[field] && isNewColorMap) {
-              colorMap[field] = getColorByIndex(index);
-            }
-            
-            return {
-              id: field, // Add the raw field name as id
-              label: field, // Show API field name as-is without formatting
-              color: colorMap[field] || getColorByIndex(index),
-              value: total,
-              shape: isLineType(chart, field) ? 'circle' as const : 'square' as const
-            };
-          });
+          // Filter out fields with zero or near-zero total values
+          chartLegends = yAxisFields
+            .filter(field => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              // Filter out fields with zero or very small values (to handle floating point precision)
+              return Math.abs(total) > 0.001;
+            })
+            .map((field, index) => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              
+              newLabels.push(field); // Use raw field name
+              
+              // Use consistent color from our map, or generate a new one if needed
+              if (!colorMap[field] && isNewColorMap) {
+                colorMap[field] = getColorByIndex(index);
+              }
+              
+              return {
+                id: field, // Add the raw field name as id
+                label: field, // Show API field name as-is without formatting
+                color: colorMap[field] || getColorByIndex(index),
+                value: total,
+                shape: isLineType(chart, field) ? 'circle' as const : 'square' as const
+              };
+            });
         } else {
           // For single-series time charts, use a single legend entry with the y-axis name - show API name as-is
           const yFieldName = getFieldName(yAxisFields[0]);
           const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
           
-          newLabels.push(yFieldName); // Use raw field name
-          
-          // Use consistent color from our map, or generate a new one if needed
-          if (!colorMap[yFieldName] && isNewColorMap) {
-            colorMap[yFieldName] = getColorByIndex(0);
+          // Only create legend if the total value is non-zero
+          if (Math.abs(total) > 0.001) {
+            newLabels.push(yFieldName); // Use raw field name
+            
+            // Use consistent color from our map, or generate a new one if needed
+            if (!colorMap[yFieldName] && isNewColorMap) {
+              colorMap[yFieldName] = getColorByIndex(0);
+            }
+            
+            // Determine if this field should be rendered as a line
+            const isLine = isLineType(chart, yFieldName);
+            
+            chartLegends = [{
+              id: yFieldName, // Add the raw field name as id
+              label: yFieldName, // Show API field name as-is without formatting
+              color: colorMap[yFieldName] || getColorByIndex(0),
+              value: total,
+              shape: isLine ? 'circle' as const : 'square' as const
+            }];
+          } else {
+            chartLegends = []; // No legend if no data
           }
-          
-          // Determine if this field should be rendered as a line
-          const isLine = isLineType(chart, yFieldName);
-          
-          chartLegends = [{
-            id: yFieldName, // Add the raw field name as id
-            label: yFieldName, // Show API field name as-is without formatting
-            color: colorMap[yFieldName] || getColorByIndex(0),
-            value: total,
-            shape: isLine ? 'circle' as const : 'square' as const
-          }];
         }
       } else {
         // For non-date based charts, determine if we should show y-axis field or data points
@@ -1786,53 +1838,72 @@ export default function DashboardRenderer({
         
         if (isMultiSeries) {
           // Multi-series chart - show y-axis field names as legends
-          chartLegends = yAxisFields.map((field, index) => {
-            // Calculate the total for this field across all data points
-            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-            
-            newLabels.push(field); // Use raw field name
-            
-            // Use consistent color from our map, or generate a new one if needed
-            if (!colorMap[field] && isNewColorMap) {
-              colorMap[field] = getColorByIndex(index);
-            }
-            
-            // Determine if this field should be rendered as a line
-            const isLine = isLineType(chart, field);
-            
-            return {
-              id: field, // Add the raw field name as id
-              label: field, // Show API field name as-is without formatting
-              color: colorMap[field] || getColorByIndex(index),
-              value: total,
-              shape: isLine ? 'circle' as const : 'square' as const
-            };
-          });
+          // Filter out fields with zero or near-zero total values
+          chartLegends = yAxisFields
+            .filter(field => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              // Filter out fields with zero or very small values (to handle floating point precision)
+              return Math.abs(total) > 0.001;
+            })
+            .map((field, index) => {
+              // Calculate the total for this field across all data points
+              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+              
+              newLabels.push(field); // Use raw field name
+              
+              // Use consistent color from our map, or generate a new one if needed
+              if (!colorMap[field] && isNewColorMap) {
+                colorMap[field] = getColorByIndex(index);
+              }
+              
+              // Determine if this field should be rendered as a line
+              const isLine = isLineType(chart, field);
+              
+              return {
+                id: field, // Add the raw field name as id
+                label: field, // Show API field name as-is without formatting
+                color: colorMap[field] || getColorByIndex(index),
+                value: total,
+                shape: isLine ? 'circle' as const : 'square' as const
+              };
+            });
         } else if (!hasGroupBy) {
           // Simple single-series chart without groupBy - show y-axis field name
           const yFieldName = getFieldName(yAxisFields[0]);
           const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
           
-          newLabels.push(yFieldName); // Use raw field name
-          
-          // Use consistent color from our map, or generate a new one if needed
-          if (!colorMap[yFieldName] && isNewColorMap) {
-            colorMap[yFieldName] = getColorByIndex(0);
+          // Only create legend if the total value is non-zero
+          if (Math.abs(total) > 0.001) {
+            newLabels.push(yFieldName); // Use raw field name
+            
+            // Use consistent color from our map, or generate a new one if needed
+            if (!colorMap[yFieldName] && isNewColorMap) {
+              colorMap[yFieldName] = getColorByIndex(0);
+            }
+            
+            // Determine if this field should be rendered as a line
+            const isLine = isLineType(chart, yFieldName);
+            
+            chartLegends = [{
+              id: yFieldName, // Add the raw field name as id
+              label: yFieldName, // Show API field name as-is without formatting
+              color: colorMap[yFieldName] || getColorByIndex(0),
+              value: total,
+              shape: isLine ? 'circle' as const : 'square' as const
+            }];
+          } else {
+            chartLegends = []; // No legend if no data
           }
-          
-          // Determine if this field should be rendered as a line
-          const isLine = isLineType(chart, yFieldName);
-          
-          chartLegends = [{
-            id: yFieldName, // Add the raw field name as id
-            label: yFieldName, // Show API field name as-is without formatting
-            color: colorMap[yFieldName] || getColorByIndex(0),
-            value: total,
-            shape: isLine ? 'circle' as const : 'square' as const
-          }];
         } else {
           // Chart with groupBy but not stacked - show individual data points
+          // Filter out items with zero or near-zero values
           chartLegends = data
+            .filter(item => {
+              const value = Number(item[yAxisFields[0]]) || 0;
+              // Filter out items with zero or very small values (to handle floating point precision)
+              return Math.abs(value) > 0.001;
+            })
             .map((item, index) => {
               const label = String(item[xField]);
               const id = label; // For non-date based, id and label are the same

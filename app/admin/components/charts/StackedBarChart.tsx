@@ -761,12 +761,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         }
       }
       
-      // Get all y-fields as keys for stacking (excluding hidden ones)
-      const stackKeys = Array.isArray(filteredYField) 
-        ? filteredYField
-            .map(field => typeof field === 'string' ? field : field.field)
-            .filter(key => !hiddenSeriesState.includes(key))
+      // Get ALL y-fields for color assignment and processing
+      const allStackKeys = Array.isArray(filteredYField) 
+        ? filteredYField.map(field => typeof field === 'string' ? field : field.field)
         : [yKey];
+      
+      // Get visible keys (excluding hidden ones) for chart rendering
+      const stackKeys = allStackKeys.filter(key => !hiddenSeriesState.includes(key));
       
       // Group by x-axis values to prevent duplicate x values
       const groupedData: Record<string, ChartDataItem> = {};
@@ -775,17 +776,17 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         const xValue = String(item[xKey]);
         
         if (!groupedData[xValue]) {
-          // Initialize with x value and all stack keys with 0
+          // Initialize with x value and all stack keys with 0 (including hidden ones for color consistency)
           groupedData[xValue] = { [xKey]: item[xKey] };
           
-          // Initialize all stack keys with 0
-          stackKeys.forEach(key => {
+          // Initialize all stack keys with 0 (including hidden ones)
+          allStackKeys.forEach(key => {
             groupedData[xValue][key] = 0;
           });
         }
         
-        // Update values for all y-fields that exist in this item
-        stackKeys.forEach(key => {
+        // Update values for all y-fields that exist in this item (including hidden ones)
+        allStackKeys.forEach(key => {
           if (item[key] !== undefined && item[key] !== null) {
             const value = Number(item[key]) || 0;
             groupedData[xValue][key] = (groupedData[xValue][key] || 0) + value;
@@ -793,13 +794,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         });
       });
       
-      // For percentage mode, we need to convert values to percentages
+      // For percentage mode, we need to convert values to percentages (only for visible keys)
       if (displayMode === 'percent') {
         Object.keys(groupedData).forEach(xValue => {
-          // Calculate the total for this x value
+          // Calculate the total for this x value (only visible keys)
           const total = stackKeys.reduce((sum, key) => sum + (groupedData[xValue][key] || 0), 0);
           if (total > 0) {
-            // Convert each value to percentage
+            // Convert each value to percentage (only visible keys)
             stackKeys.forEach(key => {
               groupedData[xValue][key] = (groupedData[xValue][key] / total) * 100;
             });
@@ -807,21 +808,21 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         });
       }
       
-      // Calculate total values for each field to determine color assignment by magnitude
+      // Calculate total values for ALL fields to determine color assignment by magnitude
       const fieldTotals: Record<string, number> = {};
-      stackKeys.forEach(field => {
+      allStackKeys.forEach(field => {
         fieldTotals[field] = Object.values(groupedData).reduce((sum, dataPoint) => {
           return sum + (Number(dataPoint[field]) || 0);
         }, 0);
       });
       
-      // Sort fields by total value (descending) to assign colors by magnitude
-      const sortedFieldsByValue = [...stackKeys].sort((a, b) => fieldTotals[b] - fieldTotals[a]);
+      // Sort ALL fields by total value (descending) to assign colors by magnitude
+      const sortedFieldsByValue = [...allStackKeys].sort((a, b) => fieldTotals[b] - fieldTotals[a]);
       
       console.log('Field totals for color assignment:', fieldTotals);
       console.log('Fields sorted by value (descending):', sortedFieldsByValue);
       
-      // Create color map based on value ranking - highest value gets colors[0], etc.
+      // Create color map based on value ranking for ALL fields - highest value gets colors[0], etc.
       const colorsByField: Record<string, string> = {};
       sortedFieldsByValue.forEach((field, index) => {
         colorsByField[field] = getColorByIndex(index);
@@ -900,10 +901,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       const xValue = String(item[xKey]);
       const groupValue = String(item[groupByField]);
       
-      // Track all unique group values (excluding hidden ones)
-      if (!hiddenSeriesState.includes(groupValue)) {
+      // Track all unique group values (including hidden ones for color consistency)
       allGroups.add(groupValue);
-      }
       
       // Initialize the grouped data structure for this x value
       if (!groupedData[xValue]) {
@@ -913,32 +912,31 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         groupedValues[xValue] = {};
       }
       
-      // Sum values for the same x value and group (if not hidden)
-      if (!hiddenSeriesState.includes(groupValue)) {
+      // Sum values for the same x value and group (all groups, including hidden)
       const currentValue = Number(item[yKey]) || 0;
       groupedValues[xValue][groupValue] = (groupedValues[xValue][groupValue] || 0) + currentValue;
-      }
     });
     
     // Second pass: build the final data structure
     Object.keys(groupedData).forEach(xValue => {
-      // Make sure each group has a value (even if zero)
+      // Make sure each group has a value (even if zero) - including hidden groups
       allGroups.forEach(group => {
         groupedData[xValue][group] = groupedValues[xValue][group] || 0;
       });
     });
     
-    // For percentage mode, convert values to percentages
+    // For percentage mode, convert values to percentages (only for visible groups)
     if (displayMode === 'percent') {
       Object.keys(groupedData).forEach(xValue => {
-        // Calculate the total for this x value
-        const total = Array.from(allGroups).reduce(
+        // Calculate the total for this x value (only visible groups)
+        const visibleGroups = Array.from(allGroups).filter(group => !hiddenSeriesState.includes(group));
+        const total = visibleGroups.reduce(
           (sum, group) => sum + (groupedData[xValue][group] || 0), 0
         );
         
         if (total > 0) {
-          // Convert each value to percentage
-          allGroups.forEach(group => {
+          // Convert each value to percentage (only visible groups)
+          visibleGroups.forEach(group => {
             groupedData[xValue][group] = (groupedData[xValue][group] / total) * 100;
           });
         }
@@ -948,13 +946,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     // Convert to array
     const uniqueProcessedData = Object.values(groupedData);
     
-    // Get all unique group values as keys for the stack
-    const stackKeys = Array.from(allGroups);
-    console.log(`Found ${stackKeys.length} groups for stacking:`, stackKeys);
+    // Get visible group values as keys for the stack rendering
+    const stackKeys = Array.from(allGroups).filter(group => !hiddenSeriesState.includes(group));
+    console.log(`Found ${stackKeys.length} visible groups for stacking out of ${allGroups.size} total:`, stackKeys);
     
-    // Create color map for each group
+    // Create color map for ALL groups (including hidden ones for legend consistency)
     const colorsByGroup: Record<string, string> = {};
-    stackKeys.forEach((group, i) => {
+    Array.from(allGroups).forEach((group, i) => {
       colorsByGroup[group] = preferredColorMap[group] || getColorByIndex(i % allColorsArray.length);
     });
     
@@ -1633,7 +1631,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
 
   // Update legend items when data changes
   useEffect(() => {
-    if (chartData.length > 0 && keys.length > 0) {
+    if (data.length > 0) {
       // Calculate total value for each key across all data points
       const keyTotals: Record<string, number> = {};
       
@@ -1661,17 +1659,21 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
         }
       });
 
-      // Use the filtered keys from chart processing instead of all original keys
-      // This ensures legend only shows fields that are actually displayed in the chart
-      const legendKeys = keys.length > 0 ? keys : 
-        Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
-          ? yField.map(field => typeof field === 'string' ? field : field.field)
-          : hasGroupBy 
-            ? Array.from(new Set(data.map(item => String(item[groupByField]))))
-            : [yKey]; // Simple bar chart has only one key
+      // Get ALL possible legend keys (not just visible ones) to ensure legend items don't disappear
+      const legendKeys = Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked
+        ? yField.map(field => typeof field === 'string' ? field : field.field)
+        : hasGroupBy 
+          ? Array.from(new Set(data.map(item => String(item[groupByField]))))
+          : [yKey]; // Simple bar chart has only one key
       
       // Create and sort legend items by total value (descending)
+      // Filter out keys with zero or near-zero total values
       const newLegendItems = legendKeys
+        .filter(key => {
+          const totalValue = keyTotals[key] || 0;
+          // Filter out keys with zero or very small values (to handle floating point precision)
+          return Math.abs(totalValue) > 0.001;
+        })
         .map(key => ({
           id: key,
           label: formatFieldName(key),
@@ -1682,7 +1684,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       
       setLegendItems(newLegendItems);
     }
-  }, [data, chartData, keys, groupColors, yField, yKey, groupByField, chartConfig.isStacked]);
+  }, [data, groupColors, yField, yKey, groupByField, chartConfig.isStacked]);
 
   // Process data for brush component
   const brushData = useMemo(() => {
@@ -1963,20 +1965,35 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const allPossibleKeys = useMemo(() => {
     if (data.length === 0) return [];
 
-    // Use the current keys from chart processing which respects currency filtering
-    if (keys.length > 0) {
-      return keys;
+    // Calculate all possible keys without filtering by hidden state
+    let possibleKeys: string[] = [];
+    if (isMultiYFieldsStacked) {
+      possibleKeys = Array.isArray(yField) ? yField.map(field => typeof field === 'string' ? field : field.field) : [];
+    } else if (!hasGroupBy) {
+      possibleKeys = [yKey];
+    } else {
+      possibleKeys = Array.from(new Set(data.map(d => d[groupByField]))).filter(key => key != null);
     }
 
-    // Fallback to original logic if keys are not available yet
-    if (isMultiYFieldsStacked) {
-      return Array.isArray(yField) ? yField.map(field => typeof field === 'string' ? field : field.field) : [];
-    } else if (!hasGroupBy) {
-      return [yKey];
-    } else {
-      return Array.from(new Set(data.map(d => d[groupByField]))).filter(key => key != null);
-    }
-  }, [data, isMultiYFieldsStacked, yField, hasGroupBy, yKey, groupByField, keys]);
+    // Filter out keys that have zero total values across all data
+    const keysWithData = possibleKeys.filter(key => {
+      const totalValue = data.reduce((sum, item) => {
+        if (isMultiYFieldsStacked) {
+          return sum + (Number(item[key]) || 0);
+        } else if (!hasGroupBy) {
+          return sum + (Number(item[yKey]) || 0);
+        } else {
+          // For grouped data, sum up values where the group matches
+          return item[groupByField] === key ? sum + (Number(item[yKey]) || 0) : sum;
+        }
+      }, 0);
+      
+      // Only include keys with non-zero values (handling floating point precision)
+      return Math.abs(totalValue) > 0.001;
+    });
+
+    return keysWithData;
+  }, [data, isMultiYFieldsStacked, yField, hasGroupBy, yKey, groupByField]);
 
   // Handler for double-click: isolate series or restore all
   const handleLegendDoubleClick = (fieldId: string) => {
