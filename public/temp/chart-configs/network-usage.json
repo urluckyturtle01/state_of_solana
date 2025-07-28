@@ -1,8 +1,8 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "chartCount": 3,
-  "lastUpdated": "2025-07-26T15:09:25.868Z",
+  "chartCount": 4,
+  "lastUpdated": "2025-07-28T10:36:19.473Z",
   "charts": [
     {
       "id": "chart_1748252444149_tkcgszd",
@@ -145,6 +145,63 @@
             ]
           }
         }
+      }
+    },
+    {
+      "id": "chart_1753698528577_c4lx4ep",
+      "title": "Weekly Real TPS And Fee Trends",
+      "subtitle": "",
+      "page": "network-usage",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13932/results.json",
+      "apiKey": "XkdswSdjpW9ISmjYqvkgNs8ggPeiyAUeruHhgq3s&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "week",
+        "yAxis": [
+          {
+            "field": "real_tps",
+            "type": "line",
+            "unit": "",
+            "rightAxis": false
+          },
+          {
+            "field": "avg_fee_lamport",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": true
+          },
+          {
+            "field": "median_fee_lamport",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": true
+          },
+          {
+            "field": "avg_priority_fee_lamport",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-07-28T10:28:48.577Z",
+      "updatedAt": "2025-07-28T10:28:48.947Z",
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "real_tps"
+        ],
+        "rightAxisFields": [
+          "avg_fee_lamport",
+          "median_fee_lamport",
+          "avg_priority_fee_lamport"
+        ]
       }
     }
   ]

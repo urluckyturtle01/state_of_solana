@@ -5,6 +5,7 @@ import ClientHydration from "./components/ClientHydration";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import SaveNotification from "./components/shared/SaveNotification";
 import AnalyticsProvider from "./components/analytics/AnalyticsProvider";
+import NewsletterSection from "./components/shared/NewsletterSection";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -87,6 +88,7 @@ export default function RootLayout({
         <AnalyticsProvider>
         <AuthWrapper>
           {children}
+          {/* <NewsletterSection /> */}
           <SaveNotification />
         </AuthWrapper>
         </AnalyticsProvider>
