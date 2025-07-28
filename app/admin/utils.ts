@@ -11,18 +11,29 @@ export function generateChartId(): string {
 export function formDataToConfig(formData: ChartFormData, isDualAxis?: boolean): ChartConfig {
   const now = new Date().toISOString();
   
-  // Set chart type to dual-axis if specified
+  // Set chart type to dual-axis if specified or if dual axis config exists
   let updatedFormData = { ...formData };
-  if (isDualAxis) {
+  if (isDualAxis || formData.dualAxisConfig) {
     updatedFormData.chartType = 'dual-axis';
   }
   
-  return {
+  const config: ChartConfig = {
     id: generateChartId(),
     ...updatedFormData,
     createdAt: now,
     updatedAt: now,
   };
+  
+  // Log for debugging
+  console.log('formDataToConfig: Input formData.dualAxisConfig:', formData.dualAxisConfig);
+  console.log('formDataToConfig: isDualAxis param:', isDualAxis);
+  if (config.dualAxisConfig) {
+    console.log('formDataToConfig: Final chart config includes dual axis config:', config.dualAxisConfig);
+  } else {
+    console.log('formDataToConfig: Final chart config does NOT include dual axis config');
+  }
+  
+  return config;
 }
 
 // Helper function to find a matching field with flexible matching

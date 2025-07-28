@@ -2645,15 +2645,7 @@ export const chartMeta: Record<string, ChartMetadata> = {
     "ogDescription": "Track total daily tvl with total value locked trends and insights on Solana",
     "ogImage": "/og-images/charts/default-chart.png",
     "keywords": "Solana, analytics, charts, blockchain, DeFi, total, daily"
-  },
-  "chart_1753698528577_c4lx4ep":   {
-      "title": "Weekly Real TPS And Fee Trends - State of Solana",
-      "description": "Explore weekly real tps and fee trends analytics on Solana blockchain",
-      "ogTitle": "Weekly Real TPS And Fee Trends",
-      "ogDescription": "Analyze weekly real tps and fee trends metrics on Solana",
-      "ogImage": "/og-images/charts/network-usage-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, network-usage, dual-axis"
-  },
+  }
 };
 
 // Helper function to get metadata for a chart ID

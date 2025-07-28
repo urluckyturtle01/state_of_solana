@@ -157,7 +157,11 @@ export default function ChartCreatorPage() {
                       ? (chartToEdit.dataMapping.yAxis as any) // Cast to any to avoid type issues
                       : [chartToEdit.dataMapping.yAxis as any], // Cast to any to avoid type issues
                   groupBy: chartToEdit.dataMapping.groupBy || '',
-                }
+                },
+                // Include dual axis config if it exists
+                dualAxisConfig: chartToEdit.dualAxisConfig,
+                // Include additional options if they exist
+                additionalOptions: chartToEdit.additionalOptions
               });
               
               // Determine which menu this page belongs to using the helper function
@@ -168,6 +172,7 @@ export default function ChartCreatorPage() {
               
               // Check if it's a dual axis chart
               if (chartToEdit.chartType === 'dual-axis' && chartToEdit.dualAxisConfig) {
+                console.log('Loading dual axis chart for editing:', chartToEdit.dualAxisConfig);
                 setIsDualAxis(true);
                 setDualAxisConfig(chartToEdit.dualAxisConfig);
               }
@@ -267,6 +272,11 @@ export default function ChartCreatorPage() {
     // Get pages for the selected menu using the helper function
     setAvailablePages(getPagesForMenu(selectedMenu));
   }, [selectedMenu]);
+  
+  // Debug: Monitor form data dual axis config changes
+  useEffect(() => {
+    console.log('FormData dual axis config changed:', formData.dualAxisConfig);
+  }, [formData.dualAxisConfig]);
   
   // Handle menu selection change
   const handleMenuChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -732,12 +742,6 @@ export default function ChartCreatorPage() {
     setIsDualAxis(newIsDualAxis);
     
     if (newIsDualAxis) {
-      // Set chart type to dual-axis when enabling
-      setFormData(prev => ({
-        ...prev,
-        chartType: 'dual-axis'
-      }));
-      
       // Initialize dual axis configuration based on current fields
       const yAxisFields = Array.isArray(formData.dataMapping.yAxis) 
         ? formData.dataMapping.yAxis 
@@ -752,12 +756,21 @@ export default function ChartCreatorPage() {
       const leftFields = fieldNames.length > 0 ? [fieldNames[0]] : [];
       const rightFields = fieldNames.length > 1 ? fieldNames.slice(1) : [];
       
-      setDualAxisConfig({
-        leftAxisType: 'bar',
-        rightAxisType: 'line',
+      const initialDualAxisConfig = {
+        leftAxisType: 'bar' as const,
+        rightAxisType: 'line' as const,
         leftAxisFields: leftFields,
         rightAxisFields: rightFields
-      });
+      };
+      
+      setDualAxisConfig(initialDualAxisConfig);
+      
+      // Also update form data immediately
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        chartType: 'dual-axis',
+        dualAxisConfig: initialDualAxisConfig
+      }));
       
       // Add rightAxis flags to the YAxisConfig objects
       if (Array.isArray(formData.dataMapping.yAxis) && typeof formData.dataMapping.yAxis[0] !== 'string') {
@@ -789,12 +802,20 @@ export default function ChartCreatorPage() {
         return {
           ...prev,
           chartType: 'bar',
-          dualAxisConfig: undefined,
+          dualAxisConfig: undefined, // Clear dual axis config
           dataMapping: {
             ...prev.dataMapping,
             yAxis: updatedYAxis
           }
         };
+      });
+      
+      // Also clear the dual axis config state
+      setDualAxisConfig({
+        leftAxisType: 'bar',
+        rightAxisType: 'line',
+        leftAxisFields: [],
+        rightAxisFields: []
       });
     }
   };
@@ -804,19 +825,21 @@ export default function ChartCreatorPage() {
     key: keyof DualAxisConfig, 
     value: string | string[]
   ) => {
-    setDualAxisConfig(prev => ({
-      ...prev,
+    const newDualAxisConfig = {
+      ...dualAxisConfig,
       [key]: value
-    }));
+    };
     
-    // Update form data with the new configuration
+    // Update both state and form data synchronously
+    setDualAxisConfig(newDualAxisConfig);
+    
     setFormData(prev => ({
       ...prev,
-      dualAxisConfig: {
-        ...prev.dualAxisConfig || dualAxisConfig,
-        [key]: value
-      }
+      dualAxisConfig: newDualAxisConfig
     }));
+    
+    console.log(`Updated dual axis config: ${key} = ${value}`, newDualAxisConfig);
+    console.log('Updated form data dual axis config:', newDualAxisConfig);
   };
 
   // Move fields between axes
@@ -1249,8 +1272,16 @@ export default function ChartCreatorPage() {
     setIsSubmitting(true);
     
     try {
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      console.log('Form data before submission:', formData);
+      console.log('isDualAxis flag:', isDualAxis);
+      console.log('dualAxisConfig state:', dualAxisConfig);
+      console.log('formData.dualAxisConfig:', formData.dualAxisConfig);
+      
       // Create chart config from form data
       let chartConfig = formDataToConfig(formData, isDualAxis);
+      
+      console.log('Chart config after formDataToConfig:', chartConfig);
       
       // If in edit mode, preserve the original chart ID
       if (isEditMode && editChartId) {
@@ -1264,13 +1295,17 @@ export default function ChartCreatorPage() {
       }
       
       // Add dual axis config
-      if (isDualAxis) {
+      if (isDualAxis && formData.dualAxisConfig) {
+        console.log('Adding dual axis config to chart (redundant check):', formData.dualAxisConfig);
         chartConfig = {
           ...chartConfig,
           chartType: 'dual-axis',
-          dualAxisConfig: dualAxisConfig
+          dualAxisConfig: formData.dualAxisConfig
         };
       }
+      
+      console.log('Final chart config before API call:', chartConfig);
+      console.log('Final chart config dualAxisConfig:', chartConfig.dualAxisConfig);
       
       // Add additionalOptions for time aggregation, tooltip total, percentage fields, and filters
       if (enableTimeAggregation || showTooltipTotal || percentageFields.length > 0 || enableFilters.timeFilter || enableFilters.currencyFilter) {
