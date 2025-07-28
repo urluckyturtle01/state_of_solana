@@ -325,8 +325,8 @@ overview: [
     "sol-strategies": [
       {
         id: "sol-strategies-overview",
-        name: "Overview",
-        path: "/projects/sol-strategies/overview"
+        name: "Staking",
+        path: "/projects/sol-strategies/staking"
       },
       {
         id: "sol-strategies-financials",

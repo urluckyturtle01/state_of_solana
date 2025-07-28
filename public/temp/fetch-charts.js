@@ -103,7 +103,7 @@ const MENU_PAGES = {
     { id: "orca-competetive-landscape", name: "Competetive Landscape", path: "/projects/orca/competetive-landscape" }
   ],
   "sol-strategies": [
-    { id: "sol-strategies-overview", name: "Overview", path: "/projects/sol-strategies/overview" },
+    { id: "sol-strategies-staking", name: "Staking", path: "/projects/sol-strategies/staking" },
     { id: "sol-strategies-financials", name: "Financials", path: "/projects/sol-strategies/financials" },
     { id: "sol-strategies-revenue", name: "Revenue", path: "/projects/sol-strategies/revenue" }
   ]

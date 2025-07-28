@@ -9,17 +9,18 @@ interface SolSTabsHeaderProps {
 export default function SolSTabsHeader({ activeTab = "overview" }: SolSTabsHeaderProps) {
   const tabs: Tab[] = [
     
-    { 
-      name: "Overview", 
-      path: "/projects/sol-strategies/overview",
-      key: "overview",
-      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-    },
+    
     { 
       name: "Financials", 
       path: "/projects/sol-strategies/financials",
       key: "financials",
       icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+    },
+    { 
+      name: "Staking", 
+      path: "/projects/sol-strategies/staking",
+      key: "staking",
+      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
     },
     { 
       name: "Revenue", 

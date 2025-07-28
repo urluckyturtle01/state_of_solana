@@ -13,9 +13,9 @@ const ChartLoading = () => (
 
 
 // SEO Structured Data
-const structuredData = generateStructuredData('/projects/sol-strategies/overview');
+const structuredData = generateStructuredData('/projects/sol-strategies/staking');
 
-export default function SolStrategiesOverviewPage() {
+export default function SolStrategiesStakingPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>

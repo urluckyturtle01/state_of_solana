@@ -15,7 +15,7 @@ export default function SolStrategiesLayout({ children }: SolStrategiesLayoutPro
   // Extract the active tab from pathname
   // /projects/raydium/overview -> overview, /projects/raydium/trading-volume -> trading-volume, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 3 ? pathSegments[3] : "overview";
+  const activeTab = pathSegments.length > 3 ? pathSegments[3] : "financials";
   
   return (
     <Layout>

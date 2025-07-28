@@ -15,7 +15,7 @@ export default function SolStrategiesPage() {
   
   useEffect(() => {
     // Redirect to overview page
-    router.replace("/projects/sol-strategies/overview");
+    router.replace("/projects/sol-strategies/financials");
   }, [router]);
   
   // Show loading spinner while redirecting
