@@ -61,7 +61,7 @@ const NewsletterSection: React.FC = () => {
   }
 
   return (
-    <section className="border-t bg-gray-950/20 border-gray-900">
+    <section className="border-t bg-black border-gray-900">
       <div className="md:ml-48 px-4 md:px-8 py-12">
         <div className="max-w-3xl mx-auto text-center">
           

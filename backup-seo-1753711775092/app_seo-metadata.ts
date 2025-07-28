@@ -1699,34 +1699,6 @@ export const pageMetadata: Record<string, PageMetadata> = {
           }
       ]
   },
-
-  '/projects/sol-strategies/staking':   {
-      "title": "Sol Strategies - Projects Analytics | State of Solana",
-      "description": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and insights.",
-      "keywords": "Solana projects, sol-strategies, blockchain analytics, projects metrics",
-      "ogTitle": "Sol Strategies - Projects Analytics",
-      "ogDescription": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and...",
-      "ogImage": "/og-images/projects.png",
-      "canonicalPath": "/projects/sol-strategies/staking",
-      "breadcrumbs": [
-          {
-              "name": "Home",
-              "url": "/"
-          },
-          {
-              "name": "Projects",
-              "url": "/projects"
-          },
-          {
-              "name": "Sol Strategies",
-              "url": "/projects/sol-strategies"
-          },
-          {
-              "name": "Staking",
-              "url": "/projects/sol-strategies/staking"
-          }
-      ]
-  },
 };
 
 // Helper function to get metadata for a specific path
