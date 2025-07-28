@@ -18,7 +18,7 @@ export default function SummaryPage() {
     <div className="space-y-6">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="summary" 
+          pageId="dex-summary" 
           enableCaching={true}
         />
       </Suspense>
