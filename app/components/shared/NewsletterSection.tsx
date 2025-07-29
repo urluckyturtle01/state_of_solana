@@ -1,12 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 const NewsletterSection: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [error, setError] = useState('');
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const { isLoading, isAuthenticated, isInternalAuth, checkAuthForRoute } = useAuth();
+  const pathname = usePathname();
+
+  // Set hasCheckedAuth to true after initial render and auth loading is complete
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setHasCheckedAuth(true);
+      }, 350); // Slightly longer than ProtectedRoute's delay to ensure sync
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +58,29 @@ const NewsletterSection: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Check if we should show the newsletter section
+  // Only show when auth is completely resolved and main content is accessible
+  const shouldShowNewsletter = () => {
+    // Never show during any loading state
+    if (isLoading || !hasCheckedAuth) return false;
+    
+    // Check if current route is protected
+    const isProtectedRoute = checkAuthForRoute(pathname);
+    const isInternalAuthRoute = pathname?.startsWith('/sf-dashboards');
+    
+    // For protected routes, only show if authenticated
+    if (isProtectedRoute && !isAuthenticated) return false;
+    if (isInternalAuthRoute && !isInternalAuth()) return false;
+    
+    // Show when authenticated or on public routes
+    return true;
+  };
+
+  // Don't render anything if conditions aren't met
+  if (!shouldShowNewsletter()) {
+    return null;
+  }
 
   if (isSubscribed) {
     return (
