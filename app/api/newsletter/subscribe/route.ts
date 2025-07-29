@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const { email, firstName = '', lastName = '' } = await request.json();
 
     // Validate email
     if (!email || !email.includes('@')) {
@@ -12,31 +12,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Integrate with your email service provider (e.g., Mailchimp, ConvertKit, etc.)
-    // For now, we'll just log the subscription and return success
-    console.log(`Newsletter subscription request: ${email}`);
+    // Check if Brevo API key is configured
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    const BREVO_LIST_ID = process.env.BREVO_LIST_ID; // Optional: specific list ID
 
-    // Example integration with a newsletter service:
-    /*
-    const response = await fetch('YOUR_EMAIL_SERVICE_API_ENDPOINT', {
+    if (!BREVO_API_KEY) {
+      console.error('Brevo API key not configured');
+      return NextResponse.json(
+        { error: 'Newsletter service not configured' },
+        { status: 500 }
+      );
+    }
+
+    // Prepare contact data for Brevo
+    const contactData = {
+      email: email,
+      attributes: {
+        FIRSTNAME: firstName,
+        LASTNAME: lastName,
+      },
+      listIds: BREVO_LIST_ID ? [parseInt(BREVO_LIST_ID)] : undefined,
+      updateEnabled: true, // Update contact if already exists
+    };
+
+    // Subscribe to Brevo
+    const brevoResponse = await fetch('https://api.brevo.com/v3/contacts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.EMAIL_SERVICE_API_KEY}`,
+        'api-key': BREVO_API_KEY,
       },
-      body: JSON.stringify({
-        email,
-        // Add any additional fields your service requires
-      }),
+      body: JSON.stringify(contactData),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to subscribe to newsletter');
-    }
-    */
+    const brevoResult = await brevoResponse.json();
 
-    // Store in database if needed
-    // await db.newsletterSubscriptions.create({ email, subscribedAt: new Date() });
+    if (!brevoResponse.ok) {
+      // Handle specific Brevo errors
+      if (brevoResponse.status === 400 && brevoResult.code === 'duplicate_parameter') {
+        // Contact already exists - this is okay
+        console.log(`Contact already exists: ${email}`);
+        return NextResponse.json(
+          { 
+            message: 'You are already subscribed to our newsletter',
+            email 
+          },
+          { status: 200 }
+        );
+      }
+      
+      console.error('Brevo API error:', brevoResult);
+      throw new Error(brevoResult.message || 'Failed to subscribe to newsletter');
+    }
+
+    console.log(`Successfully subscribed to newsletter: ${email}`);
 
     return NextResponse.json(
       { 
