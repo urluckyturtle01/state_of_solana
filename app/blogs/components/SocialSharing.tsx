@@ -7,9 +7,10 @@ interface SocialSharingProps {
   post: BlogPost;
   position: 'top' | 'bottom' | 'floating' | 'mobile';
   url: string;
+  analyticsButton?: React.ReactNode;
 }
 
-export default function SocialSharing({ post, position, url }: SocialSharingProps) {
+export default function SocialSharing({ post, position, url, analyticsButton }: SocialSharingProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = async () => {
@@ -116,6 +117,9 @@ export default function SocialSharing({ post, position, url }: SocialSharingProp
             <span className="text-sm">{copied ? 'Copied!' : 'Copy Link'}</span>
           )}
         </button>
+
+        {/* Analytics Button for Mobile */}
+        {position === 'mobile' && analyticsButton}
       </div>
     </div>
   );

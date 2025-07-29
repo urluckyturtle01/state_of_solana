@@ -4,6 +4,9 @@ import ArticleHeader from '../components/ArticleHeader';
 import ArticleContent from '../components/ArticleContent';
 import ReadingProgress from '../components/ReadingProgress';
 import SocialSharing from '../components/SocialSharing';
+import BlogAnalytics from '../components/BlogAnalytics';
+import BlogAnalyticsMobile from '../components/BlogAnalyticsMobile';
+import BlogAnalyticsTracker from '../components/BlogAnalyticsTracker';
 import AuthorBio from '../components/AuthorBio';
 import RelatedArticles from '../components/RelatedArticles';
 import BackToBlogsButton from '../components/BackToBlogsButton';
@@ -226,6 +229,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     <>
       <TwitterCardMeta post={post} />
       <ReadingProgress />
+      <BlogAnalyticsTracker slug={post.slug} />
       
       <div className="min-h-screen relative">
         {/* Floating Social Sharing - Top Right Corner */}
@@ -235,6 +239,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             position="floating"
             url={`https://research.topledger.xyz/blogs/${post.slug}`}
           />
+        </div>
+
+        {/* Blog Analytics - Below Social Sharing (Desktop) */}
+        <div className="fixed top-60 right-6 z-50 hidden md:block">
+          <BlogAnalytics slug={post.slug} />
         </div>
 
         <div className="max-w-4xl mx-auto py-8">
@@ -251,6 +260,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               post={post} 
               position="mobile"
               url={`https://research.topledger.xyz/blogs/${post.slug}`}
+              analyticsButton={<BlogAnalyticsMobile slug={post.slug} />}
             />
           </div>
           
