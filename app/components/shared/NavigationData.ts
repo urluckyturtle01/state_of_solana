@@ -53,7 +53,7 @@ export const menuItems: MenuItem[] = [
         //status: "soon"
       },
       {
-        name: "Sol Strategies",
+        name: "SOL Strategies",
         path: "/projects/sol-strategies",
         logo: "https://solstrategies.io/wp-content/themes/solstrategies/images/logo-iso-200.webp",
         //status: "soon"
