@@ -51,7 +51,7 @@ export default function BlogAnalytics({ slug }: BlogAnalyticsProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 bg-gray-900/40 backdrop-blur-md border border-gray-800/60 rounded-lg p-2 shadow-lg">
+    <div className="flex flex-col items-center gap-2 bg-gray-900/40 backdrop-blur-md border border-gray-800/60 rounded-lg w-16.5 shadow-lg">
       
       
       <div className="flex flex-col items-center gap-2 text-center">

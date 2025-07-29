@@ -37,7 +37,7 @@ export default function SocialSharing({ post, position, url, analyticsButton }: 
   const getContainerStyles = () => {
     switch (position) {
       case 'floating':
-        return 'flex flex-col items-center gap-3 bg-gray-900/80 backdrop-blur-md border border-gray-700/50 rounded-lg p-3 shadow-lg';
+        return 'flex flex-col items-center gap-3 bg-gray-900/40 backdrop-blur-md border border-gray-800/60 rounded-lg p-3 shadow-lg';
       case 'mobile':
         return 'flex items-center gap-4 justify-start';
       case 'top':
@@ -61,7 +61,7 @@ export default function SocialSharing({ post, position, url, analyticsButton }: 
       {position === 'floating' && (
         <div className="flex items-center gap-2 mb-1">
           
-          <span className="text-[10px] font-medium text-gray-300 uppercase tracking-wide">Share</span>
+          <span className="text-[9px] font-medium text-gray-500 uppercase tracking-wide">Share</span>
         </div>
       )}
       
@@ -73,7 +73,7 @@ export default function SocialSharing({ post, position, url, analyticsButton }: 
         {/* X (formerly Twitter) */}
         <button
           onClick={shareOnX}
-          className={`${getButtonStyles()} bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20`}
+          className={`${getButtonStyles()} text-blue-400 border-gray-700/20 hover:bg-blue-700/10`}
           title="Share on X"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -99,8 +99,8 @@ export default function SocialSharing({ post, position, url, analyticsButton }: 
           onClick={handleCopyLink}
           className={`${getButtonStyles()} ${
             copied 
-              ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-              : 'bg-gray-500/10 text-gray-400 border-gray-500/20 hover:bg-gray-500/20'
+              ? 'bg-green-500/10 text-green-400 border-green-700/20' 
+              : 'bg-gray-800/10 text-gray-400 border-gray-700/20 hover:bg-gray-800/20'
           }`}
           title="Copy link"
         >
