@@ -13,7 +13,7 @@ export default function HomePage() {
 
   return (
     <div className="w-full h-[500px] flex items-center justify-center">
-    <PrettyLoader size="md" />
+    <PrettyLoader size="sm" />
   </div>
   );
 } 

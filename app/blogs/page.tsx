@@ -97,7 +97,7 @@ export default function BlogsPage() {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
       <div className="text-center">
-        <PrettyLoader size="md" />
+        <PrettyLoader size="sm" />
       </div>
     </div>
     );
