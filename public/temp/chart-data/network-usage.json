@@ -1,11 +1,40 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "fetchedAt": "2025-07-29T23:22:28.374Z",
+  "fetchedAt": "2025-07-30T01:56:29.660Z",
   "charts": [
     {
       "success": true,
       "data": [
+        {
+          "block_date": "2025-07-28",
+          "total_transactions": 349552548,
+          "succeessful_transactions": 315728433,
+          "succeesful_transactions_perc": 90.32,
+          "non_vote_transactions_perc": 35.22,
+          "successful_non_vote_transactions_perc": 72.67,
+          "failed_transactions": 33824115,
+          "total_vote_transactions": 226430520,
+          "total_non_vote_transactions": 123122028,
+          "successful_vote_transactions": 226261797,
+          "successful_non_vote_transactions": 89466636,
+          "failed_vote_transactions": 168723,
+          "failed_non_vote_transactions": 33655392,
+          "total_Fees": 7733.93796808,
+          "non_vote_transactions_fees": 6600.699690239,
+          "vote_transactions_fees": 1133.238277841,
+          "priority_fees": 5913.361750239,
+          "successful_vote_transactions_fees": 1132.394432841,
+          "successful_non_vote_transactions_fees": 5350.281738298,
+          "failed_vote_transactions_fees": 0.843845,
+          "failed_non_vote_transactions_fees": 1250.417951941,
+          "successful_non_vote_transactions_priority_fees": 4834.004828298,
+          "failed_non_vote_transactions_priority_fees": 1079.356921941,
+          "total_tps": 4045,
+          "success_tps": 3654,
+          "failed_tps": 391,
+          "real_tps": 1425
+        },
         {
           "block_date": "2025-07-27",
           "total_transactions": 330529280,
@@ -16653,7 +16682,7 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1753831346697,
+      "timestamp": 1753840588002,
       "chartId": "chart_1748252444149_tkcgszd",
       "title": "Transactions Summary"
     },
@@ -18124,7 +18153,7 @@
           "median_priority_fee_sol": 3.4e-7
         }
       ],
-      "timestamp": 1753831346605,
+      "timestamp": 1753840587967,
       "chartId": "chart_1748255554567_w4iy4xx",
       "title": "Non-vote Transaction Fees"
     },
@@ -18289,7 +18318,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1753831346604
+          "timestamp": 1753840587971
         },
         {
           "data": [
@@ -18353,7 +18382,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1753831346854
+          "timestamp": 1753840588201
         },
         {
           "data": [
@@ -18377,7 +18406,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1753831347103
+          "timestamp": 1753840588431
         }
       ],
       "data": [
@@ -18534,7 +18563,7 @@
           "successful_non_vote_transactiosn_perc": 39.97245750859373
         }
       ],
-      "timestamp": 1753831347303,
+      "timestamp": 1753840588631,
       "chartId": "chart_1748255787490_ud2wzln",
       "title": "Transaction Count",
       "parameters": {
@@ -18562,35 +18591,35 @@
           "week": "2025-07-21",
           "real_tps": 1349,
           "avg_fee_lamport": 56086,
-          "median_fee_lamport": 5619,
+          "median_fee_lamport": 5690,
           "avg_priority_fee_lamport": 50468
         },
         {
           "week": "2025-07-14",
           "real_tps": 1322,
           "avg_fee_lamport": 70145,
-          "median_fee_lamport": 6336,
+          "median_fee_lamport": 6331,
           "avg_priority_fee_lamport": 64453
         },
         {
           "week": "2025-07-07",
           "real_tps": 1303,
           "avg_fee_lamport": 59314,
-          "median_fee_lamport": 5859,
+          "median_fee_lamport": 5903,
           "avg_priority_fee_lamport": 53645
         },
         {
           "week": "2025-06-30",
           "real_tps": 1252,
           "avg_fee_lamport": 61351,
-          "median_fee_lamport": 6045,
+          "median_fee_lamport": 6051,
           "avg_priority_fee_lamport": 55707
         },
         {
           "week": "2025-06-23",
           "real_tps": 1175,
           "avg_fee_lamport": 55080,
-          "median_fee_lamport": 5764,
+          "median_fee_lamport": 5759,
           "avg_priority_fee_lamport": 49472
         },
         {
@@ -18604,28 +18633,28 @@
           "week": "2025-06-09",
           "real_tps": 1114,
           "avg_fee_lamport": 56973,
-          "median_fee_lamport": 5837,
+          "median_fee_lamport": 5787,
           "avg_priority_fee_lamport": 51351
         },
         {
           "week": "2025-06-02",
           "real_tps": 1129,
           "avg_fee_lamport": 61748,
-          "median_fee_lamport": 6046,
+          "median_fee_lamport": 6037,
           "avg_priority_fee_lamport": 56138
         },
         {
           "week": "2025-05-26",
           "real_tps": 1114,
           "avg_fee_lamport": 61769,
-          "median_fee_lamport": 6089,
+          "median_fee_lamport": 6092,
           "avg_priority_fee_lamport": 56283
         },
         {
           "week": "2025-05-19",
           "real_tps": 1204,
           "avg_fee_lamport": 73799,
-          "median_fee_lamport": 5931,
+          "median_fee_lamport": 5923,
           "avg_priority_fee_lamport": 68539
         },
         {
@@ -18639,501 +18668,501 @@
           "week": "2025-05-05",
           "real_tps": 1186,
           "avg_fee_lamport": 86354,
-          "median_fee_lamport": 7035,
+          "median_fee_lamport": 7064,
           "avg_priority_fee_lamport": 80982
         },
         {
           "week": "2025-04-28",
           "real_tps": 1147,
           "avg_fee_lamport": 99208,
-          "median_fee_lamport": 8197,
+          "median_fee_lamport": 8124,
           "avg_priority_fee_lamport": 93896
         },
         {
           "week": "2025-04-21",
           "real_tps": 1151,
           "avg_fee_lamport": 85601,
-          "median_fee_lamport": 7732,
+          "median_fee_lamport": 7768,
           "avg_priority_fee_lamport": 80236
         },
         {
           "week": "2025-04-14",
           "real_tps": 1068,
           "avg_fee_lamport": 89693,
-          "median_fee_lamport": 7977,
+          "median_fee_lamport": 7995,
           "avg_priority_fee_lamport": 84264
         },
         {
           "week": "2025-04-07",
           "real_tps": 1078,
           "avg_fee_lamport": 86623,
-          "median_fee_lamport": 7457,
+          "median_fee_lamport": 7487,
           "avg_priority_fee_lamport": 81193
         },
         {
           "week": "2025-03-31",
           "real_tps": 1009,
           "avg_fee_lamport": 74518,
-          "median_fee_lamport": 6667,
+          "median_fee_lamport": 6669,
           "avg_priority_fee_lamport": 69105
         },
         {
           "week": "2025-03-24",
           "real_tps": 1039,
           "avg_fee_lamport": 79202,
-          "median_fee_lamport": 6297,
+          "median_fee_lamport": 6343,
           "avg_priority_fee_lamport": 73775
         },
         {
           "week": "2025-03-17",
           "real_tps": 966,
           "avg_fee_lamport": 58094,
-          "median_fee_lamport": 5745,
+          "median_fee_lamport": 5771,
           "avg_priority_fee_lamport": 52468
         },
         {
           "week": "2025-03-10",
           "real_tps": 977,
           "avg_fee_lamport": 69126,
-          "median_fee_lamport": 6094,
+          "median_fee_lamport": 6063,
           "avg_priority_fee_lamport": 63699
         },
         {
           "week": "2025-03-03",
           "real_tps": 1067,
           "avg_fee_lamport": 75214,
-          "median_fee_lamport": 6161,
+          "median_fee_lamport": 6149,
           "avg_priority_fee_lamport": 69803
         },
         {
           "week": "2025-02-24",
           "real_tps": 985,
           "avg_fee_lamport": 82414,
-          "median_fee_lamport": 6383,
+          "median_fee_lamport": 6302,
           "avg_priority_fee_lamport": 76984
         },
         {
           "week": "2025-02-17",
           "real_tps": 998,
           "avg_fee_lamport": 116908,
-          "median_fee_lamport": 6568,
+          "median_fee_lamport": 6597,
           "avg_priority_fee_lamport": 111494
         },
         {
           "week": "2025-02-10",
           "real_tps": 1188,
           "avg_fee_lamport": 179433,
-          "median_fee_lamport": 8725,
+          "median_fee_lamport": 8890,
           "avg_priority_fee_lamport": 174028
         },
         {
           "week": "2025-02-03",
           "real_tps": 1222,
           "avg_fee_lamport": 181022,
-          "median_fee_lamport": 7965,
+          "median_fee_lamport": 7942,
           "avg_priority_fee_lamport": 175611
         },
         {
           "week": "2025-01-27",
           "real_tps": 1216,
           "avg_fee_lamport": 285199,
-          "median_fee_lamport": 9283,
+          "median_fee_lamport": 9322,
           "avg_priority_fee_lamport": 279796
         },
         {
           "week": "2025-01-20",
           "real_tps": 1206,
           "avg_fee_lamport": 481671,
-          "median_fee_lamport": 10726,
+          "median_fee_lamport": 10375,
           "avg_priority_fee_lamport": 476226
         },
         {
           "week": "2025-01-13",
           "real_tps": 1114,
           "avg_fee_lamport": 397515,
-          "median_fee_lamport": 9532,
+          "median_fee_lamport": 9371,
           "avg_priority_fee_lamport": 392037
         },
         {
           "week": "2025-01-06",
           "real_tps": 1188,
           "avg_fee_lamport": 224946,
-          "median_fee_lamport": 9313,
+          "median_fee_lamport": 9486,
           "avg_priority_fee_lamport": 219466
         },
         {
           "week": "2024-12-30",
           "real_tps": 1200,
           "avg_fee_lamport": 179131,
-          "median_fee_lamport": 7790,
+          "median_fee_lamport": 7788,
           "avg_priority_fee_lamport": 173696
         },
         {
           "week": "2024-12-23",
           "real_tps": 1309,
           "avg_fee_lamport": 128320,
-          "median_fee_lamport": 7595,
+          "median_fee_lamport": 7544,
           "avg_priority_fee_lamport": 122924
         },
         {
           "week": "2024-12-16",
           "real_tps": 1195,
           "avg_fee_lamport": 184784,
-          "median_fee_lamport": 7823,
+          "median_fee_lamport": 7785,
           "avg_priority_fee_lamport": 179298
         },
         {
           "week": "2024-12-09",
           "real_tps": 1164,
           "avg_fee_lamport": 182973,
-          "median_fee_lamport": 7988,
+          "median_fee_lamport": 7981,
           "avg_priority_fee_lamport": 177511
         },
         {
           "week": "2024-12-02",
           "real_tps": 1071,
           "avg_fee_lamport": 183778,
-          "median_fee_lamport": 7522,
+          "median_fee_lamport": 7579,
           "avg_priority_fee_lamport": 178260
         },
         {
           "week": "2024-11-25",
           "real_tps": 1069,
           "avg_fee_lamport": 263390,
-          "median_fee_lamport": 8121,
+          "median_fee_lamport": 8152,
           "avg_priority_fee_lamport": 257902
         },
         {
           "week": "2024-11-18",
           "real_tps": 944,
           "avg_fee_lamport": 526836,
-          "median_fee_lamport": 10765,
+          "median_fee_lamport": 11191,
           "avg_priority_fee_lamport": 521259
         },
         {
           "week": "2024-11-11",
           "real_tps": 853,
           "avg_fee_lamport": 465860,
-          "median_fee_lamport": 12273,
+          "median_fee_lamport": 12402,
           "avg_priority_fee_lamport": 460300
         },
         {
           "week": "2024-11-04",
           "real_tps": 789,
           "avg_fee_lamport": 250531,
-          "median_fee_lamport": 7606,
+          "median_fee_lamport": 7739,
           "avg_priority_fee_lamport": 244970
         },
         {
           "week": "2024-10-28",
           "real_tps": 776,
           "avg_fee_lamport": 240816,
-          "median_fee_lamport": 7455,
+          "median_fee_lamport": 7584,
           "avg_priority_fee_lamport": 235231
         },
         {
           "week": "2024-10-21",
           "real_tps": 720,
           "avg_fee_lamport": 331948,
-          "median_fee_lamport": 8596,
+          "median_fee_lamport": 8555,
           "avg_priority_fee_lamport": 326228
         },
         {
           "week": "2024-10-14",
           "real_tps": 757,
           "avg_fee_lamport": 220404,
-          "median_fee_lamport": 8259,
+          "median_fee_lamport": 8207,
           "avg_priority_fee_lamport": 214574
         },
         {
           "week": "2024-10-07",
           "real_tps": 761,
           "avg_fee_lamport": 131122,
-          "median_fee_lamport": 8057,
+          "median_fee_lamport": 8017,
           "avg_priority_fee_lamport": 125367
         },
         {
           "week": "2024-09-30",
           "real_tps": 753,
           "avg_fee_lamport": 132067,
-          "median_fee_lamport": 8345,
+          "median_fee_lamport": 8371,
           "avg_priority_fee_lamport": 126384
         },
         {
           "week": "2024-09-23",
           "real_tps": 694,
           "avg_fee_lamport": 124802,
-          "median_fee_lamport": 7919,
+          "median_fee_lamport": 7841,
           "avg_priority_fee_lamport": 118988
         },
         {
           "week": "2024-09-16",
           "real_tps": 664,
           "avg_fee_lamport": 61737,
-          "median_fee_lamport": 6922,
+          "median_fee_lamport": 6942,
           "avg_priority_fee_lamport": 55893
         },
         {
           "week": "2024-09-09",
           "real_tps": 661,
           "avg_fee_lamport": 58075,
-          "median_fee_lamport": 7284,
+          "median_fee_lamport": 7270,
           "avg_priority_fee_lamport": 52130
         },
         {
           "week": "2024-09-02",
           "real_tps": 636,
           "avg_fee_lamport": 56514,
-          "median_fee_lamport": 6504,
+          "median_fee_lamport": 6478,
           "avg_priority_fee_lamport": 50761
         },
         {
           "week": "2024-08-26",
           "real_tps": 656,
           "avg_fee_lamport": 62663,
-          "median_fee_lamport": 6913,
+          "median_fee_lamport": 6936,
           "avg_priority_fee_lamport": 56854
         },
         {
           "week": "2024-08-19",
           "real_tps": 737,
           "avg_fee_lamport": 60540,
-          "median_fee_lamport": 7896,
+          "median_fee_lamport": 7846,
           "avg_priority_fee_lamport": 54677
         },
         {
           "week": "2024-08-12",
           "real_tps": 736,
           "avg_fee_lamport": 93143,
-          "median_fee_lamport": 7768,
+          "median_fee_lamport": 7763,
           "avg_priority_fee_lamport": 87436
         },
         {
           "week": "2024-08-05",
           "real_tps": 639,
           "avg_fee_lamport": 156223,
-          "median_fee_lamport": 8676,
+          "median_fee_lamport": 8677,
           "avg_priority_fee_lamport": 150694
         },
         {
           "week": "2024-07-29",
           "real_tps": 749,
           "avg_fee_lamport": 136142,
-          "median_fee_lamport": 7876,
+          "median_fee_lamport": 7761,
           "avg_priority_fee_lamport": 130606
         },
         {
           "week": "2024-07-22",
           "real_tps": 795,
           "avg_fee_lamport": 143929,
-          "median_fee_lamport": 7298,
+          "median_fee_lamport": 7326,
           "avg_priority_fee_lamport": 138446
         },
         {
           "week": "2024-07-15",
           "real_tps": 801,
           "avg_fee_lamport": 153254,
-          "median_fee_lamport": 8093,
+          "median_fee_lamport": 8072,
           "avg_priority_fee_lamport": 147730
         },
         {
           "week": "2024-07-08",
           "real_tps": 820,
           "avg_fee_lamport": 133209,
-          "median_fee_lamport": 7956,
+          "median_fee_lamport": 7876,
           "avg_priority_fee_lamport": 127788
         },
         {
           "week": "2024-07-01",
           "real_tps": 729,
           "avg_fee_lamport": 146247,
-          "median_fee_lamport": 7612,
+          "median_fee_lamport": 7688,
           "avg_priority_fee_lamport": 140880
         },
         {
           "week": "2024-06-24",
           "real_tps": 743,
           "avg_fee_lamport": 166244,
-          "median_fee_lamport": 9044,
+          "median_fee_lamport": 9059,
           "avg_priority_fee_lamport": 160867
         },
         {
           "week": "2024-06-17",
           "real_tps": 686,
           "avg_fee_lamport": 185454,
-          "median_fee_lamport": 9257,
+          "median_fee_lamport": 9309,
           "avg_priority_fee_lamport": 180213
         },
         {
           "week": "2024-06-10",
           "real_tps": 680,
           "avg_fee_lamport": 190185,
-          "median_fee_lamport": 10476,
+          "median_fee_lamport": 10427,
           "avg_priority_fee_lamport": 184983
         },
         {
           "week": "2024-06-03",
           "real_tps": 663,
           "avg_fee_lamport": 206415,
-          "median_fee_lamport": 11911,
+          "median_fee_lamport": 11943,
           "avg_priority_fee_lamport": 201246
         },
         {
           "week": "2024-05-27",
           "real_tps": 711,
           "avg_fee_lamport": 167999,
-          "median_fee_lamport": 11654,
+          "median_fee_lamport": 11453,
           "avg_priority_fee_lamport": 162847
         },
         {
           "week": "2024-05-20",
           "real_tps": 872,
           "avg_fee_lamport": 111394,
-          "median_fee_lamport": 10702,
+          "median_fee_lamport": 10768,
           "avg_priority_fee_lamport": 106289
         },
         {
           "week": "2024-05-13",
           "real_tps": 854,
           "avg_fee_lamport": 125618,
-          "median_fee_lamport": 9936,
+          "median_fee_lamport": 9951,
           "avg_priority_fee_lamport": 120505
         },
         {
           "week": "2024-05-06",
           "real_tps": 896,
           "avg_fee_lamport": 112417,
-          "median_fee_lamport": 8581,
+          "median_fee_lamport": 8566,
           "avg_priority_fee_lamport": 107311
         },
         {
           "week": "2024-04-29",
           "real_tps": 843,
           "avg_fee_lamport": 94740,
-          "median_fee_lamport": 9267,
+          "median_fee_lamport": 9367,
           "avg_priority_fee_lamport": 89581
         },
         {
           "week": "2024-04-22",
           "real_tps": 877,
           "avg_fee_lamport": 107006,
-          "median_fee_lamport": 9422,
+          "median_fee_lamport": 9447,
           "avg_priority_fee_lamport": 101683
         },
         {
           "week": "2024-04-15",
           "real_tps": 819,
           "avg_fee_lamport": 103581,
-          "median_fee_lamport": 10307,
+          "median_fee_lamport": 10238,
           "avg_priority_fee_lamport": 98232
         },
         {
           "week": "2024-04-08",
           "real_tps": 938,
           "avg_fee_lamport": 133804,
-          "median_fee_lamport": 11940,
+          "median_fee_lamport": 11945,
           "avg_priority_fee_lamport": 128171
         },
         {
           "week": "2024-04-01",
           "real_tps": 962,
           "avg_fee_lamport": 165850,
-          "median_fee_lamport": 13195,
+          "median_fee_lamport": 12993,
           "avg_priority_fee_lamport": 160671
         },
         {
           "week": "2024-03-25",
           "real_tps": 931,
           "avg_fee_lamport": 174059,
-          "median_fee_lamport": 16880,
+          "median_fee_lamport": 16793,
           "avg_priority_fee_lamport": 168958
         },
         {
           "week": "2024-03-18",
           "real_tps": 892,
           "avg_fee_lamport": 233286,
-          "median_fee_lamport": 18170,
+          "median_fee_lamport": 18321,
           "avg_priority_fee_lamport": 228182
         },
         {
           "week": "2024-03-11",
           "real_tps": 969,
           "avg_fee_lamport": 172040,
-          "median_fee_lamport": 12958,
+          "median_fee_lamport": 12980,
           "avg_priority_fee_lamport": 166962
         },
         {
           "week": "2024-03-04",
           "real_tps": 666,
           "avg_fee_lamport": 100042,
-          "median_fee_lamport": 9161,
+          "median_fee_lamport": 9047,
           "avg_priority_fee_lamport": 94944
         },
         {
           "week": "2024-02-26",
           "real_tps": 711,
           "avg_fee_lamport": 35776,
-          "median_fee_lamport": 6060,
+          "median_fee_lamport": 6019,
           "avg_priority_fee_lamport": 30682
         },
         {
           "week": "2024-02-19",
           "real_tps": 863,
           "avg_fee_lamport": 31684,
-          "median_fee_lamport": 6040,
+          "median_fee_lamport": 6033,
           "avg_priority_fee_lamport": 26588
         },
         {
           "week": "2024-02-12",
           "real_tps": 922,
           "avg_fee_lamport": 40919,
-          "median_fee_lamport": 6320,
+          "median_fee_lamport": 6344,
           "avg_priority_fee_lamport": 35826
         },
         {
           "week": "2024-02-05",
           "real_tps": 896,
           "avg_fee_lamport": 52833,
-          "median_fee_lamport": 6752,
+          "median_fee_lamport": 6744,
           "avg_priority_fee_lamport": 47697
         },
         {
           "week": "2024-01-29",
           "real_tps": 836,
           "avg_fee_lamport": 93768,
-          "median_fee_lamport": 7597,
+          "median_fee_lamport": 7520,
           "avg_priority_fee_lamport": 88494
         },
         {
           "week": "2024-01-22",
           "real_tps": 802,
           "avg_fee_lamport": 74320,
-          "median_fee_lamport": 6668,
+          "median_fee_lamport": 6654,
           "avg_priority_fee_lamport": 68937
         },
         {
           "week": "2024-01-15",
           "real_tps": 680,
           "avg_fee_lamport": 75848,
-          "median_fee_lamport": 6457,
+          "median_fee_lamport": 6468,
           "avg_priority_fee_lamport": 70533
         },
         {
           "week": "2024-01-08",
           "real_tps": 609,
           "avg_fee_lamport": 53034,
-          "median_fee_lamport": 5877,
+          "median_fee_lamport": 5847,
           "avg_priority_fee_lamport": 47840
         },
         {
           "week": "2024-01-01",
           "real_tps": 677,
           "avg_fee_lamport": 60818,
-          "median_fee_lamport": 5848,
+          "median_fee_lamport": 5841,
           "avg_priority_fee_lamport": 55501
         }
       ],
-      "timestamp": 1753831348374,
+      "timestamp": 1753840589660,
       "chartId": "chart_1753698528577_c4lx4ep",
       "title": "Weekly Real TPS And Fee Trends"
     }
