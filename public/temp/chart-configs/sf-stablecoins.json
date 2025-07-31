@@ -2,7 +2,7 @@
   "pageId": "sf-stablecoins",
   "pageName": "Stablecoins",
   "chartCount": 8,
-  "lastUpdated": "2025-07-28T14:06:58.964Z",
+  "lastUpdated": "2025-07-31T04:05:36.694Z",
   "charts": [
     {
       "id": "chart_1749461368950_lwdnpbr",
@@ -177,14 +177,15 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "month",
-        "yAxis": "Dex_Volume",
-        "groupBy": "Symbol"
+        "yAxis": "dex_volume_usd",
+        "groupBy": "symbol",
+        "yAxisUnit": "$"
       },
       "additionalOptions": {
         "showTooltipTotal": true
       },
       "createdAt": "2025-06-09T10:11:47.977Z",
-      "updatedAt": "2025-06-25T18:44:03.767Z"
+      "updatedAt": "2025-07-31T04:01:49.766Z"
     }
   ]
 }
