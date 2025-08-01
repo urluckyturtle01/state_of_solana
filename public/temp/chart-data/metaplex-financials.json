@@ -1,21 +1,25 @@
 {
   "pageId": "metaplex-financials",
   "pageName": "Financials",
-  "fetchedAt": "2025-08-01T13:39:11.936Z",
+  "fetchedAt": "2025-08-01T14:12:24.463Z",
   "charts": [
     {
       "success": false,
-      "error": "API error: 404",
+      "error": "API error: 500",
       "chartId": "chart_1749625280929_87ubkll",
-      "title": "Revenue",
-      "parameters": {}
+      "title": "Protocol Revenue",
+      "parameters": {
+        "currency": "SOL"
+      }
     },
     {
       "success": false,
-      "error": "API error: 404",
+      "error": "API error: 500",
       "chartId": "chart_1749626388597_kadqewj",
-      "title": "Revenue By Product",
-      "parameters": {}
+      "title": "Protocol Revenue By Product",
+      "parameters": {
+        "currency": "SOL"
+      }
     },
     {
       "success": true,
@@ -229,7 +233,7 @@
           "cumulative_percentage_of_total_MPLX_Supply": 7.38
         }
       ],
-      "timestamp": 1754055550683,
+      "timestamp": 1754057540984,
       "chartId": "chart_1749627353996_0gvazog",
       "title": "Protocol Fee Used To Buy Mplx"
     },
@@ -445,7 +449,7 @@
           "cumulative_percentage_of_total_MPLX_Supply": 7.38
         }
       ],
-      "timestamp": 1754055551914,
+      "timestamp": 1754057542498,
       "chartId": "chart_1749627575498_ojnyxe5",
       "title": "Monthly Mplx Purchased"
     },
@@ -4473,14 +4477,32 @@
           "Balance": 160000000
         }
       ],
-      "timestamp": 1754055551936,
+      "timestamp": 1754057542580,
       "chartId": "chart_1752838202795_r7y5gmo",
       "title": "Metaplex DAO $mplx Balance"
+    },
+    {
+      "success": false,
+      "error": "API error: 500",
+      "chartId": "chart_1754038010417_ovdne7u",
+      "title": "Protocol Revenue By Segment",
+      "parameters": {
+        "currency": "SOL"
+      }
+    },
+    {
+      "success": false,
+      "error": "API error: 500",
+      "chartId": "chart_1754038193098_4bmt821",
+      "title": "Protocol Revenue By Asset Type",
+      "parameters": {
+        "currency": "SOL"
+      }
     }
   ],
   "summary": {
-    "totalCharts": 5,
+    "totalCharts": 7,
     "successfulFetches": 3,
-    "failedFetches": 2
+    "failedFetches": 4
   }
 }
