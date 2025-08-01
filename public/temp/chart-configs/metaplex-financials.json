@@ -1,79 +1,33 @@
 {
   "pageId": "metaplex-financials",
   "pageName": "Financials",
-  "chartCount": 5,
-  "lastUpdated": "2025-08-01T09:37:23.906Z",
+  "chartCount": 7,
+  "lastUpdated": "2025-08-01T14:08:23.960Z",
   "charts": [
     {
       "id": "chart_1749625280929_87ubkll",
-      "title": "Revenue",
+      "title": "Protocol Revenue",
       "subtitle": "",
       "page": "metaplex-financials",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13606/results.json",
-      "apiKey": "seJwdkJwvZLpK7heKAv1Owoa1dTlLko6wi2VN710&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/10489/results.json",
+      "apiKey": "47FCA2utQ8cS23KVTjZQ1yDCOhGyqs2ef3q1QuCK&max_age=86400",
       "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": "Metaplex_Revenue",
-        "groupBy": "",
-        "yAxisUnit": "$"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          }
-        }
-      },
-      "createdAt": "2025-06-11T07:01:20.929Z",
-      "updatedAt": "2025-07-19T19:00:07.606Z"
-    },
-    {
-      "id": "chart_1749626388597_kadqewj",
-      "title": "Revenue By Product",
-      "subtitle": "",
-      "page": "metaplex-financials",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13606/results.json",
-      "apiKey": "seJwdkJwvZLpK7heKAv1Owoa1dTlLko6wi2VN710&max_age=86400",
-      "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "tm_rev",
+            "field": "Revenue_SOL",
             "type": "bar",
-            "unit": "$"
+            "unit": ""
           },
           {
-            "field": "core_rev",
+            "field": "Revenue_USD",
             "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "bg_rev",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "mpl_hybrid_rev",
-            "type": "bar",
-            "unit": "$"
+            "unit": ""
           }
         ],
         "groupBy": ""
@@ -84,17 +38,87 @@
           "timeFilter": {
             "paramName": "Date Part",
             "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "Revenue_USD",
+              "SOL": "Revenue_SOL"
+            }
+          }
+        }
+      },
+      "createdAt": "2025-06-11T07:01:20.929Z",
+      "updatedAt": "2025-08-01T08:40:50.939Z"
+    },
+    {
+      "id": "chart_1749626388597_kadqewj",
+      "title": "Protocol Revenue By Product",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13942/results.json",
+      "apiKey": "vZSTmbXZ1bne5Fw5rDqy4yfugM9kqOSfGwJzZTPM&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Revenue_Sol",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Revenue_USD",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "Program"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
               "D",
               "W",
               "M",
               "Q",
               "Y"
             ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "Revenue_USD",
+              "SOL": "Revenue_Sol"
+            }
           }
-        }
+        },
+        "showTooltipTotal": true
       },
       "createdAt": "2025-06-11T07:19:48.597Z",
-      "updatedAt": "2025-07-11T08:41:25.402Z"
+      "updatedAt": "2025-08-01T08:44:32.964Z"
     },
     {
       "id": "chart_1749627353996_0gvazog",
@@ -161,6 +185,122 @@
       },
       "createdAt": "2025-07-18T11:30:02.795Z",
       "updatedAt": "2025-07-18T11:30:03.298Z"
+    },
+    {
+      "id": "chart_1754038010417_ovdne7u",
+      "title": "Protocol Revenue By Segment",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13961/results.json",
+      "apiKey": "nTYXMrPwu8whMm6RXQI1OJG7zK3LJczWXekUuD86&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Revenue_SOL",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Revenue_USD",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "Segment"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "Revenue_USD",
+              "SOL": "Revenue_SOL"
+            }
+          }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-08-01T08:46:50.417Z",
+      "updatedAt": "2025-08-01T08:46:50.575Z"
+    },
+    {
+      "id": "chart_1754038193098_4bmt821",
+      "title": "Protocol Revenue By Asset Type",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13962/results.json",
+      "apiKey": "gTUJQBRPsCtveWW0umKg1nuR98QcgxMvjeqDKFuT&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Revenue_SOL",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Revenue_USD",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "Asset_Type"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "Revenue_USD",
+              "SOL": "Revenue_SOL"
+            }
+          }
+        },
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-08-01T08:49:53.098Z",
+      "updatedAt": "2025-08-01T08:49:53.274Z"
     }
   ]
 }
