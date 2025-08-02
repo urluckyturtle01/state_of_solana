@@ -1,7 +1,7 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "fetchedAt": "2025-08-02T11:18:23.938Z",
+  "fetchedAt": "2025-08-02T12:42:06.138Z",
   "charts": [
     {
       "success": true,
@@ -217,7 +217,7 @@
           "percentage_txns_using_compute_budget": 86.6
         }
       ],
-      "timestamp": 1754133501844,
+      "timestamp": 1754138523960,
       "chartId": "chart_1748087823998_ru1ktw2",
       "title": "Transactions Using Compute Budget Program"
     },
@@ -435,7 +435,7 @@
           "percentage_txns_using_compute_budget": 86.6
         }
       ],
-      "timestamp": 1754133501843,
+      "timestamp": 1754138523962,
       "chartId": "chart_1748088263791_vfj94hw",
       "title": "Daily Compute Budget Usage - In Percentage"
     },
@@ -743,7 +743,7 @@
           "median_unused_cu": 167578
         }
       ],
-      "timestamp": 1754133501845,
+      "timestamp": 1754138523969,
       "chartId": "chart_1748088783904_hypf57i",
       "title": "Avg Cu Allocated & Consumed Per Transaction"
     },
@@ -871,7 +871,7 @@
           "avg_consumed_cu_per_block": 43566987.623768665
         }
       ],
-      "timestamp": 1754133502876,
+      "timestamp": 1754138525022,
       "chartId": "chart_1748088979907_8f6w6d2",
       "title": "Avg Cu Consumed Per Block"
     },
@@ -1239,7 +1239,7 @@
           "max_compute_unit_price_usd": 0.014035403725791614
         }
       ],
-      "timestamp": 1754133502886,
+      "timestamp": 1754138525031,
       "chartId": "chart_1748089483199_dzzkc0m",
       "title": "Avg & Median Cu Price"
     },
@@ -1607,7 +1607,7 @@
           "max_compute_unit_price_usd": 0.014035403725791614
         }
       ],
-      "timestamp": 1754133502887,
+      "timestamp": 1754138525043,
       "chartId": "chart_1748201111110_el5y1pn",
       "title": "Max Cu Price In Single Transaction - Lamports/cu"
     },
@@ -5203,7 +5203,7 @@
           "total_cu_consumed": 3517
         }
       ],
-      "timestamp": 1754133503938,
+      "timestamp": 1754138526138,
       "chartId": "chart_1748201257936_m7dwpx7",
       "title": "Cu Consumed By Ecosystem"
     },
@@ -5211,24 +5211,28 @@
       "success": true,
       "data": [
         {
+          "category": "Asset Burner",
+          "total_cu_consumed": 44985641325
+        },
+        {
           "category": "Betting",
-          "total_cu_consumed": 679344005
+          "total_cu_consumed": 663392140
         },
         {
           "category": "Bridge",
-          "total_cu_consumed": 54793272084
+          "total_cu_consumed": 57107041292
         },
         {
           "category": "Creator",
-          "total_cu_consumed": 8549320790
+          "total_cu_consumed": 8375063480
         },
         {
           "category": "DeFi",
-          "total_cu_consumed": 201211472732184
+          "total_cu_consumed": 200261260773594
         },
         {
           "category": "DePIN",
-          "total_cu_consumed": 394131236510
+          "total_cu_consumed": 388911220974
         },
         {
           "category": "Encryption",
@@ -5236,66 +5240,62 @@
         },
         {
           "category": "Gambling",
-          "total_cu_consumed": 6234881026
+          "total_cu_consumed": 6271985874
         },
         {
           "category": "Gaming",
-          "total_cu_consumed": 5711362174912
+          "total_cu_consumed": 5623327508120
         },
         {
           "category": "Governance",
-          "total_cu_consumed": 312809296
+          "total_cu_consumed": 302308113
         },
         {
           "category": "Infrastructure",
-          "total_cu_consumed": 699351752727
+          "total_cu_consumed": 675741926274
         },
         {
           "category": "MEV",
-          "total_cu_consumed": 17386234973584
+          "total_cu_consumed": 16905396760816
         },
         {
           "category": "Mining",
-          "total_cu_consumed": 25746974083
+          "total_cu_consumed": 24934451840
         },
         {
           "category": "Music",
-          "total_cu_consumed": 9834647463
+          "total_cu_consumed": 9757741732
         },
         {
           "category": "NFT",
-          "total_cu_consumed": 1964784303563
+          "total_cu_consumed": 1886667726622
         },
         {
           "category": "Name Service",
-          "total_cu_consumed": 3130457398
-        },
-        {
-          "category": "Name service",
-          "total_cu_consumed": 228071586
+          "total_cu_consumed": 3250150519
         },
         {
           "category": "Oracle",
-          "total_cu_consumed": 8595189582546
+          "total_cu_consumed": 8476004003526
         },
         {
           "category": "Payments",
-          "total_cu_consumed": 63273526049
+          "total_cu_consumed": 62557785332
         },
         {
           "category": "Social Platform",
-          "total_cu_consumed": 271658457
+          "total_cu_consumed": 258422460
         },
         {
           "category": "Wallet",
-          "total_cu_consumed": 1012728690
+          "total_cu_consumed": 918625826
         },
         {
           "category": "others",
-          "total_cu_consumed": 94962532051763
+          "total_cu_consumed": 93901485278901
         }
       ],
-      "timestamp": 1754133503924,
+      "timestamp": 1754138526090,
       "chartId": "chart_1748201444923_71ydpwe",
       "title": "Cu Consumed By Ecosystem - Last 30 Days"
     }
