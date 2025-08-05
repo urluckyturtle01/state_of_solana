@@ -286,11 +286,10 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           timeGroupKey = dateValue;
       }
       
-      // For stacked charts with groupBy, create composite key: time + groupBy value
-      // For stacked charts with multiple y-fields but no groupBy, use just time key (data will be properly aggregated)
-      // For non-stacked charts, use just the time key
+      // For charts with groupBy (stacked or non-stacked), create composite key: time + groupBy value
+      // For charts without groupBy, use just the time key
       let groupKey: string;
-      if (isStackedWithGroupBy) {
+      if (groupByField) {
         const groupValue = String(item[groupByField]);
         groupKey = `${timeGroupKey}|${groupValue}`;
       } else {
@@ -304,8 +303,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           _firstDate: date
         };
         
-        // For stacked charts with groupBy, preserve the groupBy field
-        if (isStackedWithGroupBy) {
+        // For charts with groupBy, preserve the groupBy field
+        if (groupByField) {
           groupedData[groupKey][groupByField] = item[groupByField];
         }
         

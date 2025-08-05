@@ -23,7 +23,8 @@ const customMap: Record<string, string> = {
   'xstocks': 'xStocks',
   'cex': 'CEX',
   'rev': 'REV',
-  'mplx': 'MPLX'
+  'mplx': 'MPLX',
+  'fdv': 'FDV'
 };
 
 export function formatTitle(title: string): string {

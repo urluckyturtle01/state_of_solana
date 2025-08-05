@@ -2670,38 +2670,6 @@ export const chartMeta: Record<string, ChartMetadata> = {
       "ogImage": "/og-images/charts/metaplex-financials-chart.png",
       "keywords": "Solana, analytics, charts, blockchain, DeFi, metaplex-financials, bar"
   },
-  "chart_1754386412286_gsq1njs":   {
-      "title": "Protocol Revenue - State of Solana",
-      "description": "Explore protocol revenue analytics on Solana blockchain",
-      "ogTitle": "Protocol Revenue",
-      "ogDescription": "Analyze protocol revenue metrics on Solana",
-      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
-  },
-  "chart_1754387334370_xe3beqv":   {
-      "title": "Token Price - State of Solana",
-      "description": "Explore token price analytics on Solana blockchain",
-      "ogTitle": "Token Price",
-      "ogDescription": "Analyze token price metrics on Solana",
-      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
-  },
-  "chart_1754387602599_y208wcx":   {
-      "title": "FDV / Revenue Ratio - State of Solana",
-      "description": "Explore fdv / revenue ratio analytics on Solana blockchain",
-      "ogTitle": "FDV / Revenue Ratio",
-      "ogDescription": "Analyze fdv / revenue ratio metrics on Solana",
-      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
-  },
-  "chart_1754387674767_emj5jfz":   {
-      "title": "Protocol Revenue / Solana Revenue Share - State of Solana",
-      "description": "Explore protocol revenue / solana revenue share analytics on Solana blockchain",
-      "ogTitle": "Protocol Revenue / Solana Revenue Share",
-      "ogDescription": "Analyze protocol revenue / solana revenue share metrics on Solana",
-      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
-  },
 };
 
 // Helper function to get metadata for a chart ID

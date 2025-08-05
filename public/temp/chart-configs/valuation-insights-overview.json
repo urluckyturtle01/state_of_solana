@@ -1,0 +1,135 @@
+{
+  "pageId": "valuation-insights-overview",
+  "pageName": "Overview",
+  "chartCount": 4,
+  "lastUpdated": "2025-08-05T10:01:14.837Z",
+  "charts": [
+    {
+      "id": "chart_1754386412286_gsq1njs",
+      "title": "Protocol Revenue",
+      "subtitle": "",
+      "page": "valuation-insights-overview",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13974/results.json",
+      "apiKey": "5uhMj0BrlNHXm1114i1VKnpknDutE2pwkVu9LYc9&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "protocol_revenue_usd",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-08-05T09:33:32.286Z",
+      "updatedAt": "2025-08-05T09:41:14.374Z"
+    },
+    {
+      "id": "chart_1754387334370_xe3beqv",
+      "title": "Token Price",
+      "subtitle": "",
+      "page": "valuation-insights-overview",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13974/results.json",
+      "apiKey": "5uhMj0BrlNHXm1114i1VKnpknDutE2pwkVu9LYc9&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "price_in_usd",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-08-05T09:48:54.370Z",
+      "updatedAt": "2025-08-05T09:58:29.929Z"
+    },
+    {
+      "id": "chart_1754387602599_y208wcx",
+      "title": "FDV / Revenue Ratio",
+      "subtitle": "",
+      "page": "valuation-insights-overview",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13974/results.json",
+      "apiKey": "5uhMj0BrlNHXm1114i1VKnpknDutE2pwkVu9LYc9&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "FDV/Rvenue Ratio",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-08-05T09:53:22.599Z",
+      "updatedAt": "2025-08-05T09:59:54.244Z"
+    },
+    {
+      "id": "chart_1754387674767_emj5jfz",
+      "title": "Protocol Revenue / Solana Revenue Share",
+      "subtitle": "",
+      "page": "valuation-insights-overview",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13974/results.json",
+      "apiKey": "5uhMj0BrlNHXm1114i1VKnpknDutE2pwkVu9LYc9&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "Protocol Revenue/Solana Revenue Share",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "platform"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true
+      },
+      "createdAt": "2025-08-05T09:54:34.767Z",
+      "updatedAt": "2025-08-05T10:01:02.813Z"
+    }
+  ]
+}
