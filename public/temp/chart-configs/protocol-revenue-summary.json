@@ -2,7 +2,7 @@
   "pageId": "protocol-revenue-summary",
   "pageName": "Summary",
   "chartCount": 2,
-  "lastUpdated": "2025-08-01T14:08:23.949Z",
+  "lastUpdated": "2025-08-05T08:13:33.025Z",
   "charts": [
     {
       "id": "chart_1747995887555_9x38uwz",
@@ -57,14 +57,14 @@
       "page": "protocol-revenue-summary",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12535/results.json",
-      "apiKey": "MJYkF0Ej7KXep8UFgBYfj4TaBCwpx1LTQ8KOOm9J&max_age=86400",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/12589/results.json",
+      "apiKey": "oiGI7qFLlC7o3etCqCywaqnYbY2Z2bGFxOOKdJwO&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "protocol_revenue_usd",
+        "yAxis": "dapp revenue",
         "groupBy": "platform",
         "yAxisUnit": "$"
       },
@@ -84,7 +84,7 @@
         }
       },
       "createdAt": "2025-05-23T10:29:00.499Z",
-      "updatedAt": "2025-07-11T08:40:05.431Z"
+      "updatedAt": "2025-08-05T08:06:53.310Z"
     }
   ]
 }
