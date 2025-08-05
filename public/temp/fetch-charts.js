@@ -62,6 +62,9 @@ const MENU_PAGES = {
     { id: "xstocks-traction", name: "Traction", path: "/xstocks/traction" },
     { id: "xstocks-tvl", name: "TVL", path: "/xstocks/tvl" }
   ],
+  "valuation-insights": [
+    { id: "valuation-insights-overview", name: "Overview", path: "/valuation-insights/overview" }
+  ],
   "sf-dashboards": [
     { id: "sf-overview", name: "Overview", path: "/sf-dashboards/overview" },
     { id: "sf-stablecoins", name: "Stablecoins", path: "/sf-dashboards/stablecoins" },

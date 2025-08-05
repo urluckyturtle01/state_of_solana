@@ -33,6 +33,7 @@ export const MENU_OPTIONS: MenuItem[] = [
   { id: 'sf-dashboards', name: 'SF Dashboards', icon: 'chart-bar' },
   { id: 'launchpads', name: 'Launchpads', icon: 'chart-bar' },
   { id: 'xstocks', name: 'Xstocks', icon: 'chart-bar' },
+  { id: 'valuation-insights', name: 'Valuation Insights', icon: 'chart-bar' },
   {
     id: "compute-units",
     name: "Compute Units",
@@ -225,6 +226,13 @@ overview: [
       id: "test",
       name: "Test",
       path: "/test"
+    }
+  ],
+  "valuation-insights": [
+    {
+      id: "valuation-insights-overview",
+      name: "Overview",
+      path: "/valuation-insights/overview"
     }
   ],
 "raydium": [

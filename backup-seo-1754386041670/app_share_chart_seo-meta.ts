@@ -2654,22 +2654,6 @@ export const chartMeta: Record<string, ChartMetadata> = {
       "ogImage": "/og-images/charts/network-usage-chart.png",
       "keywords": "Solana, analytics, charts, blockchain, DeFi, network-usage, dual-axis"
   },
-  "chart_1754038010417_ovdne7u":   {
-      "title": "Protocol Revenue By Segment - State of Solana",
-      "description": "Explore protocol revenue by segment analytics on Solana blockchain",
-      "ogTitle": "Protocol Revenue By Segment",
-      "ogDescription": "Analyze protocol revenue by segment metrics on Solana",
-      "ogImage": "/og-images/charts/metaplex-financials-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, metaplex-financials, bar"
-  },
-  "chart_1754038193098_4bmt821":   {
-      "title": "Protocol Revenue By Asset Type - State of Solana",
-      "description": "Explore protocol revenue by asset type analytics on Solana blockchain",
-      "ogTitle": "Protocol Revenue By Asset Type",
-      "ogDescription": "Analyze protocol revenue by asset type metrics on Solana",
-      "ogImage": "/og-images/charts/metaplex-financials-chart.png",
-      "keywords": "Solana, analytics, charts, blockchain, DeFi, metaplex-financials, bar"
-  },
 };
 
 // Helper function to get metadata for a chart ID

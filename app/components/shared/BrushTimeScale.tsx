@@ -322,6 +322,33 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   value: safeValue
                 };
               });
+          
+          // Ensure line data covers the full brush width by adding boundary points if needed
+          const extendedLineData = [...lineData];
+          
+          if (lineData.length > 0) {
+            const actualDomain = brushDateScale.domain();
+            const firstDataDate = new Date(lineData[0].date);
+            const lastDataDate = new Date(lineData[lineData.length - 1].date);
+            
+            // Add point at the start of brush domain if needed
+            if (actualDomain[0] < firstDataDate) {
+              extendedLineData.unshift({
+                date: actualDomain[0].toISOString(),
+                idx: -1,
+                value: lineData[0].value // Use first data point's value
+              });
+            }
+            
+            // Add point at the end of brush domain if needed
+            if (actualDomain[1] > lastDataDate) {
+              extendedLineData.push({
+                date: actualDomain[1].toISOString(),
+                idx: lineData.length,
+                value: lineData[lineData.length - 1].value // Use last data point's value
+              });
+            }
+          }
               
           // Create a wrapped change handler that prevents the initial render from triggering updates
           const handleBrushChange = (domain: any) => {
@@ -362,7 +389,7 @@ const BrushTimeScale: React.FC<BrushTimeScaleProps> = ({
                   <>
                 {/* Line representing the data */}
                 <LinePath 
-                  data={lineData}
+                  data={extendedLineData}
                   x={(d) => {
                     // Use date-based x-position for smoother lines that follow the pattern
                     // This ensures points are positioned by their actual date values

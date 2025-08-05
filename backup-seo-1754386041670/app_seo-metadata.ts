@@ -1727,50 +1727,6 @@ export const pageMetadata: Record<string, PageMetadata> = {
           }
       ]
   },
-
-  '/valuation-insights/overview':   {
-      "title": "Overview - Valuation Insights Analytics | State of Solana",
-      "description": "Analyze overview metrics for valuation insights on Solana blockchain with comprehensive analytics and insights.",
-      "keywords": "Solana valuation-insights, overview, blockchain analytics, valuation insights metrics",
-      "ogTitle": "Overview - Valuation Insights Analytics",
-      "ogDescription": "Analyze overview metrics for valuation insights on Solana blockchain with comprehensive analytics...",
-      "ogImage": "/og-images/valuation-insights.png",
-      "canonicalPath": "/valuation-insights/overview",
-      "breadcrumbs": [
-          {
-              "name": "Home",
-              "url": "/"
-          },
-          {
-              "name": "Valuation Insights",
-              "url": "/valuation-insights"
-          },
-          {
-              "name": "Overview",
-              "url": "/valuation-insights/overview"
-          }
-      ]
-  },
-
-  '/valuation-insights':   {
-      "title": "Valuation Insights Analytics - Solana Blockchain | State ...",
-      "description": "Comprehensive valuation insights analytics on Solana blockchain including metrics, trends, and performance insights.",
-      "keywords": "Solana valuation-insights, blockchain analytics, valuation insights metrics, DeFi analytics",
-      "ogTitle": "Valuation Insights Analytics - Solana Blockchain | State ...",
-      "ogDescription": "Comprehensive valuation insights analytics on Solana blockchain including metrics, trends, and pe...",
-      "ogImage": "/og-images/valuation-insights.png",
-      "canonicalPath": "/valuation-insights",
-      "breadcrumbs": [
-          {
-              "name": "Home",
-              "url": "/"
-          },
-          {
-              "name": "Valuation Insights",
-              "url": "/valuation-insights"
-          }
-      ]
-  },
 };
 
 // Helper function to get metadata for a specific path
