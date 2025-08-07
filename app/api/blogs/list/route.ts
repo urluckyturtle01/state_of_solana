@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Check for includeDrafts query parameter
+    const { searchParams } = new URL(request.url);
+    const includeDrafts = searchParams.get('includeDrafts') === 'true';
+    
     // Check if AWS credentials are configured
     const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
     const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
@@ -54,8 +59,11 @@ export async function GET() {
             
             if (body) {
               const articleData = JSON.parse(body);
-              // Extract just the blog post metadata (not the full content)
-              articles.push(articleData.blogPost);
+              // Filter based on status - only include published articles unless includeDrafts is true
+              const blogPost = articleData.blogPost;
+              if (includeDrafts || !blogPost.status || blogPost.status === 'published') {
+                articles.push(blogPost);
+              }
             }
           } catch (fileError) {
             console.error(`Error reading ${object.Key}:`, fileError);

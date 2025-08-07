@@ -14,6 +14,8 @@ interface BlogPost {
   slug: string;
   readTime?: string;
   isHero?: boolean;
+  customAuthor?: string;
+  status?: 'draft' | 'published';
   company?: {
     name: string;
     handle: string;
@@ -55,6 +57,8 @@ export default function BlogEditor() {
     slug: '',
     readTime: '5 min read',
     isHero: false,
+    customAuthor: '',
+    status: 'draft',
     company: { name: '', handle: '' }
   });
   
@@ -167,9 +171,17 @@ export default function BlogEditor() {
     }
   };
 
-  const saveBlog = async () => {
-    if (!blogPost.title || !blogPost.excerpt || !blogPost.author) {
-      alert('Please fill in all required fields (title, excerpt, author)');
+  const saveBlog = async (status: 'draft' | 'published' = 'published') => {
+    const finalAuthor = blogPost.author === 'custom' ? blogPost.customAuthor : blogPost.author;
+    
+    // For drafts, only require title. For published, require all fields
+    if (status === 'published' && (!blogPost.title || !blogPost.excerpt || !finalAuthor)) {
+      alert('Please fill in all required fields (title, excerpt, author) before publishing');
+      return;
+    }
+    
+    if (!blogPost.title) {
+      alert('Please enter a title to save the article');
       return;
     }
 
@@ -181,6 +193,8 @@ export default function BlogEditor() {
         body: JSON.stringify({
           blogPost: {
             ...blogPost,
+            author: finalAuthor, // Use the final author name
+            status,
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('en-US', { 
               month: 'short', 
@@ -193,7 +207,8 @@ export default function BlogEditor() {
       });
 
       if (response.ok) {
-        alert('Blog post saved successfully!');
+        const message = status === 'draft' ? 'Article saved as draft!' : 'Article published successfully!';
+        alert(message);
         router.push('/admin');
       } else {
         throw new Error('Failed to save blog post');
@@ -241,11 +256,18 @@ export default function BlogEditor() {
               {isPreview ? 'Edit' : 'Preview'}
             </button>
             <button
-              onClick={saveBlog}
+              onClick={() => saveBlog('draft')}
+              disabled={isSaving}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save Draft'}
+            </button>
+            <button
+              onClick={() => saveBlog('published')}
               disabled={isSaving}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
             >
-              {isSaving ? 'Saving...' : 'Publish'}
+              {isSaving ? 'Publishing...' : 'Publish'}
             </button>
           </div>
         </div>
@@ -264,13 +286,28 @@ export default function BlogEditor() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Author *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     value={blogPost.author || ''}
                     onChange={(e) => setBlogPost(prev => ({ ...prev, author: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                    placeholder="Author name"
-                  />
+                  >
+                    <option value="">Select an author...</option>
+                    <option value="Soham">Soham</option>
+                    <option value="Decal">Decal</option>
+                    <option value="Helius Team">Helius Team</option>
+                    <option value="custom">Custom Author...</option>
+                  </select>
+                  
+                  {/* Custom author input - shown when "custom" is selected */}
+                  {blogPost.author === 'custom' && (
+                    <input
+                      type="text"
+                      value={blogPost.customAuthor || ''}
+                      onChange={(e) => setBlogPost(prev => ({ ...prev, customAuthor: e.target.value }))}
+                      placeholder="Enter custom author name"
+                      className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    />
+                  )}
                 </div>
                 
                 <div>

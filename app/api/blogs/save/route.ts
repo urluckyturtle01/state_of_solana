@@ -4,12 +4,29 @@ export async function POST(request: NextRequest) {
   try {
     const { blogPost, content } = await request.json();
 
-    // Validate required fields
-    if (!blogPost.title || !blogPost.excerpt || !blogPost.author || !blogPost.slug) {
+    // Validate required fields based on status
+    if (!blogPost.title) {
       return NextResponse.json(
-        { error: 'Missing required fields: title, excerpt, author, or slug' },
+        { error: 'Title is required' },
         { status: 400 }
       );
+    }
+
+    // For published articles, require all fields
+    if (blogPost.status === 'published' && (!blogPost.excerpt || !blogPost.author || !blogPost.slug)) {
+      return NextResponse.json(
+        { error: 'Missing required fields for published article: excerpt, author, or slug' },
+        { status: 400 }
+      );
+    }
+
+    // Generate slug if not provided (for drafts)
+    if (!blogPost.slug) {
+      blogPost.slug = blogPost.title
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, '')
+        .replace(/\s+/g, '-')
+        .substring(0, 50);
     }
 
     // Save directly to S3 (primary storage)

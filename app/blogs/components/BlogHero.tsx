@@ -17,8 +17,30 @@ interface BlogHeroProps {
 
 export default function BlogHero({ featuredPost }: BlogHeroProps) {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/50 via-gray-900/50 to-gray-900/20 border border-[0.5px] border-gray-900">
-      <div className="absolute inset-0 bg-black/20"></div>
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 border border-[0.5px] border-gray-800">
+      {/* Main background overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-gray-900/30 to-black/40"></div>
+      
+      {/* Gradient patches for visual interest */}
+      <div className="absolute inset-0">
+        {/* Top-left gradient patch */}
+        <div className="absolute -top-12 -left-12 w-32 h-32 bg-gradient-to-br from-gray-900/20 via-purple-900/15 to-transparent rounded-full blur-3xl"></div>
+        
+        {/* Top-right gradient patch */}
+        <div className="absolute -top-8 -right-16 w-40 h-40 bg-gradient-to-bl from-orange-500/15 via-red-500/10 to-transparent rounded-full blur-3xl"></div>
+        
+        {/* Bottom-left gradient patch */}
+        <div className="absolute -bottom-16 -left-8 w-36 h-36 bg-gradient-to-tr from-green-600/10 via-teal-600/8 to-transparent rounded-full blur-3xl"></div>
+        
+        {/* Bottom-right gradient patch */}
+        <div className="absolute -bottom-12 -right-12 w-44 h-44 bg-gradient-to-tl from-purple-600/12 via-pink-600/8 to-transparent rounded-full blur-3xl"></div>
+        
+        {/* Center accent patch */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-gradient-to-r from-blue-500/8 to-purple-500/8 rounded-full blur-2xl"></div>
+      </div>
+      
+      {/* Subtle noise texture overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-800/5 to-gray-700/10"></div>
       
       <div className="relative px-8 py-12 lg:px-12 lg:py-16">
         {/* Mobile Layout */}
@@ -147,8 +169,17 @@ export default function BlogHero({ featuredPost }: BlogHeroProps) {
         </div>
         
         {/* Decorative Elements */}
-        <div className="absolute top-8 right-8 lg:top-12 lg:right-12 opacity-30">
-          <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gradient-to-br from-orange-500/10 to-red-600/10 rounded-full blur-2xl"></div>
+        <div className="absolute top-8 right-8 lg:top-12 lg:right-12 opacity-20">
+          <div className="w-20 h-20 lg:w-28 lg:h-28 bg-gradient-to-br from-cyan-400/20 via-blue-500/15 to-purple-600/20 rounded-full blur-2xl animate-pulse"></div>
+        </div>
+        
+        {/* Additional floating decorative elements */}
+        <div className="absolute top-16 left-16 lg:top-20 lg:left-20 opacity-15">
+          <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-tr from-emerald-400/20 to-teal-600/15 rounded-full blur-xl"></div>
+        </div>
+        
+        <div className="absolute bottom-16 left-1/3 opacity-10">
+          <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-bl from-pink-400/25 to-rose-600/20 rounded-full blur-xl"></div>
         </div>
       </div>
       

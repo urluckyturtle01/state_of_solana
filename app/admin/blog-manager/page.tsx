@@ -15,6 +15,7 @@ interface BlogPost {
   slug: string;
   readTime?: string;
   isHero?: boolean;
+  status?: 'draft' | 'published';
   company?: {
     name: string;
     handle: string;
@@ -34,7 +35,7 @@ export default function BlogManager() {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch('/api/blogs/list');
+      const response = await fetch('/api/blogs/list?includeDrafts=true');
       if (response.ok) {
         const data = await response.json();
         setArticles(data.articles || []);
@@ -140,16 +141,16 @@ export default function BlogManager() {
               <p className="text-gray-600">Total Articles</p>
             </div>
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-blue-600">
-                {articles.filter(a => a.category === 'depin').length}
+              <h3 className="text-2xl font-bold text-green-600">
+                {articles.filter(a => a.status === 'published' || !a.status).length}
               </h3>
-              <p className="text-gray-600">DePIN Articles</p>
+              <p className="text-gray-600">Published Articles</p>
             </div>
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-green-600">
-                {articles.filter(a => a.category === 'defi').length}
+              <h3 className="text-2xl font-bold text-gray-600">
+                {articles.filter(a => a.status === 'draft').length}
               </h3>
-              <p className="text-gray-600">DeFi Articles</p>
+              <p className="text-gray-600">Draft Articles</p>
             </div>
           </div>
         </div>
@@ -187,6 +188,13 @@ export default function BlogManager() {
                             ★ Hero
                           </span>
                         )}
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          article.status === 'draft' 
+                            ? 'bg-gray-100 text-gray-600' 
+                            : 'bg-green-100 text-green-600'
+                        }`}>
+                          {article.status === 'draft' ? 'Draft' : 'Published'}
+                        </span>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                           getCategoryColor(article.category)
                         }`}>
