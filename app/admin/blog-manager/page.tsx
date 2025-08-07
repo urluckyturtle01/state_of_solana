@@ -28,6 +28,7 @@ export default function BlogManager() {
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [unpublishing, setUnpublishing] = useState<string | null>(null);
 
   useEffect(() => {
     fetchArticles();
@@ -94,6 +95,48 @@ export default function BlogManager() {
       }
     } catch (error) {
       alert('Error toggling hero status: ' + (error as Error).message);
+    }
+  };
+
+  const unpublishArticle = async (slug: string) => {
+    try {
+      setUnpublishing(slug);
+      
+      // First, get the article data
+      const getResponse = await fetch(`/api/blogs/get/${slug}`);
+      if (!getResponse.ok) {
+        throw new Error('Failed to fetch article');
+      }
+      
+      const { article } = await getResponse.json();
+      
+      // Update the status to draft
+      const updatedBlogPost = {
+        ...article.blogPost,
+        status: 'draft'
+      };
+      
+      // Save the updated article
+      const saveResponse = await fetch('/api/blogs/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          blogPost: updatedBlogPost,
+          content: article.content
+        })
+      });
+      
+      if (saveResponse.ok) {
+        alert('Article unpublished successfully! It is now in drafts.');
+        fetchArticles(); // Refresh the list
+      } else {
+        throw new Error('Failed to unpublish article');
+      }
+    } catch (error) {
+      console.error('Error unpublishing article:', error);
+      alert('Error unpublishing article: ' + (error as Error).message);
+    } finally {
+      setUnpublishing(null);
     }
   };
 
@@ -244,6 +287,17 @@ export default function BlogManager() {
                       >
                         {article.isHero ? '★ Hero' : 'Make Hero'}
                       </button>
+                      
+                      {/* Unpublish button - only show for published articles */}
+                      {(article.status === 'published' || !article.status) && (
+                        <button
+                          onClick={() => unpublishArticle(article.slug)}
+                          disabled={unpublishing === article.slug}
+                          className="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200 transition-colors disabled:opacity-50"
+                        >
+                          {unpublishing === article.slug ? 'Unpublishing...' : 'Unpublish'}
+                        </button>
+                      )}
                       
                       <button
                         onClick={() => setDeleteConfirm(article.slug)}
