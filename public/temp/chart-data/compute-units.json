@@ -1,7 +1,7 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "fetchedAt": "2025-08-14T10:24:14.022Z",
+  "fetchedAt": "2025-08-14T11:18:50.696Z",
   "charts": [
     {
       "success": true,
@@ -217,7 +217,7 @@
           "percentage_txns_using_compute_budget": 89.1
         }
       ],
-      "timestamp": 1755167051634,
+      "timestamp": 1755170328554,
       "chartId": "chart_1748087823998_ru1ktw2",
       "title": "Transactions Using Compute Budget Program"
     },
@@ -435,7 +435,7 @@
           "percentage_txns_using_compute_budget": 89.1
         }
       ],
-      "timestamp": 1755167051629,
+      "timestamp": 1755170328556,
       "chartId": "chart_1748088263791_vfj94hw",
       "title": "Daily Compute Budget Usage - In Percentage"
     },
@@ -743,7 +743,7 @@
           "median_unused_cu": 180360
         }
       ],
-      "timestamp": 1755167051646,
+      "timestamp": 1755170328557,
       "chartId": "chart_1748088783904_hypf57i",
       "title": "Avg Cu Allocated & Consumed Per Transaction"
     },
@@ -871,7 +871,7 @@
           "avg_consumed_cu_per_block": 39364481.16928447
         }
       ],
-      "timestamp": 1755167052772,
+      "timestamp": 1755170329592,
       "chartId": "chart_1748088979907_8f6w6d2",
       "title": "Avg Cu Consumed Per Block"
     },
@@ -1239,7 +1239,7 @@
           "max_compute_unit_price_usd": 0.030328471794316914
         }
       ],
-      "timestamp": 1755167052817,
+      "timestamp": 1755170329604,
       "chartId": "chart_1748089483199_dzzkc0m",
       "title": "Avg & Median Cu Price"
     },
@@ -1607,7 +1607,7 @@
           "max_compute_unit_price_usd": 0.030328471794316914
         }
       ],
-      "timestamp": 1755167052781,
+      "timestamp": 1755170329607,
       "chartId": "chart_1748201111110_el5y1pn",
       "title": "Max Cu Price In Single Transaction - Lamports/cu"
     },
@@ -5836,7 +5836,7 @@
           "cu_efficiency": 29.9
         }
       ],
-      "timestamp": 1755167054021,
+      "timestamp": 1755170330696,
       "chartId": "chart_1748201257936_m7dwpx7",
       "title": "Cu Consumed By Ecosystem"
     },
@@ -5928,14 +5928,4243 @@
           "total_cu_consumed": 97648813298820
         }
       ],
-      "timestamp": 1755167053905,
+      "timestamp": 1755170330664,
       "chartId": "chart_1748201444923_71ydpwe",
       "title": "Cu Consumed By Ecosystem - Last 30 Days"
+    },
+    {
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-08-13",
+          "category": "Name Service",
+          "total_cu_requested": 1290679745,
+          "total_cu_consumed": 901136813,
+          "cu_efficiency": 69.8
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Oracle",
+          "total_cu_requested": 1334833685224,
+          "total_cu_consumed": 273501602278,
+          "cu_efficiency": 20.5
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "NFT",
+          "total_cu_requested": 1789327421549,
+          "total_cu_consumed": 1495291198190,
+          "cu_efficiency": 83.6
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Bridge",
+          "total_cu_requested": 9829034354,
+          "total_cu_consumed": 2239646589,
+          "cu_efficiency": 22.8
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Encryption",
+          "total_cu_requested": 200000,
+          "total_cu_consumed": 3517,
+          "cu_efficiency": 1.8
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Governance",
+          "total_cu_requested": 113780238,
+          "total_cu_consumed": 6931797,
+          "cu_efficiency": 6.1
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Mining",
+          "total_cu_requested": 1050589996,
+          "total_cu_consumed": 662579032,
+          "cu_efficiency": 63.1
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Infrastructure",
+          "total_cu_requested": 1933405427,
+          "total_cu_consumed": 1532071214,
+          "cu_efficiency": 79.2
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "DePIN",
+          "total_cu_requested": 35016601779,
+          "total_cu_consumed": 9441372797,
+          "cu_efficiency": 27
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "DeFi",
+          "total_cu_requested": 14124325878412,
+          "total_cu_consumed": 6260561603639,
+          "cu_efficiency": 44.3
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Gaming",
+          "total_cu_requested": 811086306710,
+          "total_cu_consumed": 192885796024,
+          "cu_efficiency": 23.8
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "others",
+          "total_cu_requested": 8902118294770,
+          "total_cu_consumed": 2617347404106,
+          "cu_efficiency": 29.4
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Creator",
+          "total_cu_requested": 300116578,
+          "total_cu_consumed": 275850379,
+          "cu_efficiency": 91.9
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Social Platform",
+          "total_cu_requested": 6323020,
+          "total_cu_consumed": 4254712,
+          "cu_efficiency": 67.3
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Asset Burner",
+          "total_cu_requested": 4695711875,
+          "total_cu_consumed": 1642402546,
+          "cu_efficiency": 35
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "MEV",
+          "total_cu_requested": 1420487121916,
+          "total_cu_consumed": 259985401581,
+          "cu_efficiency": 18.3
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Payments",
+          "total_cu_requested": 3706626588,
+          "total_cu_consumed": 2527212294,
+          "cu_efficiency": 68.2
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Music",
+          "total_cu_requested": 1008535152,
+          "total_cu_consumed": 401927195,
+          "cu_efficiency": 39.9
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Wallet",
+          "total_cu_requested": 228905451,
+          "total_cu_consumed": 147491703,
+          "cu_efficiency": 64.4
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Gambling",
+          "total_cu_requested": 182775324,
+          "total_cu_consumed": 175397171,
+          "cu_efficiency": 96
+        },
+        {
+          "partition_0": "2025-08-13",
+          "category": "Betting",
+          "total_cu_requested": 25236270,
+          "total_cu_consumed": 20406909,
+          "cu_efficiency": 80.9
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Creator",
+          "total_cu_requested": 307621578,
+          "total_cu_consumed": 282005416,
+          "cu_efficiency": 91.7
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Name Service",
+          "total_cu_requested": 586520429,
+          "total_cu_consumed": 404773445,
+          "cu_efficiency": 69
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Mining",
+          "total_cu_requested": 1202395026,
+          "total_cu_consumed": 760157273,
+          "cu_efficiency": 63.2
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Infrastructure",
+          "total_cu_requested": 2131181152,
+          "total_cu_consumed": 1745501460,
+          "cu_efficiency": 81.9
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "NFT",
+          "total_cu_requested": 290883461875,
+          "total_cu_consumed": 69544289900,
+          "cu_efficiency": 23.9
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Oracle",
+          "total_cu_requested": 1418972912766,
+          "total_cu_consumed": 292695003524,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Bridge",
+          "total_cu_requested": 9433982048,
+          "total_cu_consumed": 2356540648,
+          "cu_efficiency": 25
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "others",
+          "total_cu_requested": 9862782968311,
+          "total_cu_consumed": 2870021692951,
+          "cu_efficiency": 29.1
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Gaming",
+          "total_cu_requested": 897370089135,
+          "total_cu_consumed": 211702918234,
+          "cu_efficiency": 23.6
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Betting",
+          "total_cu_requested": 13406858,
+          "total_cu_consumed": 12627584,
+          "cu_efficiency": 94.2
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "DeFi",
+          "total_cu_requested": 13722380771036,
+          "total_cu_consumed": 6083604583570,
+          "cu_efficiency": 44.3
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Music",
+          "total_cu_requested": 901063997,
+          "total_cu_consumed": 370725516,
+          "cu_efficiency": 41.1
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Gambling",
+          "total_cu_requested": 184086047,
+          "total_cu_consumed": 176463613,
+          "cu_efficiency": 95.9
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Asset Burner",
+          "total_cu_requested": 4697910142,
+          "total_cu_consumed": 1585314106,
+          "cu_efficiency": 33.7
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "MEV",
+          "total_cu_requested": 1786463672708,
+          "total_cu_consumed": 350909756717,
+          "cu_efficiency": 19.6
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Social Platform",
+          "total_cu_requested": 11300000,
+          "total_cu_consumed": 8491898,
+          "cu_efficiency": 75.1
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Wallet",
+          "total_cu_requested": 174167121,
+          "total_cu_consumed": 110980156,
+          "cu_efficiency": 63.7
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "DePIN",
+          "total_cu_requested": 29638965702,
+          "total_cu_consumed": 9985106497,
+          "cu_efficiency": 33.7
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Payments",
+          "total_cu_requested": 3273224724,
+          "total_cu_consumed": 2214659215,
+          "cu_efficiency": 67.7
+        },
+        {
+          "partition_0": "2025-08-12",
+          "category": "Governance",
+          "total_cu_requested": 57139968,
+          "total_cu_consumed": 5317379,
+          "cu_efficiency": 9.3
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "others",
+          "total_cu_requested": 10467113399895,
+          "total_cu_consumed": 2854748933858,
+          "cu_efficiency": 27.3
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Oracle",
+          "total_cu_requested": 1267897065091,
+          "total_cu_consumed": 283609120163,
+          "cu_efficiency": 22.4
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Music",
+          "total_cu_requested": 996862342,
+          "total_cu_consumed": 417339563,
+          "cu_efficiency": 41.9
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Creator",
+          "total_cu_requested": 310765459,
+          "total_cu_consumed": 282835637,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Betting",
+          "total_cu_requested": 18233722,
+          "total_cu_consumed": 16665215,
+          "cu_efficiency": 91.4
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Infrastructure",
+          "total_cu_requested": 2583764136,
+          "total_cu_consumed": 2094018679,
+          "cu_efficiency": 81
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Gambling",
+          "total_cu_requested": 45238017,
+          "total_cu_consumed": 42243518,
+          "cu_efficiency": 93.4
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Social Platform",
+          "total_cu_requested": 11752755,
+          "total_cu_consumed": 3877938,
+          "cu_efficiency": 33
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "DeFi",
+          "total_cu_requested": 14848350041696,
+          "total_cu_consumed": 6506442781298,
+          "cu_efficiency": 43.8
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Bridge",
+          "total_cu_requested": 9806476434,
+          "total_cu_consumed": 2414060795,
+          "cu_efficiency": 24.6
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Name Service",
+          "total_cu_requested": 356148272,
+          "total_cu_consumed": 242995965,
+          "cu_efficiency": 68.2
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "MEV",
+          "total_cu_requested": 1564612840474,
+          "total_cu_consumed": 295028995564,
+          "cu_efficiency": 18.9
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Asset Burner",
+          "total_cu_requested": 4421398874,
+          "total_cu_consumed": 1486055135,
+          "cu_efficiency": 33.6
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "DePIN",
+          "total_cu_requested": 32601510236,
+          "total_cu_consumed": 10616443595,
+          "cu_efficiency": 32.6
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "NFT",
+          "total_cu_requested": 286529299306,
+          "total_cu_consumed": 70233038158,
+          "cu_efficiency": 24.5
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Wallet",
+          "total_cu_requested": 322231892,
+          "total_cu_consumed": 218758799,
+          "cu_efficiency": 67.9
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Gaming",
+          "total_cu_requested": 968688188740,
+          "total_cu_consumed": 223936175469,
+          "cu_efficiency": 23.1
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Payments",
+          "total_cu_requested": 3309490706,
+          "total_cu_consumed": 2255368479,
+          "cu_efficiency": 68.1
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Mining",
+          "total_cu_requested": 1191585730,
+          "total_cu_consumed": 757157192,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-08-11",
+          "category": "Governance",
+          "total_cu_requested": 132132852,
+          "total_cu_consumed": 10587927,
+          "cu_efficiency": 8
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "MEV",
+          "total_cu_requested": 943880929675,
+          "total_cu_consumed": 173380760999,
+          "cu_efficiency": 18.4
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Creator",
+          "total_cu_requested": 434055294,
+          "total_cu_consumed": 300379660,
+          "cu_efficiency": 69.2
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Bridge",
+          "total_cu_requested": 8442488687,
+          "total_cu_consumed": 2133730343,
+          "cu_efficiency": 25.3
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Gaming",
+          "total_cu_requested": 931756019458,
+          "total_cu_consumed": 217004397935,
+          "cu_efficiency": 23.3
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Asset Burner",
+          "total_cu_requested": 4553606073,
+          "total_cu_consumed": 1592862543,
+          "cu_efficiency": 35
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Wallet",
+          "total_cu_requested": 365429594,
+          "total_cu_consumed": 240635230,
+          "cu_efficiency": 65.8
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Payments",
+          "total_cu_requested": 2920773773,
+          "total_cu_consumed": 2046638115,
+          "cu_efficiency": 70.1
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "NFT",
+          "total_cu_requested": 343455898889,
+          "total_cu_consumed": 76880475226,
+          "cu_efficiency": 22.4
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Name Service",
+          "total_cu_requested": 431839067,
+          "total_cu_consumed": 293548831,
+          "cu_efficiency": 68
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Gambling",
+          "total_cu_requested": 15758697,
+          "total_cu_consumed": 15162211,
+          "cu_efficiency": 96.2
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "others",
+          "total_cu_requested": 10210620756101,
+          "total_cu_consumed": 2837825287086,
+          "cu_efficiency": 27.8
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Mining",
+          "total_cu_requested": 1193011622,
+          "total_cu_consumed": 756015851,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Oracle",
+          "total_cu_requested": 1247778710774,
+          "total_cu_consumed": 262488880519,
+          "cu_efficiency": 21
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Betting",
+          "total_cu_requested": 29445596,
+          "total_cu_consumed": 27294748,
+          "cu_efficiency": 92.7
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "DePIN",
+          "total_cu_requested": 36192935248,
+          "total_cu_consumed": 9018313285,
+          "cu_efficiency": 24.9
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Infrastructure",
+          "total_cu_requested": 2912302806,
+          "total_cu_consumed": 2375032632,
+          "cu_efficiency": 81.6
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "DeFi",
+          "total_cu_requested": 12793905643156,
+          "total_cu_consumed": 5939414942189,
+          "cu_efficiency": 46.4
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Governance",
+          "total_cu_requested": 22326964,
+          "total_cu_consumed": 1876229,
+          "cu_efficiency": 8.4
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Music",
+          "total_cu_requested": 643686038,
+          "total_cu_consumed": 270346415,
+          "cu_efficiency": 42
+        },
+        {
+          "partition_0": "2025-08-10",
+          "category": "Social Platform",
+          "total_cu_requested": 9600000,
+          "total_cu_consumed": 5202057,
+          "cu_efficiency": 54.2
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "DePIN",
+          "total_cu_requested": 27468357305,
+          "total_cu_consumed": 9328513561,
+          "cu_efficiency": 34
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Wallet",
+          "total_cu_requested": 340711252,
+          "total_cu_consumed": 224170882,
+          "cu_efficiency": 65.8
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "others",
+          "total_cu_requested": 10507397522121,
+          "total_cu_consumed": 2865916978802,
+          "cu_efficiency": 27.3
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Asset Burner",
+          "total_cu_requested": 4973842737,
+          "total_cu_consumed": 1607055245,
+          "cu_efficiency": 32.3
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Music",
+          "total_cu_requested": 848175540,
+          "total_cu_consumed": 355395327,
+          "cu_efficiency": 41.9
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Gambling",
+          "total_cu_requested": 26291250,
+          "total_cu_consumed": 25069020,
+          "cu_efficiency": 95.4
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Creator",
+          "total_cu_requested": 268022846,
+          "total_cu_consumed": 238270180,
+          "cu_efficiency": 88.9
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "NFT",
+          "total_cu_requested": 267263459353,
+          "total_cu_consumed": 55459290058,
+          "cu_efficiency": 20.8
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Name Service",
+          "total_cu_requested": 359305386,
+          "total_cu_consumed": 246507282,
+          "cu_efficiency": 68.6
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "MEV",
+          "total_cu_requested": 1617283785900,
+          "total_cu_consumed": 303504415605,
+          "cu_efficiency": 18.8
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Oracle",
+          "total_cu_requested": 1289803193505,
+          "total_cu_consumed": 255706013312,
+          "cu_efficiency": 19.8
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Infrastructure",
+          "total_cu_requested": 3393366813,
+          "total_cu_consumed": 2717231887,
+          "cu_efficiency": 80.1
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Social Platform",
+          "total_cu_requested": 16942255,
+          "total_cu_consumed": 12369165,
+          "cu_efficiency": 73
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "DeFi",
+          "total_cu_requested": 14345273818951,
+          "total_cu_consumed": 6273123432392,
+          "cu_efficiency": 43.7
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Betting",
+          "total_cu_requested": 22139648,
+          "total_cu_consumed": 20715851,
+          "cu_efficiency": 93.6
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Bridge",
+          "total_cu_requested": 10086353035,
+          "total_cu_consumed": 2491287807,
+          "cu_efficiency": 24.7
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Gaming",
+          "total_cu_requested": 1003751495024,
+          "total_cu_consumed": 222915097433,
+          "cu_efficiency": 22.2
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Governance",
+          "total_cu_requested": 56920852,
+          "total_cu_consumed": 3746067,
+          "cu_efficiency": 6.6
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Mining",
+          "total_cu_requested": 1197569029,
+          "total_cu_consumed": 759145362,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-08-09",
+          "category": "Payments",
+          "total_cu_requested": 3201193990,
+          "total_cu_consumed": 2262896508,
+          "cu_efficiency": 70.7
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Betting",
+          "total_cu_requested": 14401650,
+          "total_cu_consumed": 13577233,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "others",
+          "total_cu_requested": 11037314420781,
+          "total_cu_consumed": 2983702872447,
+          "cu_efficiency": 27
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Asset Burner",
+          "total_cu_requested": 4545901526,
+          "total_cu_consumed": 1548155382,
+          "cu_efficiency": 34.1
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Governance",
+          "total_cu_requested": 85438999,
+          "total_cu_consumed": 6117489,
+          "cu_efficiency": 7.2
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Music",
+          "total_cu_requested": 1503163207,
+          "total_cu_consumed": 613337404,
+          "cu_efficiency": 40.8
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Wallet",
+          "total_cu_requested": 234807192,
+          "total_cu_consumed": 152368372,
+          "cu_efficiency": 64.9
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Name Service",
+          "total_cu_requested": 368399137,
+          "total_cu_consumed": 253287771,
+          "cu_efficiency": 68.8
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Gaming",
+          "total_cu_requested": 893412827783,
+          "total_cu_consumed": 209899280531,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "DeFi",
+          "total_cu_requested": 14970648724030,
+          "total_cu_consumed": 6794944456670,
+          "cu_efficiency": 45.4
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "DePIN",
+          "total_cu_requested": 30198099520,
+          "total_cu_consumed": 11121904072,
+          "cu_efficiency": 36.8
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Social Platform",
+          "total_cu_requested": 3159445,
+          "total_cu_consumed": 2299379,
+          "cu_efficiency": 72.8
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "MEV",
+          "total_cu_requested": 1666711125049,
+          "total_cu_consumed": 315287691598,
+          "cu_efficiency": 18.9
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "NFT",
+          "total_cu_requested": 306185880687,
+          "total_cu_consumed": 60935280627,
+          "cu_efficiency": 19.9
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Payments",
+          "total_cu_requested": 3603066326,
+          "total_cu_consumed": 2419489499,
+          "cu_efficiency": 67.2
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Gambling",
+          "total_cu_requested": 89792722,
+          "total_cu_consumed": 86477992,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Oracle",
+          "total_cu_requested": 1298091613219,
+          "total_cu_consumed": 275148373562,
+          "cu_efficiency": 21.2
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Infrastructure",
+          "total_cu_requested": 4204647668,
+          "total_cu_consumed": 3319656195,
+          "cu_efficiency": 79
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Creator",
+          "total_cu_requested": 297544263,
+          "total_cu_consumed": 274289856,
+          "cu_efficiency": 92.2
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Bridge",
+          "total_cu_requested": 9053093302,
+          "total_cu_consumed": 2201671484,
+          "cu_efficiency": 24.3
+        },
+        {
+          "partition_0": "2025-08-08",
+          "category": "Mining",
+          "total_cu_requested": 1023996594,
+          "total_cu_consumed": 649134456,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Gaming",
+          "total_cu_requested": 892204884141,
+          "total_cu_consumed": 211012382969,
+          "cu_efficiency": 23.7
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Betting",
+          "total_cu_requested": 19351771,
+          "total_cu_consumed": 18253125,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "DeFi",
+          "total_cu_requested": 14887976695990,
+          "total_cu_consumed": 6355157119085,
+          "cu_efficiency": 42.7
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Governance",
+          "total_cu_requested": 130909850,
+          "total_cu_consumed": 10485070,
+          "cu_efficiency": 8
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Gambling",
+          "total_cu_requested": 95695887,
+          "total_cu_consumed": 92189571,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Asset Burner",
+          "total_cu_requested": 4503911373,
+          "total_cu_consumed": 1518607778,
+          "cu_efficiency": 33.7
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Music",
+          "total_cu_requested": 1433214838,
+          "total_cu_consumed": 573302191,
+          "cu_efficiency": 40
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "NFT",
+          "total_cu_requested": 153818742839,
+          "total_cu_consumed": 45868355604,
+          "cu_efficiency": 29.8
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Oracle",
+          "total_cu_requested": 1336293576542,
+          "total_cu_consumed": 282309187133,
+          "cu_efficiency": 21.1
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Name Service",
+          "total_cu_requested": 416115706,
+          "total_cu_consumed": 292761657,
+          "cu_efficiency": 70.4
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Social Platform",
+          "total_cu_requested": 20776765,
+          "total_cu_consumed": 15936644,
+          "cu_efficiency": 76.7
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "DePIN",
+          "total_cu_requested": 35918046281,
+          "total_cu_consumed": 13135732968,
+          "cu_efficiency": 36.6
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Wallet",
+          "total_cu_requested": 372434766,
+          "total_cu_consumed": 185556285,
+          "cu_efficiency": 49.8
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "MEV",
+          "total_cu_requested": 2116520643657,
+          "total_cu_consumed": 438636554643,
+          "cu_efficiency": 20.7
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Payments",
+          "total_cu_requested": 3599649783,
+          "total_cu_consumed": 2463862493,
+          "cu_efficiency": 68.4
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Infrastructure",
+          "total_cu_requested": 4849710872,
+          "total_cu_consumed": 3777220875,
+          "cu_efficiency": 77.9
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Bridge",
+          "total_cu_requested": 9325017864,
+          "total_cu_consumed": 2247189448,
+          "cu_efficiency": 24.1
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "others",
+          "total_cu_requested": 12012906570515,
+          "total_cu_consumed": 3320097278273,
+          "cu_efficiency": 27.6
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Creator",
+          "total_cu_requested": 316563838,
+          "total_cu_consumed": 282777088,
+          "cu_efficiency": 89.3
+        },
+        {
+          "partition_0": "2025-08-07",
+          "category": "Mining",
+          "total_cu_requested": 1174530267,
+          "total_cu_consumed": 745601987,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Governance",
+          "total_cu_requested": 81008336,
+          "total_cu_consumed": 8443880,
+          "cu_efficiency": 10.4
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Music",
+          "total_cu_requested": 886706222,
+          "total_cu_consumed": 355215979,
+          "cu_efficiency": 40.1
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Oracle",
+          "total_cu_requested": 1329060529571,
+          "total_cu_consumed": 275946523579,
+          "cu_efficiency": 20.8
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Payments",
+          "total_cu_requested": 3325862694,
+          "total_cu_consumed": 2255822232,
+          "cu_efficiency": 67.8
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Infrastructure",
+          "total_cu_requested": 5965829402,
+          "total_cu_consumed": 4564985495,
+          "cu_efficiency": 76.5
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Name Service",
+          "total_cu_requested": 331781929,
+          "total_cu_consumed": 228640635,
+          "cu_efficiency": 68.9
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Mining",
+          "total_cu_requested": 1837976783,
+          "total_cu_consumed": 686231190,
+          "cu_efficiency": 37.3
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Asset Burner",
+          "total_cu_requested": 4151452990,
+          "total_cu_consumed": 1438350149,
+          "cu_efficiency": 34.6
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Gaming",
+          "total_cu_requested": 905991117679,
+          "total_cu_consumed": 212717627746,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Gambling",
+          "total_cu_requested": 153992013,
+          "total_cu_consumed": 148149461,
+          "cu_efficiency": 96.2
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Betting",
+          "total_cu_requested": 7858251,
+          "total_cu_consumed": 7086306,
+          "cu_efficiency": 90.2
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Wallet",
+          "total_cu_requested": 272643591,
+          "total_cu_consumed": 192597074,
+          "cu_efficiency": 70.6
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "DeFi",
+          "total_cu_requested": 13829861312120,
+          "total_cu_consumed": 6061240946213,
+          "cu_efficiency": 43.8
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "others",
+          "total_cu_requested": 10314305275699,
+          "total_cu_consumed": 2735877571731,
+          "cu_efficiency": 26.5
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "DePIN",
+          "total_cu_requested": 36286768034,
+          "total_cu_consumed": 9271626299,
+          "cu_efficiency": 25.6
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Bridge",
+          "total_cu_requested": 7650296528,
+          "total_cu_consumed": 1806085236,
+          "cu_efficiency": 23.6
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "NFT",
+          "total_cu_requested": 198942716582,
+          "total_cu_consumed": 57176191666,
+          "cu_efficiency": 28.7
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Creator",
+          "total_cu_requested": 301380630,
+          "total_cu_consumed": 219728072,
+          "cu_efficiency": 72.9
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "Social Platform",
+          "total_cu_requested": 19300000,
+          "total_cu_consumed": 14923147,
+          "cu_efficiency": 77.3
+        },
+        {
+          "partition_0": "2025-08-06",
+          "category": "MEV",
+          "total_cu_requested": 1571160959739,
+          "total_cu_consumed": 319018898601,
+          "cu_efficiency": 20.3
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Creator",
+          "total_cu_requested": 300350647,
+          "total_cu_consumed": 271699715,
+          "cu_efficiency": 90.5
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Asset Burner",
+          "total_cu_requested": 4433619685,
+          "total_cu_consumed": 1535602510,
+          "cu_efficiency": 34.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Oracle",
+          "total_cu_requested": 1307542808847,
+          "total_cu_consumed": 283274523343,
+          "cu_efficiency": 21.7
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Mining",
+          "total_cu_requested": 5144864000,
+          "total_cu_consumed": 743614663,
+          "cu_efficiency": 14.5
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "MEV",
+          "total_cu_requested": 1769133959715,
+          "total_cu_consumed": 337647602177,
+          "cu_efficiency": 19.1
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Governance",
+          "total_cu_requested": 53650612,
+          "total_cu_consumed": 3975132,
+          "cu_efficiency": 7.4
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "DeFi",
+          "total_cu_requested": 14877555726259,
+          "total_cu_consumed": 6690390947794,
+          "cu_efficiency": 45
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Wallet",
+          "total_cu_requested": 165098532,
+          "total_cu_consumed": 115613921,
+          "cu_efficiency": 70
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Music",
+          "total_cu_requested": 919318635,
+          "total_cu_consumed": 379597358,
+          "cu_efficiency": 41.3
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Social Platform",
+          "total_cu_requested": 36254075,
+          "total_cu_consumed": 17240882,
+          "cu_efficiency": 47.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Betting",
+          "total_cu_requested": 16967662,
+          "total_cu_consumed": 15826971,
+          "cu_efficiency": 93.3
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "DePIN",
+          "total_cu_requested": 38903842856,
+          "total_cu_consumed": 11528839623,
+          "cu_efficiency": 29.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "NFT",
+          "total_cu_requested": 223945641819,
+          "total_cu_consumed": 57703179925,
+          "cu_efficiency": 25.8
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Bridge",
+          "total_cu_requested": 7433656714,
+          "total_cu_consumed": 1792353752,
+          "cu_efficiency": 24.1
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Infrastructure",
+          "total_cu_requested": 8213549269,
+          "total_cu_consumed": 5801308375,
+          "cu_efficiency": 70.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Gaming",
+          "total_cu_requested": 889962709284,
+          "total_cu_consumed": 209505966497,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Gambling",
+          "total_cu_requested": 115610928,
+          "total_cu_consumed": 110477511,
+          "cu_efficiency": 95.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "others",
+          "total_cu_requested": 12290285666518,
+          "total_cu_consumed": 3166295308032,
+          "cu_efficiency": 25.8
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Name Service",
+          "total_cu_requested": 308341922,
+          "total_cu_consumed": 214516032,
+          "cu_efficiency": 69.6
+        },
+        {
+          "partition_0": "2025-08-05",
+          "category": "Payments",
+          "total_cu_requested": 3256904435,
+          "total_cu_consumed": 2162334233,
+          "cu_efficiency": 66.4
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Social Platform",
+          "total_cu_requested": 2400000,
+          "total_cu_consumed": 388382,
+          "cu_efficiency": 16.2
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Mining",
+          "total_cu_requested": 1265801832,
+          "total_cu_consumed": 804457583,
+          "cu_efficiency": 63.6
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Betting",
+          "total_cu_requested": 8069814,
+          "total_cu_consumed": 7599939,
+          "cu_efficiency": 94.2
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Gaming",
+          "total_cu_requested": 894855265263,
+          "total_cu_consumed": 210691793057,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Bridge",
+          "total_cu_requested": 6982210097,
+          "total_cu_consumed": 1754781597,
+          "cu_efficiency": 25.1
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "DeFi",
+          "total_cu_requested": 14891284580347,
+          "total_cu_consumed": 7148467927582,
+          "cu_efficiency": 48
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Oracle",
+          "total_cu_requested": 1258745075167,
+          "total_cu_consumed": 283166195794,
+          "cu_efficiency": 22.5
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Wallet",
+          "total_cu_requested": 132486048,
+          "total_cu_consumed": 92870762,
+          "cu_efficiency": 70.1
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Payments",
+          "total_cu_requested": 3385496048,
+          "total_cu_consumed": 2182771178,
+          "cu_efficiency": 64.5
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Music",
+          "total_cu_requested": 918570003,
+          "total_cu_consumed": 386475442,
+          "cu_efficiency": 42.1
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Name Service",
+          "total_cu_requested": 720319014,
+          "total_cu_consumed": 508401977,
+          "cu_efficiency": 70.6
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Infrastructure",
+          "total_cu_requested": 7896404416,
+          "total_cu_consumed": 5992517244,
+          "cu_efficiency": 75.9
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Asset Burner",
+          "total_cu_requested": 4218354589,
+          "total_cu_consumed": 1486920910,
+          "cu_efficiency": 35.2
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "MEV",
+          "total_cu_requested": 2051340943777,
+          "total_cu_consumed": 394103504976,
+          "cu_efficiency": 19.2
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Governance",
+          "total_cu_requested": 147537166,
+          "total_cu_consumed": 13003996,
+          "cu_efficiency": 8.8
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "NFT",
+          "total_cu_requested": 198105498922,
+          "total_cu_consumed": 54788170704,
+          "cu_efficiency": 27.7
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "others",
+          "total_cu_requested": 13118256518700,
+          "total_cu_consumed": 3414520754357,
+          "cu_efficiency": 26
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Gambling",
+          "total_cu_requested": 126957603,
+          "total_cu_consumed": 121684399,
+          "cu_efficiency": 95.8
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "DePIN",
+          "total_cu_requested": 29805859372,
+          "total_cu_consumed": 9959507630,
+          "cu_efficiency": 33.4
+        },
+        {
+          "partition_0": "2025-08-04",
+          "category": "Creator",
+          "total_cu_requested": 415371160,
+          "total_cu_consumed": 378010618,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Music",
+          "total_cu_requested": 1874376456,
+          "total_cu_consumed": 717958192,
+          "cu_efficiency": 38.3
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Name Service",
+          "total_cu_requested": 508113698,
+          "total_cu_consumed": 358732816,
+          "cu_efficiency": 70.6
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "MEV",
+          "total_cu_requested": 1433918416932,
+          "total_cu_consumed": 294977653662,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Wallet",
+          "total_cu_requested": 91457332,
+          "total_cu_consumed": 65317206,
+          "cu_efficiency": 71.4
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Betting",
+          "total_cu_requested": 20608936,
+          "total_cu_consumed": 19237492,
+          "cu_efficiency": 93.3
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Bridge",
+          "total_cu_requested": 5567149929,
+          "total_cu_consumed": 1454440513,
+          "cu_efficiency": 26.1
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Gambling",
+          "total_cu_requested": 127754934,
+          "total_cu_consumed": 122560641,
+          "cu_efficiency": 95.9
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Social Platform",
+          "total_cu_requested": 8548065,
+          "total_cu_consumed": 3733253,
+          "cu_efficiency": 43.7
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Oracle",
+          "total_cu_requested": 1221684957413,
+          "total_cu_consumed": 264570298417,
+          "cu_efficiency": 21.7
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Governance",
+          "total_cu_requested": 87796412,
+          "total_cu_consumed": 7576741,
+          "cu_efficiency": 8.6
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "NFT",
+          "total_cu_requested": 183646367155,
+          "total_cu_consumed": 54778776600,
+          "cu_efficiency": 29.8
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Asset Burner",
+          "total_cu_requested": 4565294091,
+          "total_cu_consumed": 1489336673,
+          "cu_efficiency": 32.6
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "DeFi",
+          "total_cu_requested": 14086199908373,
+          "total_cu_consumed": 6529828878674,
+          "cu_efficiency": 46.4
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Infrastructure",
+          "total_cu_requested": 9493245747,
+          "total_cu_consumed": 7103951063,
+          "cu_efficiency": 74.8
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Mining",
+          "total_cu_requested": 2103442000,
+          "total_cu_consumed": 1322846313,
+          "cu_efficiency": 62.9
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Creator",
+          "total_cu_requested": 390231902,
+          "total_cu_consumed": 353040972,
+          "cu_efficiency": 90.5
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Payments",
+          "total_cu_requested": 2707097239,
+          "total_cu_consumed": 1841566219,
+          "cu_efficiency": 68
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "others",
+          "total_cu_requested": 11212839511057,
+          "total_cu_consumed": 2797108042599,
+          "cu_efficiency": 24.9
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "DePIN",
+          "total_cu_requested": 28854968041,
+          "total_cu_consumed": 10185184956,
+          "cu_efficiency": 35.3
+        },
+        {
+          "partition_0": "2025-08-03",
+          "category": "Gaming",
+          "total_cu_requested": 873258854868,
+          "total_cu_consumed": 205201888578,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Asset Burner",
+          "total_cu_requested": 3715864872,
+          "total_cu_consumed": 1288216539,
+          "cu_efficiency": 34.7
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Payments",
+          "total_cu_requested": 2763169573,
+          "total_cu_consumed": 1924130088,
+          "cu_efficiency": 69.6
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Wallet",
+          "total_cu_requested": 82015114,
+          "total_cu_consumed": 58328365,
+          "cu_efficiency": 71.1
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Social Platform",
+          "total_cu_requested": 25929220,
+          "total_cu_consumed": 9716640,
+          "cu_efficiency": 37.5
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Music",
+          "total_cu_requested": 1179224392,
+          "total_cu_consumed": 471916245,
+          "cu_efficiency": 40
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "DeFi",
+          "total_cu_requested": 14084329958223,
+          "total_cu_consumed": 6540369854061,
+          "cu_efficiency": 46.4
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Gaming",
+          "total_cu_requested": 858873788778,
+          "total_cu_consumed": 203358495713,
+          "cu_efficiency": 23.7
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Infrastructure",
+          "total_cu_requested": 10632302085,
+          "total_cu_consumed": 7951687185,
+          "cu_efficiency": 74.8
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "NFT",
+          "total_cu_requested": 171754710921,
+          "total_cu_consumed": 57098242749,
+          "cu_efficiency": 33.2
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Oracle",
+          "total_cu_requested": 1303869247087,
+          "total_cu_consumed": 275106850154,
+          "cu_efficiency": 21.1
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Creator",
+          "total_cu_requested": 339128680,
+          "total_cu_consumed": 304861434,
+          "cu_efficiency": 89.9
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "MEV",
+          "total_cu_requested": 1294299127757,
+          "total_cu_consumed": 180301907901,
+          "cu_efficiency": 13.9
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Gambling",
+          "total_cu_requested": 98607227,
+          "total_cu_consumed": 95004115,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Betting",
+          "total_cu_requested": 16853259,
+          "total_cu_consumed": 15387879,
+          "cu_efficiency": 91.3
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "DePIN",
+          "total_cu_requested": 32035338049,
+          "total_cu_consumed": 12839834444,
+          "cu_efficiency": 40.1
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Mining",
+          "total_cu_requested": 2183479314,
+          "total_cu_consumed": 1386448608,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "others",
+          "total_cu_requested": 9827834177728,
+          "total_cu_consumed": 2494066853745,
+          "cu_efficiency": 25.4
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Bridge",
+          "total_cu_requested": 5458103186,
+          "total_cu_consumed": 1386096327,
+          "cu_efficiency": 25.4
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Name Service",
+          "total_cu_requested": 218181542,
+          "total_cu_consumed": 152209928,
+          "cu_efficiency": 69.8
+        },
+        {
+          "partition_0": "2025-08-02",
+          "category": "Governance",
+          "total_cu_requested": 132015248,
+          "total_cu_consumed": 16237982,
+          "cu_efficiency": 12.3
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Wallet",
+          "total_cu_requested": 50402615,
+          "total_cu_consumed": 35825260,
+          "cu_efficiency": 71.1
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Creator",
+          "total_cu_requested": 419733123,
+          "total_cu_consumed": 370750493,
+          "cu_efficiency": 88.3
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Gaming",
+          "total_cu_requested": 854314917115,
+          "total_cu_consumed": 202453711242,
+          "cu_efficiency": 23.7
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Betting",
+          "total_cu_requested": 21827386,
+          "total_cu_consumed": 20588663,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Infrastructure",
+          "total_cu_requested": 12257142334,
+          "total_cu_consumed": 9125441380,
+          "cu_efficiency": 74.4
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "others",
+          "total_cu_requested": 10949784424601,
+          "total_cu_consumed": 2881638660556,
+          "cu_efficiency": 26.3
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Governance",
+          "total_cu_requested": 171111846,
+          "total_cu_consumed": 12345767,
+          "cu_efficiency": 7.2
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Bridge",
+          "total_cu_requested": 6475700622,
+          "total_cu_consumed": 1694670375,
+          "cu_efficiency": 26.2
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "MEV",
+          "total_cu_requested": 1453983971129,
+          "total_cu_consumed": 236591202882,
+          "cu_efficiency": 16.3
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Oracle",
+          "total_cu_requested": 1374532865633,
+          "total_cu_consumed": 304262917481,
+          "cu_efficiency": 22.1
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Gambling",
+          "total_cu_requested": 624913834,
+          "total_cu_consumed": 602303852,
+          "cu_efficiency": 96.4
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Asset Burner",
+          "total_cu_requested": 3589529031,
+          "total_cu_consumed": 1264775638,
+          "cu_efficiency": 35.2
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Name Service",
+          "total_cu_requested": 315182725,
+          "total_cu_consumed": 209672944,
+          "cu_efficiency": 66.5
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "NFT",
+          "total_cu_requested": 234842056528,
+          "total_cu_consumed": 59081490236,
+          "cu_efficiency": 25.2
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Mining",
+          "total_cu_requested": 2293650000,
+          "total_cu_consumed": 1455058161,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Social Platform",
+          "total_cu_requested": 2194555,
+          "total_cu_consumed": 1995050,
+          "cu_efficiency": 90.9
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Music",
+          "total_cu_requested": 1317137883,
+          "total_cu_consumed": 532325400,
+          "cu_efficiency": 40.4
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Payments",
+          "total_cu_requested": 3324628692,
+          "total_cu_consumed": 2320227364,
+          "cu_efficiency": 69.8
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "Encryption",
+          "total_cu_requested": 200000,
+          "total_cu_consumed": 3517,
+          "cu_efficiency": 1.8
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "DePIN",
+          "total_cu_requested": 48281265028,
+          "total_cu_consumed": 23585842256,
+          "cu_efficiency": 48.9
+        },
+        {
+          "partition_0": "2025-08-01",
+          "category": "DeFi",
+          "total_cu_requested": 15194309655618,
+          "total_cu_consumed": 7393811028728,
+          "cu_efficiency": 48.7
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Betting",
+          "total_cu_requested": 15208633,
+          "total_cu_consumed": 14349221,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Governance",
+          "total_cu_requested": 178195330,
+          "total_cu_consumed": 16335301,
+          "cu_efficiency": 9.2
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Wallet",
+          "total_cu_requested": 46056751,
+          "total_cu_consumed": 30539281,
+          "cu_efficiency": 66.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Payments",
+          "total_cu_requested": 3390950148,
+          "total_cu_consumed": 2109962766,
+          "cu_efficiency": 62.2
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Gambling",
+          "total_cu_requested": 103481788,
+          "total_cu_consumed": 99647790,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "DePIN",
+          "total_cu_requested": 39964219208,
+          "total_cu_consumed": 17754913257,
+          "cu_efficiency": 44.4
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Music",
+          "total_cu_requested": 969509322,
+          "total_cu_consumed": 412820132,
+          "cu_efficiency": 42.6
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "NFT",
+          "total_cu_requested": 244807408868,
+          "total_cu_consumed": 64037686436,
+          "cu_efficiency": 26.2
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Gaming",
+          "total_cu_requested": 910173741721,
+          "total_cu_consumed": 208660252908,
+          "cu_efficiency": 22.9
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Name Service",
+          "total_cu_requested": 216538669,
+          "total_cu_consumed": 145017804,
+          "cu_efficiency": 67
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Oracle",
+          "total_cu_requested": 1381420492870,
+          "total_cu_consumed": 294300665604,
+          "cu_efficiency": 21.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "others",
+          "total_cu_requested": 13163230735417,
+          "total_cu_consumed": 3171783990739,
+          "cu_efficiency": 24.1
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "MEV",
+          "total_cu_requested": 2196590220331,
+          "total_cu_consumed": 446557409593,
+          "cu_efficiency": 20.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "DeFi",
+          "total_cu_requested": 15266952817204,
+          "total_cu_consumed": 6934535767340,
+          "cu_efficiency": 45.4
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Asset Burner",
+          "total_cu_requested": 4346462821,
+          "total_cu_consumed": 1508310550,
+          "cu_efficiency": 34.7
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Bridge",
+          "total_cu_requested": 6976609255,
+          "total_cu_consumed": 1760937075,
+          "cu_efficiency": 25.2
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Infrastructure",
+          "total_cu_requested": 13893793163,
+          "total_cu_consumed": 10329639277,
+          "cu_efficiency": 74.3
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Mining",
+          "total_cu_requested": 2195646251,
+          "total_cu_consumed": 1395332215,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Social Platform",
+          "total_cu_requested": 5823005,
+          "total_cu_consumed": 4801031,
+          "cu_efficiency": 82.4
+        },
+        {
+          "partition_0": "2025-07-31",
+          "category": "Creator",
+          "total_cu_requested": 322141581,
+          "total_cu_consumed": 286599965,
+          "cu_efficiency": 89
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Payments",
+          "total_cu_requested": 3266451482,
+          "total_cu_consumed": 2193189682,
+          "cu_efficiency": 67.1
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Betting",
+          "total_cu_requested": 19329190,
+          "total_cu_consumed": 18230194,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Creator",
+          "total_cu_requested": 316138889,
+          "total_cu_consumed": 276150223,
+          "cu_efficiency": 87.4
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Social Platform",
+          "total_cu_requested": 8446195,
+          "total_cu_consumed": 6966208,
+          "cu_efficiency": 82.5
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Governance",
+          "total_cu_requested": 124343600,
+          "total_cu_consumed": 10639633,
+          "cu_efficiency": 8.6
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "DeFi",
+          "total_cu_requested": 14450325191366,
+          "total_cu_consumed": 6577417097268,
+          "cu_efficiency": 45.5
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "NFT",
+          "total_cu_requested": 225417002250,
+          "total_cu_consumed": 61384187353,
+          "cu_efficiency": 27.2
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "others",
+          "total_cu_requested": 14243004400281,
+          "total_cu_consumed": 3464234264080,
+          "cu_efficiency": 24.3
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Oracle",
+          "total_cu_requested": 1470327490084,
+          "total_cu_consumed": 298546632088,
+          "cu_efficiency": 20.3
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "MEV",
+          "total_cu_requested": 1663519542910,
+          "total_cu_consumed": 343119906678,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Name Service",
+          "total_cu_requested": 160782969,
+          "total_cu_consumed": 111805416,
+          "cu_efficiency": 69.5
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Mining",
+          "total_cu_requested": 1034796000,
+          "total_cu_consumed": 651925752,
+          "cu_efficiency": 63
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Music",
+          "total_cu_requested": 3027812197,
+          "total_cu_consumed": 457660357,
+          "cu_efficiency": 15.1
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Bridge",
+          "total_cu_requested": 6727139385,
+          "total_cu_consumed": 1665038333,
+          "cu_efficiency": 24.8
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Gambling",
+          "total_cu_requested": 308561076,
+          "total_cu_consumed": 296917159,
+          "cu_efficiency": 96.2
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Wallet",
+          "total_cu_requested": 37773215,
+          "total_cu_consumed": 24845211,
+          "cu_efficiency": 65.8
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "DePIN",
+          "total_cu_requested": 34562780376,
+          "total_cu_consumed": 13844085616,
+          "cu_efficiency": 40.1
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Gaming",
+          "total_cu_requested": 935788809330,
+          "total_cu_consumed": 208434558251,
+          "cu_efficiency": 22.3
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Infrastructure",
+          "total_cu_requested": 14577439677,
+          "total_cu_consumed": 12070300580,
+          "cu_efficiency": 82.8
+        },
+        {
+          "partition_0": "2025-07-30",
+          "category": "Asset Burner",
+          "total_cu_requested": 4236940537,
+          "total_cu_consumed": 1477169665,
+          "cu_efficiency": 34.9
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Wallet",
+          "total_cu_requested": 36495004,
+          "total_cu_consumed": 24912536,
+          "cu_efficiency": 68.3
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Name Service",
+          "total_cu_requested": 198126362,
+          "total_cu_consumed": 136382126,
+          "cu_efficiency": 68.8
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "DeFi",
+          "total_cu_requested": 14941634558448,
+          "total_cu_consumed": 6676378962768,
+          "cu_efficiency": 44.7
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Gambling",
+          "total_cu_requested": 95362427,
+          "total_cu_consumed": 91695494,
+          "cu_efficiency": 96.2
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Payments",
+          "total_cu_requested": 3041069946,
+          "total_cu_consumed": 2129348583,
+          "cu_efficiency": 70
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Music",
+          "total_cu_requested": 1381652945,
+          "total_cu_consumed": 452507149,
+          "cu_efficiency": 32.8
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "NFT",
+          "total_cu_requested": 284270327107,
+          "total_cu_consumed": 70245670224,
+          "cu_efficiency": 24.7
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "others",
+          "total_cu_requested": 13632343142124,
+          "total_cu_consumed": 3367021224890,
+          "cu_efficiency": 24.7
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Infrastructure",
+          "total_cu_requested": 16018276998,
+          "total_cu_consumed": 14591257228,
+          "cu_efficiency": 91.1
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "DePIN",
+          "total_cu_requested": 49981514688,
+          "total_cu_consumed": 21517332463,
+          "cu_efficiency": 43.1
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Governance",
+          "total_cu_requested": 74479792,
+          "total_cu_consumed": 7234801,
+          "cu_efficiency": 9.7
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "MEV",
+          "total_cu_requested": 2444948142514,
+          "total_cu_consumed": 500351233717,
+          "cu_efficiency": 20.5
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Mining",
+          "total_cu_requested": 1424079995,
+          "total_cu_consumed": 903554656,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Betting",
+          "total_cu_requested": 15664798,
+          "total_cu_consumed": 14777495,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Asset Burner",
+          "total_cu_requested": 4251221058,
+          "total_cu_consumed": 1500714047,
+          "cu_efficiency": 35.3
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Social Platform",
+          "total_cu_requested": 16900000,
+          "total_cu_consumed": 13708805,
+          "cu_efficiency": 81.1
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Gaming",
+          "total_cu_requested": 948042774711,
+          "total_cu_consumed": 210084604333,
+          "cu_efficiency": 22.2
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Creator",
+          "total_cu_requested": 332286036,
+          "total_cu_consumed": 292759183,
+          "cu_efficiency": 88.1
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Bridge",
+          "total_cu_requested": 7329654846,
+          "total_cu_consumed": 1975269287,
+          "cu_efficiency": 26.9
+        },
+        {
+          "partition_0": "2025-07-29",
+          "category": "Oracle",
+          "total_cu_requested": 1482583415294,
+          "total_cu_consumed": 295563660330,
+          "cu_efficiency": 19.9
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Social Platform",
+          "total_cu_requested": 20557215,
+          "total_cu_consumed": 15765391,
+          "cu_efficiency": 76.7
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Name Service",
+          "total_cu_requested": 190611555,
+          "total_cu_consumed": 128892421,
+          "cu_efficiency": 67.6
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Bridge",
+          "total_cu_requested": 8166589101,
+          "total_cu_consumed": 2264262595,
+          "cu_efficiency": 27.7
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Asset Burner",
+          "total_cu_requested": 4861982167,
+          "total_cu_consumed": 1685033112,
+          "cu_efficiency": 34.7
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Oracle",
+          "total_cu_requested": 1468029106369,
+          "total_cu_consumed": 301935467358,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "DeFi",
+          "total_cu_requested": 16561632785011,
+          "total_cu_consumed": 7284932487227,
+          "cu_efficiency": 44
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Mining",
+          "total_cu_requested": 1581128000,
+          "total_cu_consumed": 985783461,
+          "cu_efficiency": 62.3
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "NFT",
+          "total_cu_requested": 311358390027,
+          "total_cu_consumed": 72587331474,
+          "cu_efficiency": 23.3
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "MEV",
+          "total_cu_requested": 2980318789731,
+          "total_cu_consumed": 624950860639,
+          "cu_efficiency": 21
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Gaming",
+          "total_cu_requested": 948922493185,
+          "total_cu_consumed": 211630947195,
+          "cu_efficiency": 22.3
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Betting",
+          "total_cu_requested": 14297727,
+          "total_cu_consumed": 12827112,
+          "cu_efficiency": 89.7
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Payments",
+          "total_cu_requested": 3322736081,
+          "total_cu_consumed": 2384683151,
+          "cu_efficiency": 71.8
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Infrastructure",
+          "total_cu_requested": 16025304067,
+          "total_cu_consumed": 14499777790,
+          "cu_efficiency": 90.5
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Gambling",
+          "total_cu_requested": 198046732,
+          "total_cu_consumed": 190334632,
+          "cu_efficiency": 96.1
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Creator",
+          "total_cu_requested": 320114236,
+          "total_cu_consumed": 289112238,
+          "cu_efficiency": 90.3
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Music",
+          "total_cu_requested": 983582957,
+          "total_cu_consumed": 403202738,
+          "cu_efficiency": 41
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "others",
+          "total_cu_requested": 15492460015545,
+          "total_cu_consumed": 4139452250648,
+          "cu_efficiency": 26.7
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Governance",
+          "total_cu_requested": 82108852,
+          "total_cu_consumed": 7039725,
+          "cu_efficiency": 8.6
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "DePIN",
+          "total_cu_requested": 66425729480,
+          "total_cu_consumed": 28292505206,
+          "cu_efficiency": 42.6
+        },
+        {
+          "partition_0": "2025-07-28",
+          "category": "Wallet",
+          "total_cu_requested": 75407811,
+          "total_cu_consumed": 48422476,
+          "cu_efficiency": 64.2
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Name Service",
+          "total_cu_requested": 128232944,
+          "total_cu_consumed": 81680866,
+          "cu_efficiency": 63.7
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Mining",
+          "total_cu_requested": 1333114702,
+          "total_cu_consumed": 843841757,
+          "cu_efficiency": 63.3
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Asset Burner",
+          "total_cu_requested": 3994078987,
+          "total_cu_consumed": 1394555671,
+          "cu_efficiency": 34.9
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "others",
+          "total_cu_requested": 11842286381050,
+          "total_cu_consumed": 3408557893375,
+          "cu_efficiency": 28.8
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Music",
+          "total_cu_requested": 678707431,
+          "total_cu_consumed": 282790194,
+          "cu_efficiency": 41.7
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Governance",
+          "total_cu_requested": 62482722,
+          "total_cu_consumed": 4602865,
+          "cu_efficiency": 7.4
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Gambling",
+          "total_cu_requested": 177100600,
+          "total_cu_consumed": 169135387,
+          "cu_efficiency": 95.5
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Wallet",
+          "total_cu_requested": 17135498,
+          "total_cu_consumed": 10905119,
+          "cu_efficiency": 63.6
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "NFT",
+          "total_cu_requested": 372939629074,
+          "total_cu_consumed": 83987957376,
+          "cu_efficiency": 22.5
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "MEV",
+          "total_cu_requested": 1462399264856,
+          "total_cu_consumed": 301560590811,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Payments",
+          "total_cu_requested": 2807566293,
+          "total_cu_consumed": 2064714917,
+          "cu_efficiency": 73.5
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Gaming",
+          "total_cu_requested": 942326289295,
+          "total_cu_consumed": 210010628785,
+          "cu_efficiency": 22.3
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Oracle",
+          "total_cu_requested": 1548774933324,
+          "total_cu_consumed": 282410467742,
+          "cu_efficiency": 18.2
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Bridge",
+          "total_cu_requested": 7553480260,
+          "total_cu_consumed": 2157145815,
+          "cu_efficiency": 28.6
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Social Platform",
+          "total_cu_requested": 11632100,
+          "total_cu_consumed": 8101356,
+          "cu_efficiency": 69.6
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Betting",
+          "total_cu_requested": 16992074,
+          "total_cu_consumed": 15347046,
+          "cu_efficiency": 90.3
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Creator",
+          "total_cu_requested": 354070952,
+          "total_cu_consumed": 325519555,
+          "cu_efficiency": 91.9
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "Infrastructure",
+          "total_cu_requested": 16993613101,
+          "total_cu_consumed": 15421943098,
+          "cu_efficiency": 90.8
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "DeFi",
+          "total_cu_requested": 14595213624312,
+          "total_cu_consumed": 6573371451998,
+          "cu_efficiency": 45
+        },
+        {
+          "partition_0": "2025-07-27",
+          "category": "DePIN",
+          "total_cu_requested": 43481228805,
+          "total_cu_consumed": 13035898937,
+          "cu_efficiency": 30
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Asset Burner",
+          "total_cu_requested": 4445634369,
+          "total_cu_consumed": 1516133951,
+          "cu_efficiency": 34.1
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "DeFi",
+          "total_cu_requested": 15016210022686,
+          "total_cu_consumed": 6446420902792,
+          "cu_efficiency": 42.9
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Mining",
+          "total_cu_requested": 1205056759,
+          "total_cu_consumed": 762521611,
+          "cu_efficiency": 63.3
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Betting",
+          "total_cu_requested": 21423126,
+          "total_cu_consumed": 19586184,
+          "cu_efficiency": 91.4
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "others",
+          "total_cu_requested": 11960020810863,
+          "total_cu_consumed": 3154915027589,
+          "cu_efficiency": 26.4
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Payments",
+          "total_cu_requested": 2980914146,
+          "total_cu_consumed": 2249092843,
+          "cu_efficiency": 75.4
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Oracle",
+          "total_cu_requested": 1469517409558,
+          "total_cu_consumed": 282729499165,
+          "cu_efficiency": 19.2
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Creator",
+          "total_cu_requested": 313127851,
+          "total_cu_consumed": 270205564,
+          "cu_efficiency": 86.3
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "NFT",
+          "total_cu_requested": 348670330713,
+          "total_cu_consumed": 80745844143,
+          "cu_efficiency": 23.2
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Gambling",
+          "total_cu_requested": 96615079,
+          "total_cu_consumed": 91302921,
+          "cu_efficiency": 94.5
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "MEV",
+          "total_cu_requested": 1548866020124,
+          "total_cu_consumed": 312751181127,
+          "cu_efficiency": 20.2
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "DePIN",
+          "total_cu_requested": 42082860806,
+          "total_cu_consumed": 12159779785,
+          "cu_efficiency": 28.9
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Gaming",
+          "total_cu_requested": 937663172724,
+          "total_cu_consumed": 210171453114,
+          "cu_efficiency": 22.4
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Bridge",
+          "total_cu_requested": 7345694578,
+          "total_cu_consumed": 2069743468,
+          "cu_efficiency": 28.2
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Music",
+          "total_cu_requested": 598598378,
+          "total_cu_consumed": 240887395,
+          "cu_efficiency": 40.2
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Infrastructure",
+          "total_cu_requested": 18456906546,
+          "total_cu_consumed": 16726225014,
+          "cu_efficiency": 90.6
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Wallet",
+          "total_cu_requested": 70012411,
+          "total_cu_consumed": 47159207,
+          "cu_efficiency": 67.4
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Governance",
+          "total_cu_requested": 124948612,
+          "total_cu_consumed": 11007424,
+          "cu_efficiency": 8.8
+        },
+        {
+          "partition_0": "2025-07-26",
+          "category": "Name Service",
+          "total_cu_requested": 158174249,
+          "total_cu_consumed": 106344939,
+          "cu_efficiency": 67.2
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "DePIN",
+          "total_cu_requested": 40902753681,
+          "total_cu_consumed": 10948429299,
+          "cu_efficiency": 26.8
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Mining",
+          "total_cu_requested": 1195938195,
+          "total_cu_consumed": 758119573,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "NFT",
+          "total_cu_requested": 428997724282,
+          "total_cu_consumed": 87435715540,
+          "cu_efficiency": 20.4
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Governance",
+          "total_cu_requested": 189264148,
+          "total_cu_consumed": 17249448,
+          "cu_efficiency": 9.1
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Infrastructure",
+          "total_cu_requested": 19478471682,
+          "total_cu_consumed": 17615683993,
+          "cu_efficiency": 90.4
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Wallet",
+          "total_cu_requested": 42101285,
+          "total_cu_consumed": 28947050,
+          "cu_efficiency": 68.8
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "MEV",
+          "total_cu_requested": 2051093348509,
+          "total_cu_consumed": 410963618817,
+          "cu_efficiency": 20
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Asset Burner",
+          "total_cu_requested": 4247818951,
+          "total_cu_consumed": 1448447057,
+          "cu_efficiency": 34.1
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Social Platform",
+          "total_cu_requested": 9508230,
+          "total_cu_consumed": 7416095,
+          "cu_efficiency": 78
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Oracle",
+          "total_cu_requested": 1469938703415,
+          "total_cu_consumed": 303187145700,
+          "cu_efficiency": 20.6
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Betting",
+          "total_cu_requested": 14027882,
+          "total_cu_consumed": 13228935,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Payments",
+          "total_cu_requested": 4781931287,
+          "total_cu_consumed": 3677087283,
+          "cu_efficiency": 76.9
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Creator",
+          "total_cu_requested": 295595597,
+          "total_cu_consumed": 235696623,
+          "cu_efficiency": 79.7
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Gaming",
+          "total_cu_requested": 900986512907,
+          "total_cu_consumed": 211579495862,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Encryption",
+          "total_cu_requested": 420000,
+          "total_cu_consumed": 4942,
+          "cu_efficiency": 1.2
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Gambling",
+          "total_cu_requested": 152485872,
+          "total_cu_consumed": 146294498,
+          "cu_efficiency": 95.9
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "DeFi",
+          "total_cu_requested": 17436261328748,
+          "total_cu_consumed": 7200960788681,
+          "cu_efficiency": 41.3
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "others",
+          "total_cu_requested": 13110615365989,
+          "total_cu_consumed": 3700961648339,
+          "cu_efficiency": 28.2
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Name Service",
+          "total_cu_requested": 194036445,
+          "total_cu_consumed": 128093105,
+          "cu_efficiency": 66
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Music",
+          "total_cu_requested": 1178582588,
+          "total_cu_consumed": 461660041,
+          "cu_efficiency": 39.2
+        },
+        {
+          "partition_0": "2025-07-25",
+          "category": "Bridge",
+          "total_cu_requested": 7119625175,
+          "total_cu_consumed": 1945696831,
+          "cu_efficiency": 27.3
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Payments",
+          "total_cu_requested": 5505543000,
+          "total_cu_consumed": 4232055090,
+          "cu_efficiency": 76.9
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Gaming",
+          "total_cu_requested": 880175448917,
+          "total_cu_consumed": 205349524870,
+          "cu_efficiency": 23.3
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Music",
+          "total_cu_requested": 648172883,
+          "total_cu_consumed": 282758410,
+          "cu_efficiency": 43.6
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Asset Burner",
+          "total_cu_requested": 4586610566,
+          "total_cu_consumed": 1566059337,
+          "cu_efficiency": 34.1
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Bridge",
+          "total_cu_requested": 7817535456,
+          "total_cu_consumed": 2036372842,
+          "cu_efficiency": 26
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "NFT",
+          "total_cu_requested": 317763342079,
+          "total_cu_consumed": 69950522426,
+          "cu_efficiency": 22
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Governance",
+          "total_cu_requested": 111722672,
+          "total_cu_consumed": 8099705,
+          "cu_efficiency": 7.2
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "DePIN",
+          "total_cu_requested": 37089260858,
+          "total_cu_consumed": 14617965381,
+          "cu_efficiency": 39.4
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Name Service",
+          "total_cu_requested": 263550177,
+          "total_cu_consumed": 179292809,
+          "cu_efficiency": 68
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "MEV",
+          "total_cu_requested": 3313486327213,
+          "total_cu_consumed": 639665129187,
+          "cu_efficiency": 19.3
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Social Platform",
+          "total_cu_requested": 11433775,
+          "total_cu_consumed": 5907228,
+          "cu_efficiency": 51.7
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Infrastructure",
+          "total_cu_requested": 19820107183,
+          "total_cu_consumed": 18043888307,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "DeFi",
+          "total_cu_requested": 17203938000866,
+          "total_cu_consumed": 7595823475513,
+          "cu_efficiency": 44.2
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Creator",
+          "total_cu_requested": 310056847,
+          "total_cu_consumed": 276202195,
+          "cu_efficiency": 89.1
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "others",
+          "total_cu_requested": 13984392040293,
+          "total_cu_consumed": 3722788101610,
+          "cu_efficiency": 26.6
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Betting",
+          "total_cu_requested": 29649419,
+          "total_cu_consumed": 27964512,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Oracle",
+          "total_cu_requested": 1488294051203,
+          "total_cu_consumed": 305333417394,
+          "cu_efficiency": 20.5
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Mining",
+          "total_cu_requested": 1192552922,
+          "total_cu_consumed": 754075156,
+          "cu_efficiency": 63.2
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Wallet",
+          "total_cu_requested": 104341431,
+          "total_cu_consumed": 73452682,
+          "cu_efficiency": 70.4
+        },
+        {
+          "partition_0": "2025-07-24",
+          "category": "Gambling",
+          "total_cu_requested": 315003472,
+          "total_cu_consumed": 302490981,
+          "cu_efficiency": 96
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Wallet",
+          "total_cu_requested": 97533801,
+          "total_cu_consumed": 67113224,
+          "cu_efficiency": 68.8
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "NFT",
+          "total_cu_requested": 308033142493,
+          "total_cu_consumed": 69940974186,
+          "cu_efficiency": 22.7
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Governance",
+          "total_cu_requested": 144824038,
+          "total_cu_consumed": 9578807,
+          "cu_efficiency": 6.6
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Gaming",
+          "total_cu_requested": 882245597206,
+          "total_cu_consumed": 200920681329,
+          "cu_efficiency": 22.8
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Asset Burner",
+          "total_cu_requested": 5009272064,
+          "total_cu_consumed": 1666466635,
+          "cu_efficiency": 33.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Payments",
+          "total_cu_requested": 4504704347,
+          "total_cu_consumed": 3438651514,
+          "cu_efficiency": 76.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "DeFi",
+          "total_cu_requested": 16471437620857,
+          "total_cu_consumed": 7200726124553,
+          "cu_efficiency": 43.7
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Betting",
+          "total_cu_requested": 64906763,
+          "total_cu_consumed": 61229810,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Oracle",
+          "total_cu_requested": 1391370545837,
+          "total_cu_consumed": 312937615322,
+          "cu_efficiency": 22.5
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Bridge",
+          "total_cu_requested": 8601064756,
+          "total_cu_consumed": 2202331814,
+          "cu_efficiency": 25.6
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Encryption",
+          "total_cu_requested": 12868,
+          "total_cu_consumed": 3517,
+          "cu_efficiency": 27.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "others",
+          "total_cu_requested": 12546981965468,
+          "total_cu_consumed": 3339077231650,
+          "cu_efficiency": 26.6
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Mining",
+          "total_cu_requested": 1208411236,
+          "total_cu_consumed": 763683247,
+          "cu_efficiency": 63.2
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Name Service",
+          "total_cu_requested": 477657320,
+          "total_cu_consumed": 321037216,
+          "cu_efficiency": 67.2
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "MEV",
+          "total_cu_requested": 3003042053579,
+          "total_cu_consumed": 559963735505,
+          "cu_efficiency": 18.6
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Music",
+          "total_cu_requested": 724343252,
+          "total_cu_consumed": 328676949,
+          "cu_efficiency": 45.4
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Infrastructure",
+          "total_cu_requested": 21244167310,
+          "total_cu_consumed": 19325994219,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Social Platform",
+          "total_cu_requested": 2840000,
+          "total_cu_consumed": 1757862,
+          "cu_efficiency": 61.9
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Creator",
+          "total_cu_requested": 356718830,
+          "total_cu_consumed": 322078116,
+          "cu_efficiency": 90.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "DePIN",
+          "total_cu_requested": 35197089728,
+          "total_cu_consumed": 13842177878,
+          "cu_efficiency": 39.3
+        },
+        {
+          "partition_0": "2025-07-23",
+          "category": "Gambling",
+          "total_cu_requested": 243230409,
+          "total_cu_consumed": 234558858,
+          "cu_efficiency": 96.4
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Bridge",
+          "total_cu_requested": 9323062124,
+          "total_cu_consumed": 2321603731,
+          "cu_efficiency": 24.9
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Payments",
+          "total_cu_requested": 3270651164,
+          "total_cu_consumed": 2288542617,
+          "cu_efficiency": 70
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "others",
+          "total_cu_requested": 12412340501148,
+          "total_cu_consumed": 3499673677860,
+          "cu_efficiency": 28.2
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Oracle",
+          "total_cu_requested": 1378655005717,
+          "total_cu_consumed": 323662668252,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "DePIN",
+          "total_cu_requested": 31518955057,
+          "total_cu_consumed": 11062696529,
+          "cu_efficiency": 35.1
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Creator",
+          "total_cu_requested": 248391102,
+          "total_cu_consumed": 219657468,
+          "cu_efficiency": 88.4
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Wallet",
+          "total_cu_requested": 70863323,
+          "total_cu_consumed": 49892990,
+          "cu_efficiency": 70.4
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Asset Burner",
+          "total_cu_requested": 5812971611,
+          "total_cu_consumed": 1859531899,
+          "cu_efficiency": 32
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Infrastructure",
+          "total_cu_requested": 30836899439,
+          "total_cu_consumed": 28056141605,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Mining",
+          "total_cu_requested": 1195332852,
+          "total_cu_consumed": 753532583,
+          "cu_efficiency": 63
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Betting",
+          "total_cu_requested": 28682000,
+          "total_cu_consumed": 27053824,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Gambling",
+          "total_cu_requested": 594468297,
+          "total_cu_consumed": 572222556,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Gaming",
+          "total_cu_requested": 879962412834,
+          "total_cu_consumed": 200207468990,
+          "cu_efficiency": 22.8
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "DeFi",
+          "total_cu_requested": 25367634344123,
+          "total_cu_consumed": 7695564428688,
+          "cu_efficiency": 30.3
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Music",
+          "total_cu_requested": 1133005003,
+          "total_cu_consumed": 489717815,
+          "cu_efficiency": 43.2
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "MEV",
+          "total_cu_requested": 2703294221603,
+          "total_cu_consumed": 515826660986,
+          "cu_efficiency": 19.1
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Social Platform",
+          "total_cu_requested": 16690215,
+          "total_cu_consumed": 4787544,
+          "cu_efficiency": 28.7
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Name Service",
+          "total_cu_requested": 265908288,
+          "total_cu_consumed": 178528539,
+          "cu_efficiency": 67.1
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "NFT",
+          "total_cu_requested": 334822452645,
+          "total_cu_consumed": 77282643885,
+          "cu_efficiency": 23.1
+        },
+        {
+          "partition_0": "2025-07-22",
+          "category": "Governance",
+          "total_cu_requested": 106096750,
+          "total_cu_consumed": 11280576,
+          "cu_efficiency": 10.6
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Wallet",
+          "total_cu_requested": 89033659,
+          "total_cu_consumed": 55416400,
+          "cu_efficiency": 62.2
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Creator",
+          "total_cu_requested": 451496959,
+          "total_cu_consumed": 390852008,
+          "cu_efficiency": 86.6
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Social Platform",
+          "total_cu_requested": 34115295,
+          "total_cu_consumed": 25692015,
+          "cu_efficiency": 75.3
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Asset Burner",
+          "total_cu_requested": 5940423733,
+          "total_cu_consumed": 1997075280,
+          "cu_efficiency": 33.6
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "others",
+          "total_cu_requested": 12374301896876,
+          "total_cu_consumed": 3414317500521,
+          "cu_efficiency": 27.6
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "DeFi",
+          "total_cu_requested": 18772693024400,
+          "total_cu_consumed": 7380757316202,
+          "cu_efficiency": 39.3
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Betting",
+          "total_cu_requested": 23638352,
+          "total_cu_consumed": 22147333,
+          "cu_efficiency": 93.7
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Payments",
+          "total_cu_requested": 3649028653,
+          "total_cu_consumed": 2662651314,
+          "cu_efficiency": 73
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "MEV",
+          "total_cu_requested": 2793519182264,
+          "total_cu_consumed": 520019626887,
+          "cu_efficiency": 18.6
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Infrastructure",
+          "total_cu_requested": 25914798535,
+          "total_cu_consumed": 23583220234,
+          "cu_efficiency": 91
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "DePIN",
+          "total_cu_requested": 35097468254,
+          "total_cu_consumed": 14146919211,
+          "cu_efficiency": 40.3
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Name Service",
+          "total_cu_requested": 311429390,
+          "total_cu_consumed": 186648175,
+          "cu_efficiency": 59.9
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Mining",
+          "total_cu_requested": 1201417548,
+          "total_cu_consumed": 761258135,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Music",
+          "total_cu_requested": 649027598,
+          "total_cu_consumed": 286867208,
+          "cu_efficiency": 44.2
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Oracle",
+          "total_cu_requested": 1347572489978,
+          "total_cu_consumed": 316353846695,
+          "cu_efficiency": 23.5
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Bridge",
+          "total_cu_requested": 9311349945,
+          "total_cu_consumed": 2409477738,
+          "cu_efficiency": 25.9
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Gaming",
+          "total_cu_requested": 870461010960,
+          "total_cu_consumed": 198937211147,
+          "cu_efficiency": 22.9
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Governance",
+          "total_cu_requested": 85061454,
+          "total_cu_consumed": 7072208,
+          "cu_efficiency": 8.3
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "Gambling",
+          "total_cu_requested": 220364255,
+          "total_cu_consumed": 211970431,
+          "cu_efficiency": 96.2
+        },
+        {
+          "partition_0": "2025-07-21",
+          "category": "NFT",
+          "total_cu_requested": 462637940903,
+          "total_cu_consumed": 95778435825,
+          "cu_efficiency": 20.7
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "others",
+          "total_cu_requested": 12533509667804,
+          "total_cu_consumed": 3287785982317,
+          "cu_efficiency": 26.2
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Creator",
+          "total_cu_requested": 395603414,
+          "total_cu_consumed": 363348269,
+          "cu_efficiency": 91.8
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Social Platform",
+          "total_cu_requested": 9300000,
+          "total_cu_consumed": 7263379,
+          "cu_efficiency": 78.1
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Gaming",
+          "total_cu_requested": 882584180474,
+          "total_cu_consumed": 199624122373,
+          "cu_efficiency": 22.6
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Music",
+          "total_cu_requested": 756391982,
+          "total_cu_consumed": 332267536,
+          "cu_efficiency": 43.9
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Governance",
+          "total_cu_requested": 70912618,
+          "total_cu_consumed": 6093505,
+          "cu_efficiency": 8.6
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Betting",
+          "total_cu_requested": 33176234,
+          "total_cu_consumed": 31291831,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Infrastructure",
+          "total_cu_requested": 28453568736,
+          "total_cu_consumed": 26100078229,
+          "cu_efficiency": 91.7
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Payments",
+          "total_cu_requested": 2877091522,
+          "total_cu_consumed": 2144662355,
+          "cu_efficiency": 74.5
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Asset Burner",
+          "total_cu_requested": 6098027074,
+          "total_cu_consumed": 1698805761,
+          "cu_efficiency": 27.9
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "MEV",
+          "total_cu_requested": 2609694070198,
+          "total_cu_consumed": 505250705835,
+          "cu_efficiency": 19.4
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "DeFi",
+          "total_cu_requested": 17316772094050,
+          "total_cu_consumed": 7679055554385,
+          "cu_efficiency": 44.3
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Bridge",
+          "total_cu_requested": 8369971580,
+          "total_cu_consumed": 2314328957,
+          "cu_efficiency": 27.7
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "DePIN",
+          "total_cu_requested": 31865440926,
+          "total_cu_consumed": 11854078954,
+          "cu_efficiency": 37.2
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Mining",
+          "total_cu_requested": 1516583394,
+          "total_cu_consumed": 959827005,
+          "cu_efficiency": 63.3
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "NFT",
+          "total_cu_requested": 256571964684,
+          "total_cu_consumed": 63479451676,
+          "cu_efficiency": 24.7
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Wallet",
+          "total_cu_requested": 41998925,
+          "total_cu_consumed": 28163752,
+          "cu_efficiency": 67.1
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Oracle",
+          "total_cu_requested": 1300426609343,
+          "total_cu_consumed": 321215136732,
+          "cu_efficiency": 24.7
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Gambling",
+          "total_cu_requested": 333856421,
+          "total_cu_consumed": 321826675,
+          "cu_efficiency": 96.4
+        },
+        {
+          "partition_0": "2025-07-20",
+          "category": "Name Service",
+          "total_cu_requested": 130522732,
+          "total_cu_consumed": 86396599,
+          "cu_efficiency": 66.2
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Name Service",
+          "total_cu_requested": 155557797,
+          "total_cu_consumed": 105864528,
+          "cu_efficiency": 68.1
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Music",
+          "total_cu_requested": 598446504,
+          "total_cu_consumed": 268226770,
+          "cu_efficiency": 44.8
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Mining",
+          "total_cu_requested": 1191508552,
+          "total_cu_consumed": 755137614,
+          "cu_efficiency": 63.4
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Governance",
+          "total_cu_requested": 90130036,
+          "total_cu_consumed": 12866881,
+          "cu_efficiency": 14.3
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Oracle",
+          "total_cu_requested": 1292029381035,
+          "total_cu_consumed": 314679524007,
+          "cu_efficiency": 24.4
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Gaming",
+          "total_cu_requested": 891986106614,
+          "total_cu_consumed": 201922725495,
+          "cu_efficiency": 22.6
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "NFT",
+          "total_cu_requested": 301707313541,
+          "total_cu_consumed": 68996129547,
+          "cu_efficiency": 22.9
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Gambling",
+          "total_cu_requested": 145629476,
+          "total_cu_consumed": 140277693,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Creator",
+          "total_cu_requested": 334156934,
+          "total_cu_consumed": 307595988,
+          "cu_efficiency": 92.1
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Wallet",
+          "total_cu_requested": 24217813,
+          "total_cu_consumed": 16936308,
+          "cu_efficiency": 69.9
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "others",
+          "total_cu_requested": 11787268774950,
+          "total_cu_consumed": 3058085779118,
+          "cu_efficiency": 25.9
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Betting",
+          "total_cu_requested": 20212587,
+          "total_cu_consumed": 19058479,
+          "cu_efficiency": 94.3
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Payments",
+          "total_cu_requested": 2504767492,
+          "total_cu_consumed": 1839660442,
+          "cu_efficiency": 73.4
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Bridge",
+          "total_cu_requested": 7146478785,
+          "total_cu_consumed": 1883668332,
+          "cu_efficiency": 26.4
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "DePIN",
+          "total_cu_requested": 32121916915,
+          "total_cu_consumed": 11855325741,
+          "cu_efficiency": 36.9
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "DeFi",
+          "total_cu_requested": 17526353424568,
+          "total_cu_consumed": 7516818377450,
+          "cu_efficiency": 42.9
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "MEV",
+          "total_cu_requested": 2641864174484,
+          "total_cu_consumed": 506873542466,
+          "cu_efficiency": 19.2
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Social Platform",
+          "total_cu_requested": 26739420,
+          "total_cu_consumed": 13426188,
+          "cu_efficiency": 50.2
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Asset Burner",
+          "total_cu_requested": 5206548532,
+          "total_cu_consumed": 1436328270,
+          "cu_efficiency": 27.6
+        },
+        {
+          "partition_0": "2025-07-19",
+          "category": "Infrastructure",
+          "total_cu_requested": 33247805878,
+          "total_cu_consumed": 30578258856,
+          "cu_efficiency": 92
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Infrastructure",
+          "total_cu_requested": 34888160621,
+          "total_cu_consumed": 31934295538,
+          "cu_efficiency": 91.5
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "NFT",
+          "total_cu_requested": 195119922724,
+          "total_cu_consumed": 57467622713,
+          "cu_efficiency": 29.5
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "DePIN",
+          "total_cu_requested": 36001070288,
+          "total_cu_consumed": 14329947353,
+          "cu_efficiency": 39.8
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Bridge",
+          "total_cu_requested": 8321656550,
+          "total_cu_consumed": 2371058343,
+          "cu_efficiency": 28.5
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Name Service",
+          "total_cu_requested": 140905693,
+          "total_cu_consumed": 91930286,
+          "cu_efficiency": 65.2
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Governance",
+          "total_cu_requested": 126308078,
+          "total_cu_consumed": 12186699,
+          "cu_efficiency": 9.6
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Payments",
+          "total_cu_requested": 3426782860,
+          "total_cu_consumed": 2527835574,
+          "cu_efficiency": 73.8
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "others",
+          "total_cu_requested": 13612911456017,
+          "total_cu_consumed": 3843512413805,
+          "cu_efficiency": 28.2
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "DeFi",
+          "total_cu_requested": 16711477327625,
+          "total_cu_consumed": 7633702995292,
+          "cu_efficiency": 45.7
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Creator",
+          "total_cu_requested": 399470659,
+          "total_cu_consumed": 356974415,
+          "cu_efficiency": 89.4
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "MEV",
+          "total_cu_requested": 3332739983095,
+          "total_cu_consumed": 594815983799,
+          "cu_efficiency": 17.8
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Music",
+          "total_cu_requested": 588942832,
+          "total_cu_consumed": 253968845,
+          "cu_efficiency": 43.1
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Betting",
+          "total_cu_requested": 14775803,
+          "total_cu_consumed": 13922486,
+          "cu_efficiency": 94.2
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Asset Burner",
+          "total_cu_requested": 5387459030,
+          "total_cu_consumed": 1662117804,
+          "cu_efficiency": 30.9
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Gaming",
+          "total_cu_requested": 892209219574,
+          "total_cu_consumed": 203134476657,
+          "cu_efficiency": 22.8
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Mining",
+          "total_cu_requested": 1200537720,
+          "total_cu_consumed": 765795191,
+          "cu_efficiency": 63.8
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Wallet",
+          "total_cu_requested": 33054764,
+          "total_cu_consumed": 22762132,
+          "cu_efficiency": 68.9
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Gambling",
+          "total_cu_requested": 109771773,
+          "total_cu_consumed": 105341134,
+          "cu_efficiency": 96
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Oracle",
+          "total_cu_requested": 1369699634747,
+          "total_cu_consumed": 314912348005,
+          "cu_efficiency": 23
+        },
+        {
+          "partition_0": "2025-07-18",
+          "category": "Social Platform",
+          "total_cu_requested": 36000000,
+          "total_cu_consumed": 18940708,
+          "cu_efficiency": 52.6
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "others",
+          "total_cu_requested": 13205879062920,
+          "total_cu_consumed": 3781258285087,
+          "cu_efficiency": 28.6
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Music",
+          "total_cu_requested": 480869462,
+          "total_cu_consumed": 220223296,
+          "cu_efficiency": 45.8
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "NFT",
+          "total_cu_requested": 199078986141,
+          "total_cu_consumed": 58534131226,
+          "cu_efficiency": 29.4
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Mining",
+          "total_cu_requested": 1207949660,
+          "total_cu_consumed": 766746071,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "DeFi",
+          "total_cu_requested": 16689627326854,
+          "total_cu_consumed": 7620522794258,
+          "cu_efficiency": 45.7
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Infrastructure",
+          "total_cu_requested": 30877286754,
+          "total_cu_consumed": 28231799814,
+          "cu_efficiency": 91.4
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Betting",
+          "total_cu_requested": 53441989,
+          "total_cu_consumed": 49777670,
+          "cu_efficiency": 93.1
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Governance",
+          "total_cu_requested": 76987796,
+          "total_cu_consumed": 12306592,
+          "cu_efficiency": 16
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Oracle",
+          "total_cu_requested": 1409858073239,
+          "total_cu_consumed": 308927275569,
+          "cu_efficiency": 21.9
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Wallet",
+          "total_cu_requested": 39736257,
+          "total_cu_consumed": 24360365,
+          "cu_efficiency": 61.3
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Gambling",
+          "total_cu_requested": 149579138,
+          "total_cu_consumed": 143371422,
+          "cu_efficiency": 95.8
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Payments",
+          "total_cu_requested": 3146118502,
+          "total_cu_consumed": 2194139499,
+          "cu_efficiency": 69.7
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Gaming",
+          "total_cu_requested": 877608987028,
+          "total_cu_consumed": 198823258898,
+          "cu_efficiency": 22.7
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Bridge",
+          "total_cu_requested": 8536544176,
+          "total_cu_consumed": 2396157044,
+          "cu_efficiency": 28.1
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "MEV",
+          "total_cu_requested": 3608868985543,
+          "total_cu_consumed": 630609649760,
+          "cu_efficiency": 17.5
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Social Platform",
+          "total_cu_requested": 8556420,
+          "total_cu_consumed": 6685966,
+          "cu_efficiency": 78.1
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "DePIN",
+          "total_cu_requested": 37226724724,
+          "total_cu_consumed": 16141475914,
+          "cu_efficiency": 43.4
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Asset Burner",
+          "total_cu_requested": 5209573756,
+          "total_cu_consumed": 1755753570,
+          "cu_efficiency": 33.7
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Creator",
+          "total_cu_requested": 317240049,
+          "total_cu_consumed": 283329811,
+          "cu_efficiency": 89.3
+        },
+        {
+          "partition_0": "2025-07-17",
+          "category": "Name Service",
+          "total_cu_requested": 167150844,
+          "total_cu_consumed": 106119747,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Payments",
+          "total_cu_requested": 3071243764,
+          "total_cu_consumed": 2155617044,
+          "cu_efficiency": 70.2
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Bridge",
+          "total_cu_requested": 9042205927,
+          "total_cu_consumed": 2306375546,
+          "cu_efficiency": 25.5
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Infrastructure",
+          "total_cu_requested": 29826854276,
+          "total_cu_consumed": 27307197605,
+          "cu_efficiency": 91.6
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "DeFi",
+          "total_cu_requested": 18750209702734,
+          "total_cu_consumed": 8053511357191,
+          "cu_efficiency": 43
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Betting",
+          "total_cu_requested": 19446633,
+          "total_cu_consumed": 17821789,
+          "cu_efficiency": 91.6
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Oracle",
+          "total_cu_requested": 1405632395982,
+          "total_cu_consumed": 309368000860,
+          "cu_efficiency": 22
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Gaming",
+          "total_cu_requested": 870566356573,
+          "total_cu_consumed": 200147134042,
+          "cu_efficiency": 23
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Name Service",
+          "total_cu_requested": 154457542,
+          "total_cu_consumed": 100840666,
+          "cu_efficiency": 65.3
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Asset Burner",
+          "total_cu_requested": 6262078437,
+          "total_cu_consumed": 2001645708,
+          "cu_efficiency": 32
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Creator",
+          "total_cu_requested": 283563264,
+          "total_cu_consumed": 259757948,
+          "cu_efficiency": 91.6
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Wallet",
+          "total_cu_requested": 41505977,
+          "total_cu_consumed": 26882301,
+          "cu_efficiency": 64.8
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Music",
+          "total_cu_requested": 692805418,
+          "total_cu_consumed": 310634857,
+          "cu_efficiency": 44.8
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "DePIN",
+          "total_cu_requested": 34588233897,
+          "total_cu_consumed": 14189591773,
+          "cu_efficiency": 41
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Social Platform",
+          "total_cu_requested": 20329445,
+          "total_cu_consumed": 16512870,
+          "cu_efficiency": 81.2
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "NFT",
+          "total_cu_requested": 206461505626,
+          "total_cu_consumed": 58303016357,
+          "cu_efficiency": 28.2
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Governance",
+          "total_cu_requested": 94165194,
+          "total_cu_consumed": 9456803,
+          "cu_efficiency": 10
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Mining",
+          "total_cu_requested": 1632933766,
+          "total_cu_consumed": 1032240219,
+          "cu_efficiency": 63.2
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "Gambling",
+          "total_cu_requested": 92369078,
+          "total_cu_consumed": 88293166,
+          "cu_efficiency": 95.6
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "others",
+          "total_cu_requested": 12847470303055,
+          "total_cu_consumed": 3517772799154,
+          "cu_efficiency": 27.4
+        },
+        {
+          "partition_0": "2025-07-16",
+          "category": "MEV",
+          "total_cu_requested": 2959546611593,
+          "total_cu_consumed": 550790555393,
+          "cu_efficiency": 18.6
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Wallet",
+          "total_cu_requested": 37149007,
+          "total_cu_consumed": 22575043,
+          "cu_efficiency": 60.8
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "others",
+          "total_cu_requested": 12033053731255,
+          "total_cu_consumed": 3351471457494,
+          "cu_efficiency": 27.9
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Name Service",
+          "total_cu_requested": 168316883,
+          "total_cu_consumed": 106005257,
+          "cu_efficiency": 63
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Infrastructure",
+          "total_cu_requested": 30475066896,
+          "total_cu_consumed": 27800673184,
+          "cu_efficiency": 91.2
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Mining",
+          "total_cu_requested": 2308918092,
+          "total_cu_consumed": 1466004008,
+          "cu_efficiency": 63.5
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Social Platform",
+          "total_cu_requested": 400000,
+          "total_cu_consumed": 74148,
+          "cu_efficiency": 18.5
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "MEV",
+          "total_cu_requested": 3399261458492,
+          "total_cu_consumed": 615819573081,
+          "cu_efficiency": 18.1
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "DeFi",
+          "total_cu_requested": 17213381776304,
+          "total_cu_consumed": 7774718643316,
+          "cu_efficiency": 45.2
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Oracle",
+          "total_cu_requested": 1342622975084,
+          "total_cu_consumed": 297468008729,
+          "cu_efficiency": 22.2
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Gambling",
+          "total_cu_requested": 92275195,
+          "total_cu_consumed": 88869398,
+          "cu_efficiency": 96.3
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "NFT",
+          "total_cu_requested": 218066101353,
+          "total_cu_consumed": 53413307969,
+          "cu_efficiency": 24.5
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Betting",
+          "total_cu_requested": 13907159,
+          "total_cu_consumed": 12619644,
+          "cu_efficiency": 90.7
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Music",
+          "total_cu_requested": 493856897,
+          "total_cu_consumed": 216964730,
+          "cu_efficiency": 43.9
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Bridge",
+          "total_cu_requested": 7503618179,
+          "total_cu_consumed": 1887185367,
+          "cu_efficiency": 25.2
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Gaming",
+          "total_cu_requested": 865019993157,
+          "total_cu_consumed": 198327145279,
+          "cu_efficiency": 22.9
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Payments",
+          "total_cu_requested": 2786223810,
+          "total_cu_consumed": 1919010051,
+          "cu_efficiency": 68.9
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "DePIN",
+          "total_cu_requested": 31103362653,
+          "total_cu_consumed": 10660927068,
+          "cu_efficiency": 34.3
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Governance",
+          "total_cu_requested": 338394084,
+          "total_cu_consumed": 28452948,
+          "cu_efficiency": 8.4
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Creator",
+          "total_cu_requested": 403604842,
+          "total_cu_consumed": 328170351,
+          "cu_efficiency": 81.3
+        },
+        {
+          "partition_0": "2025-07-15",
+          "category": "Asset Burner",
+          "total_cu_requested": 5614475207,
+          "total_cu_consumed": 1678640810,
+          "cu_efficiency": 29.9
+        }
+      ],
+      "timestamp": 1755170330663,
+      "chartId": "chart_1754571653621_zxb33yh",
+      "title": "Cu Efficiency By Ecosystem"
     }
   ],
   "summary": {
-    "totalCharts": 8,
-    "successfulFetches": 8,
+    "totalCharts": 9,
+    "successfulFetches": 9,
     "failedFetches": 0
   }
 }
