@@ -1,8 +1,8 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "chartCount": 8,
-  "lastUpdated": "2025-08-05T12:05:02.946Z",
+  "chartCount": 9,
+  "lastUpdated": "2025-08-14T10:22:48.607Z",
   "charts": [
     {
       "id": "chart_1748087823998_ru1ktw2",
@@ -217,6 +217,26 @@
       },
       "createdAt": "2025-05-25T19:30:44.923Z",
       "updatedAt": "2025-07-11T08:40:33.088Z"
+    },
+    {
+      "id": "chart_1754571653621_zxb33yh",
+      "title": "Cu Efficiency By Ecosystem",
+      "subtitle": "",
+      "page": "compute-units",
+      "section": "",
+      "chartType": "line",
+      "apiEndpoint": "https://analytics.topledger.xyz/solanafm/api/queries/13449/results.json",
+      "apiKey": "myAJgSU2nhoxFvmgmgSJRY08ecwK59QIkw4xs44T&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "partition_0",
+        "yAxis": "cu_efficiency",
+        "groupBy": "category"
+      },
+      "createdAt": "2025-08-07T13:00:53.621Z",
+      "updatedAt": "2025-08-07T13:00:53.793Z"
     }
   ]
 }

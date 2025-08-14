@@ -2,12 +2,12 @@
   "pageId": "mev-summary",
   "pageName": "Summary",
   "chartCount": 2,
-  "lastUpdated": "2025-08-05T12:05:02.939Z",
+  "lastUpdated": "2025-08-14T10:22:48.602Z",
   "charts": [
     {
       "id": "chart_1747912299931_ifdsfj1",
-      "title": "Total SOL Drained - Last 30 Days",
-      "subtitle": "",
+      "title": "Total SOL Drained",
+      "subtitle": "Since May'25",
       "page": "mev-summary",
       "section": "",
       "chartType": "area",
@@ -15,19 +15,19 @@
       "apiKey": "v1I32v14WIg9uWYA8ypwToBK3uhPzCbQyBlw2907",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "cumulative_sol_drained",
-        "groupBy": "",
-        "yAxisUnit": "SOL"
+        "groupBy": ""
       },
       "createdAt": "2025-05-22T11:11:39.931Z",
-      "updatedAt": "2025-07-11T08:39:59.661Z"
+      "updatedAt": "2025-08-13T12:29:47.794Z"
     },
     {
       "id": "chart_1747912515365_t6aqyxm",
       "title": "Total Attacks",
-      "subtitle": "",
+      "subtitle": "Since May'25",
       "page": "mev-summary",
       "section": "",
       "chartType": "area",
@@ -35,6 +35,7 @@
       "apiKey": "v1I32v14WIg9uWYA8ypwToBK3uhPzCbQyBlw2907",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
@@ -47,7 +48,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-22T11:15:15.365Z",
-      "updatedAt": "2025-07-11T08:40:00.372Z"
+      "updatedAt": "2025-08-13T12:30:25.773Z"
     }
   ]
 }
