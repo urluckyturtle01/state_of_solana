@@ -10,6 +10,7 @@ const NewsletterSection: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [error, setError] = useState('');
   const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [hideAfterSubscribe, setHideAfterSubscribe] = useState(false);
   const { isLoading, isAuthenticated, isInternalAuth, checkAuthForRoute } = useAuth();
   const pathname = usePathname();
 
@@ -23,6 +24,16 @@ const NewsletterSection: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [isLoading]);
+
+  // After successful subscribe, hide the whole section after 2 seconds
+  useEffect(() => {
+    if (isSubscribed) {
+      const t = setTimeout(() => {
+        setHideAfterSubscribe(true);
+      }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [isSubscribed]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,14 +88,14 @@ const NewsletterSection: React.FC = () => {
     return true;
   };
 
-  // Don't render anything if conditions aren't met
-  if (!shouldShowNewsletter()) {
+  // Don't render anything if conditions aren't met or we've hidden after subscribe
+  if (!shouldShowNewsletter() || hideAfterSubscribe) {
     return null;
   }
 
   if (isSubscribed) {
     return (
-      <section className="border-t border-gray-800">
+      <section className="border-t bg-black border-gray-800">
         <div className="md:ml-48 px-4 md:px-8 py-6">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-1.5 text-green-400 text-xs">
@@ -115,7 +126,7 @@ const NewsletterSection: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter email"
-                className="flex-1 px-2 py-1.5 bg-gray-900/50 border border-gray-800/70 rounded text-white text-xs placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-700/50 focus:border-transparent"
+                className="flex-1 px-2 py-1.5 focus:bg-gray-900/50 bg-gray-900/50 border border-gray-800/70 rounded text-white text-xs placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-700/50 focus:border-transparent"
                 disabled={isSubmitting}
               />
               <button
