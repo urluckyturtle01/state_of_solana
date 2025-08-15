@@ -78,7 +78,7 @@ async function sendTelegramMessage(message) {
   // Send each message part
   for (let i = 0; i < messages.length; i++) {
     const messageText = messages.length > 1 ? 
-      `${messages[i]}\n\n📄 _Part ${i + 1} of ${messages.length}_` : 
+      `${messages[i]}\n\n(${i + 1}/${messages.length})` : 
       messages[i];
     
     try {
@@ -87,8 +87,8 @@ async function sendTelegramMessage(message) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: CONFIG.telegramChatId,
-          text: messageText
-          // Removed parse_mode to avoid Markdown parsing issues
+          text: messageText,
+          parse_mode: 'Markdown'
         })
       });
       
@@ -280,24 +280,24 @@ async function monitorDataFreshness() {
       console.log(`🚨 Found ${outdatedFiles.length} outdated files`);
       
       let message = `🚨 DATA FRESHNESS ALERT\n\n`;
-      message += `Found ${outdatedFiles.length} file(s) with data older than yesterday:\n\n`;
+      message += `Found ${outdatedFiles.length} outdated file(s):\n\n`;
       
       for (const item of outdatedFiles) {
         const configFileName = item.file.replace('.gz', '');
         const configPath = path.join(CONFIG.chartConfigDir, configFileName);
         
-        // Clean chart name (remove .json extension)
-        const chartName = configFileName.replace('.json', '');
-        
-        message += `📊 ${chartName} - ${item.dataAge}\n`;
+        message += `📊 ${item.file.replace('.json.gz', '')}\n`;
         
         // Get chart APIs from config
         const config = await readConfigFile(configPath);
         if (config) {
           const apis = getChartAPIs(config);
           if (apis.length > 0) {
-            apis.forEach((api, index) => {
-              message += `   ${index + 1}. ${api.title}\n`;
+            apis.forEach((api) => {
+              // Show the full API URL with results.json included
+              let fullUrl = `${api.apiEndpoint}${api.apiKey}`;
+              // Use backticks to display as code (plain text) in Telegram
+              message += `${api.title}:\n\`${fullUrl}\`\n\n`;
             });
           }
         }
