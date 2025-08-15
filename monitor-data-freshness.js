@@ -282,38 +282,24 @@ async function monitorDataFreshness() {
       let message = `🚨 DATA FRESHNESS ALERT\n\n`;
       message += `Found ${outdatedFiles.length} file(s) with data older than yesterday:\n\n`;
       
-      // Summary first
-      message += `📋 SUMMARY:\n`;
-      outdatedFiles.forEach((item, index) => {
-        message += `${index + 1}. ${item.file} - Latest data: ${item.dataAge}\n`;
-      });
-      
-      // Always show chart APIs for all files
-      message += `\n📊 CHART APIs FOR ALL FILES:\n\n`;
-      
       for (const item of outdatedFiles) {
         const configFileName = item.file.replace('.gz', '');
         const configPath = path.join(CONFIG.chartConfigDir, configFileName);
         
-        message += `📊 ${item.file}\n`;
-        message += `📅 Latest data: ${item.dataAge}\n`;
-        message += `⏰ Fetched: ${item.fetchAge}\n`;
+        // Clean chart name (remove .json extension)
+        const chartName = configFileName.replace('.json', '');
+        
+        message += `📊 ${chartName} - ${item.dataAge}\n`;
         
         // Get chart APIs from config
         const config = await readConfigFile(configPath);
         if (config) {
           const apis = getChartAPIs(config);
           if (apis.length > 0) {
-            message += `🔗 ${apis.length} Chart API(s):\n`;
             apis.forEach((api, index) => {
-              message += `${index + 1}. ${api.title}\n`;
-              message += `   ${api.apiEndpoint}${api.apiKey}\n`;
+              message += `   ${index + 1}. ${api.title}\n`;
             });
-          } else {
-            message += `🔗 No Chart APIs found\n`;
           }
-        } else {
-          message += `🔗 Config file not found\n`;
         }
         message += '\n';
       }
