@@ -9,3 +9,5 @@ export $(cat .env | xargs)
 
 # Run the monitoring script
 node monitor-data-freshness.js 
+
+# hello world
