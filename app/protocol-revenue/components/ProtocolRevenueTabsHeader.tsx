@@ -27,12 +27,12 @@ export default function ProtocolRevenueTabsHeader({ activeTab = "summary" }: Pro
       key: "dex-ecosystem",
       icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
     },
-    { 
+    /*{ 
       name: "NFT Ecosystem", 
       path: "/protocol-revenue/nft-ecosystem",
       key: "nft-ecosystem",
       icon: "M12 2L2 7l10 12L22 7l-10-5z"
-    },
+    },*/
     {
       name: "DePin",
       path: "/protocol-revenue/depin",

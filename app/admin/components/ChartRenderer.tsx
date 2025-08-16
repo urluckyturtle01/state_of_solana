@@ -325,7 +325,8 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                               (fieldLower.includes('supply') && !fieldLower.includes('revenue') && !fieldLower.includes('volume') && !fieldLower.includes('fees')) ||
                               fieldLower.includes('marketcap') ||
                               fieldLower.includes('market_cap') ||
-                              fieldLower === 'total' ||  // Only exact 'total' field, not fields containing 'total'
+                              fieldLower === 'total' ||
+                              fieldLower.startsWith('total') ||  // Only exact 'total' field, not fields containing 'total'
                               fieldLower.endsWith('_total') ||  // Fields ending with _total
                               fieldLower.startsWith('total_supply') ||  // Total supply fields
                               fieldLower.startsWith('total_market'); // Total market fields

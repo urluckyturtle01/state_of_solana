@@ -2,7 +2,7 @@
   "pageId": "total",
   "pageName": "Total",
   "chartCount": 4,
-  "lastUpdated": "2025-08-15T20:28:52.800Z",
+  "lastUpdated": "2025-08-16T09:45:21.003Z",
   "charts": [
     {
       "id": "chart_1747996370344_q23bnxz",
@@ -18,7 +18,18 @@
       "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
-        "yAxis": "dApp Revenue",
+        "yAxis": [
+          {
+            "field": "Total dApp Revenue",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "Total Network Revenue",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
         "groupBy": ""
       },
       "additionalOptions": {
@@ -37,7 +48,7 @@
         }
       },
       "createdAt": "2025-05-23T10:32:50.344Z",
-      "updatedAt": "2025-07-16T14:01:30.832Z"
+      "updatedAt": "2025-08-16T09:34:18.263Z"
     },
     {
       "id": "chart_1747996534384_lz5aaxw",
@@ -87,7 +98,7 @@
       "page": "total",
       "section": "",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13168/results",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13168/results.json",
       "apiKey": "AhoU1Wq4NS9iHdyeJy6VejNkCIZE5PVSsL2Xg0MM&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
@@ -111,10 +122,11 @@
               "Y"
             ]
           }
-        }
+        },
+        "showTooltipTotal": true
       },
       "createdAt": "2025-05-23T11:03:25.364Z",
-      "updatedAt": "2025-07-16T08:02:06.520Z"
+      "updatedAt": "2025-08-16T09:37:34.805Z"
     }
   ]
 }
