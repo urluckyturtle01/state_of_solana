@@ -2645,7 +2645,63 @@ export const chartMeta: Record<string, ChartMetadata> = {
     "ogDescription": "Track total daily tvl with total value locked trends and insights on Solana",
     "ogImage": "/og-images/charts/default-chart.png",
     "keywords": "Solana, analytics, charts, blockchain, DeFi, total, daily"
-  }
+  },
+  "chart_1753698528577_c4lx4ep":   {
+      "title": "Weekly Real TPS And Fee Trends - State of Solana",
+      "description": "Explore weekly real tps and fee trends analytics on Solana blockchain",
+      "ogTitle": "Weekly Real TPS And Fee Trends",
+      "ogDescription": "Analyze weekly real tps and fee trends metrics on Solana",
+      "ogImage": "/og-images/charts/network-usage-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, network-usage, dual-axis"
+  },
+  "chart_1754038010417_ovdne7u":   {
+      "title": "Protocol Revenue By Segment - State of Solana",
+      "description": "Explore protocol revenue by segment analytics on Solana blockchain",
+      "ogTitle": "Protocol Revenue By Segment",
+      "ogDescription": "Analyze protocol revenue by segment metrics on Solana",
+      "ogImage": "/og-images/charts/metaplex-financials-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, metaplex-financials, bar"
+  },
+  "chart_1754038193098_4bmt821":   {
+      "title": "Protocol Revenue By Asset Type - State of Solana",
+      "description": "Explore protocol revenue by asset type analytics on Solana blockchain",
+      "ogTitle": "Protocol Revenue By Asset Type",
+      "ogDescription": "Analyze protocol revenue by asset type metrics on Solana",
+      "ogImage": "/og-images/charts/metaplex-financials-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, metaplex-financials, bar"
+  },
+  "chart_1754386412286_gsq1njs":   {
+      "title": "Protocol Revenue - State of Solana",
+      "description": "Explore protocol revenue analytics on Solana blockchain",
+      "ogTitle": "Protocol Revenue",
+      "ogDescription": "Analyze protocol revenue metrics on Solana",
+      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
+  },
+  "chart_1754387334370_xe3beqv":   {
+      "title": "Token Price - State of Solana",
+      "description": "Explore token price analytics on Solana blockchain",
+      "ogTitle": "Token Price",
+      "ogDescription": "Analyze token price metrics on Solana",
+      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
+  },
+  "chart_1754387602599_y208wcx":   {
+      "title": "FDV / Revenue Ratio - State of Solana",
+      "description": "Explore fdv / revenue ratio analytics on Solana blockchain",
+      "ogTitle": "FDV / Revenue Ratio",
+      "ogDescription": "Analyze fdv / revenue ratio metrics on Solana",
+      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
+  },
+  "chart_1754387674767_emj5jfz":   {
+      "title": "Protocol Revenue / Solana Revenue Share - State of Solana",
+      "description": "Explore protocol revenue / solana revenue share analytics on Solana blockchain",
+      "ogTitle": "Protocol Revenue / Solana Revenue Share",
+      "ogDescription": "Analyze protocol revenue / solana revenue share metrics on Solana",
+      "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
+  },
 };
 
 // Helper function to get metadata for a chart ID

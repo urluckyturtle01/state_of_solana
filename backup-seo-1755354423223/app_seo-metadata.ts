@@ -1094,7 +1094,683 @@ export const pageMetadata: Record<string, PageMetadata> = {
     ogDescription: 'Complete markdown formatting and documentation guide',
     ogImage: '/og-images/markdown-guide.png',
     canonicalPath: '/markdown-guide'
-  }
+  },
+
+  '/blogs/[slug]': {
+    title: 'Solana Research Blog - Blockchain Insights | State of Solana',
+    description: 'In-depth research and analysis of Solana blockchain ecosystem, trends, and developments.',
+    keywords: 'Solana research, blockchain insights, crypto analysis, DeFi research',
+    ogTitle: 'Solana Research Blog',
+    ogDescription: 'Expert insights and research on Solana blockchain ecosystem',
+    ogImage: '/og-images/blogs.png',
+    canonicalPath: '/blogs/[slug]',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Blogs',
+        url: '/blogs'
+      }
+    ]
+  },
+
+  '/projects/helium/competitive-landscape': {
+    title: 'Helium Competitive Landscape - Project Analytics | State of Solana',
+    description: 'Analyze Helium competitive landscape and market positioning in the Solana ecosystem with comprehensive analytics.',
+    keywords: 'Solana projects, Helium, competitive analysis, market landscape, DePIN analytics',
+    ogTitle: 'Helium Competitive Landscape Analysis',
+    ogDescription: 'Comprehensive analysis of Helium competitive positioning in Solana ecosystem',
+    ogImage: '/og-images/projects/helium.png',
+    canonicalPath: '/projects/helium/competitive-landscape',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Projects',
+        url: '/projects'
+      },
+      {
+        name: 'Helium',
+        url: '/projects/helium'
+      },
+      {
+        name: 'Competitive Landscape',
+        url: '/projects/helium/competitive-landscape'
+      }
+    ]
+  },
+
+  '/projects/helium/financials': {
+    title: 'Helium Financials - Revenue & Growth Metrics | State of Solana',
+    description: 'Track Helium financial metrics including revenue, growth, and key performance indicators on Solana.',
+    keywords: 'Helium financials, revenue metrics, growth analytics, DePIN economics',
+    ogTitle: 'Helium Financial Analytics',
+    ogDescription: 'Complete analysis of Helium financial performance and metrics',
+    ogImage: '/og-images/projects/helium.png',
+    canonicalPath: '/projects/helium/financials',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Projects',
+        url: '/projects'
+      },
+      {
+        name: 'Helium',
+        url: '/projects/helium'
+      },
+      {
+        name: 'Financials',
+        url: '/projects/helium/financials'
+      }
+    ]
+  },
+
+  '/projects/helium/governance': {
+    title: 'Helium Governance - DAO & Protocol Analytics | State of Solana',
+    description: 'Analyze Helium governance metrics including DAO activity, voting patterns, and protocol decisions.',
+    keywords: 'Helium governance, DAO analytics, voting metrics, protocol decisions',
+    ogTitle: 'Helium Governance Analytics',
+    ogDescription: 'Analysis of Helium DAO governance and protocol decisions',
+    ogImage: '/og-images/projects/helium.png',
+    canonicalPath: '/projects/helium/governance',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Projects',
+        url: '/projects'
+      },
+      {
+        name: 'Helium',
+        url: '/projects/helium'
+      },
+      {
+        name: 'Governance',
+        url: '/projects/helium/governance'
+      }
+    ]
+  },
+
+  '/projects/helium/protocol-token': {
+    title: 'Helium Token (HNT) - Price & Supply Analytics | State of Solana',
+    description: 'Track Helium token (HNT) metrics including price, supply dynamics, and token economics on Solana.',
+    keywords: 'Helium token, HNT price, token supply, token economics',
+    ogTitle: 'Helium Token Analytics',
+    ogDescription: 'Analysis of Helium token (HNT) metrics and economics',
+    ogImage: '/og-images/projects/helium.png',
+    canonicalPath: '/projects/helium/protocol-token',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Projects',
+        url: '/projects'
+      },
+      {
+        name: 'Helium',
+        url: '/projects/helium'
+      },
+      {
+        name: 'Protocol Token',
+        url: '/projects/helium/protocol-token'
+      }
+    ]
+  },
+
+  '/projects/helium/traction': {
+    title: 'Helium Traction - Network Growth & Adoption | State of Solana',
+    description: 'Track Helium network growth metrics including adoption, network coverage, and ecosystem expansion.',
+    keywords: 'Helium traction, network growth, adoption metrics, ecosystem expansion',
+    ogTitle: 'Helium Network Growth Analytics',
+    ogDescription: 'Analysis of Helium network adoption and growth metrics',
+    ogImage: '/og-images/projects/helium.png',
+    canonicalPath: '/projects/helium/traction',
+    breadcrumbs: [
+      {
+        name: 'Home',
+        url: '/'
+      },
+      {
+        name: 'Projects',
+        url: '/projects'
+      },
+      {
+        name: 'Helium',
+        url: '/projects/helium'
+      },
+      {
+        name: 'Traction',
+        url: '/projects/helium/traction'
+      }
+    ]
+  },
+
+  '/projects/metaplex/competitive-landscape':   {
+      "title": "Metaplex - Projects Analytics | State of Solana",
+      "description": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, metaplex, blockchain analytics, projects metrics",
+      "ogTitle": "Metaplex - Projects Analytics",
+      "ogDescription": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insig...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/metaplex/competitive-landscape",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Metaplex",
+              "url": "/projects/metaplex"
+          },
+          {
+              "name": "Competitive Landscape",
+              "url": "/projects/metaplex/competitive-landscape"
+          }
+      ]
+  },
+
+  '/projects/metaplex/financials':   {
+      "title": "Metaplex - Projects Analytics | State of Solana",
+      "description": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, metaplex, blockchain analytics, projects metrics",
+      "ogTitle": "Metaplex - Projects Analytics",
+      "ogDescription": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insig...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/metaplex/financials",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Metaplex",
+              "url": "/projects/metaplex"
+          },
+          {
+              "name": "Financials",
+              "url": "/projects/metaplex/financials"
+          }
+      ]
+  },
+
+  '/projects/metaplex/protocol-token':   {
+      "title": "Metaplex - Projects Analytics | State of Solana",
+      "description": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, metaplex, blockchain analytics, projects metrics",
+      "ogTitle": "Metaplex - Projects Analytics",
+      "ogDescription": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insig...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/metaplex/protocol-token",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Metaplex",
+              "url": "/projects/metaplex"
+          },
+          {
+              "name": "Protocol Token",
+              "url": "/projects/metaplex/protocol-token"
+          }
+      ]
+  },
+
+  '/projects/metaplex/traction':   {
+      "title": "Metaplex - Projects Analytics | State of Solana",
+      "description": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, metaplex, blockchain analytics, projects metrics",
+      "ogTitle": "Metaplex - Projects Analytics",
+      "ogDescription": "Analyze metaplex metrics for projects on Solana blockchain with comprehensive analytics and insig...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/metaplex/traction",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Metaplex",
+              "url": "/projects/metaplex"
+          },
+          {
+              "name": "Traction",
+              "url": "/projects/metaplex/traction"
+          }
+      ]
+  },
+
+  '/projects/orca/competitive-landscape':   {
+      "title": "Orca - Projects Analytics | State of Solana",
+      "description": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, orca, blockchain analytics, projects metrics",
+      "ogTitle": "Orca - Projects Analytics",
+      "ogDescription": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/orca/competitive-landscape",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Orca",
+              "url": "/projects/orca"
+          },
+          {
+              "name": "Competitive Landscape",
+              "url": "/projects/orca/competitive-landscape"
+          }
+      ]
+  },
+
+  '/projects/orca/financials':   {
+      "title": "Orca - Projects Analytics | State of Solana",
+      "description": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, orca, blockchain analytics, projects metrics",
+      "ogTitle": "Orca - Projects Analytics",
+      "ogDescription": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/orca/financials",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Orca",
+              "url": "/projects/orca"
+          },
+          {
+              "name": "Financials",
+              "url": "/projects/orca/financials"
+          }
+      ]
+  },
+
+  '/projects/orca/protocol-token':   {
+      "title": "Orca - Projects Analytics | State of Solana",
+      "description": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, orca, blockchain analytics, projects metrics",
+      "ogTitle": "Orca - Projects Analytics",
+      "ogDescription": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/orca/protocol-token",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Orca",
+              "url": "/projects/orca"
+          },
+          {
+              "name": "Protocol Token",
+              "url": "/projects/orca/protocol-token"
+          }
+      ]
+  },
+
+  '/projects/orca/traction':   {
+      "title": "Orca - Projects Analytics | State of Solana",
+      "description": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, orca, blockchain analytics, projects metrics",
+      "ogTitle": "Orca - Projects Analytics",
+      "ogDescription": "Analyze orca metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/orca/traction",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Orca",
+              "url": "/projects/orca"
+          },
+          {
+              "name": "Traction",
+              "url": "/projects/orca/traction"
+          }
+      ]
+  },
+
+  '/projects/raydium/competetive-landscape':   {
+      "title": "Raydium - Projects Analytics | State of Solana",
+      "description": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, raydium, blockchain analytics, projects metrics",
+      "ogTitle": "Raydium - Projects Analytics",
+      "ogDescription": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/raydium/competetive-landscape",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Raydium",
+              "url": "/projects/raydium"
+          },
+          {
+              "name": "Competetive Landscape",
+              "url": "/projects/raydium/competetive-landscape"
+          }
+      ]
+  },
+
+  '/projects/raydium/financials':   {
+      "title": "Raydium - Projects Analytics | State of Solana",
+      "description": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, raydium, blockchain analytics, projects metrics",
+      "ogTitle": "Raydium - Projects Analytics",
+      "ogDescription": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/raydium/financials",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Raydium",
+              "url": "/projects/raydium"
+          },
+          {
+              "name": "Financials",
+              "url": "/projects/raydium/financials"
+          }
+      ]
+  },
+
+  '/projects/raydium/protocol-token':   {
+      "title": "Raydium - Projects Analytics | State of Solana",
+      "description": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, raydium, blockchain analytics, projects metrics",
+      "ogTitle": "Raydium - Projects Analytics",
+      "ogDescription": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/raydium/protocol-token",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Raydium",
+              "url": "/projects/raydium"
+          },
+          {
+              "name": "Protocol Token",
+              "url": "/projects/raydium/protocol-token"
+          }
+      ]
+  },
+
+  '/projects/raydium/traction':   {
+      "title": "Raydium - Projects Analytics | State of Solana",
+      "description": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, raydium, blockchain analytics, projects metrics",
+      "ogTitle": "Raydium - Projects Analytics",
+      "ogDescription": "Analyze raydium metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/raydium/traction",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Raydium",
+              "url": "/projects/raydium"
+          },
+          {
+              "name": "Traction",
+              "url": "/projects/raydium/traction"
+          }
+      ]
+  },
+
+  '/projects/sol-strategies/financials':   {
+      "title": "Sol Strategies - Projects Analytics | State of Solana",
+      "description": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, sol-strategies, blockchain analytics, projects metrics",
+      "ogTitle": "Sol Strategies - Projects Analytics",
+      "ogDescription": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/sol-strategies/financials",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Sol Strategies",
+              "url": "/projects/sol-strategies"
+          },
+          {
+              "name": "Financials",
+              "url": "/projects/sol-strategies/financials"
+          }
+      ]
+  },
+
+  '/projects/sol-strategies/overview':   {
+      "title": "Sol Strategies - Projects Analytics | State of Solana",
+      "description": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, sol-strategies, blockchain analytics, projects metrics",
+      "ogTitle": "Sol Strategies - Projects Analytics",
+      "ogDescription": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/sol-strategies/overview",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Sol Strategies",
+              "url": "/projects/sol-strategies"
+          },
+          {
+              "name": "Overview",
+              "url": "/projects/sol-strategies/overview"
+          }
+      ]
+  },
+
+  '/projects/sol-strategies/revenue':   {
+      "title": "Sol Strategies - Projects Analytics | State of Solana",
+      "description": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, sol-strategies, blockchain analytics, projects metrics",
+      "ogTitle": "Sol Strategies - Projects Analytics",
+      "ogDescription": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/sol-strategies/revenue",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Sol Strategies",
+              "url": "/projects/sol-strategies"
+          },
+          {
+              "name": "Revenue",
+              "url": "/projects/sol-strategies/revenue"
+          }
+      ]
+  },
+
+  '/public/[id]':   {
+      "title": "[id] - Public Analytics | State of Solana",
+      "description": "Analyze [id] metrics for public on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana public, [id], blockchain analytics, public metrics",
+      "ogTitle": "[id] - Public Analytics",
+      "ogDescription": "Analyze [id] metrics for public on Solana blockchain with comprehensive analytics and insights.",
+      "ogImage": "/og-images/public.png",
+      "canonicalPath": "/public/[id]",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Public",
+              "url": "/public"
+          },
+          {
+              "name": "[id]",
+              "url": "/public/[id]"
+          }
+      ]
+  },
+
+  '/projects/sol-strategies/staking':   {
+      "title": "Sol Strategies - Projects Analytics | State of Solana",
+      "description": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana projects, sol-strategies, blockchain analytics, projects metrics",
+      "ogTitle": "Sol Strategies - Projects Analytics",
+      "ogDescription": "Analyze sol strategies metrics for projects on Solana blockchain with comprehensive analytics and...",
+      "ogImage": "/og-images/projects.png",
+      "canonicalPath": "/projects/sol-strategies/staking",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Projects",
+              "url": "/projects"
+          },
+          {
+              "name": "Sol Strategies",
+              "url": "/projects/sol-strategies"
+          },
+          {
+              "name": "Staking",
+              "url": "/projects/sol-strategies/staking"
+          }
+      ]
+  },
+
+  '/valuation-insights/overview':   {
+      "title": "Overview - Valuation Insights Analytics | State of Solana",
+      "description": "Analyze overview metrics for valuation insights on Solana blockchain with comprehensive analytics and insights.",
+      "keywords": "Solana valuation-insights, overview, blockchain analytics, valuation insights metrics",
+      "ogTitle": "Overview - Valuation Insights Analytics",
+      "ogDescription": "Analyze overview metrics for valuation insights on Solana blockchain with comprehensive analytics...",
+      "ogImage": "/og-images/valuation-insights.png",
+      "canonicalPath": "/valuation-insights/overview",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Valuation Insights",
+              "url": "/valuation-insights"
+          },
+          {
+              "name": "Overview",
+              "url": "/valuation-insights/overview"
+          }
+      ]
+  },
+
+  '/valuation-insights':   {
+      "title": "Valuation Insights Analytics - Solana Blockchain | State ...",
+      "description": "Comprehensive valuation insights analytics on Solana blockchain including metrics, trends, and performance insights.",
+      "keywords": "Solana valuation-insights, blockchain analytics, valuation insights metrics, DeFi analytics",
+      "ogTitle": "Valuation Insights Analytics - Solana Blockchain | State ...",
+      "ogDescription": "Comprehensive valuation insights analytics on Solana blockchain including metrics, trends, and pe...",
+      "ogImage": "/og-images/valuation-insights.png",
+      "canonicalPath": "/valuation-insights",
+      "breadcrumbs": [
+          {
+              "name": "Home",
+              "url": "/"
+          },
+          {
+              "name": "Valuation Insights",
+              "url": "/valuation-insights"
+          }
+      ]
+  },
 };
 
 // Helper function to get metadata for a specific path

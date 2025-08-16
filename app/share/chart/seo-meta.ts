@@ -2702,6 +2702,14 @@ export const chartMeta: Record<string, ChartMetadata> = {
       "ogImage": "/og-images/charts/valuation-insights-overview-chart.png",
       "keywords": "Solana, analytics, charts, blockchain, DeFi, valuation-insights-overview, bar"
   },
+  "chart_1754571653621_zxb33yh":   {
+      "title": "Cu Efficiency By Ecosystem - State of Solana",
+      "description": "Explore cu efficiency by ecosystem analytics on Solana blockchain",
+      "ogTitle": "Cu Efficiency By Ecosystem",
+      "ogDescription": "Analyze cu efficiency by ecosystem metrics on Solana",
+      "ogImage": "/og-images/charts/compute-units-chart.png",
+      "keywords": "Solana, analytics, charts, blockchain, DeFi, compute-units, line"
+  },
 };
 
 // Helper function to get metadata for a chart ID
