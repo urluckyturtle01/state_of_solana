@@ -1,40 +1,914 @@
 {
   "pageId": "transaction-bytes",
   "pageName": "Transaction Bytes",
-  "fetchedAt": "2025-08-20T14:10:19.939Z",
+  "fetchedAt": "2025-08-20T19:45:13.054Z",
   "charts": [
     {
-      "success": false,
-      "error": "API error: 500",
+      "success": true,
+      "data": [
+        {
+          "block_date": "2025-08-19",
+          "median_byte_size": 769,
+          "max_byte_size_txns": 181649,
+          "avg_byte_size": 724.6535981482988,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 85041367
+        },
+        {
+          "block_date": "2025-08-18",
+          "median_byte_size": 774,
+          "max_byte_size_txns": 230609,
+          "avg_byte_size": 729.7411483371291,
+          "max_byte_size_txns_percentage": 0.25,
+          "total_txns": 91098561
+        },
+        {
+          "block_date": "2025-08-17",
+          "median_byte_size": 739,
+          "max_byte_size_txns": 131862,
+          "avg_byte_size": 712.7508597993112,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 87090963
+        },
+        {
+          "block_date": "2025-08-16",
+          "median_byte_size": 793,
+          "max_byte_size_txns": 129526,
+          "avg_byte_size": 750.3847056344586,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 83845021
+        },
+        {
+          "block_date": "2025-08-15",
+          "median_byte_size": 799,
+          "max_byte_size_txns": 200993,
+          "avg_byte_size": 752.9480696546785,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 95341076
+        },
+        {
+          "block_date": "2025-08-14",
+          "median_byte_size": 792,
+          "max_byte_size_txns": 197262,
+          "avg_byte_size": 748.9554980521816,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 109364404
+        },
+        {
+          "block_date": "2025-08-13",
+          "median_byte_size": 806,
+          "max_byte_size_txns": 273998,
+          "avg_byte_size": 753.2334021277505,
+          "max_byte_size_txns_percentage": 0.26,
+          "total_txns": 104928088
+        },
+        {
+          "block_date": "2025-08-12",
+          "median_byte_size": 807,
+          "max_byte_size_txns": 194855,
+          "avg_byte_size": 751.4841233211157,
+          "max_byte_size_txns_percentage": 0.19,
+          "total_txns": 100277458
+        },
+        {
+          "block_date": "2025-08-11",
+          "median_byte_size": 826,
+          "max_byte_size_txns": 205317,
+          "avg_byte_size": 770.6984418556692,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 100549992
+        },
+        {
+          "block_date": "2025-08-10",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 119977,
+          "avg_byte_size": 772.9769798270092,
+          "max_byte_size_txns_percentage": 0.13,
+          "total_txns": 93257466
+        },
+        {
+          "block_date": "2025-08-09",
+          "median_byte_size": 838,
+          "max_byte_size_txns": 103790,
+          "avg_byte_size": 783.3854000158905,
+          "max_byte_size_txns_percentage": 0.11,
+          "total_txns": 96988722
+        },
+        {
+          "block_date": "2025-08-08",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 296413,
+          "avg_byte_size": 780.6971341080425,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 103376507
+        },
+        {
+          "block_date": "2025-08-07",
+          "median_byte_size": 818,
+          "max_byte_size_txns": 250975,
+          "avg_byte_size": 775.161605356879,
+          "max_byte_size_txns_percentage": 0.24,
+          "total_txns": 106794721
+        },
+        {
+          "block_date": "2025-08-06",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 294373,
+          "avg_byte_size": 776.9833916842256,
+          "max_byte_size_txns_percentage": 0.3,
+          "total_txns": 97240444
+        },
+        {
+          "block_date": "2025-08-05",
+          "median_byte_size": 828,
+          "max_byte_size_txns": 307960,
+          "avg_byte_size": 779.7894581489294,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 107568395
+        },
+        {
+          "block_date": "2025-08-04",
+          "median_byte_size": 836,
+          "max_byte_size_txns": 324093,
+          "avg_byte_size": 788.2325984310812,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 111145711
+        },
+        {
+          "block_date": "2025-08-03",
+          "median_byte_size": 843,
+          "max_byte_size_txns": 162726,
+          "avg_byte_size": 793.0909812920273,
+          "max_byte_size_txns_percentage": 0.17,
+          "total_txns": 98082087
+        },
+        {
+          "block_date": "2025-08-02",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 150380,
+          "avg_byte_size": 782.3379999799687,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 97247846
+        },
+        {
+          "block_date": "2025-08-01",
+          "median_byte_size": 791,
+          "max_byte_size_txns": 244722,
+          "avg_byte_size": 746.8933957615883,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 105462289
+        },
+        {
+          "block_date": "2025-07-31",
+          "median_byte_size": 823,
+          "max_byte_size_txns": 262799,
+          "avg_byte_size": 774.9837554643476,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 113506230
+        },
+        {
+          "block_date": "2025-07-30",
+          "median_byte_size": 809,
+          "max_byte_size_txns": 217591,
+          "avg_byte_size": 761.0950250298322,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 118178779
+        },
+        {
+          "block_date": "2025-07-29",
+          "median_byte_size": 798,
+          "max_byte_size_txns": 259500,
+          "avg_byte_size": 751.5978372018066,
+          "max_byte_size_txns_percentage": 0.22,
+          "total_txns": 118766883
+        },
+        {
+          "block_date": "2025-07-28",
+          "median_byte_size": 810,
+          "max_byte_size_txns": 283625,
+          "avg_byte_size": 762.3808789114487,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 123122028
+        },
+        {
+          "block_date": "2025-07-27",
+          "median_byte_size": 820,
+          "max_byte_size_txns": 122384,
+          "avg_byte_size": 768.3718388666512,
+          "max_byte_size_txns_percentage": 0.12,
+          "total_txns": 103699477
+        },
+        {
+          "block_date": "2025-07-26",
+          "median_byte_size": 814,
+          "max_byte_size_txns": 122906,
+          "avg_byte_size": 768.1084846293128,
+          "max_byte_size_txns_percentage": 0.12,
+          "total_txns": 105006756
+        },
+        {
+          "block_date": "2025-07-25",
+          "median_byte_size": 810,
+          "max_byte_size_txns": 248890,
+          "avg_byte_size": 762.9953676036049,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 120027509
+        },
+        {
+          "block_date": "2025-07-24",
+          "median_byte_size": 809,
+          "max_byte_size_txns": 249439,
+          "avg_byte_size": 760.2158786685839,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 124625134
+        },
+        {
+          "block_date": "2025-07-23",
+          "median_byte_size": 799,
+          "max_byte_size_txns": 219812,
+          "avg_byte_size": 756.6738703083402,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 119036043
+        },
+        {
+          "block_date": "2025-07-22",
+          "median_byte_size": 778,
+          "max_byte_size_txns": 299668,
+          "avg_byte_size": 736.1616453988676,
+          "max_byte_size_txns_percentage": 0.24,
+          "total_txns": 125954578
+        },
+        {
+          "block_date": "2025-07-21",
+          "median_byte_size": 800,
+          "max_byte_size_txns": 240353,
+          "avg_byte_size": 756.5196137356623,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 117777997
+        }
+      ],
+      "timestamp": 1755719112003,
       "chartId": "chart_1748081007853_vaogp16",
-      "title": "Transaction Bytes",
-      "parameters": {}
+      "title": "Transaction Bytes"
     },
     {
-      "success": false,
-      "error": "API error: 500",
+      "success": true,
+      "data": [
+        {
+          "block_date": "2025-08-19",
+          "median_byte_size": 769,
+          "max_byte_size_txns": 181649,
+          "avg_byte_size": 724.6535981482988,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 85041367
+        },
+        {
+          "block_date": "2025-08-18",
+          "median_byte_size": 774,
+          "max_byte_size_txns": 230609,
+          "avg_byte_size": 729.7411483371291,
+          "max_byte_size_txns_percentage": 0.25,
+          "total_txns": 91098561
+        },
+        {
+          "block_date": "2025-08-17",
+          "median_byte_size": 739,
+          "max_byte_size_txns": 131862,
+          "avg_byte_size": 712.7508597993112,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 87090963
+        },
+        {
+          "block_date": "2025-08-16",
+          "median_byte_size": 793,
+          "max_byte_size_txns": 129526,
+          "avg_byte_size": 750.3847056344586,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 83845021
+        },
+        {
+          "block_date": "2025-08-15",
+          "median_byte_size": 799,
+          "max_byte_size_txns": 200993,
+          "avg_byte_size": 752.9480696546785,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 95341076
+        },
+        {
+          "block_date": "2025-08-14",
+          "median_byte_size": 792,
+          "max_byte_size_txns": 197262,
+          "avg_byte_size": 748.9554980521816,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 109364404
+        },
+        {
+          "block_date": "2025-08-13",
+          "median_byte_size": 806,
+          "max_byte_size_txns": 273998,
+          "avg_byte_size": 753.2334021277505,
+          "max_byte_size_txns_percentage": 0.26,
+          "total_txns": 104928088
+        },
+        {
+          "block_date": "2025-08-12",
+          "median_byte_size": 807,
+          "max_byte_size_txns": 194855,
+          "avg_byte_size": 751.4841233211157,
+          "max_byte_size_txns_percentage": 0.19,
+          "total_txns": 100277458
+        },
+        {
+          "block_date": "2025-08-11",
+          "median_byte_size": 826,
+          "max_byte_size_txns": 205317,
+          "avg_byte_size": 770.6984418556692,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 100549992
+        },
+        {
+          "block_date": "2025-08-10",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 119977,
+          "avg_byte_size": 772.9769798270092,
+          "max_byte_size_txns_percentage": 0.13,
+          "total_txns": 93257466
+        },
+        {
+          "block_date": "2025-08-09",
+          "median_byte_size": 838,
+          "max_byte_size_txns": 103790,
+          "avg_byte_size": 783.3854000158905,
+          "max_byte_size_txns_percentage": 0.11,
+          "total_txns": 96988722
+        },
+        {
+          "block_date": "2025-08-08",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 296413,
+          "avg_byte_size": 780.6971341080425,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 103376507
+        },
+        {
+          "block_date": "2025-08-07",
+          "median_byte_size": 818,
+          "max_byte_size_txns": 250975,
+          "avg_byte_size": 775.161605356879,
+          "max_byte_size_txns_percentage": 0.24,
+          "total_txns": 106794721
+        },
+        {
+          "block_date": "2025-08-06",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 294373,
+          "avg_byte_size": 776.9833916842256,
+          "max_byte_size_txns_percentage": 0.3,
+          "total_txns": 97240444
+        },
+        {
+          "block_date": "2025-08-05",
+          "median_byte_size": 828,
+          "max_byte_size_txns": 307960,
+          "avg_byte_size": 779.7894581489294,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 107568395
+        },
+        {
+          "block_date": "2025-08-04",
+          "median_byte_size": 836,
+          "max_byte_size_txns": 324093,
+          "avg_byte_size": 788.2325984310812,
+          "max_byte_size_txns_percentage": 0.29,
+          "total_txns": 111145711
+        },
+        {
+          "block_date": "2025-08-03",
+          "median_byte_size": 843,
+          "max_byte_size_txns": 162726,
+          "avg_byte_size": 793.0909812920273,
+          "max_byte_size_txns_percentage": 0.17,
+          "total_txns": 98082087
+        },
+        {
+          "block_date": "2025-08-02",
+          "median_byte_size": 825,
+          "max_byte_size_txns": 150380,
+          "avg_byte_size": 782.3379999799687,
+          "max_byte_size_txns_percentage": 0.15,
+          "total_txns": 97247846
+        },
+        {
+          "block_date": "2025-08-01",
+          "median_byte_size": 791,
+          "max_byte_size_txns": 244722,
+          "avg_byte_size": 746.8933957615883,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 105462289
+        },
+        {
+          "block_date": "2025-07-31",
+          "median_byte_size": 823,
+          "max_byte_size_txns": 262799,
+          "avg_byte_size": 774.9837554643476,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 113506230
+        },
+        {
+          "block_date": "2025-07-30",
+          "median_byte_size": 809,
+          "max_byte_size_txns": 217591,
+          "avg_byte_size": 761.0950250298322,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 118178779
+        },
+        {
+          "block_date": "2025-07-29",
+          "median_byte_size": 798,
+          "max_byte_size_txns": 259500,
+          "avg_byte_size": 751.5978372018066,
+          "max_byte_size_txns_percentage": 0.22,
+          "total_txns": 118766883
+        },
+        {
+          "block_date": "2025-07-28",
+          "median_byte_size": 810,
+          "max_byte_size_txns": 283625,
+          "avg_byte_size": 762.3808789114487,
+          "max_byte_size_txns_percentage": 0.23,
+          "total_txns": 123122028
+        },
+        {
+          "block_date": "2025-07-27",
+          "median_byte_size": 820,
+          "max_byte_size_txns": 122384,
+          "avg_byte_size": 768.3718388666512,
+          "max_byte_size_txns_percentage": 0.12,
+          "total_txns": 103699477
+        },
+        {
+          "block_date": "2025-07-26",
+          "median_byte_size": 814,
+          "max_byte_size_txns": 122906,
+          "avg_byte_size": 768.1084846293128,
+          "max_byte_size_txns_percentage": 0.12,
+          "total_txns": 105006756
+        },
+        {
+          "block_date": "2025-07-25",
+          "median_byte_size": 810,
+          "max_byte_size_txns": 248890,
+          "avg_byte_size": 762.9953676036049,
+          "max_byte_size_txns_percentage": 0.21,
+          "total_txns": 120027509
+        },
+        {
+          "block_date": "2025-07-24",
+          "median_byte_size": 809,
+          "max_byte_size_txns": 249439,
+          "avg_byte_size": 760.2158786685839,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 124625134
+        },
+        {
+          "block_date": "2025-07-23",
+          "median_byte_size": 799,
+          "max_byte_size_txns": 219812,
+          "avg_byte_size": 756.6738703083402,
+          "max_byte_size_txns_percentage": 0.18,
+          "total_txns": 119036043
+        },
+        {
+          "block_date": "2025-07-22",
+          "median_byte_size": 778,
+          "max_byte_size_txns": 299668,
+          "avg_byte_size": 736.1616453988676,
+          "max_byte_size_txns_percentage": 0.24,
+          "total_txns": 125954578
+        },
+        {
+          "block_date": "2025-07-21",
+          "median_byte_size": 800,
+          "max_byte_size_txns": 240353,
+          "avg_byte_size": 756.5196137356623,
+          "max_byte_size_txns_percentage": 0.2,
+          "total_txns": 117777997
+        }
+      ],
+      "timestamp": 1755719111986,
       "chartId": "chart_1748081521416_b3nvblz",
-      "title": "Avg & Median Transaction Bytes",
-      "parameters": {}
+      "title": "Avg & Median Transaction Bytes"
     },
     {
-      "success": false,
-      "error": "API error: 500",
+      "success": true,
+      "data": [
+        {
+          "block_date": "2025-08-19",
+          "data_bytes": 11582002726,
+          "account_bytes": 35719329925,
+          "data bytes/account bytes": 0.32
+        },
+        {
+          "block_date": "2025-08-18",
+          "data_bytes": 12637867317,
+          "account_bytes": 36844630803,
+          "data bytes/account bytes": 0.34
+        },
+        {
+          "block_date": "2025-08-17",
+          "data_bytes": 11749436725,
+          "account_bytes": 34453320910,
+          "data bytes/account bytes": 0.34
+        },
+        {
+          "block_date": "2025-08-16",
+          "data_bytes": 11616134052,
+          "account_bytes": 35016876425,
+          "data bytes/account bytes": 0.33
+        },
+        {
+          "block_date": "2025-08-15",
+          "data_bytes": 12233467097,
+          "account_bytes": 40350848642,
+          "data bytes/account bytes": 0.3
+        },
+        {
+          "block_date": "2025-08-14",
+          "data_bytes": 13530433516,
+          "account_bytes": 46700339568,
+          "data bytes/account bytes": 0.29
+        },
+        {
+          "block_date": "2025-08-13",
+          "data_bytes": 13122398777,
+          "account_bytes": 45106604398,
+          "data bytes/account bytes": 0.29
+        },
+        {
+          "block_date": "2025-08-12",
+          "data_bytes": 12901260571,
+          "account_bytes": 42434734953,
+          "data bytes/account bytes": 0.3
+        },
+        {
+          "block_date": "2025-08-11",
+          "data_bytes": 12642967986,
+          "account_bytes": 44518847351,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-08-10",
+          "data_bytes": 12131136431,
+          "account_bytes": 41028865363,
+          "data bytes/account bytes": 0.3
+        },
+        {
+          "block_date": "2025-08-09",
+          "data_bytes": 12166988138,
+          "account_bytes": 43769249820,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-08-08",
+          "data_bytes": 13004087591,
+          "account_bytes": 46373600322,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-08-07",
+          "data_bytes": 12742351568,
+          "account_bytes": 47779101513,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-08-06",
+          "data_bytes": 12556606991,
+          "account_bytes": 42994831662,
+          "data bytes/account bytes": 0.29
+        },
+        {
+          "block_date": "2025-08-05",
+          "data_bytes": 13448187508,
+          "account_bytes": 47971190811,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-08-04",
+          "data_bytes": 13720243368,
+          "account_bytes": 50229661607,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-08-03",
+          "data_bytes": 11946514040,
+          "account_bytes": 44815552538,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-08-02",
+          "data_bytes": 12687366481,
+          "account_bytes": 43498149275,
+          "data bytes/account bytes": 0.29
+        },
+        {
+          "block_date": "2025-08-01",
+          "data_bytes": 13322736380,
+          "account_bytes": 44155353083,
+          "data bytes/account bytes": 0.3
+        },
+        {
+          "block_date": "2025-07-31",
+          "data_bytes": 13469427496,
+          "account_bytes": 50507564173,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-07-30",
+          "data_bytes": 13528728326,
+          "account_bytes": 51764437847,
+          "data bytes/account bytes": 0.26
+        },
+        {
+          "block_date": "2025-07-29",
+          "data_bytes": 13618816340,
+          "account_bytes": 51091064226,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-07-28",
+          "data_bytes": 13799989552,
+          "account_bytes": 54393096703,
+          "data bytes/account bytes": 0.25
+        },
+        {
+          "block_date": "2025-07-27",
+          "data_bytes": 12849521100,
+          "account_bytes": 45892585664,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-07-26",
+          "data_bytes": 12331787784,
+          "account_bytes": 46316008767,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-07-25",
+          "data_bytes": 13986826881,
+          "account_bytes": 52587375329,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-07-24",
+          "data_bytes": 14265162100,
+          "account_bytes": 54695136310,
+          "data bytes/account bytes": 0.26
+        },
+        {
+          "block_date": "2025-07-23",
+          "data_bytes": 14079168093,
+          "account_bytes": 52054842891,
+          "data bytes/account bytes": 0.27
+        },
+        {
+          "block_date": "2025-07-22",
+          "data_bytes": 15050442211,
+          "account_bytes": 53437292733,
+          "data bytes/account bytes": 0.28
+        },
+        {
+          "block_date": "2025-07-21",
+          "data_bytes": 14608835799,
+          "account_bytes": 50991631399,
+          "data bytes/account bytes": 0.29
+        }
+      ],
+      "timestamp": 1755719111987,
       "chartId": "chart_1748087042364_phdzeam",
-      "title": "Account Bytes Vs Data Bytes",
-      "parameters": {}
+      "title": "Account Bytes Vs Data Bytes"
     },
     {
-      "success": false,
-      "error": "API error: 500",
+      "success": true,
+      "data": [
+        {
+          "partition_0": "2025-08-19",
+          "byte_size_25th_percentile": 461,
+          "byte_size_median": 765,
+          "byte_size_75th_percentile": 953,
+          "byte_size_90th_percentile": 1107
+        },
+        {
+          "partition_0": "2025-08-18",
+          "byte_size_25th_percentile": 467,
+          "byte_size_median": 774,
+          "byte_size_75th_percentile": 954,
+          "byte_size_90th_percentile": 1106
+        },
+        {
+          "partition_0": "2025-08-17",
+          "byte_size_25th_percentile": 433,
+          "byte_size_median": 740,
+          "byte_size_75th_percentile": 948,
+          "byte_size_90th_percentile": 1109
+        },
+        {
+          "partition_0": "2025-08-16",
+          "byte_size_25th_percentile": 542,
+          "byte_size_median": 792,
+          "byte_size_75th_percentile": 957,
+          "byte_size_90th_percentile": 1104
+        },
+        {
+          "partition_0": "2025-08-15",
+          "byte_size_25th_percentile": 549,
+          "byte_size_median": 799,
+          "byte_size_75th_percentile": 961,
+          "byte_size_90th_percentile": 1106
+        },
+        {
+          "partition_0": "2025-08-14",
+          "byte_size_25th_percentile": 534,
+          "byte_size_median": 792,
+          "byte_size_75th_percentile": 956,
+          "byte_size_90th_percentile": 1096
+        },
+        {
+          "partition_0": "2025-08-13",
+          "byte_size_25th_percentile": 542,
+          "byte_size_median": 805,
+          "byte_size_75th_percentile": 959,
+          "byte_size_90th_percentile": 1103
+        },
+        {
+          "partition_0": "2025-08-12",
+          "byte_size_25th_percentile": 548,
+          "byte_size_median": 806,
+          "byte_size_75th_percentile": 951,
+          "byte_size_90th_percentile": 1089
+        },
+        {
+          "partition_0": "2025-08-11",
+          "byte_size_25th_percentile": 567,
+          "byte_size_median": 823,
+          "byte_size_75th_percentile": 976,
+          "byte_size_90th_percentile": 1110
+        },
+        {
+          "partition_0": "2025-08-10",
+          "byte_size_25th_percentile": 579,
+          "byte_size_median": 825,
+          "byte_size_75th_percentile": 978,
+          "byte_size_90th_percentile": 1116
+        },
+        {
+          "partition_0": "2025-08-09",
+          "byte_size_25th_percentile": 598,
+          "byte_size_median": 840,
+          "byte_size_75th_percentile": 984,
+          "byte_size_90th_percentile": 1121
+        },
+        {
+          "partition_0": "2025-08-08",
+          "byte_size_25th_percentile": 591,
+          "byte_size_median": 826,
+          "byte_size_75th_percentile": 986,
+          "byte_size_90th_percentile": 1125
+        },
+        {
+          "partition_0": "2025-08-07",
+          "byte_size_25th_percentile": 592,
+          "byte_size_median": 819,
+          "byte_size_75th_percentile": 978,
+          "byte_size_90th_percentile": 1117
+        },
+        {
+          "partition_0": "2025-08-06",
+          "byte_size_25th_percentile": 592,
+          "byte_size_median": 825,
+          "byte_size_75th_percentile": 982,
+          "byte_size_90th_percentile": 1120
+        },
+        {
+          "partition_0": "2025-08-05",
+          "byte_size_25th_percentile": 602,
+          "byte_size_median": 829,
+          "byte_size_75th_percentile": 971,
+          "byte_size_90th_percentile": 1120
+        },
+        {
+          "partition_0": "2025-08-04",
+          "byte_size_25th_percentile": 620,
+          "byte_size_median": 835,
+          "byte_size_75th_percentile": 973,
+          "byte_size_90th_percentile": 1127
+        },
+        {
+          "partition_0": "2025-08-03",
+          "byte_size_25th_percentile": 617,
+          "byte_size_median": 842,
+          "byte_size_75th_percentile": 982,
+          "byte_size_90th_percentile": 1136
+        },
+        {
+          "partition_0": "2025-08-02",
+          "byte_size_25th_percentile": 593,
+          "byte_size_median": 827,
+          "byte_size_75th_percentile": 977,
+          "byte_size_90th_percentile": 1136
+        },
+        {
+          "partition_0": "2025-08-01",
+          "byte_size_25th_percentile": 541,
+          "byte_size_median": 790,
+          "byte_size_75th_percentile": 943,
+          "byte_size_90th_percentile": 1080
+        },
+        {
+          "partition_0": "2025-07-31",
+          "byte_size_25th_percentile": 600,
+          "byte_size_median": 823,
+          "byte_size_75th_percentile": 967,
+          "byte_size_90th_percentile": 1079
+        },
+        {
+          "partition_0": "2025-07-30",
+          "byte_size_25th_percentile": 571,
+          "byte_size_median": 808,
+          "byte_size_75th_percentile": 961,
+          "byte_size_90th_percentile": 1078
+        },
+        {
+          "partition_0": "2025-07-29",
+          "byte_size_25th_percentile": 563,
+          "byte_size_median": 798,
+          "byte_size_75th_percentile": 947,
+          "byte_size_90th_percentile": 1072
+        },
+        {
+          "partition_0": "2025-07-28",
+          "byte_size_25th_percentile": 590,
+          "byte_size_median": 812,
+          "byte_size_75th_percentile": 944,
+          "byte_size_90th_percentile": 1071
+        },
+        {
+          "partition_0": "2025-07-27",
+          "byte_size_25th_percentile": 603,
+          "byte_size_median": 822,
+          "byte_size_75th_percentile": 946,
+          "byte_size_90th_percentile": 1069
+        },
+        {
+          "partition_0": "2025-07-26",
+          "byte_size_25th_percentile": 615,
+          "byte_size_median": 814,
+          "byte_size_75th_percentile": 947,
+          "byte_size_90th_percentile": 1066
+        },
+        {
+          "partition_0": "2025-07-25",
+          "byte_size_25th_percentile": 595,
+          "byte_size_median": 810,
+          "byte_size_75th_percentile": 949,
+          "byte_size_90th_percentile": 1067
+        },
+        {
+          "partition_0": "2025-07-24",
+          "byte_size_25th_percentile": 591,
+          "byte_size_median": 808,
+          "byte_size_75th_percentile": 944,
+          "byte_size_90th_percentile": 1069
+        },
+        {
+          "partition_0": "2025-07-23",
+          "byte_size_25th_percentile": 583,
+          "byte_size_median": 800,
+          "byte_size_75th_percentile": 948,
+          "byte_size_90th_percentile": 1072
+        },
+        {
+          "partition_0": "2025-07-22",
+          "byte_size_25th_percentile": 542,
+          "byte_size_median": 779,
+          "byte_size_75th_percentile": 935,
+          "byte_size_90th_percentile": 1071
+        },
+        {
+          "partition_0": "2025-07-21",
+          "byte_size_25th_percentile": 574,
+          "byte_size_median": 799,
+          "byte_size_75th_percentile": 954,
+          "byte_size_90th_percentile": 1073
+        }
+      ],
+      "timestamp": 1755719113054,
       "chartId": "chart_1748087555242_0h73rio",
-      "title": "Byte Size Quantiles",
-      "parameters": {}
+      "title": "Byte Size Quantiles"
     }
   ],
   "summary": {
     "totalCharts": 4,
-    "successfulFetches": 0,
-    "failedFetches": 4
+    "successfulFetches": 4,
+    "failedFetches": 0
   }
 }

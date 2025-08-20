@@ -12,6 +12,7 @@ if (!fs.existsSync(dataDir)) {
 
 // Function to fetch chart data with timeout
 async function fetchChartData(chart, filterParams = {}) {
+  let timeoutId;
   try {
     const url = new URL(chart.apiEndpoint);
     if (chart.apiKey) {
@@ -37,16 +38,20 @@ async function fetchChartData(chart, filterParams = {}) {
     const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
     
     if (filterConfig) {
-      // Add currency parameter if configured
-      if (filterConfig.currencyFilter && filterParams.currency) {
-        parameters[filterConfig.currencyFilter.paramName] = filterParams.currency;
-        hasParameters = true;
-        console.log(`  Using currency parameter: ${filterConfig.currencyFilter.paramName}=${filterParams.currency}`);
-      } else if (filterConfig.currencyFilter && filterConfig.currencyFilter.options && filterConfig.currencyFilter.options.length > 0) {
-        // Use first currency option as default
-        parameters[filterConfig.currencyFilter.paramName] = filterConfig.currencyFilter.options[0];
-        hasParameters = true;
-        console.log(`  Using default currency: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
+      // Add currency parameter if configured (but NOT for field_switcher type)
+      if (filterConfig.currencyFilter && filterConfig.currencyFilter.type !== 'field_switcher') {
+        if (filterParams.currency) {
+          parameters[filterConfig.currencyFilter.paramName] = filterParams.currency;
+          hasParameters = true;
+          console.log(`  Using currency parameter: ${filterConfig.currencyFilter.paramName}=${filterParams.currency}`);
+        } else if (filterConfig.currencyFilter.options && filterConfig.currencyFilter.options.length > 0) {
+          // Use first currency option as default
+          parameters[filterConfig.currencyFilter.paramName] = filterConfig.currencyFilter.options[0];
+          hasParameters = true;
+          console.log(`  Using default currency: ${filterConfig.currencyFilter.paramName}=${filterConfig.currencyFilter.options[0]}`);
+        }
+      } else if (filterConfig.currencyFilter?.type === 'field_switcher') {
+        console.log(`  Skipping currency parameter for field_switcher type - fetching full data for: ${chart.title}`);
       }
       
       // IMPORTANT: Only add time filter parameter if time aggregation is NOT enabled
@@ -80,36 +85,67 @@ async function fetchChartData(chart, filterParams = {}) {
     }
 
     console.log(`Fetching data for ${chart.title} (${chart.id})...`);
+    console.log(`  Method: ${hasParameters ? 'POST' : 'GET'}`);
+    console.log(`  URL: ${url.toString()}`);
     if (hasParameters) {
       console.log(`  Parameters:`, JSON.stringify(parameters));
     }
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for POST requests
+    timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for POST requests
 
-    // Configure request options
+    // Configure request options - MATCH ADMIN PANEL FORMAT
     const requestOptions = {
+      method: hasParameters ? 'POST' : 'GET',
       signal: controller.signal,
       headers: { 
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      cache: 'no-store' // Match admin panel cache setting
     };
 
-    // Use POST with parameters if needed, otherwise GET
+    // Add body with parameters for POST request - MATCH ADMIN PANEL FORMAT
     if (hasParameters) {
-      requestOptions.method = 'POST';
+      // Format exactly as in the admin panel: {"parameters":{"Date Part":"W"}}
       requestOptions.body = JSON.stringify({ parameters });
-    } else {
-      requestOptions.method = 'GET';
+      console.log(`  Request body:`, requestOptions.body);
     }
 
     const response = await fetch(url.toString(), requestOptions);
 
-    clearTimeout(timeoutId);
-
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      // Enhanced error handling to match admin panel
+      let errorDetail = '';
+      let errorJson = null;
+      
+      try {
+        const errorText = await response.text();
+        errorDetail = errorText.length > 0 ? ` Error details: ${errorText}` : '';
+        
+        // Try to parse the error as JSON for more specific handling
+        try {
+          errorJson = JSON.parse(errorText);
+        } catch {
+          // Not JSON, continue with text error
+        }
+        
+        // Check for common parameter errors
+        if (errorJson && errorJson.message) {
+          if (errorJson.message.includes('parameter values are incompatible')) {
+            const paramMatch = errorJson.message.match(/parameter values are incompatible.*?: (.+?)($|\})/i);
+            const paramName = paramMatch ? paramMatch[1].trim() : null;
+            
+            if (paramName) {
+              throw new Error(`Parameter error: "${paramName}" appears to be incompatible. This might be due to incorrect case sensitivity.`);
+            }
+          }
+        }
+      } catch (parseError) {
+        // Ignore error reading body, use original error
+      }
+      
+      throw new Error(`API request failed with status ${response.status}: ${response.statusText}.${errorDetail}`);
     }
 
     const result = await response.json();
@@ -157,14 +193,30 @@ async function fetchChartData(chart, filterParams = {}) {
     };
 
   } catch (error) {
-    console.error(`Error fetching data for ${chart.title}:`, error.message);
+    // Enhanced error handling to match admin panel behavior
+    let errorMessage = error.message;
+    
+    if (error.name === 'AbortError') {
+      errorMessage = 'API request timed out after 15 seconds';
+    } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      errorMessage = `Network error: Unable to reach the API. Check if the endpoint is accessible.`;
+    } else if (error.message.includes('CORS')) {
+      errorMessage = `CORS error: The API doesn't allow requests from this origin.`;
+    }
+    
+    console.error(`Error fetching data for ${chart.title}:`, errorMessage);
     return {
       success: false,
-      error: error.message,
+      error: errorMessage,
       chartId: chart.id,
       title: chart.title,
       parameters: filterParams
     };
+  } finally {
+    // Always clear timeout if it was set
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   }
 }
 
@@ -181,8 +233,8 @@ async function fetchChartDataWithAllParameters(chart) {
   // Build all parameter combinations
   const parameterCombinations = [{}]; // Start with empty params
   
-  // Add currency parameter combinations
-  if (filterConfig.currencyFilter && filterConfig.currencyFilter.options) {
+  // Add currency parameter combinations (but NOT for field_switcher type)
+  if (filterConfig.currencyFilter && filterConfig.currencyFilter.options && filterConfig.currencyFilter.type !== 'field_switcher') {
     const currencyOptions = filterConfig.currencyFilter.options;
     const newCombinations = [];
     
