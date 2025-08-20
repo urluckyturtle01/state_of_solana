@@ -2,7 +2,7 @@
   "pageId": "helium-financials",
   "pageName": "Financials",
   "chartCount": 5,
-  "lastUpdated": "2025-08-20T11:58:11.737Z",
+  "lastUpdated": "2025-08-20T14:07:55.639Z",
   "charts": [
     {
       "id": "chart_1749487989484_o4yl7sk",
@@ -66,7 +66,7 @@
             "unit": "$"
           },
           {
-            "field": "cumulative_reward",
+            "field": "cumulative_reward_usd",
             "type": "line",
             "unit": "$",
             "rightAxis": true
@@ -78,7 +78,7 @@
         "leftAxisType": "bar",
         "rightAxisType": "line",
         "leftAxisFields": [
-          "total_reward_usd"
+          "total_reward"
         ],
         "rightAxisFields": [
           "cumulative_reward_usd"
@@ -88,7 +88,7 @@
         "enableTimeAggregation": true
       },
       "createdAt": "2025-06-09T16:56:34.332Z",
-      "updatedAt": "2025-08-20T10:48:55.731Z"
+      "updatedAt": "2025-08-20T14:06:14.937Z"
     },
     {
       "id": "chart_1749488352825_7o1unn0",
