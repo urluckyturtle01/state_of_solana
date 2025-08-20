@@ -453,29 +453,24 @@ export default function ChartCreatorPage() {
         const leftFields = values.filter(val => !val.rightAxis).map(val => val.field);
         const rightFields = values.filter(val => val.rightAxis).map(val => val.field);
         
-        const newDualAxisConfig = {
+        const updatedDualAxisConfig = {
           leftAxisType: dualAxisConfig.leftAxisType,
           rightAxisType: dualAxisConfig.rightAxisType,
           leftAxisFields: leftFields,
           rightAxisFields: rightFields
         };
         
-        setDualAxisConfig(newDualAxisConfig);
+        setDualAxisConfig(updatedDualAxisConfig);
         
-        // CRITICAL FIX: Also update formData.dualAxisConfig so it gets saved to S3
-        setFormData(prev => {
-          // Create a properly typed update for dataMapping
-          const updatedDataMapping = { ...prev.dataMapping };
-          
-          // Set the yAxis value ensuring we maintain the correct type
-          updatedDataMapping.yAxis = values;
-          
-          return {
-            ...prev,
-            dataMapping: updatedDataMapping,
-            dualAxisConfig: newDualAxisConfig // Update formData.dualAxisConfig too!
-          };
-        });
+        // CRITICAL FIX: Also update formData.dualAxisConfig for S3 sync
+        setFormData(prev => ({
+          ...prev,
+          dataMapping: {
+            ...prev.dataMapping,
+            yAxis: values
+          },
+          dualAxisConfig: updatedDualAxisConfig
+        }));
       } else {
         setFormData(prev => {
           // Create a properly typed update for dataMapping
