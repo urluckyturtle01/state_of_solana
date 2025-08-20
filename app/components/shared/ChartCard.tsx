@@ -1,6 +1,6 @@
 import React, { ReactNode, useRef, useState } from 'react';
 import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, SparklesIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import PrettyLoader from './PrettyLoader';
 import Loader from './Loader'
 import ShareButton from './ShareButton';
@@ -26,6 +26,8 @@ interface ChartCardProps {
   filterValues?: Record<string, string>;
   isEditMode?: boolean;
   dragHandleProps?: any;
+  chartData?: any[];
+  onSummarizeClick?: () => void;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -47,9 +49,14 @@ const ChartCard: React.FC<ChartCardProps> = ({
   filterValues,
   isEditMode = false,
   dragHandleProps,
+  chartData,
+  onSummarizeClick,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [showSummary, setShowSummary] = useState(false);
 
   // Screenshot function
   const handleScreenshot = async () => {
@@ -327,6 +334,49 @@ const ChartCard: React.FC<ChartCardProps> = ({
     }
   };
 
+  // Chart summarization function
+  const handleSummarize = async () => {
+    if (!chart?.id || !chart?.page) {
+      alert('Chart ID or page information not available for summarization');
+      return;
+    }
+
+    setIsSummarizing(true);
+    
+    try {
+      const response = await fetch('/api/chart-summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chartId: chart.id,
+          pageId: chart.page
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setSummary(data.summary);
+      setShowSummary(true);
+      
+      // Call the optional callback
+      if (onSummarizeClick) {
+        onSummarizeClick();
+      }
+      
+    } catch (error) {
+      console.error('Chart summarization failed:', error);
+      alert(`Failed to generate chart summary: ${error instanceof Error ? error.message : 'Please try again.'}`);
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   // Define color variants
   const colorVariants = {
     blue: {
@@ -399,6 +449,20 @@ const ChartCard: React.FC<ChartCardProps> = ({
         </div>
         {!isEditMode && (
           <div className="flex justify-end space-x-2 -mr-2 md:mr-0 screenshot-ignore" onClick={(e) => e.stopPropagation()}>
+            {chart?.id && chart?.page && (
+              <button 
+                className={`p-1.5 ${colors.button} rounded-md transition-colors ${isSummarizing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={handleSummarize}
+                title="Summarize Chart Data with AI"
+                disabled={isSummarizing} hidden={true}
+              >
+                {isSummarizing ? (
+                  <Loader size="xs" className="w-4 h-4" />
+                ) : (
+                  <SparklesIcon className="w-4 h-4" />
+                )}
+              </button>
+            )}
             <button 
               className={`p-1.5 ${colors.button} rounded-md transition-colors ${isCapturing ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={handleScreenshot}
@@ -501,6 +565,42 @@ const ChartCard: React.FC<ChartCardProps> = ({
           </div>
         )}
       </div>
+
+      {/* Summary Modal */}
+      {showSummary && summary && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowSummary(false)}>
+          <div className="bg-gray-900 rounded-xl border border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <div className="flex items-center gap-2">
+                <DocumentTextIcon className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">Chart Summary</h3>
+              </div>
+              <button
+                onClick={() => setShowSummary(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[calc(80vh-120px)]">
+              <div className="text-sm text-gray-300 mb-3">
+                <span className="text-gray-500">Chart:</span> {title}
+              </div>
+              <div className="text-gray-200 whitespace-pre-wrap text-sm leading-relaxed">
+                {summary}
+              </div>
+            </div>
+            <div className="p-4 border-t border-gray-700 flex justify-end">
+              <button
+                onClick={() => setShowSummary(false)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

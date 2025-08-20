@@ -923,6 +923,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
                 description={visualization.description || `${visualization.configuration.chartType === 'dual' ? 'Dual Axis' : visualization.configuration.chartType === 'stacked' ? 'Stacked ' : ''}Chart`}
                 className="h-[500px]"
                 onExpandClick={() => {}}
+                chartData={visualization.chartData}
 
                 filterBar={
                   isStackedChart(visualization.configuration) ? (

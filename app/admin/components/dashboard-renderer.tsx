@@ -2294,6 +2294,7 @@ export default function DashboardRenderer({
           id={`chart-card-${chart.id}`}
           chart={chart}
           filterValues={filterValues[chart.id]}
+          chartData={chartData[chart.id]}
           
           // Add filter bar for regular chart view using ChartRenderer's filter props
           filterBar={

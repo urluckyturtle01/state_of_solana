@@ -631,6 +631,7 @@ export default function DashboardPage() {
                   onDeleteClick={() => handleDeleteChart(item.id)}
                   isEditMode={isEditMode}
                   dragHandleProps={{}}
+                  chartData={item.chartData}
                   filterBar={
                     isStackedChart(item) ? (
                       <div className="flex flex-wrap gap-3 items-center">
