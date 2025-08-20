@@ -453,25 +453,43 @@ export default function ChartCreatorPage() {
         const leftFields = values.filter(val => !val.rightAxis).map(val => val.field);
         const rightFields = values.filter(val => val.rightAxis).map(val => val.field);
         
-        setDualAxisConfig(prev => ({
-          ...prev,
+        const newDualAxisConfig = {
+          leftAxisType: dualAxisConfig.leftAxisType,
+          rightAxisType: dualAxisConfig.rightAxisType,
           leftAxisFields: leftFields,
           rightAxisFields: rightFields
-        }));
-      }
-      
-      setFormData(prev => {
-        // Create a properly typed update for dataMapping
-        const updatedDataMapping = { ...prev.dataMapping };
-        
-        // Set the yAxis value ensuring we maintain the correct type
-        updatedDataMapping.yAxis = values;
-        
-        return {
-          ...prev,
-          dataMapping: updatedDataMapping
         };
-      });
+        
+        setDualAxisConfig(newDualAxisConfig);
+        
+        // CRITICAL FIX: Also update formData.dualAxisConfig so it gets saved to S3
+        setFormData(prev => {
+          // Create a properly typed update for dataMapping
+          const updatedDataMapping = { ...prev.dataMapping };
+          
+          // Set the yAxis value ensuring we maintain the correct type
+          updatedDataMapping.yAxis = values;
+          
+          return {
+            ...prev,
+            dataMapping: updatedDataMapping,
+            dualAxisConfig: newDualAxisConfig // Update formData.dualAxisConfig too!
+          };
+        });
+      } else {
+        setFormData(prev => {
+          // Create a properly typed update for dataMapping
+          const updatedDataMapping = { ...prev.dataMapping };
+          
+          // Set the yAxis value ensuring we maintain the correct type
+          updatedDataMapping.yAxis = values;
+          
+          return {
+            ...prev,
+            dataMapping: updatedDataMapping
+          };
+        });
+      }
     }
     
     // Mark as touched
