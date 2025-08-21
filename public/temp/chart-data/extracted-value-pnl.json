@@ -1,23 +1,36 @@
 {
   "pageId": "extracted-value-pnl",
   "pageName": "Extracted Value & PNL",
-  "fetchedAt": "2025-08-21T12:41:55.947Z",
+  "fetchedAt": "2025-08-21T13:31:05.637Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-08-21",
+          "attacks": 842,
+          "cumulative_attacks": 650454,
+          "total_sol_drained": 51.598429738,
+          "cumulative_sol_drained": 58081.573381131,
+          "attackers": 131,
+          "victims": 530,
+          "exposed_volume": 1388.305023302,
+          "exposed_volume_usd": 260520.6792070363,
+          "cumulative_exposed_volume": 1353811.9259244476,
+          "cumulative_exposed_volume_usd": 221358775.2496541
+        },
+        {
           "block_date": "2025-08-20",
-          "attacks": 870,
-          "cumulative_attacks": 648136,
-          "total_sol_drained": 38.684691924,
-          "cumulative_sol_drained": 57906.56575881,
-          "attackers": 162,
-          "victims": 591,
-          "exposed_volume": 1401.232961827,
-          "exposed_volume_usd": 252247.0304526936,
-          "cumulative_exposed_volume": 1349278.7966875765,
-          "cumulative_exposed_volume_usd": 220522268.58788964
+          "attacks": 2346,
+          "cumulative_attacks": 649612,
+          "total_sol_drained": 162.093884507,
+          "cumulative_sol_drained": 58029.974951393,
+          "attackers": 276,
+          "victims": 1291,
+          "exposed_volume": 4546.057175396,
+          "exposed_volume_usd": 828233.0130101589,
+          "cumulative_exposed_volume": 1352423.6209011455,
+          "cumulative_exposed_volume_usd": 221098254.5704471
         },
         {
           "block_date": "2025-08-19",
@@ -1424,7 +1437,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1755780114881,
+      "timestamp": 1755783064527,
       "chartId": "chart_1747913013490_uo9o6kd",
       "title": "Attacks & Attackers"
     },
@@ -1432,17 +1445,30 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-08-21",
+          "attacks": 842,
+          "cumulative_attacks": 650454,
+          "total_sol_drained": 51.598429738,
+          "cumulative_sol_drained": 58081.573381131,
+          "attackers": 131,
+          "victims": 530,
+          "exposed_volume": 1388.305023302,
+          "exposed_volume_usd": 260520.6792070363,
+          "cumulative_exposed_volume": 1353811.9259244476,
+          "cumulative_exposed_volume_usd": 221358775.2496541
+        },
+        {
           "block_date": "2025-08-20",
-          "attacks": 870,
-          "cumulative_attacks": 648136,
-          "total_sol_drained": 38.684691924,
-          "cumulative_sol_drained": 57906.56575881,
-          "attackers": 162,
-          "victims": 591,
-          "exposed_volume": 1401.232961827,
-          "exposed_volume_usd": 252247.0304526936,
-          "cumulative_exposed_volume": 1349278.7966875765,
-          "cumulative_exposed_volume_usd": 220522268.58788964
+          "attacks": 2346,
+          "cumulative_attacks": 649612,
+          "total_sol_drained": 162.093884507,
+          "cumulative_sol_drained": 58029.974951393,
+          "attackers": 276,
+          "victims": 1291,
+          "exposed_volume": 4546.057175396,
+          "exposed_volume_usd": 828233.0130101589,
+          "cumulative_exposed_volume": 1352423.6209011455,
+          "cumulative_exposed_volume_usd": 221098254.5704471
         },
         {
           "block_date": "2025-08-19",
@@ -2849,7 +2875,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1755780114865,
+      "timestamp": 1755783064528,
       "chartId": "chart_1747913289182_5vwaozt",
       "title": "Daily SOL Drained"
     },
@@ -3511,7 +3537,7 @@
           "sol_drained_pct": 2.7607609139854157
         }
       ],
-      "timestamp": 1755780114830,
+      "timestamp": 1755783064461,
       "chartId": "chart_1748081344058_qxcos7c",
       "title": "SOL Drained Vs Volume Exposed"
     },
@@ -3543,7 +3569,7 @@
           "exposed_txns": 23989
         }
       ],
-      "timestamp": 1755780115941,
+      "timestamp": 1755783065631,
       "chartId": "chart_1748081590850_soiyu3i",
       "title": "Sandwich Trades By SOL Drained"
     },
@@ -3731,7 +3757,7 @@
           "Exposed_volume_percentage": 0.0740029169465024
         }
       ],
-      "timestamp": 1755780115947,
+      "timestamp": 1755783065637,
       "chartId": "chart_1748087853606_gysynde",
       "title": "Exposed Volume Vs DEX Volume"
     },
@@ -3919,7 +3945,7 @@
           "Exposed_volume_percentage": 0.0740029169465024
         }
       ],
-      "timestamp": 1755780115942,
+      "timestamp": 1755783065631,
       "chartId": "chart_1748087954763_m518u4k",
       "title": "Exposed Volume %"
     }
