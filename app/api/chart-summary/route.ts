@@ -122,12 +122,14 @@ async function callOpenAI(systemMessage: string, userPrompt: string): Promise<st
         content: userPrompt
       }
     ],
-    text: {
-      verbosity: 'medium' // New gpt-5-nano parameter: 'low', 'medium', 'high'
-    },
-    reasoning: {
-      effort: 'medium' // New gpt-5-nano parameter: 'minimal', 'low', 'medium', 'high'
-    }
+    //text: {
+      //verbosity: 'medium' // New gpt-5-nano parameter: 'low', 'medium', 'high'
+    //},
+    //reasoning: {
+      //effort: 'medium' // New gpt-5-nano parameter: 'minimal', 'low', 'medium', 'high'
+    // }
+    //max_tokens: 2000,
+    //temperature: 0.7
   });
 
   // Extract text from new response format
