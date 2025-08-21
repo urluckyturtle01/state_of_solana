@@ -499,7 +499,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
                 className={`p-1.5 ${colors.button} rounded-md transition-colors ${isSummarizing ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={handleSummarize}
                 title="Summarize Chart Data with AI"
-                disabled={isSummarizing} hidden={true}
+                disabled={isSummarizing} hidden={false}
               >
                 {isSummarizing ? (
                   <Loader size="xs" className="w-4 h-4" />

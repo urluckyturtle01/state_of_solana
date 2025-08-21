@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { rateLimiters, getClientIdentifier } from '@/app/lib/rate-limiter';
-import { detectBot, isWhitelistedBot, patternAnalyzer } from '@/app/lib/bot-detection';
-import { apiMonitor } from '@/app/lib/api-monitor';
-import crypto from 'crypto';
 
 // AI Configuration - Switch between OpenAI and Local API
 // 
@@ -21,55 +17,6 @@ import crypto from 'crypto';
 const USE_LOCAL_API = process.env.USE_LOCAL_AI === 'true'; // Set to 'true' to use local API
 const LOCAL_API_URL = process.env.LOCAL_AI_URL || 'http://84.32.32.11:11434/api/generate';
 const LOCAL_AI_MODEL = process.env.LOCAL_AI_MODEL || 'gpt-oss:20b';
-
-// Simple in-memory cache for chart summaries (upgrade to Redis for production)
-interface CacheEntry {
-  summary: string;
-  timestamp: number;
-  metadata: any;
-}
-
-const summaryCache = new Map<string, CacheEntry>();
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
-
-function getCacheKey(chartId: string, pageId: string): string {
-  return crypto.createHash('md5').update(`${chartId}:${pageId}`).digest('hex');
-}
-
-function getCachedSummary(chartId: string, pageId: string): CacheEntry | null {
-  const key = getCacheKey(chartId, pageId);
-  const entry = summaryCache.get(key);
-  
-  if (entry && Date.now() - entry.timestamp < CACHE_DURATION) {
-    return entry;
-  }
-  
-  // Clean up expired entry
-  if (entry) {
-    summaryCache.delete(key);
-  }
-  
-  return null;
-}
-
-function setCachedSummary(chartId: string, pageId: string, summary: string, metadata: any): void {
-  const key = getCacheKey(chartId, pageId);
-  summaryCache.set(key, {
-    summary,
-    timestamp: Date.now(),
-    metadata
-  });
-  
-  // Periodic cleanup (1% chance per request)
-  if (Math.random() < 0.01) {
-    const now = Date.now();
-    for (const [key, entry] of summaryCache.entries()) {
-      if (now - entry.timestamp >= CACHE_DURATION) {
-        summaryCache.delete(key);
-      }
-    }
-  }
-}
 
 // Initialize OpenAI client (used when USE_LOCAL_API is false)
 const openai = new OpenAI({
@@ -103,115 +50,29 @@ async function callLocalAI(prompt: string): Promise<string> {
   return data.response || data.text || '';
 }
 
-// Function to call OpenAI API with gpt-5-nano using new Responses API
-// Key changes from GPT-4: 
-// - Uses responses.create() instead of chat.completions.create()
-// - New input format with 'developer' and 'user' roles
-// - New 'verbosity' parameter controls output length/detail
-// - New 'reasoning.effort' parameter controls reasoning depth
+// Function to call OpenAI API
 async function callOpenAI(systemMessage: string, userPrompt: string): Promise<string> {
-  const response = await openai.responses.create({
-    model: 'gpt-5-nano', // Options: 'gpt-5-nano' (most powerful), 'gpt-5-nano-mini' (balanced), 'gpt-5-nano-nano' (fastest)
-    input: [
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
       {
-        role: 'developer',
+        role: 'system',
         content: systemMessage
       },
       {
-        role: 'user', 
+        role: 'user',
         content: userPrompt
       }
     ],
-    text: {
-      verbosity: 'medium' // New gpt-5-nano parameter: 'low', 'medium', 'high'
-    },
-    reasoning: {
-      effort: 'medium' // New gpt-5-nano parameter: 'minimal', 'low', 'medium', 'high'
-    }
+    max_tokens: 400,
+    temperature: 0.3,
   });
 
-  // Extract text from new response format
-  let outputText = '';
-  for (const item of response.output) {
-    if (item && typeof item === 'object' && 'content' in item) {
-      const content = (item as any).content;
-      if (Array.isArray(content)) {
-        for (const contentItem of content) {
-          if (contentItem && typeof contentItem === 'object' && 'text' in contentItem) {
-            outputText += contentItem.text;
-          }
-        }
-      }
-    }
-  }
-
-  return outputText || '';
+  return response.choices[0]?.message?.content || '';
 }
 
 export async function POST(request: NextRequest) {
-  const startTime = Date.now();
-  
   try {
-    // 🛡️ PROTECTION LAYER 1: Rate Limiting (AI Summary Only)
-    const clientId = getClientIdentifier(request);
-    const aiRateLimiter = rateLimiters.aiSummary;
-    
-    if (aiRateLimiter) {
-      const rateLimitResult = aiRateLimiter.isAllowed(clientId);
-      
-      if (!rateLimitResult.allowed) {
-        return NextResponse.json(
-          { 
-            error: 'Rate limit exceeded. Too many requests for AI summary.',
-            retryAfter: Math.ceil((rateLimitResult.resetTime! - Date.now()) / 1000)
-          },
-          { 
-            status: 429,
-            headers: {
-              'Retry-After': String(Math.ceil((rateLimitResult.resetTime! - Date.now()) / 1000)),
-              'X-RateLimit-Limit': '10',
-              'X-RateLimit-Remaining': String(rateLimitResult.remaining || 0),
-              'X-RateLimit-Window': '30 minutes'
-            }
-          }
-        );
-      }
-    }
-
-    // 🛡️ PROTECTION LAYER 2: Bot Detection
-    const userAgent = request.headers.get('user-agent') || '';
-    const botDetection = detectBot(request);
-    
-    if (botDetection.isBot && !isWhitelistedBot(userAgent)) {
-      console.warn(`Blocked bot request: ${clientId}`, {
-        userAgent,
-        confidence: botDetection.confidence,
-        reasons: botDetection.reasons
-      });
-      
-      // Record blocked request for monitoring
-      apiMonitor.recordBlockedRequest();
-      
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
-
-    // 🛡️ PROTECTION LAYER 3: Request Pattern Analysis
-    const isSuspiciousPattern = patternAnalyzer.addRequest(clientId);
-    if (isSuspiciousPattern) {
-      console.warn(`Suspicious request pattern detected: ${clientId}`);
-      
-      // Record blocked request for monitoring
-      apiMonitor.recordBlockedRequest();
-      
-      return NextResponse.json(
-        { error: 'Suspicious activity detected. Please wait before making more requests.' },
-        { status: 429 }
-      );
-    }
-
     // Check if API is available based on configuration
     if (!USE_LOCAL_API && !process.env.OPENAI_API_KEY) {
       return NextResponse.json(
@@ -229,20 +90,6 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required fields: chartId and pageId' },
         { status: 400 }
       );
-    }
-
-    // 🚀 PERFORMANCE LAYER: Check cache first
-    const cachedResult = getCachedSummary(chartId, pageId);
-    if (cachedResult) {
-      console.log(`Cache hit for ${chartId}:${pageId}`);
-      return NextResponse.json({
-        summary: cachedResult.summary,
-        metadata: {
-          ...cachedResult.metadata,
-          cached: true,
-          cacheAge: Math.floor((Date.now() - cachedResult.timestamp) / 1000)
-        }
-      });
     }
 
     // Read chart data and config from temp directories
@@ -384,63 +231,29 @@ ${prompt}`;
       throw new Error(`No summary generated from ${USE_LOCAL_API ? 'Local AI' : 'OpenAI'}`);
     }
 
-    // Prepare metadata
-    const metadata = {
-      chartId,
-      pageId,
-      chartTitle: chartConfig.title,
-      chartType: chartConfig.chartType,
-      dataPoints: dataStats.totalRows,
-      aggregatedPoints: dataStats.aggregatedCount,
-      aggregationMethod: dataStats.aggregationMethod,
-      yAxisFields: dataStats.yAxisFields,
-      groupByField: dataStats.groupByField,
-      groupByDistinctItems: dataStats.groupByDistinctItems,
-      dateRange: dataStats.dateRange,
-      aiService: USE_LOCAL_API ? 'Local AI' : 'OpenAI Responses API',
-      aiModel: USE_LOCAL_API ? LOCAL_AI_MODEL : 'gpt-5-nano',
-      generatedAt: new Date().toISOString(),
-      processingTimeMs: Date.now() - startTime,
-      cached: false
-    };
-
-    // 💾 Cache the result for future requests
-    setCachedSummary(chartId, pageId, summary, metadata);
-
-    // 📊 Log successful API usage for monitoring
-    const processingTime = Date.now() - startTime;
-    console.log(`AI Summary generated: ${chartId}:${pageId}`, {
-      clientId,
-      processingTime,
-      dataPoints: dataStats.totalRows,
-      aiService: USE_LOCAL_API ? 'Local AI' : 'OpenAI'
-    });
-
-    // Record successful request for monitoring
-    apiMonitor.recordRequest(true, processingTime);
-
     // Return the summary
     return NextResponse.json({
       summary,
-      metadata
+      metadata: {
+        chartId,
+        pageId,
+        chartTitle: chartConfig.title,
+        chartType: chartConfig.chartType,
+        dataPoints: dataStats.totalRows,
+        aggregatedPoints: dataStats.aggregatedCount,
+        aggregationMethod: dataStats.aggregationMethod,
+        yAxisFields: dataStats.yAxisFields,
+        groupByField: dataStats.groupByField,
+        groupByDistinctItems: dataStats.groupByDistinctItems,
+        dateRange: dataStats.dateRange,
+        aiService: USE_LOCAL_API ? 'Local AI' : 'OpenAI',
+        aiModel: USE_LOCAL_API ? LOCAL_AI_MODEL : 'gpt-4o',
+        generatedAt: new Date().toISOString()
+      }
     });
 
   } catch (error) {
-    // 📊 Enhanced error logging for monitoring
-    const processingTime = Date.now() - startTime;
-    const errorDetails = {
-      timestamp: new Date().toISOString(),
-      clientId: getClientIdentifier(request),
-      userAgent: request.headers.get('user-agent'),
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      processingTime
-    };
-    
-    console.error('Chart summarization error:', errorDetails);
-    
-    // Record failed request for monitoring
-    apiMonitor.recordRequest(false, processingTime);
+    console.error('Chart summarization error:', error);
     
     return NextResponse.json(
       { 
