@@ -1,4 +1,5 @@
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ExpandIcon, DownloadIcon, CameraIcon } from './Icons';
 import { XMarkIcon, SparklesIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import PrettyLoader from './PrettyLoader';
@@ -6,6 +7,7 @@ import Loader from './Loader'
 import ShareButton from './ShareButton';
 import { ChartConfig } from '@/app/admin/types';
 import html2canvas from 'html2canvas';
+import ReactMarkdown from 'react-markdown';
 
 interface ChartCardProps {
   title: string;
@@ -57,6 +59,33 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [rateLimitEndTime, setRateLimitEndTime] = useState<number | null>(null);
+  const [remainingMinutes, setRemainingMinutes] = useState<number>(0);
+
+  // Update remaining time every 10 seconds
+  useEffect(() => {
+    if (!rateLimitEndTime) {
+      setRemainingMinutes(0);
+      return;
+    }
+
+    const updateRemainingTime = () => {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.ceil((rateLimitEndTime - now) / (1000 * 60)));
+      setRemainingMinutes(remaining);
+      
+      if (remaining <= 0) {
+        setRateLimitEndTime(null);
+        setError(null); // Clear error when rate limit expires
+      }
+    };
+
+    updateRemainingTime(); // Initial calculation
+    const interval = setInterval(updateRemainingTime, 10000); // Update every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [rateLimitEndTime]);
 
   // Screenshot function
   const handleScreenshot = async () => {
@@ -337,11 +366,16 @@ const ChartCard: React.FC<ChartCardProps> = ({
   // Chart summarization function
   const handleSummarize = async () => {
     if (!chart?.id || !chart?.page) {
-      alert('Chart ID or page information not available for summarization');
+      setError('Chart ID or page information not available for summarization');
+      setShowSummary(true);
       return;
     }
 
+    // Show modal immediately and start thinking state
     setIsSummarizing(true);
+    setShowSummary(true);
+    setSummary(null); // Clear any previous summary
+    setError(null); // Clear any previous error
     
     try {
       const response = await fetch('/api/chart-summary', {
@@ -362,7 +396,8 @@ const ChartCard: React.FC<ChartCardProps> = ({
 
       const data = await response.json();
       setSummary(data.summary);
-      setShowSummary(true);
+      setError(null); // Clear error on success
+      setRateLimitEndTime(null); // Clear any rate limit on success
       
       // Call the optional callback
       if (onSummarizeClick) {
@@ -371,7 +406,17 @@ const ChartCard: React.FC<ChartCardProps> = ({
       
     } catch (error) {
       console.error('Chart summarization failed:', error);
-      alert(`Failed to generate chart summary: ${error instanceof Error ? error.message : 'Please try again.'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate chart summary. Please try again.';
+      
+      // Check if it's a rate limit error
+      if (errorMessage.toLowerCase().includes('rate limit') || errorMessage.toLowerCase().includes('too many requests')) {
+        setRateLimitEndTime(Date.now() + (30 * 60 * 1000)); // 30 minutes from now
+      } else {
+        setRateLimitEndTime(null); // Clear any existing rate limit
+      }
+      
+      setError(errorMessage);
+      setSummary(null); // Clear summary on error
     } finally {
       setIsSummarizing(false);
     }
@@ -566,40 +611,98 @@ const ChartCard: React.FC<ChartCardProps> = ({
         )}
       </div>
 
-      {/* Summary Modal */}
-      {showSummary && summary && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50" onClick={() => setShowSummary(false)}>
-          <div className="bg-gray-900 rounded-xl border border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-700">
-              <div className="flex items-center gap-2">
-                <DocumentTextIcon className="w-5 h-5 text-blue-400" />
-                <h3 className="text-lg font-semibold text-white">Chart Summary</h3>
+      {/* Summary Modal - Rendered as Portal */}
+      {showSummary && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]" onClick={() => {
+          setShowSummary(false);
+          setSummary(null);
+          setError(null);
+          setRateLimitEndTime(null);
+        }}>
+          <div className="bg-gray-950/90 rounded-xl border border-gray-800 max-w-3xl w-full max-h-[85vh] overflow-hidden shadow-2xl animate-in fade-in duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-950/90">
+              <div className="flex items-center gap-3">
+                <h3 className="text-sm font-regular text-gray-400">
+                  {error ? 'Error' : isSummarizing ? 'Thinking...' : 'Chart Summary'}
+                </h3>
               </div>
               <button
-                onClick={() => setShowSummary(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                onClick={() => {
+                  setShowSummary(false);
+                  setSummary(null);
+                  setError(null);
+                  setRateLimitEndTime(null);
+                }}
+                className="text-gray-400 hover:text-white transition-colors p-1 rounded-md hover:bg-gray-700"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto max-h-[calc(80vh-120px)]">
-              <div className="text-sm text-gray-300 mb-3">
-                <span className="text-gray-500">Chart:</span> {title}
+            <div className="p-6 overflow-y-auto max-h-[calc(85vh-140px)]">
+              <div className="text-sm text-gray-300 mb-4 pb-3 border-b border-gray-800">
+                <span className="text-gray-500 font-normal">Chart:</span> 
+                <span className="ml-2 text-gray-300">{title}</span>
               </div>
-              <div className="text-gray-200 whitespace-pre-wrap text-sm leading-relaxed">
-                {summary}
-              </div>
-            </div>
-            <div className="p-4 border-t border-gray-700 flex justify-end">
-              <button
-                onClick={() => setShowSummary(false)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                Close
-              </button>
+              
+              {error ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="text-gray-400 text-center max-w-md mb-6">
+                    {error}
+                  </div>
+                  <button
+                    onClick={handleSummarize}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      remainingMinutes > 0 
+                        ? 'text-gray-500 cursor-not-allowed' 
+                        : 'text-gray-400 hover:text-white'
+                    }`}
+                    disabled={isSummarizing || remainingMinutes > 0}
+                  >
+                    {isSummarizing 
+                      ? 'Retrying...' 
+                      : remainingMinutes > 0 
+                        ? `Try Again in ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`
+                        : 'Try Again'
+                    }
+                  </button>
+                </div>
+              ) : isSummarizing && !summary ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="flex items-center gap-2 mb-2">
+                    <SparklesIcon className="w-8 h-8 text-blue-400 animate-pulse" />
+                    <div className="text-sm font-regular text-gray-400">Thinking...</div>
+                  </div>
+                 
+                  <div className="flex gap-1 mt-6">
+                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              ) : summary ? (
+                <div className="prose prose-invert prose-blue max-w-none text-gray-200 leading-relaxed">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => <h1 className="text-lg font-bold text-gray-300 mb-3 mt-4 first:mt-0">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-md font-medium text-gray-300 mb-2 mt-4 first:mt-0">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-base font-normal text-gray-300 mb-2 mt-3 first:mt-0">{children}</h3>,
+                      p: ({ children }) => <p className="text-gray-300 mb-3 leading-relaxed">{children}</p>,
+                      strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                      ul: ({ children }) => <ul className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ul>,
+                      ol: ({ children }) => <ol className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ol>,
+                      li: ({ children }) => <li className="text-gray-300 leading-relaxed">{children}</li>,
+                      code: ({ children }) => <code className="bg-gray-800 text-blue-300 px-1.5 py-0.5 rounded text-sm">{children}</code>,
+                      blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-300 my-3">{children}</blockquote>,
+                    }}
+                  >
+                    {summary}
+                  </ReactMarkdown>
+                </div>
+              ) : null}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
