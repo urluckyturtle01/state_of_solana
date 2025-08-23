@@ -2,7 +2,7 @@
   "pageId": "compute-units",
   "pageName": "Compute Units",
   "chartCount": 9,
-  "lastUpdated": "2025-08-20T21:18:01.792Z",
+  "lastUpdated": "2025-08-23T13:14:27.276Z",
   "charts": [
     {
       "id": "chart_1748087823998_ru1ktw2",
@@ -224,10 +224,10 @@
       "subtitle": "",
       "page": "compute-units",
       "section": "",
-      "chartType": "line",
+      "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13449/results.json",
       "apiKey": "myAJgSU2nhoxFvmgmgSJRY08ecwK59QIkw4xs44T&max_age=86400",
-      "isStacked": false,
+      "isStacked": true,
       "colorScheme": "default",
       "width": 2,
       "dataMapping": {
@@ -235,8 +235,11 @@
         "yAxis": "cu_efficiency",
         "groupBy": "category"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-08-07T13:00:53.621Z",
-      "updatedAt": "2025-08-07T13:00:53.793Z"
+      "updatedAt": "2025-08-23T13:14:10.169Z"
     }
   ]
 }

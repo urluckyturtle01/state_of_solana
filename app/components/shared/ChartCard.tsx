@@ -8,6 +8,7 @@ import ShareButton from './ShareButton';
 import { ChartConfig } from '@/app/admin/types';
 import html2canvas from 'html2canvas';
 import ReactMarkdown from 'react-markdown';
+import { getTrendIcon, cleanTrendText, getTrendColor } from './TrendIcons';
 
 interface ChartCardProps {
   title: string;
@@ -690,7 +691,22 @@ const ChartCard: React.FC<ChartCardProps> = ({
                       strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
                       ul: ({ children }) => <ul className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ul>,
                       ol: ({ children }) => <ol className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ol>,
-                      li: ({ children }) => <li className="text-gray-300 leading-relaxed">{children}</li>,
+                      li: ({ children }) => {
+                        // Convert children to string to check for trend indicators
+                        const childrenString = React.Children.toArray(children).join('');
+                        const TrendIcon = getTrendIcon(childrenString);
+                        const cleanedText = cleanTrendText(childrenString);
+                        const iconColor = getTrendColor(childrenString);
+                        
+                        return (
+                          <li className="text-gray-300 leading-relaxed">
+                            {cleanedText}
+                            {TrendIcon && (
+                              <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
+                            )}
+                          </li>
+                        );
+                      },
                       code: ({ children }) => <code className="bg-gray-800 text-blue-300 px-1.5 py-0.5 rounded text-sm">{children}</code>,
                       blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-300 my-3">{children}</blockquote>,
                     }}

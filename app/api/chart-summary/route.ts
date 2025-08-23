@@ -363,6 +363,20 @@ Analyze this data and provide a concise but comprehensive summary formatted as f
 **Ecosystem Impact:**
 [Context within Solana ecosystem]
 
+IMPORTANT: At the end of each bullet point, add a trend indicator based on the pattern you identify:
+- [EXPONENTIAL] for exponential/accelerating growth
+- [GROWTH] for steady upward trends  
+- [DECLINE] for downward trends
+- [VOLATILE] for high volatility/zigzag patterns
+- [STABLE] for flat/steady patterns
+- [PEAK] for reaching highs
+- [DIP] for reaching lows
+- [RECOVERY] for bouncing back from lows
+- [VOLUME] for volume-related insights
+- [CYCLE] for cyclical patterns
+
+Example: "Transaction volume increased 45% month-over-month [GROWTH]"
+
 Keep each section concise (1-2 sentences max). Use proper line breaks and markdown formatting. Focus on actionable insights a data analyst would highlight.
 `;
 
@@ -371,14 +385,14 @@ Keep each section concise (1-2 sentences max). Use proper line breaks and markdo
     
     if (USE_LOCAL_API) {
       // For local API, combine system message and prompt
-      const fullPrompt = `You are a senior blockchain data analyst. Provide structured, professional analysis with clear sections and proper line breaks. Focus on the most impactful insights while keeping sections concise. Use markdown formatting for readability.
+      const fullPrompt = `You are a senior blockchain data analyst. Provide structured, professional analysis with clear sections and proper line breaks. Focus on the most impactful insights while keeping sections concise. Use markdown formatting for readability. Always include trend indicators at the end of bullet points as specified.
 
 ${prompt}`;
       
       summary = await callLocalAI(fullPrompt);
     } else {
       // Use OpenAI API
-      const systemMessage = 'You are a senior blockchain data analyst. Provide structured, professional analysis with clear sections and proper line breaks. Focus on the most impactful insights while keeping sections concise. Use markdown formatting for readability.';
+      const systemMessage = 'You are a senior blockchain data analyst. Provide structured, professional analysis with clear sections and proper line breaks. Focus on the most impactful insights while keeping sections concise. Use markdown formatting for readability. Always include trend indicators at the end of bullet points as specified.';
       summary = await callOpenAI(systemMessage, prompt);
     }
 
