@@ -128,7 +128,6 @@ async function callOpenAI(systemMessage: string, userPrompt: string): Promise<st
     //reasoning: {
       //effort: 'medium' // New gpt-5-nano parameter: 'minimal', 'low', 'medium', 'high'
     // }
-    //max_tokens: 2000,
     //temperature: 0.7
   });
 
@@ -363,21 +362,22 @@ Analyze this data and provide a concise but comprehensive summary formatted as f
 **Ecosystem Impact:**
 [Context within Solana ecosystem]
 
-IMPORTANT: At the end of each bullet point, add a trend indicator based on the pattern you identify:
-- [EXPONENTIAL] for exponential/accelerating growth
+IMPORTANT: Based on the actual data patterns you observe, intelligently add appropriate trend indicators at the end of each key insight. Choose from these custom trend indicators based on what you actually see in the data:
+
+- [EXPONENTIAL] for explosive/accelerating growth patterns
 - [GROWTH] for steady upward trends  
 - [DECLINE] for downward trends
-- [VOLATILE] for high volatility/zigzag patterns
+- [VOLATILE] for high volatility/rapid changes
 - [STABLE] for flat/steady patterns
-- [PEAK] for reaching highs
-- [DIP] for reaching lows
+- [PEAK] for reaching highs/local peaks
+- [DIP] for reaching lows/local dips
 - [RECOVERY] for bouncing back from lows
 - [VOLUME] for volume-related insights
-- [CYCLE] for cyclical patterns
+- [CYCLE] for cyclical/seasonal patterns
 
-Example: "Transaction volume increased 45% month-over-month [GROWTH]"
+Example: "Transaction fees increased 45% month-over-month [GROWTH]"
 
-Keep each section concise (1-2 sentences max). Use proper line breaks and markdown formatting. Focus on actionable insights a data analyst would highlight.
+Let the data guide your trend indicator choice - only use indicators that match actual patterns you observe. Keep each section concise (1-2 sentences max). Use proper line breaks and markdown formatting.
 `;
 
     // Call AI API based on configuration

@@ -681,16 +681,105 @@ const ChartCard: React.FC<ChartCardProps> = ({
                   </div>
                 </div>
               ) : summary ? (
-                <div className="prose prose-invert prose-blue max-w-none text-gray-200 leading-relaxed">
+                <div className="prose prose-invert prose-blue max-w-none text-gray-200 leading-relaxed text-left"
+                     key="summary-content">
                   <ReactMarkdown
                     components={{
-                      h1: ({ children }) => <h1 className="text-lg font-bold text-gray-300 mb-3 mt-4 first:mt-0">{children}</h1>,
-                      h2: ({ children }) => <h2 className="text-md font-medium text-gray-300 mb-2 mt-4 first:mt-0">{children}</h2>,
-                      h3: ({ children }) => <h3 className="text-base font-normal text-gray-300 mb-2 mt-3 first:mt-0">{children}</h3>,
-                      p: ({ children }) => <p className="text-gray-300 mb-3 leading-relaxed">{children}</p>,
-                      strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
-                      ul: ({ children }) => <ul className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ul>,
-                      ol: ({ children }) => <ol className="text-gray-300 mb-3 ml-4 space-y-1">{children}</ol>,
+                      h1: ({ children }) => {
+                        const cleanedChildren = React.Children.toArray(children).map(child => 
+                          typeof child === 'string' ? child.replace(/:\s*$/, '') : child
+                        );
+                        return (
+                          <h1 className="text-lg font-bold text-gray-300 mb-3 mt-6 pt-4 border-t border-gray-800 first:mt-0 first:pt-0 first:border-t-0 text-left">
+                            {cleanedChildren}
+                          </h1>
+                        );
+                      },
+                      h2: ({ children }) => {
+                        const cleanedChildren = React.Children.toArray(children).map(child => 
+                          typeof child === 'string' ? child.replace(/:\s*$/, '') : child
+                        );
+                        return (
+                          <h2 className="text-md font-medium text-gray-300 mb-2 mt-6 pt-4 border-t border-gray-800 first:mt-0 first:pt-0 first:border-t-0 text-left">
+                            {cleanedChildren}
+                          </h2>
+                        );
+                      },
+                      h3: ({ children }) => {
+                        const cleanedChildren = React.Children.toArray(children).map(child => 
+                          typeof child === 'string' ? child.replace(/:\s*$/, '') : child
+                        );
+                        return (
+                          <h3 className="text-base font-normal text-gray-300 mb-2 mt-5 pt-3 border-t border-gray-800 first:mt-0 first:pt-0 first:border-t-0 text-left">
+                            {cleanedChildren}
+                          </h3>
+                        );
+                      },
+                      p: ({ children }) => <p className="text-gray-300 mb-3 leading-relaxed text-left">{children}</p>,
+                      strong: ({ children }) => {
+                        // Check if this strong element is a heading-like text
+                        const text = React.Children.toArray(children).join('');
+                        const isHeading = /^(Key Findings|Trend Analysis|Ecosystem Impact|Pattern Analysis|Summary|Overview):/i.test(text);
+                        
+                        if (isHeading) {
+                          const cleanedText = text.replace(/:\s*$/, '');
+                          return (
+                            <div className="text-md font-medium text-gray-300 mb-2 mt-6 pt-4 border-t border-gray-800 first:mt-0 first:pt-0 first:border-t-0 text-left">
+                              {cleanedText}
+                            </div>
+                          );
+                        }
+                        
+                        return <strong className="text-white font-semibold">{children}</strong>;
+                      },
+                      ul: ({ children }) => {
+                        const childrenArray = React.Children.toArray(children);
+                        const itemCount = childrenArray.length;
+                        
+                        // If only one item, render as paragraph instead of list
+                        if (itemCount === 1) {
+                          const singleChild = childrenArray[0];
+                          if (React.isValidElement(singleChild) && singleChild.props.children) {
+                            const childrenString = React.Children.toArray(singleChild.props.children).join('');
+                            const TrendIcon = getTrendIcon(childrenString);
+                            const cleanedText = cleanTrendText(childrenString);
+                            const iconColor = getTrendColor(childrenString);
+                            
+                            return (
+                              <div className="text-gray-300 mb-3 leading-relaxed text-left">
+                                {cleanedText}
+                                {TrendIcon && (
+                                  <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
+                                )}
+                              </div>
+                            );
+                          }
+                        }
+                        
+                        // Multiple items - render as list with horizontal line after last item
+                        return (
+                          <div>
+                            <ul className="text-gray-300 mb-3 ml-0 space-y-3 list-none">
+                              {children}
+                            </ul>
+                            <div className="h-px bg-gray-800 w-full mb-4"></div>
+                          </div>
+                        );
+                      },
+                      ol: ({ children }) => {
+                        const childrenArray = React.Children.toArray(children);
+                        const itemCount = childrenArray.length;
+                        
+                        // Multiple items - render as list with horizontal line after last item
+                        return (
+                          <div>
+                            <ol className="text-gray-300 mb-3 ml-0 space-y-3 list-decimal list-inside">
+                              {children}
+                            </ol>
+                            <div className="h-px bg-gray-800 w-full mb-4"></div>
+                          </div>
+                        );
+                      },
                       li: ({ children }) => {
                         // Convert children to string to check for trend indicators
                         const childrenString = React.Children.toArray(children).join('');
@@ -699,16 +788,21 @@ const ChartCard: React.FC<ChartCardProps> = ({
                         const iconColor = getTrendColor(childrenString);
                         
                         return (
-                          <li className="text-gray-300 leading-relaxed">
-                            {cleanedText}
-                            {TrendIcon && (
-                              <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
-                            )}
+                          <li className="text-gray-300 leading-relaxed text-left border-b border-gray-800 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                            <div className="flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
+                              <div className="flex-1">
+                                {cleanedText}
+                                {TrendIcon && (
+                                  <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
+                                )}
+                              </div>
+                            </div>
                           </li>
                         );
                       },
                       code: ({ children }) => <code className="bg-gray-800 text-blue-300 px-1.5 py-0.5 rounded text-sm">{children}</code>,
-                      blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-300 my-3">{children}</blockquote>,
+                      blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-300 my-3 text-left">{children}</blockquote>,
                     }}
                   >
                     {summary}
