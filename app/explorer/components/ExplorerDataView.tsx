@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, startTransition, useRef } from 'react';
 import TabsNavigation, { Tab } from '../../components/shared/TabsNavigation';
 import VisualizationModal from './VisualizationModal';
-import NLPChartInput from './NLPChartInput';
+// import NLPChartInput from './NLPChartInput';
 import PrettyLoader from '@/app/components/shared/PrettyLoader';
 import AddToDashboardModal from './AddToDashboardModal';
 import ChartCard from '@/app/components/shared/ChartCard';
@@ -106,8 +106,8 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
   const [isDashboardModalOpen, setIsDashboardModalOpen] = useState(false);
   const [selectedVisualizationForDashboard, setSelectedVisualizationForDashboard] = useState<SavedVisualization | null>(null);
   const [editingVisualization, setEditingVisualization] = useState<SavedVisualization | null>(null);
-  const [nlpGeneratedConfig, setNlpGeneratedConfig] = useState<any | null>(null);
-  const [nlpMatchingApis, setNlpMatchingApis] = useState<any[]>([]);
+  // const [nlpGeneratedConfig, setNlpGeneratedConfig] = useState<any | null>(null);
+  // const [nlpMatchingApis, setNlpMatchingApis] = useState<any[]>([]);
   
   // Use UserDataContext for user-specific data
   const { explorerData, addVisualization, updateVisualization, deleteVisualization, isLoading } = useUserData();
@@ -555,7 +555,8 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
     }
   };
 
-  // Handle NLP chart generation
+  // Handle NLP chart generation - COMMENTED OUT
+  /*
   const handleNLPChartGenerated = useCallback((configuration: any, matchingApis: any[]) => {
     console.log('🎯 NLP Chart Generated Callback called!');
     console.log('📊 Configuration received:', configuration);
@@ -670,6 +671,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
     
     console.log('✅ State updates batched and submitted - Modal should be opening!');
   }, [onToggleColumnSelection, columnData]);
+  */
 
   const renderVisualizationChart = (visualization: SavedVisualization) => {
     const { configuration, chartConfig, chartData } = visualization;
@@ -724,12 +726,13 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-200 mb-2">Explore Data with AI</h3>
+            <h3 className="text-lg font-medium text-gray-200 mb-2">Explore Data</h3>
             <p className="text-gray-400 text-sm mb-8">
-              Create charts using natural language or select columns from the APIs on the left
+              Select columns from the APIs on the left to start exploring your data
             </p>
             
-            {/* NLP Chart Input */}
+            {/* NLP Chart Input - COMMENTED OUT */}
+            {/*
             <div className="mb-8">
               <NLPChartInput
                 onChartGenerated={handleNLPChartGenerated}
@@ -744,6 +747,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
                 <span>manually select columns</span>
               </div>
             </div>
+            */}
           </div>
         </div>
       </div>
@@ -995,11 +999,12 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
             <div>
               <h3 className="text-lg font-medium text-gray-200 mb-4">Create Visualization</h3>
               <p className="text-gray-400 text-sm mb-6">
-                Use AI to generate a chart from natural language or choose a chart type manually
+                Choose a chart type to create your visualization
               </p>
             </div>
 
-            {/* NLP Chart Input */}
+            {/* NLP Chart Input - COMMENTED OUT */}
+            {/*
             <div className="bg-gray-900/30 border border-gray-800/50 rounded-lg p-4">
               <h4 className="text-sm font-medium text-gray-200 mb-3">Generate Chart with AI</h4>
               <NLPChartInput
@@ -1013,6 +1018,7 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
               <span className="text-sm text-gray-500">or choose manually</span>
               <div className="h-px bg-gray-700 flex-1"></div>
             </div>
+            */}
 
             {/* Chart Type Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1069,16 +1075,16 @@ const ExplorerDataView: React.FC<ExplorerDataViewProps> = ({
         onClose={() => {
           setIsVisualizationModalOpen(false);
           setEditingVisualization(null);
-          setNlpGeneratedConfig(null);
-          setNlpMatchingApis([]);
+          // setNlpGeneratedConfig(null);
+          // setNlpMatchingApis([]);
         }}
         columnData={columnData}
         apis={apis}
         joinedTableData={{ headers, rows }}
         onSaveVisualization={handleSaveVisualization}
         editingVisualization={editingVisualization}
-        nlpGeneratedConfig={nlpGeneratedConfig}
-        nlpMatchingApis={nlpMatchingApis}
+        // nlpGeneratedConfig={nlpGeneratedConfig}
+        // nlpMatchingApis={nlpMatchingApis}
       />
 
       {/* Add to Dashboard Modal */}
