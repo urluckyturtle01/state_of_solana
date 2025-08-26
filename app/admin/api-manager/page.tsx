@@ -108,9 +108,9 @@ export default function ApiManagerPage() {
     setSuccessMessage(null);
     
     // Set all APIs to loading status
-    const loadingApis = apis.map(api => ({
+    const loadingApis: EnrichedApiData[] = apis.map(api => ({
       ...api,
-      fetchStatus: 'loading' as const,
+      fetchStatus: 'loading',
       fetchError: undefined,
     }));
     setApis(loadingApis);
@@ -172,9 +172,9 @@ export default function ApiManagerPage() {
       setError(err instanceof Error ? err.message : 'Failed to fetch API responses');
       
       // Reset all APIs to pending status on error
-      const resetApis = apis.map(api => ({
+      const resetApis: EnrichedApiData[] = apis.map(api => ({
         ...api,
-        fetchStatus: 'pending' as const,
+        fetchStatus: 'pending',
         fetchError: undefined,
       }));
       setApis(resetApis);
