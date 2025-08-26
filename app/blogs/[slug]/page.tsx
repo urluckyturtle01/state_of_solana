@@ -12,6 +12,7 @@ import RelatedArticles from '../components/RelatedArticles';
 import BackToBlogsButton from '../components/BackToBlogsButton';
 import TwitterCardMeta from '../components/TwitterCardMeta';
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
+export const dynamic = "force-dynamic"; // 👈 add this here
 
 interface BlogPost {
   id: string;
