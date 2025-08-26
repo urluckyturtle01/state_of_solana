@@ -284,11 +284,21 @@ export default function AdminLayout({
                   Manage Dashboard
                 </AdminNavLink>
               </li>
-              <li>
-                <AdminNavLink href="/admin/settings">
-                  Settings
-                </AdminNavLink>
-              </li>
+                                <li>
+                    <AdminNavLink href="/admin/api-manager">
+                      API Manager
+                    </AdminNavLink>
+                  </li>
+                  <li>
+                    <AdminNavLink href="/admin/docs">
+                      API Docs
+                    </AdminNavLink>
+                  </li>
+                  <li>
+                    <AdminNavLink href="/admin/settings">
+                      Settings
+                    </AdminNavLink>
+                  </li>
             </ul>
           </nav>
         </div>

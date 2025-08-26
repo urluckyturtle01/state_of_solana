@@ -1,0 +1,2196 @@
+{
+  "totalApis": 219,
+  "extractedAt": "2025-08-25T09:39:16.804Z",
+  "apis": [
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13448/results.json",
+      "apiKey": "enfT00LNZEyisrWZh1mcgCLaPvcddY6r4nqlyN5J",
+      "title": "Avg & Median Cu Price",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13447/results.json",
+      "apiKey": "dYp9G4vrqTAqE4pEI2cjoisceJ5g1442XW7yagI7",
+      "title": "Avg Cu Allocated & Consumed Per Transaction",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13455/results.json",
+      "apiKey": "IDknsOk4xxg7L0oseAOQHt80gsQjVRZTZ9Svyfgw",
+      "title": "Avg Cu Consumed Per Block",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13449/results.json",
+      "apiKey": "myAJgSU2nhoxFvmgmgSJRY08ecwK59QIkw4xs44T",
+      "title": "Cu Consumed By Ecosystem",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13450/results.json",
+      "apiKey": "YuPnlyIpkHRQgCUHIsAWdWNTC1JmjOVgOVhdjNcs",
+      "title": "Cu Consumed By Ecosystem - Last 30 Days",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13446/results.json",
+      "apiKey": "1aLYPZuX8Lq4nGINkeibVqOmujWcw7oDnydJ1OwT",
+      "title": "Transactions Using Compute Budget Program",
+      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "page": "compute-units",
+      "pageName": "Compute Units",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13453/results.json",
+      "apiKey": "YsiiU9f3RuuT8L5YbysSgde9MNkpLOptBhUXoI9g",
+      "title": "Cu Overspending",
+      "subtitle": "Daily CU overspending by transactions, measured as (allocated - consumed) / allocated. For example, xxx transactions overspent by 80–100%",
+      "page": "cu-overspending",
+      "pageName": "CU Overspending",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13454/results.json",
+      "apiKey": "1HAPupelDkhIsTwEJFUSc9OcXjnA9gajslaIMFbq",
+      "title": "Priority Fee Breakdown",
+      "subtitle": "Unused CU fee is calculated by multiplying the unused compute units with the per-unit priority fee derived from total allocated units",
+      "page": "cu-overspending",
+      "pageName": "CU Overspending",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13456/results.json",
+      "apiKey": "pIZbUOVVSmy0JoeBNIcBxy61FAo06MVVtl3HVav1",
+      "title": "Total Cu Overspending - Last 30 Days",
+      "subtitle": "Daily CU overspending by transactions, measured as (allocated - consumed) / allocated. For example, xxx transactions overspent by 80–100%",
+      "page": "cu-overspending",
+      "pageName": "CU Overspending",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13444/results.json",
+      "apiKey": "ji0D2QXyi9GzZEObhD0cgoNviXHLQLJopbpjc87q",
+      "title": "Account Bytes Vs Data Bytes",
+      "subtitle": "Solana's max transaction size is 1232 bytes",
+      "page": "transaction-bytes",
+      "pageName": "Transaction Bytes",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13445/results.json",
+      "apiKey": "xnfRkicaESr2bwMlF8KTLwLwtjTzU84DQyIWUqjQ",
+      "title": "Byte Size Quantiles",
+      "subtitle": "Solana's max transaction size is 1232 bytes",
+      "page": "transaction-bytes",
+      "pageName": "Transaction Bytes",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13443/results.json",
+      "apiKey": "XsCunes5JrcnFMTFz23pOgDn6fTX7hqZRKYPXTM1",
+      "title": "Transaction Bytes",
+      "subtitle": "Solana's max transaction size is 1232 bytes",
+      "page": "transaction-bytes",
+      "pageName": "Transaction Bytes",
+      "menuId": "compute-units",
+      "menuName": "Compute Units"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json",
+      "apiKey": "jes4jbtggmsezoHwIxltmSjmQxmExPOgnQNhFzZm",
+      "title": "DEX Volume Aggregator Vs Direct Share",
+      "subtitle": "Aggregator vs Direct share Since Jan'25",
+      "page": "aggregators",
+      "pageName": "DEX Aggregators",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json",
+      "apiKey": "M50ElvuV9FtY3XlSVP2GtGfSTefJ13C8z4y742da",
+      "title": "DEX Volume Share",
+      "subtitle": "",
+      "page": "aggregators",
+      "pageName": "DEX Aggregators",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12459/results.json",
+      "apiKey": "MwgPFDxoN9SCpEC6I6nhBH85dtNkXndNYcRtHLYA",
+      "title": "Daily TVL Vs Velocity",
+      "subtitle": "TVL(Total Value Locked) represents total amount of assets (in USD) locked in a pool.",
+      "page": "dex-summary",
+      "pageName": "Summary",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12439/results.json",
+      "apiKey": "zFtRMSKAAC8nTdp6JX2NebxyP6YCct9poXLe5WfN",
+      "title": "Velocity By DEX Program Category",
+      "subtitle": "",
+      "page": "dex-summary",
+      "pageName": "Summary",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json",
+      "apiKey": "aSgz8ztgBg46FAoarkY8JGS5K0jxqm9t60sF3CDQ",
+      "title": "Distribution By Traders' Trade Frequency",
+      "subtitle": "",
+      "page": "traders",
+      "pageName": "Traders",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json",
+      "apiKey": "fLzwXGF8j4St6XvrckEAe1gjQRHKveWvvCafx2Zz",
+      "title": "Monthly Traders",
+      "subtitle": "",
+      "page": "traders",
+      "pageName": "Traders",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12422/results.json",
+      "apiKey": "pOuD9xaxsmquzZGOnUcR9disUQI3EeXNQKuKpO6l",
+      "title": "Volume Distribution By Traders' Lifetime Trade Volume",
+      "subtitle": "",
+      "page": "traders",
+      "pageName": "Traders",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json",
+      "apiKey": "6VxvtalvUgsuSnkLIzcoEdI6t2GySCTmClGbKAK1",
+      "title": "DEX TVL",
+      "subtitle": "",
+      "page": "tvl",
+      "pageName": "TVL",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json",
+      "apiKey": "QoHzXXunvuLg0rrTWyFTNzmIjIoqY5MJhHo3ltZg",
+      "title": "DEX TVL Daily",
+      "subtitle": "",
+      "page": "tvl",
+      "pageName": "TVL",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13225/results.json",
+      "apiKey": "6rNImjI05B6uxQzhrJcoOkrYN4Upw6oFkN1yqm76",
+      "title": "Top Pools By TVL",
+      "subtitle": "",
+      "page": "tvl",
+      "pageName": "TVL",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json",
+      "apiKey": "PSDSE4K3HsoXJX8a3dgeps4GF1ilSejrVjmkF8Fe",
+      "title": "DEX Volume",
+      "subtitle": "",
+      "page": "volume",
+      "pageName": "Volume",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12401/results.json",
+      "apiKey": "fGkLNd9bLPAbP4nEImmeGpeNc03BFl1B6nuUcD16",
+      "title": "Distribution By Token Category",
+      "subtitle": "",
+      "page": "volume",
+      "pageName": "Volume",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13231/results.json",
+      "apiKey": "gFXy7839FSeqNL8PFFT8rVNNBWt9IJ9Jp7UOKzSu",
+      "title": "Top Memecoins By Volume",
+      "subtitle": "",
+      "page": "volume",
+      "pageName": "Volume",
+      "menuId": "dex",
+      "menuName": "DEX"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13843/results.json",
+      "apiKey": "xqFztHCpLEqootvUoAnZ5AgMbhcqrBzCFOPmpPAd",
+      "title": "Fees",
+      "subtitle": "",
+      "page": "launchpads-fee-revenue",
+      "pageName": "Fee Revenue",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13825/results.json",
+      "apiKey": "ura6t788LF1CZgvF0CE4OA2sez8FLdKsehpxjXE6",
+      "title": "Creators By Token Launched",
+      "subtitle": "",
+      "page": "launchpads-financials",
+      "pageName": "Financials",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13824/results.json",
+      "apiKey": "TnBFmJA70hdArey2sKaJ7U1GoRzVXRTbU3TeSmd4",
+      "title": "Creators By Tokens Launched",
+      "subtitle": "",
+      "page": "launchpads-financials",
+      "pageName": "Financials",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13817/results.json",
+      "apiKey": "hWKBzmZNswtTupuTSJcft3kdxgtK0WuqPKXkIrDi",
+      "title": "Tokens Launched",
+      "subtitle": "",
+      "page": "launchpads-financials",
+      "pageName": "Financials",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13829/results.json",
+      "apiKey": "R9f8tpZVBUYtHUEbpXJVwkDCtjX0r5R7IDQvZGyu",
+      "title": "Volume",
+      "subtitle": "",
+      "page": "launchpads-tokenized-equities",
+      "pageName": "Tokenized Equities",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13779/results.json",
+      "apiKey": "JkVI7PCisDFqMukfN3gBHF31BX4l3FkuhSEYmMFF",
+      "title": "Trade Volume",
+      "subtitle": "",
+      "page": "launchpads-traction",
+      "pageName": "Traction",
+      "menuId": "launchpads",
+      "menuName": "Launchpads"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13392/results.json",
+      "apiKey": "RqSl6Ca5yWt4QwkKSBB9q7RA0qyMtqeRSESgXvK1",
+      "title": "Top Dexs Used - By SOL Drained",
+      "subtitle": "last 30 days",
+      "page": "dex-token-hotspots",
+      "pageName": "DEX & Token Hotspots",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13391/results.json",
+      "apiKey": "3PjHRoejiRIHduZyo5NxvhEPNpOSfPFzFu0Hg09k",
+      "title": "Top Tokens Attacked - By SOL Drained",
+      "subtitle": "Total SOL extracted via attacks, broken down by token (last 30 days)",
+      "page": "dex-token-hotspots",
+      "pageName": "DEX & Token Hotspots",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13388/results.json",
+      "apiKey": "v1I32v14WIg9uWYA8ypwToBK3uhPzCbQyBlw2907",
+      "title": "Attacks & Attackers",
+      "subtitle": "Visualizing the scale and spread of sandwich attacks across Solana's ecosystem",
+      "page": "extracted-value-pnl",
+      "pageName": "Extracted Value & PNL",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13468/results.json",
+      "apiKey": "kIYkuqov4O7K3LTTP0o93VgbKFeiS0HxdKEEMbrE",
+      "title": "Exposed Volume Vs DEX Volume",
+      "subtitle": "",
+      "page": "extracted-value-pnl",
+      "pageName": "Extracted Value & PNL",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13459/results.json",
+      "apiKey": "f1RHdbIXs4Y3SS40VT63b1OvS1GlEKO3tXA5kjxV",
+      "title": "Sandwich Trades By SOL Drained",
+      "subtitle": "last 30 days",
+      "page": "extracted-value-pnl",
+      "pageName": "Extracted Value & PNL",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json",
+      "apiKey": "oci9M527RiQFjD48qhfmNmUbZ0vTf5BEv06EufrF",
+      "title": "SOL Drained Vs Volume Exposed",
+      "subtitle": "",
+      "page": "extracted-value-pnl",
+      "pageName": "Extracted Value & PNL",
+      "menuId": "mev",
+      "menuName": "MEV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json",
+      "apiKey": "TX3IB72GCHQhkdtMsVBeXKflxLvbucqcGcdewsTI",
+      "title": "Daily Solana Annualized Volatility",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "pageName": "Market Dynamics",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13426/results.json",
+      "apiKey": "x3ZEM6s0UwS2aiYh2yP1rT99UTS3pt92CLFmnSNR",
+      "title": "SOL Marketcap",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "pageName": "Market Dynamics",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13428/results.json",
+      "apiKey": "DB8JKxuFTJ7xFUW07TdWXMEgOdGk5ivr31DRpoId",
+      "title": "SOL Price",
+      "subtitle": "",
+      "page": "market-dynamics",
+      "pageName": "Market Dynamics",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13249/results.json",
+      "apiKey": "VXYHhXmv3FGJJbtg0W8nxUm7RHWFH1sxVgXJ8Jn2",
+      "title": "Non-vote Transaction Fees",
+      "subtitle": "",
+      "page": "network-usage",
+      "pageName": "Network Usage",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12976/results",
+      "apiKey": "0pzEmBGojQAV7yWcJEbd0VhJ6FGpKAk04jztTwSp",
+      "title": "Transaction Count",
+      "subtitle": "",
+      "page": "network-usage",
+      "pageName": "Network Usage",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json",
+      "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6",
+      "title": "Transactions Summary",
+      "subtitle": "Real TPS is the number of non-vote transactions per second",
+      "page": "network-usage",
+      "pageName": "Network Usage",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13932/results.json",
+      "apiKey": "XkdswSdjpW9ISmjYqvkgNs8ggPeiyAUeruHhgq3s",
+      "title": "Weekly Real TPS And Fee Trends",
+      "subtitle": "",
+      "page": "network-usage",
+      "pageName": "Network Usage",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12924/results.json",
+      "apiKey": "zJ0eDpbvi35e8axF6FIGZHHpAVuYpGHZoqCeAlh5",
+      "title": "Monthly Active & New Wallets",
+      "subtitle": "",
+      "page": "dashboard",
+      "pageName": "User Activity",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12929/results.json",
+      "apiKey": "qMWNTHb9k4p9UjvmT5omRmJghhGlJh5V9XH9Zet9",
+      "title": "Wallet By Txns Cohort",
+      "subtitle": "",
+      "page": "dashboard",
+      "pageName": "User Activity",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13248/results.json",
+      "apiKey": "hkE1WGaM5wcDut9q1Lvq3OFEpeUc3C8kHeAawrRy",
+      "title": "Wallet's Current SOL Holding",
+      "subtitle": "",
+      "page": "dashboard",
+      "pageName": "User Activity",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13250/results.json",
+      "apiKey": "zZJ4P3HtiaEeLtDAgm7TvTPVHKofWGOpOHpqZPoM",
+      "title": "Wallet's SOL Balance Change - Since Jan'25",
+      "subtitle": "",
+      "page": "dashboard",
+      "pageName": "User Activity",
+      "menuId": "overview",
+      "menuName": "Overview"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json",
+      "apiKey": "vo8bOPRnGz1CHrCu8KPlvXh6e1La8PXva3pXKtje",
+      "title": "Daily Holders",
+      "subtitle": "",
+      "page": "metaplex-competetive-landscape",
+      "pageName": "Competetive Landscape",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13549/results.json",
+      "apiKey": "sU79XR6BdxIgJqw2YLwSkKRJbu0FXjdGqv3imwsL",
+      "title": "Monthly DEX Volume",
+      "subtitle": "",
+      "page": "orca-competetive-landscape",
+      "pageName": "Competetive Landscape",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13572/results.json",
+      "apiKey": "fHHviCSS1CYRIHkosGuB7JXjDlgpJUsL2NSRv5n8",
+      "title": "Monthly Protocol Revenue",
+      "subtitle": "",
+      "page": "orca-competetive-landscape",
+      "pageName": "Competetive Landscape",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13557/results.json",
+      "apiKey": "VWpr3QW49psgyCr58QteGna6WFf2FkLM981hZGjB",
+      "title": "Monthly Traders",
+      "subtitle": "",
+      "page": "raydium-competetive-landscape",
+      "pageName": "Competetive Landscape",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13559/results.json",
+      "apiKey": "dVCfnKDliSudamF3dZe0Cp2LnR2EICEUbbhGaBca",
+      "title": "Top 5 Pool Volumes Across DEX",
+      "subtitle": "last 90 days",
+      "page": "raydium-competetive-landscape",
+      "pageName": "Competetive Landscape",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13487/results.json",
+      "apiKey": "pEwpYykPmexn5N4ZdAh0g3uWaFmnI34V6WzyHuwd",
+      "title": "Cashflow",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13288/results.json",
+      "apiKey": "uJEuaPmE8QJHSXwLkklS7c5Ra39DiCNNMVqE7x5O",
+      "title": "Daily Mobile Rewards",
+      "subtitle": "Since 29th jan 2025",
+      "page": "helium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/5023/results.json",
+      "apiKey": "nPc8FdcKG69aM0Ne2C4FYHArO3LzpLPEPbnEYfsK",
+      "title": "Dc Burn",
+      "subtitle": "",
+      "page": "helium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13467/results",
+      "apiKey": "NaP14nl0INqjE8maqOdu8cnDljAkhEaL5kgS0fZb",
+      "title": "Fees And Revenue",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13290/results.json",
+      "apiKey": "KnKa2YgPDqeMrZ5YeKMf7VDYNsv6C7XDy12oiH5g",
+      "title": "Iot Rewards",
+      "subtitle": "",
+      "page": "helium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13289/results.json",
+      "apiKey": "TBPONHTI3aSxW9VGkJYugRxRcNQXuT3htkBFUcZy",
+      "title": "Iot Rewards",
+      "subtitle": "Since 29th jan 2025",
+      "page": "helium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13873/results.json",
+      "apiKey": "aF4IhZDHQ1fGBffKBTRe2Ve5e5ycT1iyoyNneHtS",
+      "title": "Metaplex DAO $mplx Balance",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/7479/results.json",
+      "apiKey": "wgsQSqvL2x0453Z6w2IrATyhsbctPkMbK7SB3JFu",
+      "title": "Mobile Rewards",
+      "subtitle": "",
+      "page": "helium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/10490/results.json",
+      "apiKey": "O4oThUGx8UXDMqrocLInpCvP0KaDBAqNYdLALtd4",
+      "title": "Protocol Fee Used To Buy Mplx",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/10993/results.json",
+      "apiKey": "Y03lOzx08ssOLAkjCDP1zQBsw68yZXRkjg0F7oSE",
+      "title": "Protocol Fees And Revenue",
+      "subtitle": "",
+      "page": "orca-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/10489/results.json",
+      "apiKey": "47FCA2utQ8cS23KVTjZQ1yDCOhGyqs2ef3q1QuCK",
+      "title": "Protocol Revenue",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13962/results.json",
+      "apiKey": "gTUJQBRPsCtveWW0umKg1nuR98QcgxMvjeqDKFuT",
+      "title": "Protocol Revenue By Asset Type",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/13637/results.json",
+      "apiKey": "eU5bdR8mwU8ag0cbkxiyKa3vEIQxS02OVpLczdGo",
+      "title": "Protocol Revenue By Pool Type",
+      "subtitle": "",
+      "page": "orca-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13942/results.json",
+      "apiKey": "vZSTmbXZ1bne5Fw5rDqy4yfugM9kqOSfGwJzZTPM",
+      "title": "Protocol Revenue By Product",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13961/results.json",
+      "apiKey": "nTYXMrPwu8whMm6RXQI1OJG7zK3LJczWXekUuD86",
+      "title": "Protocol Revenue By Segment",
+      "subtitle": "",
+      "page": "metaplex-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13556/results.json",
+      "apiKey": "i6eHPqQYAMCJ2lpJiweVn9iRQE8eaRUbEuJJBy0m",
+      "title": "Raydium Assets",
+      "subtitle": "RAY tokens here are from buyback mechanisms driven by Raydium’s economic activity",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13469/results.json",
+      "apiKey": "8OjepYHYg0MmjFxUawCs8Oc23t2jaui9j5V63soV",
+      "title": "Revenue By Product",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13478/results.json",
+      "apiKey": "Paw3vNs4eZDwTa1a9rVcE87GK2PKRjZlelrzSAWF",
+      "title": "Revenue Sources",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13484/results.json",
+      "apiKey": "NaP14nl0INqjE8maqOdu8cnDljAkhEaL5kgS0fZb",
+      "title": "Swap Revenue By Pool Category",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13924/results.json",
+      "apiKey": "V12RwFH3j528JtqRCl0xudwK0nWozKaHgsGX2hbr",
+      "title": "Total Revenue By Validator",
+      "subtitle": "",
+      "page": "sol-strategies-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/raydium/api/queries/11074/results.json",
+      "apiKey": "QDb0QHrGbrgwv46ZL3aUdEsnCYoxh56ZS3QclDow",
+      "title": "Total USD Spent To Buy RAY",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13493/results.json",
+      "apiKey": "x0HQw1jNhU8oDakyCozhOdirFsNEZww3pC3Y8joC",
+      "title": "Treasury Fund Flow",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13486/results.json",
+      "apiKey": "tlXHCcnR79snuvaUzNrucCEtzo3wS4vamfZ7G0CG",
+      "title": "Treasury Revenue By Product",
+      "subtitle": "",
+      "page": "raydium-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13921/results.json",
+      "apiKey": "XMxY4A5H1MZqyDw3Ip96vxOtyN5hJMsknmZPcwUB",
+      "title": "Treasury Stake",
+      "subtitle": "",
+      "page": "sol-strategies-financials",
+      "pageName": "Financials",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/7417/results.json",
+      "apiKey": "gmq5liGNsuNxbesxmL3y3CbWgE02BWvAMI6k6YaU",
+      "title": "Hnt Emission",
+      "subtitle": "",
+      "page": "helium-governance",
+      "pageName": "helium-governance",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13813/results.json",
+      "apiKey": "rGbWuc0AyBF7oW1PYHAUNOLl3A2UY4Xa9KWOZBjc",
+      "title": "Utility Score Delegations Split July-aug",
+      "subtitle": "",
+      "page": "helium-governance",
+      "pageName": "helium-governance",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/13631/results.json",
+      "apiKey": "RVWY1MZTSAq0beeQayM0vgL55gLhZbwM97MN8TwO",
+      "title": "Cex Orca Holdings",
+      "subtitle": "",
+      "page": "orca-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13538/results.json",
+      "apiKey": "Lk7wDbqzoVGpKevIXiCbz1ObtScuLId5cn9Ao4aa",
+      "title": "CEX RAY Holdings",
+      "subtitle": "",
+      "page": "raydium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/13627/results.json",
+      "apiKey": "7qaCd6LR0cSyxnOBczKg2Dh0FNGC0QW6bNI5LTmG",
+      "title": "Daily Marketcap",
+      "subtitle": "",
+      "page": "orca-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13604/results.json",
+      "apiKey": "TdJ1aLhP0Wn2fwIIn7P16BPJuqShDUmIYC69Jamd",
+      "title": "Hnt DEX Volume",
+      "subtitle": "",
+      "page": "helium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13610/results.json",
+      "apiKey": "5sgaSlVerdNwVFsc62t98b6eI907M6wBGb43Y6oN",
+      "title": "Monthly Cex Mplx Holdings",
+      "subtitle": "",
+      "page": "metaplex-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13515/results.json",
+      "apiKey": "AKCFWScPiekq8W42PVdCth9spZ7rAGnj3ExV4JFn",
+      "title": "Monthly DEX Swap Volume",
+      "subtitle": "",
+      "page": "orca-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13611/results.json",
+      "apiKey": "aIw64EF9JMyA16CNFylrpClYPKYGM3DQyl6Frf4S ",
+      "title": "Monthly MPLX DEX Pool TVL - Solana",
+      "subtitle": "",
+      "page": "metaplex-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13516/results.json",
+      "apiKey": "Iy02dH2lQwx5qwGVK12Oow76LyjRtcM2mYOkeyqJ",
+      "title": "Monthly Pool TVL",
+      "subtitle": "",
+      "page": "orca-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13609/results.json",
+      "apiKey": "gu3I0jTNsJVl5q2Qc0QtUAykvNhew8bXJK89cVMY",
+      "title": "MPLX DEX Volume - Solana",
+      "subtitle": "MPLX Swap",
+      "page": "metaplex-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13510/results.json",
+      "apiKey": "WiNaoOIpQNzkitdVgt8CL68s8fasSmNcyq05i59b",
+      "title": "New And Churned Holders",
+      "subtitle": "Monthly tracker",
+      "page": "raydium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13601/results.json",
+      "apiKey": "6ANDS1EokUT3hGANDJj5AXcpsl9y3XR9dCX6uOiU",
+      "title": "Protocol Token Holders",
+      "subtitle": "",
+      "page": "helium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13511/results.json",
+      "apiKey": "9roGSspeswcX8w34zVPyMAnzPIRLfXH028NaUPkx",
+      "title": "RAY Price Stats",
+      "subtitle": "Monthly tracker",
+      "page": "raydium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13507/results.json",
+      "apiKey": "xeRqDhuEHbbRRAF9EmejNcsmyaWvWky7U2mxs8rn",
+      "title": "RAY Token Marketcap",
+      "subtitle": "Raydium protocol token marketcap is a multiplication of the total circulating supply and the token price at any given time",
+      "page": "raydium-protocol-token",
+      "pageName": "Protocol Token",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13930/results.json",
+      "apiKey": "87httryvMLkezcJF931YHjPFBqjxwXqGgzb0VViM",
+      "title": "Staking Rewards",
+      "subtitle": "",
+      "page": "sol-strategies-revenue",
+      "pageName": "Revenue",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13920/results.json",
+      "apiKey": "im5YtWd4pxcxak6hESCGSWuj4IZdyvPhsosq2kU8",
+      "title": "Unique And New Stakers",
+      "subtitle": "",
+      "page": "sol-strategies-overview",
+      "pageName": "sol-strategies-overview",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json",
+      "apiKey": "ylHSfx4LVFXoOD0gR0FF4z2xhYqzoI6gfpBaFRjY",
+      "title": "Dc Burned For Network Usage",
+      "subtitle": "",
+      "page": "helium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/7454/results.json",
+      "apiKey": "bu9Ju2wL8TvslcUq81jL7r1QiHuIZjyPYxJb449V",
+      "title": "Iot Data Transfer By Payload Size",
+      "subtitle": "",
+      "page": "helium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/13047/results.json",
+      "apiKey": "SEtpKF394scvhuebroEyfoZTrmSnbWGj0zJxXVZP",
+      "title": "Mobile Data Transfer",
+      "subtitle": "",
+      "page": "helium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/helium/api/queries/6601/results.json",
+      "apiKey": "n0aPO2doGI9bSdO1xWYRaM4bq3NkYU9ZO8TfxULy",
+      "title": "Mobile Subscriber NFT",
+      "subtitle": "",
+      "page": "helium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13502/results.json",
+      "apiKey": "QvrJRDwSDZAda7LMTVf0ZUpht419hKvSo0J6ecIL",
+      "title": "Monthly Active And New Wallets",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json",
+      "apiKey": "VZf0MMWDzNorkXuiJDJTNNysyCWOmoGdsKqgv7vu",
+      "title": "Monthly Active Wallets",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/12052/results.json",
+      "apiKey": "WT7Xx5C911qhxntOaHeQt63wulSpwQ9NKESz1Ods",
+      "title": "Monthly Digital Assets Minted",
+      "subtitle": "(excl cNFTs)",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/10247/results.json",
+      "apiKey": "KGgiS0vbj9YszS1lL6fwWEchjiRSseipp4EiqOCz",
+      "title": "Monthly Tm Fungible And Non-fungible Mints",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/2363/results.json",
+      "apiKey": "A70wQP2ArNcnqgKPjCEHLrdwmPyYwNuCQIjLy5IO",
+      "title": "Monthly Total Mints By Program",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/13625/results.json",
+      "apiKey": "ZDjlwGOWvjVobrJpngFTgRqx3J5E2nMm8uN5LspS",
+      "title": "Monthly Trades",
+      "subtitle": "",
+      "page": "orca-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/13678/results.json",
+      "apiKey": "Naj2L3HNcc4l18ZMbf36CRrk6q8rdIHnwEGW77eL",
+      "title": "Monthly Transactions",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/metaplex/api/queries/1270/results.json",
+      "apiKey": "hoPpzV4r0mHc4mw8NFU1ntFDdGkgIoABkf0CdmkE",
+      "title": "Monthly Transactions By Program",
+      "subtitle": "",
+      "page": "metaplex-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13504/results.json",
+      "apiKey": "0IJ7uwyvWtfjLhT1SfEy5wkTJiU9DeCNkTAdxWzA",
+      "title": "Trades By Lifetime Trade Volume",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/orca/api/queries/10859/results.json",
+      "apiKey": "DBrSsUFjwne42yATscorXOywwD37pTpkgYvNuTIu",
+      "title": "Volume By Pool Age",
+      "subtitle": "Since Jan'24",
+      "page": "orca-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13503/results.json",
+      "apiKey": "iJn7Q3dORHSDO3RT9KWO6mmPBXrMXH0A6oaHtbTA",
+      "title": "Volume By Pool Age",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13499/results",
+      "apiKey": "D8FIAv2MtjpTRuW3yRRrT1hA1GtHU3awKfomY6gm",
+      "title": "Volume By Pool Type",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13497/results.json",
+      "apiKey": "Ioj7rYbSvlv13qFKehJ4oIwFs5ZSCu9aW3eqzvFZ",
+      "title": "Volume By Product",
+      "subtitle": "",
+      "page": "raydium-traction",
+      "pageName": "Traction",
+      "menuId": "projects",
+      "menuName": "Projects"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13252/results.json",
+      "apiKey": "TLqCBQoor6alADQbYUfFRNNc3h1KAtbH5xg3GDzh",
+      "title": "DePIN Revenue",
+      "subtitle": "",
+      "page": "depin",
+      "pageName": "Depin",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13169/results.json",
+      "apiKey": "5csRuDS90HOdVaNWFua3wRc8e5gYyePNuHGcshkv",
+      "title": "Memecoin Launchpad Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "pageName": "DEX Ecosystem",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13182/results.json",
+      "apiKey": "TKHcPPIIfclxuUcvLvQ43vVAw6OKglHDf469m5py",
+      "title": "Memecoin Trading Platform Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "pageName": "DEX Ecosystem",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13171/results.json",
+      "apiKey": "rEzuwlk0RAE0NejUfX3vVcKmiO6ocehFgsBjq5qK",
+      "title": "Spot DEX Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "pageName": "DEX Ecosystem",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13170/results.json",
+      "apiKey": "oL930Rxt1WLfufIUXUyz6QRfjXTUInkqS5foPV0j",
+      "title": "Telegram Bot Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "pageName": "DEX Ecosystem",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13172/results.json",
+      "apiKey": "ALdIglv0PhFtf1or3jLzYlqaSlbjndx3wZzRlnhx",
+      "title": "NFT Marketplace Revenue",
+      "subtitle": "",
+      "page": "nft-ecosystem",
+      "pageName": "NFT Ecosystem",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13163/results.json",
+      "apiKey": "S8KkuOqLoYqCIPGstMYVC7zxl84uW7c16KT4nNLH",
+      "title": "Network & dApp Revenue",
+      "subtitle": "Network revenue = (Base + Priority + Vote) × 0.5 + Jito × 0.95, accounting for fee burns and Jito tips",
+      "page": "protocol-revenue-summary",
+      "pageName": "Summary",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12589/results.json",
+      "apiKey": "oiGI7qFLlC7o3etCqCywaqnYbY2Z2bGFxOOKdJwO",
+      "title": "Top Dapp's Revenue",
+      "subtitle": "Revenue before buybacks, rebates, and other adjustments",
+      "page": "protocol-revenue-summary",
+      "pageName": "Summary",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13168/results.json",
+      "apiKey": "AhoU1Wq4NS9iHdyeJy6VejNkCIZE5PVSsL2Xg0MM",
+      "title": "dApp Revenue By Ecosystem",
+      "subtitle": "",
+      "page": "total",
+      "pageName": "Total",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13241/results.json",
+      "apiKey": "gpgdCtoDOhHa2fc4FPd0NfwiCFfaREWflZ3knXJ3",
+      "title": "Ecosystem Wise Top Dapp's Revenue - Since Jan'25",
+      "subtitle": "",
+      "page": "total",
+      "pageName": "Total",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13165/results.json",
+      "apiKey": "KcTuHb64zoaF0agKXEOg8XkK0wuJsxD8GjHMU2J5",
+      "title": "Top Dapp's Revenue - Since Jan'24",
+      "subtitle": "",
+      "page": "total",
+      "pageName": "Total",
+      "menuId": "protocol-revenue",
+      "menuName": "Protocol Revenue"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13207/results.json",
+      "apiKey": "9zbkGgIfDrhCnAhfd5OMJe4z4JxJiB0d4SuO3ynF",
+      "title": "Transaction Fees + Jito Tips",
+      "subtitle": "",
+      "page": "rev-cost-capacity",
+      "pageName": "Cost & Capacity",
+      "menuId": "rev",
+      "menuName": "REV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results",
+      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj",
+      "title": "Block Rewards & Jito Commission",
+      "subtitle": "",
+      "page": "rev-issuance-burn",
+      "pageName": "Issuance & Burn",
+      "menuId": "rev",
+      "menuName": "REV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results.json",
+      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj",
+      "title": "Gross & Net SOL Issuance",
+      "subtitle": "",
+      "page": "rev-issuance-burn",
+      "pageName": "Issuance & Burn",
+      "menuId": "rev",
+      "menuName": "REV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13230/results.json",
+      "apiKey": "OUAKufVU3UKpwQd06ZUu3lYqrEM2W7cowtH5IoGV",
+      "title": "SOL Burn",
+      "subtitle": "",
+      "page": "rev-issuance-burn",
+      "pageName": "Issuance & Burn",
+      "menuId": "rev",
+      "menuName": "REV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13227/results.json",
+      "apiKey": "ic32Un4g6DkouRC8CKL6zvulzZH765l0iyLn5UEf",
+      "title": "Total Economic Value",
+      "subtitle": "Total economic value combines SOL Issuance and REV",
+      "page": "rev-total-economic-value",
+      "pageName": "Total Economic Value",
+      "menuId": "rev",
+      "menuName": "REV"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "apiKey": "sKzEvdBnFLdpvk9c1Pr10CQPg0GpIM2Xezl0nljm",
+      "title": "Daily Traders",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "pageName": "AI Tokens",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13369/results.json",
+      "apiKey": "HVqXqdjizpKqv40yHqEstBfMeIzSWUE79GPGXvYW",
+      "title": "Market Cap",
+      "subtitle": "",
+      "page": "sf-ai-tokens",
+      "pageName": "AI Tokens",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json",
+      "apiKey": "WTIxKcHZ8XowFUSM5JX68aj7ATnmpQrygSeLlO7Q",
+      "title": "Daily Supply",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "pageName": "Bitcoin on Solana",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13272/results.json",
+      "apiKey": "R9x4XvkFCG8AsZc6TIs1CUPJtXOPfiZrpEt4Zv8G",
+      "title": "Monthly DEX Volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "pageName": "Bitcoin on Solana",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "apiKey": "HkhpyAYdhpTqNEwzwgXz4yhyolZwSHE4SymUvuN1",
+      "title": "Monthly Transfer Count",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "pageName": "Bitcoin on Solana",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13279/results.json",
+      "apiKey": "kriv5dTlObAJM5jF2jWV7pep3W4Iov9Ze3q5rCMu",
+      "title": "Top Program By Fee Payer",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "pageName": "Bitcoin on Solana",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13278/results.json",
+      "apiKey": "pzR1VjgdcTiIYK3Wlld1V15GrWAY70tfYs2ItPGu",
+      "title": "Top Program By Transfer Volume",
+      "subtitle": "",
+      "page": "sf-bitcoin-on-solana",
+      "pageName": "Bitcoin on Solana",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json",
+      "apiKey": "bZXsg22jBPxPr7x8tl2VOoGWcH5MeHWNRTCRqGrl",
+      "title": "Daily Holders",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "pageName": "Consumer",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json",
+      "apiKey": "yczvNIuwZ0O9hhfuglmfYBaSdwmlzaprbkvuZ4YZ",
+      "title": "Daily Marketcap",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "pageName": "Consumer",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13520/results.json",
+      "apiKey": "35PKL7sMInC8wV20OmKnGyFeuKlPuNZGhn3kGOHp",
+      "title": "Monthly DEX Volume",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "pageName": "Consumer",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13522/results.json",
+      "apiKey": "fITgej1L2DSpcpjZlMczIopx4rCSuWNEB43Id3Rp",
+      "title": "Monthly Transfers",
+      "subtitle": "",
+      "page": "sf-consumer",
+      "pageName": "Consumer",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13856/results.json",
+      "apiKey": "h22PHvfbLDCMAUmDk34RD3Z4L0s3fzcw6dqkpR5x",
+      "title": "DEX Traders",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13847/results.json",
+      "apiKey": "NVyk6jRuEoc7JW1XYh2CIKZVMmGg8gkaAz1WR41U",
+      "title": "DEX Volume",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13029/results.json",
+      "apiKey": "tLrp1jmzxnqFOVr7UmxmcRXeC7V2S7yTghgZlFUp",
+      "title": "Monthly Capital Efficiency",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13030/results.json",
+      "apiKey": "unPYrcrkodj8p71b1GVnJE3QIysYCDmilwqx1vOK",
+      "title": "Monthly Capital Efficiency By Dexs",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13027/results.json",
+      "apiKey": "sO72c6WL0PObMeCjbdUvSVe4VZHGIxMAUIRTtCD3",
+      "title": "Monthly DEX Volume",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13028/results.json",
+      "apiKey": "LB4hNnsDLLA5HXZOY6rzKViRaHrsKleKTEuJNFCk",
+      "title": "Monthly TVL",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13831/results.json",
+      "apiKey": "2IM0QITnr0eRDm5796VMH1mDQe9KOwHBAVBdrivT",
+      "title": "Rev ( DEX )",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13854/results.json",
+      "apiKey": "u3WYLPvkkDWGHM9xqZkLxhaIVg6rkO6AMM2CvEzJ",
+      "title": "Rev(dex)",
+      "subtitle": "",
+      "page": "sf-defi",
+      "pageName": "DeFi",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12614/results.json",
+      "apiKey": "sbN9b8FsGKSdrsZcdnYI40gwEhpK8fnMoAIQpCn8",
+      "title": "DePIN Funding",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12624/results.json",
+      "apiKey": "XOt9iApi9AZWtPkRqDW6P2YmvBHT9Uo6wG8dZIw3",
+      "title": "DePIN Projects Revenue",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12619/results.json",
+      "apiKey": "psDpQvQhTbdi51cLcH7wMwHhXL99edgjczu1I4WN",
+      "title": "DePIN Revenue By Chain",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12368/results.json",
+      "apiKey": "Jl90ERmcujokEPAd514uBc5E8t5VdMDqKrWUJlv3",
+      "title": "DePIN Token Marketcap",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/11220/results.json",
+      "apiKey": "sUzCjZF1wBR36hR100PM6CJDqxxUXO5DSgvx3FOU",
+      "title": "Monthly Rewards By DePIN",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/11246/results.json",
+      "apiKey": "jx4gBzQTA4eEklP3a7HsLaDUBUyZw3dsTRQ9Yc3y",
+      "title": "Monthly Transactions",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/11375/results.json",
+      "apiKey": "tFKzXOFOWcCymcSXedytJOHrruI8EeGGdgQXWon7",
+      "title": "Monthly Transactions By Reward Receiver",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/11221/results.json",
+      "apiKey": "7TWdIuW3Krrs6RzcFNM11dGQgnepa8LvGKeHfmU0",
+      "title": "Token Burned By DePIN",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/11609/results.json",
+      "apiKey": "UGt3HHwze70USSFWl0y20l0s7zGor748ScQ9v1TE",
+      "title": "Top Programs By Transactions",
+      "subtitle": "",
+      "page": "sf-depin",
+      "pageName": "Depin",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12595/results",
+      "apiKey": "W0xmD2n07A9ngTCkvuUiFmc4UmrCup5FSbXXslFw",
+      "title": "Average Stablecoin Supply",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json",
+      "apiKey": "9fl3LcRZpMRgUrz3trQiv4DNlLgcBcPhxKQjmd9p",
+      "title": "DeFi Capital Efficiency",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12594/results",
+      "apiKey": "X9qTnUVMZxKFTcXvkoSsnEUSdO5IsruQ717A9iri",
+      "title": "DEX Volume",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12524/results.json",
+      "apiKey": "2EGZpf9dPt4lZ86Sp4aAi5Ogz0x1PG9EIHAZikUC",
+      "title": "Monthly Fee Payers",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json",
+      "apiKey": "pIZEY1uPvMeGVeS5BCLR90Unf9FxoQOVJVEEn3Wu",
+      "title": "Non-vote Transactions",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12523/results.json",
+      "apiKey": "w8mW0d9FND1BMpaRD3YkWmNTXeHPpOOEcGSIGti5",
+      "title": "Solana Real Economic Value",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12589/results",
+      "apiKey": "oiGI7qFLlC7o3etCqCywaqnYbY2Z2bGFxOOKdJwO",
+      "title": "Top Dapp's Revenue",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12540/results.json",
+      "apiKey": "U0d6U06KFG9U8nQndfuVmZNGQCr9puRWiRB22bmb",
+      "title": "TPS",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/9153/results.json",
+      "apiKey": "dCCVXwv8cajDX7OiQKwgLxyBnJXErKzjcQVOlEW0",
+      "title": "Validator Decentralization Score",
+      "subtitle": "Measures how evenly stake is distributed among Solana validators.A higher score indicates better decentralization, reducing risks of centralization, censorship, and collusion.",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13036/results.json",
+      "apiKey": "Zgvl94t2ciEEK7ZMJ1IFmLUZkZn3W214vdrwgVzc",
+      "title": "Validators",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12569/results.json",
+      "apiKey": "pXxADZFSMPcxMIjHspl3zbkOdqwm4iFwpuklKei1",
+      "title": "Velocity",
+      "subtitle": "",
+      "page": "sf-overview",
+      "pageName": "Overview",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13371/results.json",
+      "apiKey": "jssyImontZtDrolwsgfnrPY1lQ0TnUBxxCqvY6UO",
+      "title": "Daily Marketcap By Asset",
+      "subtitle": "",
+      "page": "sf-rwa",
+      "pageName": "RWA",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13372/results.json",
+      "apiKey": "uLEVkAyNMW6oaFfMHYxdN5EdloJ90Lr7D16Ls0xI",
+      "title": "Stablecoins Vs Rwa Marketcap",
+      "subtitle": "",
+      "page": "sf-rwa",
+      "pageName": "RWA",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13032/results.json",
+      "apiKey": "UcSiv2vy9gBfjqXriebY88zQDlDIgJEPlQy2C1ow",
+      "title": "Daily Supply",
+      "subtitle": "Total supply of stablecoins in circulation, on a daily basis",
+      "page": "sf-stablecoins",
+      "pageName": "Stablecoins",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json",
+      "apiKey": "8GSPY200lQhlBJAnej96disGkUiSBbBot73nMwu4",
+      "title": "DEX Volume",
+      "subtitle": "Volume associated with stablecoin pairs on Solana DEXs ",
+      "page": "sf-stablecoins",
+      "pageName": "Stablecoins",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13514/results.json",
+      "apiKey": "GIBczTFyyBH4yqB9afBTx26mylqXy26NN0M0Y2Xq",
+      "title": "Net Inflow From Cexs",
+      "subtitle": "Dollar value of stablecoins moved from CEX wallets to non-custodial wallets",
+      "page": "sf-stablecoins",
+      "pageName": "Stablecoins",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12551/results.json",
+      "apiKey": "TbIKmyGpECJJzj5E5fi9cAFZLGofK1rC4kChBcaU",
+      "title": "Ecosystem Treasury Balance",
+      "subtitle": "",
+      "page": "sf-treasury",
+      "pageName": "Treasury",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12550/results.json",
+      "apiKey": "2cYT6c6IZ4AthEcBlAMv2pQrJOnW7OD2vZp5lrx9",
+      "title": "Realms Treasury Balance",
+      "subtitle": "",
+      "page": "sf-treasury",
+      "pageName": "Treasury",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12521/results.json",
+      "apiKey": "lBjShIP0JFiMDhDsvwEcx2YawV0lG4qSuV2UiHMl",
+      "title": "Squads Treasury Balance",
+      "subtitle": "",
+      "page": "sf-treasury",
+      "pageName": "Treasury",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12503/results.json",
+      "apiKey": "8nemtTC1RXEvlV3Pvh6nlBlIIzGOulzNmyMlXKe7",
+      "title": "Top Ecosystem Categories By Treasury Net Worth",
+      "subtitle": "",
+      "page": "sf-treasury",
+      "pageName": "Treasury",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12502/results.json",
+      "apiKey": "Gh2CYLOSqmRhLlPhiZLRjeOSNdWYGYyW8FgIf7Bn",
+      "title": "Top Teams By Treasury Balance",
+      "subtitle": "",
+      "page": "sf-treasury",
+      "pageName": "Treasury",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13307/results.json",
+      "apiKey": "SsmXGcQTSoyyNYrOt7R5FmIBGP0243vraEpQWRvH",
+      "title": "Cross-chain Funding By Protocol Category",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13309/results.json",
+      "apiKey": "iUDxkNvbcBZOSLJNkFhv8hnibN8iUOxZDPldXJVf",
+      "title": "Cross-chain Funding By Protocol Category",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13305/results.json",
+      "apiKey": "3FbUeKUurce34RlUavPUQVTu6eFAwyVcu1o0XH21",
+      "title": "Cross-chain Funding By Sectors",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13308/results.json",
+      "apiKey": "aukJcWr92PuC222CQeHtuSNNx4mHpBpB8DexkVgu",
+      "title": "Cross-chain VC Funding By Sector",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13304/results.json",
+      "apiKey": "bifkJW7dwRuzqxbHurxm5ibkhllzh4I1UeXweA9l",
+      "title": "Cross-chain VC Funding Flow",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13908/results.json",
+      "apiKey": "v6TacarpCEToJEiPgfr228n4LKOOSu0jHY5WJxdN",
+      "title": "Solana Funding By Protocol Category",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13910/results.json",
+      "apiKey": "55MYeBYEFFCCDKWtE8Ll3zC5sW3V1BK9Ba3zlgG7",
+      "title": "Solana Funding By Protocol Category",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13907/results.json",
+      "apiKey": "fLu48tI9I9KvkchZzay4go3oESNuRa4dk651gRzb",
+      "title": "Solana VC Funding By Sector",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13909/results.json",
+      "apiKey": "UxqtXyk8cg1F1CtzVsNkHwwrDiVcXQeU9y2j4Nhm",
+      "title": "Solana VC Funding By Sector",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13906/results.json",
+      "apiKey": "8w8b0XKSJ01WYS5ABdFc4wDYw9vPquoMfJi2Ddkp",
+      "title": "Solana VC Funding Flow",
+      "subtitle": "",
+      "page": "sf-vc-funding",
+      "pageName": "VC Funding",
+      "menuId": "sf-dashboards",
+      "menuName": "SF Dashboards"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12788/results.json",
+      "apiKey": "qtmqsLMWCpEH4EhFbgB8BYKBi8IcFJ47i1JKACaq",
+      "title": "Monthly Stablecoin Transfer From Exchange",
+      "subtitle": "Volume of stablecoins transferred from exchanges, providing insights into liquidity outflow",
+      "page": "cexs",
+      "pageName": "CEXs",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12789/results.json",
+      "apiKey": "BxiXraSaVxbbTXg5pArmhmirBiErX2qiKogxOgAo",
+      "title": "Monthly Stablecoin Transfer To Exchange",
+      "subtitle": "Volume of stablecoins transferred to centralized exchanges, indicating inflow and potential for market impact",
+      "page": "cexs",
+      "pageName": "CEXs",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13457/results.json",
+      "apiKey": "iQAoodBhCz6kls9LrklUh8aG1tCwVjSVW8aaqJHu",
+      "title": "Stablecoin Net Inflow",
+      "subtitle": "Net stablecoin inflow from CEXs to Solana, showing adoption and capital movement",
+      "page": "cexs",
+      "pageName": "CEXs",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12899/results",
+      "apiKey": "PDO9L8zUfu9YfUaqvNXTW13Zwz9jJiYYB2HmjAyN",
+      "title": "Daily Avg P2p Transfer Size",
+      "subtitle": "Average size of user-driven P2P transactions, showing ecosystem trends",
+      "page": "liquidity-velocity",
+      "pageName": "Liquidity Velocity",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "apiKey": "ypIOlDBsixHtBlfsFtuv5LzvZ8Vi4avG3wcLC74q",
+      "title": "Monthly Stablecoin Transfer Velocity",
+      "subtitle": "The rate at which stablecoins are moved within the ecosystem, giving insight into liquidity flow",
+      "page": "liquidity-velocity",
+      "pageName": "Liquidity Velocity",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12796/results.json",
+      "apiKey": "FsMRolQsXioS23lMYqhIqoD98nrm2EjkxgeqyPuW",
+      "title": "Mints",
+      "subtitle": "Amount of stablecoins minted, showing the supply expansion",
+      "page": "mint-burn",
+      "pageName": "Mint & Burn",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12781/results.json",
+      "apiKey": "i1EMrmekV6vqSiyxWx3o8ncTbKqEIBBJ6Me3mwRu",
+      "title": "Top Stablecoins By Holders",
+      "subtitle": "Day-on-day changes in the number of holders (owners), indicating growing or shrinking user base.",
+      "page": "stablecoin-usage",
+      "pageName": "Stablecoin Usage",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13409/results.json",
+      "apiKey": "w5H1Xhtgura5ZnmyZFeYIu1lQO0dBdth7UCAaU18",
+      "title": "Transfer Volume",
+      "subtitle": "Stablecoin transfer volume on Solana, reflecting ecosystem liquidity and adoption trends",
+      "page": "stablecoin-usage",
+      "pageName": "Stablecoin Usage",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12795/results.json",
+      "apiKey": "xIeiFus6bymtdn5zq2EGXVHr9XcapwmMXoLdvW7R",
+      "title": "Stablecoin DEX Volume",
+      "subtitle": "Volume of stablecoin swaps on DEXs, showing how stablecoins are used in DeFi on Solana",
+      "page": "transaction-activity",
+      "pageName": "Transaction Activity",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12905/results.json",
+      "apiKey": "5zstW6keBAxELlhfMpi2qvRUAykA5usVpkhOyFmI",
+      "title": "Stablecoin TVL In DEX Pools",
+      "subtitle": "The total value locked in decentralized stablecoin pools, showing capital allocation and liquidity on Solana DEXs",
+      "page": "stablecoins-tvl",
+      "pageName": "TVL",
+      "menuId": "stablecoins",
+      "menuName": "Stablecoins"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12988/results.json",
+      "apiKey": "OQNRdRvcIdbJdDvfgyDqpCuz49FUuxaa08Bl2Rox",
+      "title": "Fee",
+      "subtitle": "",
+      "page": "test",
+      "pageName": "Test",
+      "menuId": "test",
+      "menuName": "Test"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "apiKey": "cogPDeFw7tEWNmdZPntjbxPBdgIChden1y9vHWGE",
+      "title": "Jbjhbhj",
+      "subtitle": "",
+      "page": "test",
+      "pageName": "Test",
+      "menuId": "test",
+      "menuName": "Test"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/12901/results.json",
+      "apiKey": "UvWTVqG5CssnjosT1GlIBvGYedgy90PwJFfCSCws",
+      "title": "Uhjnjbnj",
+      "subtitle": "",
+      "page": "test",
+      "pageName": "Test",
+      "menuId": "test",
+      "menuName": "Test"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/solana/api/queries/13974/results.json",
+      "apiKey": "5uhMj0BrlNHXm1114i1VKnpknDutE2pwkVu9LYc9",
+      "title": "Protocol Revenue",
+      "subtitle": "",
+      "page": "valuation-insights-overview",
+      "pageName": "Overview",
+      "menuId": "valuation-insights",
+      "menuName": "Valuation Insights"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13422/results.json",
+      "apiKey": "TnJOTkKLkqBU3cEoK8uQtfOyzd7g5Cgcpxymu6oV",
+      "title": "Total Wrapped Btc Trade Volume - By Pool Type",
+      "subtitle": "last 30 days",
+      "page": "dex-activity",
+      "pageName": "DEX Activity",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13427/results.json",
+      "apiKey": "CAdciqVpawenBLQE4T4l7YeVMauInYbZfMdfbqyF",
+      "title": "Wrapped Btc Trade Volume",
+      "subtitle": "",
+      "page": "dex-activity",
+      "pageName": "DEX Activity",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13424/results.json",
+      "apiKey": "VxD3rsDiDjTNkXDB8NGu007FkRoyYyFrOxSW9gNT",
+      "title": "Wrapped Btc Trade Volume - By Pool Type",
+      "subtitle": "",
+      "page": "dex-activity",
+      "pageName": "DEX Activity",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13421/results.json",
+      "apiKey": "YXezn6KnJfoKgGceI87sjDNIIe0DKKCf9pLZW6mx",
+      "title": "Wrapped Btc Trades",
+      "subtitle": "",
+      "page": "dex-activity",
+      "pageName": "DEX Activity",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json",
+      "apiKey": "loYepWvnDGaUK1DWbQua395wQazlRRdiz5maqYVL",
+      "title": "Average Btc Holding Per Wallet",
+      "subtitle": "Includes holdings in programs",
+      "page": "holders-supply",
+      "pageName": "Holders & Supply",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
+      "apiKey": "43oArwpC4KGiIESfKuwvqK7HGOzGGE9nqGSZrLyE",
+      "title": "Supply",
+      "subtitle": "Comparing wrapped bitcoin issued by different issuing entities",
+      "page": "holders-supply",
+      "pageName": "Holders & Supply",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "apiKey": "2uh20UsQ9YxEtWP80SoP8n7vNKWwoxEwKPzFXExI",
+      "title": "Wrapped Btc Transfer Volume",
+      "subtitle": "",
+      "page": "transfers",
+      "pageName": "Transfers",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13432/results.json",
+      "apiKey": "7IQVHzE8vTPiMhd8jaLoAvqGqUHwqGJmDNgDeI9h",
+      "title": "Wrapped Btc TVL By DEX",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "pageName": "TVL",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13434/results.json",
+      "apiKey": "eIabVeL4E9CxitqGLzbghZvsqzuBZLk194lGxB3Y",
+      "title": "Wrapped Btc TVL By Perpetual",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "pageName": "TVL",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13431/results.json",
+      "apiKey": "kyxmqvSLlaN5Rswz4SM0kbYAymmOdFTHpknUgPaZ",
+      "title": "Wrapped Btc TVL In DEX",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "pageName": "TVL",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl/api/queries/13433/results.json",
+      "apiKey": "krwE97KvHGq03PALdzh4h8JgrkWqxtu7tF8zZkZq",
+      "title": "Wrapped Btc TVL In Perpetuals",
+      "subtitle": "",
+      "page": "btc-tvl",
+      "pageName": "TVL",
+      "menuId": "wrapped-btc",
+      "menuName": "Wrapped BTC"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13814/results.json",
+      "apiKey": "rP2DEyUTQ4xn7CFeS8nTO2eqXr8oBGZlwLmyppcx",
+      "title": "Fee By DEX",
+      "subtitle": "",
+      "page": "xstocks-fee-revenue",
+      "pageName": "Fee Revenue",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13850/results",
+      "apiKey": "aAxjDBpoyWHsGtEB9qdMGKGbsPSOmARM3kSNxeTd",
+      "title": "Comparision Of Onchain & Offchain Prices",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "pageName": "Traction",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13798/results.json",
+      "apiKey": "20klT9XAM7tquzMqHrfWwcuZDzU8nABon5Nh9DCx",
+      "title": "Volume",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "pageName": "Traction",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13800/results.json",
+      "apiKey": "D8qevDhHHS5wUoegABX72UQUsFYjBEzngJ8rjamR",
+      "title": "Volume By Asset",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "pageName": "Traction",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13820/results.json",
+      "apiKey": "91oZw6oUPyaDyz89IsoVYSxQ1vO4cVlmS78sEXpE",
+      "title": "Volume By Day Of Week",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "pageName": "Traction",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13805/results.json",
+      "apiKey": "Fwa8vT15hbyRxbpLhOnQNQQ0HXN0LcNn8VTQ7pb4",
+      "title": "Volume By Hour",
+      "subtitle": "",
+      "page": "xstocks-traction",
+      "pageName": "Traction",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13811/results.json",
+      "apiKey": "wgLJTpxiFdZvIcBq0sWtxBblW0Keb7xTJQDUWfFf",
+      "title": "Asset Wise TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "pageName": "TVL",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    },
+    {
+      "endpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13851/results.json",
+      "apiKey": "hujPcxW5PDHBBscbjjjINceulhhIB5TBrAo2Nt3U",
+      "title": "Total Daily TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "pageName": "TVL",
+      "menuId": "xstocks",
+      "menuName": "xStocks"
+    }
+  ]
+}
