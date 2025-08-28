@@ -12,15 +12,14 @@ export interface PublicChartConfig {
   section?: string;
   chartType: string;
   dataMapping: any;
-  displayOptions?: any;
   additionalOptions?: any;
   position?: number;
   width?: number;
-  height?: number;
   colorScheme?: string;
   isStacked?: boolean;
-  showLegend?: boolean;
-  legendPosition?: string;
+  enableCategoricalBrush?: boolean;
+  useDistinctColors?: boolean;
+  dualAxisConfig?: any;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -33,6 +32,7 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     // Remove sensitive fields
     apiEndpoint,
     apiKey,
+    onFilterChange, // Remove callback function
     
     // Keep safe fields
     id,
@@ -42,15 +42,14 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     section,
     chartType,
     dataMapping,
-    displayOptions,
     additionalOptions,
     position,
     width,
-    height,
     colorScheme,
     isStacked,
-    showLegend,
-    legendPosition,
+    enableCategoricalBrush,
+    useDistinctColors,
+    dualAxisConfig,
     createdAt,
     updatedAt,
     
@@ -67,15 +66,14 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     section,
     chartType,
     dataMapping,
-    displayOptions,
     additionalOptions,
     position,
     width,
-    height,
     colorScheme,
     isStacked,
-    showLegend,
-    legendPosition,
+    enableCategoricalBrush,
+    useDistinctColors,
+    dualAxisConfig,
     createdAt,
     updatedAt,
   };
