@@ -17,11 +17,7 @@ interface ApiData {
   menuName?: string;
 }
 
-interface ApiListData {
-  totalApis: number;
-  extractedAt: string;
-  apis: ApiData[];
-}
+
 
 interface ColumnDefinition {
   name: string;
@@ -68,27 +64,10 @@ export default function ApiManagerPage() {
         setSuccessMessage(`Loaded ${s3Result.data.apis.length} APIs from S3 (last updated: ${s3Result.data.metadata?.lastUpdated ? new Date(s3Result.data.metadata.lastUpdated).toLocaleString() : 'unknown'})`);
         
       } else {
-        // Fallback to original JSON file
-        console.log('No S3 data found, loading from original JSON file...');
-        
-        const response = await fetch('/apis_list.json');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch APIs: ${response.status}`);
-        }
-
-        const data: ApiListData = await response.json();
-        console.log(`Loaded ${data.totalApis} APIs from original file`);
-
-        // Convert to enriched format
-        const enrichedApis: EnrichedApiData[] = data.apis.map((api, index) => ({
-          ...api,
-          id: `api-${index}`,
-          responseColumns: [],
-          fetchStatus: 'pending',
-        }));
-
-        setApis(enrichedApis);
-        setSuccessMessage(`Loaded ${data.totalApis} APIs from original file (no S3 data found yet)`);
+        // No S3 data found - show empty state
+        console.log('No S3 data found, showing empty state');
+        setApis([]);
+        setSuccessMessage('No API data found in S3. Use the import feature or manually add APIs to get started.');
       }
       
     } catch (err) {
@@ -352,7 +331,7 @@ export default function ApiManagerPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6-4h6m2 5l-1 1a2 2 0 01-2.828 0L12 12.172a2 2 0 01-2.828 0L8 14H6a2 2 0 01-2-2V6a2 2 0 012-2h12a2 2 0 012 2v6a2 2 0 01-2 2h-2z" />
               </svg>
               <span className="text-blue-300 text-sm">
-                📊 Data Source: {successMessage?.includes('S3') ? '☁️ Amazon S3 (Persistent)' : '📄 Original JSON (Temporary)'}
+                📊 Data Source: ☁️ Amazon S3 (Persistent)
               </span>
             </div>
             <div className="text-xs text-blue-400">
