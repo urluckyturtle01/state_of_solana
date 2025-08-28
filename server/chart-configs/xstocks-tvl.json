@@ -1,0 +1,50 @@
+{
+  "pageId": "xstocks-tvl",
+  "pageName": "TVL",
+  "chartCount": 2,
+  "lastUpdated": "2025-08-23T13:14:27.282Z",
+  "charts": [
+    {
+      "id": "chart_1752486109597_a62ko8d",
+      "title": "Asset Wise TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13811/results.json",
+      "apiKey": "wgLJTpxiFdZvIcBq0sWtxBblW0Keb7xTJQDUWfFf&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "asset",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-14T09:41:49.597Z",
+      "updatedAt": "2025-07-14T09:41:49.801Z"
+    },
+    {
+      "id": "chart_1753190539117_irop5i9",
+      "title": "Total Daily TVL",
+      "subtitle": "",
+      "page": "xstocks-tvl",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13851/results.json",
+      "apiKey": "hujPcxW5PDHBBscbjjjINceulhhIB5TBrAo2Nt3U&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "tvl",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-07-22T13:22:19.117Z",
+      "updatedAt": "2025-07-22T13:22:19.536Z"
+    }
+  ]
+}

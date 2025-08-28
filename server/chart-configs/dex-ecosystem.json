@@ -1,0 +1,156 @@
+{
+  "pageId": "dex-ecosystem",
+  "pageName": "DEX Ecosystem",
+  "chartCount": 4,
+  "lastUpdated": "2025-08-23T13:14:27.274Z",
+  "charts": [
+    {
+      "id": "chart_1748000370222_qb6a46o",
+      "title": "Spot DEX Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13171/results.json",
+      "apiKey": "rEzuwlk0RAE0NejUfX3vVcKmiO6ocehFgsBjq5qK&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        },
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-05-23T11:39:30.222Z",
+      "updatedAt": "2025-08-16T09:42:03.170Z"
+    },
+    {
+      "id": "chart_1748000467485_5uuvy1q",
+      "title": "Memecoin Launchpad Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13169/results.json",
+      "apiKey": "5csRuDS90HOdVaNWFua3wRc8e5gYyePNuHGcshkv&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        },
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-05-23T11:41:07.485Z",
+      "updatedAt": "2025-08-16T09:42:37.582Z"
+    },
+    {
+      "id": "chart_1748001442855_u9uy7lm",
+      "title": "Memecoin Trading Platform Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13182/results.json",
+      "apiKey": "TKHcPPIIfclxuUcvLvQ43vVAw6OKglHDf469m5py&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        },
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-05-23T11:57:22.855Z",
+      "updatedAt": "2025-08-16T09:43:15.694Z"
+    },
+    {
+      "id": "chart_1748001498518_6d5arhi",
+      "title": "Telegram Bot Revenue",
+      "subtitle": "",
+      "page": "dex-ecosystem",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/solana/api/queries/13170/results.json",
+      "apiKey": "oL930Rxt1WLfufIUXUyz6QRfjXTUInkqS5foPV0j&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "protocol_revenue",
+        "groupBy": "platform",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        },
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-05-23T11:58:18.518Z",
+      "updatedAt": "2025-08-16T09:43:47.264Z"
+    }
+  ]
+}

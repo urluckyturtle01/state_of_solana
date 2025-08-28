@@ -1,0 +1,72 @@
+{
+  "pageId": "holders-supply",
+  "pageName": "Holders & Supply",
+  "chartCount": 3,
+  "lastUpdated": "2025-08-23T13:14:27.277Z",
+  "charts": [
+    {
+      "id": "chart_1748210640957_ullxc4w",
+      "title": "Supply",
+      "subtitle": "Comparing wrapped bitcoin issued by different issuing entities",
+      "page": "holders-supply",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
+      "apiKey": "43oArwpC4KGiIESfKuwvqK7HGOzGGE9nqGSZrLyE",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "supply",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-25T22:04:00.957Z",
+      "updatedAt": "2025-05-25T22:04:01.141Z"
+    },
+    {
+      "id": "chart_1748210765328_0s7ys3a",
+      "title": "Wrapped Btc Holders",
+      "subtitle": "Comparing holders of wrapped bitcoin issued by different issuing entities",
+      "page": "holders-supply",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
+      "apiKey": "43oArwpC4KGiIESfKuwvqK7HGOzGGE9nqGSZrLyE",
+      "isStacked": true,
+      "colorScheme": "default",
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Holders",
+        "groupBy": "symbol"
+      },
+      "createdAt": "2025-05-25T22:06:05.328Z",
+      "updatedAt": "2025-07-11T08:40:35.497Z"
+    },
+    {
+      "id": "chart_1748210879501_pobqbm1",
+      "title": "Average Btc Holding Per Wallet",
+      "subtitle": "Includes holdings in programs",
+      "page": "holders-supply",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json",
+      "apiKey": "loYepWvnDGaUK1DWbQua395wQazlRRdiz5maqYVL&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_holding",
+            "type": "line",
+            "unit": "BTC"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-05-25T22:07:59.501Z",
+      "updatedAt": "2025-07-16T12:59:09.957Z"
+    }
+  ]
+}
