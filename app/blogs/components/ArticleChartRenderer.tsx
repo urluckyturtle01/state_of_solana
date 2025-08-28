@@ -21,29 +21,19 @@ export default function ArticleChartRenderer({ chartId, title, description }: Ar
         setLoading(true);
         setError(null);
 
-        // Try to fetch the chart config from existing charts API
-        const response = await fetch(`/api/charts/${chartId}`);
+        // Try to fetch the chart config from admin API (full config with credentials)
+        const response = await fetch(`/api/admin/charts/${chartId}`, {
+          headers: {
+            'x-admin-auth': 'blog-chart-renderer',
+          },
+        });
         
         if (!response.ok) {
-          // If direct fetch fails, try to search through all chart configs
-          const searchResponse = await fetch('/api/charts/search', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ chartId })
-          });
-          
-          if (!searchResponse.ok) {
-            throw new Error(`Chart with ID "${chartId}" not found`);
-          }
-          
-          const chartData = await searchResponse.json();
-          setChartConfig(chartData);
-        } else {
-          const chartData = await response.json();
-          setChartConfig(chartData);
+          throw new Error(`Chart with ID "${chartId}" not found`);
         }
+        
+        const chartData = await response.json();
+        setChartConfig(chartData);
       } catch (err) {
         console.error('Error loading chart config:', err);
         setError(err instanceof Error ? err.message : 'Failed to load chart');
