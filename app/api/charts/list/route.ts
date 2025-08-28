@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { sanitizeChartConfigs, isAdminRequest } from '@/lib/chart-sanitizer';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const chartsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+    const chartsDir = path.join(process.cwd(), 'server', 'chart-configs');
     
     if (!fs.existsSync(chartsDir)) {
       return NextResponse.json({
@@ -40,10 +41,15 @@ export async function GET() {
     // Sort charts by title
     charts.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
 
+    // Sanitize chart data for public consumption (unless admin request)
+    const isAdmin = isAdminRequest(request);
+    const responseCharts = isAdmin ? charts : sanitizeChartConfigs(charts);
+
     return NextResponse.json({
-      charts,
-      count: charts.length,
-      message: `Found ${charts.length} charts from ${jsonFiles.length} config files`
+      charts: responseCharts,
+      count: responseCharts.length,
+      message: `Found ${responseCharts.length} charts from ${jsonFiles.length} config files`,
+      sanitized: !isAdmin // Indicate if data was sanitized
     });
 
   } catch (error) {

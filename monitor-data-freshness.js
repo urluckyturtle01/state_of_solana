@@ -8,7 +8,7 @@ const util = require('util');
 // Configuration
 const CONFIG = {
   chartDataDir: '/root/state_of_solana/public/temp/chart-data',
-  chartConfigDir: '/root/state_of_solana/public/temp/chart-configs',
+  chartConfigDir: '/root/state_of_solana/server/chart-configs',
   maxAgeHours: 24, // Fallback: Alert if fetch time is older than 24 hours (when no data dates found)
   
   // Telegram configuration (set these environment variables)

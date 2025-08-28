@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Search through all chart config files
-    const tempConfigsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+    const tempConfigsDir = path.join(process.cwd(), 'server', 'chart-configs');
     
     try {
       const files = await fs.readdir(tempConfigsDir);

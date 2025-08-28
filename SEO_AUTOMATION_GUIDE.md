@@ -100,7 +100,7 @@ Shows all available options.
 
 ### When You Add New Charts
 
-1. **Add chart configurations** to `public/temp/chart-configs/`
+1. **Add chart configurations** to `server/chart-configs/` (secure directory)
 2. **Run the SEO update**:
    ```bash
    npm run seo:update

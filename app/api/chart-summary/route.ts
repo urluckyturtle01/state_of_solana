@@ -248,7 +248,7 @@ export async function POST(request: NextRequest) {
 
     // Read chart data and config from temp directories
     const dataPath = join(process.cwd(), 'public', 'temp', 'chart-data', `${pageId}.json`);
-    const configPath = join(process.cwd(), 'public', 'temp', 'chart-configs', `${pageId}.json`);
+    const configPath = join(process.cwd(), 'server', 'chart-configs', `${pageId}.json`);
 
     let chartDataFile, chartConfigFile;
     try {

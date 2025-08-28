@@ -11,6 +11,7 @@ import {
 } from '@/lib/s3';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../lib/auth";
+import { sanitizeChartConfig, isAdminRequest } from '@/lib/chart-sanitizer';
 
 /*
  * This API endpoint manages individual chart configurations.
@@ -97,8 +98,15 @@ export async function GET(
       );
     }
     
+    // Sanitize chart data for public consumption (unless admin request)
+    const isAdmin = isAdminRequest(req);
+    const responseChart = isAdmin ? chart : sanitizeChartConfig(chart);
+    
     // Create response with caching headers
-    const response = NextResponse.json(chart);
+    const response = NextResponse.json({
+      ...responseChart,
+      sanitized: !isAdmin // Indicate if data was sanitized
+    });
     
           // Add caching headers (updated for 2-hour cache duration)
     response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=7200');

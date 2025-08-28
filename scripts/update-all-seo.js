@@ -62,7 +62,7 @@ function scanForNewPages() {
 function scanForNewCharts() {
   console.log('\n📊 Scanning for new charts...');
   
-  const configsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+  const configsDir = path.join(process.cwd(), 'server', 'chart-configs');
   const existingChartMeta = readExistingChartMeta();
   const newCharts = [];
   

@@ -120,7 +120,7 @@ const DYNAMIC_PAGES = [
 
 // Function to get all chart IDs from configurations
 async function getAllChartIds() {
-  const configsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+  const configsDir = path.join(process.cwd(), 'server', 'chart-configs');
   const chartIds = [];
   
   if (!fs.existsSync(configsDir)) {

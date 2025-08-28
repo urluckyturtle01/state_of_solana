@@ -10,6 +10,7 @@ import {
   getChartsBatch,
   getBatchedObjectsFromS3
 } from '@/lib/s3';
+import { sanitizeChartConfigs, isAdminRequest } from '@/lib/chart-sanitizer';
 
 // Enable ISR for this API route with 30-second revalidation
 export const revalidate = 30;
@@ -235,13 +236,18 @@ export async function GET(req: NextRequest) {
       }
     }
     
+    // Sanitize chart data for public consumption (unless admin request)
+    const isAdmin = isAdminRequest(req);
+    const responseCharts = isAdmin ? charts : sanitizeChartConfigs(charts);
+    
     // Create response with caching headers
     const response = NextResponse.json({ 
-      charts,
+      charts: responseCharts,
       source,
-      count: charts.length,
+      count: responseCharts.length,
       pageId: pageId || null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      sanitized: !isAdmin // Indicate if data was sanitized
     });
     
     // Add caching headers (updated for 2-hour cache duration)

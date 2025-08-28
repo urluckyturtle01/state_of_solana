@@ -104,7 +104,7 @@ You can modify the configuration in the script:
 ```javascript
 const CONFIG = {
   chartDataDir: '/root/state_of_solana/public/temp/chart-data',
-  chartConfigDir: '/root/state_of_solana/public/temp/chart-configs',
+  chartConfigDir: '/root/state_of_solana/server/chart-configs',
   maxAgeHours: 24, // Alert if data is older than 24 hours
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
   telegramChatId: process.env.TELEGRAM_CHAT_ID

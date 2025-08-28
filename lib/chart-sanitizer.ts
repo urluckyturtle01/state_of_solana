@@ -1,0 +1,112 @@
+import { ChartConfig } from '@/app/admin/types';
+
+/**
+ * Sanitize chart configuration for public consumption
+ * Removes sensitive fields like API endpoints, keys, and internal configuration
+ */
+export interface PublicChartConfig {
+  id: string;
+  title: string;
+  subtitle?: string;
+  page: string;
+  section?: string;
+  chartType: string;
+  dataMapping: any;
+  displayOptions?: any;
+  additionalOptions?: any;
+  position?: number;
+  width?: number;
+  height?: number;
+  colorScheme?: string;
+  isStacked?: boolean;
+  showLegend?: boolean;
+  legendPosition?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Remove sensitive fields from chart configuration
+ */
+export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
+  const {
+    // Remove sensitive fields
+    apiEndpoint,
+    apiKey,
+    
+    // Keep safe fields
+    id,
+    title,
+    subtitle,
+    page,
+    section,
+    chartType,
+    dataMapping,
+    displayOptions,
+    additionalOptions,
+    position,
+    width,
+    height,
+    colorScheme,
+    isStacked,
+    showLegend,
+    legendPosition,
+    createdAt,
+    updatedAt,
+    
+    // Ignore any other fields (safety net)
+    ...rest
+  } = chart;
+
+  // Return only safe, public fields
+  return {
+    id,
+    title,
+    subtitle,
+    page,
+    section,
+    chartType,
+    dataMapping,
+    displayOptions,
+    additionalOptions,
+    position,
+    width,
+    height,
+    colorScheme,
+    isStacked,
+    showLegend,
+    legendPosition,
+    createdAt,
+    updatedAt,
+  };
+}
+
+/**
+ * Sanitize an array of chart configurations
+ */
+export function sanitizeChartConfigs(charts: ChartConfig[]): PublicChartConfig[] {
+  return charts.map(sanitizeChartConfig);
+}
+
+/**
+ * Check if the request is from an admin context
+ * This can be used to determine whether to return full or sanitized data
+ */
+export function isAdminRequest(request: Request): boolean {
+  // Check for admin authentication header
+  const adminAuth = request.headers.get('x-admin-auth');
+  if (adminAuth) {
+    // Verify admin token/session here
+    // For now, just check if it exists
+    return true;
+  }
+  
+  // Check if request is coming from admin pages
+  const referer = request.headers.get('referer');
+  if (referer && referer.includes('/admin/')) {
+    return true;
+  }
+  
+  // Default to non-admin (public)
+  return false;
+}

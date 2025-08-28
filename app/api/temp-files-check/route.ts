@@ -5,7 +5,7 @@ import path from 'path';
 export async function GET() {
   try {
     const chartDataDir = path.join(process.cwd(), 'public', 'temp', 'chart-data');
-    const chartConfigsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+    const chartConfigsDir = path.join(process.cwd(), 'server', 'chart-configs');
     
     const result = {
       chartDataExists: fs.existsSync(chartDataDir),

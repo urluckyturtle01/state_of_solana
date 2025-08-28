@@ -108,7 +108,7 @@ function generatePageTitle(title) {
 
 // Main function to generate SEO metadata
 async function generateSEOMetadata() {
-  const configsDir = path.join(process.cwd(), 'public', 'temp', 'chart-configs');
+  const configsDir = path.join(process.cwd(), 'server', 'chart-configs');
   const outputFile = path.join(process.cwd(), 'app', 'share', 'chart', 'seo-meta.ts');
   
   console.log('🔍 Reading chart configurations...');
