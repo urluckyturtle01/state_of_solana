@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// Extract all page IDs from temp configs
-const tempDir = path.join(__dirname, 'chart-configs');
+// Extract all page IDs from secure chart configs
+const tempDir = path.join(__dirname, '../../server/chart-configs');
 const dataDir = path.join(__dirname, 'chart-data');
 
 // Create data directory
