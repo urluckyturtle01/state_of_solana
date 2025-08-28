@@ -126,21 +126,35 @@ const getAllPageIds = () => {
 // Fetch all charts from the API
 async function fetchAllCharts() {
   try {
-    console.log('Fetching all charts from API...');
+    console.log('Fetching all charts from admin API...');
     
     // Use environment variable or fallback to local development URL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3000';
-    const apiUrl = `${baseUrl}/api/charts`;
+    const apiUrl = `${baseUrl}/api/admin/charts`;
     
-    console.log(`Using API URL: ${apiUrl}`);
-    const response = await fetch(apiUrl);
+    console.log(`Using admin API URL: ${apiUrl}`);
+    const response = await fetch(apiUrl, {
+      headers: {
+        'x-admin-auth': 'chart-fetch-script', // Admin authentication
+        'User-Agent': 'fetch-charts-script/1.0'
+      }
+    });
     
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`Admin API error: ${response.status} - ${response.statusText}`);
     }
     
     const data = await response.json();
-    console.log(`Retrieved ${data.charts?.length || 0} charts from API`);
+    console.log(`Retrieved ${data.charts?.length || 0} charts from admin API`);
+    
+    // Verify we got full chart data with sensitive fields
+    const firstChart = data.charts?.[0];
+    if (firstChart && !firstChart.apiEndpoint) {
+      console.warn('WARNING: Charts appear to be sanitized (missing apiEndpoint). This may cause issues.');
+    } else if (firstChart?.apiEndpoint) {
+      console.log('✅ Confirmed: Received full chart configurations with API endpoints');
+    }
+    
     return data.charts || [];
   } catch (error) {
     console.error('Error fetching charts:', error);
@@ -156,8 +170,8 @@ async function createPageConfigs() {
     
     console.log(`Processing ${allCharts.length} charts for ${allPageIds.length} pages...`);
     
-    // Create chart-configs directory if it doesn't exist
-    const configDir = path.join(__dirname, 'chart-configs');
+    // Create chart-configs directory in secure location if it doesn't exist
+    const configDir = path.join(process.cwd(), 'server', 'chart-configs');
     if (!fs.existsSync(configDir)) {
       fs.mkdirSync(configDir, { recursive: true });
     }

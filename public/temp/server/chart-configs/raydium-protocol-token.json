@@ -1,0 +1,194 @@
+{
+  "pageId": "raydium-protocol-token",
+  "pageName": "Protocol Token",
+  "chartCount": 6,
+  "lastUpdated": "2025-08-28T08:15:49.550Z",
+  "charts": [
+    {
+      "id": "chart_1749037046760_nob6d9c",
+      "title": "New And Churned Holders",
+      "subtitle": "Monthly tracker",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13510/results.json",
+      "apiKey": "WiNaoOIpQNzkitdVgt8CL68s8fasSmNcyq05i59b",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": [
+          {
+            "field": "Holders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "Last_Month_Churn",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "New_Holders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-04T11:37:26.760Z",
+      "updatedAt": "2025-07-11T08:41:07.759Z"
+    },
+    {
+      "id": "chart_1749037178794_cs8vi58",
+      "title": "RAY Price Stats",
+      "subtitle": "Monthly tracker",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13511/results.json",
+      "apiKey": "9roGSspeswcX8w34zVPyMAnzPIRLfXH028NaUPkx",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": [
+          {
+            "field": "Avg_price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "Max_Price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "Median_price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "Min_Price",
+            "type": "line",
+            "unit": "$"
+          },
+          {
+            "field": "Standard_Deviation",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-06-04T11:39:38.794Z",
+      "updatedAt": "2025-07-11T09:17:02.631Z"
+    },
+    {
+      "id": "chart_1749037709191_oujv8ri",
+      "title": "DEX Swap Volume",
+      "subtitle": "Protocol token swap volumes comparision stack chart",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13515/results.json",
+      "apiKey": "AKCFWScPiekq8W42PVdCth9spZ7rAGnj3ExV4JFn&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Dex_Volume",
+        "groupBy": "mint",
+        "yAxisUnit": "$"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-06-04T11:48:29.191Z",
+      "updatedAt": "2025-07-11T08:41:08.961Z"
+    },
+    {
+      "id": "chart_1749037824658_bm5v6nr",
+      "title": "RAY Token Marketcap",
+      "subtitle": "Raydium protocol token marketcap is a multiplication of the total circulating supply and the token price at any given time",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13507/results.json",
+      "apiKey": "xeRqDhuEHbbRRAF9EmejNcsmyaWvWky7U2mxs8rn&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Morketcap",
+        "groupBy": "",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-04T11:50:24.658Z",
+      "updatedAt": "2025-07-11T09:17:03.057Z"
+    },
+    {
+      "id": "chart_1749160564837_1xaej56",
+      "title": "CEX RAY Holdings",
+      "subtitle": "",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13538/results.json",
+      "apiKey": "Lk7wDbqzoVGpKevIXiCbz1ObtScuLId5cn9Ao4aa&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": [
+          {
+            "field": "Holdings",
+            "type": "line",
+            "unit": "RAY"
+          }
+        ],
+        "groupBy": "cex_name"
+      },
+      "createdAt": "2025-06-05T21:56:04.837Z",
+      "updatedAt": "2025-07-16T14:16:18.587Z"
+    },
+    {
+      "id": "chart_1749161870705_avg2sp4",
+      "title": "TVL In DEX Pools",
+      "subtitle": "",
+      "page": "raydium-protocol-token",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13516/results.json",
+      "apiKey": "Iy02dH2lQwx5qwGVK12Oow76LyjRtcM2mYOkeyqJ&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "amount_usd_in_pools",
+        "groupBy": "mint",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-05T22:17:50.705Z",
+      "updatedAt": "2025-07-11T08:41:12.597Z"
+    }
+  ]
+}

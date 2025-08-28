@@ -1,0 +1,52 @@
+{
+  "pageId": "sol-strategies-financials",
+  "pageName": "Financials",
+  "chartCount": 2,
+  "lastUpdated": "2025-08-28T08:15:49.555Z",
+  "charts": [
+    {
+      "id": "chart_1753531456410_my1lp1v",
+      "title": "Total Revenue By Validator",
+      "subtitle": "",
+      "page": "sol-strategies-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13924/results.json",
+      "apiKey": "V12RwFH3j528JtqRCl0xudwK0nWozKaHgsGX2hbr&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": "Revenue",
+        "groupBy": "validator"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-07-26T12:04:16.410Z",
+      "updatedAt": "2025-07-26T14:56:10.162Z"
+    },
+    {
+      "id": "chart_1753531928533_bynrkwp",
+      "title": "Treasury Stake",
+      "subtitle": "",
+      "page": "sol-strategies-financials",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13921/results.json",
+      "apiKey": "XMxY4A5H1MZqyDw3Ip96vxOtyN5hJMsknmZPcwUB&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": "treasury_Stake",
+        "groupBy": "",
+        "yAxisUnit": "SOL"
+      },
+      "createdAt": "2025-07-26T12:12:08.533Z",
+      "updatedAt": "2025-07-26T12:12:08.710Z"
+    }
+  ]
+}

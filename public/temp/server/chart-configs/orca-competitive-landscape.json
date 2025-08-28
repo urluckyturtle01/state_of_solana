@@ -1,0 +1,80 @@
+{
+  "pageId": "orca-competitive-landscape",
+  "pageName": "orca-competitive-landscape",
+  "chartCount": 2,
+  "lastUpdated": "2025-08-28T08:15:49.556Z",
+  "charts": [
+    {
+      "id": "chart_1749889214920_nvk4q37",
+      "title": "DEX Volume",
+      "subtitle": "",
+      "page": "orca-competitive-landscape",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13549/results.json",
+      "apiKey": "sU79XR6BdxIgJqw2YLwSkKRJbu0FXjdGqv3imwsL&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume_usd",
+        "groupBy": "dex",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-14T08:20:14.920Z",
+      "updatedAt": "2025-07-11T08:42:14.096Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1749889430822_8q4rpe5",
+      "title": "Protocol Revenue",
+      "subtitle": "",
+      "page": "orca-competitive-landscape",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13572/results.json",
+      "apiKey": "fHHviCSS1CYRIHkosGuB7JXjDlgpJUsL2NSRv5n8&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Protocol_fees",
+        "groupBy": "Project",
+        "yAxisUnit": "$"
+      },
+      "createdAt": "2025-06-14T08:23:50.822Z",
+      "updatedAt": "2025-07-11T08:42:14.712Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
