@@ -171,7 +171,7 @@ async function createPageConfigs() {
     console.log(`Processing ${allCharts.length} charts for ${allPageIds.length} pages...`);
     
     // Create chart-configs directory in secure location if it doesn't exist
-    const configDir = path.join(process.cwd(), 'server', 'chart-configs');
+    const configDir = path.join('/root/state_of_solana', 'server', 'chart-configs');
     if (!fs.existsSync(configDir)) {
       fs.mkdirSync(configDir, { recursive: true });
     }
