@@ -1,8 +1,8 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "chartCount": 9,
-  "lastUpdated": "2025-08-23T13:14:27.276Z",
+  "chartCount": 8,
+  "lastUpdated": "2025-08-29T13:43:23.794Z",
   "charts": [
     {
       "id": "chart_1748087823998_ru1ktw2",
@@ -13,37 +13,6 @@
       "chartType": "bar",
       "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13446/results.json",
       "apiKey": "1aLYPZuX8Lq4nGINkeibVqOmujWcw7oDnydJ1OwT",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "compute_txns",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "non_compute_txns",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "createdAt": "2025-05-24T11:57:03.998Z",
-      "updatedAt": "2025-07-11T08:40:23.235Z"
-    },
-    {
-      "id": "chart_1748088263791_vfj94hw",
-      "title": "Daily Compute Budget Usage - In Percentage",
-      "subtitle": "last 30 days",
-      "page": "compute-units",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/13446/results.json",
-      "apiKey": "1aLYPZuX8Lq4nGINkeibVqOmujWcw7oDnydJ1OwT&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
       "width": 2,
@@ -51,20 +20,20 @@
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "compute_txns",
+            "field": "explicit_cu_txns",
             "type": "bar",
             "unit": ""
           },
           {
-            "field": "non_compute_txns",
+            "field": "default_cu_txns",
             "type": "bar",
             "unit": ""
           }
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-05-24T12:04:23.791Z",
-      "updatedAt": "2025-07-11T08:40:25.035Z"
+      "createdAt": "2025-05-24T11:57:03.998Z",
+      "updatedAt": "2025-08-29T13:35:31.526Z"
     },
     {
       "id": "chart_1748088783904_hypf57i",
@@ -126,19 +95,10 @@
       "apiKey": "enfT00LNZEyisrWZh1mcgCLaPvcddY6r4nqlyN5J",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
-          {
-            "field": "99.99 percentile compute unit price",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "99 percentile compute unit price",
-            "type": "line",
-            "unit": ""
-          },
           {
             "field": "avg_compute_unit_price",
             "type": "line",
@@ -153,7 +113,7 @@
         "groupBy": ""
       },
       "createdAt": "2025-05-24T12:24:43.199Z",
-      "updatedAt": "2025-07-11T08:40:26.847Z"
+      "updatedAt": "2025-08-29T13:21:24.030Z"
     },
     {
       "id": "chart_1748201111110_el5y1pn",
@@ -183,7 +143,7 @@
     {
       "id": "chart_1748201257936_m7dwpx7",
       "title": "Cu Consumed By Ecosystem",
-      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "subtitle": "solana native programs excluded",
       "page": "compute-units",
       "section": "",
       "chartType": "bar",
@@ -191,18 +151,19 @@
       "apiKey": "myAJgSU2nhoxFvmgmgSJRY08ecwK59QIkw4xs44T",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "partition_0",
         "yAxis": "total_cu_consumed",
         "groupBy": "category"
       },
       "createdAt": "2025-05-25T19:27:37.936Z",
-      "updatedAt": "2025-07-11T08:40:32.481Z"
+      "updatedAt": "2025-08-29T13:22:43.059Z"
     },
     {
       "id": "chart_1748201444923_71ydpwe",
       "title": "Cu Consumed By Ecosystem - Last 30 Days",
-      "subtitle": "Includes all non-vote transactions (successful and failed)",
+      "subtitle": "solana native programs excluded",
       "page": "compute-units",
       "section": "",
       "chartType": "pie",
@@ -210,13 +171,14 @@
       "apiKey": "YuPnlyIpkHRQgCUHIsAWdWNTC1JmjOVgOVhdjNcs",
       "isStacked": false,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "category",
         "yAxis": "total_cu_consumed",
         "groupBy": ""
       },
       "createdAt": "2025-05-25T19:30:44.923Z",
-      "updatedAt": "2025-07-11T08:40:33.088Z"
+      "updatedAt": "2025-08-29T13:23:17.611Z"
     },
     {
       "id": "chart_1754571653621_zxb33yh",
