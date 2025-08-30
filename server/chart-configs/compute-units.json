@@ -1,8 +1,8 @@
 {
   "pageId": "compute-units",
   "pageName": "Compute Units",
-  "chartCount": 8,
-  "lastUpdated": "2025-08-29T13:43:23.794Z",
+  "chartCount": 9,
+  "lastUpdated": "2025-08-30T10:53:34.497Z",
   "charts": [
     {
       "id": "chart_1748087823998_ru1ktw2",
@@ -202,6 +202,37 @@
       },
       "createdAt": "2025-08-07T13:00:53.621Z",
       "updatedAt": "2025-08-23T13:14:10.169Z"
+    },
+    {
+      "id": "chart_1756550725763_wfnmuln",
+      "title": "Cu Consumed Vs Cu Allocated",
+      "subtitle": "",
+      "page": "compute-units",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/tl-research/api/queries/14065/results.json",
+      "apiKey": "RvaVvQbK1tT5swXRD9qXl8yoOju0uasiQ48Rsh7G&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "compute_units_consumed",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "compute_units_allocated",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-08-30T10:45:25.763Z",
+      "updatedAt": "2025-08-30T10:45:25.973Z"
     }
   ]
 }
