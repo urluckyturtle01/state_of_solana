@@ -64,13 +64,24 @@ export default function ClientChartPage() {
           return;
         }
 
-        // Fetch chart config
+        console.log('Fetching chart config for ID:', chartId);
+
+        // Fetch chart config (sanitized for security)
         const response = await fetch(`/api/charts/${chartId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch chart: ${response.statusText}`);
         }
 
         const chartData = await response.json();
+        console.log('Chart config loaded (sanitized):', chartData.title);
+        
+        // For share charts, redirect API calls to secure proxy
+        if (!chartData.apiEndpoint) {
+          chartData.apiEndpoint = `${window.location.origin}/api/chart-data/${chartId}`;
+          chartData.apiKey = ''; // No key needed for proxy
+          console.log('Using secure proxy for chart data:', chartData.apiEndpoint);
+        }
+        
         setChart(chartData);
 
         // Initialize filter values from URL params or defaults

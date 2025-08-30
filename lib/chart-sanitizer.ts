@@ -88,23 +88,23 @@ export function sanitizeChartConfigs(charts: ChartConfig[]): PublicChartConfig[]
 
 /**
  * Check if the request is from an admin context
- * This can be used to determine whether to return full or sanitized data
+ * Share charts should NOT get unsanitized data for security
  */
 export function isAdminRequest(request: Request): boolean {
   // Check for admin authentication header
   const adminAuth = request.headers.get('x-admin-auth');
-  if (adminAuth) {
+  if (adminAuth && adminAuth !== 'share-chart-request') {
     // Verify admin token/session here
-    // For now, just check if it exists
+    // For now, just check if it exists and is not a share chart request
     return true;
   }
   
-  // Check if request is coming from admin pages
+  // Check if request is coming from admin pages only
   const referer = request.headers.get('referer');
   if (referer && referer.includes('/admin/')) {
     return true;
   }
   
-  // Default to non-admin (public)
+  // Default to non-admin (public) - share charts get sanitized data
   return false;
 }
