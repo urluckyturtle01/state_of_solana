@@ -1,7 +1,7 @@
 {
   "pageId": "xstocks-traction",
   "pageName": "Traction",
-  "fetchedAt": "2025-08-30T02:58:23.307Z",
+  "fetchedAt": "2025-08-30T03:33:04.703Z",
   "charts": [
     {
       "success": true,
@@ -597,7 +597,7 @@
           "cumulative_volume": 1337871.563352173
         }
       ],
-      "timestamp": 1756522697357,
+      "timestamp": 1756524779179,
       "chartId": "chart_1752486222398_v7cmsr7",
       "title": "Volume"
     },
@@ -1195,7 +1195,7 @@
           "cumulative_volume": 1337871.563352173
         }
       ],
-      "timestamp": 1756522697379,
+      "timestamp": 1756524779178,
       "chartId": "chart_1752486294207_1hlhva0",
       "title": "Trades"
     },
@@ -1793,7 +1793,7 @@
           "cumulative_volume": 1337871.563352173
         }
       ],
-      "timestamp": 1756522697386,
+      "timestamp": 1756524779177,
       "chartId": "chart_1752486427191_pqc1bpr",
       "title": "Daily Active And New Traders"
     },
@@ -1801,116 +1801,340 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-08-29",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 13,
+          "volume_usd": 2058.855543134364
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MSTRx",
+          "trades": 1672,
+          "traders": 217,
+          "volume_usd": 284620.18640319834
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "CRCLx",
+          "trades": 1488,
+          "traders": 243,
+          "volume_usd": 241587.68086868612
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMBRx",
+          "trades": 9,
+          "traders": 6,
+          "volume_usd": 2700.9639100673808
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 0.006126630785352419
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "NVDAx",
+          "trades": 2865,
+          "traders": 323,
+          "volume_usd": 265725.7849913577
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GLDx",
+          "trades": 42,
+          "traders": 18,
+          "volume_usd": 2291.0523691879607
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "HOODx",
+          "trades": 123,
+          "traders": 43,
+          "volume_usd": 8460.764747807178
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMZNx",
+          "trades": 207,
+          "traders": 50,
+          "volume_usd": 6146.078778896054
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "QQQx",
+          "trades": 1253,
+          "traders": 142,
+          "volume_usd": 926834.5166051771
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GOOGLx",
+          "trades": 1035,
+          "traders": 99,
+          "volume_usd": 68502.74135484142
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "SPYx",
+          "trades": 5117,
+          "traders": 801,
+          "volume_usd": 1203185.3164554574
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "METAx",
+          "trades": 24,
+          "traders": 19,
+          "volume_usd": 755.7214620257782
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "APPLx",
+          "trades": 770,
+          "traders": 72,
+          "volume_usd": 23562.16732946348
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "TSLAx",
+          "trades": 4767,
+          "traders": 923,
+          "volume_usd": 1231871.960994775
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "DFDVx",
+          "trades": 58,
+          "traders": 37,
+          "volume_usd": 3019.056305560005
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 16,
+          "volume_usd": 3383.091055627578
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMBRx",
+          "trades": 5,
+          "traders": 3,
+          "volume_usd": 554.1528375799284
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 4.13004981283976
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "HOODx",
+          "trades": 104,
+          "traders": 46,
+          "volume_usd": 31189.164112160954
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "QQQx",
+          "trades": 885,
+          "traders": 82,
+          "volume_usd": 237049.37992559758
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GLDx",
+          "trades": 88,
+          "traders": 29,
+          "volume_usd": 4266.76102231985
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "TSLAx",
+          "trades": 4320,
+          "traders": 942,
+          "volume_usd": 1074041.3368238476
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "APPLx",
+          "trades": 769,
+          "traders": 116,
+          "volume_usd": 42767.549128280116
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMZNx",
+          "trades": 226,
+          "traders": 74,
+          "volume_usd": 27728.394457326736
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "NVDAx",
+          "trades": 3294,
+          "traders": 455,
+          "volume_usd": 465124.84193947696
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GOOGLx",
+          "trades": 754,
+          "traders": 111,
+          "volume_usd": 60844.75959277509
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MSTRx",
+          "trades": 1311,
+          "traders": 183,
+          "volume_usd": 204437.63563715247
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "CRCLx",
+          "trades": 859,
+          "traders": 146,
+          "volume_usd": 165448.611137392
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "DFDVx",
+          "trades": 47,
+          "traders": 33,
+          "volume_usd": 1888.7599606801266
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "SPYx",
+          "trades": 2992,
+          "traders": 277,
+          "volume_usd": 385212.76785188
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "METAx",
+          "trades": 101,
+          "traders": 43,
+          "volume_usd": 21452.792237508966
+        },
+        {
           "block_date": "2025-08-27",
           "mint": "SPYx",
           "trades": 3204,
           "traders": 254,
-          "volume_usd": 441724.93771884346
+          "volume_usd": 441724.93771884363
         },
         {
           "block_date": "2025-08-27",
           "mint": "MSTRx",
           "trades": 1508,
           "traders": 164,
-          "volume_usd": 644629.037271889
+          "volume_usd": 644629.0372718896
         },
         {
           "block_date": "2025-08-27",
           "mint": "DFDVx",
           "trades": 134,
           "traders": 58,
-          "volume_usd": 7614.787472126092
+          "volume_usd": 7614.787472126098
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMZNx",
           "trades": 202,
           "traders": 64,
-          "volume_usd": 4941.314318925674
+          "volume_usd": 4941.314318925679
         },
         {
           "block_date": "2025-08-27",
           "mint": "MCDx",
           "trades": 5,
           "traders": 4,
-          "volume_usd": 5.099490597614637
+          "volume_usd": 5.099490597614642
         },
         {
           "block_date": "2025-08-27",
           "mint": "CRCLx",
           "trades": 788,
           "traders": 126,
-          "volume_usd": 65642.19852266918
+          "volume_usd": 65642.19852266922
         },
         {
           "block_date": "2025-08-27",
           "mint": "HOODx",
           "trades": 171,
           "traders": 58,
-          "volume_usd": 41910.025371537595
+          "volume_usd": 41910.025371537624
         },
         {
           "block_date": "2025-08-27",
           "mint": "QQQx",
           "trades": 919,
           "traders": 62,
-          "volume_usd": 125938.8315602534
+          "volume_usd": 125938.83156025353
         },
         {
           "block_date": "2025-08-27",
           "mint": "GLDx",
           "trades": 85,
           "traders": 31,
-          "volume_usd": 4198.560215134545
+          "volume_usd": 4198.560215134547
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMBRx",
           "trades": 10,
           "traders": 8,
-          "volume_usd": 2147.173487402295
+          "volume_usd": 2147.173487402297
         },
         {
           "block_date": "2025-08-27",
           "mint": "NVDAx",
           "trades": 3199,
           "traders": 509,
-          "volume_usd": 431411.81500240247
+          "volume_usd": 431411.8150024028
         },
         {
           "block_date": "2025-08-27",
           "mint": "GOOGLx",
           "trades": 963,
           "traders": 141,
-          "volume_usd": 82404.16130156368
+          "volume_usd": 82404.16130156371
         },
         {
           "block_date": "2025-08-27",
           "mint": "METAx",
           "trades": 38,
           "traders": 28,
-          "volume_usd": 303.38817923776924
+          "volume_usd": 303.3881792377695
         },
         {
           "block_date": "2025-08-27",
           "mint": "APPLx",
           "trades": 602,
           "traders": 102,
-          "volume_usd": 15492.507110774202
+          "volume_usd": 15492.507110774219
         },
         {
           "block_date": "2025-08-27",
           "mint": "COINx",
           "trades": 32,
           "traders": 23,
-          "volume_usd": 1553.2129710723198
+          "volume_usd": 1553.212971072321
         },
         {
           "block_date": "2025-08-27",
           "mint": "TSLAx",
           "trades": 4431,
           "traders": 719,
-          "volume_usd": 1119611.562474593
+          "volume_usd": 1119611.5624745938
         },
         {
           "block_date": "2025-08-26",
@@ -8115,7 +8339,7 @@
           "volume_usd": 404928.0522869248
         }
       ],
-      "timestamp": 1756522698482,
+      "timestamp": 1756524780230,
       "chartId": "chart_1752486715831_0cf8zfz",
       "title": "Volume By Asset"
     },
@@ -8123,116 +8347,340 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-08-29",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 13,
+          "volume_usd": 2058.855543134364
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MSTRx",
+          "trades": 1672,
+          "traders": 217,
+          "volume_usd": 284620.18640319834
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "CRCLx",
+          "trades": 1488,
+          "traders": 243,
+          "volume_usd": 241587.68086868612
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMBRx",
+          "trades": 9,
+          "traders": 6,
+          "volume_usd": 2700.9639100673808
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 0.006126630785352419
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "NVDAx",
+          "trades": 2865,
+          "traders": 323,
+          "volume_usd": 265725.7849913577
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GLDx",
+          "trades": 42,
+          "traders": 18,
+          "volume_usd": 2291.0523691879607
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "HOODx",
+          "trades": 123,
+          "traders": 43,
+          "volume_usd": 8460.764747807178
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMZNx",
+          "trades": 207,
+          "traders": 50,
+          "volume_usd": 6146.078778896054
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "QQQx",
+          "trades": 1253,
+          "traders": 142,
+          "volume_usd": 926834.5166051771
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GOOGLx",
+          "trades": 1035,
+          "traders": 99,
+          "volume_usd": 68502.74135484142
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "SPYx",
+          "trades": 5117,
+          "traders": 801,
+          "volume_usd": 1203185.3164554574
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "METAx",
+          "trades": 24,
+          "traders": 19,
+          "volume_usd": 755.7214620257782
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "APPLx",
+          "trades": 770,
+          "traders": 72,
+          "volume_usd": 23562.16732946348
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "TSLAx",
+          "trades": 4767,
+          "traders": 923,
+          "volume_usd": 1231871.960994775
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "DFDVx",
+          "trades": 58,
+          "traders": 37,
+          "volume_usd": 3019.056305560005
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 16,
+          "volume_usd": 3383.091055627578
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMBRx",
+          "trades": 5,
+          "traders": 3,
+          "volume_usd": 554.1528375799284
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 4.13004981283976
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "HOODx",
+          "trades": 104,
+          "traders": 46,
+          "volume_usd": 31189.164112160954
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "QQQx",
+          "trades": 885,
+          "traders": 82,
+          "volume_usd": 237049.37992559758
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GLDx",
+          "trades": 88,
+          "traders": 29,
+          "volume_usd": 4266.76102231985
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "TSLAx",
+          "trades": 4320,
+          "traders": 942,
+          "volume_usd": 1074041.3368238476
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "APPLx",
+          "trades": 769,
+          "traders": 116,
+          "volume_usd": 42767.549128280116
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMZNx",
+          "trades": 226,
+          "traders": 74,
+          "volume_usd": 27728.394457326736
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "NVDAx",
+          "trades": 3294,
+          "traders": 455,
+          "volume_usd": 465124.84193947696
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GOOGLx",
+          "trades": 754,
+          "traders": 111,
+          "volume_usd": 60844.75959277509
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MSTRx",
+          "trades": 1311,
+          "traders": 183,
+          "volume_usd": 204437.63563715247
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "CRCLx",
+          "trades": 859,
+          "traders": 146,
+          "volume_usd": 165448.611137392
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "DFDVx",
+          "trades": 47,
+          "traders": 33,
+          "volume_usd": 1888.7599606801266
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "SPYx",
+          "trades": 2992,
+          "traders": 277,
+          "volume_usd": 385212.76785188
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "METAx",
+          "trades": 101,
+          "traders": 43,
+          "volume_usd": 21452.792237508966
+        },
+        {
           "block_date": "2025-08-27",
           "mint": "SPYx",
           "trades": 3204,
           "traders": 254,
-          "volume_usd": 441724.93771884346
+          "volume_usd": 441724.93771884363
         },
         {
           "block_date": "2025-08-27",
           "mint": "MSTRx",
           "trades": 1508,
           "traders": 164,
-          "volume_usd": 644629.037271889
+          "volume_usd": 644629.0372718896
         },
         {
           "block_date": "2025-08-27",
           "mint": "DFDVx",
           "trades": 134,
           "traders": 58,
-          "volume_usd": 7614.787472126092
+          "volume_usd": 7614.787472126098
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMZNx",
           "trades": 202,
           "traders": 64,
-          "volume_usd": 4941.314318925674
+          "volume_usd": 4941.314318925679
         },
         {
           "block_date": "2025-08-27",
           "mint": "MCDx",
           "trades": 5,
           "traders": 4,
-          "volume_usd": 5.099490597614637
+          "volume_usd": 5.099490597614642
         },
         {
           "block_date": "2025-08-27",
           "mint": "CRCLx",
           "trades": 788,
           "traders": 126,
-          "volume_usd": 65642.19852266918
+          "volume_usd": 65642.19852266922
         },
         {
           "block_date": "2025-08-27",
           "mint": "HOODx",
           "trades": 171,
           "traders": 58,
-          "volume_usd": 41910.025371537595
+          "volume_usd": 41910.025371537624
         },
         {
           "block_date": "2025-08-27",
           "mint": "QQQx",
           "trades": 919,
           "traders": 62,
-          "volume_usd": 125938.8315602534
+          "volume_usd": 125938.83156025353
         },
         {
           "block_date": "2025-08-27",
           "mint": "GLDx",
           "trades": 85,
           "traders": 31,
-          "volume_usd": 4198.560215134545
+          "volume_usd": 4198.560215134547
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMBRx",
           "trades": 10,
           "traders": 8,
-          "volume_usd": 2147.173487402295
+          "volume_usd": 2147.173487402297
         },
         {
           "block_date": "2025-08-27",
           "mint": "NVDAx",
           "trades": 3199,
           "traders": 509,
-          "volume_usd": 431411.81500240247
+          "volume_usd": 431411.8150024028
         },
         {
           "block_date": "2025-08-27",
           "mint": "GOOGLx",
           "trades": 963,
           "traders": 141,
-          "volume_usd": 82404.16130156368
+          "volume_usd": 82404.16130156371
         },
         {
           "block_date": "2025-08-27",
           "mint": "METAx",
           "trades": 38,
           "traders": 28,
-          "volume_usd": 303.38817923776924
+          "volume_usd": 303.3881792377695
         },
         {
           "block_date": "2025-08-27",
           "mint": "APPLx",
           "trades": 602,
           "traders": 102,
-          "volume_usd": 15492.507110774202
+          "volume_usd": 15492.507110774219
         },
         {
           "block_date": "2025-08-27",
           "mint": "COINx",
           "trades": 32,
           "traders": 23,
-          "volume_usd": 1553.2129710723198
+          "volume_usd": 1553.212971072321
         },
         {
           "block_date": "2025-08-27",
           "mint": "TSLAx",
           "trades": 4431,
           "traders": 719,
-          "volume_usd": 1119611.562474593
+          "volume_usd": 1119611.5624745938
         },
         {
           "block_date": "2025-08-26",
@@ -14437,7 +14885,7 @@
           "volume_usd": 404928.0522869248
         }
       ],
-      "timestamp": 1756522698549,
+      "timestamp": 1756524780229,
       "chartId": "chart_1752486788838_5hask29",
       "title": "Traders By Asset"
     },
@@ -14445,116 +14893,340 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-08-29",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 13,
+          "volume_usd": 2058.855543134364
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MSTRx",
+          "trades": 1672,
+          "traders": 217,
+          "volume_usd": 284620.18640319834
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "CRCLx",
+          "trades": 1488,
+          "traders": 243,
+          "volume_usd": 241587.68086868612
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMBRx",
+          "trades": 9,
+          "traders": 6,
+          "volume_usd": 2700.9639100673808
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 0.006126630785352419
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "NVDAx",
+          "trades": 2865,
+          "traders": 323,
+          "volume_usd": 265725.7849913577
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GLDx",
+          "trades": 42,
+          "traders": 18,
+          "volume_usd": 2291.0523691879607
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "HOODx",
+          "trades": 123,
+          "traders": 43,
+          "volume_usd": 8460.764747807178
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "AMZNx",
+          "trades": 207,
+          "traders": 50,
+          "volume_usd": 6146.078778896054
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "QQQx",
+          "trades": 1253,
+          "traders": 142,
+          "volume_usd": 926834.5166051771
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "GOOGLx",
+          "trades": 1035,
+          "traders": 99,
+          "volume_usd": 68502.74135484142
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "SPYx",
+          "trades": 5117,
+          "traders": 801,
+          "volume_usd": 1203185.3164554574
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "METAx",
+          "trades": 24,
+          "traders": 19,
+          "volume_usd": 755.7214620257782
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "APPLx",
+          "trades": 770,
+          "traders": 72,
+          "volume_usd": 23562.16732946348
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "TSLAx",
+          "trades": 4767,
+          "traders": 923,
+          "volume_usd": 1231871.960994775
+        },
+        {
+          "block_date": "2025-08-29",
+          "mint": "DFDVx",
+          "trades": 58,
+          "traders": 37,
+          "volume_usd": 3019.056305560005
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "COINx",
+          "trades": 26,
+          "traders": 16,
+          "volume_usd": 3383.091055627578
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMBRx",
+          "trades": 5,
+          "traders": 3,
+          "volume_usd": 554.1528375799284
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MCDx",
+          "trades": 1,
+          "traders": 1,
+          "volume_usd": 4.13004981283976
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "HOODx",
+          "trades": 104,
+          "traders": 46,
+          "volume_usd": 31189.164112160954
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "QQQx",
+          "trades": 885,
+          "traders": 82,
+          "volume_usd": 237049.37992559758
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GLDx",
+          "trades": 88,
+          "traders": 29,
+          "volume_usd": 4266.76102231985
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "TSLAx",
+          "trades": 4320,
+          "traders": 942,
+          "volume_usd": 1074041.3368238476
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "APPLx",
+          "trades": 769,
+          "traders": 116,
+          "volume_usd": 42767.549128280116
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "AMZNx",
+          "trades": 226,
+          "traders": 74,
+          "volume_usd": 27728.394457326736
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "NVDAx",
+          "trades": 3294,
+          "traders": 455,
+          "volume_usd": 465124.84193947696
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "GOOGLx",
+          "trades": 754,
+          "traders": 111,
+          "volume_usd": 60844.75959277509
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "MSTRx",
+          "trades": 1311,
+          "traders": 183,
+          "volume_usd": 204437.63563715247
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "CRCLx",
+          "trades": 859,
+          "traders": 146,
+          "volume_usd": 165448.611137392
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "DFDVx",
+          "trades": 47,
+          "traders": 33,
+          "volume_usd": 1888.7599606801266
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "SPYx",
+          "trades": 2992,
+          "traders": 277,
+          "volume_usd": 385212.76785188
+        },
+        {
+          "block_date": "2025-08-28",
+          "mint": "METAx",
+          "trades": 101,
+          "traders": 43,
+          "volume_usd": 21452.792237508966
+        },
+        {
           "block_date": "2025-08-27",
           "mint": "SPYx",
           "trades": 3204,
           "traders": 254,
-          "volume_usd": 441724.93771884346
+          "volume_usd": 441724.93771884363
         },
         {
           "block_date": "2025-08-27",
           "mint": "MSTRx",
           "trades": 1508,
           "traders": 164,
-          "volume_usd": 644629.037271889
+          "volume_usd": 644629.0372718896
         },
         {
           "block_date": "2025-08-27",
           "mint": "DFDVx",
           "trades": 134,
           "traders": 58,
-          "volume_usd": 7614.787472126092
+          "volume_usd": 7614.787472126098
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMZNx",
           "trades": 202,
           "traders": 64,
-          "volume_usd": 4941.314318925674
+          "volume_usd": 4941.314318925679
         },
         {
           "block_date": "2025-08-27",
           "mint": "MCDx",
           "trades": 5,
           "traders": 4,
-          "volume_usd": 5.099490597614637
+          "volume_usd": 5.099490597614642
         },
         {
           "block_date": "2025-08-27",
           "mint": "CRCLx",
           "trades": 788,
           "traders": 126,
-          "volume_usd": 65642.19852266918
+          "volume_usd": 65642.19852266922
         },
         {
           "block_date": "2025-08-27",
           "mint": "HOODx",
           "trades": 171,
           "traders": 58,
-          "volume_usd": 41910.025371537595
+          "volume_usd": 41910.025371537624
         },
         {
           "block_date": "2025-08-27",
           "mint": "QQQx",
           "trades": 919,
           "traders": 62,
-          "volume_usd": 125938.8315602534
+          "volume_usd": 125938.83156025353
         },
         {
           "block_date": "2025-08-27",
           "mint": "GLDx",
           "trades": 85,
           "traders": 31,
-          "volume_usd": 4198.560215134545
+          "volume_usd": 4198.560215134547
         },
         {
           "block_date": "2025-08-27",
           "mint": "AMBRx",
           "trades": 10,
           "traders": 8,
-          "volume_usd": 2147.173487402295
+          "volume_usd": 2147.173487402297
         },
         {
           "block_date": "2025-08-27",
           "mint": "NVDAx",
           "trades": 3199,
           "traders": 509,
-          "volume_usd": 431411.81500240247
+          "volume_usd": 431411.8150024028
         },
         {
           "block_date": "2025-08-27",
           "mint": "GOOGLx",
           "trades": 963,
           "traders": 141,
-          "volume_usd": 82404.16130156368
+          "volume_usd": 82404.16130156371
         },
         {
           "block_date": "2025-08-27",
           "mint": "METAx",
           "trades": 38,
           "traders": 28,
-          "volume_usd": 303.38817923776924
+          "volume_usd": 303.3881792377695
         },
         {
           "block_date": "2025-08-27",
           "mint": "APPLx",
           "trades": 602,
           "traders": 102,
-          "volume_usd": 15492.507110774202
+          "volume_usd": 15492.507110774219
         },
         {
           "block_date": "2025-08-27",
           "mint": "COINx",
           "trades": 32,
           "traders": 23,
-          "volume_usd": 1553.2129710723198
+          "volume_usd": 1553.212971072321
         },
         {
           "block_date": "2025-08-27",
           "mint": "TSLAx",
           "trades": 4431,
           "traders": 719,
-          "volume_usd": 1119611.562474593
+          "volume_usd": 1119611.5624745938
         },
         {
           "block_date": "2025-08-26",
@@ -20759,7 +21431,7 @@
           "volume_usd": 404928.0522869248
         }
       ],
-      "timestamp": 1756522698509,
+      "timestamp": 1756524780232,
       "chartId": "chart_1752486854131_9a62cde",
       "title": "Trades By Asset"
     },
@@ -20887,7 +21559,7 @@
           "% volume": 1.9352367772662566
         }
       ],
-      "timestamp": 1756522699598,
+      "timestamp": 1756524781262,
       "chartId": "chart_1752487914985_zk78fao",
       "title": "Volume By Hour"
     },
@@ -20930,7 +21602,7 @@
           "% volume": 6.156775518510684
         }
       ],
-      "timestamp": 1756522699601,
+      "timestamp": 1756524781287,
       "chartId": "chart_1752487998859_7r1mzvj",
       "title": "Volume By Day Of Week"
     },
@@ -21231,7 +21903,7 @@
           "parameters": {
             "Symbol": "SPY"
           },
-          "timestamp": 1756522699610
+          "timestamp": 1756524781271
         },
         {
           "data": [
@@ -21527,7 +22199,7 @@
           "parameters": {
             "Symbol": "TSLA"
           },
-          "timestamp": 1756522699862
+          "timestamp": 1756524781502
         },
         {
           "data": [
@@ -21823,7 +22495,7 @@
           "parameters": {
             "Symbol": "MSTR"
           },
-          "timestamp": 1756522700112
+          "timestamp": 1756524781735
         },
         {
           "data": [
@@ -22119,7 +22791,7 @@
           "parameters": {
             "Symbol": "CRCL"
           },
-          "timestamp": 1756522700359
+          "timestamp": 1756524781965
         },
         {
           "data": [
@@ -22415,7 +23087,7 @@
           "parameters": {
             "Symbol": "AAPL"
           },
-          "timestamp": 1756522700608
+          "timestamp": 1756524782194
         },
         {
           "data": [
@@ -22703,7 +23375,7 @@
           "parameters": {
             "Symbol": "META"
           },
-          "timestamp": 1756522700859
+          "timestamp": 1756524782426
         },
         {
           "data": [
@@ -22991,7 +23663,7 @@
           "parameters": {
             "Symbol": "QQQ"
           },
-          "timestamp": 1756522701109
+          "timestamp": 1756524782655
         },
         {
           "data": [
@@ -23263,7 +23935,7 @@
           "parameters": {
             "Symbol": "COIN"
           },
-          "timestamp": 1756522701358
+          "timestamp": 1756524782884
         },
         {
           "data": [
@@ -23559,7 +24231,7 @@
           "parameters": {
             "Symbol": "NVDA"
           },
-          "timestamp": 1756522701609
+          "timestamp": 1756524783117
         },
         {
           "data": [
@@ -23847,7 +24519,7 @@
           "parameters": {
             "Symbol": "GOOGL"
           },
-          "timestamp": 1756522701859
+          "timestamp": 1756524783347
         },
         {
           "data": [
@@ -24135,7 +24807,7 @@
           "parameters": {
             "Symbol": "AMZN"
           },
-          "timestamp": 1756522702108
+          "timestamp": 1756524783576
         },
         {
           "data": [
@@ -24351,7 +25023,7 @@
           "parameters": {
             "Symbol": "MCD"
           },
-          "timestamp": 1756522702357
+          "timestamp": 1756524783808
         },
         {
           "data": [
@@ -24623,7 +25295,7 @@
           "parameters": {
             "Symbol": "HOOD"
           },
-          "timestamp": 1756522702609
+          "timestamp": 1756524784039
         },
         {
           "data": [
@@ -24895,7 +25567,7 @@
           "parameters": {
             "Symbol": "DFDV"
           },
-          "timestamp": 1756522702858
+          "timestamp": 1756524784267
         },
         {
           "data": [
@@ -25159,7 +25831,7 @@
           "parameters": {
             "Symbol": "AMBR"
           },
-          "timestamp": 1756522703106
+          "timestamp": 1756524784502
         }
       ],
       "data": [
@@ -25452,7 +26124,7 @@
           "%_discount": -0.1254031202980177
         }
       ],
-      "timestamp": 1756522703307,
+      "timestamp": 1756524784703,
       "chartId": "chart_1752572568145_dm7r0kq",
       "title": "Comparision Of Onchain & Offchain Prices",
       "parameters": {
