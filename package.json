@@ -22,10 +22,12 @@
     "seo:pages": "node scripts/update-all-seo.js --pages-only",
     "seo:charts": "node scripts/update-all-seo.js --charts-only",
     "seo:sitemap": "node scripts/generate-sitemap.js",
-    "seo:help": "node scripts/update-all-seo.js --help"
+    "seo:help": "node scripts/update-all-seo.js --help",
+    "summaries:generate": "node scripts/generate-chart-summaries.js",
+    "summaries:help": "echo 'Generates 5 AI summary versions for all charts and stores them in S3'"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.821.0",
+    "@aws-sdk/client-s3": "^3.879.0",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.8.2",
     "@tailwindcss/typography": "^0.5.16",
@@ -42,6 +44,7 @@
     "@visx/shape": "^3.12.0",
     "@visx/xychart": "^3.12.0",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
     "google-auth-library": "^9.15.1",
     "google-spreadsheet": "^4.1.4",
     "gsap": "^3.13.0",
@@ -49,7 +52,7 @@
     "next": "14.2.0",
     "next-auth": "^4.24.11",
     "node-fetch": "^3.3.2",
-    "openai": "^5.13.1",
+    "openai": "^5.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^10.1.0",

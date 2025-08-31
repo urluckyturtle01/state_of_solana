@@ -10,6 +10,35 @@ import html2canvas from 'html2canvas';
 import ReactMarkdown from 'react-markdown';
 import { getTrendIcon, cleanTrendText, getTrendColor } from './TrendIcons';
 
+// Helper function to extract text content from React children for trend detection
+const extractTextFromChildren = (children: React.ReactNode): string => {
+  return React.Children.toArray(children)
+    .map(child => {
+      if (typeof child === 'string') {
+        return child;
+      } else if (React.isValidElement(child) && child.props.children) {
+        return extractTextFromChildren(child.props.children);
+      }
+      return '';
+    })
+    .join('');
+};
+
+// Helper function to clean trend tags from React children while preserving structure
+const cleanTrendTagsFromChildren = (children: React.ReactNode): React.ReactNode => {
+  return React.Children.map(children, (child) => {
+    if (typeof child === 'string') {
+      return cleanTrendText(child);
+    } else if (React.isValidElement(child) && child.props.children) {
+      return React.cloneElement(child, {
+        ...child.props,
+        children: cleanTrendTagsFromChildren(child.props.children)
+      });
+    }
+    return child;
+  });
+};
+
 interface ChartCardProps {
   title: string;
   description?: string;
@@ -61,32 +90,9 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const [summary, setSummary] = useState<string | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [rateLimitEndTime, setRateLimitEndTime] = useState<number | null>(null);
-  const [remainingMinutes, setRemainingMinutes] = useState<number>(0);
+  const [summaryMetadata, setSummaryMetadata] = useState<any>(null);
 
-  // Update remaining time every 10 seconds
-  useEffect(() => {
-    if (!rateLimitEndTime) {
-      setRemainingMinutes(0);
-      return;
-    }
 
-    const updateRemainingTime = () => {
-      const now = Date.now();
-      const remaining = Math.max(0, Math.ceil((rateLimitEndTime - now) / (1000 * 60)));
-      setRemainingMinutes(remaining);
-      
-      if (remaining <= 0) {
-        setRateLimitEndTime(null);
-        setError(null); // Clear error when rate limit expires
-      }
-    };
-
-    updateRemainingTime(); // Initial calculation
-    const interval = setInterval(updateRemainingTime, 10000); // Update every 10 seconds
-
-    return () => clearInterval(interval);
-  }, [rateLimitEndTime]);
 
   // Screenshot function
   const handleScreenshot = async () => {
@@ -379,6 +385,9 @@ const ChartCard: React.FC<ChartCardProps> = ({
     setError(null); // Clear any previous error
     
     try {
+      // Generate random version (1-5) for variety
+      const randomVersion = Math.floor(Math.random() * 5) + 1;
+      
       const response = await fetch('/api/chart-summary', {
         method: 'POST',
         headers: {
@@ -386,7 +395,8 @@ const ChartCard: React.FC<ChartCardProps> = ({
         },
         body: JSON.stringify({
           chartId: chart.id,
-          pageId: chart.page
+          pageId: chart.page,
+          version: randomVersion
         })
       });
 
@@ -397,8 +407,8 @@ const ChartCard: React.FC<ChartCardProps> = ({
 
       const data = await response.json();
       setSummary(data.summary);
+      setSummaryMetadata(data.metadata);
       setError(null); // Clear error on success
-      setRateLimitEndTime(null); // Clear any rate limit on success
       
       // Call the optional callback
       if (onSummarizeClick) {
@@ -408,13 +418,6 @@ const ChartCard: React.FC<ChartCardProps> = ({
     } catch (error) {
       console.error('Chart summarization failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate chart summary. Please try again.';
-      
-      // Check if it's a rate limit error
-      if (errorMessage.toLowerCase().includes('rate limit') || errorMessage.toLowerCase().includes('too many requests')) {
-        setRateLimitEndTime(Date.now() + (30 * 60 * 1000)); // 30 minutes from now
-      } else {
-        setRateLimitEndTime(null); // Clear any existing rate limit
-      }
       
       setError(errorMessage);
       setSummary(null); // Clear summary on error
@@ -498,7 +501,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
             {chart?.id && chart?.page && (
               <button 
                 className={`p-1.5 ${colors.button} rounded-md transition-colors ${isSummarizing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={handleSummarize}
+                onClick={() => handleSummarize()}
                 title="Summarize Chart Data with AI"
                 disabled={isSummarizing} hidden={false}
               >
@@ -614,11 +617,10 @@ const ChartCard: React.FC<ChartCardProps> = ({
 
       {/* Summary Modal - Rendered as Portal */}
       {showSummary && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]" onClick={() => {
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"         onClick={() => {
           setShowSummary(false);
           setSummary(null);
           setError(null);
-          setRateLimitEndTime(null);
         }}>
           <div className="bg-gray-950/90 rounded-xl border border-gray-800 max-w-3xl w-full max-h-[85vh] overflow-hidden shadow-2xl animate-in fade-in duration-200" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-950/90">
@@ -626,13 +628,14 @@ const ChartCard: React.FC<ChartCardProps> = ({
                 <h3 className="text-sm font-regular text-gray-400">
                   {error ? 'Error' : isSummarizing ? 'Thinking...' : 'Chart Summary'}
                 </h3>
+                
               </div>
               <button
                 onClick={() => {
                   setShowSummary(false);
                   setSummary(null);
                   setError(null);
-                  setRateLimitEndTime(null);
+                  setSummaryMetadata(null);
                 }}
                 className="text-gray-400 hover:text-white transition-colors p-1 rounded-md hover:bg-gray-700"
               >
@@ -651,20 +654,11 @@ const ChartCard: React.FC<ChartCardProps> = ({
                     {error}
                   </div>
                   <button
-                    onClick={handleSummarize}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      remainingMinutes > 0 
-                        ? 'text-gray-500 cursor-not-allowed' 
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                    disabled={isSummarizing || remainingMinutes > 0}
+                    onClick={() => handleSummarize()}
+                    className="px-4 py-2 rounded-lg transition-colors text-gray-400 hover:text-white"
+                    disabled={isSummarizing}
                   >
-                    {isSummarizing 
-                      ? 'Retrying...' 
-                      : remainingMinutes > 0 
-                        ? `Try Again in ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`
-                        : 'Try Again'
-                    }
+                    {isSummarizing ? 'Retrying...' : 'Try Again'}
                   </button>
                 </div>
               ) : isSummarizing && !summary ? (
@@ -715,7 +709,10 @@ const ChartCard: React.FC<ChartCardProps> = ({
                           </h3>
                         );
                       },
-                      p: ({ children }) => <p className="text-gray-300 mb-3 leading-relaxed text-left">{children}</p>,
+                      p: ({ children }) => {
+                        const cleanedChildren = cleanTrendTagsFromChildren(children);
+                        return <p className="text-gray-300 mb-3 leading-relaxed text-left">{cleanedChildren}</p>;
+                      },
                       strong: ({ children }) => {
                         // Check if this strong element is a heading-like text
                         const text = React.Children.toArray(children).join('');
@@ -730,7 +727,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
                           );
                         }
                         
-                        return <strong className="text-white font-semibold">{children}</strong>;
+                        return <strong className="text-white font-semibold">{cleanTrendTagsFromChildren(children)}</strong>;
                       },
                       ul: ({ children }) => {
                         const childrenArray = React.Children.toArray(children);
@@ -740,14 +737,17 @@ const ChartCard: React.FC<ChartCardProps> = ({
                         if (itemCount === 1) {
                           const singleChild = childrenArray[0];
                           if (React.isValidElement(singleChild) && singleChild.props.children) {
-                            const childrenString = React.Children.toArray(singleChild.props.children).join('');
-                            const TrendIcon = getTrendIcon(childrenString);
-                            const cleanedText = cleanTrendText(childrenString);
-                            const iconColor = getTrendColor(childrenString);
+                            // Extract text for trend detection (before cleaning)
+                            const originalText = extractTextFromChildren(singleChild.props.children);
+                            const TrendIcon = getTrendIcon(originalText);
+                            const iconColor = getTrendColor(originalText);
+                            
+                            // Clean the child for display (after trend detection)
+                            const cleanedChild = cleanTrendTagsFromChildren(singleChild);
                             
                             return (
                               <div className="text-gray-300 mb-3 leading-relaxed text-left">
-                                {cleanedText}
+                                {cleanedChild}
                                 {TrendIcon && (
                                   <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
                                 )}
@@ -781,18 +781,20 @@ const ChartCard: React.FC<ChartCardProps> = ({
                         );
                       },
                       li: ({ children }) => {
-                        // Convert children to string to check for trend indicators
-                        const childrenString = React.Children.toArray(children).join('');
-                        const TrendIcon = getTrendIcon(childrenString);
-                        const cleanedText = cleanTrendText(childrenString);
-                        const iconColor = getTrendColor(childrenString);
+                        // Extract text for trend detection (before cleaning)
+                        const originalText = extractTextFromChildren(children);
+                        const TrendIcon = getTrendIcon(originalText);
+                        const iconColor = getTrendColor(originalText);
+                        
+                        // Clean the children for display (after trend detection)
+                        const cleanedChildren = cleanTrendTagsFromChildren(children);
                         
                         return (
                           <li className="text-gray-300 leading-relaxed text-left border-b border-gray-800 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
                             <div className="flex items-start gap-2">
                               <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
                               <div className="flex-1">
-                                {cleanedText}
+                                {cleanedChildren}
                                 {TrendIcon && (
                                   <TrendIcon className={`w-3 h-3 ${iconColor} ml-2 inline-block opacity-80`} />
                                 )}
