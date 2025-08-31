@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiMonitor } from '@/app/lib/api-monitor';
-import { rateLimiters, getClientIdentifier } from '@/app/lib/rate-limiter';
+
 
 // Simple authentication for status endpoint (use a secure token in production)
 const STATUS_API_KEY = process.env.STATUS_API_KEY || 'dev-status-key';
