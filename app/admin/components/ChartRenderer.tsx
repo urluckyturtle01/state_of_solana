@@ -327,7 +327,9 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
                               fieldLower.includes('market_cap') ||
                               fieldLower === 'total' ||  // Only exact 'total' field, not fields containing 'total'
                               fieldLower.endsWith('_total') ||  // Fields ending with _total
-                              fieldLower.startsWith('total_supply') ||  // Total supply fields
+                              fieldLower.startsWith('total_supply') || 
+            fieldLower.startsWith('total dapp') ||
+            fieldLower.startsWith('total network') ||
                               fieldLower.startsWith('total_market'); // Total market fields
           
           // Debug logging for field classification in multi y-field stacked charts
