@@ -129,7 +129,7 @@ async function fetchAllCharts() {
     console.log('Fetching all charts from admin API...');
     
     // Use environment variable or fallback to local development URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3001';
     const apiUrl = `${baseUrl}/api/admin/charts`;
     
     console.log(`Using admin API URL: ${apiUrl}`);
