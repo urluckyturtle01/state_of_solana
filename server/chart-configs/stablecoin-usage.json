@@ -2,7 +2,7 @@
   "pageId": "stablecoin-usage",
   "pageName": "Stablecoin Usage",
   "chartCount": 4,
-  "lastUpdated": "2025-09-29T11:52:43.895Z",
+  "lastUpdated": "2025-09-29T13:45:19.978Z",
   "charts": [
     {
       "id": "chart_1747820222768_snym0wr",
@@ -91,8 +91,11 @@
         "yAxis": "token_supply",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-05-23T12:08:28.997Z",
-      "updatedAt": "2025-07-11T08:40:11.687Z"
+      "updatedAt": "2025-09-29T13:40:58.517Z"
     },
     {
       "id": "chart_1748002319511_gc6tcy6",
@@ -105,13 +108,17 @@
       "apiKey": "i1EMrmekV6vqSiyxWx3o8ncTbKqEIBBJ6Me3mwRu&max_age=86400",
       "isStacked": true,
       "colorScheme": "default",
+      "width": 2,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": "holders",
         "groupBy": "mint_name"
       },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
       "createdAt": "2025-05-23T12:11:59.511Z",
-      "updatedAt": "2025-07-11T08:40:12.299Z"
+      "updatedAt": "2025-09-29T13:42:24.786Z"
     }
   ]
 }
