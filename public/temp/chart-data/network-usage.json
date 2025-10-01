@@ -1,11 +1,40 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "fetchedAt": "2025-09-30T23:18:05.765Z",
+  "fetchedAt": "2025-10-01T01:45:49.200Z",
   "charts": [
     {
       "success": true,
       "data": [
+        {
+          "block_date": "2025-09-29",
+          "total_transactions": 282604624,
+          "succeessful_transactions": 266755246,
+          "succeesful_transactions_perc": 94.39,
+          "non_vote_transactions_perc": 26.19,
+          "successful_non_vote_transactions_perc": 78.8,
+          "failed_transactions": 15849378,
+          "total_vote_transactions": 208591021,
+          "total_non_vote_transactions": 74013603,
+          "successful_vote_transactions": 208431802,
+          "successful_non_vote_transactions": 58323444,
+          "failed_vote_transactions": 159219,
+          "failed_non_vote_transactions": 15690159,
+          "total_Fees": 4851.815016007,
+          "non_vote_transactions_fees": 3805.583203763,
+          "vote_transactions_fees": 1046.231812244,
+          "priority_fees": 3371.242923763,
+          "successful_vote_transactions_fees": 1045.435087244,
+          "successful_non_vote_transactions_fees": 3165.08520645,
+          "failed_vote_transactions_fees": 0.796725,
+          "failed_non_vote_transactions_fees": 640.497997313,
+          "successful_non_vote_transactions_priority_fees": 2812.45718645,
+          "failed_non_vote_transactions_priority_fees": 558.785737313,
+          "total_tps": 3270,
+          "success_tps": 3087,
+          "failed_tps": 183,
+          "real_tps": 856
+        },
         {
           "block_date": "2025-09-28",
           "total_transactions": 273635793,
@@ -18480,7 +18509,7 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1759274284226,
+      "timestamp": 1759283147678,
       "chartId": "chart_1748252444149_tkcgszd",
       "title": "Transactions Summary"
     },
@@ -20392,7 +20421,7 @@
           "median_priority_fee_sol": 4.42e-7
         }
       ],
-      "timestamp": 1759274283850,
+      "timestamp": 1759283147290,
       "chartId": "chart_1748255554567_w4iy4xx",
       "title": "Non-vote Transaction Fees"
     },
@@ -20565,7 +20594,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1759274283852
+          "timestamp": 1759283147295
         },
         {
           "data": [
@@ -20629,31 +20658,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1759274284155
-        },
-        {
-          "data": [
-            {
-              "block_date": "2025-01-01",
-              "total_transactions": 93896593953,
-              "total_vote_transactions": 68228678009,
-              "total_non_vote_Transactions": 25667915944,
-              "succeesful_transactions_perc": 90.61195399865902,
-              "successful_non_vote_transactiosn_perc": 66.05075650469023
-            },
-            {
-              "block_date": "2024-01-01",
-              "total_transactions": 96782119718,
-              "total_vote_transactions": 70874601701,
-              "total_non_vote_Transactions": 25907518017,
-              "succeesful_transactions_perc": 86.9883386934561,
-              "successful_non_vote_transactiosn_perc": 51.674723550188396
-            }
-          ],
-          "parameters": {
-            "Date Part": "Y"
-          },
-          "timestamp": 1759274284465
+          "timestamp": 1759283147588
         }
       ],
       "data": [
@@ -20818,24 +20823,21 @@
           "successful_non_vote_transactiosn_perc": 39.97245750859373
         }
       ],
-      "timestamp": 1759274284665,
+      "timestamp": 1759283148091,
       "chartId": "chart_1748255787490_ud2wzln",
       "title": "Transaction Count",
       "parameters": {
         "Date Part": "M"
       },
       "totalCombinations": 3,
-      "successfulCombinations": 3,
-      "failedCombinations": 0,
+      "successfulCombinations": 2,
+      "failedCombinations": 1,
       "availableParameters": [
         {
           "Date Part": "M"
         },
         {
           "Date Part": "Q"
-        },
-        {
-          "Date Part": "Y"
         }
       ]
     },
@@ -21480,7 +21482,7 @@
           "avg_priority_fee_lamport": 55501
         }
       ],
-      "timestamp": 1759274285765,
+      "timestamp": 1759283149199,
       "chartId": "chart_1753698528577_c4lx4ep",
       "title": "Weekly Real TPS And Fee Trends"
     }
