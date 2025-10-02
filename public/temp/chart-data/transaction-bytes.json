@@ -1,7 +1,7 @@
 {
   "pageId": "transaction-bytes",
   "pageName": "Transaction Bytes",
-  "fetchedAt": "2025-10-01T23:18:23.241Z",
+  "fetchedAt": "2025-10-02T01:27:36.043Z",
   "charts": [
     {
       "success": true,
@@ -247,7 +247,7 @@
           "total_txns": 83724797
         }
       ],
-      "timestamp": 1759360702197,
+      "timestamp": 1759368454972,
       "chartId": "chart_1748081007853_vaogp16",
       "title": "Transaction Bytes"
     },
@@ -495,7 +495,7 @@
           "total_txns": 83724797
         }
       ],
-      "timestamp": 1759360702198,
+      "timestamp": 1759368454981,
       "chartId": "chart_1748081521416_b3nvblz",
       "title": "Avg & Median Transaction Bytes"
     },
@@ -503,9 +503,15 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-10-01",
+          "data_bytes": 9515667099,
+          "account_bytes": 28151131113,
+          "data bytes/account bytes": 0.34
+        },
+        {
           "block_date": "2025-09-30",
-          "data_bytes": 10069740338,
-          "account_bytes": 29022527530,
+          "data_bytes": 10256452584,
+          "account_bytes": 29547148439,
           "data bytes/account bytes": 0.35
         },
         {
@@ -675,15 +681,9 @@
           "data_bytes": 11639329912,
           "account_bytes": 32146015623,
           "data bytes/account bytes": 0.36
-        },
-        {
-          "block_date": "2025-09-01",
-          "data_bytes": 11373183423,
-          "account_bytes": 32925782256,
-          "data bytes/account bytes": 0.35
         }
       ],
-      "timestamp": 1759360702196,
+      "timestamp": 1759368454977,
       "chartId": "chart_1748087042364_phdzeam",
       "title": "Account Bytes Vs Data Bytes"
     },
@@ -691,67 +691,74 @@
       "success": true,
       "data": [
         {
+          "partition_0": "2025-10-01",
+          "byte_size_25th_percentile": 425,
+          "byte_size_median": 753,
+          "byte_size_75th_percentile": 942,
+          "byte_size_90th_percentile": 1100
+        },
+        {
           "partition_0": "2025-09-30",
-          "byte_size_25th_percentile": 427,
-          "byte_size_median": 765,
-          "byte_size_75th_percentile": 940,
-          "byte_size_90th_percentile": 1094
+          "byte_size_25th_percentile": 431,
+          "byte_size_median": 762,
+          "byte_size_75th_percentile": 937,
+          "byte_size_90th_percentile": 1093
         },
         {
           "partition_0": "2025-09-29",
-          "byte_size_25th_percentile": 433,
-          "byte_size_median": 762,
-          "byte_size_75th_percentile": 935,
-          "byte_size_90th_percentile": 1083
+          "byte_size_25th_percentile": 428,
+          "byte_size_median": 760,
+          "byte_size_75th_percentile": 934,
+          "byte_size_90th_percentile": 1085
         },
         {
           "partition_0": "2025-09-28",
           "byte_size_25th_percentile": 428,
-          "byte_size_median": 778,
-          "byte_size_75th_percentile": 939,
-          "byte_size_90th_percentile": 1087
+          "byte_size_median": 780,
+          "byte_size_75th_percentile": 938,
+          "byte_size_90th_percentile": 1085
         },
         {
           "partition_0": "2025-09-27",
-          "byte_size_25th_percentile": 430,
-          "byte_size_median": 774,
-          "byte_size_75th_percentile": 938,
-          "byte_size_90th_percentile": 1100
+          "byte_size_25th_percentile": 427,
+          "byte_size_median": 772,
+          "byte_size_75th_percentile": 939,
+          "byte_size_90th_percentile": 1101
         },
         {
           "partition_0": "2025-09-26",
           "byte_size_25th_percentile": 406,
-          "byte_size_median": 737,
+          "byte_size_median": 735,
           "byte_size_75th_percentile": 935,
-          "byte_size_90th_percentile": 1085
+          "byte_size_90th_percentile": 1083
         },
         {
           "partition_0": "2025-09-25",
-          "byte_size_25th_percentile": 408,
-          "byte_size_median": 745,
+          "byte_size_25th_percentile": 409,
+          "byte_size_median": 744,
           "byte_size_75th_percentile": 934,
           "byte_size_90th_percentile": 1081
         },
         {
           "partition_0": "2025-09-24",
           "byte_size_25th_percentile": 446,
-          "byte_size_median": 779,
-          "byte_size_75th_percentile": 942,
+          "byte_size_median": 775,
+          "byte_size_75th_percentile": 941,
           "byte_size_90th_percentile": 1083
         },
         {
           "partition_0": "2025-09-23",
-          "byte_size_25th_percentile": 441,
-          "byte_size_median": 749,
-          "byte_size_75th_percentile": 934,
-          "byte_size_90th_percentile": 1065
+          "byte_size_25th_percentile": 442,
+          "byte_size_median": 750,
+          "byte_size_75th_percentile": 935,
+          "byte_size_90th_percentile": 1066
         },
         {
           "partition_0": "2025-09-22",
-          "byte_size_25th_percentile": 425,
+          "byte_size_25th_percentile": 424,
           "byte_size_median": 750,
           "byte_size_75th_percentile": 937,
-          "byte_size_90th_percentile": 1077
+          "byte_size_90th_percentile": 1076
         },
         {
           "partition_0": "2025-09-21",
@@ -762,93 +769,93 @@
         },
         {
           "partition_0": "2025-09-20",
-          "byte_size_25th_percentile": 457,
+          "byte_size_25th_percentile": 460,
           "byte_size_median": 785,
-          "byte_size_75th_percentile": 942,
-          "byte_size_90th_percentile": 1087
+          "byte_size_75th_percentile": 941,
+          "byte_size_90th_percentile": 1088
         },
         {
           "partition_0": "2025-09-19",
-          "byte_size_25th_percentile": 455,
-          "byte_size_median": 778,
-          "byte_size_75th_percentile": 941,
+          "byte_size_25th_percentile": 457,
+          "byte_size_median": 776,
+          "byte_size_75th_percentile": 943,
           "byte_size_90th_percentile": 1082
         },
         {
           "partition_0": "2025-09-18",
-          "byte_size_25th_percentile": 499,
-          "byte_size_median": 793,
-          "byte_size_75th_percentile": 953,
-          "byte_size_90th_percentile": 1091
+          "byte_size_25th_percentile": 500,
+          "byte_size_median": 796,
+          "byte_size_75th_percentile": 952,
+          "byte_size_90th_percentile": 1093
         },
         {
           "partition_0": "2025-09-17",
-          "byte_size_25th_percentile": 470,
-          "byte_size_median": 760,
-          "byte_size_75th_percentile": 942,
-          "byte_size_90th_percentile": 1077
+          "byte_size_25th_percentile": 471,
+          "byte_size_median": 759,
+          "byte_size_75th_percentile": 943,
+          "byte_size_90th_percentile": 1078
         },
         {
           "partition_0": "2025-09-16",
           "byte_size_25th_percentile": 509,
-          "byte_size_median": 782,
-          "byte_size_75th_percentile": 945,
-          "byte_size_90th_percentile": 1086
+          "byte_size_median": 779,
+          "byte_size_75th_percentile": 946,
+          "byte_size_90th_percentile": 1084
         },
         {
           "partition_0": "2025-09-15",
-          "byte_size_25th_percentile": 474,
-          "byte_size_median": 765,
-          "byte_size_75th_percentile": 940,
-          "byte_size_90th_percentile": 1080
+          "byte_size_25th_percentile": 475,
+          "byte_size_median": 766,
+          "byte_size_75th_percentile": 938,
+          "byte_size_90th_percentile": 1081
         },
         {
           "partition_0": "2025-09-14",
-          "byte_size_25th_percentile": 481,
+          "byte_size_25th_percentile": 485,
           "byte_size_median": 771,
-          "byte_size_75th_percentile": 939,
+          "byte_size_75th_percentile": 943,
           "byte_size_90th_percentile": 1080
         },
         {
           "partition_0": "2025-09-13",
-          "byte_size_25th_percentile": 462,
-          "byte_size_median": 802,
-          "byte_size_75th_percentile": 954,
+          "byte_size_25th_percentile": 461,
+          "byte_size_median": 803,
+          "byte_size_75th_percentile": 953,
           "byte_size_90th_percentile": 1100
         },
         {
           "partition_0": "2025-09-12",
-          "byte_size_25th_percentile": 466,
-          "byte_size_median": 789,
-          "byte_size_75th_percentile": 948,
+          "byte_size_25th_percentile": 467,
+          "byte_size_median": 792,
+          "byte_size_75th_percentile": 949,
           "byte_size_90th_percentile": 1091
         },
         {
           "partition_0": "2025-09-11",
-          "byte_size_25th_percentile": 480,
-          "byte_size_median": 786,
+          "byte_size_25th_percentile": 478,
+          "byte_size_median": 787,
           "byte_size_75th_percentile": 946,
-          "byte_size_90th_percentile": 1089
+          "byte_size_90th_percentile": 1090
         },
         {
           "partition_0": "2025-09-10",
-          "byte_size_25th_percentile": 470,
+          "byte_size_25th_percentile": 471,
           "byte_size_median": 781,
-          "byte_size_75th_percentile": 941,
-          "byte_size_90th_percentile": 1077
+          "byte_size_75th_percentile": 940,
+          "byte_size_90th_percentile": 1076
         },
         {
           "partition_0": "2025-09-09",
           "byte_size_25th_percentile": 462,
-          "byte_size_median": 768,
-          "byte_size_75th_percentile": 935,
+          "byte_size_median": 769,
+          "byte_size_75th_percentile": 937,
           "byte_size_90th_percentile": 1063
         },
         {
           "partition_0": "2025-09-08",
           "byte_size_25th_percentile": 450,
-          "byte_size_median": 775,
-          "byte_size_75th_percentile": 939,
+          "byte_size_median": 777,
+          "byte_size_75th_percentile": 938,
           "byte_size_90th_percentile": 1068
         },
         {
@@ -860,30 +867,30 @@
         },
         {
           "partition_0": "2025-09-06",
-          "byte_size_25th_percentile": 486,
-          "byte_size_median": 800,
+          "byte_size_25th_percentile": 491,
+          "byte_size_median": 805,
           "byte_size_75th_percentile": 939,
-          "byte_size_90th_percentile": 1094
+          "byte_size_90th_percentile": 1093
         },
         {
           "partition_0": "2025-09-05",
-          "byte_size_25th_percentile": 448,
-          "byte_size_median": 761,
+          "byte_size_25th_percentile": 441,
+          "byte_size_median": 763,
           "byte_size_75th_percentile": 940,
           "byte_size_90th_percentile": 1099
         },
         {
           "partition_0": "2025-09-04",
-          "byte_size_25th_percentile": 474,
-          "byte_size_median": 787,
-          "byte_size_75th_percentile": 947,
+          "byte_size_25th_percentile": 476,
+          "byte_size_median": 788,
+          "byte_size_75th_percentile": 946,
           "byte_size_90th_percentile": 1111
         },
         {
           "partition_0": "2025-09-03",
-          "byte_size_25th_percentile": 485,
-          "byte_size_median": 783,
-          "byte_size_75th_percentile": 947,
+          "byte_size_25th_percentile": 487,
+          "byte_size_median": 782,
+          "byte_size_75th_percentile": 949,
           "byte_size_90th_percentile": 1105
         },
         {
@@ -892,16 +899,9 @@
           "byte_size_median": 733,
           "byte_size_75th_percentile": 936,
           "byte_size_90th_percentile": 1087
-        },
-        {
-          "partition_0": "2025-09-01",
-          "byte_size_25th_percentile": 470,
-          "byte_size_median": 762,
-          "byte_size_75th_percentile": 940,
-          "byte_size_90th_percentile": 1083
         }
       ],
-      "timestamp": 1759360703241,
+      "timestamp": 1759368456043,
       "chartId": "chart_1748087555242_0h73rio",
       "title": "Byte Size Quantiles"
     }
