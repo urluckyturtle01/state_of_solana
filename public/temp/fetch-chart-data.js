@@ -30,6 +30,9 @@ async function fetchChartData(chart, filterParams = {}) {
       }
     }
 
+    // Determine API type based on URL
+    const isJsonApi = chart.apiEndpoint.endsWith('.json');
+    
     // Build parameters object for POST request based on chart filters
     const parameters = {};
     let hasParameters = false;
@@ -37,7 +40,9 @@ async function fetchChartData(chart, filterParams = {}) {
     const filterConfig = chart.additionalOptions?.filters;
     const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
     
-    if (filterConfig) {
+    // For non-JSON APIs, we need to send parameters (especially time filters)
+    // For JSON APIs, we typically don't need parameters
+    if (filterConfig && !isJsonApi) {
       // Add currency parameter if configured (but NOT for field_switcher type)
       if (filterConfig.currencyFilter && filterConfig.currencyFilter.type !== 'field_switcher') {
         if (filterParams.currency) {
@@ -54,22 +59,18 @@ async function fetchChartData(chart, filterParams = {}) {
         console.log(`  Skipping currency parameter for field_switcher type - fetching full data for: ${chart.title}`);
       }
       
-      // Add time filter parameter if configured
+      // For non-JSON APIs, ALWAYS add time filter parameter if available
+      // This is required for the API to work, regardless of time aggregation setting
       if (filterConfig.timeFilter) {
         if (filterParams.timeFilter) {
           parameters[filterConfig.timeFilter.paramName] = filterParams.timeFilter;
           hasParameters = true;
           console.log(`  Using time parameter: ${filterConfig.timeFilter.paramName}=${filterParams.timeFilter}`);
         } else if (filterConfig.timeFilter.options && filterConfig.timeFilter.options.length > 0) {
-          // For time aggregation enabled charts, always use the first time option to get raw data
-          // For regular charts, also use first time option as default
+          // Use first time option as default - this is crucial for non-JSON APIs
           parameters[filterConfig.timeFilter.paramName] = filterConfig.timeFilter.options[0];
           hasParameters = true;
-          if (isTimeAggregationEnabled) {
-            console.log(`  Using first time filter for time aggregation chart: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
-          } else {
-            console.log(`  Using default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
-          }
+          console.log(`  Using default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]} (required for non-JSON API)`);
         }
       }
       
@@ -87,28 +88,29 @@ async function fetchChartData(chart, filterParams = {}) {
     }
 
     console.log(`Fetching data for ${chart.title} (${chart.id})...`);
-    console.log(`  Method: ${hasParameters ? 'POST' : 'GET'}`);
+    console.log(`  API Type: ${isJsonApi ? 'JSON (GET)' : 'Non-JSON (POST)'}`);
+    console.log(`  Method: ${!isJsonApi && hasParameters ? 'POST' : 'GET'}`);
     console.log(`  URL: ${url.toString()}`);
-    if (hasParameters) {
+    if (!isJsonApi && hasParameters) {
       console.log(`  Parameters:`, JSON.stringify(parameters));
     }
     
     const controller = new AbortController();
-    timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for POST requests
+    timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-    // Configure request options - MATCH ADMIN PANEL FORMAT
+    // Configure request options based on API type
     const requestOptions = {
-      method: hasParameters ? 'POST' : 'GET',
+      method: (!isJsonApi && hasParameters) ? 'POST' : 'GET',
       signal: controller.signal,
       headers: { 
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      cache: 'no-store' // Match admin panel cache setting
+      cache: 'no-store'
     };
 
-    // Add body with parameters for POST request - MATCH ADMIN PANEL FORMAT
-    if (hasParameters) {
+    // Add body with parameters for POST request (non-JSON APIs only)
+    if (!isJsonApi && hasParameters) {
       // Format exactly as in the admin panel: {"parameters":{"Date Part":"W"}}
       requestOptions.body = JSON.stringify({ parameters });
       console.log(`  Request body:`, requestOptions.body);
@@ -191,7 +193,8 @@ async function fetchChartData(chart, filterParams = {}) {
       timestamp: Date.now(),
       chartId: chart.id,
       title: chart.title,
-      parameters: hasParameters ? parameters : undefined
+      apiType: isJsonApi ? 'JSON' : 'Non-JSON',
+      parameters: (!isJsonApi && hasParameters) ? parameters : undefined
     };
 
   } catch (error) {
@@ -253,35 +256,31 @@ async function fetchChartDataWithAllParameters(chart) {
     parameterCombinations.push(...newCombinations);
   }
   
-  // Add time filter combinations when time filters exist and no currency filter
-  if (filterConfig.timeFilter && filterConfig.timeFilter.options && !filterConfig.currencyFilter) {
+  // For non-JSON APIs, we need to fetch with time filter parameters regardless of time aggregation
+  // For JSON APIs, we skip time filter combinations when time aggregation is enabled
+  const chart_isJsonApi = chart.apiEndpoint.endsWith('.json');
+  const shouldAddTimeFilterCombinations = filterConfig.timeFilter && filterConfig.timeFilter.options && !filterConfig.currencyFilter && 
+    (!chart_isJsonApi || !isTimeAggregationEnabled);
+  
+  if (shouldAddTimeFilterCombinations) {
     const timeOptions = filterConfig.timeFilter.options;
     const newCombinations = [];
     
-    if (isTimeAggregationEnabled) {
-      // For time aggregation enabled charts, use only the FIRST time filter option
-      // This provides raw data for client-side aggregation
-      console.log(`  Using first time filter option for time aggregation chart: ${chart.title} - ${timeOptions[0]}`);
-      for (const combination of parameterCombinations) {
+    for (const combination of parameterCombinations) {
+      for (const timeFilter of timeOptions) {
         newCombinations.push({
           ...combination,
-          timeFilter: timeOptions[0]
+          timeFilter
         });
-      }
-    } else {
-      // For regular charts, fetch all time filter combinations
-      for (const combination of parameterCombinations) {
-        for (const timeFilter of timeOptions) {
-          newCombinations.push({
-            ...combination,
-            timeFilter
-          });
-        }
       }
     }
     
     parameterCombinations.length = 0;
     parameterCombinations.push(...newCombinations);
+  } else if (filterConfig.timeFilter && chart_isJsonApi && isTimeAggregationEnabled) {
+    console.log(`  Skipping time filter combinations for JSON API with time aggregation enabled: ${chart.title}`);
+  } else if (filterConfig.timeFilter && !chart_isJsonApi) {
+    console.log(`  Non-JSON API will use time filter parameter in single request: ${chart.title}`);
   }
   
   console.log(`  Will fetch ${parameterCombinations.length} parameter combinations for ${chart.title}`);
