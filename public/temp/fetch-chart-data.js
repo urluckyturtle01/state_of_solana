@@ -54,21 +54,23 @@ async function fetchChartData(chart, filterParams = {}) {
         console.log(`  Skipping currency parameter for field_switcher type - fetching full data for: ${chart.title}`);
       }
       
-      // IMPORTANT: Only add time filter parameter if time aggregation is NOT enabled
-      // Charts with enableTimeAggregation=true should get full raw data for client-side aggregation
-      if (filterConfig.timeFilter && !isTimeAggregationEnabled) {
+      // Add time filter parameter if configured
+      if (filterConfig.timeFilter) {
         if (filterParams.timeFilter) {
           parameters[filterConfig.timeFilter.paramName] = filterParams.timeFilter;
           hasParameters = true;
           console.log(`  Using time parameter: ${filterConfig.timeFilter.paramName}=${filterParams.timeFilter}`);
         } else if (filterConfig.timeFilter.options && filterConfig.timeFilter.options.length > 0) {
-          // Use first time option as default
+          // For time aggregation enabled charts, always use the first time option to get raw data
+          // For regular charts, also use first time option as default
           parameters[filterConfig.timeFilter.paramName] = filterConfig.timeFilter.options[0];
           hasParameters = true;
-          console.log(`  Using default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
+          if (isTimeAggregationEnabled) {
+            console.log(`  Using first time filter for time aggregation chart: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
+          } else {
+            console.log(`  Using default time filter: ${filterConfig.timeFilter.paramName}=${filterConfig.timeFilter.options[0]}`);
+          }
         }
-      } else if (filterConfig.timeFilter && isTimeAggregationEnabled) {
-        console.log(`  Skipping time filter parameter for time aggregation enabled chart: ${chart.title}`);
       }
       
       // Add display mode filter parameter if configured
@@ -251,25 +253,35 @@ async function fetchChartDataWithAllParameters(chart) {
     parameterCombinations.push(...newCombinations);
   }
   
-  // IMPORTANT: Only add time filter combinations for charts WITHOUT enableTimeAggregation
-  // Charts with enableTimeAggregation=true need full raw data for client-side processing
-  if (filterConfig.timeFilter && filterConfig.timeFilter.options && !filterConfig.currencyFilter && !isTimeAggregationEnabled) {
+  // Add time filter combinations when time filters exist and no currency filter
+  if (filterConfig.timeFilter && filterConfig.timeFilter.options && !filterConfig.currencyFilter) {
     const timeOptions = filterConfig.timeFilter.options;
     const newCombinations = [];
     
-    for (const combination of parameterCombinations) {
-      for (const timeFilter of timeOptions) {
+    if (isTimeAggregationEnabled) {
+      // For time aggregation enabled charts, use only the FIRST time filter option
+      // This provides raw data for client-side aggregation
+      console.log(`  Using first time filter option for time aggregation chart: ${chart.title} - ${timeOptions[0]}`);
+      for (const combination of parameterCombinations) {
         newCombinations.push({
           ...combination,
-          timeFilter
+          timeFilter: timeOptions[0]
         });
+      }
+    } else {
+      // For regular charts, fetch all time filter combinations
+      for (const combination of parameterCombinations) {
+        for (const timeFilter of timeOptions) {
+          newCombinations.push({
+            ...combination,
+            timeFilter
+          });
+        }
       }
     }
     
     parameterCombinations.length = 0;
     parameterCombinations.push(...newCombinations);
-  } else if (filterConfig.timeFilter && isTimeAggregationEnabled) {
-    console.log(`  Skipping time filter combinations for time aggregation enabled chart: ${chart.title}`);
   }
   
   console.log(`  Will fetch ${parameterCombinations.length} parameter combinations for ${chart.title}`);
