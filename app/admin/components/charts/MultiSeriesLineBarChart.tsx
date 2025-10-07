@@ -407,7 +407,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     visible: boolean;
     left: number;
     top: number;
-    key: string;
+    key: string | number;
     title?: string;
     items: { label: string, value: string | number, color: string, shape?: 'circle' | 'square' }[];
   }>({
@@ -1623,6 +1623,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [chartData, fields, fieldColors]);
 
+  // Detect if x-axis values are numerical (calculate once for the entire component)
+  const isNumericalXAxis = useMemo(() => {
+    if (!chartData || chartData.length === 0) return false;
+    const xValues = chartData.map(d => d[xKey]);
+    return xValues.every(v => !isNaN(Number(v)) && v !== null && v !== undefined && v !== '');
+  }, [chartData, xKey]);
+
   // Set isClient to true when component mounts in browser
   useEffect(() => {
     setIsClient(true);
@@ -1682,12 +1689,24 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     if (innerWidth <= 0 || innerHeight <= 0) return null;
     
-    // Create scales
-    const xScale = scaleBand<string>({
-      domain: chartData.map(d => d[xKey]),
-      range: [0, innerWidth],
-      padding: 0.2,
-    });
+    // Create scales - use linear scale for numerical data, band scale for categorical
+    const xValues = chartData.map(d => d[xKey]);
+    let xScale: any;
+    if (isNumericalXAxis) {
+      const numericValues = xValues.map(v => Number(v));
+      const xMin = Math.min(...numericValues);
+      const xMax = Math.max(...numericValues);
+      xScale = scaleLinear<number>({
+        domain: [xMin, xMax],
+        range: [0, innerWidth],
+      });
+    } else {
+      xScale = scaleBand<string>({
+        domain: xValues.map(String),
+        range: [0, innerWidth],
+        padding: 0.2,
+      });
+    }
     
     // Calculate max and min values for y-axis from actual data
     const allValues = chartData.flatMap(d => 
@@ -1756,8 +1775,15 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     chartData.forEach(d => {
       fields.forEach(field => {
         if (fieldTypes[field] === 'line') {
-          const x = xScale(d[xKey]) || 0;
-          const centerX = x + (xScale.bandwidth() / 2); // Center of the bar
+          let centerX: number;
+          if (isNumericalXAxis) {
+            // For numerical x-axis, use the value directly
+            centerX = xScale(Number(d[xKey])) || 0;
+          } else {
+            // For categorical x-axis, use the center of the band
+            const x = xScale(d[xKey]) || 0;
+            centerX = x + (xScale.bandwidth() / 2);
+          }
           const y = yScale(Number(d[field]) || 0);
           
           lineDataByField[field].push({ x: centerX, y });
@@ -1772,6 +1798,22 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Calculate x-axis tick values - limit for dates/integers, show all for text strings
     const xTickValues = (() => {
+      // For numerical x-axis, generate evenly spaced ticks
+      if (isNumericalXAxis) {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const maxTicks = maxXAxisTicks || (isMobile ? 5 : 8);
+        const numericValues = chartData.map(d => Number(d[xKey])).sort((a, b) => a - b);
+        const min = numericValues[0];
+        const max = numericValues[numericValues.length - 1];
+        const step = (max - min) / (maxTicks - 1);
+        
+        const ticks: number[] = [];
+        for (let i = 0; i < maxTicks; i++) {
+          ticks.push(min + step * i);
+        }
+        return ticks;
+      }
+      
       // Check if the data contains dates
       const isDateData = chartData.length > 0 && 
         typeof chartData[0][xKey] === 'string' && 
@@ -1825,7 +1867,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         {/* Tooltip - only show for non-modal version, modal has its own tooltip container */}
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
-            title={String(tooltip.key)}
+            title={isNumericalXAxis && typeof tooltip.key === 'number' 
+              ? `${xKey}: ${tooltip.key.toFixed(2)}` 
+              : String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
@@ -1900,6 +1944,20 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               
               tickValues={xTickValues}
               tickFormat={(value) => {
+                // For numerical x-axis, format numbers with appropriate decimal places
+                if (isNumericalXAxis && typeof value === 'number') {
+                  // Format z-scores or other numerical values
+                  if (Math.abs(value) < 0.01) {
+                    return value.toFixed(4);
+                  } else if (Math.abs(value) < 1) {
+                    return value.toFixed(3);
+                  } else if (Math.abs(value) < 10) {
+                    return value.toFixed(2);
+                  } else {
+                    return value.toFixed(1);
+                  }
+                }
+                
                 // Format date labels based on timeFilter
                 if (typeof value === 'string') {
                   // For ISO dates (YYYY-MM-DD)
@@ -1972,10 +2030,23 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                   
                   // Determine how many fields should be rendered as bars
                   const barFields = fields.filter(f => fieldTypes[f] !== 'line' && !hiddenSeriesState.includes(f));
-                  const barWidth = xScale.bandwidth() / barFields.length;
                   
-                  // Find this field's position in the barFields array
-                  const barFieldIndex = barFields.indexOf(field);
+                  let barWidth: number;
+                  let barX: number;
+                  
+                  if (isNumericalXAxis) {
+                    // For numerical x-axis, use a fixed small bar width
+                    // Calculate a reasonable bar width based on data density
+                    const numericXValues = chartData.map(d => Number(d[xKey]));
+                    const xRange = Math.max(...numericXValues) - Math.min(...numericXValues);
+                    barWidth = Math.max(2, innerWidth / (chartData.length * 2)); // Minimum 2px width
+                    barX = xScale(Number(d[xKey])) - barWidth / 2; // Center the bar on the x value
+                  } else {
+                    // For categorical x-axis, use bandwidth
+                    barWidth = xScale.bandwidth() / barFields.length;
+                    const barFieldIndex = barFields.indexOf(field);
+                    barX = (xScale(d[xKey]) || 0) + (barFieldIndex * barWidth);
+                  }
                   
                   // Calculate bar dimensions
                   const value = Number(d[field]) || 0;
@@ -1983,7 +2054,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                   // For positive values, the bar starts at the value position and extends down to zero
                   // For negative values, the bar starts at zero and extends down to the value position
                   const barHeight = Math.abs(yScale(0) - yScale(value));
-                  const barX = (xScale(d[xKey]) || 0) + (barFieldIndex * barWidth);
                   
                   // For positive values, the bar's y position is at the value's y coordinate
                   // For negative values, the bar's y position is at the zero line
@@ -2183,7 +2253,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                       left: tooltip.left
                     }}>
                                           <ChartTooltip
-                      title={String(tooltip.key)}
+                      title={isNumericalXAxis && typeof tooltip.key === 'number' 
+                        ? `${xKey}: ${tooltip.key.toFixed(2)}` 
+                        : String(tooltip.key)}
                       items={tooltip.items}
                       left={0}
                       top={0}

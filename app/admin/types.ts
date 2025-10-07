@@ -25,7 +25,9 @@ export type AvailablePage =
   // Stablecoins menu pages
   | 'stablecoin-usage' | 'transaction-activity' | 'liquidity-velocity' | 'mint-burn' | 'platform-exchange'
   // Protocol Revenue menu pages - already included in AVAILABLE_PAGES
-  | 'protocol-revenue-summary';
+  | 'protocol-revenue-summary'
+  // Validators menu pages
+  | 'validators-overview' | 'validators-performance';
 
 // Chart visualization types
 export const CHART_TYPES = [
