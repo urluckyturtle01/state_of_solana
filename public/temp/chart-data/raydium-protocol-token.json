@@ -1,7 +1,7 @@
 {
   "pageId": "raydium-protocol-token",
   "pageName": "Protocol Token",
-  "fetchedAt": "2025-10-08T07:19:42.536Z",
+  "fetchedAt": "2025-10-08T08:28:45.447Z",
   "charts": [
     {
       "success": true,
@@ -61,7 +61,7 @@
           "Last_Month_Churn": null
         }
       ],
-      "timestamp": 1759907981169,
+      "timestamp": 1759912123711,
       "chartId": "chart_1749037046760_nob6d9c",
       "title": "New And Churned Holders",
       "apiType": "JSON"
@@ -246,7 +246,7 @@
           "Standard_Deviation": 0.10726907611109568
         }
       ],
-      "timestamp": 1759907981168,
+      "timestamp": 1759912123720,
       "chartId": "chart_1749037178794_cs8vi58",
       "title": "RAY Price Stats",
       "apiType": "JSON"
@@ -256,6 +256,21 @@
       "datasets": [
         {
           "data": [
+            {
+              "block_date": "2025-10-07",
+              "mint": "RAY",
+              "Dex_Volume": 6744594.599414535
+            },
+            {
+              "block_date": "2025-10-07",
+              "mint": "JUP",
+              "Dex_Volume": 9770131.602250624
+            },
+            {
+              "block_date": "2025-10-07",
+              "mint": "ORCA",
+              "Dex_Volume": 455128.65140952624
+            },
             {
               "block_date": "2025-10-06",
               "mint": "RAY",
@@ -269,7 +284,7 @@
             {
               "block_date": "2025-10-06",
               "mint": "JUP",
-              "Dex_Volume": 8404560.80610562
+              "Dex_Volume": 8404560.806105606
             },
             {
               "block_date": "2025-10-05",
@@ -9787,10 +9802,25 @@
               "Dex_Volume": 1932055.3715322544
             }
           ],
-          "timestamp": 1759907981269
+          "timestamp": 1759912124068
         }
       ],
       "data": [
+        {
+          "block_date": "2025-10-07",
+          "mint": "RAY",
+          "Dex_Volume": 6744594.599414535
+        },
+        {
+          "block_date": "2025-10-07",
+          "mint": "JUP",
+          "Dex_Volume": 9770131.602250624
+        },
+        {
+          "block_date": "2025-10-07",
+          "mint": "ORCA",
+          "Dex_Volume": 455128.65140952624
+        },
         {
           "block_date": "2025-10-06",
           "mint": "RAY",
@@ -9804,7 +9834,7 @@
         {
           "block_date": "2025-10-06",
           "mint": "JUP",
-          "Dex_Volume": 8404560.80610562
+          "Dex_Volume": 8404560.806105606
         },
         {
           "block_date": "2025-10-05",
@@ -19322,7 +19352,7 @@
           "Dex_Volume": 1932055.3715322544
         }
       ],
-      "timestamp": 1759907981469,
+      "timestamp": 1759912124269,
       "chartId": "chart_1749037709191_oujv8ri",
       "title": "DEX Swap Volume",
       "totalCombinations": 1,
@@ -21010,7 +21040,7 @@
           "Morketcap": 2734149125.763848
         }
       ],
-      "timestamp": 1759907982536,
+      "timestamp": 1759912125445,
       "chartId": "chart_1749037824658_bm5v6nr",
       "title": "RAY Token Marketcap",
       "apiType": "JSON"
@@ -21019,39 +21049,104 @@
       "success": true,
       "data": [
         {
+          "Month": "2025-10-01",
+          "cex_name": "Binance",
+          "Holdings": 37998695.16812467
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "MEXC",
+          "Holdings": 1450332.7505528333
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Gate.io",
+          "Holdings": 1231539.3404706668
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Crypto.com",
+          "Holdings": 646017.0572526667
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "KuCoin",
+          "Holdings": 412957.22467633337
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Bitget",
+          "Holdings": 324418.5260283333
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Backpack",
+          "Holdings": 61762.18099683333
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Coinbase",
+          "Holdings": 21095.209713999997
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "FTX",
+          "Holdings": 10323.492288
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Swissborg",
+          "Holdings": 8273.5724175
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "HTX",
+          "Holdings": 1701.9949286666667
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "AscendEX",
+          "Holdings": 77.70896500000002
+        },
+        {
+          "Month": "2025-10-01",
+          "cex_name": "Bybit",
+          "Holdings": 0.0045639999999999995
+        },
+        {
           "Month": "2025-09-01",
           "cex_name": "Binance",
-          "Holdings": 38245635.93103759
+          "Holdings": 38235692.79422947
         },
         {
           "Month": "2025-09-01",
           "cex_name": "Kraken",
-          "Holdings": 2879191.61358468
+          "Holdings": 2879191.6135846805
         },
         {
           "Month": "2025-09-01",
           "cex_name": "MEXC",
-          "Holdings": 1498919.5321970002
+          "Holdings": 1495729.975132233
         },
         {
           "Month": "2025-09-01",
           "cex_name": "Gate.io",
-          "Holdings": 1205817.3672598617
+          "Holdings": 1206990.0301246329
         },
         {
           "Month": "2025-09-01",
           "cex_name": "Crypto.com",
-          "Holdings": 635589.9337775862
+          "Holdings": 636617.0509581
         },
         {
           "Month": "2025-09-01",
           "cex_name": "KuCoin",
-          "Holdings": 409248.8565519312
+          "Holdings": 408715.3017604001
         },
         {
           "Month": "2025-09-01",
           "cex_name": "Bitget",
-          "Holdings": 259694.64905206897
+          "Holdings": 262586.3216704667
         },
         {
           "Month": "2025-09-01",
@@ -21061,7 +21156,7 @@
         {
           "Month": "2025-09-01",
           "cex_name": "Backpack",
-          "Holdings": 51868.045151896564
+          "Holdings": 52220.033921566675
         },
         {
           "Month": "2025-09-01",
@@ -21076,17 +21171,17 @@
         {
           "Month": "2025-09-01",
           "cex_name": "Swissborg",
-          "Holdings": 7338.647060689656
+          "Holdings": 7509.5252334666675
         },
         {
           "Month": "2025-09-01",
           "cex_name": "HTX",
-          "Holdings": 5523.010529137932
+          "Holdings": 5423.525922633333
         },
         {
           "Month": "2025-09-01",
           "cex_name": "AscendEX",
-          "Holdings": 54.685472862069005
+          "Holdings": 55.452922600000015
         },
         {
           "Month": "2025-09-01",
@@ -21101,22 +21196,22 @@
         {
           "Month": "2025-08-01",
           "cex_name": "Kraken",
-          "Holdings": 2826711.18518071
+          "Holdings": 2826711.1851807097
         },
         {
           "Month": "2025-08-01",
           "cex_name": "MEXC",
-          "Holdings": 1513492.4819551934
+          "Holdings": 1513492.4819551932
         },
         {
           "Month": "2025-08-01",
           "cex_name": "Bitget",
-          "Holdings": 853922.3579574517
+          "Holdings": 853922.3579574516
         },
         {
           "Month": "2025-08-01",
           "cex_name": "Gate.io",
-          "Holdings": 814067.0908495157
+          "Holdings": 814067.0908495154
         },
         {
           "Month": "2025-08-01",
@@ -21136,7 +21231,7 @@
         {
           "Month": "2025-08-01",
           "cex_name": "Backpack",
-          "Holdings": 40896.75311938711
+          "Holdings": 40896.7531193871
         },
         {
           "Month": "2025-08-01",
@@ -21156,7 +21251,7 @@
         {
           "Month": "2025-08-01",
           "cex_name": "HTX",
-          "Holdings": 2970.0205122903226
+          "Holdings": 2970.0205122903217
         },
         {
           "Month": "2025-08-01",
@@ -21176,7 +21271,7 @@
         {
           "Month": "2025-07-01",
           "cex_name": "Kraken",
-          "Holdings": 3398100.1767124515
+          "Holdings": 3398100.1767124524
         },
         {
           "Month": "2025-07-01",
@@ -21191,7 +21286,7 @@
         {
           "Month": "2025-07-01",
           "cex_name": "Gate.io",
-          "Holdings": 861345.8406066125
+          "Holdings": 861345.8406066127
         },
         {
           "Month": "2025-07-01",
@@ -21201,7 +21296,7 @@
         {
           "Month": "2025-07-01",
           "cex_name": "KuCoin",
-          "Holdings": 397163.47150745185
+          "Holdings": 397163.4715074518
         },
         {
           "Month": "2025-07-01",
@@ -21211,7 +21306,7 @@
         {
           "Month": "2025-07-01",
           "cex_name": "Backpack",
-          "Holdings": 26063.7478073871
+          "Holdings": 26063.747807387095
         },
         {
           "Month": "2025-07-01",
@@ -21226,12 +21321,12 @@
         {
           "Month": "2025-07-01",
           "cex_name": "Swissborg",
-          "Holdings": 9222.027666903225
+          "Holdings": 9222.027666903226
         },
         {
           "Month": "2025-07-01",
           "cex_name": "HTX",
-          "Holdings": 6658.129546032258
+          "Holdings": 6658.129546032259
         },
         {
           "Month": "2025-07-01",
@@ -21261,7 +21356,7 @@
         {
           "Month": "2025-06-01",
           "cex_name": "MEXC",
-          "Holdings": 1494430.2314170334
+          "Holdings": 1494430.2314170336
         },
         {
           "Month": "2025-06-01",
@@ -21301,7 +21396,7 @@
         {
           "Month": "2025-06-01",
           "cex_name": "Swissborg",
-          "Holdings": 11740.346225199999
+          "Holdings": 11740.346225199997
         },
         {
           "Month": "2025-06-01",
@@ -21326,22 +21421,22 @@
         {
           "Month": "2025-05-01",
           "cex_name": "Bitget",
-          "Holdings": 2525860.8224555156
+          "Holdings": 2525860.822455516
         },
         {
           "Month": "2025-05-01",
           "cex_name": "Kraken",
-          "Holdings": 2024205.422530032
+          "Holdings": 2024205.422530033
         },
         {
           "Month": "2025-05-01",
           "cex_name": "MEXC",
-          "Holdings": 1502432.1507594513
+          "Holdings": 1502432.1507594518
         },
         {
           "Month": "2025-05-01",
           "cex_name": "Gate.io",
-          "Holdings": 796897.0829645803
+          "Holdings": 796897.0829645802
         },
         {
           "Month": "2025-05-01",
@@ -21351,7 +21446,7 @@
         {
           "Month": "2025-05-01",
           "cex_name": "Crypto.com",
-          "Holdings": 578211.7543124517
+          "Holdings": 578211.7543124518
         },
         {
           "Month": "2025-05-01",
@@ -21366,7 +21461,7 @@
         {
           "Month": "2025-05-01",
           "cex_name": "Backpack",
-          "Holdings": 33662.17684590323
+          "Holdings": 33662.17684590324
         },
         {
           "Month": "2025-05-01",
@@ -21406,12 +21501,12 @@
         {
           "Month": "2025-04-01",
           "cex_name": "MEXC",
-          "Holdings": 1453739.3720934666
+          "Holdings": 1453739.3720934668
         },
         {
           "Month": "2025-04-01",
           "cex_name": "Gate.io",
-          "Holdings": 878476.9478915494
+          "Holdings": 878476.9478915497
         },
         {
           "Month": "2025-04-01",
@@ -21421,7 +21516,7 @@
         {
           "Month": "2025-04-01",
           "cex_name": "Crypto.com",
-          "Holdings": 523778.2794522333
+          "Holdings": 523778.27945223334
         },
         {
           "Month": "2025-04-01",
@@ -21441,7 +21536,7 @@
         {
           "Month": "2025-04-01",
           "cex_name": "HTX",
-          "Holdings": 36033.99978779999
+          "Holdings": 36033.9997878
         },
         {
           "Month": "2025-04-01",
@@ -21461,12 +21556,12 @@
         {
           "Month": "2025-03-01",
           "cex_name": "Binance",
-          "Holdings": 40164090.98927378
+          "Holdings": 40164090.98927377
         },
         {
           "Month": "2025-03-01",
           "cex_name": "OKX",
-          "Holdings": 3535712.6191587504
+          "Holdings": 3535712.61915875
         },
         {
           "Month": "2025-03-01",
@@ -21476,22 +21571,22 @@
         {
           "Month": "2025-03-01",
           "cex_name": "Kraken",
-          "Holdings": 1926662.7219583227
+          "Holdings": 1926662.721958323
         },
         {
           "Month": "2025-03-01",
           "cex_name": "MEXC",
-          "Holdings": 1391707.156152419
+          "Holdings": 1391707.1561524193
         },
         {
           "Month": "2025-03-01",
           "cex_name": "Gate.io",
-          "Holdings": 796188.0038800476
+          "Holdings": 796188.0038800478
         },
         {
           "Month": "2025-03-01",
           "cex_name": "Swissborg",
-          "Holdings": 639061.0415409676
+          "Holdings": 639061.0415409678
         },
         {
           "Month": "2025-03-01",
@@ -21501,7 +21596,7 @@
         {
           "Month": "2025-03-01",
           "cex_name": "Crypto.com",
-          "Holdings": 507682.5803848067
+          "Holdings": 507682.5803848065
         },
         {
           "Month": "2025-03-01",
@@ -21511,12 +21606,12 @@
         {
           "Month": "2025-03-01",
           "cex_name": "Backpack",
-          "Holdings": 86115.43478577421
+          "Holdings": 86115.43478577424
         },
         {
           "Month": "2025-03-01",
           "cex_name": "HTX",
-          "Holdings": 75193.23069722581
+          "Holdings": 75193.23069722582
         },
         {
           "Month": "2025-03-01",
@@ -21526,7 +21621,7 @@
         {
           "Month": "2025-03-01",
           "cex_name": "FTX",
-          "Holdings": 10253.878892096776
+          "Holdings": 10253.87889209678
         },
         {
           "Month": "2025-03-01",
@@ -21551,12 +21646,12 @@
         {
           "Month": "2025-02-01",
           "cex_name": "Kraken",
-          "Holdings": 1840710.28540275
+          "Holdings": 1840710.2854027504
         },
         {
           "Month": "2025-02-01",
           "cex_name": "MEXC",
-          "Holdings": 1273312.6472918217
+          "Holdings": 1273312.6472918212
         },
         {
           "Month": "2025-02-01",
@@ -21566,7 +21661,7 @@
         {
           "Month": "2025-02-01",
           "cex_name": "Gate.io",
-          "Holdings": 592929.362778107
+          "Holdings": 592929.3627781069
         },
         {
           "Month": "2025-02-01",
@@ -21576,7 +21671,7 @@
         {
           "Month": "2025-02-01",
           "cex_name": "Crypto.com",
-          "Holdings": 322697.1270734286
+          "Holdings": 322697.12707342865
         },
         {
           "Month": "2025-02-01",
@@ -21591,7 +21686,7 @@
         {
           "Month": "2025-02-01",
           "cex_name": "HTX",
-          "Holdings": 23003.55908182143
+          "Holdings": 23003.559081821422
         },
         {
           "Month": "2025-02-01",
@@ -21616,22 +21711,22 @@
         {
           "Month": "2025-01-01",
           "cex_name": "OKX",
-          "Holdings": 3608623.08221971
+          "Holdings": 3608623.0822197096
         },
         {
           "Month": "2025-01-01",
           "cex_name": "Kraken",
-          "Holdings": 2850101.0357951624
+          "Holdings": 2850101.0357951615
         },
         {
           "Month": "2025-01-01",
           "cex_name": "Bitget",
-          "Holdings": 2210408.640095194
+          "Holdings": 2210408.6400951934
         },
         {
           "Month": "2025-01-01",
           "cex_name": "MEXC",
-          "Holdings": 1212561.2270066447
+          "Holdings": 1212561.2270066452
         },
         {
           "Month": "2025-01-01",
@@ -21646,12 +21741,12 @@
         {
           "Month": "2025-01-01",
           "cex_name": "Gate.io",
-          "Holdings": 600174.6048141933
+          "Holdings": 600174.6048141932
         },
         {
           "Month": "2025-01-01",
           "cex_name": "Crypto.com",
-          "Holdings": 345012.08581574186
+          "Holdings": 345012.085815742
         },
         {
           "Month": "2025-01-01",
@@ -21666,7 +21761,7 @@
         {
           "Month": "2025-01-01",
           "cex_name": "HTX",
-          "Holdings": 22079.223101935484
+          "Holdings": 22079.22310193548
         },
         {
           "Month": "2025-01-01",
@@ -21679,7 +21774,7 @@
           "Holdings": 9732.640030999999
         }
       ],
-      "timestamp": 1759907982535,
+      "timestamp": 1759912125447,
       "chartId": "chart_1749160564837_1xaej56",
       "title": "CEX RAY Holdings",
       "apiType": "JSON"
@@ -22018,7 +22113,7 @@
           "amount_usd_in_pools": 41325684.809467375
         }
       ],
-      "timestamp": 1759907982512,
+      "timestamp": 1759912125381,
       "chartId": "chart_1749161870705_avg2sp4",
       "title": "TVL In DEX Pools",
       "apiType": "JSON"
