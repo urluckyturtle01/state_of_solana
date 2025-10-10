@@ -1798,7 +1798,31 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Calculate x-axis tick values - limit for dates/integers, show all for text strings
     const xTickValues = (() => {
-      // For numerical x-axis, generate evenly spaced ticks
+      // Check if all values are integers (needed for both numerical and categorical logic)
+      const areAllIntegers = chartData.every(item => {
+        const num = Number(item[xKey]);
+        return Number.isInteger(num) && !isNaN(num);
+      });
+      
+      // For numerical x-axis with integers (like epochs), use discrete values
+      if (isNumericalXAxis && areAllIntegers) {
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const maxTicks = maxXAxisTicks || (isMobile ? 5 : 8);
+        
+        // Use actual integer values from data, not interpolated values
+        const uniqueValues = [...new Set(chartData.map(d => Number(d[xKey])))].sort((a, b) => a - b);
+        
+        // If we have fewer values than maxTicks, show all
+        if (uniqueValues.length <= maxTicks) {
+          return uniqueValues;
+        }
+        
+        // Otherwise, sample evenly through the unique values
+        const tickInterval = Math.ceil(uniqueValues.length / maxTicks);
+        return uniqueValues.filter((_, i) => i % tickInterval === 0);
+      }
+      
+      // For numerical x-axis with non-integers, generate evenly spaced ticks
       if (isNumericalXAxis) {
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         const maxTicks = maxXAxisTicks || (isMobile ? 5 : 8);
@@ -1822,12 +1846,6 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
          /^\d{1,2}-[A-Za-z]{3}-\d{4}/.test(chartData[0][xKey]) ||
          /^[A-Za-z]{3}\s\d{4}$/.test(chartData[0][xKey]) || 
          /^\d{4}$/.test(chartData[0][xKey]));
-      
-      // Check if all values are integers
-      const areAllIntegers = chartData.every(item => {
-        const num = Number(item[xKey]);
-        return Number.isInteger(num) && !isNaN(num);
-      });
       
       // Detect mobile screen size
       const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -1868,7 +1886,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
             title={isNumericalXAxis && typeof tooltip.key === 'number' 
-              ? `${xKey}: ${tooltip.key.toFixed(2)}` 
+              ? `${xKey}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}` 
               : String(tooltip.key)}
             items={tooltip.items}
             left={tooltip.left}
@@ -1946,6 +1964,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               tickFormat={(value) => {
                 // For numerical x-axis, format numbers with appropriate decimal places
                 if (isNumericalXAxis && typeof value === 'number') {
+                  // Check if this is an integer value (like epochs)
+                  if (Number.isInteger(value)) {
+                    return value.toString(); // Show integers without decimal places
+                  }
+                  
                   // Format z-scores or other numerical values
                   if (Math.abs(value) < 0.01) {
                     return value.toFixed(4);
@@ -2254,7 +2277,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                     }}>
                                           <ChartTooltip
                       title={isNumericalXAxis && typeof tooltip.key === 'number' 
-                        ? `${xKey}: ${tooltip.key.toFixed(2)}` 
+                        ? `${xKey}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}` 
                         : String(tooltip.key)}
                       items={tooltip.items}
                       left={0}
