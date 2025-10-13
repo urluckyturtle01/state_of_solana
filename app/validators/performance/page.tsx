@@ -5,7 +5,7 @@ import ChartCard from '@/app/components/shared/ChartCard';
 import SimpleBarChart from '@/app/admin/components/charts/SimpleBarChart';
 import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLineBarChart';
 import VoteAccountFilter from '@/app/components/shared/filters/VoteAccountFilter';
-import StakeTypeFilter, { StakeType } from '@/app/components/shared/filters/StakeTypeFilter';
+import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTIONS } from '@/app/components/shared/filters/StakeTypeFilter';
 import { ChartConfig, YAxisConfig } from '@/app/admin/types';
 
 interface ValidatorPerformanceData {
@@ -25,6 +25,11 @@ interface ValidatorPerformanceData {
   avg_commission_per_staker: number;
   validator_commission_pct: number;
   epoch: number;
+  // Distribution metrics
+  gini_coefficient: number;
+  nakamoto_coeff_33: number;
+  skewness: number;
+  kurtosis: number;
 }
 
 export default function ValidatorsPerformancePage() {
@@ -32,6 +37,7 @@ export default function ValidatorsPerformancePage() {
     'xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v'
   );
   const [selectedStakeType, setSelectedStakeType] = useState<StakeType>('total_stake');
+  const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('gini_coefficient');
   const [chartData, setChartData] = useState<ValidatorPerformanceData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,6 +79,22 @@ export default function ValidatorsPerformancePage() {
     return stakeType === 'mean_stake' || stakeType === 'median_stake';
   };
 
+  // Get metric type display info
+  const getMetricTypeInfo = (metricType: MetricType) => {
+    switch (metricType) {
+      case 'gini_coefficient':
+        return { title: 'Gini Index by Epoch', unit: '' };
+      case 'nakamoto_coeff_33':
+        return { title: 'Nakamoto Coefficient by Epoch', unit: 'validators' };
+      case 'skewness':
+        return { title: 'Skewness by Epoch', unit: '' };
+      case 'kurtosis':
+        return { title: 'Kurtosis by Epoch', unit: '' };
+      default:
+        return { title: 'Distribution Metric by Epoch', unit: '' };
+    }
+  };
+
   // Chart configuration for stake vs epoch  
   const stakeChartConfig: ChartConfig = {
     id: 'validator-stake-chart',
@@ -87,6 +109,25 @@ export default function ValidatorsPerformancePage() {
         ? { field: selectedStakeType, type: 'line', unit: getStakeTypeInfo(selectedStakeType).unit } as YAxisConfig
         : selectedStakeType,
       yAxisUnit: getStakeTypeInfo(selectedStakeType).unit
+    },
+    additionalOptions: {
+      showTooltipTotal: false,
+      enableTimeAggregation: false
+    }
+  };
+
+  // Chart configuration for distribution metrics vs epoch  
+  const distributionChartConfig: ChartConfig = {
+    id: 'validator-distribution-chart',
+    title: getMetricTypeInfo(selectedMetricType).title,
+    subtitle: `Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
+    page: 'validators-performance',
+    chartType: 'line',
+    apiEndpoint: '/api/validators/performance',
+    dataMapping: {
+      xAxis: 'epoch',
+      yAxis: { field: selectedMetricType, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit } as YAxisConfig,
+      yAxisUnit: getMetricTypeInfo(selectedMetricType).unit
     },
     additionalOptions: {
       showTooltipTotal: false,
@@ -140,6 +181,11 @@ export default function ValidatorsPerformancePage() {
   // Handle stake type change
   const handleStakeTypeChange = useCallback((newStakeType: StakeType) => {
     setSelectedStakeType(newStakeType);
+  }, []);
+
+  // Handle metric type change
+  const handleMetricTypeChange = useCallback((newMetricType: MetricType) => {
+    setSelectedMetricType(newMetricType);
   }, []);
 
   // Fetch data when vote account changes
@@ -236,6 +282,36 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
+      {/* Distribution Metrics Chart - Full Width */}
+      <div className="mt-6">
+        <ChartCard
+          title={getMetricTypeInfo(selectedMetricType).title}
+          description={`Distribution metrics for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          isLoading={isLoading}
+          chart={distributionChartConfig}
+          chartData={chartData}
+          filterBar={
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <GenericFilter
+                  value={selectedMetricType}
+                  onChange={handleMetricTypeChange}
+                  options={METRIC_TYPE_OPTIONS}
+                />
+              </div>
+            </div>
+          }
+        >
+          <MultiSeriesLineBarChart
+            chartConfig={distributionChartConfig}
+            data={chartData}
+            height={400}
+            maxXAxisTicks={8}
+            yAxisUnit={getMetricTypeInfo(selectedMetricType).unit}
+          />
+        </ChartCard>
+      </div>
+
       {/* Data Summary */}
       {chartData.length > 0 && !isLoading && (
         <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
@@ -273,6 +349,18 @@ export default function ValidatorsPerformancePage() {
               <span className="text-gray-400">Current {getStakeTypeInfo(selectedStakeType).title.split(' ')[0]}:</span>
               <span className="ml-2 text-gray-200">
                 {chartData.length > 0 ? chartData[chartData.length - 1][selectedStakeType].toFixed(2) : '0'} SOL
+              </span>
+            </div>
+            <div>
+              <span className="text-gray-400">Current {getMetricTypeInfo(selectedMetricType).title.split(' ')[0]}:</span>
+              <span className="ml-2 text-gray-200">
+                {chartData.length > 0 ? chartData[chartData.length - 1][selectedMetricType].toFixed(4) : '0'} {getMetricTypeInfo(selectedMetricType).unit}
+              </span>
+            </div>
+            <div>
+              <span className="text-gray-400">Avg {getMetricTypeInfo(selectedMetricType).title.split(' ')[0]}:</span>
+              <span className="ml-2 text-gray-200">
+                {chartData.length > 0 ? (chartData.reduce((sum, d) => sum + d[selectedMetricType], 0) / chartData.length).toFixed(4) : '0'} {getMetricTypeInfo(selectedMetricType).unit}
               </span>
             </div>
           </div>
