@@ -200,11 +200,16 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   currencyFilter,
   showTotal = false
 }) => {
+  // Early return if items is null or undefined
+  if (!items || !Array.isArray(items)) {
+    return null;
+  }
+
   // Calculate if tooltip should be positioned right to left (to avoid edge cutoff)
   const shouldFlipX = left > (isModal ? 500 : 250);
   
   // Check if we have any axis information (dual-axis chart)
-  const hasDualAxisItems = items.some(item => item.axis);
+  const hasDualAxisItems = items?.some(item => item.axis) || false;
   
   // Format the title based on timeFilter if provided
   const formattedTitle = formatTooltipTitle(title, timeFilter);
@@ -232,7 +237,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   };
   
   // Sort items by value in descending order
-  const sortedItems = [...items].sort((a, b) => {
+  const sortedItems = [...(items || [])].sort((a, b) => {
     const valueA = parseValueWithUnits(a.value);
     const valueB = parseValueWithUnits(b.value);
     
@@ -247,7 +252,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   const hiddenItemsCount = sortedItems.length - maxItems;
 
   // Calculate total if showTotal is enabled
-  const totalValue = showTotal ? items.reduce((sum, item) => {
+  const totalValue = showTotal ? (items || []).reduce((sum, item) => {
     return sum + parseValueWithUnits(item.value);
   }, 0) : 0;
 
@@ -354,7 +359,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
         )}
         
         {/* Show total if enabled */}
-        {showTotal && items.length > 1 && (
+        {showTotal && (items?.length || 0) > 1 && (
           <>
             {/* Separator line */}
             <div className="border-t border-gray-800 my-1"></div>

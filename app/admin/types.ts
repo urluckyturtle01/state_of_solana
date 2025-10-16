@@ -40,7 +40,7 @@ export const CHART_TYPES = [
   { id: 'stacked-area', name: 'Stacked Area Chart' },
 ] as const;
 
-export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie';
+export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie' | 'box';
 
 // Percentage field configuration for weighted average calculation
 export interface PercentageFieldConfig {
@@ -55,6 +55,7 @@ export interface YAxisConfig {
   type: 'bar' | 'line';
   color?: string;
   unit?: string; // Optional unit for display purposes (e.g., "$", "%", "SOL")
+  label?: string; // Optional label for the series (e.g., "Validator", "Network Median")
   // Optional flag for dual-axis charts to indicate right y-axis
   rightAxis?: boolean;
   // Optional flag to mark this field as a percentage

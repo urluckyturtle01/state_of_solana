@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type StakeType = 'total_stake' | 'mean_stake' | 'median_stake';
-export type MetricType = 'gini_coefficient' | 'nakamoto_coeff_33' | 'skewness' | 'kurtosis';
+export type MetricType = 'gini_coefficient' | 'hhi_index' | 'nakamoto_coeff_33' | 'skewness' | 'kurtosis';
 
 export interface FilterOption<T = string> {
   value: T;
@@ -53,6 +53,11 @@ export const METRIC_TYPE_OPTIONS: FilterOption<MetricType>[] = [
     value: 'gini_coefficient', 
     label: 'Gini Index', 
     description: 'Gini coefficient measuring stake distribution inequality',
+  },
+  { 
+    value: 'hhi_index', 
+    label: 'HHI Index', 
+    description: 'Herfindahl-Hirschman Index measuring market concentration',
   },
   { 
     value: 'nakamoto_coeff_33', 
