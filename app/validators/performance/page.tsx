@@ -534,8 +534,9 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Ladder Chart - Full Width */}
-      <div className="mt-6">
+      {/* Ladder Chart and Box Plot Chart - Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        {/* Ladder Chart */}
         <ChartCard
           title="Concentration Ladder Chart"
           description={`Horizontal bar chart showing concentration levels for epoch ${selectedEpoch || 'N/A'}. Validator: ${selectedVoteAccount.slice(0, 8)}...`}
@@ -569,10 +570,8 @@ export default function ValidatorsPerformancePage() {
             selectedEpoch={selectedEpoch || undefined}
           />
         </ChartCard>
-      </div>
 
-      {/* Box Plot Chart - Full Width */}
-      <div className="mt-6">
+        {/* Box Plot Chart */}
         <ChartCard
           title="Stake Distribution (Box Plot - Log Scale)"
           description={`Box plot showing stake distribution quartiles for the last 10 epochs. Validator: ${selectedVoteAccount.slice(0, 8)}...`}

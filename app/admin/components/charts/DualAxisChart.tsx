@@ -1200,7 +1200,20 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
               return dateA.getTime() - dateB.getTime();
             }
           }
-          return 0; // No change in order if not dates
+          
+          // If they're numeric values, sort numerically (lowest to highest)
+          const numA = Number(a);
+          const numB = Number(b);
+          if (!isNaN(numA) && !isNaN(numB)) {
+            return numA - numB;
+          }
+          
+          // For strings, sort alphabetically
+          if (typeof a === 'string' && typeof b === 'string') {
+            return a.localeCompare(b);
+          }
+          
+          return 0; // No change in order if not handled above
         }),
       range: [0, innerWidth],
       padding: 0.2,
