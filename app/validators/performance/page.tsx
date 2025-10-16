@@ -9,10 +9,10 @@ import LadderChart, { LadderChartData } from '@/app/admin/components/charts/Ladd
 import VoteAccountFilter from '@/app/components/shared/filters/VoteAccountFilter';
 import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTIONS } from '@/app/components/shared/filters/StakeTypeFilter';
 
-// Concentration type definition
-export type ConcentrationType = 'top_01pct_concentration' | 'top_1pct_concentration' | 'top_5pct_concentration' | 'top_10pct_concentration';
+// Concentration type definition (internal to component)
+type ConcentrationType = 'top_01pct_concentration' | 'top_1pct_concentration' | 'top_5pct_concentration' | 'top_10pct_concentration';
 
-export const CONCENTRATION_TYPE_OPTIONS = [
+const CONCENTRATION_TYPE_OPTIONS = [
   { value: 'top_01pct_concentration' as ConcentrationType, label: 'Top 0.1% Concentration', description: 'Concentration among top 0.1% of stakers' },
   { value: 'top_1pct_concentration' as ConcentrationType, label: 'Top 1% Concentration', description: 'Concentration among top 1% of stakers' },
   { value: 'top_5pct_concentration' as ConcentrationType, label: 'Top 5% Concentration', description: 'Concentration among top 5% of stakers' },

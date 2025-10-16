@@ -202,7 +202,7 @@ export default function LadderChart({
                         
                         if (barY === undefined) return null;
 
-                        const color = getColorByIndex(index, 'bar');
+                        const color = getColorByIndex(index);
                         
                         return (
                           <Bar
