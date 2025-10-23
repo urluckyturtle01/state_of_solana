@@ -1,23 +1,36 @@
 {
   "pageId": "mev-summary",
   "pageName": "Summary",
-  "fetchedAt": "2025-10-23T12:45:01.912Z",
+  "fetchedAt": "2025-10-23T13:33:14.443Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-10-23",
+          "attacks": 116,
+          "cumulative_attacks": 709948,
+          "total_sol_drained": 12.374168098,
+          "cumulative_sol_drained": 62484.777128114,
+          "attackers": 52,
+          "victims": 85,
+          "exposed_volume": 168.798748188,
+          "exposed_volume_usd": 31323.4719112585,
+          "cumulative_exposed_volume": 1485127.287868507,
+          "cumulative_exposed_volume_usd": 248494323.06278443
+        },
+        {
           "block_date": "2025-10-22",
-          "attacks": 327,
-          "cumulative_attacks": 709607,
-          "total_sol_drained": 7.685847132,
-          "cumulative_sol_drained": 62448.310733512,
-          "attackers": 42,
-          "victims": 273,
-          "exposed_volume": 282.654329032,
-          "exposed_volume_usd": 52368.6548052539,
-          "cumulative_exposed_volume": 1484408.164369012,
-          "cumulative_exposed_volume_usd": 248362955.18452498
+          "attacks": 552,
+          "cumulative_attacks": 709832,
+          "total_sol_drained": 31.778073636,
+          "cumulative_sol_drained": 62472.402960016,
+          "attackers": 113,
+          "victims": 417,
+          "exposed_volume": 832.979080339,
+          "exposed_volume_usd": 152413.0611534507,
+          "cumulative_exposed_volume": 1484958.489120319,
+          "cumulative_exposed_volume_usd": 248462999.59087318
         },
         {
           "block_date": "2025-10-21",
@@ -2243,7 +2256,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1761223501912,
+      "timestamp": 1761226394443,
       "chartId": "chart_1747912299931_ifdsfj1",
       "title": "Total SOL Drained",
       "apiType": "JSON"
@@ -2252,17 +2265,30 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-10-23",
+          "attacks": 116,
+          "cumulative_attacks": 709948,
+          "total_sol_drained": 12.374168098,
+          "cumulative_sol_drained": 62484.777128114,
+          "attackers": 52,
+          "victims": 85,
+          "exposed_volume": 168.798748188,
+          "exposed_volume_usd": 31323.4719112585,
+          "cumulative_exposed_volume": 1485127.287868507,
+          "cumulative_exposed_volume_usd": 248494323.06278443
+        },
+        {
           "block_date": "2025-10-22",
-          "attacks": 327,
-          "cumulative_attacks": 709607,
-          "total_sol_drained": 7.685847132,
-          "cumulative_sol_drained": 62448.310733512,
-          "attackers": 42,
-          "victims": 273,
-          "exposed_volume": 282.654329032,
-          "exposed_volume_usd": 52368.6548052539,
-          "cumulative_exposed_volume": 1484408.164369012,
-          "cumulative_exposed_volume_usd": 248362955.18452498
+          "attacks": 552,
+          "cumulative_attacks": 709832,
+          "total_sol_drained": 31.778073636,
+          "cumulative_sol_drained": 62472.402960016,
+          "attackers": 113,
+          "victims": 417,
+          "exposed_volume": 832.979080339,
+          "exposed_volume_usd": 152413.0611534507,
+          "cumulative_exposed_volume": 1484958.489120319,
+          "cumulative_exposed_volume_usd": 248462999.59087318
         },
         {
           "block_date": "2025-10-21",
@@ -4488,7 +4514,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1761223501831,
+      "timestamp": 1761226394383,
       "chartId": "chart_1747912515365_t6aqyxm",
       "title": "Total Attacks",
       "apiType": "JSON"
