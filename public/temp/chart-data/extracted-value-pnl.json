@@ -1,7 +1,7 @@
 {
   "pageId": "extracted-value-pnl",
   "pageName": "Extracted Value & PNL",
-  "fetchedAt": "2025-10-24T19:16:45.948Z",
+  "fetchedAt": "2025-10-24T20:23:16.743Z",
   "charts": [
     {
       "success": true,
@@ -2269,7 +2269,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1761333404913,
+      "timestamp": 1761337395644,
       "chartId": "chart_1747913013490_uo9o6kd",
       "title": "Attacks & Attackers",
       "apiType": "JSON"
@@ -4540,7 +4540,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1761333404914,
+      "timestamp": 1761337395642,
       "chartId": "chart_1747913289182_5vwaozt",
       "title": "Daily SOL Drained",
       "apiType": "JSON"
@@ -5582,12 +5582,18 @@
         },
         {
           "block_date": "2025-10-23",
-          "total_sol_drained": 12.374168098,
-          "exposed_volume": 168.798748188,
-          "sol_drained_pct": 7.330722668759511
+          "total_sol_drained": 24.557226999,
+          "exposed_volume": 478.48276311,
+          "sol_drained_pct": 5.1323117345722356
+        },
+        {
+          "block_date": "2025-10-24",
+          "total_sol_drained": 5.130827204,
+          "exposed_volume": 120.614253961,
+          "sol_drained_pct": 4.253914471550789
         }
       ],
-      "timestamp": 1761333404903,
+      "timestamp": 1761337395588,
       "chartId": "chart_1748081344058_qxcos7c",
       "title": "SOL Drained Vs Volume Exposed",
       "apiType": "JSON"
@@ -5620,7 +5626,7 @@
           "exposed_txns": 23989
         }
       ],
-      "timestamp": 1761333405946,
+      "timestamp": 1761337396736,
       "chartId": "chart_1748081590850_soiyu3i",
       "title": "Sandwich Trades By SOL Drained",
       "apiType": "JSON"
@@ -5629,58 +5635,70 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-10-23",
+          "exposed_volume_usd": 90367.433661004,
+          "dex_volume_usd": 1274439816.4980438,
+          "Exposed_volume_percentage": 0.007090757248099736
+        },
+        {
+          "block_date": "2025-10-22",
+          "exposed_volume_usd": 152413.0611534507,
+          "dex_volume_usd": 1588541964.3334377,
+          "Exposed_volume_percentage": 0.009594525330490981
+        },
+        {
           "block_date": "2025-10-21",
           "exposed_volume_usd": 210539.803919557,
-          "dex_volume_usd": 1374461110.085051,
-          "Exposed_volume_percentage": 0.01531798916497018
+          "dex_volume_usd": 1677640460.5468886,
+          "Exposed_volume_percentage": 0.012549757166140582
         },
         {
           "block_date": "2025-10-20",
           "exposed_volume_usd": 297924.1694523102,
-          "dex_volume_usd": 1185383091.5596554,
-          "Exposed_volume_percentage": 0.02513315497526792
+          "dex_volume_usd": 1185383091.5596564,
+          "Exposed_volume_percentage": 0.025133154975267896
         },
         {
           "block_date": "2025-10-19",
           "exposed_volume_usd": 155861.5484981313,
-          "dex_volume_usd": 919847526.26543,
-          "Exposed_volume_percentage": 0.016944280877824104
+          "dex_volume_usd": 919847526.2654287,
+          "Exposed_volume_percentage": 0.01694428087782413
         },
         {
           "block_date": "2025-10-18",
           "exposed_volume_usd": 459415.4417440584,
-          "dex_volume_usd": 910621033.4250896,
-          "Exposed_volume_percentage": 0.05045078302398461
+          "dex_volume_usd": 910621033.4250882,
+          "Exposed_volume_percentage": 0.0504507830239847
         },
         {
           "block_date": "2025-10-17",
           "exposed_volume_usd": 153890.5441024953,
-          "dex_volume_usd": 1834854398.0827682,
-          "Exposed_volume_percentage": 0.008387071162883274
+          "dex_volume_usd": 1834854398.0827613,
+          "Exposed_volume_percentage": 0.008387071162883305
         },
         {
           "block_date": "2025-10-16",
           "exposed_volume_usd": 163364.3458007695,
-          "dex_volume_usd": 1997948212.4670172,
-          "Exposed_volume_percentage": 0.008176605618773833
+          "dex_volume_usd": 1997948212.4670162,
+          "Exposed_volume_percentage": 0.008176605618773838
         },
         {
           "block_date": "2025-10-15",
           "exposed_volume_usd": 189926.1617385101,
-          "dex_volume_usd": 1885770926.9103715,
-          "Exposed_volume_percentage": 0.010071539391567737
+          "dex_volume_usd": 1885770926.9103737,
+          "Exposed_volume_percentage": 0.010071539391567725
         },
         {
           "block_date": "2025-10-14",
           "exposed_volume_usd": 344928.9628728759,
-          "dex_volume_usd": 2434870759.6968884,
-          "Exposed_volume_percentage": 0.01416621237489481
+          "dex_volume_usd": 2434870759.6968865,
+          "Exposed_volume_percentage": 0.014166212374894824
         },
         {
           "block_date": "2025-10-13",
           "exposed_volume_usd": 122572.7205126475,
-          "dex_volume_usd": 2156907472.167964,
-          "Exposed_volume_percentage": 0.005682799197197201
+          "dex_volume_usd": 2156907472.16795,
+          "Exposed_volume_percentage": 0.005682799197197237
         },
         {
           "block_date": "2025-10-12",
@@ -5691,125 +5709,113 @@
         {
           "block_date": "2025-10-11",
           "exposed_volume_usd": 2872382.0417178813,
-          "dex_volume_usd": 2965538657.9084425,
-          "Exposed_volume_percentage": 0.09685869493077985
+          "dex_volume_usd": 2965538657.908422,
+          "Exposed_volume_percentage": 0.09685869493078052
         },
         {
           "block_date": "2025-10-10",
           "exposed_volume_usd": 179542.6584464603,
-          "dex_volume_usd": 4933345635.52744,
-          "Exposed_volume_percentage": 0.00363936913630145
+          "dex_volume_usd": 4933345635.527441,
+          "Exposed_volume_percentage": 0.0036393691363014497
         },
         {
           "block_date": "2025-10-09",
           "exposed_volume_usd": 130465.9134092795,
-          "dex_volume_usd": 1775911502.6769478,
-          "Exposed_volume_percentage": 0.007346419751920053
+          "dex_volume_usd": 1775911502.6769533,
+          "Exposed_volume_percentage": 0.00734641975192003
         },
         {
           "block_date": "2025-10-08",
           "exposed_volume_usd": 106379.8701019498,
-          "dex_volume_usd": 1658830898.7092865,
-          "Exposed_volume_percentage": 0.00641294240327465
+          "dex_volume_usd": 1658830898.709289,
+          "Exposed_volume_percentage": 0.00641294240327464
         },
         {
           "block_date": "2025-10-07",
           "exposed_volume_usd": 176798.3208333165,
-          "dex_volume_usd": 1916492228.2501278,
-          "Exposed_volume_percentage": 0.009225099806157
+          "dex_volume_usd": 1916492228.250109,
+          "Exposed_volume_percentage": 0.009225099806157091
         },
         {
           "block_date": "2025-10-06",
           "exposed_volume_usd": 239044.9460609486,
-          "dex_volume_usd": 1583520994.8684554,
-          "Exposed_volume_percentage": 0.01509578634167754
+          "dex_volume_usd": 1583520994.868456,
+          "Exposed_volume_percentage": 0.015095786341677537
         },
         {
           "block_date": "2025-10-05",
           "exposed_volume_usd": 150483.8220828088,
-          "dex_volume_usd": 1441977675.3234992,
-          "Exposed_volume_percentage": 0.010435932862070741
+          "dex_volume_usd": 1441977675.3234982,
+          "Exposed_volume_percentage": 0.010435932862070748
         },
         {
           "block_date": "2025-10-04",
           "exposed_volume_usd": 112334.520054438,
-          "dex_volume_usd": 1053051968.8560704,
-          "Exposed_volume_percentage": 0.010667519113654657
+          "dex_volume_usd": 1053051968.8560716,
+          "Exposed_volume_percentage": 0.010667519113654645
         },
         {
           "block_date": "2025-10-03",
           "exposed_volume_usd": 225954.4653498664,
-          "dex_volume_usd": 1906837753.3982654,
-          "Exposed_volume_percentage": 0.011849695389509795
+          "dex_volume_usd": 1906837753.39827,
+          "Exposed_volume_percentage": 0.011849695389509767
         },
         {
           "block_date": "2025-10-02",
           "exposed_volume_usd": 186535.5691750816,
-          "dex_volume_usd": 1898432528.9584491,
-          "Exposed_volume_percentage": 0.009825767644079612
+          "dex_volume_usd": 1898432528.958435,
+          "Exposed_volume_percentage": 0.009825767644079685
         },
         {
           "block_date": "2025-10-01",
           "exposed_volume_usd": 224689.6214737436,
-          "dex_volume_usd": 1419672264.766959,
-          "Exposed_volume_percentage": 0.015826865611876042
+          "dex_volume_usd": 1419672264.7669678,
+          "Exposed_volume_percentage": 0.015826865611875945
         },
         {
           "block_date": "2025-09-30",
           "exposed_volume_usd": 182202.4392251506,
-          "dex_volume_usd": 1285568182.4626803,
-          "Exposed_volume_percentage": 0.014172911379629595
+          "dex_volume_usd": 1285568182.4626863,
+          "Exposed_volume_percentage": 0.01417291137962953
         },
         {
           "block_date": "2025-09-29",
           "exposed_volume_usd": 194713.6580326078,
-          "dex_volume_usd": 1254233369.0751107,
-          "Exposed_volume_percentage": 0.015524515838403533
+          "dex_volume_usd": 1254233369.0751145,
+          "Exposed_volume_percentage": 0.015524515838403488
         },
         {
           "block_date": "2025-09-28",
           "exposed_volume_usd": 74933.1900417942,
-          "dex_volume_usd": 895496171.1167761,
-          "Exposed_volume_percentage": 0.008367784526464785
+          "dex_volume_usd": 895496171.1167645,
+          "Exposed_volume_percentage": 0.008367784526464892
         },
         {
           "block_date": "2025-09-27",
           "exposed_volume_usd": 65595.8758190413,
-          "dex_volume_usd": 799207420.1667011,
-          "Exposed_volume_percentage": 0.008207615965997804
+          "dex_volume_usd": 799207420.1667039,
+          "Exposed_volume_percentage": 0.008207615965997773
         },
         {
           "block_date": "2025-09-26",
           "exposed_volume_usd": 89594.4223965534,
-          "dex_volume_usd": 1616402553.3825846,
-          "Exposed_volume_percentage": 0.005542828561428744
+          "dex_volume_usd": 1616402553.3825817,
+          "Exposed_volume_percentage": 0.005542828561428755
         },
         {
           "block_date": "2025-09-25",
           "exposed_volume_usd": 102261.6104639991,
-          "dex_volume_usd": 2018932001.462558,
-          "Exposed_volume_percentage": 0.005065133961417154
+          "dex_volume_usd": 2018932001.4625587,
+          "Exposed_volume_percentage": 0.005065133961417152
         },
         {
           "block_date": "2025-09-24",
           "exposed_volume_usd": 125667.1515330513,
-          "dex_volume_usd": 1571646932.3448064,
-          "Exposed_volume_percentage": 0.00799588946771672
-        },
-        {
-          "block_date": "2025-09-23",
-          "exposed_volume_usd": 88425.8218737107,
-          "dex_volume_usd": 1781662522.4107738,
-          "Exposed_volume_percentage": 0.004963107252997689
-        },
-        {
-          "block_date": "2025-09-22",
-          "exposed_volume_usd": 150390.7951936027,
-          "dex_volume_usd": 2220305061.595629,
-          "Exposed_volume_percentage": 0.006773429372156811
+          "dex_volume_usd": 1571646932.3448102,
+          "Exposed_volume_percentage": 0.007995889467716701
         }
       ],
-      "timestamp": 1761333405948,
+      "timestamp": 1761337396743,
       "chartId": "chart_1748087853606_gysynde",
       "title": "Exposed Volume Vs DEX Volume",
       "apiType": "JSON"
@@ -5818,58 +5824,70 @@
       "success": true,
       "data": [
         {
+          "block_date": "2025-10-23",
+          "exposed_volume_usd": 90367.433661004,
+          "dex_volume_usd": 1274439816.4980438,
+          "Exposed_volume_percentage": 0.007090757248099736
+        },
+        {
+          "block_date": "2025-10-22",
+          "exposed_volume_usd": 152413.0611534507,
+          "dex_volume_usd": 1588541964.3334377,
+          "Exposed_volume_percentage": 0.009594525330490981
+        },
+        {
           "block_date": "2025-10-21",
           "exposed_volume_usd": 210539.803919557,
-          "dex_volume_usd": 1374461110.085051,
-          "Exposed_volume_percentage": 0.01531798916497018
+          "dex_volume_usd": 1677640460.5468886,
+          "Exposed_volume_percentage": 0.012549757166140582
         },
         {
           "block_date": "2025-10-20",
           "exposed_volume_usd": 297924.1694523102,
-          "dex_volume_usd": 1185383091.5596554,
-          "Exposed_volume_percentage": 0.02513315497526792
+          "dex_volume_usd": 1185383091.5596564,
+          "Exposed_volume_percentage": 0.025133154975267896
         },
         {
           "block_date": "2025-10-19",
           "exposed_volume_usd": 155861.5484981313,
-          "dex_volume_usd": 919847526.26543,
-          "Exposed_volume_percentage": 0.016944280877824104
+          "dex_volume_usd": 919847526.2654287,
+          "Exposed_volume_percentage": 0.01694428087782413
         },
         {
           "block_date": "2025-10-18",
           "exposed_volume_usd": 459415.4417440584,
-          "dex_volume_usd": 910621033.4250896,
-          "Exposed_volume_percentage": 0.05045078302398461
+          "dex_volume_usd": 910621033.4250882,
+          "Exposed_volume_percentage": 0.0504507830239847
         },
         {
           "block_date": "2025-10-17",
           "exposed_volume_usd": 153890.5441024953,
-          "dex_volume_usd": 1834854398.0827682,
-          "Exposed_volume_percentage": 0.008387071162883274
+          "dex_volume_usd": 1834854398.0827613,
+          "Exposed_volume_percentage": 0.008387071162883305
         },
         {
           "block_date": "2025-10-16",
           "exposed_volume_usd": 163364.3458007695,
-          "dex_volume_usd": 1997948212.4670172,
-          "Exposed_volume_percentage": 0.008176605618773833
+          "dex_volume_usd": 1997948212.4670162,
+          "Exposed_volume_percentage": 0.008176605618773838
         },
         {
           "block_date": "2025-10-15",
           "exposed_volume_usd": 189926.1617385101,
-          "dex_volume_usd": 1885770926.9103715,
-          "Exposed_volume_percentage": 0.010071539391567737
+          "dex_volume_usd": 1885770926.9103737,
+          "Exposed_volume_percentage": 0.010071539391567725
         },
         {
           "block_date": "2025-10-14",
           "exposed_volume_usd": 344928.9628728759,
-          "dex_volume_usd": 2434870759.6968884,
-          "Exposed_volume_percentage": 0.01416621237489481
+          "dex_volume_usd": 2434870759.6968865,
+          "Exposed_volume_percentage": 0.014166212374894824
         },
         {
           "block_date": "2025-10-13",
           "exposed_volume_usd": 122572.7205126475,
-          "dex_volume_usd": 2156907472.167964,
-          "Exposed_volume_percentage": 0.005682799197197201
+          "dex_volume_usd": 2156907472.16795,
+          "Exposed_volume_percentage": 0.005682799197197237
         },
         {
           "block_date": "2025-10-12",
@@ -5880,125 +5898,113 @@
         {
           "block_date": "2025-10-11",
           "exposed_volume_usd": 2872382.0417178813,
-          "dex_volume_usd": 2965538657.9084425,
-          "Exposed_volume_percentage": 0.09685869493077985
+          "dex_volume_usd": 2965538657.908422,
+          "Exposed_volume_percentage": 0.09685869493078052
         },
         {
           "block_date": "2025-10-10",
           "exposed_volume_usd": 179542.6584464603,
-          "dex_volume_usd": 4933345635.52744,
-          "Exposed_volume_percentage": 0.00363936913630145
+          "dex_volume_usd": 4933345635.527441,
+          "Exposed_volume_percentage": 0.0036393691363014497
         },
         {
           "block_date": "2025-10-09",
           "exposed_volume_usd": 130465.9134092795,
-          "dex_volume_usd": 1775911502.6769478,
-          "Exposed_volume_percentage": 0.007346419751920053
+          "dex_volume_usd": 1775911502.6769533,
+          "Exposed_volume_percentage": 0.00734641975192003
         },
         {
           "block_date": "2025-10-08",
           "exposed_volume_usd": 106379.8701019498,
-          "dex_volume_usd": 1658830898.7092865,
-          "Exposed_volume_percentage": 0.00641294240327465
+          "dex_volume_usd": 1658830898.709289,
+          "Exposed_volume_percentage": 0.00641294240327464
         },
         {
           "block_date": "2025-10-07",
           "exposed_volume_usd": 176798.3208333165,
-          "dex_volume_usd": 1916492228.2501278,
-          "Exposed_volume_percentage": 0.009225099806157
+          "dex_volume_usd": 1916492228.250109,
+          "Exposed_volume_percentage": 0.009225099806157091
         },
         {
           "block_date": "2025-10-06",
           "exposed_volume_usd": 239044.9460609486,
-          "dex_volume_usd": 1583520994.8684554,
-          "Exposed_volume_percentage": 0.01509578634167754
+          "dex_volume_usd": 1583520994.868456,
+          "Exposed_volume_percentage": 0.015095786341677537
         },
         {
           "block_date": "2025-10-05",
           "exposed_volume_usd": 150483.8220828088,
-          "dex_volume_usd": 1441977675.3234992,
-          "Exposed_volume_percentage": 0.010435932862070741
+          "dex_volume_usd": 1441977675.3234982,
+          "Exposed_volume_percentage": 0.010435932862070748
         },
         {
           "block_date": "2025-10-04",
           "exposed_volume_usd": 112334.520054438,
-          "dex_volume_usd": 1053051968.8560704,
-          "Exposed_volume_percentage": 0.010667519113654657
+          "dex_volume_usd": 1053051968.8560716,
+          "Exposed_volume_percentage": 0.010667519113654645
         },
         {
           "block_date": "2025-10-03",
           "exposed_volume_usd": 225954.4653498664,
-          "dex_volume_usd": 1906837753.3982654,
-          "Exposed_volume_percentage": 0.011849695389509795
+          "dex_volume_usd": 1906837753.39827,
+          "Exposed_volume_percentage": 0.011849695389509767
         },
         {
           "block_date": "2025-10-02",
           "exposed_volume_usd": 186535.5691750816,
-          "dex_volume_usd": 1898432528.9584491,
-          "Exposed_volume_percentage": 0.009825767644079612
+          "dex_volume_usd": 1898432528.958435,
+          "Exposed_volume_percentage": 0.009825767644079685
         },
         {
           "block_date": "2025-10-01",
           "exposed_volume_usd": 224689.6214737436,
-          "dex_volume_usd": 1419672264.766959,
-          "Exposed_volume_percentage": 0.015826865611876042
+          "dex_volume_usd": 1419672264.7669678,
+          "Exposed_volume_percentage": 0.015826865611875945
         },
         {
           "block_date": "2025-09-30",
           "exposed_volume_usd": 182202.4392251506,
-          "dex_volume_usd": 1285568182.4626803,
-          "Exposed_volume_percentage": 0.014172911379629595
+          "dex_volume_usd": 1285568182.4626863,
+          "Exposed_volume_percentage": 0.01417291137962953
         },
         {
           "block_date": "2025-09-29",
           "exposed_volume_usd": 194713.6580326078,
-          "dex_volume_usd": 1254233369.0751107,
-          "Exposed_volume_percentage": 0.015524515838403533
+          "dex_volume_usd": 1254233369.0751145,
+          "Exposed_volume_percentage": 0.015524515838403488
         },
         {
           "block_date": "2025-09-28",
           "exposed_volume_usd": 74933.1900417942,
-          "dex_volume_usd": 895496171.1167761,
-          "Exposed_volume_percentage": 0.008367784526464785
+          "dex_volume_usd": 895496171.1167645,
+          "Exposed_volume_percentage": 0.008367784526464892
         },
         {
           "block_date": "2025-09-27",
           "exposed_volume_usd": 65595.8758190413,
-          "dex_volume_usd": 799207420.1667011,
-          "Exposed_volume_percentage": 0.008207615965997804
+          "dex_volume_usd": 799207420.1667039,
+          "Exposed_volume_percentage": 0.008207615965997773
         },
         {
           "block_date": "2025-09-26",
           "exposed_volume_usd": 89594.4223965534,
-          "dex_volume_usd": 1616402553.3825846,
-          "Exposed_volume_percentage": 0.005542828561428744
+          "dex_volume_usd": 1616402553.3825817,
+          "Exposed_volume_percentage": 0.005542828561428755
         },
         {
           "block_date": "2025-09-25",
           "exposed_volume_usd": 102261.6104639991,
-          "dex_volume_usd": 2018932001.462558,
-          "Exposed_volume_percentage": 0.005065133961417154
+          "dex_volume_usd": 2018932001.4625587,
+          "Exposed_volume_percentage": 0.005065133961417152
         },
         {
           "block_date": "2025-09-24",
           "exposed_volume_usd": 125667.1515330513,
-          "dex_volume_usd": 1571646932.3448064,
-          "Exposed_volume_percentage": 0.00799588946771672
-        },
-        {
-          "block_date": "2025-09-23",
-          "exposed_volume_usd": 88425.8218737107,
-          "dex_volume_usd": 1781662522.4107738,
-          "Exposed_volume_percentage": 0.004963107252997689
-        },
-        {
-          "block_date": "2025-09-22",
-          "exposed_volume_usd": 150390.7951936027,
-          "dex_volume_usd": 2220305061.595629,
-          "Exposed_volume_percentage": 0.006773429372156811
+          "dex_volume_usd": 1571646932.3448102,
+          "Exposed_volume_percentage": 0.007995889467716701
         }
       ],
-      "timestamp": 1761333405948,
+      "timestamp": 1761337396738,
       "chartId": "chart_1748087954763_m518u4k",
       "title": "Exposed Volume %",
       "apiType": "JSON"
