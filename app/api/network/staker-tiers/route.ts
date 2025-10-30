@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the external API
+    // Call the TopLedger API for network staker tier data with the same vote_account parameter
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14376/results?api_key=JQwzpR69QNOYLY2gqZv7eUoIjyQ7cddLzDPb9SyA',
+      'https://analytics.topledger.xyz/tl/api/queries/14375/results?api_key=q0dmkVVgNrRwuDtk1dJx0ctm5uxmg6sNA1mt571e',
       {
         method: 'POST',
         headers: {
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching validator performance data:', error);
+    console.error('Error fetching network staker tier data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch validator performance data' },
+      { error: 'Failed to fetch network staker tier data' },
       { status: 500 }
     );
   }

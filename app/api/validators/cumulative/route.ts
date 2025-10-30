@@ -3,18 +3,18 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { vote_account } = body;
+    const { epoch, vote_account } = body;
 
-    if (!vote_account) {
+    if (!epoch || !vote_account) {
       return NextResponse.json(
-        { error: 'vote_account parameter is required' },
+        { error: 'Both epoch and vote_account parameters are required' },
         { status: 400 }
       );
     }
 
-    // Call the external API
+    // Call the TopLedger API for cumulative percentage data
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14376/results?api_key=JQwzpR69QNOYLY2gqZv7eUoIjyQ7cddLzDPb9SyA',
+      'https://analytics.topledger.xyz/tl/api/queries/14370/results?api_key=zI3JupYOw0UHi5O14RtONlKBMX8em6mD3YKq4Awf',
       {
         method: 'POST',
         headers: {
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           parameters: {
+            epoch: epoch,
             vote_account: vote_account
           }
         })
@@ -44,9 +45,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching validator performance data:', error);
+    console.error('Error fetching cumulative percentage data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch validator performance data' },
+      { error: 'Failed to fetch cumulative percentage data' },
       { status: 500 }
     );
   }
