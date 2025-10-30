@@ -957,7 +957,7 @@ export default function ValidatorsPerformancePage() {
       
 
       {/* Vote Account Filter */}
-      <div className="mb-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+      <div className="mb-6 p-4 bg-gray-900/30 rounded-lg border border-gray-900">
         <VoteAccountFilter
           value={selectedVoteAccount}
           onChange={handleVoteAccountChange}
@@ -1016,7 +1016,9 @@ export default function ValidatorsPerformancePage() {
         </div>
       )}
 
-      {/* Charts Display - Side by Side */}
+      {/* Charts Display - All in Grid Layout with 2 Charts per Row */}
+      
+      {/* Row 1: Total Stakers & Stake Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Total Stakers Chart */}
         <ChartCard
@@ -1044,7 +1046,6 @@ export default function ValidatorsPerformancePage() {
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                
                 <StakeTypeFilter 
                   value={selectedStakeType}
                   onChange={handleStakeTypeChange}
@@ -1073,7 +1074,7 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Distribution Charts - Side by Side */}
+      {/* Row 2: Distribution Metrics & Concentration */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {/* Distribution Metrics Chart */}
         <ChartCard
@@ -1132,7 +1133,7 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Ladder Chart and Box Plot Chart - Side by Side */}
+      {/* Row 3: Ladder Chart & Box Plot */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {/* Ladder Chart */}
         <ChartCard
@@ -1189,7 +1190,7 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Staker Tier Charts - Side by Side */}
+      {/* Row 4: Staker Tier Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {/* Validator Staker Tier Chart */}
         <ChartCard
@@ -1260,8 +1261,9 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Cumulative Percentage Chart */}
-      <div className="mt-6">
+      {/* Row 5: Cumulative Distribution & Rewards/Commission Stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        {/* Cumulative Percentage Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
           description={`Cumulative stake distribution showing percentage relationship for epoch ${selectedCumulativeEpoch}`}
@@ -1292,10 +1294,8 @@ export default function ValidatorsPerformancePage() {
             yAxisUnit="%"
           />
         </ChartCard>
-      </div>
 
-      {/* Rewards & Commission Stacked Chart */}
-      <div className="mt-6">
+        {/* Rewards & Commission Stacked Chart */}
         <ChartCard
           title={rewardsCommissionChartConfig.title}
           description={`Stacked view of total rewards distributed and commission collected by epoch for validator: ${selectedVoteAccount.slice(0, 8)}...`}
@@ -1313,7 +1313,7 @@ export default function ValidatorsPerformancePage() {
         </ChartCard>
       </div>
 
-      {/* Reward Analysis Charts - Side by Side */}
+      {/* Row 6: Reward Analysis Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {/* Reward Analysis Chart */}
         <ChartCard
