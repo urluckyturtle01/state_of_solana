@@ -620,6 +620,29 @@ export default function ValidatorsPerformancePage() {
     }
   };
 
+  // Chart configuration for rewards and commission stacked bar chart
+  const rewardsCommissionChartConfig: ChartConfig = {
+    id: 'validator-rewards-commission-chart',
+    title: 'Rewards & Commission Distribution by Epoch',
+    subtitle: `Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
+    page: 'validators-performance',
+    chartType: 'bar',
+    apiEndpoint: '/api/validators/performance',
+    isStacked: true,
+    dataMapping: {
+      xAxis: 'epoch',
+      yAxis: [
+        { field: 'total_rewards_distributed', type: 'bar', unit: 'SOL', label: 'Total Rewards' } as YAxisConfig,
+        { field: 'total_commission_collected', type: 'bar', unit: 'SOL', label: 'Total Commission' } as YAxisConfig
+      ],
+      yAxisUnit: 'SOL'
+    },
+    additionalOptions: {
+      showTooltipTotal: true,
+      enableTimeAggregation: false
+    }
+  };
+
   // Get available epochs for filter
   const availableEpochs = useMemo(() => {
     return [...chartData].sort((a, b) => b.epoch - a.epoch).map(d => d.epoch);
@@ -1267,6 +1290,25 @@ export default function ValidatorsPerformancePage() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit="%"
+          />
+        </ChartCard>
+      </div>
+
+      {/* Rewards & Commission Stacked Chart */}
+      <div className="mt-6">
+        <ChartCard
+          title={rewardsCommissionChartConfig.title}
+          description={`Stacked view of total rewards distributed and commission collected by epoch for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          isLoading={isLoading}
+          chart={rewardsCommissionChartConfig}
+          chartData={chartData}
+        >
+          <StackedBarChart
+            chartConfig={rewardsCommissionChartConfig}
+            data={chartData}
+            height={400}
+            maxXAxisTicks={8}
+            yAxisUnit="SOL"
           />
         </ChartCard>
       </div>
