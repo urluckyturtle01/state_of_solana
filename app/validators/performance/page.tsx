@@ -4,9 +4,9 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import ChartCard from '@/app/components/shared/ChartCard';
 import SimpleBarChart from '@/app/admin/components/charts/SimpleBarChart';
 import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLineBarChart';
-import StackedBarChart from '@/app/admin/components/charts/StackedBarChart';
 import BoxChart, { BoxPlotData, BoxChartLegend } from '@/app/admin/components/charts/BoxChart';
 import LadderChart, { LadderChartData } from '@/app/admin/components/charts/LadderChart';
+import ChartRenderer from '@/app/admin/components/ChartRenderer';
 import VoteAccountFilter from '@/app/components/shared/filters/VoteAccountFilter';
 import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTIONS, FilterOption } from '@/app/components/shared/filters/StakeTypeFilter';
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
@@ -930,14 +930,6 @@ export default function ValidatorsPerformancePage() {
     }
   }, [selectedCumulativeEpoch, selectedVoteAccount, fetchCumulativeData]);
 
-  // Load initial data
-  useEffect(() => {
-    fetchValidatorData(selectedVoteAccount);
-    fetchStakerTierData(selectedVoteAccount);
-    fetchNetworkTierData(selectedVoteAccount);
-    fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch);
-  }, []);
-
   // Reset staker tier display mode to absolute if negative values are detected
   useEffect(() => {
     if (stakerTierHasNegativeValues && stakerTierDisplayMode === 'percent') {
@@ -1216,13 +1208,15 @@ export default function ValidatorsPerformancePage() {
             </div>
           }
         >
-          <StackedBarChart
+          <ChartRenderer
             chartConfig={stakerTierChartConfig}
-            data={stakerTierData}
-            height={400}
-            maxXAxisTicks={8}
-            yAxisUnit={getStakerTierTabInfo(activeStakerTierTab).unit}
-            displayMode={stakerTierDisplayMode}
+            preloadedData={stakerTierData}
+            filterValues={{ displayMode: stakerTierDisplayMode }}
+            onFilterChange={(filterType, value) => {
+              if (filterType === 'displayMode') {
+                setStakerTierDisplayMode(value as DisplayMode);
+              }
+            }}
           />
         </ChartCard>
 
@@ -1250,13 +1244,15 @@ export default function ValidatorsPerformancePage() {
             </div>
           }
         >
-          <StackedBarChart
+          <ChartRenderer
             chartConfig={networkTierChartConfig}
-            data={networkTierData}
-            height={400}
-            maxXAxisTicks={8}
-            yAxisUnit={getNetworkTierTabInfo(activeNetworkTierTab).unit}
-            displayMode={networkTierDisplayMode}
+            preloadedData={networkTierData}
+            filterValues={{ displayMode: networkTierDisplayMode }}
+            onFilterChange={(filterType, value) => {
+              if (filterType === 'displayMode') {
+                setNetworkTierDisplayMode(value as DisplayMode);
+              }
+            }}
           />
         </ChartCard>
       </div>
@@ -1303,12 +1299,9 @@ export default function ValidatorsPerformancePage() {
           chart={rewardsCommissionChartConfig}
           chartData={chartData}
         >
-          <StackedBarChart
+          <ChartRenderer
             chartConfig={rewardsCommissionChartConfig}
-            data={chartData}
-            height={400}
-            maxXAxisTicks={8}
-            yAxisUnit="SOL"
+            preloadedData={chartData}
           />
         </ChartCard>
       </div>
