@@ -29,6 +29,12 @@ interface SearchConfig {
   initialValue?: string;
 }
 
+interface VoteAccountSearchConfig {
+  placeholder?: string;
+  onSearch: (voteAccount: string) => void;
+  initialValue?: string;
+}
+
 export interface TabsNavigationProps {
   tabs?: Tab[];
   activeTab?: string;
@@ -47,6 +53,7 @@ export interface TabsNavigationProps {
   onTitleChange?: (newTitle: string) => void;
   onDescriptionChange?: (newDescription: string) => void;
   search?: SearchConfig;
+  voteAccountSearch?: VoteAccountSearchConfig;
 }
 
 const TabsNavigation: React.FC<TabsNavigationProps> = ({
@@ -66,6 +73,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   onTitleChange,
   onDescriptionChange,
   search,
+  voteAccountSearch,
 }) => {
   // Edit state for editable mode
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -76,10 +84,18 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   const [isHoveringDescription, setIsHoveringDescription] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null); // Add hover state for tabs
   const [searchTerm, setSearchTerm] = useState(search?.initialValue || '');
+  const [voteAccountSearchTerm, setVoteAccountSearchTerm] = useState(voteAccountSearch?.initialValue || '');
   
   // Refs for auto-focus
   const titleInputRef = useRef<HTMLInputElement>(null);
   const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Update vote account search term when initialValue changes
+  useEffect(() => {
+    if (voteAccountSearch?.initialValue !== undefined) {
+      setVoteAccountSearchTerm(voteAccountSearch.initialValue);
+    }
+  }, [voteAccountSearch?.initialValue]);
 
   // Auto-focus when editing starts
   useEffect(() => {
@@ -255,6 +271,52 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
     if (search?.onSearch) {
       search.onSearch('');
     }
+  };
+
+  const handleVoteAccountSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setVoteAccountSearchTerm(value);
+  };
+
+  const handleVoteAccountSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (voteAccountSearch?.onSearch) {
+        voteAccountSearch.onSearch(voteAccountSearchTerm);
+      }
+    }
+  };
+
+  const handleVoteAccountSearchBlur = () => {
+    // Trigger search on blur if value has changed
+    if (voteAccountSearch?.onSearch && voteAccountSearchTerm !== voteAccountSearch.initialValue) {
+      voteAccountSearch.onSearch(voteAccountSearchTerm);
+    }
+  };
+
+  const renderVoteAccountSearchBar = () => {
+    if (!voteAccountSearch) return null;
+
+    return (
+      <div className="mb-4 p-4 bg-gray-900/30 rounded-lg border border-gray-900">
+        <div className="flex items-center space-x-2">
+          <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            Vote Account:
+          </label>
+          <input
+            type="text"
+            placeholder={voteAccountSearch.placeholder || "Enter vote account address..."}
+            value={voteAccountSearchTerm}
+            onChange={handleVoteAccountSearchChange}
+            onKeyDown={handleVoteAccountSearchKeyDown}
+            onBlur={handleVoteAccountSearchBlur}
+            className={`bg-gray-900/50 text-sm px-3 py-1.5 rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent min-w-[300px] flex-1 ${
+              voteAccountSearchTerm ? 'text-gray-200' : 'text-gray-400'
+            } placeholder-gray-500`}
+          />
+        </div>
+      </div>
+    );
   };
 
   const renderSearchField = () => {
@@ -542,6 +604,9 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
           {showDivider && <div className="h-px bg-gradient-to-r from-gray-900 via-gray-800 to-transparent mb-1"></div>}
         </div>
       )}
+      
+      {/* Vote Account Search Bar */}
+      {renderVoteAccountSearchBar()}
       
       {tabs && tabs.length > 0 && (
         <div className="overflow-x-auto w-full">

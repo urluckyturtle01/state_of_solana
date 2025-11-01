@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import TabsNavigation, { Tab } from "@/app/components/shared/TabsNavigation";
 
 interface ValidatorsTabsHeaderProps {
@@ -7,6 +8,8 @@ interface ValidatorsTabsHeaderProps {
 }
 
 export default function ValidatorsTabsHeader({ activeTab = "overview" }: ValidatorsTabsHeaderProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const tabs: Tab[] = [
     { 
       name: "Overview", 
@@ -27,6 +30,27 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
       icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
     }
   ];
+
+  // Handler for vote account search - triggers on every change
+  const handleVoteAccountSearch = (voteAccount: string) => {
+    // Update URL with vote account parameter
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (voteAccount.trim()) {
+      params.set('voteAccount', voteAccount.trim());
+      // Navigate to performance page with the vote account param
+      router.push(`/validators/performance?${params.toString()}`);
+    } else {
+      // Clear the parameter if search is empty, but stay on current page
+      params.delete('voteAccount');
+      const queryString = params.toString();
+      const currentPath = window.location.pathname;
+      router.push(`${currentPath}${queryString ? '?' + queryString : ''}`);
+    }
+  };
+
+  // Get current vote account from URL params
+  const currentVoteAccount = searchParams.get('voteAccount') || '';
   
   return (
     <TabsNavigation 
@@ -35,6 +59,11 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
       title="Validators"
       description="Solana validator network performance, rewards, and economics"
       showDivider={true}
+      voteAccountSearch={{
+        placeholder: "Enter vote account address...",
+        onSearch: handleVoteAccountSearch,
+        initialValue: currentVoteAccount
+      }}
     />
   );
 }

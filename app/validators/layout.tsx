@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import Layout from "../components/Layout";
 import ValidatorsTabsHeader from "./components/ValidatorsTabsHeader";
 import { usePathname } from "next/navigation";
@@ -20,7 +20,9 @@ export default function ValidatorsLayout({ children }: ValidatorsLayoutProps) {
   return (
     <Layout>
       <div className="space-y-6">
-        <ValidatorsTabsHeader activeTab={activeTab} />
+        <Suspense fallback={<div className="h-32 bg-gray-900/30 rounded-lg animate-pulse" />}>
+          <ValidatorsTabsHeader activeTab={activeTab} />
+        </Suspense>
         {children}
       </div>
     </Layout>

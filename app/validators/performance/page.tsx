@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ChartCard from '@/app/components/shared/ChartCard';
 import SimpleBarChart from '@/app/admin/components/charts/SimpleBarChart';
 import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLineBarChart';
 import BoxChart, { BoxPlotData, BoxChartLegend } from '@/app/admin/components/charts/BoxChart';
 import LadderChart, { LadderChartData } from '@/app/admin/components/charts/LadderChart';
 import ChartRenderer from '@/app/admin/components/ChartRenderer';
-import VoteAccountFilter from '@/app/components/shared/filters/VoteAccountFilter';
 import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTIONS, FilterOption } from '@/app/components/shared/filters/StakeTypeFilter';
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
 
@@ -180,9 +180,16 @@ interface CumulativePercentageData {
   vote_account: string;
 }
 
-export default function ValidatorsPerformancePage() {
+function ValidatorsPerformanceContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // Get vote account from URL params or use default
+  const defaultVoteAccount = 'xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v';
+  const voteAccountFromUrl = searchParams.get('voteAccount');
+  
   const [selectedVoteAccount, setSelectedVoteAccount] = useState<string>(
-    'xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v'
+    voteAccountFromUrl || defaultVoteAccount
   );
   const [selectedStakeType, setSelectedStakeType] = useState<StakeType>('total_stake');
   const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('gini_coefficient');
@@ -883,10 +890,6 @@ export default function ValidatorsPerformancePage() {
     }
   }, []);
 
-  // Handle vote account change
-  const handleVoteAccountChange = useCallback((newVoteAccount: string) => {
-    setSelectedVoteAccount(newVoteAccount);
-  }, []);
 
   // Handle stake type change
   const handleStakeTypeChange = useCallback((newStakeType: StakeType) => {
@@ -912,6 +915,25 @@ export default function ValidatorsPerformancePage() {
   const handleCumulativeEpochChange = useCallback((newEpoch: number) => {
     setSelectedCumulativeEpoch(newEpoch);
   }, []);
+
+  // Set default vote account in URL on initial load if not present
+  useEffect(() => {
+    const voteAccountParam = searchParams.get('voteAccount');
+    if (!voteAccountParam) {
+      // No vote account in URL, set the default one
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('voteAccount', defaultVoteAccount);
+      router.replace(`/validators/performance?${params.toString()}`, { scroll: false });
+    }
+  }, [searchParams, router, defaultVoteAccount]);
+
+  // Update vote account when URL params change
+  useEffect(() => {
+    const voteAccountParam = searchParams.get('voteAccount');
+    if (voteAccountParam && voteAccountParam !== selectedVoteAccount) {
+      setSelectedVoteAccount(voteAccountParam);
+    }
+  }, [searchParams, selectedVoteAccount]);
 
   // Fetch data when vote account changes
   useEffect(() => {
@@ -946,16 +968,6 @@ export default function ValidatorsPerformancePage() {
 
   return (
     <div className="space-y-6">
-      
-
-      {/* Vote Account Filter */}
-      <div className="mb-6 p-4 bg-gray-900/30 rounded-lg border border-gray-900">
-        <VoteAccountFilter
-          value={selectedVoteAccount}
-          onChange={handleVoteAccountChange}
-        />
-      </div>
-
       {/* Error Display */}
       {error && (
         <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg">
@@ -1442,5 +1454,13 @@ export default function ValidatorsPerformancePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ValidatorsPerformancePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-gray-400">Loading...</div>}>
+      <ValidatorsPerformanceContent />
+    </Suspense>
   );
 }
