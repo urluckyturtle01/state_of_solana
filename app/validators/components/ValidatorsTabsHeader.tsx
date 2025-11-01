@@ -1,15 +1,24 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import TabsNavigation, { Tab } from "@/app/components/shared/TabsNavigation";
 
 interface ValidatorsTabsHeaderProps {
   activeTab?: string;
 }
 
+interface ValidatorData {
+  validator_name?: string;
+  epoch?: number;
+  validator_commission_pct?: number;
+}
+
 export default function ValidatorsTabsHeader({ activeTab = "overview" }: ValidatorsTabsHeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [validatorData, setValidatorData] = useState<ValidatorData | null>(null);
+  const [loading, setLoading] = useState(false);
   const tabs: Tab[] = [
     { 
       name: "Overview", 
@@ -31,6 +40,52 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
     }
   ];
 
+  // Get current vote account from URL params
+  const currentVoteAccount = searchParams.get('voteAccount') || '';
+
+  // Fetch validator data when vote account changes
+  useEffect(() => {
+    const fetchValidatorData = async () => {
+      if (!currentVoteAccount) {
+        setValidatorData(null);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await fetch('/api/validators/performance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            vote_account: currentVoteAccount,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch validator data');
+        }
+
+        const result = await response.json();
+        
+        // Get the first row of data (most recent epoch)
+        if (result.data && result.data.length > 0) {
+          setValidatorData(result.data[0]);
+        } else {
+          setValidatorData(null);
+        }
+      } catch (error) {
+        console.error('Error fetching validator data:', error);
+        setValidatorData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchValidatorData();
+  }, [currentVoteAccount]);
+
   // Handler for vote account search - triggers on every change
   const handleVoteAccountSearch = (voteAccount: string) => {
     // Update URL with vote account parameter
@@ -48,9 +103,6 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
       router.push(`${currentPath}${queryString ? '?' + queryString : ''}`);
     }
   };
-
-  // Get current vote account from URL params
-  const currentVoteAccount = searchParams.get('voteAccount') || '';
   
   return (
     <TabsNavigation 
@@ -64,6 +116,16 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
         onSearch: handleVoteAccountSearch,
         initialValue: currentVoteAccount
       }}
+      validatorInfo={
+        currentVoteAccount
+          ? {
+              validatorName: validatorData?.validator_name,
+              epoch: validatorData?.epoch,
+              commission: validatorData?.validator_commission_pct,
+              loading: loading
+            }
+          : undefined
+      }
     />
   );
 }

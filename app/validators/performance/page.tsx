@@ -272,7 +272,7 @@ function ValidatorsPerformanceContent() {
       case 'nakamoto_coeff_33':
         return { 
           title: 'Nakamoto Coefficient by Epoch', 
-          unit: 'validators',
+          unit: 'stakers',
           hasNetworkMedian: true,
           networkMedianField: 'network_nakamoto_coeff_33'
         };
@@ -506,7 +506,7 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Staker Count by Tier', 
           field: 'validator_staker_count',
-          unit: 'stakers'
+          unit: ''
         };
       case 'total_stake':
         return { 
@@ -518,7 +518,7 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Staker Count by Tier', 
           field: 'validator_staker_count',
-          unit: 'stakers'
+          unit: ''
         };
     }
   };
@@ -530,7 +530,7 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Network Staker Count by Tier', 
           field: 'network_staker_count',
-          unit: 'stakers'
+          unit: ''
         };
       case 'total_stake':
         return { 
@@ -542,7 +542,7 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Network Staker Count by Tier', 
           field: 'network_staker_count',
-          unit: 'stakers'
+          unit: ''
         };
     }
   };
@@ -1139,40 +1139,7 @@ function ValidatorsPerformanceContent() {
 
       {/* Row 3: Ladder Chart & Box Plot */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Ladder Chart */}
-        <ChartCard
-          title="Concentration Ladder Chart"
-          description={`Horizontal bar chart showing concentration levels for epoch ${selectedEpoch || 'N/A'}. Validator: ${selectedVoteAccount.slice(0, 8)}...`}
-          isLoading={isLoading}
-          chart={ladderChartConfig}
-          chartData={ladderChartData}
-          filterBar={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <label className="text-sm font-medium text-gray-300">Epoch:</label>
-                <select
-                  value={selectedEpoch || ''}
-                  onChange={(e) => handleEpochChange(Number(e.target.value))}
-                  className="px-3 py-1 bg-gray-700 border border-gray-600 rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {availableEpochs.map(epoch => (
-                    <option key={epoch} value={epoch}>
-                      Epoch {epoch}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          }
-        >
-          <LadderChart
-            chartConfig={ladderChartConfig}
-            data={ladderChartData}
-            height={300}
-            yAxisUnit="%"
-            selectedEpoch={selectedEpoch || undefined}
-          />
-        </ChartCard>
+        
 
         {/* Box Plot Chart */}
         <ChartCard
@@ -1192,10 +1159,8 @@ function ValidatorsPerformanceContent() {
             yAxisUnit="SOL"
           />
         </ChartCard>
-      </div>
 
-      {/* Row 4: Staker Tier Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
         {/* Validator Staker Tier Chart */}
         <ChartCard
           title={stakerTierChartConfig.title}
@@ -1231,7 +1196,12 @@ function ValidatorsPerformanceContent() {
             }}
           />
         </ChartCard>
+      </div>
 
+    
+
+      {/* Row 5: Cumulative Distribution & Rewards/Commission Stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {/* Network Staker Tier Chart */}
         <ChartCard
           title={networkTierChartConfig.title}
@@ -1265,41 +1235,6 @@ function ValidatorsPerformanceContent() {
                 setNetworkTierDisplayMode(value as DisplayMode);
               }
             }}
-          />
-        </ChartCard>
-      </div>
-
-      {/* Row 5: Cumulative Distribution & Rewards/Commission Stack */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Cumulative Percentage Chart */}
-        <ChartCard
-          title={cumulativeChartConfig.title}
-          description={`Cumulative stake distribution showing percentage relationship for epoch ${selectedCumulativeEpoch}`}
-          isLoading={isCumulativeLoading}
-          chart={cumulativeChartConfig}
-          chartData={cumulativeData}
-          filterBar={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <label className="text-sm font-medium text-gray-300">Epoch:</label>
-                <input
-                  type="number"
-                  value={selectedCumulativeEpoch}
-                  onChange={(e) => handleCumulativeEpochChange(Number(e.target.value))}
-                  className="px-3 py-1 bg-gray-700 border border-gray-600 rounded-md text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 w-20"
-                  min="1"
-                  max="1000"
-                />
-              </div>
-            </div>
-          }
-        >
-          <MultiSeriesLineBarChart
-            chartConfig={cumulativeChartConfig}
-            data={cumulativeData}
-            height={400}
-            maxXAxisTicks={8}
-            yAxisUnit="%"
           />
         </ChartCard>
 
@@ -1387,72 +1322,7 @@ function ValidatorsPerformanceContent() {
         </ChartCard>
       </div>
 
-      {/* Data Summary */}
-      {chartData.length > 0 && !isLoading && (
-        <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-200 mb-2">Data Summary</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 text-sm">
-            <div>
-              <span className="text-gray-400">Total Records:</span>
-              <span className="ml-2 text-gray-200">{chartData.length}</span>
-            </div>
-            <div>
-              <span className="text-gray-400">Epoch Range:</span>
-              <span className="ml-2 text-gray-200">
-                {Math.min(...chartData.map(d => d.epoch))} - {Math.max(...chartData.map(d => d.epoch))}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Max Stakers:</span>
-              <span className="ml-2 text-gray-200">
-                {Math.max(...chartData.map(d => d.total_stakers)).toLocaleString()}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Avg Stakers:</span>
-              <span className="ml-2 text-gray-200">
-                {Math.round(chartData.reduce((sum, d) => sum + d.total_stakers, 0) / chartData.length).toLocaleString()}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Max Total Stake:</span>
-              <span className="ml-2 text-gray-200">
-                {Math.max(...chartData.map(d => d.total_stake)).toFixed(2)} SOL
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Current {getStakeTypeInfo(selectedStakeType).title.split(' ')[0]}:</span>
-              <span className="ml-2 text-gray-200">
-                {chartData.length > 0 ? chartData[chartData.length - 1][selectedStakeType].toFixed(2) : '0'} SOL
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Current {getMetricTypeInfo(selectedMetricType).title.split(' ')[0]}:</span>
-              <span className="ml-2 text-gray-200">
-                {chartData.length > 0 ? chartData[chartData.length - 1][selectedMetricType].toFixed(4) : '0'} {getMetricTypeInfo(selectedMetricType).unit}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Avg {getMetricTypeInfo(selectedMetricType).title.split(' ')[0]}:</span>
-              <span className="ml-2 text-gray-200">
-                {chartData.length > 0 ? (chartData.reduce((sum, d) => sum + d[selectedMetricType], 0) / chartData.length).toFixed(4) : '0'} {getMetricTypeInfo(selectedMetricType).unit}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Current {getConcentrationTypeInfo(selectedConcentrationType).title.split(' ')[0]} {getConcentrationTypeInfo(selectedConcentrationType).title.split(' ')[1]}:</span>
-              <span className="ml-2 text-gray-200">
-                {chartData.length > 0 ? chartData[chartData.length - 1][selectedConcentrationType].toFixed(2) : '0'} {getConcentrationTypeInfo(selectedConcentrationType).unit}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-400">Avg {getConcentrationTypeInfo(selectedConcentrationType).title.split(' ')[0]} {getConcentrationTypeInfo(selectedConcentrationType).title.split(' ')[1]}:</span>
-              <span className="ml-2 text-gray-200">
-                {chartData.length > 0 ? (chartData.reduce((sum, d) => sum + d[selectedConcentrationType], 0) / chartData.length).toFixed(2) : '0'} {getConcentrationTypeInfo(selectedConcentrationType).unit}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
