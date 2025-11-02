@@ -1,7 +1,7 @@
 {
   "pageId": "sf-overview",
   "pageName": "Overview",
-  "fetchedAt": "2025-11-02T01:47:53.286Z",
+  "fetchedAt": "2025-11-02T03:18:00.309Z",
   "charts": [
     {
       "success": true,
@@ -9,11 +9,18 @@
         {
           "data": [
             {
+              "block_date": "2025-10-31",
+              "base_fee": 10135.170548967919,
+              "priority_fee": 80888.61835607754,
+              "jito_total_tips": 338265.89234830893,
+              "vote_fees": 177982.87249093593
+            },
+            {
               "block_date": "2025-10-30",
-              "base_fee": 40864.9597570275,
-              "priority_fee": 270563.54041648796,
-              "jito_total_tips": 445894.81972341257,
-              "vote_fees": 181810.73071599318
+              "base_fee": 96293.8264537139,
+              "priority_fee": 770196.0032230922,
+              "jito_total_tips": 445894.8197234129,
+              "vote_fees": 181810.7307159932
             },
             {
               "block_date": "2025-10-29",
@@ -4692,16 +4699,23 @@
               "vote_fees": 122228.70760992738
             }
           ],
-          "timestamp": 1762048062160
+          "timestamp": 1762053468532
         }
       ],
       "data": [
         {
+          "block_date": "2025-10-31",
+          "base_fee": 10135.170548967919,
+          "priority_fee": 80888.61835607754,
+          "jito_total_tips": 338265.89234830893,
+          "vote_fees": 177982.87249093593
+        },
+        {
           "block_date": "2025-10-30",
-          "base_fee": 40864.9597570275,
-          "priority_fee": 270563.54041648796,
-          "jito_total_tips": 445894.81972341257,
-          "vote_fees": 181810.73071599318
+          "base_fee": 96293.8264537139,
+          "priority_fee": 770196.0032230922,
+          "jito_total_tips": 445894.8197234129,
+          "vote_fees": 181810.7307159932
         },
         {
           "block_date": "2025-10-29",
@@ -9380,7 +9394,7 @@
           "vote_fees": 122228.70760992738
         }
       ],
-      "timestamp": 1762048062360,
+      "timestamp": 1762053468732,
       "chartId": "chart_1749809832495_hqam9lh",
       "title": "Solana Real Economic Value",
       "totalCombinations": 1,
@@ -110284,7 +110298,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1762048062413
+          "timestamp": 1762053468861
         },
         {
           "data": [
@@ -211177,7 +211191,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1762048063113
+          "timestamp": 1762053469653
         },
         {
           "data": [
@@ -312070,7 +312084,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1762048063566
+          "timestamp": 1762053470136
         },
         {
           "data": [
@@ -412963,7 +412977,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1762048064060
+          "timestamp": 1762053470588
         }
       ],
       "data": [
@@ -513853,7 +513867,7 @@
           "dapp revenue": 529869.7780947617
         }
       ],
-      "timestamp": 1762048064260,
+      "timestamp": 1762053470789,
       "chartId": "chart_1749814251162_ip5x6ou",
       "title": "Top Dapp's Revenue",
       "parameters": {
@@ -513880,6 +513894,10 @@
     {
       "success": true,
       "data": [
+        {
+          "block_date": "2025-11-01",
+          "validators_count": 918
+        },
         {
           "block_date": "2025-10-31",
           "validators_count": 919
@@ -515061,7 +515079,7 @@
           "validators_count": 1446
         }
       ],
-      "timestamp": 1762048062137,
+      "timestamp": 1762053468535,
       "chartId": "chart_1749814557247_26tciwb",
       "title": "Validators",
       "apiType": "JSON"
@@ -519974,7 +519992,7 @@
           "vds": 23.63023127514025
         }
       ],
-      "timestamp": 1762048065611,
+      "timestamp": 1762053471907,
       "chartId": "chart_1749814780531_i40g2o2",
       "title": "Validator Decentralization Score",
       "apiType": "JSON"
@@ -527355,7 +527373,7 @@
               "median_txn_fee_sol": 0.000005665
             }
           ],
-          "timestamp": 1762048065535
+          "timestamp": 1762053472101
         }
       ],
       "data": [
@@ -534730,7 +534748,7 @@
           "median_txn_fee_sol": 0.000005665
         }
       ],
-      "timestamp": 1762048065736,
+      "timestamp": 1762053472301,
       "chartId": "chart_1749815451298_342kxs1",
       "title": "Non-vote Transactions",
       "totalCombinations": 1,
@@ -542114,7 +542132,7 @@
           "median_txn_fee_sol": 0.000005665
         }
       ],
-      "timestamp": 1762048065520,
+      "timestamp": 1762053472097,
       "chartId": "chart_1749815739707_3d289dj",
       "title": "Daily Fee",
       "apiType": "JSON"
@@ -544799,7 +544817,7 @@
           "avg_daily_tps": 1275
         }
       ],
-      "timestamp": 1762048066879,
+      "timestamp": 1762053473469,
       "chartId": "chart_1749816086278_ma9a09x",
       "title": "TPS",
       "apiType": "JSON"
@@ -544918,7 +544936,7 @@
           "new_fee_payers": 3724623
         }
       ],
-      "timestamp": 1762048066825,
+      "timestamp": 1762053473396,
       "chartId": "chart_1749816253273_6lksekc",
       "title": "Monthly Fee Payers",
       "apiType": "JSON"
@@ -548252,7 +548270,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1762048066939
+          "timestamp": 1762053473538
         },
         {
           "data": [
@@ -551580,7 +551598,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1762048067281
+          "timestamp": 1762053473903
         },
         {
           "data": [
@@ -554908,7 +554926,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1762048067623
+          "timestamp": 1762053474484
         },
         {
           "data": [
@@ -558236,7 +558254,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1762048067976
+          "timestamp": 1762053474851
         }
       ],
       "data": [
@@ -561561,7 +561579,7 @@
           "volume": 602203396.813732
         }
       ],
-      "timestamp": 1762048068177,
+      "timestamp": 1762053475051,
       "chartId": "chart_1749816617339_8ytezdu",
       "title": "DEX Volume",
       "parameters": {
@@ -564914,7 +564932,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1762048069376
+          "timestamp": 1762053476304
         },
         {
           "data": [
@@ -568242,7 +568260,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1762048069718
+          "timestamp": 1762053476678
         },
         {
           "data": [
@@ -571570,7 +571588,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1762048070066
+          "timestamp": 1762053477044
         },
         {
           "data": [
@@ -574898,7 +574916,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1762048070472
+          "timestamp": 1762053477420
         }
       ],
       "data": [
@@ -578223,7 +578241,7 @@
           "volume": 602203396.813732
         }
       ],
-      "timestamp": 1762048070673,
+      "timestamp": 1762053477620,
       "chartId": "chart_1749816989671_pu4hbi2",
       "title": "Daily Trades",
       "parameters": {
@@ -578383,7 +578401,7 @@
           "capital_efficency": 9.107537068432658
         }
       ],
-      "timestamp": 1762048069272,
+      "timestamp": 1762053476162,
       "chartId": "chart_1749817104717_rp8ajfg",
       "title": "DeFi Capital Efficiency",
       "apiType": "JSON"
@@ -584537,7 +584555,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1762048069384
+          "timestamp": 1762053476383
         },
         {
           "data": [
@@ -585520,7 +585538,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1762048069733
+          "timestamp": 1762053476749
         },
         {
           "data": [
@@ -585888,7 +585906,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1762048070023
+          "timestamp": 1762053477058
         },
         {
           "data": [
@@ -586041,7 +586059,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1762048070308
+          "timestamp": 1762053477362
         }
       ],
       "data": [
@@ -592186,7 +592204,7 @@
           "Avg_Supply": 1000
         }
       ],
-      "timestamp": 1762048070508,
+      "timestamp": 1762053477562,
       "chartId": "chart_1749819338660_rkfnj5d",
       "title": "Average Stablecoin Supply",
       "parameters": {
@@ -597841,7 +597859,7 @@
           "program_interacted": 32
         }
       ],
-      "timestamp": 1762048071936,
+      "timestamp": 1762053478941,
       "chartId": "chart_1749819503642_nefh80a",
       "title": "Monthly Transfer Volume",
       "apiType": "JSON"
@@ -603477,7 +603495,7 @@
           "program_interacted": 32
         }
       ],
-      "timestamp": 1762048071948,
+      "timestamp": 1762053478924,
       "chartId": "chart_1749819682803_79lo96i",
       "title": "Monthly P2p Transfer Volume",
       "apiType": "JSON"
@@ -609113,7 +609131,7 @@
           "program_interacted": 32
         }
       ],
-      "timestamp": 1762048071928,
+      "timestamp": 1762053478926,
       "chartId": "chart_1749819983030_2h0mf7l",
       "title": "Monthly Transfer Count",
       "apiType": "JSON"
@@ -614749,7 +614767,7 @@
           "program_interacted": 32
         }
       ],
-      "timestamp": 1762048073207,
+      "timestamp": 1762053480254,
       "chartId": "chart_1749820134362_jvhnl8a",
       "title": "Monthly P2p Transfer Count",
       "apiType": "JSON"
@@ -614850,7 +614868,7 @@
           "velocity": 8.74608775672219
         }
       ],
-      "timestamp": 1762048073036,
+      "timestamp": 1762053480045,
       "chartId": "chart_1749820203812_z5tts01",
       "title": "Velocity",
       "apiType": "JSON"
@@ -615347,7 +615365,7 @@
               "sol_issuance_usd": 46146822.59644046
             }
           ],
-          "timestamp": 1762048073086
+          "timestamp": 1762053480109
         }
       ],
       "data": [
@@ -615838,7 +615856,7 @@
           "sol_issuance_usd": 46146822.59644046
         }
       ],
-      "timestamp": 1762048073286,
+      "timestamp": 1762053480309,
       "chartId": "chart_1753295488291_8vevawb",
       "title": "Total Economic Value",
       "totalCombinations": 1,
