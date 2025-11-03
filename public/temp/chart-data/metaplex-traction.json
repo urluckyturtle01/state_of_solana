@@ -1,7 +1,7 @@
 {
   "pageId": "metaplex-traction",
   "pageName": "Traction",
-  "fetchedAt": "2025-11-03T11:18:18.849Z",
+  "fetchedAt": "2025-11-03T12:44:54.865Z",
   "charts": [
     {
       "success": true,
@@ -237,7 +237,7 @@
           "mints": 156100
         }
       ],
-      "timestamp": 1762168697354,
+      "timestamp": 1762173893620,
       "chartId": "chart_1749629023835_wd03h9z",
       "title": "Monthly Tm Fungible And Non-fungible Mints",
       "apiType": "JSON"
@@ -384,7 +384,7 @@
           "mpl_core": null
         }
       ],
-      "timestamp": 1762168697366,
+      "timestamp": 1762173893617,
       "chartId": "chart_1749628724126_z6sgnvd",
       "title": "Monthly Digital Assets Minted",
       "apiType": "JSON"
@@ -394,7 +394,7 @@
       "data": [
         {
           "month": "2025-11-01",
-          "active-wallets": 26591
+          "active-wallets": 35292
         },
         {
           "month": "2025-10-01",
@@ -609,7 +609,7 @@
           "active-wallets": 405
         }
       ],
-      "timestamp": 1762168697494,
+      "timestamp": 1762173893620,
       "chartId": "chart_1749627922355_vt1yejy",
       "title": "Monthly Active Wallets",
       "apiType": "JSON"
@@ -619,10 +619,10 @@
       "data": [
         {
           "month": "2025-11-01",
-          "token_metadata_nfts": 40272,
-          "compressed_nfts": 108180,
-          "Bubblegum_v2_cNFTs": 45602,
-          "core_nft": 9695
+          "token_metadata_nfts": 58540,
+          "compressed_nfts": 121572,
+          "Bubblegum_v2_cNFTs": 52782,
+          "core_nft": 13187
         },
         {
           "month": "2025-10-01",
@@ -996,7 +996,7 @@
           "core_nft": null
         }
       ],
-      "timestamp": 1762168698568,
+      "timestamp": 1762173894651,
       "chartId": "chart_1749629260401_ack8uo5",
       "title": "Monthly Total Mints By Program",
       "apiType": "JSON"
@@ -7431,7 +7431,7 @@
               "transactions": 17
             }
           ],
-          "timestamp": 1762168698648
+          "timestamp": 1762173894665
         }
       ],
       "data": [
@@ -13860,7 +13860,7 @@
           "transactions": 17
         }
       ],
-      "timestamp": 1762168698849,
+      "timestamp": 1762173894865,
       "chartId": "chart_1749627736683_bchbaau",
       "title": "Monthly Transactions",
       "totalCombinations": 1,
@@ -13874,24 +13874,44 @@
       "success": true,
       "data": [
         {
+          "month": "2025-11-01 00:00:00",
+          "protocol": "Bubblegum",
+          "total_txn": 138267
+        },
+        {
+          "month": "2025-11-01 00:00:00",
+          "protocol": "Bubblegum_v2",
+          "total_txn": 47623
+        },
+        {
+          "month": "2025-11-01 00:00:00",
+          "protocol": "Others",
+          "total_txn": 77466
+        },
+        {
+          "month": "2025-11-01 00:00:00",
+          "protocol": "Token Metadata",
+          "total_txn": 90480
+        },
+        {
           "month": "2025-10-01 00:00:00",
           "protocol": "Bubblegum",
-          "total_txn": 3556417
+          "total_txn": 3587695
         },
         {
           "month": "2025-10-01 00:00:00",
           "protocol": "Bubblegum_v2",
-          "total_txn": 291611
+          "total_txn": 296603
         },
         {
           "month": "2025-10-01 00:00:00",
           "protocol": "Others",
-          "total_txn": 1002853
+          "total_txn": 1013052
         },
         {
           "month": "2025-10-01 00:00:00",
           "protocol": "Token Metadata",
-          "total_txn": 1614402
+          "total_txn": 1630286
         },
         {
           "month": "2025-09-01 00:00:00",
@@ -14584,7 +14604,7 @@
           "total_txn": 2769
         }
       ],
-      "timestamp": 1762168698628,
+      "timestamp": 1762173894653,
       "chartId": "chart_1749628211337_ts1ilil",
       "title": "Monthly Transactions By Program",
       "apiType": "JSON"
