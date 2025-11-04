@@ -69,9 +69,12 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
 
         const result = await response.json();
         
-        // Get the first row of data (most recent epoch)
+        // Sort by epoch descending to get the latest epoch first
         if (result.data && result.data.length > 0) {
-          setValidatorData(result.data[0]);
+          const sortedData = [...result.data].sort((a: ValidatorData, b: ValidatorData) => 
+            (b.epoch || 0) - (a.epoch || 0)
+          );
+          setValidatorData(sortedData[0]);
         } else {
           setValidatorData(null);
         }

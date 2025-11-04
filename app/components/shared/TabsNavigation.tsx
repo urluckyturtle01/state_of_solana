@@ -339,7 +339,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
           )}
           
           {validatorInfo && !validatorInfo.loading && validatorInfo.epoch !== undefined && (
-            <span className="text-xs text-purple-300">epoch: {validatorInfo.epoch}</span>
+            <span className="text-xs text-purple-300">Epoch: {validatorInfo.epoch}</span>
           )}
           
           {validatorInfo && !validatorInfo.loading && validatorInfo.commission !== undefined && (
