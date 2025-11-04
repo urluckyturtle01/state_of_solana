@@ -39,6 +39,11 @@ const cleanTrendTagsFromChildren = (children: React.ReactNode): React.ReactNode 
   });
 };
 
+interface InfoConfig {
+  title: string;
+  description: string;
+}
+
 interface ChartCardProps {
   title: string;
   description?: string;
@@ -60,6 +65,7 @@ interface ChartCardProps {
   dragHandleProps?: any;
   chartData?: any[];
   onSummarizeClick?: () => void;
+  info?: InfoConfig;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -83,6 +89,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   dragHandleProps,
   chartData,
   onSummarizeClick,
+  info,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -91,6 +98,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   const [showSummary, setShowSummary] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [summaryMetadata, setSummaryMetadata] = useState<any>(null);
+  const [showInfoTooltip, setShowInfoTooltip] = useState(false);
 
 
 
@@ -493,7 +501,33 @@ const ChartCard: React.FC<ChartCardProps> = ({
       {/* Header Section with Title and Action Buttons */}
       <div className="flex justify-between items-center mb-3">
         <div className="-mt-1">
-          <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">{title}</h2>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">{title}</h2>
+            {info && (
+              <div className="relative inline-block">
+                <button
+                  onMouseEnter={() => setShowInfoTooltip(true)}
+                  onMouseLeave={() => setShowInfoTooltip(false)}
+                  className="text-gray-500 hover:text-gray-300 transition-colors"
+                  type="button"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+                {showInfoTooltip && (
+                  <div className="absolute left-0 top-full mt-1 z-50 w-72 p-3 bg-gray-950/95 backdrop-blur-sm border border-gray-700/50 rounded-lg shadow-xl">
+                    <div className="text-xs font-medium text-gray-300 mb-1.5">
+                      {info.title}
+                    </div>
+                    <div className="text-[11px] text-gray-400 leading-relaxed">
+                      {info.description}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           {description && <p className="text-gray-500 text-[10px] tracking-wide">{description}</p>}
         </div>
         {!isEditMode && (

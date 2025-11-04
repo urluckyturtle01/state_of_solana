@@ -237,13 +237,34 @@ function ValidatorsPerformanceContent() {
   const getStakeTypeInfo = (stakeType: StakeType) => {
     switch (stakeType) {
       case 'total_stake':
-        return { title: 'Total Stake by Epoch', unit: 'SOL' };
+        return { 
+          title: 'Total Stake by Epoch', 
+          unit: 'SOL',
+          info: {
+            title: 'Total Stake',
+            description: 'Total SOL staked to the validator per epoch.'
+          }
+        };
       case 'mean_stake':
-        return { title: 'Mean Stake by Epoch', unit: 'SOL' };
+        return { 
+          title: 'Mean Stake by Epoch', 
+          unit: 'SOL',
+          info: {
+            title: 'Mean Stake',
+            description: 'Average stake per staker. Heavily influenced by large outliers and whale stakers.'
+          }
+        };
       case 'median_stake':
-        return { title: 'Median Stake by Epoch', unit: 'SOL' };
+        return { 
+          title: 'Median Stake by Epoch', 
+          unit: 'SOL',
+          info: {
+            title: 'Median Stake',
+            description: 'Middle value of stake amounts. Better represents typical staker, less affected by outliers.'
+          }
+        };
       default:
-        return { title: 'Stake by Epoch', unit: 'SOL' };
+        return { title: 'Stake by Epoch', unit: 'SOL', info: { title: '', description: '' } };
     }
   };
 
@@ -260,28 +281,54 @@ function ValidatorsPerformanceContent() {
           title: 'Gini Index by Epoch', 
           unit: '',
           hasNetworkMedian: true,
-          networkMedianField: 'network_gini_coefficient'
+          networkMedianField: 'network_gini_coefficient',
+          info: {
+            title: 'Gini Coefficient',
+            description: 'Measure of stake inequality among validators. 0 = equal distribution; 1 = full concentration.'
+          }
         };
       case 'hhi_index':
         return { 
           title: 'HHI Index by Epoch', 
           unit: '',
           hasNetworkMedian: true,
-          networkMedianField: 'network_hhi_index'
+          networkMedianField: 'network_hhi_index',
+          info: {
+            title: 'HHI Index',
+            description: 'Summarizes stake concentration across validators. Lower = decentralized; higher = centralized.'
+          }
         };
       case 'nakamoto_coeff_33':
         return { 
           title: 'Nakamoto Coefficient by Epoch', 
           unit: 'stakers',
           hasNetworkMedian: true,
-          networkMedianField: 'network_nakamoto_coeff_33'
+          networkMedianField: 'network_nakamoto_coeff_33',
+          info: {
+            title: 'Nakamoto Coefficient',
+            description: 'Minimum number of entities controlling 51% of stake. Higher = stronger decentralization and security.'
+          }
         };
       case 'skewness':
-        return { title: 'Skewness by Epoch', unit: '' };
+        return { 
+          title: 'Skewness', 
+          unit: '',
+          info: {
+            title: 'Skewness',
+            description: 'Degree of asymmetry in stake or rewards data. Positive = right-tailed; negative = left-tailed distribution.'
+          }
+        };
       case 'kurtosis':
-        return { title: 'Kurtosis by Epoch', unit: '' };
+        return { 
+          title: 'Kurtosis by Epoch', 
+          unit: '',
+          info: {
+            title: 'Kurtosis',
+            description: 'Measures tail extremity of data distribution. High kurtosis highlights frequent outliers and risk.'
+          }
+        };
       default:
-        return { title: 'Distribution Metric by Epoch', unit: '' };
+        return { title: 'Distribution Metric by Epoch', unit: '', info: { title: '', description: '' } };
     }
   };
 
@@ -289,15 +336,43 @@ function ValidatorsPerformanceContent() {
   const getConcentrationTypeInfo = (concentrationType: ConcentrationType) => {
     switch (concentrationType) {
       case 'top_01pct_concentration':
-        return { title: 'Top 0.1% Concentration by Epoch', unit: '%' };
+        return { 
+          title: 'Top 0.1% Concentration by Epoch', 
+          unit: '%',
+          info: {
+            title: 'Top 0.1% Concentration by Epoch',
+            description: '% of total stake held by the top 0.1% validators each epoch. Higher values suggest centralization risk.'
+          }
+        };
       case 'top_1pct_concentration':
-        return { title: 'Top 1% Concentration by Epoch', unit: '%' };
+        return { 
+          title: 'Top 1% Concentration by Epoch', 
+          unit: '%',
+          info: {
+            title: 'Top 1% Concentration',
+            description: '% of total stake held by the top 1% validators each epoch. Higher values suggest centralization risk.'
+          }
+        };
       case 'top_5pct_concentration':
-        return { title: 'Top 5% Concentration by Epoch', unit: '%' };
+        return { 
+          title: 'Top 5% Concentration by Epoch', 
+          unit: '%',
+          info: {
+            title: 'Top 5% Concentration',
+            description: '% of total stake held by the top 5% validators each epoch. Higher values suggest centralization risk.'
+          }
+        };
       case 'top_10pct_concentration':
-        return { title: 'Top 10% Concentration by Epoch', unit: '%' };
+        return { 
+          title: 'Top 10% Concentration by Epoch', 
+          unit: '%',
+          info: {
+            title: 'Top 10% Concentration',
+            description: '% of total stake held by the top 10% validators each epoch. Higher values suggest centralization risk.'
+          }
+        };
       default:
-        return { title: 'Concentration by Epoch', unit: '%' };
+        return { title: 'Concentration by Epoch', unit: '%', info: { title: '', description: '' } };
     }
   };
 
@@ -409,35 +484,52 @@ function ValidatorsPerformanceContent() {
           title: 'Total Rewards Distributed by Epoch', 
           field: 'total_rewards_distributed',
           unit: 'SOL',
-          chartType: 'bar' as const
+          chartType: 'bar' as const,
+          info: {
+            title: 'Total Rewards Distribution by Epoch',
+            description: 'Total SOL rewards earned by validator and stakers each epoch. Indicates performance.'
+          }
         };
       case 'average':
         return { 
           title: 'Average Reward per Staker by Epoch', 
           field: 'avg_reward_per_staker',
           unit: 'SOL',
-          chartType: 'line' as const
+          chartType: 'line' as const,
+          info: {
+            title: 'Average Reward',
+            description: 'Mean reward per staker. Heavily influenced by whale stakers with large stakes.'
+          }
         };
       case 'median':
         return { 
           title: 'Median Reward per Staker by Epoch', 
           field: 'median_reward_per_staker',
           unit: 'SOL',
-          chartType: 'line' as const
+          chartType: 'line' as const,
+          info: {
+            title: 'Median Reward',
+            description: 'Middle value of staker rewards. Better represents typical staker experience, less affected by outliers.'
+          }
         };
       case 'gini':
         return { 
           title: 'Reward Gini Coefficient by Epoch', 
           field: 'reward_gini_coefficient',
           unit: '',
-          chartType: 'line' as const
+          chartType: 'line' as const,
+          info: {
+            title: 'Reward Gini',
+            description: 'Reward inequality measure. 0 = equal rewards, 1 = extremely unequal distribution.'
+          }
         };
       default:
         return { 
           title: 'Reward Metrics by Epoch', 
           field: 'total_rewards_distributed',
           unit: 'SOL',
-          chartType: 'bar' as const
+          chartType: 'bar' as const,
+          info: { title: '', description: '' }
         };
     }
   };
@@ -470,31 +562,48 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Average Reward Rate by Epoch', 
           field: 'avg_reward_rate_pct',
-          unit: '%'
+          unit: '%',
+          info: {
+            title: 'Average Reward Rate by Epoch',
+            description: 'Average staking reward rate per epoch for delegators. Shows staking yield efficiency.'
+          }
         };
       case 'median_rate':
         return { 
           title: 'Median Reward Rate by Epoch', 
           field: 'median_reward_rate_pct',
-          unit: '%'
+          unit: '%',
+          info: {
+            title: 'Median Rate',
+            description: 'Middle reward rate value. Better represents typical staker experience, less affected by outliers.'
+          }
         };
       case 'min_rate':
         return { 
           title: 'Minimum Reward Rate by Epoch', 
           field: 'min_reward_rate_pct',
-          unit: '%'
+          unit: '%',
+          info: {
+            title: 'Minimum Rate',
+            description: 'Lowest reward rate earned. Can indicate late staking or validator performance issues.'
+          }
         };
       case 'max_rate':
         return { 
           title: 'Maximum Reward Rate by Epoch', 
           field: 'max_reward_rate_pct',
-          unit: '%'
+          unit: '%',
+          info: {
+            title: 'Maximum Rate',
+            description: 'Highest reward rate earned. May indicate early staking or full epoch participation.'
+          }
         };
       default:
         return { 
           title: 'Reward Rate by Epoch', 
           field: 'avg_reward_rate_pct',
-          unit: '%'
+          unit: '%',
+          info: { title: '', description: '' }
         };
     }
   };
@@ -506,19 +615,28 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Staker Count by Tier', 
           field: 'validator_staker_count',
-          unit: ''
+          unit: '',
+          info: {
+            title: 'Staker Count by Tier',
+            description: 'Counts of stakers grouped by delegation size tiers. Reveals supporter diversity.'
+          }
         };
       case 'total_stake':
         return { 
           title: 'Total Stake by Tier', 
           field: 'validator_total_stake_in_tier',
-          unit: 'SOL'
+          unit: 'SOL',
+          info: {
+            title: 'Total Stake',
+            description: 'SOL staked by tier. Reveals validator dependency on whale vs. retail stakers.'
+          }
         };
       default:
         return { 
           title: 'Staker Count by Tier', 
           field: 'validator_staker_count',
-          unit: ''
+          unit: '',
+          info: { title: '', description: '' }
         };
     }
   };
@@ -530,19 +648,28 @@ function ValidatorsPerformanceContent() {
         return { 
           title: 'Network Staker Count by Tier', 
           field: 'network_staker_count',
-          unit: ''
+          unit: '',
+          info: {
+            title: 'Network Staker Count by Tier',
+            description: 'Counts of all network stakers segmented by stake tiers. Indicates network-wide stake profile.'
+          }
         };
       case 'total_stake':
         return { 
           title: 'Network Total Stake by Tier', 
           field: 'network_total_stake_in_tier',
-          unit: 'SOL'
+          unit: 'SOL',
+          info: {
+            title: 'Network Total Stake',
+            description: 'SOL staked by tier network-wide. Shows overall stake concentration patterns.'
+          }
         };
       default:
         return { 
           title: 'Network Staker Count by Tier', 
           field: 'network_staker_count',
-          unit: ''
+          unit: '',
+          info: { title: '', description: '' }
         };
     }
   };
@@ -1031,6 +1158,10 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={stakersChartConfig}
           chartData={chartData}
+          info={{
+            title: 'Total Stakers',
+            description: 'Unique staker accounts delegating to this validator each epoch. Growing count indicates rising popularity.'
+          }}
         >
           <SimpleBarChart
             chartConfig={stakersChartConfig}
@@ -1047,6 +1178,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={stakeChartConfig}
           chartData={chartData}
+          info={getStakeTypeInfo(selectedStakeType).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1087,6 +1219,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={distributionChartConfig}
           chartData={chartData}
+          info={getMetricTypeInfo(selectedMetricType).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1115,6 +1248,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={concentrationChartConfig}
           chartData={chartData}
+          info={getConcentrationTypeInfo(selectedConcentrationType).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1150,6 +1284,10 @@ function ValidatorsPerformanceContent() {
           chartData={boxPlotData}
           legend={<BoxChartLegend />}
           legendWidth="1/6"
+          info={{
+            title: 'Stake Distribution (Box Plot - Log Scale)',
+            description: 'Distribution of staked SOL per delegator using box plot on log scale. Shows median, IQR, and outliers.'
+          }}
         >
           <BoxChart
             chartConfig={boxPlotChartConfig}
@@ -1168,6 +1306,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isStakerTierLoading}
           chart={stakerTierChartConfig}
           chartData={stakerTierData}
+          info={getStakerTierTabInfo(activeStakerTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1209,6 +1348,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isNetworkTierLoading}
           chart={networkTierChartConfig}
           chartData={networkTierData}
+          info={getNetworkTierTabInfo(activeNetworkTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1245,6 +1385,10 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={rewardsCommissionChartConfig}
           chartData={chartData}
+          info={{
+            title: 'Rewards & Commission Distribution by Epoch',
+            description: 'Split of validator rewards between commission and stakers. Reflects income flow.'
+          }}
         >
           <ChartRenderer
             chartConfig={rewardsCommissionChartConfig}
@@ -1262,6 +1406,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={rewardChartConfig}
           chartData={chartData}
+          info={getRewardTabInfo(activeRewardTab).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -1300,6 +1445,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={rewardRateChartConfig}
           chartData={chartData}
+          info={getRewardRateTabInfo(activeRewardRateTab).info}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">

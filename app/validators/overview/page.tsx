@@ -332,6 +332,10 @@ function ValidatorsOverviewContent() {
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
+          info={{
+            title: 'Cumulative Stake Distribution',
+            description: 'Cumulative % of total stake held by top ranked validators. Shows broad decentralization trends.'
+          }}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -362,6 +366,10 @@ function ValidatorsOverviewContent() {
           isLoading={isLoading}
           chart={ladderChartConfig}
           chartData={ladderChartData}
+          info={{
+            title: 'Concentration Ladder Chart',
+            description: 'Cumulative stake share by validator rank. Flatter curves mean more even stake distribution.'
+          }}
           filterBar={
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">

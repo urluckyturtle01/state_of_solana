@@ -308,7 +308,8 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
 
     return (
       <div className="mb-4 p-4 bg-gray-900/30 rounded-lg border border-gray-900">
-        <div className="flex items-center flex-wrap gap-x-4 gap-y-2">
+        <div className="flex items-center justify-between flex-wrap gap-x-4 gap-y-2">
+          <div className="flex items-center space-x-2">
           <label className="text-sm font-medium text-gray-500 whitespace-nowrap">
             Vote Account:
           </label>
@@ -319,18 +320,16 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
             onChange={handleVoteAccountSearchChange}
             onKeyDown={handleVoteAccountSearchKeyDown}
             onBlur={handleVoteAccountSearchBlur}
-            className={`bg-gray-900/50 text-sm px-3 py-1.5 rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent max-w-[300px] flex-1 ${
+            className={`bg-gray-900/50 text-sm px-3 py-1.5 w-[350px] rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent max-w-[300px] flex-1 ${
               voteAccountSearchTerm ? 'text-gray-200' : 'text-gray-400'
             } placeholder-gray-500`}
           />
-          
+            </div>     
+            <div className="flex items-center space-x-3">
           {/* Validator Info Display */}
           {validatorInfo?.loading && (
             <div className="flex items-center space-x-2 text-gray-400 text-sm">
-              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
+              
               <span>Loading...</span>
             </div>
           )}
@@ -346,6 +345,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
           {validatorInfo && !validatorInfo.loading && validatorInfo.commission !== undefined && (
             <span className="text-xs text-emerald-300">{validatorInfo.commission}% commission</span>
           )}
+          </div>
         </div>
       </div>
     );
