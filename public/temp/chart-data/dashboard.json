@@ -1,7 +1,7 @@
 {
   "pageId": "dashboard",
   "pageName": "User Activity",
-  "fetchedAt": "2025-11-04T17:16:31.518Z",
+  "fetchedAt": "2025-11-04T18:30:33.343Z",
   "charts": [
     {
       "success": true,
@@ -319,7 +319,7 @@
           "Cumulative_Wallets_million": 0.198276
         }
       ],
-      "timestamp": 1762276590385,
+      "timestamp": 1762281032279,
       "chartId": "chart_1748248498156_cvil0pz",
       "title": "Monthly Active & New Wallets",
       "apiType": "JSON"
@@ -328,35 +328,35 @@
       "success": true,
       "data": [
         {
+          "txns_cohort": "2-5 Txns",
+          "wallet_count": 134041676
+        },
+        {
           "txns_cohort": "101-500 Txns",
-          "wallet_count": 11027167
+          "wallet_count": 11035229
         },
         {
           "txns_cohort": "6-10 Txns",
-          "wallet_count": 22345348
-        },
-        {
-          "txns_cohort": "Only 1 Txns",
-          "wallet_count": 978533770
-        },
-        {
-          "txns_cohort": ">1000 Txns",
-          "wallet_count": 2024113
-        },
-        {
-          "txns_cohort": "2-5 Txns",
-          "wallet_count": 133721512
-        },
-        {
-          "txns_cohort": "11-100 Txns",
-          "wallet_count": 32986607
+          "wallet_count": 22384172
         },
         {
           "txns_cohort": "501-1000 Txns",
-          "wallet_count": 1559461
+          "wallet_count": 1560944
+        },
+        {
+          "txns_cohort": ">1000 Txns",
+          "wallet_count": 2026461
+        },
+        {
+          "txns_cohort": "Only 1 Txns",
+          "wallet_count": 979680202
+        },
+        {
+          "txns_cohort": "11-100 Txns",
+          "wallet_count": 33043704
         }
       ],
-      "timestamp": 1762276590380,
+      "timestamp": 1762281032276,
       "chartId": "chart_1748249106338_0x5hkkh",
       "title": "Wallet By Txns Cohort",
       "apiType": "JSON"
@@ -389,7 +389,7 @@
           "wallets": 38694092
         }
       ],
-      "timestamp": 1762276590384,
+      "timestamp": 1762281032282,
       "chartId": "chart_1748249302829_m1bfvg0",
       "title": "Wallet's Current SOL Holding",
       "apiType": "JSON"
@@ -426,7 +426,7 @@
           "wallets": 13734105
         }
       ],
-      "timestamp": 1762276591518,
+      "timestamp": 1762281033343,
       "chartId": "chart_1748249412629_n8mxzi1",
       "title": "Wallet's SOL Balance Change - Since Jan'25",
       "apiType": "JSON"
