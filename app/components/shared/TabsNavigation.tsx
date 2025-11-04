@@ -328,7 +328,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
             <div className="flex items-center space-x-3">
           {/* Validator Info Display */}
           {validatorInfo?.loading && (
-            <div className="flex items-center space-x-2 text-gray-400 text-sm">
+            <div className="flex items-center space-x-2 text-gray-500 text-xs">
               
               <span>Loading...</span>
             </div>
