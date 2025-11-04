@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import { ButtonPrimary, ButtonSecondary } from "./buttons";
 
 export interface Tab {
@@ -95,9 +94,6 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   const [hoveredTab, setHoveredTab] = useState<string | null>(null); // Add hover state for tabs
   const [searchTerm, setSearchTerm] = useState(search?.initialValue || '');
   const [voteAccountSearchTerm, setVoteAccountSearchTerm] = useState(voteAccountSearch?.initialValue || '');
-  
-  // Get current search params to preserve them when switching tabs
-  const searchParams = useSearchParams();
   
   // Refs for auto-focus
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -652,9 +648,12 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
                 const isActive = activeTab === tab.key;
                 const isHovered = hoveredTab === tab.key;
                 
-                // Preserve current search params when switching tabs
-                const tabPath = searchParams.toString() 
-                  ? `${tab.path}?${searchParams.toString()}`
+                // Preserve current search params when switching tabs (read directly from URL)
+                const currentParams = typeof window !== 'undefined' 
+                  ? window.location.search.substring(1) 
+                  : '';
+                const tabPath = currentParams 
+                  ? `${tab.path}?${currentParams}`
                   : tab.path;
                 
                 return (
