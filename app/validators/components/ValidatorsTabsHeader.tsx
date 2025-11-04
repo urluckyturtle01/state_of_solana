@@ -22,7 +22,7 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
   const tabs: Tab[] = [
     { 
       name: "Overview", 
-      path: "/validators",
+      path: "/validators/overview",
       key: "overview",
       icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
     },
@@ -93,16 +93,16 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
   const handleVoteAccountSearch = (voteAccount: string) => {
     // Update URL with vote account parameter
     const params = new URLSearchParams(searchParams.toString());
+    const currentPath = window.location.pathname;
     
     if (voteAccount.trim()) {
       params.set('voteAccount', voteAccount.trim());
-      // Navigate to performance page with the vote account param
-      router.push(`/validators/performance?${params.toString()}`);
+      // Stay on current page with the vote account param
+      router.push(`${currentPath}?${params.toString()}`);
     } else {
       // Clear the parameter if search is empty, but stay on current page
       params.delete('voteAccount');
       const queryString = params.toString();
-      const currentPath = window.location.pathname;
       router.push(`${currentPath}${queryString ? '?' + queryString : ''}`);
     }
   };

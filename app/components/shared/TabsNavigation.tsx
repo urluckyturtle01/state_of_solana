@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ButtonPrimary, ButtonSecondary } from "./buttons";
 
 export interface Tab {
@@ -94,6 +95,9 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
   const [hoveredTab, setHoveredTab] = useState<string | null>(null); // Add hover state for tabs
   const [searchTerm, setSearchTerm] = useState(search?.initialValue || '');
   const [voteAccountSearchTerm, setVoteAccountSearchTerm] = useState(voteAccountSearch?.initialValue || '');
+  
+  // Get current search params to preserve them when switching tabs
+  const searchParams = useSearchParams();
   
   // Refs for auto-focus
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -648,6 +652,11 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
                 const isActive = activeTab === tab.key;
                 const isHovered = hoveredTab === tab.key;
                 
+                // Preserve current search params when switching tabs
+                const tabPath = searchParams.toString() 
+                  ? `${tab.path}?${searchParams.toString()}`
+                  : tab.path;
+                
                 return (
                   <div
                     key={tab.key}
@@ -660,7 +669,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
                     onMouseLeave={() => setHoveredTab(null)}
                   >
                     <Link
-                      href={tab.path}
+                      href={tabPath}
                       onClick={onTabClick ? (e) => onTabClick(e, tab.key) : undefined}
                       className={`flex items-center gap-1.5 px-3 py-2.5 whitespace-nowrap transition-all duration-200 ${
                         tab.closeable ? 'pr-1' : ''
