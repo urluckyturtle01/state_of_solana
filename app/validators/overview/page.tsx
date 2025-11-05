@@ -14,10 +14,10 @@ interface ValidatorPerformanceData {
   total_commission_collected: number;
   total_rewards_distributed: number;
   block_rewards_sol: number;
-  top_01pct_concentration: number;
-  top_1pct_concentration: number;
-  top_5pct_concentration: number;
-  top_10pct_concentration: number;
+  top_01pct: number;
+  top_1pct: number;
+  top_5pct: number;
+  top_10pct: number;
   epoch: number;
   [key: string]: any;
 }
@@ -183,23 +183,23 @@ function ValidatorsOverviewContent() {
 
     return [
       {
-        category: 'top_01pct_concentration',
-        value: epochData.top_01pct_concentration,
+        category: 'top_01pct',
+        value: epochData.top_01pct,
         label: 'Top 0.1% Concentration'
       },
       {
-        category: 'top_1pct_concentration',
-        value: epochData.top_1pct_concentration,
+        category: 'top_1pct',
+        value: epochData.top_1pct,
         label: 'Top 1% Concentration'
       },
       {
-        category: 'top_5pct_concentration',
-        value: epochData.top_5pct_concentration,
+        category: 'top_5pct',
+        value: epochData.top_5pct,
         label: 'Top 5% Concentration'
       },
       {
-        category: 'top_10pct_concentration',
-        value: epochData.top_10pct_concentration,
+        category: 'top_10pct',
+        value: epochData.top_10pct,
         label: 'Top 10% Concentration'
       }
     ];
@@ -261,7 +261,7 @@ function ValidatorsOverviewContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Counter
           title="Total Stakers"
-          value={isLoading ? "Loading..." : latestData ? latestData.total_stakers.toLocaleString() : "0"}
+          value={isLoading ? "Loading..." : latestData ? Math.floor(latestData.total_stakers).toLocaleString() : "0"}
           icon={
             <svg className="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />

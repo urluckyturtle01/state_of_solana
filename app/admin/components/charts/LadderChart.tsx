@@ -29,13 +29,13 @@ export interface LadderChartProps {
   selectedEpoch?: number;
 }
 
-const DEFAULT_MARGIN = { top: 20, right: 40, bottom: 40, left: 120 };
+const DEFAULT_MARGIN = { top: 20, right: 40, bottom: 40, left: 70 };
 
 export default function LadderChart({
   chartConfig,
   data = [],
-  width = 600,
-  height = 400,
+  width = 500,
+  height = 300,
   isExpanded = false,
   onCloseExpanded,
   yAxisUnit = '',
@@ -163,9 +163,9 @@ export default function LadderChart({
         <ParentSize debounceTime={10}>
           {({ width: parentWidth, height: parentHeight }) => {
             // Ensure we have valid dimensions and constrain to container bounds
-            const maxWidth = Math.min(parentWidth > 0 ? parentWidth : width || 600, 1200);
-            const maxHeight = Math.min(parentHeight > 0 ? parentHeight : height || 400, 800);
-            const chartWidth = Math.max(maxWidth, 400); // Minimum width for readability
+            const maxWidth = Math.min(parentWidth > 0 ? parentWidth : width || 500, 1200);
+            const maxHeight = Math.min(parentHeight > 0 ? parentHeight : height || 300, 800);
+            const chartWidth = Math.max(maxWidth, 500); // Minimum width for readability
             const chartHeight = Math.max(maxHeight, 300); // Minimum height for readability
 
             // Only render if we have valid dimensions

@@ -12,13 +12,13 @@ import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTI
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
 
 // Concentration type definition (internal to component)
-type ConcentrationType = 'top_01pct_concentration' | 'top_1pct_concentration' | 'top_5pct_concentration' | 'top_10pct_concentration';
+type ConcentrationType = 'top_01pct' | 'top_1pct' | 'top_5pct' | 'top_10pct';
 
 const CONCENTRATION_TYPE_OPTIONS = [
-  { value: 'top_01pct_concentration' as ConcentrationType, label: 'Top 0.1% Concentration', description: 'Concentration among top 0.1% of stakers' },
-  { value: 'top_1pct_concentration' as ConcentrationType, label: 'Top 1% Concentration', description: 'Concentration among top 1% of stakers' },
-  { value: 'top_5pct_concentration' as ConcentrationType, label: 'Top 5% Concentration', description: 'Concentration among top 5% of stakers' },
-  { value: 'top_10pct_concentration' as ConcentrationType, label: 'Top 10% Concentration', description: 'Concentration among top 10% of stakers' },
+  { value: 'top_01pct' as ConcentrationType, label: 'Top 0.1% Concentration', description: 'Concentration among top 0.1% of stakers' },
+  { value: 'top_1pct' as ConcentrationType, label: 'Top 1% Concentration', description: 'Concentration among top 1% of stakers' },
+  { value: 'top_5pct' as ConcentrationType, label: 'Top 5% Concentration', description: 'Concentration among top 5% of stakers' },
+  { value: 'top_10pct' as ConcentrationType, label: 'Top 10% Concentration', description: 'Concentration among top 10% of stakers' },
 ];
 
 // Reward tab type definition
@@ -152,10 +152,10 @@ interface ValidatorPerformanceData {
   p95: number;
   p99: number;
   // Concentration metrics
-  top_01pct_concentration: number;
-  top_1pct_concentration: number;
-  top_5pct_concentration: number;
-  top_10pct_concentration: number;
+  top_01pct: number;
+  top_1pct: number;
+  top_5pct: number;
+  top_10pct: number;
 }
 
 interface ValidatorStakerTierData {
@@ -193,7 +193,7 @@ function ValidatorsPerformanceContent() {
   );
   const [selectedStakeType, setSelectedStakeType] = useState<StakeType>('total_stake');
   const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('gini_coefficient');
-  const [selectedConcentrationType, setSelectedConcentrationType] = useState<ConcentrationType>('top_1pct_concentration');
+  const [selectedConcentrationType, setSelectedConcentrationType] = useState<ConcentrationType>('top_1pct');
   const [selectedEpoch, setSelectedEpoch] = useState<number | null>(null);
   const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('total');
   const [activeRewardRateTab, setActiveRewardRateTab] = useState<RewardRateTabType>('avg_rate');
@@ -335,7 +335,7 @@ function ValidatorsPerformanceContent() {
   // Get concentration type display info
   const getConcentrationTypeInfo = (concentrationType: ConcentrationType) => {
     switch (concentrationType) {
-      case 'top_01pct_concentration':
+      case 'top_01pct':
         return { 
           title: 'Top 0.1% Concentration by Epoch', 
           unit: '%',
@@ -344,7 +344,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 0.1% validators each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_1pct_concentration':
+      case 'top_1pct':
         return { 
           title: 'Top 1% Concentration by Epoch', 
           unit: '%',
@@ -353,7 +353,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 1% validators each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_5pct_concentration':
+      case 'top_5pct':
         return { 
           title: 'Top 5% Concentration by Epoch', 
           unit: '%',
@@ -362,7 +362,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 5% validators each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_10pct_concentration':
+      case 'top_10pct':
         return { 
           title: 'Top 10% Concentration by Epoch', 
           unit: '%',
@@ -818,23 +818,23 @@ function ValidatorsPerformanceContent() {
 
     return [
       {
-        category: 'top_01pct_concentration',
-        value: epochData.top_01pct_concentration,
+        category: 'top_01pct',
+        value: epochData.top_01pct,
         label: 'Top 0.1% Concentration'
       },
       {
-        category: 'top_1pct_concentration',
-        value: epochData.top_1pct_concentration,
+        category: 'top_1pct',
+        value: epochData.top_1pct,
         label: 'Top 1% Concentration'
       },
       {
-        category: 'top_5pct_concentration',
-        value: epochData.top_5pct_concentration,
+        category: 'top_5pct',
+        value: epochData.top_5pct,
         label: 'Top 5% Concentration'
       },
       {
-        category: 'top_10pct_concentration',
-        value: epochData.top_10pct_concentration,
+        category: 'top_10pct',
+        value: epochData.top_10pct,
         label: 'Top 10% Concentration'
       }
     ];
@@ -1337,11 +1337,8 @@ function ValidatorsPerformanceContent() {
         </ChartCard>
       </div>
 
-    
-
-      {/* Row 5: Cumulative Distribution & Rewards/Commission Stack */}
+      {/* Network Staker Tier Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Network Staker Tier Chart */}
         <ChartCard
           title={networkTierChartConfig.title}
           description="Network-wide staker distribution by tier across all validators"
@@ -1375,95 +1372,6 @@ function ValidatorsPerformanceContent() {
                 setNetworkTierDisplayMode(value as DisplayMode);
               }
             }}
-          />
-        </ChartCard>
-
-        {/* Rewards & Commission Stacked Chart */}
-        <ChartCard
-          title={rewardsCommissionChartConfig.title}
-          description={`Stacked view of total rewards distributed and commission collected by epoch for validator: ${selectedVoteAccount.slice(0, 8)}...`}
-          isLoading={isLoading}
-          chart={rewardsCommissionChartConfig}
-          chartData={chartData}
-          info={{
-            title: 'Rewards & Commission Distribution by Epoch',
-            description: 'Split of validator rewards between commission and stakers. Reflects income flow.'
-          }}
-        >
-          <ChartRenderer
-            chartConfig={rewardsCommissionChartConfig}
-            preloadedData={chartData}
-          />
-        </ChartCard>
-      </div>
-
-      {/* Row 6: Reward Analysis Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        {/* Reward Analysis Chart */}
-        <ChartCard
-          title={getRewardTabInfo(activeRewardTab).title}
-          description={`Reward analysis for validator: ${selectedVoteAccount.slice(0, 8)}...`}
-          isLoading={isLoading}
-          chart={rewardChartConfig}
-          chartData={chartData}
-          info={getRewardTabInfo(activeRewardTab).info}
-          filterBar={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <GenericFilter
-                  value={activeRewardTab}
-                  onChange={setActiveRewardTab}
-                  options={REWARD_TAB_OPTIONS}
-                />
-              </div>
-            </div>
-          }
-        >
-          {getRewardTabInfo(activeRewardTab).chartType === 'line' ? (
-            <MultiSeriesLineBarChart
-              chartConfig={rewardChartConfig}
-              data={chartData}
-              height={400}
-              maxXAxisTicks={8}
-              yAxisUnit={getRewardTabInfo(activeRewardTab).unit}
-            />
-          ) : (
-            <SimpleBarChart
-              chartConfig={rewardChartConfig}
-              data={chartData}
-              height={400}
-              maxXAxisTicks={8}
-              yAxisUnit={getRewardTabInfo(activeRewardTab).unit}
-            />
-          )}
-        </ChartCard>
-
-        {/* Reward Rate Analysis Chart */}
-        <ChartCard
-          title={getRewardRateTabInfo(activeRewardRateTab).title}
-          description={`Reward rate analysis for validator: ${selectedVoteAccount.slice(0, 8)}...`}
-          isLoading={isLoading}
-          chart={rewardRateChartConfig}
-          chartData={chartData}
-          info={getRewardRateTabInfo(activeRewardRateTab).info}
-          filterBar={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <GenericFilter
-                  value={activeRewardRateTab}
-                  onChange={setActiveRewardRateTab}
-                  options={REWARD_RATE_TAB_OPTIONS}
-                />
-              </div>
-            </div>
-          }
-        >
-          <MultiSeriesLineBarChart
-            chartConfig={rewardRateChartConfig}
-            data={chartData}
-            height={400}
-            maxXAxisTicks={8}
-            yAxisUnit={getRewardRateTabInfo(activeRewardRateTab).unit}
           />
         </ChartCard>
       </div>
