@@ -1,7 +1,7 @@
 {
   "pageId": "orca-traction",
   "pageName": "Traction",
-  "fetchedAt": "2025-11-05T01:43:40.190Z",
+  "fetchedAt": "2025-11-05T03:13:10.490Z",
   "charts": [
     {
       "success": true,
@@ -14408,7 +14408,7 @@
               "cumulative_Protocol_revenue_usd": 0.1217328579
             }
           ],
-          "timestamp": 1762307018596
+          "timestamp": 1762312388971
         }
       ],
       "data": [
@@ -28812,7 +28812,7 @@
           "cumulative_Protocol_revenue_usd": 0.1217328579
         }
       ],
-      "timestamp": 1762307018797,
+      "timestamp": 1762312389172,
       "chartId": "chart_1749882403819_afp5rgw",
       "title": "Volume",
       "totalCombinations": 1,
@@ -29282,7 +29282,7 @@
           "cumulative_traders": 5973
         }
       ],
-      "timestamp": 1762307018528,
+      "timestamp": 1762312388938,
       "chartId": "chart_1749882660219_syz5m5k",
       "title": "Monthly Trades",
       "apiType": "JSON"
@@ -29747,7 +29747,7 @@
           "cumulative_traders": 5973
         }
       ],
-      "timestamp": 1762307018535,
+      "timestamp": 1762312388942,
       "chartId": "chart_1749883050956_dwojn2y",
       "title": "Monthly Traders And New Traders",
       "apiType": "JSON"
@@ -29788,7 +29788,7 @@
           "volume_in_usd": 7653012177.378938
         }
       ],
-      "timestamp": 1762307019844,
+      "timestamp": 1762312390206,
       "chartId": "chart_1749906632293_2chwizz",
       "title": "Volume By Pool Age",
       "apiType": "JSON"
@@ -29799,60 +29799,116 @@
         {
           "data": [
             {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "Bluechip",
+              "volume": 46540652.49670494,
+              "Protocol_fee_usd": 19056.733064693966,
+              "LP_fee_usd": 18446.25828954649,
+              "Protocol_revenue_usd": 610.4747751474687
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "(Meme)Others",
+              "volume": 110437204.60676298,
+              "Protocol_fee_usd": 74350.26937560883,
+              "LP_fee_usd": 72182.45983152412,
+              "Protocol_revenue_usd": 2167.809544084765
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "Stable",
+              "volume": 8284013.257501954,
+              "Protocol_fee_usd": 829.9096564320608,
+              "LP_fee_usd": 829.9096564320608,
+              "Protocol_revenue_usd": 0
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "AI",
+              "volume": 46659.71541122475,
+              "Protocol_fee_usd": 235.41483907730054,
+              "LP_fee_usd": 214.62435385174786,
+              "Protocol_revenue_usd": 20.79048522555281
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "SOL-Stable",
+              "volume": 378426796.551616,
+              "Protocol_fee_usd": 145204.86933975306,
+              "LP_fee_usd": 145183.4802605866,
+              "Protocol_revenue_usd": 21.389079166448425
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "Meme(Pump.fun)",
+              "volume": 8851.88889253056,
+              "Protocol_fee_usd": 135.86276779651885,
+              "LP_fee_usd": 118.61065333127178,
+              "Protocol_revenue_usd": 17.252114465247196
+            },
+            {
+              "block_date": "2025-11-04",
+              "Swap_Mint_Type": "LST",
+              "volume": 72261370.48872216,
+              "Protocol_fee_usd": 10829.320835105113,
+              "LP_fee_usd": 10634.47628060723,
+              "Protocol_revenue_usd": 194.8445544978848
+            },
+            {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "LST",
-              "volume": 21686304.449545596,
-              "Protocol_fee_usd": 4185.402422590098,
-              "LP_fee_usd": 4064.3166960913427,
-              "Protocol_revenue_usd": 121.08572649875588
+              "volume": 29119121.281703312,
+              "Protocol_fee_usd": 5286.008159084565,
+              "LP_fee_usd": 5147.339318210926,
+              "Protocol_revenue_usd": 138.66884087364153
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "Meme(Pump.fun)",
-              "volume": 3084.6658392295208,
-              "Protocol_fee_usd": 38.86245986419589,
-              "LP_fee_usd": 34.03167494843667,
-              "Protocol_revenue_usd": 4.830784915759231
+              "volume": 4972.661085973502,
+              "Protocol_fee_usd": 62.1171321414364,
+              "LP_fee_usd": 54.443056566966774,
+              "Protocol_revenue_usd": 7.674075574469651
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "(Meme)Others",
-              "volume": 66851056.882428885,
-              "Protocol_fee_usd": 39001.61854171613,
-              "LP_fee_usd": 38454.572620048944,
-              "Protocol_revenue_usd": 547.045921667193
+              "volume": 80321663.00693007,
+              "Protocol_fee_usd": 49285.94474987176,
+              "LP_fee_usd": 48336.91187544566,
+              "Protocol_revenue_usd": 949.0328744260829
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "Stable",
-              "volume": 2849046.9350337205,
-              "Protocol_fee_usd": 285.5754010139554,
-              "LP_fee_usd": 285.5754010139554,
+              "volume": 4626228.805659923,
+              "Protocol_fee_usd": 463.67154664615197,
+              "LP_fee_usd": 463.67154664615197,
               "Protocol_revenue_usd": 0
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "Bluechip",
-              "volume": 37273745.82088732,
-              "Protocol_fee_usd": 11589.050665465697,
-              "LP_fee_usd": 11430.845750894518,
-              "Protocol_revenue_usd": 158.20491457117586
+              "volume": 45397659.88421833,
+              "Protocol_fee_usd": 13802.456377880226,
+              "LP_fee_usd": 13620.202096302413,
+              "Protocol_revenue_usd": 182.25428157781738
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "AI",
-              "volume": 35585.09356705345,
-              "Protocol_fee_usd": 151.36910089893834,
-              "LP_fee_usd": 139.70776674090357,
-              "Protocol_revenue_usd": 11.66133415803472
+              "volume": 40157.450306814746,
+              "Protocol_fee_usd": 170.45822598543904,
+              "LP_fee_usd": 157.34804056732256,
+              "Protocol_revenue_usd": 13.110185418116409
             },
             {
               "block_date": "2025-11-03",
               "Swap_Mint_Type": "SOL-Stable",
-              "volume": 369243196.29631114,
-              "Protocol_fee_usd": 142515.91051961045,
-              "LP_fee_usd": 142505.86112921895,
-              "Protocol_revenue_usd": 10.049390391476933
+              "volume": 426353645.0076181,
+              "Protocol_fee_usd": 164466.49715702984,
+              "LP_fee_usd": 164454.91020664922,
+              "Protocol_revenue_usd": 11.586950380628577
             },
             {
               "block_date": "2025-11-02",
@@ -68919,65 +68975,121 @@
               "Protocol_revenue_usd": 3790.0098641074615
             }
           ],
-          "timestamp": 1762307019989
+          "timestamp": 1762312390289
         }
       ],
       "data": [
         {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "Bluechip",
+          "volume": 46540652.49670494,
+          "Protocol_fee_usd": 19056.733064693966,
+          "LP_fee_usd": 18446.25828954649,
+          "Protocol_revenue_usd": 610.4747751474687
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "(Meme)Others",
+          "volume": 110437204.60676298,
+          "Protocol_fee_usd": 74350.26937560883,
+          "LP_fee_usd": 72182.45983152412,
+          "Protocol_revenue_usd": 2167.809544084765
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "Stable",
+          "volume": 8284013.257501954,
+          "Protocol_fee_usd": 829.9096564320608,
+          "LP_fee_usd": 829.9096564320608,
+          "Protocol_revenue_usd": 0
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "AI",
+          "volume": 46659.71541122475,
+          "Protocol_fee_usd": 235.41483907730054,
+          "LP_fee_usd": 214.62435385174786,
+          "Protocol_revenue_usd": 20.79048522555281
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "SOL-Stable",
+          "volume": 378426796.551616,
+          "Protocol_fee_usd": 145204.86933975306,
+          "LP_fee_usd": 145183.4802605866,
+          "Protocol_revenue_usd": 21.389079166448425
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "Meme(Pump.fun)",
+          "volume": 8851.88889253056,
+          "Protocol_fee_usd": 135.86276779651885,
+          "LP_fee_usd": 118.61065333127178,
+          "Protocol_revenue_usd": 17.252114465247196
+        },
+        {
+          "block_date": "2025-11-04",
+          "Swap_Mint_Type": "LST",
+          "volume": 72261370.48872216,
+          "Protocol_fee_usd": 10829.320835105113,
+          "LP_fee_usd": 10634.47628060723,
+          "Protocol_revenue_usd": 194.8445544978848
+        },
+        {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "LST",
-          "volume": 21686304.449545596,
-          "Protocol_fee_usd": 4185.402422590098,
-          "LP_fee_usd": 4064.3166960913427,
-          "Protocol_revenue_usd": 121.08572649875588
+          "volume": 29119121.281703312,
+          "Protocol_fee_usd": 5286.008159084565,
+          "LP_fee_usd": 5147.339318210926,
+          "Protocol_revenue_usd": 138.66884087364153
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "Meme(Pump.fun)",
-          "volume": 3084.6658392295208,
-          "Protocol_fee_usd": 38.86245986419589,
-          "LP_fee_usd": 34.03167494843667,
-          "Protocol_revenue_usd": 4.830784915759231
+          "volume": 4972.661085973502,
+          "Protocol_fee_usd": 62.1171321414364,
+          "LP_fee_usd": 54.443056566966774,
+          "Protocol_revenue_usd": 7.674075574469651
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "(Meme)Others",
-          "volume": 66851056.882428885,
-          "Protocol_fee_usd": 39001.61854171613,
-          "LP_fee_usd": 38454.572620048944,
-          "Protocol_revenue_usd": 547.045921667193
+          "volume": 80321663.00693007,
+          "Protocol_fee_usd": 49285.94474987176,
+          "LP_fee_usd": 48336.91187544566,
+          "Protocol_revenue_usd": 949.0328744260829
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "Stable",
-          "volume": 2849046.9350337205,
-          "Protocol_fee_usd": 285.5754010139554,
-          "LP_fee_usd": 285.5754010139554,
+          "volume": 4626228.805659923,
+          "Protocol_fee_usd": 463.67154664615197,
+          "LP_fee_usd": 463.67154664615197,
           "Protocol_revenue_usd": 0
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "Bluechip",
-          "volume": 37273745.82088732,
-          "Protocol_fee_usd": 11589.050665465697,
-          "LP_fee_usd": 11430.845750894518,
-          "Protocol_revenue_usd": 158.20491457117586
+          "volume": 45397659.88421833,
+          "Protocol_fee_usd": 13802.456377880226,
+          "LP_fee_usd": 13620.202096302413,
+          "Protocol_revenue_usd": 182.25428157781738
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "AI",
-          "volume": 35585.09356705345,
-          "Protocol_fee_usd": 151.36910089893834,
-          "LP_fee_usd": 139.70776674090357,
-          "Protocol_revenue_usd": 11.66133415803472
+          "volume": 40157.450306814746,
+          "Protocol_fee_usd": 170.45822598543904,
+          "LP_fee_usd": 157.34804056732256,
+          "Protocol_revenue_usd": 13.110185418116409
         },
         {
           "block_date": "2025-11-03",
           "Swap_Mint_Type": "SOL-Stable",
-          "volume": 369243196.29631114,
-          "Protocol_fee_usd": 142515.91051961045,
-          "LP_fee_usd": 142505.86112921895,
-          "Protocol_revenue_usd": 10.049390391476933
+          "volume": 426353645.0076181,
+          "Protocol_fee_usd": 164466.49715702984,
+          "LP_fee_usd": 164454.91020664922,
+          "Protocol_revenue_usd": 11.586950380628577
         },
         {
           "block_date": "2025-11-02",
@@ -108044,7 +108156,7 @@
           "Protocol_revenue_usd": 3790.0098641074615
         }
       ],
-      "timestamp": 1762307020189,
+      "timestamp": 1762312390490,
       "chartId": "chart_1749912148074_wrm985h",
       "title": "Volume By Pool Type",
       "totalCombinations": 1,
