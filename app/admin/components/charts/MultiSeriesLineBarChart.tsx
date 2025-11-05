@@ -180,11 +180,18 @@ const formatFieldName = (fieldName: string): string => {
   // Always capitalize the first letter of the entire string
   if (spaceSeparated.length === 0) return '';
   
+  // Special cases for acronyms
+  const acronyms = ['hhi', 'apy', 'apr', 'roi', 'tvl', 'api'];
+  
   // Split into words and capitalize each word
   return spaceSeparated
     .split(' ')
     .map(word => {
       if (word.length === 0) return '';
+      // Check if word is an acronym
+      if (acronyms.includes(word.toLowerCase())) {
+        return word.toUpperCase();
+      }
       // Capitalize first letter, lowercase the rest
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
@@ -1886,8 +1893,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         {tooltip.visible && tooltip.items && !isModal && (
           <ChartTooltip
             title={isNumericalXAxis && typeof tooltip.key === 'number' 
-              ? `${xKey}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}` 
-              : String(tooltip.key)}
+              ? `${formatFieldName(xKey)}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}${xKey.includes('pct') || xKey.includes('cumulative') ? ' %' : ''}` 
+              : `${formatFieldName(xKey)}: ${String(tooltip.key)}`}
             items={tooltip.items}
             left={tooltip.left}
             top={tooltip.top}
@@ -2277,8 +2284,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                     }}>
                                           <ChartTooltip
                       title={isNumericalXAxis && typeof tooltip.key === 'number' 
-                        ? `${xKey}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}` 
-                        : String(tooltip.key)}
+                        ? `${formatFieldName(xKey)}: ${Number.isInteger(tooltip.key) ? tooltip.key.toString() : tooltip.key.toFixed(2)}${xKey.includes('pct') || xKey.includes('cumulative') ? ' %' : ''}` 
+                        : `${formatFieldName(xKey)}: ${String(tooltip.key)}`}
                       items={tooltip.items}
                       left={0}
                       top={0}

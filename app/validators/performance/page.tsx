@@ -618,7 +618,7 @@ function ValidatorsPerformanceContent() {
           unit: '',
           info: {
             title: 'Staker Count by Tier',
-            description: 'Counts of stakers grouped by delegation size tiers. Reveals supporter diversity.'
+            description: 'Counts of stakers grouped by delegation size tiers. Reveals delegator diversity.'
           }
         };
       case 'total_stake':
@@ -628,7 +628,7 @@ function ValidatorsPerformanceContent() {
           unit: 'SOL',
           info: {
             title: 'Total Stake',
-            description: 'SOL staked by tier. Reveals validator dependency on whale vs. retail stakers.'
+            description: 'Amount of stake (in SOL)  grouped by delegation size tiers. Reveals delegator diversity.'
           }
         };
       default:
@@ -661,7 +661,7 @@ function ValidatorsPerformanceContent() {
           unit: 'SOL',
           info: {
             title: 'Network Total Stake',
-            description: 'SOL staked by tier network-wide. Shows overall stake concentration patterns.'
+            description: 'Amount of stake (in SOL) of all network stakers segmented by stake tiers. Indicates network-wide stake profile.'
           }
         };
       default:

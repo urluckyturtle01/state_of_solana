@@ -61,6 +61,15 @@ export default function LadderChart({
     }
   }, [data]);
 
+  // Create category to label mapping
+  const categoryLabelMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    processedData.forEach(d => {
+      map[d.category] = d.label || d.category;
+    });
+    return map;
+  }, [processedData]);
+
   // Create scales factory function to be used with responsive dimensions
   const createScales = useCallback((chartWidth: number, chartHeight: number) => {
     if (!processedData.length) {
@@ -232,6 +241,10 @@ export default function LadderChart({
                       tickStroke="transparent"
                       tickLength={0}
                       hideAxisLine={false}
+                      tickFormat={(category) => {
+                        const label = categoryLabelMap[category as string] || category;
+                        return label.replace(' Concentration', '');
+                      }}
                       tickLabelProps={() => ({
                         fill: '#6b7280',
                         fontSize: 12,
