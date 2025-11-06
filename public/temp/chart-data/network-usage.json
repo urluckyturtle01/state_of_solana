@@ -1,39 +1,68 @@
 {
   "pageId": "network-usage",
   "pageName": "Network Usage",
-  "fetchedAt": "2025-11-05T23:20:12.460Z",
+  "fetchedAt": "2025-11-06T01:43:28.458Z",
   "charts": [
     {
       "success": true,
       "data": [
         {
+          "block_date": "2025-11-05",
+          "total_transactions": 263381494,
+          "succeessful_transactions": 241804903,
+          "succeesful_transactions_perc": 91.80785609789274,
+          "non_vote_transactions_perc": 30.95537646240248,
+          "successful_non_vote_transactions_perc": 73.97191437000818,
+          "failed_transactions": 21576591,
+          "total_vote_transactions": 181850761,
+          "total_non_vote_transactions": 81530733,
+          "successful_vote_transactions": 181495059,
+          "successful_non_vote_transactions": 60309844,
+          "failed_vote_transactions": 355702,
+          "failed_non_vote_transactions": 21220889,
+          "total_Fees": 5110.196853165,
+          "non_vote_transactions_fees": 4197.639980479,
+          "vote_transactions_fees": 912.556872686,
+          "priority_fees": 3739.508175479,
+          "successful_vote_transactions_fees": 910.732060454,
+          "successful_non_vote_transactions_fees": 3199.831363631,
+          "failed_vote_transactions_fees": 1.824812232,
+          "failed_non_vote_transactions_fees": 997.808616848,
+          "successful_non_vote_transactions_priority_fees": 2849.234758631,
+          "failed_non_vote_transactions_priority_fees": 890.273416848,
+          "total_tps": 3048,
+          "success_tps": 2798,
+          "failed_tps": 249,
+          "real_tps": 943
+        },
+        {
           "block_date": "2025-11-04",
-          "total_transactions": 270473847,
-          "succeessful_transactions": 244339758,
-          "succeesful_transactions_perc": 90.33766506822377,
-          "non_vote_transactions_perc": 34.743354317728176,
-          "successful_non_vote_transactions_perc": 72.63809577027175,
-          "failed_transactions": 26134089,
-          "total_vote_transactions": 176502160,
-          "total_non_vote_transactions": 93971687,
-          "successful_vote_transactions": 176080514,
-          "successful_non_vote_transactions": 68259244,
-          "failed_vote_transactions": 421646,
-          "failed_non_vote_transactions": 25712443,
-          "total_Fees": 5371.043277176,
-          "non_vote_transactions_fees": 4485.467979759,
-          "vote_transactions_fees": 885.575297417,
-          "priority_fees": 3963.490644759,
-          "successful_vote_transactions_fees": 883.462587417,
-          "successful_non_vote_transactions_fees": 3191.143560728,
-          "failed_vote_transactions_fees": 2.11271,
-          "failed_non_vote_transactions_fees": 1294.324419031,
-          "successful_non_vote_transactions_priority_fees": 2799.184790728,
-          "failed_non_vote_transactions_priority_fees": 1164.305854031,
-          "total_tps": 3130,
-          "success_tps": 2828,
-          "failed_tps": 302,
-          "real_tps": 1087
+          "total_transactions": 282300816,
+          "succeessful_transactions": 255407806,
+          "succeesful_transactions_perc": 90.47363362917095,
+          "non_vote_transactions_perc": 34.51703731525877,
+          "successful_non_vote_transactions_perc": 72.85127961101078,
+          "failed_transactions": 26893010,
+          "total_vote_transactions": 184858938,
+          "total_non_vote_transactions": 97441878,
+          "successful_vote_transactions": 184420151,
+          "successful_non_vote_transactions": 70987655,
+          "failed_vote_transactions": 438787,
+          "failed_non_vote_transactions": 26454223,
+          "total_Fees": 5591.499541839,
+          "non_vote_transactions_fees": 4663.995589422,
+          "vote_transactions_fees": 927.503952417,
+          "priority_fees": 4122.453844422,
+          "successful_vote_transactions_fees": 925.305362417,
+          "successful_non_vote_transactions_fees": 3330.609288567,
+          "failed_vote_transactions_fees": 2.19859,
+          "failed_non_vote_transactions_fees": 1333.386300855,
+          "successful_non_vote_transactions_priority_fees": 2922.833768567,
+          "failed_non_vote_transactions_priority_fees": 1199.620075855,
+          "total_tps": 3267,
+          "success_tps": 2956,
+          "failed_tps": 311,
+          "real_tps": 1127
         },
         {
           "block_date": "2025-11-03",
@@ -19553,7 +19582,7 @@
           "real_tps": 637
         }
       ],
-      "timestamp": 1762384810913,
+      "timestamp": 1762393406926,
       "chartId": "chart_1748252444149_tkcgszd",
       "title": "Transactions Summary",
       "apiType": "JSON"
@@ -21718,7 +21747,7 @@
           "median_priority_fee_sol": 3.04e-7
         }
       ],
-      "timestamp": 1762384810543,
+      "timestamp": 1762393406548,
       "chartId": "chart_1748255554567_w4iy4xx",
       "title": "Non-vote Transaction Fees",
       "apiType": "JSON"
@@ -21908,7 +21937,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1762384810553
+          "timestamp": 1762393406549
         },
         {
           "data": [
@@ -21980,7 +22009,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1762384810856
+          "timestamp": 1762393406854
         },
         {
           "data": [
@@ -22004,7 +22033,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1762384811165
+          "timestamp": 1762393407156
         }
       ],
       "data": [
@@ -22185,7 +22214,7 @@
           "successful_non_vote_transactiosn_perc": 39.97245750859373
         }
       ],
-      "timestamp": 1762384811364,
+      "timestamp": 1762393407356,
       "chartId": "chart_1748255787490_ud2wzln",
       "title": "Transaction Count",
       "parameters": {
@@ -22882,7 +22911,7 @@
           "avg_priority_fee_lamport": 55501
         }
       ],
-      "timestamp": 1762384812460,
+      "timestamp": 1762393408458,
       "chartId": "chart_1753698528577_c4lx4ep",
       "title": "Weekly Real TPS And Fee Trends",
       "apiType": "JSON"
