@@ -44,7 +44,7 @@ function ValidatorsOverviewContent() {
   );
   const [data, setData] = useState<ValidatorPerformanceData[]>([]);
   const [cumulativeData, setCumulativeData] = useState<CumulativePercentageData[]>([]);
-  const [selectedCumulativeEpoch, setSelectedCumulativeEpoch] = useState<number>(870);
+  const [selectedCumulativeEpoch, setSelectedCumulativeEpoch] = useState<number | null>(null);
   const [selectedLadderEpoch, setSelectedLadderEpoch] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCumulativeLoading, setIsCumulativeLoading] = useState<boolean>(false);
@@ -86,6 +86,11 @@ function ValidatorsOverviewContent() {
         if (!selectedLadderEpoch && sortedData.length > 0) {
           setSelectedLadderEpoch(sortedData[0].epoch);
         }
+        
+        // Set the latest epoch for cumulative chart if not already set
+        if (!selectedCumulativeEpoch && sortedData.length > 0) {
+          setSelectedCumulativeEpoch(sortedData[0].epoch);
+        }
       } else {
         throw new Error('Invalid response format');
       }
@@ -96,7 +101,7 @@ function ValidatorsOverviewContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedLadderEpoch]);
+  }, [selectedLadderEpoch, selectedCumulativeEpoch]);
 
   // Fetch cumulative percentage data
   const fetchCumulativeData = useCallback(async (voteAccount: string, epoch: number) => {
@@ -161,7 +166,9 @@ function ValidatorsOverviewContent() {
   useEffect(() => {
     if (selectedVoteAccount) {
       fetchValidatorData(selectedVoteAccount);
-      fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch);
+      if (selectedCumulativeEpoch !== null) {
+        fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch);
+      }
     }
   }, [selectedVoteAccount, fetchValidatorData, fetchCumulativeData, selectedCumulativeEpoch]);
 
@@ -283,7 +290,7 @@ function ValidatorsOverviewContent() {
   const cumulativeChartConfig = {
     id: 'validator-cumulative-chart',
     title: 'Cumulative Stake Distribution',
-    subtitle: `Epoch ${selectedCumulativeEpoch} - Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
+    subtitle: `Epoch ${selectedCumulativeEpoch || 'N/A'} - Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
     page: 'validators-overview' as const,
     chartType: 'line' as const,
     apiEndpoint: '/api/validators/cumulative',
@@ -388,12 +395,14 @@ function ValidatorsOverviewContent() {
       {cumulativeError && (
         <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg">
           <p className="text-red-400">Cumulative Data Error: {cumulativeError}</p>
-          <button
-            onClick={() => fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch)}
-            className="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
-          >
-            Retry
-          </button>
+          {selectedCumulativeEpoch !== null && (
+            <button
+              onClick={() => fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch)}
+              className="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+            >
+              Retry
+            </button>
+          )}
         </div>
       )}
 
@@ -402,7 +411,7 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`Percentage of total network stake held cumulatively by top-ranked validators for epoch ${selectedCumulativeEpoch}`}
+          description={`Percentage of total network stake held cumulatively by top-ranked validators for epoch ${selectedCumulativeEpoch || 'N/A'}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
@@ -416,7 +425,7 @@ function ValidatorsOverviewContent() {
                 <label className="text-xs font-regular text-gray-600">Epoch</label>
                 <input
                   type="number"
-                  value={selectedCumulativeEpoch}
+                  value={selectedCumulativeEpoch || ''}
                   onChange={(e) => setSelectedCumulativeEpoch(Number(e.target.value))}
                   className="px-2 py-0.5 bg-gray-900 border border-gray-800 rounded-sm text-sm text-gray-400 focus:outline-none w-16"
                 />
