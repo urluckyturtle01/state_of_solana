@@ -328,7 +328,7 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`Cumulative stake distribution showing percentage relationship for epoch ${selectedCumulativeEpoch}`}
+          description={`Percentage of total network stake held cumulatively by top-ranked validators for epoch ${selectedCumulativeEpoch}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
@@ -361,14 +361,14 @@ function ValidatorsOverviewContent() {
 
         {/* Concentration Ladder Chart */}
         <ChartCard
-          title="Concentration Ladder Chart"
-          description={`Horizontal bar chart showing concentration levels for epoch ${selectedLadderEpoch || 'N/A'}. Validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          title="Stake Concentration Ladder"
+          description={`Distribution of stake across top validator groups for epoch ${selectedLadderEpoch || 'N/A'}`}
           isLoading={isLoading}
           chart={ladderChartConfig}
           chartData={ladderChartData}
           info={{
             title: 'Concentration Ladder Chart',
-            description: 'Cumulative stake share by validator rank. Flatter curves mean more even stake distribution.'
+            description: 'Illustrates how staked SOL is distributed among validators ranked by stake size. Useful to assess concentration and decentralization within the network.'
           }}
           filterBar={
             <div className="flex items-center justify-between">

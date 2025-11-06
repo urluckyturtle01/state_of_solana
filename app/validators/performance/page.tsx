@@ -238,7 +238,7 @@ function ValidatorsPerformanceContent() {
     switch (stakeType) {
       case 'total_stake':
         return { 
-          title: 'Total Stake by Epoch', 
+          title: 'Total Staked SOL per Epoch', 
           unit: 'SOL',
           info: {
             title: 'Total Stake',
@@ -247,7 +247,7 @@ function ValidatorsPerformanceContent() {
         };
       case 'mean_stake':
         return { 
-          title: 'Mean Stake by Epoch', 
+          title: 'Mean Staked SOL per EPOCH', 
           unit: 'SOL',
           info: {
             title: 'Mean Stake',
@@ -256,7 +256,7 @@ function ValidatorsPerformanceContent() {
         };
       case 'median_stake':
         return { 
-          title: 'Median Stake by Epoch', 
+          title: 'Median Staked SOL per Epoch', 
           unit: 'SOL',
           info: {
             title: 'Median Stake',
@@ -278,7 +278,8 @@ function ValidatorsPerformanceContent() {
     switch (metricType) {
       case 'gini_coefficient':
         return { 
-          title: 'Gini Index by Epoch', 
+          title: 'Stake Gini Index by Epoch', 
+          description: 'Stake distribution inequality for this validator across recent Solana epochs.',
           unit: '',
           hasNetworkMedian: true,
           networkMedianField: 'network_gini_coefficient',
@@ -289,7 +290,8 @@ function ValidatorsPerformanceContent() {
         };
       case 'hhi_index':
         return { 
-          title: 'HHI Index by Epoch', 
+          title: 'Stake HHI Index by Epoch', 
+          description: 'Herfindahl-Hirschman Index of stake concentration for this validator across recent epochs.',
           unit: '',
           hasNetworkMedian: true,
           networkMedianField: 'network_hhi_index',
@@ -301,17 +303,19 @@ function ValidatorsPerformanceContent() {
       case 'nakamoto_coeff_33':
         return { 
           title: 'Nakamoto Coefficient by Epoch', 
+          description: 'Minimum number of validators needed to control 33% of stake across recent epochs.',
           unit: 'stakers',
           hasNetworkMedian: true,
           networkMedianField: 'network_nakamoto_coeff_33',
           info: {
             title: 'Nakamoto Coefficient',
-            description: 'Minimum number of entities controlling 51% of stake. Higher = stronger decentralization and security.'
+            description: 'Minimum number of entities controlling 33% of stake. Higher = stronger decentralization and security.'
           }
         };
       case 'skewness':
         return { 
-          title: 'Skewness', 
+          title: 'Stake Skewness by Epoch', 
+          description: 'Distribution asymmetry of validator’s staked SOL across epochs.',
           unit: '',
           info: {
             title: 'Skewness',
@@ -320,7 +324,8 @@ function ValidatorsPerformanceContent() {
         };
       case 'kurtosis':
         return { 
-          title: 'Kurtosis by Epoch', 
+          title: 'Stake Kurtosis by Epoch', 
+          description: 'Tail risk and outlier intensity in validator’s staked SOL per epoch.',
           unit: '',
           info: {
             title: 'Kurtosis',
@@ -337,37 +342,41 @@ function ValidatorsPerformanceContent() {
     switch (concentrationType) {
       case 'top_01pct':
         return { 
-          title: 'Top 0.1% Concentration by Epoch', 
+          title: 'Top 0.1% Stake Concentration by Epoch', 
+          description: 'Share of total network stake held by the largest 0.1% of validators per epoch.',
           unit: '%',
           info: {
-            title: 'Top 0.1% Concentration by Epoch',
+            title: 'Top 0.1% Stake Concentration by Epoch',
             description: '% of total stake held by the top 0.1% validators each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_1pct':
         return { 
-          title: 'Top 1% Concentration by Epoch', 
+          title: 'Top 1% Stake Concentration by Epoch', 
+          description: 'Share of total network stake held by the largest 1% of validators per epoch.',
           unit: '%',
           info: {
-            title: 'Top 1% Concentration',
+            title: 'Top 1% Stake Concentration by Epoch',
             description: '% of total stake held by the top 1% validators each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_5pct':
         return { 
-          title: 'Top 5% Concentration by Epoch', 
+          title: 'Top 5% Stake Concentration by Epoch', 
+          description: 'Share of total network stake held by the largest 5% of validators per epoch.',
           unit: '%',
           info: {
-            title: 'Top 5% Concentration',
+            title: 'Top 5% Stake Concentration by Epoch',
             description: '% of total stake held by the top 5% validators each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_10pct':
         return { 
-          title: 'Top 10% Concentration by Epoch', 
+          title: 'Top 10% Stake Concentration by Epoch', 
+          description: 'Share of total network stake held by the largest 10% of validators per epoch.',
           unit: '%',
           info: {
-            title: 'Top 10% Concentration',
+            title: 'Top 10% Stake Concentration by Epoch',
             description: '% of total stake held by the top 10% validators each epoch. Higher values suggest centralization risk.'
           }
         };
@@ -613,7 +622,8 @@ function ValidatorsPerformanceContent() {
     switch (tabType) {
       case 'staker_count':
         return { 
-          title: 'Staker Count by Tier', 
+          title: 'Staker Count Distribution by Tier', 
+          description: 'Number of stakers per delegation size tier for this validator across epochs.',
           field: 'validator_staker_count',
           unit: '',
           info: {
@@ -623,7 +633,8 @@ function ValidatorsPerformanceContent() {
         };
       case 'total_stake':
         return { 
-          title: 'Total Stake by Tier', 
+          title: 'Total Stake Distribution by Tier', 
+          description: "Validator's staked SOL by delegation size tier across epochs.",
           field: 'validator_total_stake_in_tier',
           unit: 'SOL',
           info: {
@@ -647,6 +658,7 @@ function ValidatorsPerformanceContent() {
       case 'staker_count':
         return { 
           title: 'Network Staker Count by Tier', 
+          description: 'Number of stakers per delegation size tier across all Solana validators, per epoch.',
           field: 'network_staker_count',
           unit: '',
           info: {
@@ -656,7 +668,8 @@ function ValidatorsPerformanceContent() {
         };
       case 'total_stake':
         return { 
-          title: 'Network Total Stake by Tier', 
+          title: 'Network Total Stake Distribution by Tier.', 
+          description: 'Total staked SOL per delegation size tier across all Solana validators, per epoch.',
           field: 'network_total_stake_in_tier',
           unit: 'SOL',
           info: {
@@ -1153,13 +1166,13 @@ function ValidatorsPerformanceContent() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Total Stakers Chart */}
         <ChartCard
-          title="Total Stakers by Epoch"
-          description={`Performance metrics for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          title="Unique Stakers per Epoch"
+          description={`Number of unique delegators to this validator over recent epochs.`}
           isLoading={isLoading}
           chart={stakersChartConfig}
           chartData={chartData}
           info={{
-            title: 'Total Stakers',
+            title: 'Total Stakers by Epoch',
             description: 'Unique staker accounts delegating to this validator each epoch. Growing count indicates rising popularity.'
           }}
         >
@@ -1174,7 +1187,7 @@ function ValidatorsPerformanceContent() {
         {/* Stake Chart with Filter */}
         <ChartCard
           title={getStakeTypeInfo(selectedStakeType).title}
-          description={`Stake distribution for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={`Validator’s staked amount across recent Solana epochs.`}
           isLoading={isLoading}
           chart={stakeChartConfig}
           chartData={chartData}
@@ -1215,7 +1228,7 @@ function ValidatorsPerformanceContent() {
         {/* Distribution Metrics Chart */}
         <ChartCard
           title={getMetricTypeInfo(selectedMetricType).title}
-          description={`Distribution metrics for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={getMetricTypeInfo(selectedMetricType).description}
           isLoading={isLoading}
           chart={distributionChartConfig}
           chartData={chartData}
@@ -1244,7 +1257,7 @@ function ValidatorsPerformanceContent() {
         {/* Concentration Chart */}
         <ChartCard
           title={getConcentrationTypeInfo(selectedConcentrationType).title}
-          description={`Concentration metrics for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={getConcentrationTypeInfo(selectedConcentrationType).description}
           isLoading={isLoading}
           chart={concentrationChartConfig}
           chartData={chartData}
@@ -1277,8 +1290,8 @@ function ValidatorsPerformanceContent() {
 
         {/* Box Plot Chart */}
         <ChartCard
-          title="Stake Distribution (Box Plot - Log Scale)"
-          description={`Box plot showing stake distribution quartiles for the last 10 epochs. Validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          title="Stake Distribution per Epoch (Log Scale)"
+          description={`Box plot of validator’s delegated stake quartiles over last 10 epochs.`}
           isLoading={isLoading}
           chart={boxPlotChartConfig}
           chartData={boxPlotData}
@@ -1302,7 +1315,7 @@ function ValidatorsPerformanceContent() {
         {/* Validator Staker Tier Chart */}
         <ChartCard
           title={stakerTierChartConfig.title}
-          description={`Staker distribution by tier for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={getStakerTierTabInfo(activeStakerTierTab).description}
           isLoading={isStakerTierLoading}
           chart={stakerTierChartConfig}
           chartData={stakerTierData}
@@ -1341,7 +1354,7 @@ function ValidatorsPerformanceContent() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <ChartCard
           title={networkTierChartConfig.title}
-          description="Network-wide staker distribution by tier across all validators"
+          description={getNetworkTierTabInfo(activeNetworkTierTab).description}
           isLoading={isNetworkTierLoading}
           chart={networkTierChartConfig}
           chartData={networkTierData}

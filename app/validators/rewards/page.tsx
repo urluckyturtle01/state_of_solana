@@ -10,14 +10,9 @@ import { GenericFilter, FilterOption } from '@/app/components/shared/filters/Sta
 import { ChartConfig, YAxisConfig } from '@/app/admin/types';
 
 // Reward tab type definition
-type RewardTabType = 'total' | 'average' | 'median' | 'gini';
+type RewardTabType = 'average' | 'median' | 'gini';
 
 const REWARD_TAB_OPTIONS: FilterOption<RewardTabType>[] = [
-  { 
-    value: 'total', 
-    label: 'Total Rewards', 
-    description: 'Total rewards distributed by epoch',
-  },
   { 
     value: 'average', 
     label: 'Avg per Staker', 
@@ -73,6 +68,7 @@ interface ValidatorPerformanceData {
   min_reward_rate_pct: number;
   max_reward_rate_pct: number;
   total_commission_collected: number;
+  block_rewards_sol: number;
   [key: string]: any;
 }
 
@@ -87,7 +83,7 @@ function ValidatorsRewardsContent() {
   const [selectedVoteAccount, setSelectedVoteAccount] = useState<string>(
     voteAccountFromUrl || defaultVoteAccount
   );
-  const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('total');
+  const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('average');
   const [activeRewardRateTab, setActiveRewardRateTab] = useState<RewardRateTabType>('avg_rate');
   const [chartData, setChartData] = useState<ValidatorPerformanceData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -96,56 +92,48 @@ function ValidatorsRewardsContent() {
   // Get reward tab display info
   const getRewardTabInfo = (tabType: RewardTabType) => {
     switch (tabType) {
-      case 'total':
-        return { 
-          title: 'Total Rewards Distributed by Epoch', 
-          field: 'total_rewards_distributed',
-          unit: 'SOL',
-          chartType: 'bar' as const,
-          info: {
-            title: 'Total Rewards Distribution by Epoch',
-            description: 'Total SOL rewards earned by validator and stakers each epoch. Indicates performance.'
-          }
-        };
       case 'average':
         return { 
-          title: 'Average Reward per Staker by Epoch', 
+          title: 'Average Rewards Distributed by Epoch', 
+          description: 'Average SOL rewards earned by validator stakers per epoch.',
           field: 'avg_reward_per_staker',
           unit: 'SOL',
           chartType: 'line' as const,
           info: {
-            title: 'Average Reward',
-            description: 'Mean reward per staker. Heavily influenced by whale stakers with large stakes.'
+            title: 'Average reward per staker by Epoch',
+            description: 'Average SOL rewards earned by validator and stakers each epoch. Indicates performance.'
           }
         };
       case 'median':
         return { 
-          title: 'Median Reward per Staker by Epoch', 
+          title: 'Median Rewards Distributed by Epoch', 
+          description: 'Median SOL rewards earned by validator stakers per epoch.',
           field: 'median_reward_per_staker',
           unit: 'SOL',
           chartType: 'line' as const,
           info: {
-            title: 'Median Reward',
-            description: 'Middle value of staker rewards. Better represents typical staker experience, less affected by outliers.'
+            title: 'Median reward per staker by Epoch',
+            description: 'Median SOL rewards earned by validator and stakers each epoch. Indicates performance.'
           }
         };
       case 'gini':
         return { 
-          title: 'Reward Gini Coefficient by Epoch', 
+          title: 'Gini coefficient of Rewards Distributed by Epoch', 
+          description: 'Gini coefficient for SOL rewards earned by validator stakers per epoch.',
           field: 'reward_gini_coefficient',
           unit: '',
           chartType: 'line' as const,
           info: {
-            title: 'Reward Gini',
-            description: 'Reward inequality measure. 0 = equal rewards, 1 = extremely unequal distribution.'
+            title: 'Reward Gini Coefficient by Epoch',
+            description: 'Gini coefficient of rewards earned by validator and stakers each epoch. Measures stake inequality.'
           }
         };
       default:
         return { 
           title: 'Reward Metrics by Epoch', 
-          field: 'total_rewards_distributed',
+          field: 'avg_reward_per_staker',
           unit: 'SOL',
-          chartType: 'bar' as const,
+          chartType: 'line' as const,
           info: { title: '', description: '' }
         };
     }
@@ -157,6 +145,7 @@ function ValidatorsRewardsContent() {
       case 'avg_rate':
         return { 
           title: 'Average Reward Rate by Epoch', 
+          description: 'Average percentage yield on staked SOL for this validator, per epoch.',
           field: 'avg_reward_rate_pct',
           unit: '%',
           info: {
@@ -167,31 +156,34 @@ function ValidatorsRewardsContent() {
       case 'median_rate':
         return { 
           title: 'Median Reward Rate by Epoch', 
+          description: 'Median percentage yield on staked SOL for this validator, per epoch.',
           field: 'median_reward_rate_pct',
           unit: '%',
           info: {
-            title: 'Median Rate',
-            description: 'Middle reward rate value. Better represents typical staker experience, less affected by outliers.'
+            title: 'Median Reward Rate by Epoch',
+            description: 'Median staking reward rate per epoch for delegators. Shows staking yield efficiency.'
           }
         };
       case 'min_rate':
         return { 
           title: 'Minimum Reward Rate by Epoch', 
+          description: 'Minimum percentage yield on staked SOL for this validator, per epoch.',
           field: 'min_reward_rate_pct',
           unit: '%',
           info: {
-            title: 'Minimum Rate',
-            description: 'Lowest reward rate earned. Can indicate late staking or validator performance issues.'
+            title: 'Minimum Reward Rate by Epoch',
+            description: 'Minimum staking reward rate per epoch for delegators.'
           }
         };
       case 'max_rate':
         return { 
           title: 'Maximum Reward Rate by Epoch', 
+          description: 'Maximum percentage yield on staked SOL for this validator, per epoch.',
           field: 'max_reward_rate_pct',
           unit: '%',
           info: {
-            title: 'Maximum Rate',
-            description: 'Highest reward rate earned. May indicate early staking or full epoch participation.'
+            title: 'Maximum Reward Rate by Epoch',
+            description: 'Maximum staking reward rate per epoch for delegators.'
           }
         };
       default:
@@ -263,6 +255,25 @@ function ValidatorsRewardsContent() {
     },
     additionalOptions: {
       showTooltipTotal: true,
+      enableTimeAggregation: false
+    }
+  };
+
+  // Chart configuration for block rewards
+  const blockRewardsChartConfig: ChartConfig = {
+    id: 'validator-block-rewards-chart',
+    title: 'Block Rewards by Epoch',
+    subtitle: `Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
+    page: 'validators-performance',
+    chartType: 'bar',
+    apiEndpoint: '/api/validators/performance',
+    dataMapping: {
+      xAxis: 'epoch',
+      yAxis: 'block_rewards_sol',
+      yAxisUnit: 'SOL'
+    },
+    additionalOptions: {
+      showTooltipTotal: false,
       enableTimeAggregation: false
     }
   };
@@ -349,7 +360,7 @@ function ValidatorsRewardsContent() {
       {/* Rewards & Commission Stacked Chart */}
       <ChartCard
         title={rewardsCommissionChartConfig.title}
-        description={`Stacked view of total rewards distributed and commission collected by epoch for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+        description={`Validator rewards split between stakers and commission, per epoch.`}
         isLoading={isLoading}
         chart={rewardsCommissionChartConfig}
         chartData={chartData}
@@ -364,10 +375,31 @@ function ValidatorsRewardsContent() {
         />
       </ChartCard>
 
+      {/* Block Rewards Chart */}
+      <ChartCard
+        title={blockRewardsChartConfig.title}
+        description="Block production rewards earned by the validator per epoch."
+        isLoading={isLoading}
+        chart={blockRewardsChartConfig}
+        chartData={chartData}
+        info={{
+          title: 'Block Rewards by Epoch',
+          description: 'SOL rewards earned from block production. Reflects validator block production performance.'
+        }}
+      >
+        <SimpleBarChart
+          chartConfig={blockRewardsChartConfig}
+          data={chartData}
+          height={300}
+          maxXAxisTicks={8}
+          yAxisUnit="SOL"
+        />
+      </ChartCard>
+
       {/* Reward Analysis Chart */}
       <ChartCard
           title={getRewardTabInfo(activeRewardTab).title}
-          description={`Reward analysis for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={getRewardTabInfo(activeRewardTab).description}
           isLoading={isLoading}
           chart={rewardChartConfig}
           chartData={chartData}
@@ -402,16 +434,10 @@ function ValidatorsRewardsContent() {
             />
           )}
         </ChartCard>
-      </div>
-
-      {/* Reward Analysis Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        
-
         {/* Reward Rate Analysis Chart */}
         <ChartCard
           title={getRewardRateTabInfo(activeRewardRateTab).title}
-          description={`Reward rate analysis for validator: ${selectedVoteAccount.slice(0, 8)}...`}
+          description={getRewardRateTabInfo(activeRewardRateTab).description}
           isLoading={isLoading}
           chart={rewardRateChartConfig}
           chartData={chartData}
@@ -436,6 +462,13 @@ function ValidatorsRewardsContent() {
             yAxisUnit={getRewardRateTabInfo(activeRewardRateTab).unit}
           />
         </ChartCard>
+      </div>
+
+      {/* Reward Analysis Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        
+
+        
       </div>
     </div>
   );
