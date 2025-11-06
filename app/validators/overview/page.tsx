@@ -36,7 +36,7 @@ function ValidatorsOverviewContent() {
   const router = useRouter();
   
   // Get vote account from URL params or use default
-  const defaultVoteAccount = 'xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v';
+  const defaultVoteAccount = 'he1iusunGwqrNtafDtLdhsUQDFvo13z9sUa36PauBtk';
   const voteAccountFromUrl = searchParams.get('voteAccount');
   
   const [selectedVoteAccount, setSelectedVoteAccount] = useState<string>(

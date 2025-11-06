@@ -8,9 +8,8 @@ interface VoteAccountFilterProps {
 
 // Common Solana validator vote accounts for testing
 const COMMON_VOTE_ACCOUNTS = [
-  { value: "xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v", label: "Validator 1" },
-  { value: "GJBuy3nzQVUfyEAQV1yydrg74u4vxSGajeS6niLPNiH", label: "Validator 2" },
-  { value: "Buy3nzQVUfyEAQV1yydrg74u4vxSGajeS6niLPNiHGJ", label: "Validator 3" },
+  //{ value: "xSGajeS6niLPNiHGJBuy3nzQVUfyEAQV1yydrg74u4v", label: "Validator 2 (Old)" },
+  { value: "he1iusunGwqrNtafDtLdhsUQDFvo13z9sUa36PauBtk", label: "Validator 1 (New)" },
 ];
 
 const VoteAccountFilter: React.FC<VoteAccountFilterProps> = ({ 
