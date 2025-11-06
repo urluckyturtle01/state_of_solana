@@ -181,6 +181,7 @@ function ValidatorsRewardsContent() {
     },
     additionalOptions: {
       showTooltipTotal: true,
+      tooltipTotalLabel: 'Inflation Rewards',
       enableTimeAggregation: false
     }
   };

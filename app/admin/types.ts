@@ -114,6 +114,7 @@ export interface ChartConfig {
     colors?: string[];
     enableTimeAggregation?: boolean;
     showTooltipTotal?: boolean;
+    tooltipTotalLabel?: string;
     // Configuration for percentage fields that need weighted average calculation
     percentageFields?: PercentageFieldConfig[];
   };

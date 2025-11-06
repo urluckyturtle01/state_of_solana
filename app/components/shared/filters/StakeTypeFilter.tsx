@@ -46,6 +46,11 @@ const STAKE_TYPE_OPTIONS: FilterOption<StakeType>[] = [
 
 export const METRIC_TYPE_OPTIONS: FilterOption<MetricType>[] = [
   { 
+    value: 'nakamoto_coeff_33', 
+    label: 'Nakamoto Coefficient', 
+    description: 'Minimum number of validators needed to control 33% of stake',
+  },
+  { 
     value: 'gini_coefficient', 
     label: 'Gini Index', 
     description: 'Gini coefficient measuring stake distribution inequality',
@@ -54,11 +59,6 @@ export const METRIC_TYPE_OPTIONS: FilterOption<MetricType>[] = [
     value: 'hhi_index', 
     label: 'HHI Index', 
     description: 'Herfindahl-Hirschman Index measuring market concentration',
-  },
-  { 
-    value: 'nakamoto_coeff_33', 
-    label: 'Nakamoto Coefficient', 
-    description: 'Minimum number of validators needed to control 33% of stake',
   },
   { 
     value: 'skewness', 

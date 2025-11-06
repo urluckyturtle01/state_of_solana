@@ -22,6 +22,7 @@ interface ChartTooltipProps {
   timeFilter?: string;
   currencyFilter?: string;
   showTotal?: boolean;
+  totalLabel?: string;
 }
 
 // Function to render the shape for a legend item
@@ -198,7 +199,8 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
   isModal = false,
   timeFilter,
   currencyFilter,
-  showTotal = false
+  showTotal = false,
+  totalLabel = 'Total'
 }) => {
   // Early return if items is null or undefined
   if (!items || !Array.isArray(items)) {
@@ -368,7 +370,7 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
             <div className="flex items-center justify-between whitespace-nowrap">
               <div className="flex items-center text-gray-300">
                 <div className="h-2 w-2 mr-1.5"></div> {/* Empty space for alignment */}
-                <span className="text-gray-300 text-[10px] font-normal ml-2">Total</span>
+                <span className="text-gray-300 text-[10px] font-normal ml-2">{totalLabel}</span>
               </div>
               
               <span className="text-gray-100 font-regular ml-4">

@@ -194,7 +194,7 @@ function ValidatorsPerformanceContent() {
     voteAccountFromUrl || defaultVoteAccount
   );
   const [selectedStakeType, setSelectedStakeType] = useState<StakeType>('total_stake');
-  const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('gini_coefficient');
+  const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('nakamoto_coeff_33');
   const [selectedConcentrationType, setSelectedConcentrationType] = useState<ConcentrationType>('top_1pct');
   const [selectedEpoch, setSelectedEpoch] = useState<number | null>(null);
   const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('total');
@@ -282,6 +282,18 @@ function ValidatorsPerformanceContent() {
   // Get metric type display info
   const getMetricTypeInfo = (metricType: MetricType) => {
     switch (metricType) {
+      case 'nakamoto_coeff_33':
+        return { 
+          title: 'Nakamoto Coefficient by Epoch', 
+          description: 'Minimum number of validators needed to control 33% of stake across recent epochs.',
+          unit: 'stakers',
+          hasNetworkMedian: true,
+          networkMedianField: 'network_nakamoto_coeff_33',
+          info: {
+            title: 'Nakamoto Coefficient',
+            description: 'Minimum number of entities controlling 33% of stake. Higher = stronger decentralization and security.'
+          }
+        };
       case 'gini_coefficient':
         return { 
           title: 'Stake Gini Index by Epoch', 
@@ -306,18 +318,7 @@ function ValidatorsPerformanceContent() {
             description: 'Summarizes stake concentration across validators. Lower = decentralized; higher = centralized.'
           }
         };
-      case 'nakamoto_coeff_33':
-        return { 
-          title: 'Nakamoto Coefficient by Epoch', 
-          description: 'Minimum number of validators needed to control 33% of stake across recent epochs.',
-          unit: 'stakers',
-          hasNetworkMedian: true,
-          networkMedianField: 'network_nakamoto_coeff_33',
-          info: {
-            title: 'Nakamoto Coefficient',
-            description: 'Minimum number of entities controlling 33% of stake. Higher = stronger decentralization and security.'
-          }
-        };
+      
       case 'skewness':
         return { 
           title: 'Stake Skewness by Epoch', 
