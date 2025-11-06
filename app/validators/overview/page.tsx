@@ -369,7 +369,7 @@ function ValidatorsOverviewContent() {
           value={isLoading ? "Loading..." : latestData ? `${(latestData.total_commission_collected + latestData.total_rewards_distributed).toFixed(2)} SOL` : "0 SOL"}
           icon={
             <svg className="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           }
           variant="purple"
@@ -381,7 +381,7 @@ function ValidatorsOverviewContent() {
           value={isLoading ? "Loading..." : latestData ? `${latestData.block_rewards_sol.toFixed(2)} SOL` : "0 SOL"}
           icon={
             <svg className="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           }
           variant="amber"
@@ -417,7 +417,7 @@ function ValidatorsOverviewContent() {
           chartData={cumulativeData}
           info={{
             title: 'Cumulative Stake Distribution',
-            description: 'This lorentz curve represents cumulative % of total stake held by top ranked stakers. Shows broad decentralization trends.'
+            description: 'This Lorenz curve represents cumulative % of total stake held by top ranked stakers. Shows broad decentralization trends.'
           }}
           filterBar={
             <div className="flex items-center justify-between">
