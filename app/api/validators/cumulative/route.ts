@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Call the TopLedger API for cumulative percentage data
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14370/results?api_key=zI3JupYOw0UHi5O14RtONlKBMX8em6mD3YKq4Awf',
+      'https://analytics.topledger.xyz/tl/api/queries/14425/results?api_key=1aDAUhQmcUFjdBb76kQTAQ5vTUBQj8FOOj0IiFSV',
       {
         method: 'POST',
         headers: {
