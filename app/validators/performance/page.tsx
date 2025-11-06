@@ -10,6 +10,8 @@ import LadderChart, { LadderChartData } from '@/app/admin/components/charts/Ladd
 import ChartRenderer from '@/app/admin/components/ChartRenderer';
 import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTIONS, FilterOption } from '@/app/components/shared/filters/StakeTypeFilter';
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
+import LegendItem from '@/app/components/shared/LegendItem';
+import { getColorByIndex } from '@/app/utils/chartColors';
 
 // Concentration type definition (internal to component)
 type ConcentrationType = 'top_01pct' | 'top_1pct' | 'top_5pct' | 'top_10pct';
@@ -214,6 +216,10 @@ function ValidatorsPerformanceContent() {
   const [stakerTierError, setStakerTierError] = useState<string | null>(null);
   const [networkTierError, setNetworkTierError] = useState<string | null>(null);
   const [cumulativeError, setCumulativeError] = useState<string | null>(null);
+  
+  // Legend state
+  const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
+  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
 
   // Chart configuration for total stakers vs epoch
   const stakersChartConfig: ChartConfig = {
@@ -1106,6 +1112,198 @@ function ValidatorsPerformanceContent() {
     }
   }, [networkTierHasNegativeValues, networkTierDisplayMode]);
 
+  // Update legends when data changes
+  useEffect(() => {
+    if (chartData && chartData.length > 0) {
+      // Stakers chart (single series)
+      const stakersTotal = chartData.reduce((sum, d) => sum + (Number(d.total_stakers) || 0), 0);
+      
+      // Stake chart (single series)
+      const stakeField = selectedStakeType;
+      const stakeTotal = chartData.reduce((sum, d) => sum + (Number(d[stakeField as keyof ValidatorPerformanceData]) || 0), 0);
+      
+      // Concentration chart (single series)
+      const concentrationField = selectedConcentrationType;
+      const concentrationTotal = chartData.reduce((sum, d) => sum + (Number(d[concentrationField as keyof ValidatorPerformanceData]) || 0), 0);
+      
+      // Distribution chart (validator + network median)
+      if (getMetricTypeInfo(selectedMetricType).hasNetworkMedian) {
+        const validatorField = selectedMetricType;
+        const networkField = getMetricTypeInfo(selectedMetricType).networkMedianField!;
+        
+        setLegends(prev => ({
+          ...prev,
+          'validator-stakers-chart': [{
+            label: 'Total Stakers',
+            color: getColorByIndex(0),
+            value: stakersTotal,
+            fieldId: 'total_stakers'
+          }],
+          'validator-stake-chart': [{
+            label: getStakeTypeInfo(selectedStakeType).title.replace(' per Epoch', '').replace(' per EPOCH', ''),
+            color: getColorByIndex(0),
+            value: stakeTotal,
+            fieldId: stakeField
+          }],
+          'validator-concentration-chart': [{
+            label: getConcentrationTypeInfo(selectedConcentrationType).title.replace(' by Epoch', ''),
+            color: getColorByIndex(0),
+            value: concentrationTotal,
+            fieldId: concentrationField
+          }],
+          'validator-distribution-chart': [
+            {
+              label: 'Validator',
+              color: getColorByIndex(0),
+              value: chartData.reduce((sum, d) => sum + (Number(d[validatorField as keyof ValidatorPerformanceData]) || 0), 0),
+              fieldId: validatorField
+            },
+            {
+              label: 'Network Median',
+              color: getColorByIndex(1),
+              value: chartData.reduce((sum, d) => sum + (Number(d[networkField as keyof ValidatorPerformanceData]) || 0), 0),
+              fieldId: networkField
+            }
+          ]
+        }));
+      } else {
+        // Distribution chart (single series - no network median)
+        const metricField = selectedMetricType;
+        const metricTotal = chartData.reduce((sum, d) => sum + (Number(d[metricField as keyof ValidatorPerformanceData]) || 0), 0);
+        
+        setLegends(prev => ({
+          ...prev,
+          'validator-stakers-chart': [{
+            label: 'Total Stakers',
+            color: getColorByIndex(0),
+            value: stakersTotal,
+            fieldId: 'total_stakers'
+          }],
+          'validator-stake-chart': [{
+            label: getStakeTypeInfo(selectedStakeType).title.replace(' per Epoch', '').replace(' per EPOCH', ''),
+            color: getColorByIndex(0),
+            value: stakeTotal,
+            fieldId: stakeField
+          }],
+          'validator-concentration-chart': [{
+            label: getConcentrationTypeInfo(selectedConcentrationType).title.replace(' by Epoch', ''),
+            color: getColorByIndex(0),
+            value: concentrationTotal,
+            fieldId: concentrationField
+          }],
+          'validator-distribution-chart': [{
+            label: getMetricTypeInfo(selectedMetricType).title.replace(' by Epoch', ''),
+            color: getColorByIndex(0),
+            value: metricTotal,
+            fieldId: metricField
+          }]
+        }));
+      }
+    }
+    
+    // Cumulative chart
+    if (cumulativeData && cumulativeData.length > 0) {
+      const total = cumulativeData.reduce((sum, d) => sum + (Number(d.cumulative_pct_stake) || 0), 0);
+      setLegends(prev => ({
+        ...prev,
+        'validator-cumulative-chart': [{
+          label: 'Cumulative Pct Stake',
+          color: getColorByIndex(0),
+          value: total,
+          fieldId: 'cumulative_pct_stake'
+        }]
+      }));
+    }
+  }, [chartData, cumulativeData, selectedMetricType, selectedStakeType, selectedConcentrationType]);
+
+  // Update staker tier legends when data changes
+  useEffect(() => {
+    if (stakerTierData && stakerTierData.length > 0) {
+      const uniqueTiers = Array.from(new Set(stakerTierData.map(d => d.tier_name)));
+      const currentField = getStakerTierTabInfo(activeStakerTierTab).field as keyof ValidatorStakerTierData;
+      
+      const stakerTierLegends = uniqueTiers.map((tier, index) => {
+        const total = stakerTierData
+          .filter(d => d.tier_name === tier)
+          .reduce((sum, d) => sum + (Number(d[currentField]) || 0), 0);
+        
+        return {
+          label: tier,
+          color: getColorByIndex(index),
+          value: total,
+          fieldId: tier  // For stacked charts, the field ID is the tier name
+        };
+      }).sort((a, b) => b.value - a.value);
+      
+      setLegends(prev => ({
+        ...prev,
+        'validator-staker-tier-chart': stakerTierLegends
+      }));
+    }
+  }, [stakerTierData, activeStakerTierTab]);
+
+  // Update network tier legends when data changes
+  useEffect(() => {
+    if (networkTierData && networkTierData.length > 0) {
+      const uniqueTiers = Array.from(new Set(networkTierData.map(d => d.tier_name)));
+      const currentField = getNetworkTierTabInfo(activeNetworkTierTab).field as keyof NetworkStakerTierData;
+      
+      const networkTierLegends = uniqueTiers.map((tier, index) => {
+        const total = networkTierData
+          .filter(d => d.tier_name === tier)
+          .reduce((sum, d) => sum + (Number(d[currentField]) || 0), 0);
+        
+        return {
+          label: tier,
+          color: getColorByIndex(index),
+          value: total,
+          fieldId: tier  // For stacked charts, the field ID is the tier name
+        };
+      }).sort((a, b) => b.value - a.value);
+      
+      setLegends(prev => ({
+        ...prev,
+        'network-staker-tier-chart': networkTierLegends
+      }));
+    }
+  }, [networkTierData, activeNetworkTierTab]);
+
+  // Legend click handlers
+  const handleLegendClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    
+    setHiddenSeries(prev => {
+      const chartHidden = prev[chartId] || [];
+      const newHidden = chartHidden.includes(fieldId)
+        ? chartHidden.filter(id => id !== fieldId)
+        : [...chartHidden, fieldId];
+      return {
+        ...prev,
+        [chartId]: newHidden
+      };
+    });
+  }, [legends]);
+
+  const handleLegendDoubleClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    const allFieldIds = legends[chartId]?.map(l => l.fieldId || l.label) || [];
+    
+    setHiddenSeries(prev => {
+      const currentHidden = prev[chartId] || [];
+      if (allFieldIds.length === 0) return prev;
+
+      if (currentHidden.length === allFieldIds.length - 1 && !currentHidden.includes(fieldId)) {
+        // Restore all
+        return { ...prev, [chartId]: [] };
+      } else {
+        // Isolate this series
+        return { ...prev, [chartId]: allFieldIds.filter(f => f !== fieldId) };
+      }
+    });
+  }, [legends]);
+
   return (
     <div className="space-y-6">
       {/* Error Display */}
@@ -1175,19 +1373,36 @@ function ValidatorsPerformanceContent() {
             title: 'Total Stakers by Epoch',
             description: 'Unique staker accounts delegating to this validator each epoch. Growing count indicates rising popularity.'
           }}
+          legend={
+            <>
+              {legends['validator-stakers-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="square"
+                  onClick={() => handleLegendClick('validator-stakers-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-stakers-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-stakers-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <SimpleBarChart
             chartConfig={stakersChartConfig}
             data={chartData}
             height={400}
             maxXAxisTicks={8}
+            hiddenSeries={hiddenSeries['validator-stakers-chart'] || []}
           />
         </ChartCard>
 
         {/* Stake Chart with Filter */}
         <ChartCard
           title={getStakeTypeInfo(selectedStakeType).title}
-          description={`Validator’s staked amount across recent Solana epochs.`}
+          description={`Validator's staked amount across recent Solana epochs.`}
           isLoading={isLoading}
           chart={stakeChartConfig}
           chartData={chartData}
@@ -1202,6 +1417,22 @@ function ValidatorsPerformanceContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['validator-stake-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape={shouldUseLineChart(selectedStakeType) ? "circle" : "square"}
+                  onClick={() => handleLegendClick('validator-stake-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-stake-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-stake-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           {shouldUseLineChart(selectedStakeType) ? (
             <MultiSeriesLineBarChart
@@ -1210,6 +1441,7 @@ function ValidatorsPerformanceContent() {
               height={400}
               maxXAxisTicks={8}
               yAxisUnit={getStakeTypeInfo(selectedStakeType).unit}
+              hiddenSeries={hiddenSeries['validator-stake-chart'] || []}
             />
           ) : (
             <SimpleBarChart
@@ -1218,6 +1450,7 @@ function ValidatorsPerformanceContent() {
               height={400}
               maxXAxisTicks={8}
               yAxisUnit={getStakeTypeInfo(selectedStakeType).unit}
+              hiddenSeries={hiddenSeries['validator-stake-chart'] || []}
             />
           )}
         </ChartCard>
@@ -1244,6 +1477,22 @@ function ValidatorsPerformanceContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['validator-distribution-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="circle"
+                  onClick={() => handleLegendClick('validator-distribution-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-distribution-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-distribution-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <MultiSeriesLineBarChart
             chartConfig={distributionChartConfig}
@@ -1251,6 +1500,7 @@ function ValidatorsPerformanceContent() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit={getMetricTypeInfo(selectedMetricType).unit}
+            hiddenSeries={hiddenSeries['validator-distribution-chart'] || []}
           />
         </ChartCard>
 
@@ -1273,6 +1523,22 @@ function ValidatorsPerformanceContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['validator-concentration-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="square"
+                  onClick={() => handleLegendClick('validator-concentration-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-concentration-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-concentration-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <SimpleBarChart
             chartConfig={concentrationChartConfig}
@@ -1280,6 +1546,7 @@ function ValidatorsPerformanceContent() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit={getConcentrationTypeInfo(selectedConcentrationType).unit}
+            hiddenSeries={hiddenSeries['validator-concentration-chart'] || []}
           />
         </ChartCard>
       </div>
@@ -1336,6 +1603,22 @@ function ValidatorsPerformanceContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['validator-staker-tier-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="square"
+                  onClick={() => handleLegendClick('validator-staker-tier-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-staker-tier-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-staker-tier-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <ChartRenderer
             chartConfig={stakerTierChartConfig}
@@ -1346,6 +1629,7 @@ function ValidatorsPerformanceContent() {
                 setStakerTierDisplayMode(value as DisplayMode);
               }
             }}
+            hiddenSeries={hiddenSeries['validator-staker-tier-chart'] || []}
           />
         </ChartCard>
       </div>
@@ -1375,6 +1659,22 @@ function ValidatorsPerformanceContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['network-staker-tier-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="square"
+                  onClick={() => handleLegendClick('network-staker-tier-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('network-staker-tier-chart', legend.label)}
+                  inactive={(hiddenSeries['network-staker-tier-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <ChartRenderer
             chartConfig={networkTierChartConfig}
@@ -1385,6 +1685,7 @@ function ValidatorsPerformanceContent() {
                 setNetworkTierDisplayMode(value as DisplayMode);
               }
             }}
+            hiddenSeries={hiddenSeries['network-staker-tier-chart'] || []}
           />
         </ChartCard>
       </div>

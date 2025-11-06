@@ -27,6 +27,7 @@ export interface LadderChartProps {
   onCloseExpanded?: () => void;
   yAxisUnit?: string;
   selectedEpoch?: number;
+  hiddenSeries?: string[];
 }
 
 const DEFAULT_MARGIN = { top: 20, right: 40, bottom: 40, left: 70 };
@@ -39,7 +40,8 @@ export default function LadderChart({
   isExpanded = false,
   onCloseExpanded,
   yAxisUnit = '',
-  selectedEpoch
+  selectedEpoch,
+  hiddenSeries = []
 }: LadderChartProps) {
   const [error, setError] = useState<string | null>(null);
   const [tooltipData, setTooltipData] = useState<any>(null);
@@ -53,13 +55,14 @@ export default function LadderChart({
     
     try {
       return data.filter(d => d.value !== undefined && d.category !== undefined)
+                 .filter(d => !hiddenSeries.includes(d.label || d.category))
                  .sort((a, b) => b.value - a.value); // Sort by value descending for ladder effect
     } catch (err) {
       console.error('Error processing ladder chart data:', err);
       setError('Error processing data');
       return [];
     }
-  }, [data]);
+  }, [data, hiddenSeries]);
 
   // Create category to label mapping
   const categoryLabelMap = useMemo(() => {

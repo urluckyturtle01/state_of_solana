@@ -8,6 +8,8 @@ import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLi
 import ChartRenderer from '@/app/admin/components/ChartRenderer';
 import { GenericFilter, FilterOption } from '@/app/components/shared/filters/StakeTypeFilter';
 import { ChartConfig, YAxisConfig } from '@/app/admin/types';
+import LegendItem from '@/app/components/shared/LegendItem';
+import { getColorByIndex } from '@/app/utils/chartColors';
 
 // Reward tab type definition
 type RewardTabType = 'average' | 'median' | 'gini';
@@ -27,32 +29,6 @@ const REWARD_TAB_OPTIONS: FilterOption<RewardTabType>[] = [
     value: 'gini', 
     label: 'Reward Gini', 
     description: 'Reward Gini coefficient by epoch',
-  },
-];
-
-// Reward rate tab type definition
-type RewardRateTabType = 'avg_rate' | 'median_rate' | 'min_rate' | 'max_rate';
-
-const REWARD_RATE_TAB_OPTIONS: FilterOption<RewardRateTabType>[] = [
-  { 
-    value: 'avg_rate', 
-    label: 'Avg Rate', 
-    description: 'Average reward rate percentage by epoch',
-  },
-  { 
-    value: 'median_rate', 
-    label: 'Median Rate', 
-    description: 'Median reward rate percentage by epoch',
-  },
-  { 
-    value: 'min_rate', 
-    label: 'Min Rate', 
-    description: 'Minimum reward rate percentage by epoch',
-  },
-  { 
-    value: 'max_rate', 
-    label: 'Max Rate', 
-    description: 'Maximum reward rate percentage by epoch',
   },
 ];
 
@@ -84,10 +60,13 @@ function ValidatorsRewardsContent() {
     voteAccountFromUrl || defaultVoteAccount
   );
   const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('average');
-  const [activeRewardRateTab, setActiveRewardRateTab] = useState<RewardRateTabType>('avg_rate');
   const [chartData, setChartData] = useState<ValidatorPerformanceData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Legend state
+  const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
+  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
 
   // Get reward tab display info
   const getRewardTabInfo = (tabType: RewardTabType) => {
@@ -139,63 +118,6 @@ function ValidatorsRewardsContent() {
     }
   };
 
-  // Get reward rate tab display info
-  const getRewardRateTabInfo = (tabType: RewardRateTabType) => {
-    switch (tabType) {
-      case 'avg_rate':
-        return { 
-          title: 'Average Reward Rate by Epoch', 
-          description: 'Average percentage yield on staked SOL for this validator, per epoch.',
-          field: 'avg_reward_rate_pct',
-          unit: '%',
-          info: {
-            title: 'Average Reward Rate by Epoch',
-            description: 'Average staking reward rate per epoch for delegators. Shows staking yield efficiency.'
-          }
-        };
-      case 'median_rate':
-        return { 
-          title: 'Median Reward Rate by Epoch', 
-          description: 'Median percentage yield on staked SOL for this validator, per epoch.',
-          field: 'median_reward_rate_pct',
-          unit: '%',
-          info: {
-            title: 'Median Reward Rate by Epoch',
-            description: 'Median staking reward rate per epoch for delegators. Shows staking yield efficiency.'
-          }
-        };
-      case 'min_rate':
-        return { 
-          title: 'Minimum Reward Rate by Epoch', 
-          description: 'Minimum percentage yield on staked SOL for this validator, per epoch.',
-          field: 'min_reward_rate_pct',
-          unit: '%',
-          info: {
-            title: 'Minimum Reward Rate by Epoch',
-            description: 'Minimum staking reward rate per epoch for delegators.'
-          }
-        };
-      case 'max_rate':
-        return { 
-          title: 'Maximum Reward Rate by Epoch', 
-          description: 'Maximum percentage yield on staked SOL for this validator, per epoch.',
-          field: 'max_reward_rate_pct',
-          unit: '%',
-          info: {
-            title: 'Maximum Reward Rate by Epoch',
-            description: 'Maximum staking reward rate per epoch for delegators.'
-          }
-        };
-      default:
-        return { 
-          title: 'Reward Rate by Epoch', 
-          field: 'avg_reward_rate_pct',
-          unit: '%',
-          info: { title: '', description: '' }
-        };
-    }
-  };
-
   // Chart configuration for reward tabs
   const rewardChartConfig: ChartConfig = {
     id: 'validator-reward-chart',
@@ -217,18 +139,22 @@ function ValidatorsRewardsContent() {
     }
   };
 
-  // Chart configuration for reward rate tabs
+  // Chart configuration for reward rate (multi-series)
   const rewardRateChartConfig: ChartConfig = {
     id: 'validator-reward-rate-chart',
-    title: getRewardRateTabInfo(activeRewardRateTab).title,
+    title: 'Reward Rate by Epoch',
     subtitle: `Vote Account: ${selectedVoteAccount.slice(0, 8)}...`,
     page: 'validators-performance',
     chartType: 'line',
     apiEndpoint: '/api/validators/performance',
     dataMapping: {
       xAxis: 'epoch',
-      yAxis: { field: getRewardRateTabInfo(activeRewardRateTab).field, type: 'line', unit: getRewardRateTabInfo(activeRewardRateTab).unit } as YAxisConfig,
-      yAxisUnit: getRewardRateTabInfo(activeRewardRateTab).unit
+      yAxis: [
+        { field: 'avg_reward_rate_pct', type: 'line', unit: '%', label: 'Avg Rate' } as YAxisConfig,
+        { field: 'median_reward_rate_pct', type: 'line', unit: '%', label: 'Median Rate' } as YAxisConfig,
+        { field: 'max_reward_rate_pct', type: 'line', unit: '%', label: 'Max Rate' } as YAxisConfig
+      ],
+      yAxisUnit: '%'
     },
     additionalOptions: {
       showTooltipTotal: false,
@@ -341,6 +267,97 @@ function ValidatorsRewardsContent() {
     }
   }, [selectedVoteAccount, fetchValidatorData]);
 
+  // Update legends when data changes
+  useEffect(() => {
+    if (chartData && chartData.length > 0) {
+      // Block Rewards chart (single series)
+      const blockRewardsTotal = chartData.reduce((sum, d) => sum + (Number(d.block_rewards_sol) || 0), 0);
+      
+      // Reward chart (single series based on tab)
+      const rewardField = getRewardTabInfo(activeRewardTab).field;
+      const rewardTotal = chartData.reduce((sum, d) => sum + (Number(d[rewardField]) || 0), 0);
+      
+      // Reward Rate chart (multi-series)
+      const rewardRateFields = ['avg_reward_rate_pct', 'median_reward_rate_pct', 'max_reward_rate_pct'];
+      const rewardRateLegends = rewardRateFields.map((field, index) => ({
+        label: field === 'avg_reward_rate_pct' ? 'Avg Rate' :
+               field === 'median_reward_rate_pct' ? 'Median Rate' : 'Max Rate',
+        color: getColorByIndex(index),
+        value: chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0),
+        fieldId: field
+      }));
+      
+      // Rewards & Commission chart (stacked)
+      const rewardsCommissionLegends = [
+        {
+          label: 'Total Rewards',
+          color: getColorByIndex(0),
+          value: chartData.reduce((sum, d) => sum + (Number(d.total_rewards_distributed) || 0), 0),
+          fieldId: 'total_rewards_distributed'
+        },
+        {
+          label: 'Total Commission',
+          color: getColorByIndex(1),
+          value: chartData.reduce((sum, d) => sum + (Number(d.total_commission_collected) || 0), 0),
+          fieldId: 'total_commission_collected'
+        }
+      ];
+      
+      setLegends({
+        'validator-block-rewards-chart': [{
+          label: 'Block Rewards',
+          color: getColorByIndex(0),
+          value: blockRewardsTotal,
+          fieldId: 'block_rewards_sol'
+        }],
+        'validator-reward-chart': [{
+          label: getRewardTabInfo(activeRewardTab).title.replace(' by Epoch', '').replace(' Distributed', ''),
+          color: getColorByIndex(0),
+          value: rewardTotal,
+          fieldId: rewardField
+        }],
+        'validator-reward-rate-chart': rewardRateLegends,
+        'validator-rewards-commission-chart': rewardsCommissionLegends
+      });
+    }
+  }, [chartData, activeRewardTab]);
+
+  // Legend click handlers
+  const handleLegendClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    
+    setHiddenSeries(prev => {
+      const chartHidden = prev[chartId] || [];
+      const newHidden = chartHidden.includes(fieldId)
+        ? chartHidden.filter(id => id !== fieldId)
+        : [...chartHidden, fieldId];
+      return {
+        ...prev,
+        [chartId]: newHidden
+      };
+    });
+  }, [legends]);
+
+  const handleLegendDoubleClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    const allFieldIds = legends[chartId]?.map(l => l.fieldId || l.label) || [];
+    
+    setHiddenSeries(prev => {
+      const currentHidden = prev[chartId] || [];
+      if (allFieldIds.length === 0) return prev;
+
+      if (currentHidden.length === allFieldIds.length - 1 && !currentHidden.includes(fieldId)) {
+        // Restore all
+        return { ...prev, [chartId]: [] };
+      } else {
+        // Isolate this series
+        return { ...prev, [chartId]: allFieldIds.filter(f => f !== fieldId) };
+      }
+    });
+  }, [legends]);
+
   return (
     <div className="space-y-6">
       {/* Error Display */}
@@ -368,10 +385,27 @@ function ValidatorsRewardsContent() {
           title: 'Rewards & Commission Distribution by Epoch',
           description: 'Split of validator rewards between commission and stakers. Reflects income flow.'
         }}
+        legend={
+          <>
+            {legends['validator-rewards-commission-chart']?.map(legend => (
+              <LegendItem
+                key={legend.label}
+                label={legend.label}
+                color={legend.color}
+                shape="square"
+                onClick={() => handleLegendClick('validator-rewards-commission-chart', legend.label)}
+                onDoubleClick={() => handleLegendDoubleClick('validator-rewards-commission-chart', legend.label)}
+                inactive={(hiddenSeries['validator-rewards-commission-chart'] || []).includes(legend.fieldId || legend.label)}
+              />
+            ))}
+          </>
+        }
+        legendWidth="1/6"
       >
         <ChartRenderer
           chartConfig={rewardsCommissionChartConfig}
           preloadedData={chartData}
+          hiddenSeries={hiddenSeries['validator-rewards-commission-chart'] || []}
         />
       </ChartCard>
 
@@ -386,6 +420,22 @@ function ValidatorsRewardsContent() {
           title: 'Block Rewards by Epoch',
           description: 'SOL rewards earned from block production. Reflects validator block production performance.'
         }}
+        legend={
+          <>
+            {legends['validator-block-rewards-chart']?.map(legend => (
+              <LegendItem
+                key={legend.label}
+                label={legend.label}
+                color={legend.color}
+                shape="square"
+                onClick={() => handleLegendClick('validator-block-rewards-chart', legend.label)}
+                onDoubleClick={() => handleLegendDoubleClick('validator-block-rewards-chart', legend.label)}
+                inactive={(hiddenSeries['validator-block-rewards-chart'] || []).includes(legend.fieldId || legend.label)}
+              />
+            ))}
+          </>
+        }
+        legendWidth="1/6"
       >
         <SimpleBarChart
           chartConfig={blockRewardsChartConfig}
@@ -393,6 +443,7 @@ function ValidatorsRewardsContent() {
           height={300}
           maxXAxisTicks={8}
           yAxisUnit="SOL"
+          hiddenSeries={hiddenSeries['validator-block-rewards-chart'] || []}
         />
       </ChartCard>
 
@@ -415,6 +466,22 @@ function ValidatorsRewardsContent() {
               </div>
             </div>
           }
+          legend={
+            <>
+              {legends['validator-reward-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape={getRewardTabInfo(activeRewardTab).chartType === 'line' ? "circle" : "square"}
+                  onClick={() => handleLegendClick('validator-reward-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-reward-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-reward-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           {getRewardTabInfo(activeRewardTab).chartType === 'line' ? (
             <MultiSeriesLineBarChart
@@ -423,6 +490,7 @@ function ValidatorsRewardsContent() {
               height={400}
               maxXAxisTicks={8}
               yAxisUnit={getRewardTabInfo(activeRewardTab).unit}
+              hiddenSeries={hiddenSeries['validator-reward-chart'] || []}
             />
           ) : (
             <SimpleBarChart
@@ -431,35 +499,45 @@ function ValidatorsRewardsContent() {
               height={400}
               maxXAxisTicks={8}
               yAxisUnit={getRewardTabInfo(activeRewardTab).unit}
+              hiddenSeries={hiddenSeries['validator-reward-chart'] || []}
             />
           )}
         </ChartCard>
         {/* Reward Rate Analysis Chart */}
         <ChartCard
-          title={getRewardRateTabInfo(activeRewardRateTab).title}
-          description={getRewardRateTabInfo(activeRewardRateTab).description}
+          title="Reward Rate by Epoch"
+          description="Average, median, and maximum percentage yield on staked SOL for this validator, per epoch."
           isLoading={isLoading}
           chart={rewardRateChartConfig}
           chartData={chartData}
-          info={getRewardRateTabInfo(activeRewardRateTab).info}
-          filterBar={
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <GenericFilter
-                  value={activeRewardRateTab}
-                  onChange={setActiveRewardRateTab}
-                  options={REWARD_RATE_TAB_OPTIONS}
+          info={{
+            title: 'Reward Rate by Epoch',
+            description: 'Comparison of average, median, and maximum staking reward rates per epoch for delegators. Shows staking yield efficiency and variance.'
+          }}
+          legend={
+            <>
+              {legends['validator-reward-rate-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="circle"
+                  onClick={() => handleLegendClick('validator-reward-rate-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-reward-rate-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-reward-rate-chart'] || []).includes(legend.fieldId || legend.label)}
                 />
-              </div>
-            </div>
+              ))}
+            </>
           }
+          legendWidth="1/6"
         >
           <MultiSeriesLineBarChart
             chartConfig={rewardRateChartConfig}
             data={chartData}
             height={400}
             maxXAxisTicks={8}
-            yAxisUnit={getRewardRateTabInfo(activeRewardRateTab).unit}
+            yAxisUnit="%"
+            hiddenSeries={hiddenSeries['validator-reward-rate-chart'] || []}
           />
         </ChartCard>
       </div>

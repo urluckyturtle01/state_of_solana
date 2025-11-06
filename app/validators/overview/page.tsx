@@ -6,6 +6,8 @@ import Counter from '@/app/components/shared/Counter';
 import ChartCard from '@/app/components/shared/ChartCard';
 import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLineBarChart';
 import LadderChart, { LadderChartData } from '@/app/admin/components/charts/LadderChart';
+import LegendItem from '@/app/components/shared/LegendItem';
+import { getColorByIndex } from '@/app/utils/chartColors';
 
 interface ValidatorPerformanceData {
   vote_account: string;
@@ -48,6 +50,10 @@ function ValidatorsOverviewContent() {
   const [isCumulativeLoading, setIsCumulativeLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [cumulativeError, setCumulativeError] = useState<string | null>(null);
+  
+  // Legend state
+  const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
+  const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
 
   // Fetch validator data
   const fetchValidatorData = useCallback(async (voteAccount: string) => {
@@ -205,6 +211,74 @@ function ValidatorsOverviewContent() {
     ];
   }, [data, selectedLadderEpoch]);
 
+  // Update legends when data changes
+  useEffect(() => {
+    if (cumulativeData && cumulativeData.length > 0) {
+      // Cumulative Stake Distribution (single series)
+      const total = cumulativeData.reduce((sum, d) => sum + (Number(d.cumulative_pct_stake) || 0), 0);
+      setLegends(prev => ({
+        ...prev,
+        'validator-cumulative-chart': [{
+          label: 'Cumulative Pct Stake',
+          color: getColorByIndex(0),
+          value: total,
+          fieldId: 'cumulative_pct_stake'
+        }]
+      }));
+    }
+
+    // Ladder chart legends
+    if (ladderChartData && ladderChartData.length > 0) {
+      const ladderLegends = ladderChartData.map((item, index) => ({
+        label: item.label || item.category,
+        color: getColorByIndex(index),
+        value: item.value,
+        fieldId: item.label || item.category  // For ladder charts, use the label as the field ID
+      }));
+      
+      setLegends(prev => ({
+        ...prev,
+        'validator-ladder-chart': ladderLegends
+      }));
+    }
+  }, [cumulativeData, ladderChartData]);
+
+  // Legend click handlers
+  const handleLegendClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    
+    setHiddenSeries(prev => {
+      const chartHidden = prev[chartId] || [];
+      const newHidden = chartHidden.includes(fieldId)
+        ? chartHidden.filter(id => id !== fieldId)
+        : [...chartHidden, fieldId];
+      return {
+        ...prev,
+        [chartId]: newHidden
+      };
+    });
+  }, [legends]);
+
+  const handleLegendDoubleClick = useCallback((chartId: string, label: string) => {
+    const legendItem = legends[chartId]?.find(l => l.label === label);
+    const fieldId = legendItem?.fieldId || label;
+    const allFieldIds = legends[chartId]?.map(l => l.fieldId || l.label) || [];
+    
+    setHiddenSeries(prev => {
+      const currentHidden = prev[chartId] || [];
+      if (allFieldIds.length === 0) return prev;
+
+      if (currentHidden.length === allFieldIds.length - 1 && !currentHidden.includes(fieldId)) {
+        // Restore all
+        return { ...prev, [chartId]: [] };
+      } else {
+        // Isolate this series
+        return { ...prev, [chartId]: allFieldIds.filter(f => f !== fieldId) };
+      }
+    });
+  }, [legends]);
+
   // Chart configurations
   const cumulativeChartConfig = {
     id: 'validator-cumulative-chart',
@@ -349,6 +423,22 @@ function ValidatorsOverviewContent() {
               </div>
         </div>
           }
+          legend={
+            <>
+              {legends['validator-cumulative-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="circle"
+                  onClick={() => handleLegendClick('validator-cumulative-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-cumulative-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-cumulative-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <MultiSeriesLineBarChart
             chartConfig={cumulativeChartConfig}
@@ -356,6 +446,7 @@ function ValidatorsOverviewContent() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit="%"
+            hiddenSeries={hiddenSeries['validator-cumulative-chart'] || []}
           />
         </ChartCard>
 
@@ -383,6 +474,22 @@ function ValidatorsOverviewContent() {
               </div>
         </div>
           }
+          legend={
+            <>
+              {legends['validator-ladder-chart']?.map(legend => (
+                <LegendItem
+                  key={legend.label}
+                  label={legend.label}
+                  color={legend.color}
+                  shape="square"
+                  onClick={() => handleLegendClick('validator-ladder-chart', legend.label)}
+                  onDoubleClick={() => handleLegendDoubleClick('validator-ladder-chart', legend.label)}
+                  inactive={(hiddenSeries['validator-ladder-chart'] || []).includes(legend.fieldId || legend.label)}
+                />
+              ))}
+            </>
+          }
+          legendWidth="1/6"
         >
           <LadderChart
             chartConfig={ladderChartConfig}
@@ -390,6 +497,7 @@ function ValidatorsOverviewContent() {
             height={300}
             yAxisUnit="%"
             selectedEpoch={selectedLadderEpoch || undefined}
+            hiddenSeries={hiddenSeries['validator-ladder-chart'] || []}
           />
         </ChartCard>
         </div>
