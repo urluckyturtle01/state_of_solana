@@ -417,7 +417,7 @@ function ValidatorsOverviewContent() {
           chartData={cumulativeData}
           info={{
             title: 'Cumulative Stake Distribution',
-            description: 'This Lorenz curve represents cumulative % of total stake held by top ranked stakers. Shows broad decentralization trends.'
+            description: "Lorenz curve showing stake distribution among this validator's delegators. Flatter curve = more diverse staker base."
           }}
           filterBar={
             <div className="flex items-center justify-between">
