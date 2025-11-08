@@ -200,9 +200,9 @@ function ValidatorsPerformanceContent() {
   const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('total');
   const [activeRewardRateTab, setActiveRewardRateTab] = useState<RewardRateTabType>('avg_rate');
   const [activeStakerTierTab, setActiveStakerTierTab] = useState<StakerTierTabType>('staker_count');
-  const [stakerTierDisplayMode, setStakerTierDisplayMode] = useState<DisplayMode>('absolute');
+  const [stakerTierDisplayMode, setStakerTierDisplayMode] = useState<DisplayMode>('percent');
   const [activeNetworkTierTab, setActiveNetworkTierTab] = useState<NetworkTierTabType>('staker_count');
-  const [networkTierDisplayMode, setNetworkTierDisplayMode] = useState<DisplayMode>('absolute');
+  const [networkTierDisplayMode, setNetworkTierDisplayMode] = useState<DisplayMode>('percent');
   const [selectedCumulativeEpoch, setSelectedCumulativeEpoch] = useState<number>(864);
   const [chartData, setChartData] = useState<ValidatorPerformanceData[]>([]);
   const [stakerTierData, setStakerTierData] = useState<ValidatorStakerTierData[]>([]);
