@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Call the external API
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14376/results?api_key=JQwzpR69QNOYLY2gqZv7eUoIjyQ7cddLzDPb9SyA',
+      'http://84.32.32.160:9080/validator_staker_metrics',
       {
         method: 'POST',
         headers: {
@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     
-    // Extract the rows from the query result
-    const rows = data?.query_result?.data?.rows || [];
+    // Extract the rows from the response
+    // Assuming the new API returns data directly or in a similar structure
+    const rows = data?.data || data?.rows || data || [];
     
     return NextResponse.json({
       success: true,

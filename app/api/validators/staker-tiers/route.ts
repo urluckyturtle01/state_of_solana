@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the TopLedger API for staker tier data
+    // Call the external API for validator stake tier distribution data
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14375/results?api_key=q0dmkVVgNrRwuDtk1dJx0ctm5uxmg6sNA1mt571e',
+      'http://84.32.32.160:9080/validator_stake_tier_distribution',
       {
         method: 'POST',
         headers: {
@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     
-    // Extract the rows from the query result
-    const rows = data?.query_result?.data?.rows || [];
+    // Extract the rows from the response
+    // Assuming the new API returns data directly or in a similar structure
+    const rows = data?.data || data?.rows || data || [];
     
     return NextResponse.json({
       success: true,
