@@ -8,8 +8,11 @@ interface ValidatorsTabsHeaderProps {
   activeTab?: string;
 }
 
-interface ValidatorData {
+interface ValidatorInfo {
   validator_name?: string;
+}
+
+interface ValidatorPerformanceData {
   epoch?: number;
   validator_commission_pct?: number;
 }
@@ -17,7 +20,8 @@ interface ValidatorData {
 export default function ValidatorsTabsHeader({ activeTab = "overview" }: ValidatorsTabsHeaderProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [validatorData, setValidatorData] = useState<ValidatorData | null>(null);
+  const [validatorInfo, setValidatorInfo] = useState<ValidatorInfo | null>(null);
+  const [performanceData, setPerformanceData] = useState<ValidatorPerformanceData | null>(null);
   const [loading, setLoading] = useState(false);
   const tabs: Tab[] = [
     { 
@@ -47,13 +51,15 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
   useEffect(() => {
     const fetchValidatorData = async () => {
       if (!currentVoteAccount) {
-        setValidatorData(null);
+        setValidatorInfo(null);
+        setPerformanceData(null);
         return;
       }
 
       setLoading(true);
       try {
-        const response = await fetch('/api/validators/performance', {
+        // Fetch validator name from info API
+        const infoResponse = await fetch('/api/validators/info', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -63,24 +69,38 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
           }),
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch validator data');
+        if (infoResponse.ok) {
+          const infoResult = await infoResponse.json();
+          if (infoResult.success && infoResult.data) {
+            setValidatorInfo(infoResult.data);
+          }
         }
 
-        const result = await response.json();
-        
-        // Sort by epoch descending to get the latest epoch first
-        if (result.data && result.data.length > 0) {
-          const sortedData = [...result.data].sort((a: ValidatorData, b: ValidatorData) => 
-            (b.epoch || 0) - (a.epoch || 0)
-          );
-          setValidatorData(sortedData[0]);
-        } else {
-          setValidatorData(null);
+        // Fetch epoch and commission from performance API
+        const performanceResponse = await fetch('/api/validators/performance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            vote_account: currentVoteAccount,
+          }),
+        });
+
+        if (performanceResponse.ok) {
+          const performanceResult = await performanceResponse.json();
+          // Sort by epoch descending to get the latest epoch first
+          if (performanceResult.success && performanceResult.data && performanceResult.data.length > 0) {
+            const sortedData = [...performanceResult.data].sort((a: ValidatorPerformanceData, b: ValidatorPerformanceData) => 
+              (b.epoch || 0) - (a.epoch || 0)
+            );
+            setPerformanceData(sortedData[0]);
+          }
         }
       } catch (error) {
         console.error('Error fetching validator data:', error);
-        setValidatorData(null);
+        setValidatorInfo(null);
+        setPerformanceData(null);
       } finally {
         setLoading(false);
       }
@@ -122,9 +142,9 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
       validatorInfo={
         currentVoteAccount
           ? {
-              validatorName: validatorData?.validator_name,
-              epoch: validatorData?.epoch,
-              commission: validatorData?.validator_commission_pct,
+              validatorName: validatorInfo?.validator_name,
+              epoch: performanceData?.epoch,
+              commission: performanceData?.validator_commission_pct,
               loading: loading
             }
           : undefined
