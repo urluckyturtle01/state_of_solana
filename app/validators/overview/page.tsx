@@ -14,7 +14,7 @@ interface ValidatorPerformanceData {
   total_stakers: number;
   total_stake: number;
   total_commission_collected: number;
-  total_rewards_distributed: number;
+ staking_reward: number;
   block_rewards_sol: number;
   top_01pct: number;
   top_1pct: number;
