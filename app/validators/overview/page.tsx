@@ -411,13 +411,13 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`Percentage of total network stake held cumulatively by top-ranked validators for epoch ${selectedCumulativeEpoch || 'N/A'}`}
+          description={`Cumulative distribution of total stake among stakers under the selected validator for epoch ${selectedCumulativeEpoch || 'N/A'}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
           info={{
             title: 'Cumulative Stake Distribution',
-            description: "Lorenz curve showing stake distribution among this validator's delegators. Flatter curve = more diverse staker base."
+            description: "For the selected validator, sort wallets from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator’s total stake (y-axis)."
           }}
           filterBar={
             <div className="flex items-center justify-between">
@@ -462,13 +462,13 @@ function ValidatorsOverviewContent() {
         {/* Concentration Ladder Chart */}
         <ChartCard
           title="Stake Concentration Ladder"
-          description={`Distribution of stake across top validator groups for epoch ${selectedLadderEpoch || 'N/A'}`}
+          description={`Distribution of staked SOL size concentration for a particular validator in epoch ${selectedLadderEpoch || 'N/A'}`}
           isLoading={isLoading}
           chart={ladderChartConfig}
           chartData={ladderChartData}
           info={{
             title: 'Concentration Ladder Chart',
-            description: 'Illustrates how staked SOL is distributed among validators ranked by stake size. Useful to assess concentration and decentralization within the network.'
+            description: 'For the selected validator, rank accounts by stake and show what percentage of total stake is held by the top 0.1%, 1%, 5%, and 10% of stakers.'
           }}
           filterBar={
             <div className="flex items-center justify-between">

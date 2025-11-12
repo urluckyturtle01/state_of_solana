@@ -285,7 +285,7 @@ function ValidatorsPerformanceContent() {
       case 'nakamoto_coeff_33':
         return { 
           title: 'Nakamoto Coefficient by Epoch', 
-          description: 'Minimum number of validators needed to control 33% of stake across recent epochs.',
+          description: 'Minimum number of stakers required to reach 33% of the total stake (per validator or across the network).',
           unit: 'stakers',
           hasNetworkMedian: true,
           networkMedianField: 'network_nakamoto_coeff_33',
@@ -297,25 +297,25 @@ function ValidatorsPerformanceContent() {
       case 'gini_coefficient':
         return { 
           title: 'Stake Gini Index by Epoch', 
-          description: 'Stake distribution inequality for this validator across recent Solana epochs.',
+          description: 'Stake distribution inequality for this validator(or across the network) across recent Solana epochs.',
           unit: '',
           hasNetworkMedian: true,
           networkMedianField: 'network_gini_coefficient',
           info: {
-            title: 'Gini Coefficient',
-            description: 'Measure of stake inequality among validators. 0 = equal distribution; 1 = full concentration.'
+            title: 'Gini Coefficient (0–1)',
+            description: 'Rank stakers by share, build the cumulative-share curve, and measure the area gap from the 45° equal-share line; larger gap = higher inequality.'
           }
         };
       case 'hhi_index':
         return { 
           title: 'Stake HHI Index by Epoch', 
-          description: 'Herfindahl-Hirschman Index of stake concentration for this validator across recent epochs.',
+          description: 'Herfindahl-Hirschman Index of stake concentration for this validator(or across the network) across recent epochs.',
           unit: '',
           hasNetworkMedian: true,
           networkMedianField: 'network_hhi_index',
           info: {
-            title: 'HHI Index',
-            description: 'Summarizes stake concentration across validators. Lower = decentralized; higher = centralized.'
+            title: 'HHI Index (0–10,000)',
+            description: 'Take each staker’s stake share, multiply it by itself, sum across all stakers, then scale to 0–10,000; higher = more concentration (few big holders dominate).'
           }
         };
       
@@ -326,7 +326,7 @@ function ValidatorsPerformanceContent() {
           unit: '',
           info: {
             title: 'Skewness',
-            description: 'Degree of asymmetry in stake or rewards data. Positive = right-tailed; negative = left-tailed distribution.'
+            description: 'Compare each staker’s share to the average share, give extra weight to big positive deviations (cube the distance), then standardize; positive = right-tailed (a few very large stakes).'
           }
         };
       case 'kurtosis':
@@ -336,7 +336,7 @@ function ValidatorsPerformanceContent() {
           unit: '',
           info: {
             title: 'Kurtosis',
-            description: 'Measures tail extremity of data distribution. High kurtosis highlights frequent outliers and risk.'
+            description: 'Uses distance from the average share, but gives much heavier weight to extremes (raise to the fourth power), then standardize; higher = heavier tails / more extreme large stakes.'
           }
         };
       default:
@@ -354,7 +354,7 @@ function ValidatorsPerformanceContent() {
           unit: '%',
           info: {
             title: 'Top 0.1% Stake Concentration by Epoch',
-            description: '% of total stake held by the top 0.1% validators each epoch. Higher values suggest centralization risk.'
+            description: '% of total stake held by the top 0.1% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_1pct':
@@ -364,7 +364,7 @@ function ValidatorsPerformanceContent() {
           unit: '%',
           info: {
             title: 'Top 1% Stake Concentration by Epoch',
-            description: '% of total stake held by the top 1% validators each epoch. Higher values suggest centralization risk.'
+            description: '% of total stake held by the top 1% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_5pct':
@@ -374,7 +374,7 @@ function ValidatorsPerformanceContent() {
           unit: '%',
           info: {
             title: 'Top 5% Stake Concentration by Epoch',
-            description: '% of total stake held by the top 5% validators each epoch. Higher values suggest centralization risk.'
+            description: '% of total stake held by the top 5% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
       case 'top_10pct':
@@ -384,7 +384,7 @@ function ValidatorsPerformanceContent() {
           unit: '%',
           info: {
             title: 'Top 10% Stake Concentration by Epoch',
-            description: '% of total stake held by the top 10% validators each epoch. Higher values suggest centralization risk.'
+            description: '% of total stake held by the top 10% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
       default:

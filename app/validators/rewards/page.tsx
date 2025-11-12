@@ -35,7 +35,7 @@ const REWARD_TAB_OPTIONS: FilterOption<RewardTabType>[] = [
 interface ValidatorPerformanceData {
   vote_account: string;
   epoch: number;
-  total_rewards_distributed: number;
+  staking_reward: number;
   avg_reward_per_staker: number;
   median_reward_per_staker: number;
   reward_gini_coefficient: number;
@@ -174,7 +174,7 @@ function ValidatorsRewardsContent() {
     dataMapping: {
       xAxis: 'epoch',
       yAxis: [
-        { field: 'total_rewards_distributed', type: 'bar', unit: 'SOL', label: 'Total Rewards' } as YAxisConfig,
+        { field: 'staking_reward', type: 'bar', unit: 'SOL', label: 'Staking Rewards' } as YAxisConfig,
         { field: 'total_commission_collected', type: 'bar', unit: 'SOL', label: 'Total Commission' } as YAxisConfig
       ],
       yAxisUnit: 'SOL'
@@ -291,10 +291,10 @@ function ValidatorsRewardsContent() {
       // Rewards & Commission chart (stacked)
       const rewardsCommissionLegends = [
         {
-          label: 'Total Rewards',
+          label: 'Staking Rewards',
           color: getColorByIndex(0),
-          value: chartData.reduce((sum, d) => sum + (Number(d.total_rewards_distributed) || 0), 0),
-          fieldId: 'total_rewards_distributed'
+          value: chartData.reduce((sum, d) => sum + (Number(d.staking_reward) || 0), 0),
+          fieldId: 'staking_reward'
         },
         {
           label: 'Total Commission',
@@ -378,13 +378,13 @@ function ValidatorsRewardsContent() {
       {/* Rewards & Commission Stacked Chart */}
       <ChartCard
         title={rewardsCommissionChartConfig.title}
-        description={`Validator rewards split between stakers and commission, per epoch.`}
+        description={`Shows how staking rewards and validator commission are distributed per epoch for the selected validator.`}
         isLoading={isLoading}
         chart={rewardsCommissionChartConfig}
         chartData={chartData}
         info={{
           title: 'Rewards & Commission Distribution by Epoch',
-          description: 'Split of validator rewards between commission and stakers. Reflects income flow.'
+          description: 'For a validator, inflation rewards split into two parts: the validator’s commission and the staking rewards.'
         }}
         legend={
           <>
@@ -507,13 +507,13 @@ function ValidatorsRewardsContent() {
         {/* Reward Rate Analysis Chart */}
         <ChartCard
           title="Reward Rate by Epoch"
-          description="Average, median, and maximum percentage yield on staked SOL for this validator, per epoch."
+          description="Per epoch, avg/median/max % yield = (staker reward ÷ active stake) across this validator’s stakers."
           isLoading={isLoading}
           chart={rewardRateChartConfig}
           chartData={chartData}
           info={{
             title: 'Reward Rate by Epoch',
-            description: 'Comparison of average, median, and maximum staking reward rates per epoch for delegators. Shows staking yield efficiency and variance.'
+            description: 'For each staker, take epoch staking reward ÷ active stake during that epoch, express it as a percentage.'
           }}
           legend={
             <>
