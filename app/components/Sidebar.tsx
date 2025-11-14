@@ -73,6 +73,11 @@ export default function Sidebar() {
                           />
                         </svg>
                         <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                        {item?.new && (
+                          <span className="ml-auto text-[9px] font-extrabold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+                            NEW
+                          </span>
+                        )}
                       </div>
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
@@ -186,6 +191,11 @@ export default function Sidebar() {
                         />
                       </svg>
                       <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                      {item?.new && (
+                        <span className="ml-auto text-[9px] font-extrabold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+                          NEW
+                        </span>
+                      )}
                     </button>
                   ) : (
                   <Link 
@@ -211,6 +221,11 @@ export default function Sidebar() {
                       />
                     </svg>
                     <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                    {item?.new && (
+                      <span className="ml-auto text-[9px] font-extrabold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+                        NEW
+                      </span>
+                    )}
                   </Link>
                   )
                 )}
@@ -243,7 +258,7 @@ export default function Sidebar() {
               
               {/* Sparkle animations */}
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full animate-ping opacity-75"></div>
-              <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-yellow-300 "></div>
             </div>
           </div>
         </div>

@@ -382,9 +382,10 @@ function ValidatorsRewardsContent() {
         isLoading={isLoading}
         chart={rewardsCommissionChartConfig}
         chartData={chartData}
+        showSummarizeButton={false}
         info={{
           title: 'Rewards & Commission Distribution by Epoch',
-          description: 'For a validator, inflation rewards split into two parts: the validator’s commission and the staking rewards.'
+          description: "For a validator, inflation rewards split into two parts: the validator's commission and the staking rewards."
         }}
         legend={
           <>
@@ -417,6 +418,7 @@ function ValidatorsRewardsContent() {
         isLoading={isLoading}
         chart={blockRewardsChartConfig}
         chartData={chartData}
+        showSummarizeButton={false}
         info={{
           title: 'Block Rewards by Epoch',
           description: 'SOL rewards earned from block production. Reflects validator block production performance.'
@@ -455,6 +457,7 @@ function ValidatorsRewardsContent() {
           isLoading={isLoading}
           chart={rewardChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={getRewardTabInfo(activeRewardTab).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -507,10 +510,11 @@ function ValidatorsRewardsContent() {
         {/* Reward Rate Analysis Chart */}
         <ChartCard
           title="Reward Rate by Epoch"
-          description="Per epoch, avg/median/max % yield = (staker reward ÷ active stake) across this validator’s stakers."
+          description="Per epoch, avg/median/max % yield = (staker reward ÷ active stake) across this validator's stakers."
           isLoading={isLoading}
           chart={rewardRateChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={{
             title: 'Reward Rate by Epoch',
             description: 'For each staker, take epoch staking reward ÷ active stake during that epoch, express it as a percentage.'

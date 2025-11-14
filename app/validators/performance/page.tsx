@@ -1371,6 +1371,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={stakersChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={{
             title: 'Total Stakers by Epoch',
             description: 'Unique staker accounts delegating to this validator each epoch. Growing count indicates rising popularity.'
@@ -1408,6 +1409,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={stakeChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={getStakeTypeInfo(selectedStakeType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1467,6 +1469,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={distributionChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={getMetricTypeInfo(selectedMetricType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1513,6 +1516,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isLoading}
           chart={concentrationChartConfig}
           chartData={chartData}
+          showSummarizeButton={false}
           info={getConcentrationTypeInfo(selectedConcentrationType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1560,10 +1564,11 @@ function ValidatorsPerformanceContent() {
         {/* Box Plot Chart */}
         <ChartCard
           title="Stake Distribution per Epoch (Log Scale)"
-          description={`Box plot of validator’s delegated stake quartiles over last 10 epochs.`}
+          description={`Box plot of validator's delegated stake quartiles over last 10 epochs.`}
           isLoading={isLoading}
           chart={boxPlotChartConfig}
           chartData={boxPlotData}
+          showSummarizeButton={false}
           legend={<BoxChartLegend />}
           legendWidth="1/6"
           info={{
@@ -1588,6 +1593,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isStakerTierLoading}
           chart={stakerTierChartConfig}
           chartData={stakerTierData}
+          showSummarizeButton={false}
           info={getStakerTierTabInfo(activeStakerTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1644,6 +1650,7 @@ function ValidatorsPerformanceContent() {
           isLoading={isNetworkTierLoading}
           chart={networkTierChartConfig}
           chartData={networkTierData}
+          showSummarizeButton={false}
           info={getNetworkTierTabInfo(activeNetworkTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">

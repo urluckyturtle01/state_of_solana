@@ -418,9 +418,10 @@ function ValidatorsOverviewContent() {
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
+          showSummarizeButton={false}
           info={{
             title: 'Cumulative Stake Distribution',
-            description: "For the selected validator, sort wallets from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator’s total stake (y-axis)."
+            description: "For the selected validator, sort wallets from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator's total stake (y-axis)."
           }}
           filterBar={
             <div className="flex items-center justify-between">
@@ -469,6 +470,7 @@ function ValidatorsOverviewContent() {
           isLoading={isLoading}
           chart={ladderChartConfig}
           chartData={ladderChartData}
+          showSummarizeButton={false}
           info={{
             title: 'Concentration Ladder Chart',
             description: 'For the selected validator, rank accounts by stake and show what percentage of total stake is held by the top 0.1%, 1%, 5%, and 10% of stakers.'

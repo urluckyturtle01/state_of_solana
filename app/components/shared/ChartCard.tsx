@@ -66,6 +66,7 @@ interface ChartCardProps {
   chartData?: any[];
   onSummarizeClick?: () => void;
   info?: InfoConfig;
+  showSummarizeButton?: boolean;
 }
 
 const ChartCard: React.FC<ChartCardProps> = ({
@@ -90,6 +91,7 @@ const ChartCard: React.FC<ChartCardProps> = ({
   chartData,
   onSummarizeClick,
   info,
+  showSummarizeButton = true,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -532,12 +534,12 @@ const ChartCard: React.FC<ChartCardProps> = ({
         </div>
         {!isEditMode && (
           <div className="flex justify-end space-x-2 -mr-2 md:mr-0 screenshot-ignore" onClick={(e) => e.stopPropagation()}>
-            {chart?.id && chart?.page && (
+            {showSummarizeButton && chart?.id && chart?.page && (
               <button 
                 className={`p-1.5 ${colors.button} rounded-md transition-colors ${isSummarizing ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => handleSummarize()}
                 title="Summarize Chart Data with AI"
-                disabled={isSummarizing} hidden={false}
+                disabled={isSummarizing}
               >
                 {isSummarizing ? (
                   <Loader size="xs" className="w-4 h-4" />

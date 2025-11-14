@@ -135,6 +135,11 @@ export default function MobileNavbar() {
                               <path strokeLinecap="round" strokeLinejoin="round" d={item?.icon || ''} />
                             </svg>
                             <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                            {item?.new && (
+                              <span className="ml-auto text-[9px] font-extrabold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+                                NEW
+                              </span>
+                            )}
                           </div>
                           <svg 
                             xmlns="http://www.w3.org/2000/svg" 
@@ -251,6 +256,11 @@ export default function MobileNavbar() {
                           <path strokeLinecap="round" strokeLinejoin="round" d={item?.icon || ''} />
                         </svg>
                         <span className="text-sm font-medium">{item?.name || 'Menu'}</span>
+                        {item?.new && (
+                          <span className="ml-auto text-[9px] font-extrabold bg-gradient-to-r from-emerald-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+                            NEW
+                          </span>
+                        )}
                       </Link>
                     )}
                   </li>
