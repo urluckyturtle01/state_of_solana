@@ -45,7 +45,7 @@ const VoteAccountFilter: React.FC<VoteAccountFilterProps> = ({
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
           placeholder="Enter vote account address..."
-          className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-md text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[400px]"
+          className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-md text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-[180px] sm:min-w-[400px]"
           disabled={isLoading}
         />
         <ButtonSecondary 

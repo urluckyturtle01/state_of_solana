@@ -320,7 +320,7 @@ const TabsNavigation: React.FC<TabsNavigationProps> = ({
             onChange={handleVoteAccountSearchChange}
             onKeyDown={handleVoteAccountSearchKeyDown}
             onBlur={handleVoteAccountSearchBlur}
-            className={`bg-gray-900/50 text-sm px-3 py-1.5 w-[350px] rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent max-w-[300px] flex-1 ${
+            className={`bg-gray-900/50 text-sm px-3 py-1.5 w-[200px] sm:w-[350px] rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent flex-1 ${
               voteAccountSearchTerm ? 'text-gray-200' : 'text-gray-400'
             } placeholder-gray-500`}
           />

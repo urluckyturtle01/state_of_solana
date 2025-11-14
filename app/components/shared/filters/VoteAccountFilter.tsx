@@ -32,7 +32,7 @@ const VoteAccountFilter: React.FC<VoteAccountFilterProps> = ({
           placeholder="Enter custom vote account..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="bg-gray-900/50 text-gray-400 text-sm px-3 py-1.5 rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent min-w-[300px]"
+          className="bg-gray-900/50 text-gray-400 text-sm px-3 py-1.5 rounded-sm border border-gray-800/70 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent w-[180px] sm:min-w-[300px]"
         />
       </div>
     </div>
