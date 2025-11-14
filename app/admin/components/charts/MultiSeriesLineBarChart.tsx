@@ -65,6 +65,11 @@ function getYAxisUnit(field: string | YAxisConfig): string | undefined {
   return typeof field === 'string' ? undefined : field.unit;
 }
 
+// Helper function to get decimals from YAxisConfig
+function getYAxisDecimals(field: string | YAxisConfig): number | undefined {
+  return typeof field === 'string' ? undefined : field.decimals;
+}
+
 // Helper function to determine if a field should be rendered as a line
 function shouldRenderAsLine(field: string | YAxisConfig): boolean {
   if (typeof field === 'string') {
@@ -74,7 +79,7 @@ function shouldRenderAsLine(field: string | YAxisConfig): boolean {
 }
 
 // Format value with appropriate units
-function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
+function formatWithUnit(value: number, unit?: string, defaultUnit?: string, decimals?: number): string {
   // Get the unit symbol (use defaultUnit as fallback)
   const unitSymbol = unit || defaultUnit || '';
   const isUnitPrefix = unitSymbol === '$'; // Only $ goes at the beginning, all other units go at the end
@@ -91,31 +96,36 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
   } else if (absValue >= 1000) {
     formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
   } else {
-    // For values less than 1000, determine appropriate decimal places based on order of magnitude
-    if (absValue >= 1) {
-      // Values 1-999: show 2 decimal places for consistency in tooltips
-    formattedValue = `${sign}${absValue.toFixed(2)}`;
-    } else if (absValue >= 0.1) {
-      // Values 0.1-0.999: show 3 decimal places
-      formattedValue = `${sign}${absValue.toFixed(3)}`;
-    } else if (absValue >= 0.01) {
-      // Values 0.01-0.099: show 4 decimal places
-      formattedValue = `${sign}${absValue.toFixed(4)}`;
-    } else if (absValue >= 0.001) {
-      // Values 0.001-0.009: show 5 decimal places
-      formattedValue = `${sign}${absValue.toFixed(5)}`;
-    } else if (absValue >= 0.0001) {
-      // Values 0.0001-0.0009: show 6 decimal places
-      formattedValue = `${sign}${absValue.toFixed(6)}`;
-    } else if (absValue > 0) {
-      // Very small values: use scientific notation or show up to 7 decimal places
-      if (absValue < 0.000001) {
-        formattedValue = `${sign}${absValue.toExponential(3)}`;
-      } else {
-        formattedValue = `${sign}${absValue.toFixed(7)}`;
-      }
+    // Use explicit decimals if provided
+    if (decimals !== undefined) {
+      formattedValue = `${sign}${absValue.toFixed(decimals)}`;
     } else {
-      formattedValue = '0';
+      // For values less than 1000, determine appropriate decimal places based on order of magnitude
+      if (absValue >= 1) {
+        // Values 1-999: show 2 decimal places for consistency in tooltips
+      formattedValue = `${sign}${absValue.toFixed(2)}`;
+      } else if (absValue >= 0.1) {
+        // Values 0.1-0.999: show 3 decimal places
+        formattedValue = `${sign}${absValue.toFixed(3)}`;
+      } else if (absValue >= 0.01) {
+        // Values 0.01-0.099: show 4 decimal places
+        formattedValue = `${sign}${absValue.toFixed(4)}`;
+      } else if (absValue >= 0.001) {
+        // Values 0.001-0.009: show 5 decimal places
+        formattedValue = `${sign}${absValue.toFixed(5)}`;
+      } else if (absValue >= 0.0001) {
+        // Values 0.0001-0.0009: show 6 decimal places
+        formattedValue = `${sign}${absValue.toFixed(6)}`;
+      } else if (absValue > 0) {
+        // Very small values: use scientific notation or show up to 7 decimal places
+        if (absValue < 0.000001) {
+          formattedValue = `${sign}${absValue.toExponential(3)}`;
+        } else {
+          formattedValue = `${sign}${absValue.toFixed(7)}`;
+        }
+      } else {
+        formattedValue = '0';
+      }
     }
   }
   
@@ -438,14 +448,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const xKey = typeof xField === 'string' ? xField : xField[0];
   
   // Extract data for the chart
-  const { chartData, fields, fieldColors, fieldTypes, fieldUnits } = useMemo(() => {
+  const { chartData, fields, fieldColors, fieldTypes, fieldUnits, fieldDecimals } = useMemo(() => {
     // Use appropriate filtered data depending on context
     const currentData = isExpanded
       ? (isModalBrushActive && modalFilteredData.length > 0 ? modalFilteredData : data)
       : (isBrushActive && filteredData.length > 0 ? filteredData : data);
     
     if (!currentData || currentData.length === 0) {
-      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {}, fieldUnits: {} };
+      return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {}, fieldUnits: {}, fieldDecimals: {} };
     }
 
     // Use external color map if available
@@ -608,17 +618,20 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           let originalFieldConfig: YAxisConfig | string;
           let originalFieldType: 'bar' | 'line';
           let originalFieldUnit: string | undefined;
+          let originalFieldDecimals: number | undefined;
           
           if (typeof filteredYField === 'string') {
             // If filteredYField is a string, use the chart's default type (bar)
             originalFieldConfig = filteredYField;
             originalFieldType = 'bar';
             originalFieldUnit = undefined;
+            originalFieldDecimals = undefined;
           } else if (Array.isArray(filteredYField) && filteredYField.length === 1) {
-            // For a single field in an array, use its specified type and unit
+            // For a single field in an array, use its specified type, unit, and decimals
             originalFieldConfig = filteredYField[0];
             originalFieldType = typeof originalFieldConfig === 'string' ? 'bar' : originalFieldConfig.type;
             originalFieldUnit = typeof originalFieldConfig === 'string' ? undefined : originalFieldConfig.unit;
+            originalFieldDecimals = typeof originalFieldConfig === 'string' ? undefined : originalFieldConfig.decimals;
             
             // Use the determined type for all groups
           } else {
@@ -626,6 +639,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             originalFieldConfig = filteredYField[0] || '';
             originalFieldType = 'bar';
             originalFieldUnit = undefined;
+            originalFieldDecimals = undefined;
           }
           
           // Apply the same type to all group-based series
@@ -640,6 +654,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             resultFieldUnits[group] = originalFieldUnit;
           });
           
+          // Create decimals mapping for all group-based fields
+          const resultFieldDecimals: Record<string, number | undefined> = {};
+          uniqueGroupsArray.forEach(group => {
+            resultFieldDecimals[group] = originalFieldDecimals;
+          });
+          
           // Get all original field names for consistent color mapping
           const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
           
@@ -651,24 +671,28 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             fields: resultFields,
             fieldColors: resultColors,
             fieldTypes: resultFieldTypes,
-            fieldUnits: resultFieldUnits
+            fieldUnits: resultFieldUnits,
+            fieldDecimals: resultFieldDecimals
           };
               } else {
           // For multiple y-fields with groupBy, combine field and group
           const combinedFields: string[] = [];
           const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
           const resultFieldUnits: Record<string, string | undefined> = {};
+          const resultFieldDecimals: Record<string, number | undefined> = {};
           
           Array.isArray(filteredYField) && filteredYField.forEach(field => {
             const fieldName = typeof field === 'string' ? field : field.field;
             const fieldType = typeof field === 'string' ? 'bar' : field.type;
             const fieldUnit = typeof field === 'string' ? undefined : field.unit;
+            const fieldDecimals = typeof field === 'string' ? undefined : field.decimals;
             
             uniqueGroupsArray.forEach(group => {
               const combinedField = `${fieldName}_${group}`;
               combinedFields.push(combinedField);
               resultFieldTypes[combinedField] = fieldType;
               resultFieldUnits[combinedField] = fieldUnit;
+              resultFieldDecimals[combinedField] = fieldDecimals;
             });
           });
           
@@ -698,7 +722,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             fields: combinedFields,
             fieldColors: resultColors,
             fieldTypes: resultFieldTypes,
-            fieldUnits: resultFieldUnits
+            fieldUnits: resultFieldUnits,
+            fieldDecimals: resultFieldDecimals
           };
         }
           } else {
@@ -706,20 +731,23 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         let resultFields: string[] = [];
         const resultFieldTypes: Record<string, 'bar' | 'line'> = {};
         const resultFieldUnits: Record<string, string | undefined> = {};
+        const resultFieldDecimals: Record<string, number | undefined> = {};
         
         if (Array.isArray(filteredYField)) {
           resultFields = filteredYField.map(field => getYAxisField(field));
           
-          // Create mapping of field types and units
+          // Create mapping of field types, units, and decimals
           filteredYField.forEach(field => {
             const fieldName = getYAxisField(field);
             resultFieldTypes[fieldName] = typeof field === 'string' ? 'bar' : (field as YAxisConfig).type;
             resultFieldUnits[fieldName] = typeof field === 'string' ? undefined : (field as YAxisConfig).unit;
+            resultFieldDecimals[fieldName] = typeof field === 'string' ? undefined : (field as YAxisConfig).decimals;
           });
         } else {
           resultFields = [getYAxisField(filteredYField)];
           resultFieldTypes[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? 'bar' : (filteredYField as YAxisConfig).type;
           resultFieldUnits[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? undefined : (filteredYField as YAxisConfig).unit;
+          resultFieldDecimals[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? undefined : (filteredYField as YAxisConfig).decimals;
         }
         
         // Get all original field names for consistent color mapping
@@ -733,7 +761,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           fields: resultFields,
           fieldColors: resultColors,
           fieldTypes: resultFieldTypes,
-          fieldUnits: resultFieldUnits
+          fieldUnits: resultFieldUnits,
+          fieldDecimals: resultFieldDecimals
         };
       }
   }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
@@ -1049,12 +1078,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           return !hiddenSeriesState.includes(field) && !isNaN(value) && value !== 0;
         })
         .map(field => {
-          // Get the unit for this field from the fieldUnits structure
+          // Get the unit and decimals for this field
           const fieldUnit = fieldUnits ? fieldUnits[field] : undefined;
+          const fieldDecimal = fieldDecimals ? fieldDecimals[field] : undefined;
 
           return {
             label: formatFieldName(field),
-            value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit, filterValues?.currencyFilter),
+            value: formatWithUnit(Number(dataPoint[field]) || 0, fieldUnit, filterValues?.currencyFilter, fieldDecimal),
             color: fieldColors[field] || blue,
             // Use different shape for bar vs line
             shape: fieldTypes[field] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
@@ -1067,12 +1097,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         const firstVisibleField = fields.find(field => !hiddenSeriesState.includes(field));
         
         if (firstVisibleField) {
-          // Get the unit for the first visible field from fieldUnits
+          // Get the unit and decimals for the first visible field
           const firstFieldUnit = fieldUnits ? fieldUnits[firstVisibleField] : undefined;
+          const firstFieldDecimal = fieldDecimals ? fieldDecimals[firstVisibleField] : undefined;
         
           tooltipItems.push({
             label: formatFieldName(firstVisibleField),
-            value: formatWithUnit(0, firstFieldUnit, filterValues?.currencyFilter),
+            value: formatWithUnit(0, firstFieldUnit, filterValues?.currencyFilter, firstFieldDecimal),
             color: fieldColors[firstVisibleField] || blue,
             shape: fieldTypes[firstVisibleField] === 'line' ? 'circle' as 'circle' : 'square' as 'square'
           });

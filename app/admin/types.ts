@@ -56,6 +56,7 @@ export interface YAxisConfig {
   color?: string;
   unit?: string; // Optional unit for display purposes (e.g., "$", "%", "SOL")
   label?: string; // Optional label for the series (e.g., "Validator", "Network Median")
+  decimals?: number; // Optional number of decimal places to display (e.g., 0 for integers)
   // Optional flag for dual-axis charts to indicate right y-axis
   rightAxis?: boolean;
   // Optional flag to mark this field as a percentage

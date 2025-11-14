@@ -191,8 +191,11 @@ function ValidatorsOverviewContent() {
   const ladderChartData: LadderChartData[] = useMemo(() => {
     if (!selectedLadderEpoch || !data.length) return [];
     
-    const epochData = data.find(d => d.epoch === selectedLadderEpoch);
-    if (!epochData) return [];
+    const epochData = data.find(d => Number(d.epoch) === Number(selectedLadderEpoch));
+    if (!epochData) {
+      //console.log('Epoch not found:', selectedLadderEpoch, 'Available epochs:', data.map(d => d.epoch));
+      return [];
+    }
 
     return [
       {

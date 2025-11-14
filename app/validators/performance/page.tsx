@@ -287,6 +287,7 @@ function ValidatorsPerformanceContent() {
           title: 'Nakamoto Coefficient by Epoch', 
           description: 'Minimum number of stakers required to reach 33% of the total stake (per validator or across the network).',
           unit: 'stakers',
+          decimals: 0,
           hasNetworkMedian: true,
           networkMedianField: 'network_nakamoto_coeff_33',
           info: {
@@ -424,9 +425,9 @@ function ValidatorsPerformanceContent() {
     dataMapping: {
       xAxis: 'epoch',
       yAxis: getMetricTypeInfo(selectedMetricType).hasNetworkMedian ? [
-        { field: selectedMetricType, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit, label: 'Validator' } as YAxisConfig,
-        { field: getMetricTypeInfo(selectedMetricType).networkMedianField!, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit, label: 'Network Median' } as YAxisConfig
-      ] : { field: selectedMetricType, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit } as YAxisConfig,
+        { field: selectedMetricType, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit, label: 'Validator', decimals: getMetricTypeInfo(selectedMetricType).decimals } as YAxisConfig,
+        { field: getMetricTypeInfo(selectedMetricType).networkMedianField!, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit, label: 'Network Median', decimals: getMetricTypeInfo(selectedMetricType).decimals } as YAxisConfig
+      ] : { field: selectedMetricType, type: 'line', unit: getMetricTypeInfo(selectedMetricType).unit, decimals: getMetricTypeInfo(selectedMetricType).decimals } as YAxisConfig,
       yAxisUnit: getMetricTypeInfo(selectedMetricType).unit
     },
     additionalOptions: {
