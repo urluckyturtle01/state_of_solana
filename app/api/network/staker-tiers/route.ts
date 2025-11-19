@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the TopLedger API for network staker tier data with the same vote_account parameter
+    // Call the validator API - it returns both validator AND network data
     const response = await fetch(
-      'https://analytics.topledger.xyz/tl/api/queries/14375/results?api_key=q0dmkVVgNrRwuDtk1dJx0ctm5uxmg6sNA1mt571e',
+      'http://84.32.32.160:9080/validator_stake_tier_distribution',
       {
         method: 'POST',
         headers: {
@@ -34,13 +34,21 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     
-    // Extract the rows from the query result
-    const rows = data?.query_result?.data?.rows || [];
+    // Extract the rows from the response
+    const rows = data?.data || data?.rows || data || [];
+    
+    // Transform the data to extract only network fields and rename them
+    const networkRows = rows.map((row: any) => ({
+      epoch: row.epoch,
+      tier_name: row.tier_name,
+      network_staker_count: row.network_staker_count,
+      network_total_stake_in_tier: row.network_total_stake_in_tier
+    }));
     
     return NextResponse.json({
       success: true,
-      data: rows,
-      count: rows.length
+      data: networkRows,
+      count: networkRows.length
     });
 
   } catch (error) {

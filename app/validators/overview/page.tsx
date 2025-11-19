@@ -459,6 +459,8 @@ function ValidatorsOverviewContent() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit="%"
+            //xAxisLogarithmic={true}
+            //yAxisLogarithmic={true}
             hiddenSeries={hiddenSeries['validator-cumulative-chart'] || []}
           />
         </ChartCard>

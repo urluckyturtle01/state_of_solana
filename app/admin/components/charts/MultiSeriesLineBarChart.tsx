@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react'
 import { ParentSize } from '@visx/responsive';
 import { Group } from '@visx/group';
 import { GridRows } from '@visx/grid';
-import { scaleBand, scaleLinear } from '@visx/scale';
+import { scaleBand, scaleLinear, scaleLog } from '@visx/scale';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Bar } from '@visx/shape';
 import { LinePath } from '@visx/shape';
@@ -53,6 +53,8 @@ export interface MultiSeriesLineBarChartProps {
   onFilterChange?: (newFilters: Record<string, string>) => void;
   onModalFilterUpdate?: (newFilters: Record<string, string>) => void;
   maxXAxisTicks?: number;
+  yAxisLogarithmic?: boolean;
+  xAxisLogarithmic?: boolean;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
@@ -383,7 +385,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   hiddenSeries,
   onFilterChange,
   onModalFilterUpdate,
-  maxXAxisTicks
+  maxXAxisTicks,
+  yAxisLogarithmic = false,
+  xAxisLogarithmic = false
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -1727,17 +1731,33 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     if (innerWidth <= 0 || innerHeight <= 0) return null;
     
-    // Create scales - use linear scale for numerical data, band scale for categorical
+    // Create scales - use linear/log scale for numerical data, band scale for categorical
     const xValues = chartData.map(d => d[xKey]);
     let xScale: any;
     if (isNumericalXAxis) {
       const numericValues = xValues.map(v => Number(v));
       const xMin = Math.min(...numericValues);
       const xMax = Math.max(...numericValues);
-      xScale = scaleLinear<number>({
-        domain: [xMin, xMax],
-        range: [0, innerWidth],
-      });
+      
+      // Use logarithmic scale if specified (only for numerical x-axis)
+      if (xAxisLogarithmic) {
+        // For logarithmic scale, ensure minimum value is positive (can't use 0)
+        const logXMin = xMin > 0 ? xMin * 0.8 : 0.01;
+        const logXMax = xMax * 1.2;
+        
+        xScale = scaleLog<number>({
+          domain: [logXMin, logXMax],
+          range: [0, innerWidth],
+          nice: true,
+          clamp: true,
+          base: 10,
+        });
+      } else {
+        xScale = scaleLinear<number>({
+          domain: [xMin, xMax],
+          range: [0, innerWidth],
+        });
+      }
     } else {
       xScale = scaleBand<string>({
         domain: xValues.map(String),
@@ -1792,12 +1812,28 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       tickInterval = null; // Let D3 decide
     }
     
-    const yScale = scaleLinear<number>({
-      domain: [yMin, yMax],
-      range: [innerHeight, 0],
-      nice: tickInterval ? false : true, // Don't use nice if we set custom interval
-      clamp: true,
-    });
+    // Create y-axis scale - use logarithmic scale if specified
+    let yScale: any;
+    if (yAxisLogarithmic) {
+      // For logarithmic scale, ensure minimum value is positive (can't use 0)
+      const logYMin = actualYMin > 0 ? actualYMin * 0.5 : 0.01;
+      const logYMax = actualYMax * 1.5;
+      
+      yScale = scaleLog<number>({
+        domain: [logYMin, logYMax],
+        range: [innerHeight, 0],
+        nice: true,
+        clamp: true,
+        base: 2,
+      });
+    } else {
+      yScale = scaleLinear<number>({
+        domain: [yMin, yMax],
+        range: [innerHeight, 0],
+        nice: tickInterval ? false : true, // Don't use nice if we set custom interval
+        clamp: true,
+      });
+    }
     
     // Create line data for series that should be rendered as lines
     const lineDataByField: Record<string, Array<{x: number, y: number}>> = {};
@@ -1862,6 +1898,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       
       // For numerical x-axis with non-integers, generate evenly spaced ticks
       if (isNumericalXAxis) {
+        // For logarithmic x-axis, use the scale's built-in tick generation
+        if (xAxisLogarithmic) {
+          // Use scale.ticks() which generates nicely spaced ticks for log scales
+          const logTicks = xScale.ticks(6); // Always use 6 ticks for log scale
+          return logTicks;
+        }
+        
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
         const maxTicks = maxXAxisTicks || (isMobile ? 5 : 8);
         const numericValues = chartData.map(d => Number(d[xKey])).sort((a, b) => a - b);
@@ -1945,6 +1988,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               stroke="#1f2937"
               strokeOpacity={0.5}
               strokeDasharray="2,3"
+              numTicks={yAxisLogarithmic ? undefined : undefined}
+              tickValues={yAxisLogarithmic ? yScale.ticks(6) : undefined}
             />
             
             {/* Zero line with special styling when we have negative values */}
@@ -1968,14 +2013,14 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
               tickStroke="transparent"
               tickLength={0}
               hideZero={false}
-              tickValues={tickInterval ? (() => {
+              tickValues={yAxisLogarithmic ? yScale.ticks(6) : (tickInterval ? (() => {
                 const ticks = [];
                 for (let i = yMin; i <= yMax; i += tickInterval) {
                   ticks.push(Math.round(i / tickInterval) * tickInterval); // Round to avoid floating point errors
                 }
                 return ticks;
-              })() : undefined}
-              numTicks={tickInterval ? undefined : 5}
+              })() : undefined)}
+              numTicks={yAxisLogarithmic ? undefined : (tickInterval ? undefined : 5)}
               tickFormat={(value) => formatTickValue(Number(value))}
               tickLabelProps={() => ({
                 fill: '#6b7280',
