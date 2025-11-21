@@ -55,6 +55,8 @@ export interface MultiSeriesLineBarChartProps {
   maxXAxisTicks?: number;
   yAxisLogarithmic?: boolean;
   xAxisLogarithmic?: boolean;
+  yAxisMax?: number;
+  xAxisMax?: number;
 }
 
 // Helper function to get field from YAxisConfig or use string directly
@@ -387,7 +389,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   onModalFilterUpdate,
   maxXAxisTicks,
   yAxisLogarithmic = false,
-  xAxisLogarithmic = false
+  xAxisLogarithmic = false,
+  yAxisMax,
+  xAxisMax
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -1737,7 +1741,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     if (isNumericalXAxis) {
       const numericValues = xValues.map(v => Number(v));
       const xMin = Math.min(...numericValues);
-      const xMax = Math.max(...numericValues);
+      let xMax = Math.max(...numericValues);
+      
+      // Cap xMax if xAxisMax is provided
+      if (xAxisMax !== undefined && xMax > xAxisMax) {
+        xMax = xAxisMax;
+      }
       
       // Use logarithmic scale if specified (only for numerical x-axis)
       if (xAxisLogarithmic) {
@@ -1810,6 +1819,11 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       // For larger values, use standard padding
       yMax = actualYMax * 1.1;
       tickInterval = null; // Let D3 decide
+    }
+    
+    // Cap yMax if yAxisMax is provided
+    if (yAxisMax !== undefined && yMax > yAxisMax) {
+      yMax = yAxisMax;
     }
     
     // Create y-axis scale - use logarithmic scale if specified
@@ -2117,8 +2131,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
                 fontWeight: 300,
                 textAnchor: 'middle',
                 dy: '0.5em',
-                dx: '1em'
-               
+                dx: '0em'
               })}
               // Ensure first tick doesn't start before origin
               left={0}

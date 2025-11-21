@@ -83,13 +83,13 @@ function ValidatorsOverviewContent() {
         setData(sortedData);
         
         // Set the latest epoch for ladder chart if not already set
-        if (!selectedLadderEpoch && sortedData.length > 0) {
-          setSelectedLadderEpoch(sortedData[0].epoch);
+        if (sortedData.length > 0) {
+          setSelectedLadderEpoch((prev) => prev ?? sortedData[0].epoch);
         }
         
         // Set the latest epoch for cumulative chart if not already set
-        if (!selectedCumulativeEpoch && sortedData.length > 0) {
-          setSelectedCumulativeEpoch(sortedData[0].epoch);
+        if (sortedData.length > 0) {
+          setSelectedCumulativeEpoch((prev) => prev ?? sortedData[0].epoch);
         }
       } else {
         throw new Error('Invalid response format');
@@ -101,7 +101,7 @@ function ValidatorsOverviewContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedLadderEpoch, selectedCumulativeEpoch]);
+  }, []);
 
   // Fetch cumulative percentage data
   const fetchCumulativeData = useCallback(async (voteAccount: string, epoch: number) => {
@@ -162,19 +162,16 @@ function ValidatorsOverviewContent() {
     }
   }, [searchParams, selectedVoteAccount]);
 
-  // Fetch data when vote account changes
+  // Fetch validator data when vote account changes
   useEffect(() => {
     if (selectedVoteAccount) {
       fetchValidatorData(selectedVoteAccount);
-      if (selectedCumulativeEpoch !== null) {
-        fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch);
-      }
     }
-  }, [selectedVoteAccount, fetchValidatorData, fetchCumulativeData, selectedCumulativeEpoch]);
+  }, [selectedVoteAccount, fetchValidatorData]);
 
-  // Fetch cumulative data when epoch changes
+  // Fetch cumulative data when vote account or epoch changes
   useEffect(() => {
-    if (selectedVoteAccount && selectedCumulativeEpoch) {
+    if (selectedVoteAccount && selectedCumulativeEpoch !== null) {
       fetchCumulativeData(selectedVoteAccount, selectedCumulativeEpoch);
     }
   }, [selectedCumulativeEpoch, selectedVoteAccount, fetchCumulativeData]);
@@ -186,6 +183,39 @@ function ValidatorsOverviewContent() {
   const availableEpochs = useMemo(() => {
     return data.map(d => d.epoch).sort((a, b) => b - a);
   }, [data]);
+
+  // Get max available epoch
+  const maxEpoch = useMemo(() => {
+    return availableEpochs.length > 0 ? availableEpochs[0] : null;
+  }, [availableEpochs]);
+
+  // Handler for cumulative epoch change with validation
+  const handleCumulativeEpochChange = useCallback((value: string) => {
+    const numValue = Number(value);
+    if (value === '' || isNaN(numValue)) {
+      setSelectedCumulativeEpoch(null);
+      return;
+    }
+    if (maxEpoch !== null && numValue > maxEpoch) {
+      setSelectedCumulativeEpoch(maxEpoch);
+    } else {
+      setSelectedCumulativeEpoch(numValue);
+    }
+  }, [maxEpoch]);
+
+  // Handler for ladder epoch change with validation
+  const handleLadderEpochChange = useCallback((value: string) => {
+    const numValue = Number(value);
+    if (value === '' || isNaN(numValue)) {
+      setSelectedLadderEpoch(null);
+      return;
+    }
+    if (maxEpoch !== null && numValue > maxEpoch) {
+      setSelectedLadderEpoch(maxEpoch);
+    } else {
+      setSelectedLadderEpoch(numValue);
+    }
+  }, [maxEpoch]);
 
   // Convert data to ladder chart format for selected epoch
   const ladderChartData: LadderChartData[] = useMemo(() => {
@@ -430,7 +460,8 @@ function ValidatorsOverviewContent() {
                 <input
                   type="number"
                   value={selectedCumulativeEpoch || ''}
-                  onChange={(e) => setSelectedCumulativeEpoch(Number(e.target.value))}
+                  onChange={(e) => handleCumulativeEpochChange(e.target.value)}
+                  max={maxEpoch || undefined}
                   className="px-2 py-0.5 bg-gray-900 border border-gray-800 rounded-sm text-sm text-gray-400 focus:outline-none w-16"
                 />
               </div>
@@ -459,6 +490,8 @@ function ValidatorsOverviewContent() {
             height={400}
             maxXAxisTicks={8}
             yAxisUnit="%"
+            xAxisMax={100}
+            yAxisMax={100}
             //xAxisLogarithmic={true}
             //yAxisLogarithmic={true}
             hiddenSeries={hiddenSeries['validator-cumulative-chart'] || []}
@@ -484,7 +517,8 @@ function ValidatorsOverviewContent() {
                 <input
                   type="number"
                   value={selectedLadderEpoch || ''}
-                  onChange={(e) => setSelectedLadderEpoch(Number(e.target.value))}
+                  onChange={(e) => handleLadderEpochChange(e.target.value)}
+                  max={maxEpoch || undefined}
                   className="px-2 py-0.5 bg-gray-900 border border-gray-800 rounded-sm text-sm text-gray-400 focus:outline-none w-16"
                 />
               </div>
