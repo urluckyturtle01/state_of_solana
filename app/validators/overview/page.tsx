@@ -414,7 +414,7 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`this chart shows how a validator’s active  stake is distributed across its stakers in epoch ${selectedCumulativeEpoch || 'N/A'}`}
+          description={`This chart shows how a validator’s active  stake is distributed across its stakers in epoch ${selectedCumulativeEpoch || 'N/A'}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
