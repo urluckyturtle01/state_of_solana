@@ -414,14 +414,14 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`Cumulative distribution of total stake among stakers under the selected validator for epoch ${selectedCumulativeEpoch || 'N/A'}`}
+          description={`this chart shows how a validator’s active  stake is distributed across its stakers in epoch ${selectedCumulativeEpoch || 'N/A'}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
           showSummarizeButton={false}
           info={{
             title: 'Cumulative Stake Distribution',
-            description: "For the selected validator, sort wallets from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator's total stake (y-axis)."
+            description: "For the selected validator, sort stake accounts from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator's total stake (y-axis)."
           }}
           filterBar={
             <div className="flex items-center justify-between">
