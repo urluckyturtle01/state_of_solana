@@ -25,11 +25,6 @@ const REWARD_TAB_OPTIONS: FilterOption<RewardTabType>[] = [
     label: 'Median per Staker', 
     description: 'Median reward per staker by epoch',
   },
-  { 
-    value: 'gini', 
-    label: 'Reward Gini', 
-    description: 'Reward Gini coefficient by epoch',
-  },
 ];
 
 interface ValidatorPerformanceData {
@@ -507,7 +502,7 @@ function ValidatorsRewardsContent() {
             />
           )}
         </ChartCard>
-        {/* Reward Rate Analysis Chart */}
+        {/* Reward Rate Analysis Chart 
         <ChartCard
           title="Reward Rate by Epoch"
           description="Per epoch, avg/median/max % yield = (staker reward ÷ active stake) across this validator's stakers."
@@ -544,7 +539,7 @@ function ValidatorsRewardsContent() {
             yAxisUnit="%"
             hiddenSeries={hiddenSeries['validator-reward-rate-chart'] || []}
           />
-        </ChartCard>
+        </ChartCard>*/}
       </div>
 
       {/* Reward Analysis Charts */}
