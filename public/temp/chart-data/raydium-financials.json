@@ -1,7 +1,7 @@
 {
   "pageId": "raydium-financials",
   "pageName": "Financials",
-  "fetchedAt": "2025-11-22T03:06:20.821Z",
+  "fetchedAt": "2025-11-22T04:25:22.447Z",
   "charts": [
     {
       "success": true,
@@ -4532,7 +4532,7 @@
           "parameters": {
             "Date Part": "D"
           },
-          "timestamp": 1763780775389
+          "timestamp": 1763785517070
         },
         {
           "data": [
@@ -9060,7 +9060,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1763780775678
+          "timestamp": 1763785517357
         },
         {
           "data": [
@@ -13588,7 +13588,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1763780775968
+          "timestamp": 1763785517642
         },
         {
           "data": [
@@ -18116,7 +18116,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1763780776257
+          "timestamp": 1763785517928
         },
         {
           "data": [
@@ -22644,7 +22644,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1763780776545
+          "timestamp": 1763785518218
         }
       ],
       "data": [
@@ -27169,7 +27169,7 @@
           "Protocol fees": 1458.1431953225
         }
       ],
-      "timestamp": 1763780776746,
+      "timestamp": 1763785518418,
       "chartId": "chart_1748935655865_ysfoa3j",
       "title": "Fees And Revenue",
       "parameters": {
@@ -27202,22 +27202,52 @@
         {
           "data": [
             {
+              "block_date": "2025-11-22",
+              "Product": "Pool Creation",
+              "Fees": null,
+              "Protocol_fees": null
+            },
+            {
+              "block_date": "2025-11-21",
+              "Product": "CLMM",
+              "Fees": 235203.6022100866,
+              "Protocol_fees": 37632.5763536139
+            },
+            {
+              "block_date": "2025-11-21",
+              "Product": "Pool Creation",
+              "Fees": 3251.9063298770557,
+              "Protocol_fees": 3251.9063298770557
+            },
+            {
+              "block_date": "2025-11-21",
+              "Product": "V4 AMM",
+              "Fees": 144551.2515599216,
+              "Protocol_fees": 17346.1501871906
+            },
+            {
               "block_date": "2025-11-20",
               "Product": "CLMM",
-              "Fees": 198592.3802006793,
-              "Protocol_fees": 31774.7808321088
+              "Fees": 198511.0551756501,
+              "Protocol_fees": 31761.7688281039
+            },
+            {
+              "block_date": "2025-11-20",
+              "Product": "CPMM",
+              "Fees": 59427.04950508,
+              "Protocol_fees": 9508.3279208128
             },
             {
               "block_date": "2025-11-20",
               "Product": "Pool Creation",
-              "Fees": 3527.974030033578,
-              "Protocol_fees": 3527.974030033578
+              "Fees": 3546.3070493524456,
+              "Protocol_fees": 3546.3070493524456
             },
             {
               "block_date": "2025-11-20",
               "Product": "V4 AMM",
-              "Fees": 144414.4717542849,
-              "Protocol_fees": 17329.7366105142
+              "Fees": 144322.5401973968,
+              "Protocol_fees": 17318.7048236876
             },
             {
               "block_date": "2025-11-19",
@@ -27228,7 +27258,7 @@
             {
               "block_date": "2025-11-19",
               "Product": "CPMM",
-              "Fees": 62347.1874317807,
+              "Fees": 62347.1874317809,
               "Protocol_fees": 9975.5499890849
             },
             {
@@ -27473,6 +27503,12 @@
             },
             {
               "block_date": "2025-11-09",
+              "Product": "Launchlab",
+              "Fees": 1483.477987723328,
+              "Protocol_fees": 1483.477987723328
+            },
+            {
+              "block_date": "2025-11-09",
               "Product": "Pool Creation",
               "Fees": 4027.993252882626,
               "Protocol_fees": 4027.993252882626
@@ -27498,8 +27534,8 @@
             {
               "block_date": "2025-11-08",
               "Product": "Launchlab",
-              "Fees": 2251.4157620083524,
-              "Protocol_fees": 2251.4157620083524
+              "Fees": 2251.4157620083533,
+              "Protocol_fees": 2251.4157620083533
             },
             {
               "block_date": "2025-11-08",
@@ -46750,27 +46786,57 @@
               "Protocol_fees": 1096.4283149951
             }
           ],
-          "timestamp": 1763780775450
+          "timestamp": 1763785517114
         }
       ],
       "data": [
         {
+          "block_date": "2025-11-22",
+          "Product": "Pool Creation",
+          "Fees": null,
+          "Protocol_fees": null
+        },
+        {
+          "block_date": "2025-11-21",
+          "Product": "CLMM",
+          "Fees": 235203.6022100866,
+          "Protocol_fees": 37632.5763536139
+        },
+        {
+          "block_date": "2025-11-21",
+          "Product": "Pool Creation",
+          "Fees": 3251.9063298770557,
+          "Protocol_fees": 3251.9063298770557
+        },
+        {
+          "block_date": "2025-11-21",
+          "Product": "V4 AMM",
+          "Fees": 144551.2515599216,
+          "Protocol_fees": 17346.1501871906
+        },
+        {
           "block_date": "2025-11-20",
           "Product": "CLMM",
-          "Fees": 198592.3802006793,
-          "Protocol_fees": 31774.7808321088
+          "Fees": 198511.0551756501,
+          "Protocol_fees": 31761.7688281039
+        },
+        {
+          "block_date": "2025-11-20",
+          "Product": "CPMM",
+          "Fees": 59427.04950508,
+          "Protocol_fees": 9508.3279208128
         },
         {
           "block_date": "2025-11-20",
           "Product": "Pool Creation",
-          "Fees": 3527.974030033578,
-          "Protocol_fees": 3527.974030033578
+          "Fees": 3546.3070493524456,
+          "Protocol_fees": 3546.3070493524456
         },
         {
           "block_date": "2025-11-20",
           "Product": "V4 AMM",
-          "Fees": 144414.4717542849,
-          "Protocol_fees": 17329.7366105142
+          "Fees": 144322.5401973968,
+          "Protocol_fees": 17318.7048236876
         },
         {
           "block_date": "2025-11-19",
@@ -46781,7 +46847,7 @@
         {
           "block_date": "2025-11-19",
           "Product": "CPMM",
-          "Fees": 62347.1874317807,
+          "Fees": 62347.1874317809,
           "Protocol_fees": 9975.5499890849
         },
         {
@@ -47026,6 +47092,12 @@
         },
         {
           "block_date": "2025-11-09",
+          "Product": "Launchlab",
+          "Fees": 1483.477987723328,
+          "Protocol_fees": 1483.477987723328
+        },
+        {
+          "block_date": "2025-11-09",
           "Product": "Pool Creation",
           "Fees": 4027.993252882626,
           "Protocol_fees": 4027.993252882626
@@ -47051,8 +47123,8 @@
         {
           "block_date": "2025-11-08",
           "Product": "Launchlab",
-          "Fees": 2251.4157620083524,
-          "Protocol_fees": 2251.4157620083524
+          "Fees": 2251.4157620083533,
+          "Protocol_fees": 2251.4157620083533
         },
         {
           "block_date": "2025-11-08",
@@ -66303,7 +66375,7 @@
           "Protocol_fees": 1096.4283149951
         }
       ],
-      "timestamp": 1763780775650,
+      "timestamp": 1763785517314,
       "chartId": "chart_1748936189726_ie9crds",
       "title": "Revenue By Product",
       "totalCombinations": 1,
@@ -74455,7 +74527,7 @@
               "Gross Profit": 1458.1431953225
             }
           ],
-          "timestamp": 1763780775605
+          "timestamp": 1763785517247
         }
       ],
       "data": [
@@ -82596,7 +82668,7 @@
           "Gross Profit": 1458.1431953225
         }
       ],
-      "timestamp": 1763780775805,
+      "timestamp": 1763785517448,
       "chartId": "chart_1748936586106_5qdpcxr",
       "title": "Revenue Sources",
       "totalCombinations": 1,
@@ -109997,7 +110069,7 @@
               "revenue": 193.14032068283487
             }
           ],
-          "timestamp": 1763780778113
+          "timestamp": 1763785519767
         }
       ],
       "data": [
@@ -137387,7 +137459,7 @@
           "revenue": 193.14032068283487
         }
       ],
-      "timestamp": 1763780778313,
+      "timestamp": 1763785519967,
       "chartId": "chart_1748936802751_n6liytd",
       "title": "Swap Revenue By Pool Category",
       "totalCombinations": 1,
@@ -143623,7 +143695,7 @@
               "treasury_usd": 2164.642664317746
             }
           ],
-          "timestamp": 1763780777981
+          "timestamp": 1763785519641
         }
       ],
       "data": [
@@ -149848,7 +149920,7 @@
           "treasury_usd": 2164.642664317746
         }
       ],
-      "timestamp": 1763780778181,
+      "timestamp": 1763785519841,
       "chartId": "chart_1748936965692_8woui2m",
       "title": "Treasury Revenue By Product",
       "totalCombinations": 1,
@@ -154694,7 +154766,7 @@
               "Infrastructure Cost": 0
             }
           ],
-          "timestamp": 1763780777995
+          "timestamp": 1763785519654
         }
       ],
       "data": [
@@ -159529,7 +159601,7 @@
           "Infrastructure Cost": 0
         }
       ],
-      "timestamp": 1763780778195,
+      "timestamp": 1763785519854,
       "chartId": "chart_1748937346377_c452g0f",
       "title": "Cashflow",
       "totalCombinations": 1,
@@ -159668,7 +159740,7 @@
           "Balance": 30145.733498200134
         }
       ],
-      "timestamp": 1763780779393,
+      "timestamp": 1763785521047,
       "chartId": "chart_1748937874895_ab9j7qj",
       "title": "Treasury Fund Flow",
       "apiType": "JSON"
@@ -159802,7 +159874,7 @@
           "Balance": 30145.733498200134
         }
       ],
-      "timestamp": 1763780779389,
+      "timestamp": 1763785521041,
       "chartId": "chart_1748938023137_x9zvrad",
       "title": "Treasury Fund Balance",
       "apiType": "JSON"
@@ -169531,7 +169603,7 @@
           "Balance": 241590961.04797626
         }
       ],
-      "timestamp": 1763780779568,
+      "timestamp": 1763785521206,
       "chartId": "chart_1748938178401_36oxl80",
       "title": "Raydium Assets",
       "apiType": "JSON"
@@ -176897,7 +176969,7 @@
           "cumulative_usdc_spent": null
         }
       ],
-      "timestamp": 1763780780820,
+      "timestamp": 1763785522447,
       "chartId": "chart_1752242932993_6u5eh1s",
       "title": "Total USD Spent To Buy RAY",
       "apiType": "JSON"
