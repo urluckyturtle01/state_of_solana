@@ -41,6 +41,12 @@ export default function ValidatorsTabsHeader({ activeTab = "overview" }: Validat
       path: "/validators/rewards",
       key: "rewards",
       icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+    },
+    { 
+      name: "APIs", 
+      path: "/validators/apis",
+      key: "apis",
+      icon: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
     }
   ];
 
