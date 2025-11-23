@@ -1,7 +1,7 @@
 {
   "pageId": "sf-depin",
   "pageName": "Depin",
-  "fetchedAt": "2025-11-23T18:29:39.746Z",
+  "fetchedAt": "2025-11-23T19:17:21.771Z",
   "charts": [
     {
       "success": true,
@@ -1237,7 +1237,7 @@
           "wallets": 13112
         }
       ],
-      "timestamp": 1763922575609,
+      "timestamp": 1763925437601,
       "chartId": "chart_1749820256507_6adnw1k",
       "title": "Monthly Transactions",
       "apiType": "JSON"
@@ -2476,7 +2476,7 @@
           "wallets": 13112
         }
       ],
-      "timestamp": 1763922575613,
+      "timestamp": 1763925437606,
       "chartId": "chart_1749820490470_fqi3ovt",
       "title": "Monthly Fee Payers",
       "apiType": "JSON"
@@ -3415,7 +3415,7 @@
           "txns": 10113
         }
       ],
-      "timestamp": 1763922575613,
+      "timestamp": 1763925437606,
       "chartId": "chart_1749820647525_wbmdtui",
       "title": "Monthly Transactions By Reward Receiver",
       "apiType": "JSON"
@@ -4354,7 +4354,7 @@
           "txns": 10113
         }
       ],
-      "timestamp": 1763922576643,
+      "timestamp": 1763925438647,
       "chartId": "chart_1749820825731_3a7cpea",
       "title": "Monthly Reward Receivers",
       "apiType": "JSON"
@@ -5509,7 +5509,7 @@
           "cumulative_reward": 565172.6284893244
         }
       ],
-      "timestamp": 1763922576649,
+      "timestamp": 1763925438652,
       "chartId": "chart_1749821036235_fks00yv",
       "title": "Monthly Rewards By DePIN",
       "apiType": "JSON"
@@ -6664,7 +6664,7 @@
           "cumulative_reward": 565172.6284893244
         }
       ],
-      "timestamp": 1763922576649,
+      "timestamp": 1763925438647,
       "chartId": "chart_1749821234632_wi52yak",
       "title": "Cumulative Rewards By DePIN",
       "apiType": "JSON"
@@ -6673,12 +6673,44 @@
       "success": true,
       "data": [
         {
+          "quarter": "2023-01-01",
+          "total_amount_raised": 75000
+        },
+        {
+          "quarter": "2022-01-01",
+          "total_amount_raised": 399625000
+        },
+        {
+          "quarter": "2022-04-01",
+          "total_amount_raised": 21000000
+        },
+        {
           "quarter": "2024-04-01",
           "total_amount_raised": 23300000
         },
         {
+          "quarter": "2024-01-01",
+          "total_amount_raised": 33665000
+        },
+        {
+          "quarter": "2022-07-01",
+          "total_amount_raised": 10766396
+        },
+        {
           "quarter": "2021-10-01",
           "total_amount_raised": 30000000
+        },
+        {
+          "quarter": "2025-01-01",
+          "total_amount_raised": 19247580
+        },
+        {
+          "quarter": "2024-07-01",
+          "total_amount_raised": 24500000
+        },
+        {
+          "quarter": "2024-10-01",
+          "total_amount_raised": 93789000
         },
         {
           "quarter": "2023-07-01",
@@ -6687,41 +6719,9 @@
         {
           "quarter": "2022-10-01",
           "total_amount_raised": 9000000
-        },
-        {
-          "quarter": "2024-07-01",
-          "total_amount_raised": 24500000
-        },
-        {
-          "quarter": "2025-01-01",
-          "total_amount_raised": 19247580
-        },
-        {
-          "quarter": "2022-07-01",
-          "total_amount_raised": 10766396
-        },
-        {
-          "quarter": "2024-10-01",
-          "total_amount_raised": 93789000
-        },
-        {
-          "quarter": "2022-04-01",
-          "total_amount_raised": 21000000
-        },
-        {
-          "quarter": "2022-01-01",
-          "total_amount_raised": 399625000
-        },
-        {
-          "quarter": "2023-01-01",
-          "total_amount_raised": 75000
-        },
-        {
-          "quarter": "2024-01-01",
-          "total_amount_raised": 33665000
         }
       ],
-      "timestamp": 1763922577681,
+      "timestamp": 1763925439685,
       "chartId": "chart_1749822628997_2p2vds0",
       "title": "DePIN Funding",
       "apiType": "JSON"
@@ -6730,14 +6730,109 @@
       "success": true,
       "data": [
         {
+          "month": "2024-12-01",
+          "name": "Helium",
+          "revenue": 206710.48385000005
+        },
+        {
+          "month": "2025-01-01",
+          "name": "Hivemapper",
+          "revenue": 11365.10056091255
+        },
+        {
+          "month": "2024-07-01",
+          "name": "Helium",
+          "revenue": 76472.22720999998
+        },
+        {
           "month": "2024-10-01",
           "name": "IO.Net",
           "revenue": 399575.19048829743
         },
         {
-          "month": "2025-02-01",
+          "month": "2024-06-01",
+          "name": "Render",
+          "revenue": 114017.72735775496
+        },
+        {
+          "month": "2024-11-01",
           "name": "Helium",
-          "revenue": 84669.5304
+          "revenue": 180908.62237
+        },
+        {
+          "month": "2024-12-01",
+          "name": "Render",
+          "revenue": 740387.6475961832
+        },
+        {
+          "month": "2024-11-01",
+          "name": "Render",
+          "revenue": 240297.5253742314
+        },
+        {
+          "month": "2024-12-01",
+          "name": "IO.Net",
+          "revenue": 1555556.3181811953
+        },
+        {
+          "month": "2024-06-01",
+          "name": "Helium",
+          "revenue": 67428.94788000002
+        },
+        {
+          "month": "2024-04-01",
+          "name": "Hivemapper",
+          "revenue": 49338.73779916373
+        },
+        {
+          "month": "2024-09-01",
+          "name": "Render",
+          "revenue": 182799.65567941876
+        },
+        {
+          "month": "2024-08-01",
+          "name": "Helium",
+          "revenue": 87593.7762
+        },
+        {
+          "month": "2025-01-01",
+          "name": "NATIX",
+          "revenue": 29202.39008567787
+        },
+        {
+          "month": "2024-10-01",
+          "name": "Hivemapper",
+          "revenue": 55719.267601589396
+        },
+        {
+          "month": "2024-05-01",
+          "name": "Hivemapper",
+          "revenue": 107256.73043428503
+        },
+        {
+          "month": "2024-01-01",
+          "name": "Hivemapper",
+          "revenue": 5549.690875612784
+        },
+        {
+          "month": "2024-03-01",
+          "name": "Hivemapper",
+          "revenue": 1654.1068407340106
+        },
+        {
+          "month": "2024-07-01",
+          "name": "Render",
+          "revenue": 30610.38403043401
+        },
+        {
+          "month": "2024-08-01",
+          "name": "Hivemapper",
+          "revenue": 62902.802155660684
+        },
+        {
+          "month": "2024-10-01",
+          "name": "Helium",
+          "revenue": 159761.63360000006
         },
         {
           "month": "2024-09-01",
@@ -6746,43 +6841,123 @@
         },
         {
           "month": "2025-02-01",
+          "name": "Helium",
+          "revenue": 84669.5304
+        },
+        {
+          "month": "2024-12-01",
           "name": "NATIX",
-          "revenue": 27696.350978770177
+          "revenue": 49528.36806996223
         },
         {
-          "month": "2024-06-01",
+          "month": "2024-02-01",
           "name": "Helium",
-          "revenue": 67428.94788000002
-        },
-        {
-          "month": "2024-12-01",
-          "name": "IO.Net",
-          "revenue": 1555556.3181811953
-        },
-        {
-          "month": "2024-05-01",
-          "name": "Hivemapper",
-          "revenue": 107256.73043428503
-        },
-        {
-          "month": "2024-04-01",
-          "name": "Helium",
-          "revenue": 75555.05898999998
-        },
-        {
-          "month": "2024-12-01",
-          "name": "Helium",
-          "revenue": 206710.48385000005
+          "revenue": 80234.36773999997
         },
         {
           "month": "2024-07-01",
+          "name": "XNET",
+          "revenue": 0
+        },
+        {
+          "month": "2024-03-01",
+          "name": "XNET",
+          "revenue": 0
+        },
+        {
+          "month": "2024-09-01",
+          "name": "Hivemapper",
+          "revenue": 17646.88738214156
+        },
+        {
+          "month": "2024-12-01",
+          "name": "Hivemapper",
+          "revenue": 143988.4292886547
+        },
+        {
+          "month": "2024-03-01",
+          "name": "Render",
+          "revenue": 103953.81064492572
+        },
+        {
+          "month": "2024-07-01",
+          "name": "Hivemapper",
+          "revenue": 21158.15035574958
+        },
+        {
+          "month": "2024-02-01",
+          "name": "Hivemapper",
+          "revenue": 384.60278702226043
+        },
+        {
+          "month": "2024-05-01",
           "name": "Helium",
-          "revenue": 76472.22720999998
+          "revenue": 66965.80448000002
         },
         {
           "month": "2025-01-01",
+          "name": "IO.Net",
+          "revenue": 752297.6891815168
+        },
+        {
+          "month": "2024-06-01",
           "name": "Hivemapper",
-          "revenue": 11365.10056091255
+          "revenue": 15812.298523914043
+        },
+        {
+          "month": "2024-10-01",
+          "name": "NATIX",
+          "revenue": 0.0061728913443451
+        },
+        {
+          "month": "2025-02-01",
+          "name": "ScPrime",
+          "revenue": 1130.5507813957258
+        },
+        {
+          "month": "2025-02-01",
+          "name": "Render",
+          "revenue": 89496.15134386807
+        },
+        {
+          "month": "2024-05-01",
+          "name": "Render",
+          "revenue": 94216.64961685249
+        },
+        {
+          "month": "2025-01-01",
+          "name": "Render",
+          "revenue": 144438.16033283147
+        },
+        {
+          "month": "2024-11-01",
+          "name": "Hivemapper",
+          "revenue": 142941.0965109368
+        },
+        {
+          "month": "2024-03-01",
+          "name": "Helium",
+          "revenue": 86919.10388000002
+        },
+        {
+          "month": "2024-11-01",
+          "name": "NATIX",
+          "revenue": 19698.586737707195
+        },
+        {
+          "month": "2024-01-01",
+          "name": "Render",
+          "revenue": 96641.6477689035
+        },
+        {
+          "month": "2024-08-01",
+          "name": "Render",
+          "revenue": 104614.27800502321
+        },
+        {
+          "month": "2025-02-01",
+          "name": "Hivemapper",
+          "revenue": 34009.02642749064
         },
         {
           "month": "2024-04-01",
@@ -6795,14 +6970,9 @@
           "revenue": 189654.8388
         },
         {
-          "month": "2024-09-01",
-          "name": "Helium",
-          "revenue": 115002.87727
-        },
-        {
-          "month": "2025-01-01",
-          "name": "ScPrime",
-          "revenue": 1944.478927579878
+          "month": "2024-01-01",
+          "name": "XNET",
+          "revenue": 0
         },
         {
           "month": "2024-01-01",
@@ -6825,197 +6995,27 @@
           "revenue": 991700.7574357529
         },
         {
-          "month": "2024-01-01",
-          "name": "XNET",
-          "revenue": 0
-        },
-        {
-          "month": "2024-01-01",
-          "name": "Hivemapper",
-          "revenue": 5549.690875612784
-        },
-        {
-          "month": "2024-11-01",
-          "name": "Render",
-          "revenue": 240297.5253742314
-        },
-        {
-          "month": "2024-12-01",
-          "name": "Render",
-          "revenue": 740387.6475961832
-        },
-        {
-          "month": "2024-06-01",
-          "name": "Render",
-          "revenue": 114017.72735775496
-        },
-        {
-          "month": "2024-11-01",
-          "name": "Helium",
-          "revenue": 180908.62237
-        },
-        {
-          "month": "2024-11-01",
-          "name": "NATIX",
-          "revenue": 19698.586737707195
-        },
-        {
-          "month": "2024-12-01",
-          "name": "NATIX",
-          "revenue": 49528.36806996223
-        },
-        {
-          "month": "2024-02-01",
-          "name": "Helium",
-          "revenue": 80234.36773999997
-        },
-        {
-          "month": "2024-07-01",
-          "name": "XNET",
-          "revenue": 0
-        },
-        {
-          "month": "2025-02-01",
-          "name": "Hivemapper",
-          "revenue": 34009.02642749064
-        },
-        {
-          "month": "2024-01-01",
-          "name": "Render",
-          "revenue": 96641.6477689035
-        },
-        {
-          "month": "2024-08-01",
-          "name": "Render",
-          "revenue": 104614.27800502321
-        },
-        {
-          "month": "2025-01-01",
-          "name": "Render",
-          "revenue": 144438.16033283147
-        },
-        {
-          "month": "2024-07-01",
-          "name": "Render",
-          "revenue": 30610.38403043401
-        },
-        {
-          "month": "2024-03-01",
-          "name": "Hivemapper",
-          "revenue": 1654.1068407340106
-        },
-        {
-          "month": "2024-03-01",
-          "name": "Helium",
-          "revenue": 86919.10388000002
-        },
-        {
-          "month": "2024-11-01",
-          "name": "Hivemapper",
-          "revenue": 142941.0965109368
-        },
-        {
-          "month": "2024-08-01",
-          "name": "Hivemapper",
-          "revenue": 62902.802155660684
-        },
-        {
-          "month": "2024-10-01",
-          "name": "Helium",
-          "revenue": 159761.63360000006
-        },
-        {
-          "month": "2024-05-01",
-          "name": "Helium",
-          "revenue": 66965.80448000002
-        },
-        {
-          "month": "2024-02-01",
-          "name": "Hivemapper",
-          "revenue": 384.60278702226043
-        },
-        {
-          "month": "2025-01-01",
-          "name": "IO.Net",
-          "revenue": 752297.6891815168
-        },
-        {
-          "month": "2024-05-01",
-          "name": "Render",
-          "revenue": 94216.64961685249
-        },
-        {
-          "month": "2024-03-01",
-          "name": "Render",
-          "revenue": 103953.81064492572
-        },
-        {
-          "month": "2024-12-01",
-          "name": "Hivemapper",
-          "revenue": 143988.4292886547
-        },
-        {
-          "month": "2025-02-01",
-          "name": "Render",
-          "revenue": 89496.15134386807
-        },
-        {
-          "month": "2025-02-01",
-          "name": "ScPrime",
-          "revenue": 1130.5507813957258
-        },
-        {
-          "month": "2024-10-01",
-          "name": "NATIX",
-          "revenue": 0.0061728913443451
-        },
-        {
-          "month": "2024-06-01",
-          "name": "Hivemapper",
-          "revenue": 15812.298523914043
-        },
-        {
-          "month": "2024-09-01",
-          "name": "Hivemapper",
-          "revenue": 17646.88738214156
-        },
-        {
-          "month": "2024-03-01",
-          "name": "XNET",
-          "revenue": 0
-        },
-        {
-          "month": "2024-07-01",
-          "name": "Hivemapper",
-          "revenue": 21158.15035574958
-        },
-        {
           "month": "2024-04-01",
-          "name": "Hivemapper",
-          "revenue": 49338.73779916373
+          "name": "Helium",
+          "revenue": 75555.05898999998
         },
         {
           "month": "2024-09-01",
-          "name": "Render",
-          "revenue": 182799.65567941876
+          "name": "Helium",
+          "revenue": 115002.87727
         },
         {
           "month": "2025-01-01",
+          "name": "ScPrime",
+          "revenue": 1944.478927579878
+        },
+        {
+          "month": "2025-02-01",
           "name": "NATIX",
-          "revenue": 29202.39008567787
-        },
-        {
-          "month": "2024-08-01",
-          "name": "Helium",
-          "revenue": 87593.7762
-        },
-        {
-          "month": "2024-10-01",
-          "name": "Hivemapper",
-          "revenue": 55719.267601589396
+          "revenue": 27696.350978770177
         }
       ],
-      "timestamp": 1763922577681,
+      "timestamp": 1763925439690,
       "chartId": "chart_1749822814924_042rjic",
       "title": "DePIN Projects Revenue",
       "apiType": "JSON"
@@ -7026,74 +7026,98 @@
         {
           "month": "2025-11-01",
           "mint": "Ionet",
-          "burn_amount": 63.43156437068742,
-          "cumulative_burn_amount": 992.3472386527059
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Uprock",
-          "burn_amount": 7227.694775855522,
-          "cumulative_burn_amount": 87982.87457858703
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Xnet",
-          "burn_amount": 3038.699084850495,
-          "cumulative_burn_amount": 10217.073613405628
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Render",
-          "burn_amount": 123878.73853733575,
-          "cumulative_burn_amount": 735807888.9002955
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Nosana",
-          "burn_amount": 4.02418899800047,
-          "cumulative_burn_amount": 172.54688479726556
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Mobile",
-          "burn_amount": 414319.3037013527,
-          "cumulative_burn_amount": 44473416.49601141
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Natix",
-          "burn_amount": 23093.67117828288,
-          "cumulative_burn_amount": 412906.13581735955
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Grass",
-          "burn_amount": 74.68455366244731,
-          "cumulative_burn_amount": 7775.435466102948
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Geodnet",
-          "burn_amount": 21457.67119913923,
-          "cumulative_burn_amount": 2992189.7166234585
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "IOT",
-          "burn_amount": 485624.2672728456,
-          "cumulative_burn_amount": 38513335.74719903
+          "burn_amount": 69.67788665026065,
+          "cumulative_burn_amount": 998.593560932279
         },
         {
           "month": "2025-11-01",
           "mint": "Honey",
-          "burn_amount": 55943.9849060027,
-          "cumulative_burn_amount": 1062737.9789407032
+          "burn_amount": 55944.04119994665,
+          "cumulative_burn_amount": 1062738.035234647
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Grass",
+          "burn_amount": 85.4820389944162,
+          "cumulative_burn_amount": 7786.23295143492
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Uprock",
+          "burn_amount": 7229.876436332806,
+          "cumulative_burn_amount": 87985.05623906432
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Natix",
+          "burn_amount": 23093.671178282875,
+          "cumulative_burn_amount": 412906.13581735955
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Nosana",
+          "burn_amount": 4.054076413603217,
+          "cumulative_burn_amount": 172.57677221286835
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "IOT",
+          "burn_amount": 505420.23010396224,
+          "cumulative_burn_amount": 38533131.71003015
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Xnet",
+          "burn_amount": 3038.699084850602,
+          "cumulative_burn_amount": 10217.073613405737
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Geodnet",
+          "burn_amount": 21457.671199139226,
+          "cumulative_burn_amount": 2992189.7166234585
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Mobile",
+          "burn_amount": 460946.4203051421,
+          "cumulative_burn_amount": 44520043.61261519
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Render",
+          "burn_amount": 128297.42009300282,
+          "cumulative_burn_amount": 735812307.5818512
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Render",
+          "burn_amount": 153946.34348955157,
+          "cumulative_burn_amount": 735684010.1617582
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "IOT",
+          "burn_amount": 86959.46583150678,
+          "cumulative_burn_amount": 38027711.47992619
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Grass",
+          "burn_amount": 296.2859483842258,
+          "cumulative_burn_amount": 7700.750912440504
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Ionet",
+          "burn_amount": 148.99595791515745,
+          "cumulative_burn_amount": 928.9156742820184
         },
         {
           "month": "2025-10-01",
           "mint": "Mobile",
           "burn_amount": 425125.57050383853,
-          "cumulative_burn_amount": 44059097.19231006
+          "cumulative_burn_amount": 44059097.19231005
         },
         {
           "month": "2025-10-01",
@@ -7103,45 +7127,9 @@
         },
         {
           "month": "2025-10-01",
-          "mint": "Geodnet",
-          "burn_amount": 23926.7039705068,
-          "cumulative_burn_amount": 2970732.0454243193
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Grass",
-          "burn_amount": 296.2859483842257,
-          "cumulative_burn_amount": 7700.750912440501
-        },
-        {
-          "month": "2025-10-01",
           "mint": "Honey",
-          "burn_amount": 76958.09529703522,
-          "cumulative_burn_amount": 1006793.9940347004
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Nosana",
-          "burn_amount": 11.025942219868924,
-          "cumulative_burn_amount": 168.52269579926508
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Xnet",
-          "burn_amount": 7177.926828597843,
-          "cumulative_burn_amount": 7178.374528555133
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Render",
-          "burn_amount": 153946.34348955145,
-          "cumulative_burn_amount": 735684010.1617582
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "IOT",
-          "burn_amount": 86959.46583150676,
-          "cumulative_burn_amount": 38027711.479926184
+          "burn_amount": 76958.09529703524,
+          "cumulative_burn_amount": 1006793.9940347006
         },
         {
           "month": "2025-10-01",
@@ -7151,117 +7139,117 @@
         },
         {
           "month": "2025-10-01",
-          "mint": "Ionet",
-          "burn_amount": 148.9959579151575,
-          "cumulative_burn_amount": 928.9156742820185
+          "mint": "Xnet",
+          "burn_amount": 7177.926828597844,
+          "cumulative_burn_amount": 7178.374528555134
         },
         {
-          "month": "2025-09-01",
-          "mint": "Uprock",
-          "burn_amount": 10915.889968589263,
-          "cumulative_burn_amount": 70836.08304759148
+          "month": "2025-10-01",
+          "mint": "Geodnet",
+          "burn_amount": 23926.703970506805,
+          "cumulative_burn_amount": 2970732.0454243193
         },
         {
-          "month": "2025-09-01",
-          "mint": "Honey",
-          "burn_amount": 37021.847009301986,
-          "cumulative_burn_amount": 929835.8987376653
+          "month": "2025-10-01",
+          "mint": "Nosana",
+          "burn_amount": 11.025942219868925,
+          "cumulative_burn_amount": 168.52269579926514
         },
         {
           "month": "2025-09-01",
           "mint": "Mobile",
           "burn_amount": 668908.2729907831,
-          "cumulative_burn_amount": 43633971.62180622
+          "cumulative_burn_amount": 43633971.62180621
         },
         {
           "month": "2025-09-01",
-          "mint": "Grass",
-          "burn_amount": 233.6748109423142,
-          "cumulative_burn_amount": 7404.464964056276
+          "mint": "Honey",
+          "burn_amount": 37021.84700930201,
+          "cumulative_burn_amount": 929835.8987376654
         },
         {
           "month": "2025-09-01",
-          "mint": "Xnet",
-          "burn_amount": 0.4476999572899395,
-          "cumulative_burn_amount": 0.4476999572899395
-        },
-        {
-          "month": "2025-09-01",
-          "mint": "IOT",
-          "burn_amount": 123377.19901630338,
-          "cumulative_burn_amount": 37940752.01409468
+          "mint": "Uprock",
+          "burn_amount": 10915.889968589261,
+          "cumulative_burn_amount": 70836.08304759148
         },
         {
           "month": "2025-09-01",
           "mint": "Nosana",
-          "burn_amount": 4.344188153171521,
-          "cumulative_burn_amount": 157.49675357939617
+          "burn_amount": 4.34418815317152,
+          "cumulative_burn_amount": 157.4967535793962
+        },
+        {
+          "month": "2025-09-01",
+          "mint": "Ionet",
+          "burn_amount": 198.835193420529,
+          "cumulative_burn_amount": 779.9197163668609
         },
         {
           "month": "2025-09-01",
           "mint": "Natix",
-          "burn_amount": 30035.63884832576,
+          "burn_amount": 30035.638848325758,
           "cumulative_burn_amount": 367055.33833361825
         },
         {
           "month": "2025-09-01",
+          "mint": "Xnet",
+          "burn_amount": 0.44769995728993944,
+          "cumulative_burn_amount": 0.44769995728993944
+        },
+        {
+          "month": "2025-09-01",
           "mint": "Geodnet",
-          "burn_amount": 1.8032124257128506,
+          "burn_amount": 1.803212425712851,
           "cumulative_burn_amount": 2946805.3414538126
         },
         {
           "month": "2025-09-01",
           "mint": "Render",
-          "burn_amount": 452830.4790070797,
+          "burn_amount": 452830.47900707973,
           "cumulative_burn_amount": 735530063.8182687
         },
         {
           "month": "2025-09-01",
-          "mint": "Ionet",
-          "burn_amount": 198.83519342052892,
-          "cumulative_burn_amount": 779.9197163668609
+          "mint": "IOT",
+          "burn_amount": 123377.19901630333,
+          "cumulative_burn_amount": 37940752.01409469
         },
         {
-          "month": "2025-08-01",
-          "mint": "Mobile",
-          "burn_amount": 1946087.0829982855,
-          "cumulative_burn_amount": 42965063.34881543
-        },
-        {
-          "month": "2025-08-01",
+          "month": "2025-09-01",
           "mint": "Grass",
-          "burn_amount": 76.39016433319512,
-          "cumulative_burn_amount": 7170.790153113961
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Render",
-          "burn_amount": 292056.47537423775,
-          "cumulative_burn_amount": 735077233.3392615
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Honey",
-          "burn_amount": 52386.526711620114,
-          "cumulative_burn_amount": 892814.0517283633
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Ionet",
-          "burn_amount": 179.02715797929235,
-          "cumulative_burn_amount": 581.084522946332
+          "burn_amount": 233.67481094231414,
+          "cumulative_burn_amount": 7404.464964056278
         },
         {
           "month": "2025-08-01",
           "mint": "Natix",
-          "burn_amount": 33333.28332726332,
+          "burn_amount": 33333.283327263314,
           "cumulative_burn_amount": 337019.6994852925
         },
         {
           "month": "2025-08-01",
+          "mint": "Mobile",
+          "burn_amount": 1946087.0829982858,
+          "cumulative_burn_amount": 42965063.348815426
+        },
+        {
+          "month": "2025-08-01",
+          "mint": "Grass",
+          "burn_amount": 76.39016433319513,
+          "cumulative_burn_amount": 7170.790153113964
+        },
+        {
+          "month": "2025-08-01",
           "mint": "IOT",
-          "burn_amount": 106287.08743860564,
-          "cumulative_burn_amount": 37817374.81507838
+          "burn_amount": 106287.08743860565,
+          "cumulative_burn_amount": 37817374.815078385
+        },
+        {
+          "month": "2025-08-01",
+          "mint": "Render",
+          "burn_amount": 292056.4753742378,
+          "cumulative_burn_amount": 735077233.3392615
         },
         {
           "month": "2025-08-01",
@@ -7271,9 +7259,15 @@
         },
         {
           "month": "2025-08-01",
+          "mint": "Ionet",
+          "burn_amount": 179.02715797929238,
+          "cumulative_burn_amount": 581.084522946332
+        },
+        {
+          "month": "2025-08-01",
           "mint": "Nosana",
-          "burn_amount": 6.2394927766541715,
-          "cumulative_burn_amount": 153.15256542622464
+          "burn_amount": 6.239492776654172,
+          "cumulative_burn_amount": 153.15256542622467
         },
         {
           "month": "2025-08-01",
@@ -7282,82 +7276,94 @@
           "cumulative_burn_amount": 59920.19307900222
         },
         {
+          "month": "2025-08-01",
+          "mint": "Honey",
+          "burn_amount": 52386.52671162012,
+          "cumulative_burn_amount": 892814.0517283634
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Mobile",
+          "burn_amount": 1420498.979600609,
+          "cumulative_burn_amount": 41018976.26581714
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Honey",
+          "burn_amount": 46372.16588114876,
+          "cumulative_burn_amount": 840427.5250167432
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Ionet",
+          "burn_amount": 206.52334882858784,
+          "cumulative_burn_amount": 402.0573649670396
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Uprock",
+          "burn_amount": 9804.974974712482,
+          "cumulative_burn_amount": 48995.40542790712
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Geodnet",
+          "burn_amount": 158477.48450844362,
+          "cumulative_burn_amount": 2686281.459846861
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Nosana",
+          "burn_amount": 2.2185606912267595,
+          "cumulative_burn_amount": 146.9130726495705
+        },
+        {
           "month": "2025-07-01",
           "mint": "Natix",
-          "burn_amount": 34391.29609589783,
+          "burn_amount": 34391.29609589784,
           "cumulative_burn_amount": 303686.41615802917
         },
         {
           "month": "2025-07-01",
           "mint": "Render",
-          "burn_amount": 207955.87741086725,
+          "burn_amount": 207955.87741086722,
           "cumulative_burn_amount": 734785176.8638873
         },
         {
           "month": "2025-07-01",
-          "mint": "Mobile",
-          "burn_amount": 1420498.9796006088,
-          "cumulative_burn_amount": 41018976.26581715
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Nosana",
-          "burn_amount": 2.21856069122676,
-          "cumulative_burn_amount": 146.91307264957047
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Geodnet",
-          "burn_amount": 158477.48450844357,
-          "cumulative_burn_amount": 2686281.459846861
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Uprock",
-          "burn_amount": 9804.97497471248,
-          "cumulative_burn_amount": 48995.40542790712
-        },
-        {
-          "month": "2025-07-01",
           "mint": "Grass",
-          "burn_amount": 50.92060989396023,
-          "cumulative_burn_amount": 7094.399988780767
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Honey",
-          "burn_amount": 46372.165881148736,
-          "cumulative_burn_amount": 840427.5250167431
+          "burn_amount": 50.920609893960226,
+          "cumulative_burn_amount": 7094.399988780769
         },
         {
           "month": "2025-07-01",
           "mint": "IOT",
-          "burn_amount": 206384.34217850328,
-          "cumulative_burn_amount": 37711087.72763977
+          "burn_amount": 206384.34217850326,
+          "cumulative_burn_amount": 37711087.72763978
         },
         {
-          "month": "2025-07-01",
-          "mint": "Ionet",
-          "burn_amount": 206.52334882858787,
-          "cumulative_burn_amount": 402.05736496703963
+          "month": "2025-06-01",
+          "mint": "IOT",
+          "burn_amount": 130587.57762374128,
+          "cumulative_burn_amount": 37504703.38546128
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Nosana",
+          "burn_amount": 7.307940745676137,
+          "cumulative_burn_amount": 144.69451195834372
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Grass",
+          "burn_amount": 29.825058959739508,
+          "cumulative_burn_amount": 7043.479378886808
         },
         {
           "month": "2025-06-01",
           "mint": "Honey",
-          "burn_amount": 28221.799573846794,
-          "cumulative_burn_amount": 794055.3591355943
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Ionet",
-          "burn_amount": 116.21750954273914,
-          "cumulative_burn_amount": 195.53401613845176
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Geodnet",
-          "burn_amount": 162651.8081898487,
-          "cumulative_burn_amount": 2527803.9753384176
+          "burn_amount": 28221.7995738468,
+          "cumulative_burn_amount": 794055.3591355945
         },
         {
           "month": "2025-06-01",
@@ -7367,39 +7373,69 @@
         },
         {
           "month": "2025-06-01",
-          "mint": "Uprock",
-          "burn_amount": 8333.551172347608,
-          "cumulative_burn_amount": 39190.43045319464
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Grass",
-          "burn_amount": 29.825058959739504,
-          "cumulative_burn_amount": 7043.479378886806
+          "mint": "Geodnet",
+          "burn_amount": 162651.8081898487,
+          "cumulative_burn_amount": 2527803.9753384176
         },
         {
           "month": "2025-06-01",
           "mint": "Mobile",
-          "burn_amount": 3112653.2501207083,
-          "cumulative_burn_amount": 39598477.28621654
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Nosana",
-          "burn_amount": 7.307940745676136,
-          "cumulative_burn_amount": 144.6945119583437
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "IOT",
-          "burn_amount": 130587.57762374131,
-          "cumulative_burn_amount": 37504703.38546127
+          "burn_amount": 3112653.25012071,
+          "cumulative_burn_amount": 39598477.286216535
         },
         {
           "month": "2025-06-01",
           "mint": "Natix",
           "burn_amount": 53022.3714603662,
           "cumulative_burn_amount": 269295.1200621313
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Ionet",
+          "burn_amount": 116.21750954273915,
+          "cumulative_burn_amount": 195.53401613845176
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Uprock",
+          "burn_amount": 8333.551172347608,
+          "cumulative_burn_amount": 39190.43045319464
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "IOT",
+          "burn_amount": 276421.3897058195,
+          "cumulative_burn_amount": 37374115.80783754
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Grass",
+          "burn_amount": 31.11858967451417,
+          "cumulative_burn_amount": 7013.654319927069
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Mobile",
+          "burn_amount": 2422878.031046614,
+          "cumulative_burn_amount": 36485824.03609583
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Uprock",
+          "burn_amount": 4775.011698155544,
+          "cumulative_burn_amount": 30856.879280847028
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Honey",
+          "burn_amount": 15224.489649359877,
+          "cumulative_burn_amount": 765833.5595617476
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Ionet",
+          "burn_amount": 1.883372706903765,
+          "cumulative_burn_amount": 79.31650659571262
         },
         {
           "month": "2025-05-01",
@@ -7409,9 +7445,9 @@
         },
         {
           "month": "2025-05-01",
-          "mint": "Uprock",
-          "burn_amount": 4775.011698155543,
-          "cumulative_burn_amount": 30856.879280847028
+          "mint": "Geodnet",
+          "burn_amount": 220291.49416273116,
+          "cumulative_burn_amount": 2365152.1671485687
         },
         {
           "month": "2025-05-01",
@@ -7421,87 +7457,57 @@
         },
         {
           "month": "2025-05-01",
-          "mint": "Honey",
-          "burn_amount": 15224.489649359875,
-          "cumulative_burn_amount": 765833.5595617476
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "IOT",
-          "burn_amount": 276421.38970581954,
-          "cumulative_burn_amount": 37374115.80783753
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Ionet",
-          "burn_amount": 1.8833727069037651,
-          "cumulative_burn_amount": 79.31650659571261
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Mobile",
-          "burn_amount": 2422878.0310466145,
-          "cumulative_burn_amount": 36485824.036095835
-        },
-        {
-          "month": "2025-05-01",
           "mint": "Nosana",
-          "burn_amount": 5.866670836592825,
-          "cumulative_burn_amount": 137.38657121266755
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Geodnet",
-          "burn_amount": 220291.49416273113,
-          "cumulative_burn_amount": 2365152.1671485687
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Grass",
-          "burn_amount": 31.11858967451417,
-          "cumulative_burn_amount": 7013.654319927067
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Nosana",
-          "burn_amount": 7.065392951046318,
-          "cumulative_burn_amount": 131.51990037607473
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Geodnet",
-          "burn_amount": 319222.01352984936,
-          "cumulative_burn_amount": 2144860.6729858373
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Ionet",
-          "burn_amount": 4.335255577158712,
-          "cumulative_burn_amount": 77.43313388880884
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "IOT",
-          "burn_amount": 194240.46676899536,
-          "cumulative_burn_amount": 37097694.41813171
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Honey",
-          "burn_amount": 18625.41517013848,
-          "cumulative_burn_amount": 750609.0699123878
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Grass",
-          "burn_amount": 60.972980561470614,
-          "cumulative_burn_amount": 6982.535730252553
+          "burn_amount": 5.866670836592824,
+          "cumulative_burn_amount": 137.38657121266758
         },
         {
           "month": "2025-04-01",
           "mint": "Render",
-          "burn_amount": 161811.9161292461,
+          "burn_amount": 161811.91612924606,
           "cumulative_burn_amount": 734054680.8260427
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Honey",
+          "burn_amount": 18625.415170138476,
+          "cumulative_burn_amount": 750609.0699123878
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Nosana",
+          "burn_amount": 7.065392951046319,
+          "cumulative_burn_amount": 131.51990037607476
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Grass",
+          "burn_amount": 60.9729805614706,
+          "cumulative_burn_amount": 6982.5357302525545
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "IOT",
+          "burn_amount": 194240.4667689954,
+          "cumulative_burn_amount": 37097694.41813172
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Ionet",
+          "burn_amount": 4.335255577158713,
+          "cumulative_burn_amount": 77.43313388880885
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Mobile",
+          "burn_amount": 1.573451918329282,
+          "cumulative_burn_amount": 34062946.005049214
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Natix",
+          "burn_amount": 22230.185331719316,
+          "cumulative_burn_amount": 184032.04429871746
         },
         {
           "month": "2025-04-01",
@@ -7511,57 +7517,33 @@
         },
         {
           "month": "2025-04-01",
-          "mint": "Mobile",
-          "burn_amount": 1.573451918329282,
-          "cumulative_burn_amount": 34062946.00504922
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Natix",
-          "burn_amount": 22230.185331719316,
-          "cumulative_burn_amount": 184032.04429871746
+          "mint": "Geodnet",
+          "burn_amount": 319222.0135298495,
+          "cumulative_burn_amount": 2144860.6729858373
         },
         {
           "month": "2025-03-01",
           "mint": "IOT",
-          "burn_amount": 399461.0511484478,
-          "cumulative_burn_amount": 36903453.951362714
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Nosana",
-          "burn_amount": 21.98873002906916,
-          "cumulative_burn_amount": 124.45450742502842
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Honey",
-          "burn_amount": 6076.125968002037,
-          "cumulative_burn_amount": 731983.6547422493
+          "burn_amount": 399461.05114844785,
+          "cumulative_burn_amount": 36903453.95136272
         },
         {
           "month": "2025-03-01",
           "mint": "Grass",
-          "burn_amount": 5385.235632394904,
-          "cumulative_burn_amount": 6921.562749691082
+          "burn_amount": 5385.235632394905,
+          "cumulative_burn_amount": 6921.562749691084
         },
         {
           "month": "2025-03-01",
-          "mint": "Geodnet",
-          "burn_amount": 346115.927895265,
-          "cumulative_burn_amount": 1825638.6594559879
+          "mint": "Honey",
+          "burn_amount": 6076.125968002035,
+          "cumulative_burn_amount": 731983.6547422493
         },
         {
           "month": "2025-03-01",
           "mint": "Mobile",
           "burn_amount": 814704.9672545516,
-          "cumulative_burn_amount": 34062944.4315973
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Natix",
-          "burn_amount": 28242.26209413591,
-          "cumulative_burn_amount": 161801.85896699814
+          "cumulative_burn_amount": 34062944.43159729
         },
         {
           "month": "2025-03-01",
@@ -7571,9 +7553,21 @@
         },
         {
           "month": "2025-03-01",
-          "mint": "Ionet",
-          "burn_amount": 26.540283497464873,
-          "cumulative_burn_amount": 73.09787831165013
+          "mint": "Nosana",
+          "burn_amount": 21.988730029069156,
+          "cumulative_burn_amount": 124.45450742502844
+        },
+        {
+          "month": "2025-03-01",
+          "mint": "Natix",
+          "burn_amount": 28242.26209413591,
+          "cumulative_burn_amount": 161801.85896699814
+        },
+        {
+          "month": "2025-03-01",
+          "mint": "Geodnet",
+          "burn_amount": 346115.927895265,
+          "cumulative_burn_amount": 1825638.6594559879
         },
         {
           "month": "2025-03-01",
@@ -7582,22 +7576,28 @@
           "cumulative_burn_amount": 733892868.9099134
         },
         {
+          "month": "2025-03-01",
+          "mint": "Ionet",
+          "burn_amount": 26.54028349746487,
+          "cumulative_burn_amount": 73.09787831165013
+        },
+        {
           "month": "2025-02-01",
-          "mint": "Render",
-          "burn_amount": 156653.23359662973,
-          "cumulative_burn_amount": 733766114.4147395
+          "mint": "Natix",
+          "burn_amount": 27644.64418057444,
+          "cumulative_burn_amount": 133559.59687286222
+        },
+        {
+          "month": "2025-02-01",
+          "mint": "Mobile",
+          "burn_amount": 21103.141446068188,
+          "cumulative_burn_amount": 33248239.46434274
         },
         {
           "month": "2025-02-01",
           "mint": "IOT",
           "burn_amount": 2459616.802465118,
-          "cumulative_burn_amount": 36503992.90021427
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Nosana",
-          "burn_amount": 3.1949327386465254,
-          "cumulative_burn_amount": 102.46577739595926
+          "cumulative_burn_amount": 36503992.90021428
         },
         {
           "month": "2025-02-01",
@@ -7607,27 +7607,9 @@
         },
         {
           "month": "2025-02-01",
-          "mint": "Uprock",
-          "burn_amount": 5208.602981976247,
-          "cumulative_burn_amount": 13417.613174188657
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Grass",
-          "burn_amount": 56.658158543270645,
-          "cumulative_burn_amount": 1536.3271172961781
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Natix",
-          "burn_amount": 27644.644180574436,
-          "cumulative_burn_amount": 133559.59687286222
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Mobile",
-          "burn_amount": 21103.141446068188,
-          "cumulative_burn_amount": 33248239.464342747
+          "mint": "Render",
+          "burn_amount": 156653.23359662975,
+          "cumulative_burn_amount": 733766114.4147395
         },
         {
           "month": "2025-02-01",
@@ -7637,51 +7619,27 @@
         },
         {
           "month": "2025-02-01",
-          "mint": "Ionet",
-          "burn_amount": 3.433026168528816,
-          "cumulative_burn_amount": 46.557594814185265
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Render",
-          "burn_amount": 144796.5160997139,
-          "cumulative_burn_amount": 733609461.1811428
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "IOT",
-          "burn_amount": 1681470.4695625498,
-          "cumulative_burn_amount": 34044376.09774915
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Mobile",
-          "burn_amount": 124932.9210297203,
-          "cumulative_burn_amount": 33227136.322896678
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Geodnet",
-          "burn_amount": 658007.7855989577,
-          "cumulative_burn_amount": 958769.2934535508
-        },
-        {
-          "month": "2025-01-01",
           "mint": "Grass",
-          "burn_amount": 188.80171880604095,
-          "cumulative_burn_amount": 1479.6689587529074
+          "burn_amount": 56.658158543270645,
+          "cumulative_burn_amount": 1536.3271172961784
         },
         {
-          "month": "2025-01-01",
-          "mint": "Natix",
-          "burn_amount": 29497.075002674886,
-          "cumulative_burn_amount": 105914.9526922878
+          "month": "2025-02-01",
+          "mint": "Ionet",
+          "burn_amount": 3.4330261685288153,
+          "cumulative_burn_amount": 46.55759481418526
         },
         {
-          "month": "2025-01-01",
+          "month": "2025-02-01",
+          "mint": "Uprock",
+          "burn_amount": 5208.602981976249,
+          "cumulative_burn_amount": 13417.613174188657
+        },
+        {
+          "month": "2025-02-01",
           "mint": "Nosana",
-          "burn_amount": 6.237748276148411,
-          "cumulative_burn_amount": 99.27084465731274
+          "burn_amount": 3.1949327386465254,
+          "cumulative_burn_amount": 102.46577739595928
         },
         {
           "month": "2025-01-01",
@@ -7691,8 +7649,26 @@
         },
         {
           "month": "2025-01-01",
+          "mint": "Natix",
+          "burn_amount": 29497.075002674886,
+          "cumulative_burn_amount": 105914.95269228778
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Geodnet",
+          "burn_amount": 658007.7855989578,
+          "cumulative_burn_amount": 958769.2934535509
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "IOT",
+          "burn_amount": 1681470.4695625505,
+          "cumulative_burn_amount": 34044376.09774916
+        },
+        {
+          "month": "2025-01-01",
           "mint": "Honey",
-          "burn_amount": 11463.843484612229,
+          "burn_amount": 11463.84348461223,
           "cumulative_burn_amount": 691090.4819971562
         },
         {
@@ -7702,16 +7678,70 @@
           "cumulative_burn_amount": 8209.010192212409
         },
         {
+          "month": "2025-01-01",
+          "mint": "Grass",
+          "burn_amount": 188.80171880604092,
+          "cumulative_burn_amount": 1479.6689587529077
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Mobile",
+          "burn_amount": 124932.92102972028,
+          "cumulative_burn_amount": 33227136.32289667
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Nosana",
+          "burn_amount": 6.237748276148411,
+          "cumulative_burn_amount": 99.27084465731275
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Render",
+          "burn_amount": 144796.51609971386,
+          "cumulative_burn_amount": 733609461.1811428
+        },
+        {
           "month": "2024-12-01",
           "mint": "Render",
-          "burn_amount": 741447.3000486322,
+          "burn_amount": 741447.3000486323,
           "cumulative_burn_amount": 733464664.6650431
         },
         {
           "month": "2024-12-01",
+          "mint": "Grass",
+          "burn_amount": 137.0989010619285,
+          "cumulative_burn_amount": 1290.8672399468667
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "IOT",
+          "burn_amount": 4102419.559598013,
+          "cumulative_burn_amount": 32362905.628186606
+        },
+        {
+          "month": "2024-12-01",
           "mint": "Geodnet",
-          "burn_amount": 205131.79842688655,
-          "cumulative_burn_amount": 300761.5078545931
+          "burn_amount": 205131.7984268866,
+          "cumulative_burn_amount": 300761.50785459316
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Natix",
+          "burn_amount": 47841.57152436523,
+          "cumulative_burn_amount": 76417.8776896129
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Nosana",
+          "burn_amount": 24.882265023903482,
+          "cumulative_burn_amount": 93.03309638116434
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Uprock",
+          "burn_amount": 179.47591905130128,
+          "cumulative_burn_amount": 3623.2310775413503
         },
         {
           "month": "2024-12-01",
@@ -7721,75 +7751,15 @@
         },
         {
           "month": "2024-12-01",
-          "mint": "Natix",
-          "burn_amount": 47841.571524365245,
-          "cumulative_burn_amount": 76417.87768961291
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Nosana",
-          "burn_amount": 24.882265023903475,
-          "cumulative_burn_amount": 93.03309638116433
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Grass",
-          "burn_amount": 137.09890106192853,
-          "cumulative_burn_amount": 1290.8672399468664
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Uprock",
-          "burn_amount": 179.47591905130125,
-          "cumulative_burn_amount": 3623.2310775413503
+          "mint": "Mobile",
+          "burn_amount": 26292357.12458194,
+          "cumulative_burn_amount": 33102203.40186695
         },
         {
           "month": "2024-12-01",
           "mint": "Ionet",
           "burn_amount": 8.445192101557206,
           "cumulative_burn_amount": 31.56353229850231
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Mobile",
-          "burn_amount": 26292357.124581948,
-          "cumulative_burn_amount": 33102203.401866958
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "IOT",
-          "burn_amount": 4102419.5595980124,
-          "cumulative_burn_amount": 32362905.628186602
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Ionet",
-          "burn_amount": 11.5949456787035,
-          "cumulative_burn_amount": 23.118340196945105
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Natix",
-          "burn_amount": 19832.945014676963,
-          "cumulative_burn_amount": 28576.306165247664
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Uprock",
-          "burn_amount": 275.5290814961678,
-          "cumulative_burn_amount": 3443.755158490049
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Render",
-          "burn_amount": 243655.9421094238,
-          "cumulative_burn_amount": 732723217.3649945
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Nosana",
-          "burn_amount": 14.732947394207189,
-          "cumulative_burn_amount": 68.15083135726086
         },
         {
           "month": "2024-11-01",
@@ -7799,63 +7769,63 @@
         },
         {
           "month": "2024-11-01",
-          "mint": "Mobile",
-          "burn_amount": 95890.56489613153,
-          "cumulative_burn_amount": 6809846.27728501
+          "mint": "Render",
+          "burn_amount": 243655.94210942384,
+          "cumulative_burn_amount": 732723217.3649945
         },
         {
           "month": "2024-11-01",
           "mint": "Honey",
-          "burn_amount": 144047.36881246502,
-          "cumulative_burn_amount": 484861.9639433691
+          "burn_amount": 144047.36881246505,
+          "cumulative_burn_amount": 484861.96394336916
+        },
+        {
+          "month": "2024-11-01",
+          "mint": "Ionet",
+          "burn_amount": 11.594945678703498,
+          "cumulative_burn_amount": 23.118340196945105
+        },
+        {
+          "month": "2024-11-01",
+          "mint": "Mobile",
+          "burn_amount": 95890.56489613152,
+          "cumulative_burn_amount": 6809846.277285009
         },
         {
           "month": "2024-11-01",
           "mint": "IOT",
-          "burn_amount": 3330374.645350469,
-          "cumulative_burn_amount": 28260486.06858859
+          "burn_amount": 3330374.64535047,
+          "cumulative_burn_amount": 28260486.068588592
         },
         {
           "month": "2024-11-01",
           "mint": "Grass",
-          "burn_amount": 614.0717184915118,
-          "cumulative_burn_amount": 1153.768338884938
+          "burn_amount": 614.0717184915119,
+          "cumulative_burn_amount": 1153.7683388849382
         },
         {
-          "month": "2024-10-01",
+          "month": "2024-11-01",
           "mint": "Uprock",
-          "burn_amount": 190.96232675300888,
-          "cumulative_burn_amount": 3168.226076993881
+          "burn_amount": 275.52908149616786,
+          "cumulative_burn_amount": 3443.755158490049
         },
         {
-          "month": "2024-10-01",
-          "mint": "IOT",
-          "burn_amount": 1359921.2375695033,
-          "cumulative_burn_amount": 24930111.42323812
+          "month": "2024-11-01",
+          "mint": "Nosana",
+          "burn_amount": 14.732947394207187,
+          "cumulative_burn_amount": 68.15083135726086
         },
         {
-          "month": "2024-10-01",
-          "mint": "Mobile",
-          "burn_amount": 192132.6234283086,
-          "cumulative_burn_amount": 6713955.712388878
-        },
-        {
-          "month": "2024-10-01",
-          "mint": "Render",
-          "burn_amount": 249068.5275673646,
-          "cumulative_burn_amount": 732479561.4228851
+          "month": "2024-11-01",
+          "mint": "Natix",
+          "burn_amount": 19832.945014676963,
+          "cumulative_burn_amount": 28576.306165247664
         },
         {
           "month": "2024-10-01",
           "mint": "Ionet",
-          "burn_amount": 1.3105109912363713,
-          "cumulative_burn_amount": 11.523394518241606
-        },
-        {
-          "month": "2024-10-01",
-          "mint": "Nosana",
-          "burn_amount": 4.666823389661176,
-          "cumulative_burn_amount": 53.41788396305366
+          "burn_amount": 1.3105109912363715,
+          "cumulative_burn_amount": 11.523394518241608
         },
         {
           "month": "2024-10-01",
@@ -7872,38 +7842,50 @@
         {
           "month": "2024-10-01",
           "mint": "Honey",
-          "burn_amount": 60569.28047621699,
+          "burn_amount": 60569.28047621698,
           "cumulative_burn_amount": 340814.5951309041
         },
         {
           "month": "2024-10-01",
-          "mint": "Geodnet",
-          "burn_amount": 23491.40521980096,
-          "cumulative_burn_amount": 23491.40521980096
+          "mint": "Uprock",
+          "burn_amount": 190.96232675300888,
+          "cumulative_burn_amount": 3168.226076993881
         },
         {
-          "month": "2024-09-01",
-          "mint": "Nosana",
-          "burn_amount": 0.13349111895128302,
-          "cumulative_burn_amount": 48.751060573392486
-        },
-        {
-          "month": "2024-09-01",
+          "month": "2024-10-01",
           "mint": "Mobile",
-          "burn_amount": 292077.51666727406,
-          "cumulative_burn_amount": 6521823.088960569
+          "burn_amount": 192132.62342830852,
+          "cumulative_burn_amount": 6713955.712388877
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Nosana",
+          "burn_amount": 4.666823389661176,
+          "cumulative_burn_amount": 53.41788396305367
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Render",
+          "burn_amount": 249068.5275673647,
+          "cumulative_burn_amount": 732479561.4228851
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "IOT",
+          "burn_amount": 1359921.2375695033,
+          "cumulative_burn_amount": 24930111.42323812
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Geodnet",
+          "burn_amount": 23491.405219800956,
+          "cumulative_burn_amount": 23491.405219800956
         },
         {
           "month": "2024-09-01",
           "mint": "Ionet",
-          "burn_amount": 0.9578471096443935,
-          "cumulative_burn_amount": 10.212883527005234
-        },
-        {
-          "month": "2024-09-01",
-          "mint": "IOT",
-          "burn_amount": 2614758.7906805393,
-          "cumulative_burn_amount": 23570190.185668617
+          "burn_amount": 0.9578471096443933,
+          "cumulative_burn_amount": 10.212883527005236
         },
         {
           "month": "2024-09-01",
@@ -7913,14 +7895,14 @@
         },
         {
           "month": "2024-09-01",
-          "mint": "Uprock",
-          "burn_amount": 88.28348195352126,
-          "cumulative_burn_amount": 2977.2637502408725
+          "mint": "IOT",
+          "burn_amount": 2614758.7906805393,
+          "cumulative_burn_amount": 23570190.185668617
         },
         {
           "month": "2024-09-01",
           "mint": "Render",
-          "burn_amount": 184077.60449466866,
+          "burn_amount": 184077.6044946687,
           "cumulative_burn_amount": 732230492.8953177
         },
         {
@@ -7930,22 +7912,34 @@
           "cumulative_burn_amount": 8743.355180275114
         },
         {
-          "month": "2024-08-01",
-          "mint": "Ionet",
-          "burn_amount": 0.8170838369498135,
-          "cumulative_burn_amount": 9.25503641736084
+          "month": "2024-09-01",
+          "mint": "Uprock",
+          "burn_amount": 88.28348195352129,
+          "cumulative_burn_amount": 2977.2637502408725
+        },
+        {
+          "month": "2024-09-01",
+          "mint": "Mobile",
+          "burn_amount": 292077.5166672741,
+          "cumulative_burn_amount": 6521823.088960568
+        },
+        {
+          "month": "2024-09-01",
+          "mint": "Nosana",
+          "burn_amount": 0.13349111895128302,
+          "cumulative_burn_amount": 48.75106057339249
         },
         {
           "month": "2024-08-01",
-          "mint": "Honey",
-          "burn_amount": 62718.75521075167,
-          "cumulative_burn_amount": 263799.8821584359
+          "mint": "IOT",
+          "burn_amount": 2754912.539730611,
+          "cumulative_burn_amount": 20955431.39498808
         },
         {
           "month": "2024-08-01",
           "mint": "Mobile",
-          "burn_amount": 407038.72035512317,
-          "cumulative_burn_amount": 6229745.5722932955
+          "burn_amount": 407038.7203551231,
+          "cumulative_burn_amount": 6229745.572293295
         },
         {
           "month": "2024-08-01",
@@ -7955,9 +7949,9 @@
         },
         {
           "month": "2024-08-01",
-          "mint": "IOT",
-          "burn_amount": 2754912.53973061,
-          "cumulative_burn_amount": 20955431.39498808
+          "mint": "Ionet",
+          "burn_amount": 0.8170838369498133,
+          "cumulative_burn_amount": 9.255036417360841
         },
         {
           "month": "2024-08-01",
@@ -7969,7 +7963,7 @@
           "month": "2024-08-01",
           "mint": "Nosana",
           "burn_amount": 1.158293143882131,
-          "cumulative_burn_amount": 48.6175694544412
+          "cumulative_burn_amount": 48.61756945444121
         },
         {
           "month": "2024-08-01",
@@ -7978,34 +7972,28 @@
           "cumulative_burn_amount": 2888.980268287351
         },
         {
+          "month": "2024-08-01",
+          "mint": "Honey",
+          "burn_amount": 62718.75521075166,
+          "cumulative_burn_amount": 263799.8821584359
+        },
+        {
           "month": "2024-07-01",
-          "mint": "Mobile",
-          "burn_amount": 537054.8608399624,
-          "cumulative_burn_amount": 5822706.851938172
+          "mint": "Ionet",
+          "burn_amount": 2.2771726101949223,
+          "cumulative_burn_amount": 8.437952580411029
         },
         {
           "month": "2024-07-01",
           "mint": "IOT",
           "burn_amount": 1324975.2452205957,
-          "cumulative_burn_amount": 18200518.85525747
+          "cumulative_burn_amount": 18200518.855257466
         },
         {
           "month": "2024-07-01",
           "mint": "Nosana",
           "burn_amount": 3.5430090657151396,
-          "cumulative_burn_amount": 47.45927631055907
-        },
-        {
-          "month": "2024-07-01",
-          "mint": "Ionet",
-          "burn_amount": 2.277172610194922,
-          "cumulative_burn_amount": 8.437952580411027
-        },
-        {
-          "month": "2024-07-01",
-          "mint": "Honey",
-          "burn_amount": 21266.03168031145,
-          "cumulative_burn_amount": 201081.12694768424
+          "cumulative_burn_amount": 47.459276310559076
         },
         {
           "month": "2024-07-01",
@@ -8015,27 +8003,57 @@
         },
         {
           "month": "2024-07-01",
+          "mint": "Mobile",
+          "burn_amount": 537054.8608399625,
+          "cumulative_burn_amount": 5822706.851938171
+        },
+        {
+          "month": "2024-07-01",
           "mint": "Render",
           "burn_amount": 576095571.5555012,
           "cumulative_burn_amount": 576550562.0978942
         },
         {
+          "month": "2024-07-01",
+          "mint": "Honey",
+          "burn_amount": 21266.031680311447,
+          "cumulative_burn_amount": 201081.12694768424
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Nosana",
+          "burn_amount": 32.917064062084144,
+          "cumulative_burn_amount": 43.91626724484394
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Ionet",
+          "burn_amount": 6.160779970216106,
+          "cumulative_burn_amount": 6.160779970216106
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Mobile",
+          "burn_amount": 450953.4464983722,
+          "cumulative_burn_amount": 5285651.991098209
+        },
+        {
           "month": "2024-06-01",
           "mint": "Honey",
-          "burn_amount": 16009.74130039198,
+          "burn_amount": 16009.741300391981,
           "cumulative_burn_amount": 179815.0952673728
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Render",
+          "burn_amount": 110186.41173907269,
+          "cumulative_burn_amount": 454990.5423929834
         },
         {
           "month": "2024-06-01",
           "mint": "IOT",
           "burn_amount": 945203.1171918546,
-          "cumulative_burn_amount": 16875543.610036876
-        },
-        {
-          "month": "2024-06-01",
-          "mint": "Nosana",
-          "burn_amount": 32.91706406208414,
-          "cumulative_burn_amount": 43.91626724484393
+          "cumulative_burn_amount": 16875543.610036872
         },
         {
           "month": "2024-06-01",
@@ -8044,46 +8062,22 @@
           "cumulative_burn_amount": 2625.66488840782
         },
         {
-          "month": "2024-06-01",
-          "mint": "Ionet",
-          "burn_amount": 6.1607799702161055,
-          "cumulative_burn_amount": 6.1607799702161055
-        },
-        {
-          "month": "2024-06-01",
+          "month": "2024-05-01",
           "mint": "Mobile",
-          "burn_amount": 450953.4464983721,
-          "cumulative_burn_amount": 5285651.99109821
+          "burn_amount": 714987.7587794155,
+          "cumulative_burn_amount": 4834698.544599837
         },
         {
-          "month": "2024-06-01",
-          "mint": "Render",
-          "burn_amount": 110186.41173907273,
-          "cumulative_burn_amount": 454990.54239298345
+          "month": "2024-05-01",
+          "mint": "Honey",
+          "burn_amount": 107010.56801573615,
+          "cumulative_burn_amount": 163805.3539669808
         },
         {
           "month": "2024-05-01",
           "mint": "IOT",
           "burn_amount": 1384457.7763695107,
-          "cumulative_burn_amount": 15930340.492845021
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Mobile",
-          "burn_amount": 714987.7587794157,
-          "cumulative_burn_amount": 4834698.544599838
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Nosana",
-          "burn_amount": 7.125487561147312,
-          "cumulative_burn_amount": 10.999203182759794
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Honey",
-          "burn_amount": 107010.56801573618,
-          "cumulative_burn_amount": 163805.35396698082
+          "cumulative_burn_amount": 15930340.49284502
         },
         {
           "month": "2024-05-01",
@@ -8093,33 +8087,33 @@
         },
         {
           "month": "2024-05-01",
+          "mint": "Nosana",
+          "burn_amount": 7.125487561147311,
+          "cumulative_burn_amount": 10.999203182759793
+        },
+        {
+          "month": "2024-05-01",
           "mint": "Render",
-          "burn_amount": 91142.16501225231,
+          "burn_amount": 91142.1650122523,
           "cumulative_burn_amount": 344804.1306539107
         },
         {
           "month": "2024-04-01",
-          "mint": "IOT",
-          "burn_amount": 1609387.6356535286,
-          "cumulative_burn_amount": 14545882.716475511
-        },
-        {
-          "month": "2024-04-01",
-          "mint": "Render",
-          "burn_amount": 59355.067692924196,
-          "cumulative_burn_amount": 253661.9656416584
+          "mint": "Mobile",
+          "burn_amount": 861512.5418090974,
+          "cumulative_burn_amount": 4119710.7858204213
         },
         {
           "month": "2024-04-01",
           "mint": "Honey",
-          "burn_amount": 49174.231331578005,
-          "cumulative_burn_amount": 56794.785951244645
+          "burn_amount": 49174.231331578,
+          "cumulative_burn_amount": 56794.78595124464
         },
         {
           "month": "2024-04-01",
-          "mint": "Mobile",
-          "burn_amount": 861512.5418090973,
-          "cumulative_burn_amount": 4119710.7858204218
+          "mint": "IOT",
+          "burn_amount": 1609387.635653529,
+          "cumulative_burn_amount": 14545882.71647551
         },
         {
           "month": "2024-04-01",
@@ -8128,16 +8122,16 @@
           "cumulative_burn_amount": 3.8737156216124817
         },
         {
-          "month": "2024-03-01",
-          "mint": "Honey",
-          "burn_amount": 1663.435498641064,
-          "cumulative_burn_amount": 7620.55461966664
+          "month": "2024-04-01",
+          "mint": "Render",
+          "burn_amount": 59355.067692924196,
+          "cumulative_burn_amount": 253661.96564165837
         },
         {
           "month": "2024-03-01",
           "mint": "IOT",
-          "burn_amount": 4162721.179172149,
-          "cumulative_burn_amount": 12936495.080821982
+          "burn_amount": 4162721.179172148,
+          "cumulative_burn_amount": 12936495.08082198
         },
         {
           "month": "2024-03-01",
@@ -8147,27 +8141,27 @@
         },
         {
           "month": "2024-03-01",
-          "mint": "Render",
-          "burn_amount": 105286.66564732874,
-          "cumulative_burn_amount": 194306.8979487342
+          "mint": "Honey",
+          "burn_amount": 1663.435498641064,
+          "cumulative_burn_amount": 7620.55461966664
         },
         {
           "month": "2024-03-01",
           "mint": "Mobile",
           "burn_amount": 1476075.3735022536,
-          "cumulative_burn_amount": 3258198.2440113244
+          "cumulative_burn_amount": 3258198.244011324
+        },
+        {
+          "month": "2024-03-01",
+          "mint": "Render",
+          "burn_amount": 105286.66564732873,
+          "cumulative_burn_amount": 194306.89794873417
         },
         {
           "month": "2024-02-01",
           "mint": "Mobile",
-          "burn_amount": 1069473.3433344297,
-          "cumulative_burn_amount": 1782122.8705090708
-        },
-        {
-          "month": "2024-02-01",
-          "mint": "IOT",
-          "burn_amount": 4552060.276868507,
-          "cumulative_burn_amount": 8773773.901649833
+          "burn_amount": 1069473.3433344294,
+          "cumulative_burn_amount": 1782122.8705090703
         },
         {
           "month": "2024-02-01",
@@ -8177,33 +8171,21 @@
         },
         {
           "month": "2024-02-01",
-          "mint": "Nosana",
-          "burn_amount": 0.7039780542116871,
-          "cumulative_burn_amount": 1.3555039238916298
-        },
-        {
-          "month": "2024-02-01",
           "mint": "Honey",
-          "burn_amount": 385.7917661947959,
+          "burn_amount": 385.79176619479597,
           "cumulative_burn_amount": 5957.1191210255765
         },
         {
-          "month": "2024-01-01",
-          "mint": "Mobile",
-          "burn_amount": 712649.5271746411,
-          "cumulative_burn_amount": 712649.5271746411
+          "month": "2024-02-01",
+          "mint": "IOT",
+          "burn_amount": 4552060.276868507,
+          "cumulative_burn_amount": 8773773.901649833
         },
         {
-          "month": "2024-01-01",
-          "mint": "Honey",
-          "burn_amount": 5571.327354830781,
-          "cumulative_burn_amount": 5571.327354830781
-        },
-        {
-          "month": "2024-01-01",
+          "month": "2024-02-01",
           "mint": "Nosana",
-          "burn_amount": 0.6515258696799426,
-          "cumulative_burn_amount": 0.6515258696799426
+          "burn_amount": 0.703978054211687,
+          "cumulative_burn_amount": 1.3555039238916298
         },
         {
           "month": "2024-01-01",
@@ -8213,12 +8195,30 @@
         },
         {
           "month": "2024-01-01",
+          "mint": "Honey",
+          "burn_amount": 5571.327354830781,
+          "cumulative_burn_amount": 5571.327354830781
+        },
+        {
+          "month": "2024-01-01",
+          "mint": "Mobile",
+          "burn_amount": 712649.5271746409,
+          "cumulative_burn_amount": 712649.5271746409
+        },
+        {
+          "month": "2024-01-01",
           "mint": "Render",
           "burn_amount": 32393.594168670494,
           "cumulative_burn_amount": 32393.594168670494
+        },
+        {
+          "month": "2024-01-01",
+          "mint": "Nosana",
+          "burn_amount": 0.6515258696799427,
+          "cumulative_burn_amount": 0.6515258696799427
         }
       ],
-      "timestamp": 1763922577687,
+      "timestamp": 1763925439697,
       "chartId": "chart_1749822956649_5ja9dme",
       "title": "Token Burned By DePIN",
       "apiType": "JSON"
@@ -8229,74 +8229,98 @@
         {
           "month": "2025-11-01",
           "mint": "Ionet",
-          "burn_amount": 63.43156437068742,
-          "cumulative_burn_amount": 992.3472386527059
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Uprock",
-          "burn_amount": 7227.694775855522,
-          "cumulative_burn_amount": 87982.87457858703
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Xnet",
-          "burn_amount": 3038.699084850495,
-          "cumulative_burn_amount": 10217.073613405628
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Render",
-          "burn_amount": 123878.73853733575,
-          "cumulative_burn_amount": 735807888.9002955
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Nosana",
-          "burn_amount": 4.02418899800047,
-          "cumulative_burn_amount": 172.54688479726556
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Mobile",
-          "burn_amount": 414319.3037013527,
-          "cumulative_burn_amount": 44473416.49601141
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Natix",
-          "burn_amount": 23093.67117828288,
-          "cumulative_burn_amount": 412906.13581735955
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Grass",
-          "burn_amount": 74.68455366244731,
-          "cumulative_burn_amount": 7775.435466102948
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "Geodnet",
-          "burn_amount": 21457.67119913923,
-          "cumulative_burn_amount": 2992189.7166234585
-        },
-        {
-          "month": "2025-11-01",
-          "mint": "IOT",
-          "burn_amount": 485624.2672728456,
-          "cumulative_burn_amount": 38513335.74719903
+          "burn_amount": 69.67788665026065,
+          "cumulative_burn_amount": 998.593560932279
         },
         {
           "month": "2025-11-01",
           "mint": "Honey",
-          "burn_amount": 55943.9849060027,
-          "cumulative_burn_amount": 1062737.9789407032
+          "burn_amount": 55944.04119994665,
+          "cumulative_burn_amount": 1062738.035234647
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Grass",
+          "burn_amount": 85.4820389944162,
+          "cumulative_burn_amount": 7786.23295143492
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Uprock",
+          "burn_amount": 7229.876436332806,
+          "cumulative_burn_amount": 87985.05623906432
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Natix",
+          "burn_amount": 23093.671178282875,
+          "cumulative_burn_amount": 412906.13581735955
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Nosana",
+          "burn_amount": 4.054076413603217,
+          "cumulative_burn_amount": 172.57677221286835
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "IOT",
+          "burn_amount": 505420.23010396224,
+          "cumulative_burn_amount": 38533131.71003015
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Xnet",
+          "burn_amount": 3038.699084850602,
+          "cumulative_burn_amount": 10217.073613405737
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Geodnet",
+          "burn_amount": 21457.671199139226,
+          "cumulative_burn_amount": 2992189.7166234585
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Mobile",
+          "burn_amount": 460946.4203051421,
+          "cumulative_burn_amount": 44520043.61261519
+        },
+        {
+          "month": "2025-11-01",
+          "mint": "Render",
+          "burn_amount": 128297.42009300282,
+          "cumulative_burn_amount": 735812307.5818512
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Render",
+          "burn_amount": 153946.34348955157,
+          "cumulative_burn_amount": 735684010.1617582
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "IOT",
+          "burn_amount": 86959.46583150678,
+          "cumulative_burn_amount": 38027711.47992619
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Grass",
+          "burn_amount": 296.2859483842258,
+          "cumulative_burn_amount": 7700.750912440504
+        },
+        {
+          "month": "2025-10-01",
+          "mint": "Ionet",
+          "burn_amount": 148.99595791515745,
+          "cumulative_burn_amount": 928.9156742820184
         },
         {
           "month": "2025-10-01",
           "mint": "Mobile",
           "burn_amount": 425125.57050383853,
-          "cumulative_burn_amount": 44059097.19231006
+          "cumulative_burn_amount": 44059097.19231005
         },
         {
           "month": "2025-10-01",
@@ -8306,45 +8330,9 @@
         },
         {
           "month": "2025-10-01",
-          "mint": "Geodnet",
-          "burn_amount": 23926.7039705068,
-          "cumulative_burn_amount": 2970732.0454243193
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Grass",
-          "burn_amount": 296.2859483842257,
-          "cumulative_burn_amount": 7700.750912440501
-        },
-        {
-          "month": "2025-10-01",
           "mint": "Honey",
-          "burn_amount": 76958.09529703522,
-          "cumulative_burn_amount": 1006793.9940347004
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Nosana",
-          "burn_amount": 11.025942219868924,
-          "cumulative_burn_amount": 168.52269579926508
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Xnet",
-          "burn_amount": 7177.926828597843,
-          "cumulative_burn_amount": 7178.374528555133
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "Render",
-          "burn_amount": 153946.34348955145,
-          "cumulative_burn_amount": 735684010.1617582
-        },
-        {
-          "month": "2025-10-01",
-          "mint": "IOT",
-          "burn_amount": 86959.46583150676,
-          "cumulative_burn_amount": 38027711.479926184
+          "burn_amount": 76958.09529703524,
+          "cumulative_burn_amount": 1006793.9940347006
         },
         {
           "month": "2025-10-01",
@@ -8354,117 +8342,117 @@
         },
         {
           "month": "2025-10-01",
-          "mint": "Ionet",
-          "burn_amount": 148.9959579151575,
-          "cumulative_burn_amount": 928.9156742820185
+          "mint": "Xnet",
+          "burn_amount": 7177.926828597844,
+          "cumulative_burn_amount": 7178.374528555134
         },
         {
-          "month": "2025-09-01",
-          "mint": "Uprock",
-          "burn_amount": 10915.889968589263,
-          "cumulative_burn_amount": 70836.08304759148
+          "month": "2025-10-01",
+          "mint": "Geodnet",
+          "burn_amount": 23926.703970506805,
+          "cumulative_burn_amount": 2970732.0454243193
         },
         {
-          "month": "2025-09-01",
-          "mint": "Honey",
-          "burn_amount": 37021.847009301986,
-          "cumulative_burn_amount": 929835.8987376653
+          "month": "2025-10-01",
+          "mint": "Nosana",
+          "burn_amount": 11.025942219868925,
+          "cumulative_burn_amount": 168.52269579926514
         },
         {
           "month": "2025-09-01",
           "mint": "Mobile",
           "burn_amount": 668908.2729907831,
-          "cumulative_burn_amount": 43633971.62180622
+          "cumulative_burn_amount": 43633971.62180621
         },
         {
           "month": "2025-09-01",
-          "mint": "Grass",
-          "burn_amount": 233.6748109423142,
-          "cumulative_burn_amount": 7404.464964056276
+          "mint": "Honey",
+          "burn_amount": 37021.84700930201,
+          "cumulative_burn_amount": 929835.8987376654
         },
         {
           "month": "2025-09-01",
-          "mint": "Xnet",
-          "burn_amount": 0.4476999572899395,
-          "cumulative_burn_amount": 0.4476999572899395
-        },
-        {
-          "month": "2025-09-01",
-          "mint": "IOT",
-          "burn_amount": 123377.19901630338,
-          "cumulative_burn_amount": 37940752.01409468
+          "mint": "Uprock",
+          "burn_amount": 10915.889968589261,
+          "cumulative_burn_amount": 70836.08304759148
         },
         {
           "month": "2025-09-01",
           "mint": "Nosana",
-          "burn_amount": 4.344188153171521,
-          "cumulative_burn_amount": 157.49675357939617
+          "burn_amount": 4.34418815317152,
+          "cumulative_burn_amount": 157.4967535793962
+        },
+        {
+          "month": "2025-09-01",
+          "mint": "Ionet",
+          "burn_amount": 198.835193420529,
+          "cumulative_burn_amount": 779.9197163668609
         },
         {
           "month": "2025-09-01",
           "mint": "Natix",
-          "burn_amount": 30035.63884832576,
+          "burn_amount": 30035.638848325758,
           "cumulative_burn_amount": 367055.33833361825
         },
         {
           "month": "2025-09-01",
+          "mint": "Xnet",
+          "burn_amount": 0.44769995728993944,
+          "cumulative_burn_amount": 0.44769995728993944
+        },
+        {
+          "month": "2025-09-01",
           "mint": "Geodnet",
-          "burn_amount": 1.8032124257128506,
+          "burn_amount": 1.803212425712851,
           "cumulative_burn_amount": 2946805.3414538126
         },
         {
           "month": "2025-09-01",
           "mint": "Render",
-          "burn_amount": 452830.4790070797,
+          "burn_amount": 452830.47900707973,
           "cumulative_burn_amount": 735530063.8182687
         },
         {
           "month": "2025-09-01",
-          "mint": "Ionet",
-          "burn_amount": 198.83519342052892,
-          "cumulative_burn_amount": 779.9197163668609
+          "mint": "IOT",
+          "burn_amount": 123377.19901630333,
+          "cumulative_burn_amount": 37940752.01409469
         },
         {
-          "month": "2025-08-01",
-          "mint": "Mobile",
-          "burn_amount": 1946087.0829982855,
-          "cumulative_burn_amount": 42965063.34881543
-        },
-        {
-          "month": "2025-08-01",
+          "month": "2025-09-01",
           "mint": "Grass",
-          "burn_amount": 76.39016433319512,
-          "cumulative_burn_amount": 7170.790153113961
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Render",
-          "burn_amount": 292056.47537423775,
-          "cumulative_burn_amount": 735077233.3392615
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Honey",
-          "burn_amount": 52386.526711620114,
-          "cumulative_burn_amount": 892814.0517283633
-        },
-        {
-          "month": "2025-08-01",
-          "mint": "Ionet",
-          "burn_amount": 179.02715797929235,
-          "cumulative_burn_amount": 581.084522946332
+          "burn_amount": 233.67481094231414,
+          "cumulative_burn_amount": 7404.464964056278
         },
         {
           "month": "2025-08-01",
           "mint": "Natix",
-          "burn_amount": 33333.28332726332,
+          "burn_amount": 33333.283327263314,
           "cumulative_burn_amount": 337019.6994852925
         },
         {
           "month": "2025-08-01",
+          "mint": "Mobile",
+          "burn_amount": 1946087.0829982858,
+          "cumulative_burn_amount": 42965063.348815426
+        },
+        {
+          "month": "2025-08-01",
+          "mint": "Grass",
+          "burn_amount": 76.39016433319513,
+          "cumulative_burn_amount": 7170.790153113964
+        },
+        {
+          "month": "2025-08-01",
           "mint": "IOT",
-          "burn_amount": 106287.08743860564,
-          "cumulative_burn_amount": 37817374.81507838
+          "burn_amount": 106287.08743860565,
+          "cumulative_burn_amount": 37817374.815078385
+        },
+        {
+          "month": "2025-08-01",
+          "mint": "Render",
+          "burn_amount": 292056.4753742378,
+          "cumulative_burn_amount": 735077233.3392615
         },
         {
           "month": "2025-08-01",
@@ -8474,9 +8462,15 @@
         },
         {
           "month": "2025-08-01",
+          "mint": "Ionet",
+          "burn_amount": 179.02715797929238,
+          "cumulative_burn_amount": 581.084522946332
+        },
+        {
+          "month": "2025-08-01",
           "mint": "Nosana",
-          "burn_amount": 6.2394927766541715,
-          "cumulative_burn_amount": 153.15256542622464
+          "burn_amount": 6.239492776654172,
+          "cumulative_burn_amount": 153.15256542622467
         },
         {
           "month": "2025-08-01",
@@ -8485,82 +8479,94 @@
           "cumulative_burn_amount": 59920.19307900222
         },
         {
+          "month": "2025-08-01",
+          "mint": "Honey",
+          "burn_amount": 52386.52671162012,
+          "cumulative_burn_amount": 892814.0517283634
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Mobile",
+          "burn_amount": 1420498.979600609,
+          "cumulative_burn_amount": 41018976.26581714
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Honey",
+          "burn_amount": 46372.16588114876,
+          "cumulative_burn_amount": 840427.5250167432
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Ionet",
+          "burn_amount": 206.52334882858784,
+          "cumulative_burn_amount": 402.0573649670396
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Uprock",
+          "burn_amount": 9804.974974712482,
+          "cumulative_burn_amount": 48995.40542790712
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Geodnet",
+          "burn_amount": 158477.48450844362,
+          "cumulative_burn_amount": 2686281.459846861
+        },
+        {
+          "month": "2025-07-01",
+          "mint": "Nosana",
+          "burn_amount": 2.2185606912267595,
+          "cumulative_burn_amount": 146.9130726495705
+        },
+        {
           "month": "2025-07-01",
           "mint": "Natix",
-          "burn_amount": 34391.29609589783,
+          "burn_amount": 34391.29609589784,
           "cumulative_burn_amount": 303686.41615802917
         },
         {
           "month": "2025-07-01",
           "mint": "Render",
-          "burn_amount": 207955.87741086725,
+          "burn_amount": 207955.87741086722,
           "cumulative_burn_amount": 734785176.8638873
         },
         {
           "month": "2025-07-01",
-          "mint": "Mobile",
-          "burn_amount": 1420498.9796006088,
-          "cumulative_burn_amount": 41018976.26581715
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Nosana",
-          "burn_amount": 2.21856069122676,
-          "cumulative_burn_amount": 146.91307264957047
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Geodnet",
-          "burn_amount": 158477.48450844357,
-          "cumulative_burn_amount": 2686281.459846861
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Uprock",
-          "burn_amount": 9804.97497471248,
-          "cumulative_burn_amount": 48995.40542790712
-        },
-        {
-          "month": "2025-07-01",
           "mint": "Grass",
-          "burn_amount": 50.92060989396023,
-          "cumulative_burn_amount": 7094.399988780767
-        },
-        {
-          "month": "2025-07-01",
-          "mint": "Honey",
-          "burn_amount": 46372.165881148736,
-          "cumulative_burn_amount": 840427.5250167431
+          "burn_amount": 50.920609893960226,
+          "cumulative_burn_amount": 7094.399988780769
         },
         {
           "month": "2025-07-01",
           "mint": "IOT",
-          "burn_amount": 206384.34217850328,
-          "cumulative_burn_amount": 37711087.72763977
+          "burn_amount": 206384.34217850326,
+          "cumulative_burn_amount": 37711087.72763978
         },
         {
-          "month": "2025-07-01",
-          "mint": "Ionet",
-          "burn_amount": 206.52334882858787,
-          "cumulative_burn_amount": 402.05736496703963
+          "month": "2025-06-01",
+          "mint": "IOT",
+          "burn_amount": 130587.57762374128,
+          "cumulative_burn_amount": 37504703.38546128
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Nosana",
+          "burn_amount": 7.307940745676137,
+          "cumulative_burn_amount": 144.69451195834372
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Grass",
+          "burn_amount": 29.825058959739508,
+          "cumulative_burn_amount": 7043.479378886808
         },
         {
           "month": "2025-06-01",
           "mint": "Honey",
-          "burn_amount": 28221.799573846794,
-          "cumulative_burn_amount": 794055.3591355943
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Ionet",
-          "burn_amount": 116.21750954273914,
-          "cumulative_burn_amount": 195.53401613845176
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Geodnet",
-          "burn_amount": 162651.8081898487,
-          "cumulative_burn_amount": 2527803.9753384176
+          "burn_amount": 28221.7995738468,
+          "cumulative_burn_amount": 794055.3591355945
         },
         {
           "month": "2025-06-01",
@@ -8570,39 +8576,69 @@
         },
         {
           "month": "2025-06-01",
-          "mint": "Uprock",
-          "burn_amount": 8333.551172347608,
-          "cumulative_burn_amount": 39190.43045319464
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Grass",
-          "burn_amount": 29.825058959739504,
-          "cumulative_burn_amount": 7043.479378886806
+          "mint": "Geodnet",
+          "burn_amount": 162651.8081898487,
+          "cumulative_burn_amount": 2527803.9753384176
         },
         {
           "month": "2025-06-01",
           "mint": "Mobile",
-          "burn_amount": 3112653.2501207083,
-          "cumulative_burn_amount": 39598477.28621654
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "Nosana",
-          "burn_amount": 7.307940745676136,
-          "cumulative_burn_amount": 144.6945119583437
-        },
-        {
-          "month": "2025-06-01",
-          "mint": "IOT",
-          "burn_amount": 130587.57762374131,
-          "cumulative_burn_amount": 37504703.38546127
+          "burn_amount": 3112653.25012071,
+          "cumulative_burn_amount": 39598477.286216535
         },
         {
           "month": "2025-06-01",
           "mint": "Natix",
           "burn_amount": 53022.3714603662,
           "cumulative_burn_amount": 269295.1200621313
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Ionet",
+          "burn_amount": 116.21750954273915,
+          "cumulative_burn_amount": 195.53401613845176
+        },
+        {
+          "month": "2025-06-01",
+          "mint": "Uprock",
+          "burn_amount": 8333.551172347608,
+          "cumulative_burn_amount": 39190.43045319464
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "IOT",
+          "burn_amount": 276421.3897058195,
+          "cumulative_burn_amount": 37374115.80783754
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Grass",
+          "burn_amount": 31.11858967451417,
+          "cumulative_burn_amount": 7013.654319927069
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Mobile",
+          "burn_amount": 2422878.031046614,
+          "cumulative_burn_amount": 36485824.03609583
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Uprock",
+          "burn_amount": 4775.011698155544,
+          "cumulative_burn_amount": 30856.879280847028
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Honey",
+          "burn_amount": 15224.489649359877,
+          "cumulative_burn_amount": 765833.5595617476
+        },
+        {
+          "month": "2025-05-01",
+          "mint": "Ionet",
+          "burn_amount": 1.883372706903765,
+          "cumulative_burn_amount": 79.31650659571262
         },
         {
           "month": "2025-05-01",
@@ -8612,9 +8648,9 @@
         },
         {
           "month": "2025-05-01",
-          "mint": "Uprock",
-          "burn_amount": 4775.011698155543,
-          "cumulative_burn_amount": 30856.879280847028
+          "mint": "Geodnet",
+          "burn_amount": 220291.49416273116,
+          "cumulative_burn_amount": 2365152.1671485687
         },
         {
           "month": "2025-05-01",
@@ -8624,87 +8660,57 @@
         },
         {
           "month": "2025-05-01",
-          "mint": "Honey",
-          "burn_amount": 15224.489649359875,
-          "cumulative_burn_amount": 765833.5595617476
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "IOT",
-          "burn_amount": 276421.38970581954,
-          "cumulative_burn_amount": 37374115.80783753
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Ionet",
-          "burn_amount": 1.8833727069037651,
-          "cumulative_burn_amount": 79.31650659571261
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Mobile",
-          "burn_amount": 2422878.0310466145,
-          "cumulative_burn_amount": 36485824.036095835
-        },
-        {
-          "month": "2025-05-01",
           "mint": "Nosana",
-          "burn_amount": 5.866670836592825,
-          "cumulative_burn_amount": 137.38657121266755
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Geodnet",
-          "burn_amount": 220291.49416273113,
-          "cumulative_burn_amount": 2365152.1671485687
-        },
-        {
-          "month": "2025-05-01",
-          "mint": "Grass",
-          "burn_amount": 31.11858967451417,
-          "cumulative_burn_amount": 7013.654319927067
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Nosana",
-          "burn_amount": 7.065392951046318,
-          "cumulative_burn_amount": 131.51990037607473
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Geodnet",
-          "burn_amount": 319222.01352984936,
-          "cumulative_burn_amount": 2144860.6729858373
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Ionet",
-          "burn_amount": 4.335255577158712,
-          "cumulative_burn_amount": 77.43313388880884
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "IOT",
-          "burn_amount": 194240.46676899536,
-          "cumulative_burn_amount": 37097694.41813171
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Honey",
-          "burn_amount": 18625.41517013848,
-          "cumulative_burn_amount": 750609.0699123878
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Grass",
-          "burn_amount": 60.972980561470614,
-          "cumulative_burn_amount": 6982.535730252553
+          "burn_amount": 5.866670836592824,
+          "cumulative_burn_amount": 137.38657121266758
         },
         {
           "month": "2025-04-01",
           "mint": "Render",
-          "burn_amount": 161811.9161292461,
+          "burn_amount": 161811.91612924606,
           "cumulative_burn_amount": 734054680.8260427
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Honey",
+          "burn_amount": 18625.415170138476,
+          "cumulative_burn_amount": 750609.0699123878
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Nosana",
+          "burn_amount": 7.065392951046319,
+          "cumulative_burn_amount": 131.51990037607476
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Grass",
+          "burn_amount": 60.9729805614706,
+          "cumulative_burn_amount": 6982.5357302525545
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "IOT",
+          "burn_amount": 194240.4667689954,
+          "cumulative_burn_amount": 37097694.41813172
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Ionet",
+          "burn_amount": 4.335255577158713,
+          "cumulative_burn_amount": 77.43313388880885
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Mobile",
+          "burn_amount": 1.573451918329282,
+          "cumulative_burn_amount": 34062946.005049214
+        },
+        {
+          "month": "2025-04-01",
+          "mint": "Natix",
+          "burn_amount": 22230.185331719316,
+          "cumulative_burn_amount": 184032.04429871746
         },
         {
           "month": "2025-04-01",
@@ -8714,57 +8720,33 @@
         },
         {
           "month": "2025-04-01",
-          "mint": "Mobile",
-          "burn_amount": 1.573451918329282,
-          "cumulative_burn_amount": 34062946.00504922
-        },
-        {
-          "month": "2025-04-01",
-          "mint": "Natix",
-          "burn_amount": 22230.185331719316,
-          "cumulative_burn_amount": 184032.04429871746
+          "mint": "Geodnet",
+          "burn_amount": 319222.0135298495,
+          "cumulative_burn_amount": 2144860.6729858373
         },
         {
           "month": "2025-03-01",
           "mint": "IOT",
-          "burn_amount": 399461.0511484478,
-          "cumulative_burn_amount": 36903453.951362714
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Nosana",
-          "burn_amount": 21.98873002906916,
-          "cumulative_burn_amount": 124.45450742502842
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Honey",
-          "burn_amount": 6076.125968002037,
-          "cumulative_burn_amount": 731983.6547422493
+          "burn_amount": 399461.05114844785,
+          "cumulative_burn_amount": 36903453.95136272
         },
         {
           "month": "2025-03-01",
           "mint": "Grass",
-          "burn_amount": 5385.235632394904,
-          "cumulative_burn_amount": 6921.562749691082
+          "burn_amount": 5385.235632394905,
+          "cumulative_burn_amount": 6921.562749691084
         },
         {
           "month": "2025-03-01",
-          "mint": "Geodnet",
-          "burn_amount": 346115.927895265,
-          "cumulative_burn_amount": 1825638.6594559879
+          "mint": "Honey",
+          "burn_amount": 6076.125968002035,
+          "cumulative_burn_amount": 731983.6547422493
         },
         {
           "month": "2025-03-01",
           "mint": "Mobile",
           "burn_amount": 814704.9672545516,
-          "cumulative_burn_amount": 34062944.4315973
-        },
-        {
-          "month": "2025-03-01",
-          "mint": "Natix",
-          "burn_amount": 28242.26209413591,
-          "cumulative_burn_amount": 161801.85896699814
+          "cumulative_burn_amount": 34062944.43159729
         },
         {
           "month": "2025-03-01",
@@ -8774,9 +8756,21 @@
         },
         {
           "month": "2025-03-01",
-          "mint": "Ionet",
-          "burn_amount": 26.540283497464873,
-          "cumulative_burn_amount": 73.09787831165013
+          "mint": "Nosana",
+          "burn_amount": 21.988730029069156,
+          "cumulative_burn_amount": 124.45450742502844
+        },
+        {
+          "month": "2025-03-01",
+          "mint": "Natix",
+          "burn_amount": 28242.26209413591,
+          "cumulative_burn_amount": 161801.85896699814
+        },
+        {
+          "month": "2025-03-01",
+          "mint": "Geodnet",
+          "burn_amount": 346115.927895265,
+          "cumulative_burn_amount": 1825638.6594559879
         },
         {
           "month": "2025-03-01",
@@ -8785,22 +8779,28 @@
           "cumulative_burn_amount": 733892868.9099134
         },
         {
+          "month": "2025-03-01",
+          "mint": "Ionet",
+          "burn_amount": 26.54028349746487,
+          "cumulative_burn_amount": 73.09787831165013
+        },
+        {
           "month": "2025-02-01",
-          "mint": "Render",
-          "burn_amount": 156653.23359662973,
-          "cumulative_burn_amount": 733766114.4147395
+          "mint": "Natix",
+          "burn_amount": 27644.64418057444,
+          "cumulative_burn_amount": 133559.59687286222
+        },
+        {
+          "month": "2025-02-01",
+          "mint": "Mobile",
+          "burn_amount": 21103.141446068188,
+          "cumulative_burn_amount": 33248239.46434274
         },
         {
           "month": "2025-02-01",
           "mint": "IOT",
           "burn_amount": 2459616.802465118,
-          "cumulative_burn_amount": 36503992.90021427
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Nosana",
-          "burn_amount": 3.1949327386465254,
-          "cumulative_burn_amount": 102.46577739595926
+          "cumulative_burn_amount": 36503992.90021428
         },
         {
           "month": "2025-02-01",
@@ -8810,27 +8810,9 @@
         },
         {
           "month": "2025-02-01",
-          "mint": "Uprock",
-          "burn_amount": 5208.602981976247,
-          "cumulative_burn_amount": 13417.613174188657
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Grass",
-          "burn_amount": 56.658158543270645,
-          "cumulative_burn_amount": 1536.3271172961781
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Natix",
-          "burn_amount": 27644.644180574436,
-          "cumulative_burn_amount": 133559.59687286222
-        },
-        {
-          "month": "2025-02-01",
-          "mint": "Mobile",
-          "burn_amount": 21103.141446068188,
-          "cumulative_burn_amount": 33248239.464342747
+          "mint": "Render",
+          "burn_amount": 156653.23359662975,
+          "cumulative_burn_amount": 733766114.4147395
         },
         {
           "month": "2025-02-01",
@@ -8840,51 +8822,27 @@
         },
         {
           "month": "2025-02-01",
-          "mint": "Ionet",
-          "burn_amount": 3.433026168528816,
-          "cumulative_burn_amount": 46.557594814185265
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Render",
-          "burn_amount": 144796.5160997139,
-          "cumulative_burn_amount": 733609461.1811428
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "IOT",
-          "burn_amount": 1681470.4695625498,
-          "cumulative_burn_amount": 34044376.09774915
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Mobile",
-          "burn_amount": 124932.9210297203,
-          "cumulative_burn_amount": 33227136.322896678
-        },
-        {
-          "month": "2025-01-01",
-          "mint": "Geodnet",
-          "burn_amount": 658007.7855989577,
-          "cumulative_burn_amount": 958769.2934535508
-        },
-        {
-          "month": "2025-01-01",
           "mint": "Grass",
-          "burn_amount": 188.80171880604095,
-          "cumulative_burn_amount": 1479.6689587529074
+          "burn_amount": 56.658158543270645,
+          "cumulative_burn_amount": 1536.3271172961784
         },
         {
-          "month": "2025-01-01",
-          "mint": "Natix",
-          "burn_amount": 29497.075002674886,
-          "cumulative_burn_amount": 105914.9526922878
+          "month": "2025-02-01",
+          "mint": "Ionet",
+          "burn_amount": 3.4330261685288153,
+          "cumulative_burn_amount": 46.55759481418526
         },
         {
-          "month": "2025-01-01",
+          "month": "2025-02-01",
+          "mint": "Uprock",
+          "burn_amount": 5208.602981976249,
+          "cumulative_burn_amount": 13417.613174188657
+        },
+        {
+          "month": "2025-02-01",
           "mint": "Nosana",
-          "burn_amount": 6.237748276148411,
-          "cumulative_burn_amount": 99.27084465731274
+          "burn_amount": 3.1949327386465254,
+          "cumulative_burn_amount": 102.46577739595928
         },
         {
           "month": "2025-01-01",
@@ -8894,8 +8852,26 @@
         },
         {
           "month": "2025-01-01",
+          "mint": "Natix",
+          "burn_amount": 29497.075002674886,
+          "cumulative_burn_amount": 105914.95269228778
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Geodnet",
+          "burn_amount": 658007.7855989578,
+          "cumulative_burn_amount": 958769.2934535509
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "IOT",
+          "burn_amount": 1681470.4695625505,
+          "cumulative_burn_amount": 34044376.09774916
+        },
+        {
+          "month": "2025-01-01",
           "mint": "Honey",
-          "burn_amount": 11463.843484612229,
+          "burn_amount": 11463.84348461223,
           "cumulative_burn_amount": 691090.4819971562
         },
         {
@@ -8905,16 +8881,70 @@
           "cumulative_burn_amount": 8209.010192212409
         },
         {
+          "month": "2025-01-01",
+          "mint": "Grass",
+          "burn_amount": 188.80171880604092,
+          "cumulative_burn_amount": 1479.6689587529077
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Mobile",
+          "burn_amount": 124932.92102972028,
+          "cumulative_burn_amount": 33227136.32289667
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Nosana",
+          "burn_amount": 6.237748276148411,
+          "cumulative_burn_amount": 99.27084465731275
+        },
+        {
+          "month": "2025-01-01",
+          "mint": "Render",
+          "burn_amount": 144796.51609971386,
+          "cumulative_burn_amount": 733609461.1811428
+        },
+        {
           "month": "2024-12-01",
           "mint": "Render",
-          "burn_amount": 741447.3000486322,
+          "burn_amount": 741447.3000486323,
           "cumulative_burn_amount": 733464664.6650431
         },
         {
           "month": "2024-12-01",
+          "mint": "Grass",
+          "burn_amount": 137.0989010619285,
+          "cumulative_burn_amount": 1290.8672399468667
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "IOT",
+          "burn_amount": 4102419.559598013,
+          "cumulative_burn_amount": 32362905.628186606
+        },
+        {
+          "month": "2024-12-01",
           "mint": "Geodnet",
-          "burn_amount": 205131.79842688655,
-          "cumulative_burn_amount": 300761.5078545931
+          "burn_amount": 205131.7984268866,
+          "cumulative_burn_amount": 300761.50785459316
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Natix",
+          "burn_amount": 47841.57152436523,
+          "cumulative_burn_amount": 76417.8776896129
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Nosana",
+          "burn_amount": 24.882265023903482,
+          "cumulative_burn_amount": 93.03309638116434
+        },
+        {
+          "month": "2024-12-01",
+          "mint": "Uprock",
+          "burn_amount": 179.47591905130128,
+          "cumulative_burn_amount": 3623.2310775413503
         },
         {
           "month": "2024-12-01",
@@ -8924,75 +8954,15 @@
         },
         {
           "month": "2024-12-01",
-          "mint": "Natix",
-          "burn_amount": 47841.571524365245,
-          "cumulative_burn_amount": 76417.87768961291
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Nosana",
-          "burn_amount": 24.882265023903475,
-          "cumulative_burn_amount": 93.03309638116433
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Grass",
-          "burn_amount": 137.09890106192853,
-          "cumulative_burn_amount": 1290.8672399468664
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Uprock",
-          "burn_amount": 179.47591905130125,
-          "cumulative_burn_amount": 3623.2310775413503
+          "mint": "Mobile",
+          "burn_amount": 26292357.12458194,
+          "cumulative_burn_amount": 33102203.40186695
         },
         {
           "month": "2024-12-01",
           "mint": "Ionet",
           "burn_amount": 8.445192101557206,
           "cumulative_burn_amount": 31.56353229850231
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "Mobile",
-          "burn_amount": 26292357.124581948,
-          "cumulative_burn_amount": 33102203.401866958
-        },
-        {
-          "month": "2024-12-01",
-          "mint": "IOT",
-          "burn_amount": 4102419.5595980124,
-          "cumulative_burn_amount": 32362905.628186602
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Ionet",
-          "burn_amount": 11.5949456787035,
-          "cumulative_burn_amount": 23.118340196945105
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Natix",
-          "burn_amount": 19832.945014676963,
-          "cumulative_burn_amount": 28576.306165247664
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Uprock",
-          "burn_amount": 275.5290814961678,
-          "cumulative_burn_amount": 3443.755158490049
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Render",
-          "burn_amount": 243655.9421094238,
-          "cumulative_burn_amount": 732723217.3649945
-        },
-        {
-          "month": "2024-11-01",
-          "mint": "Nosana",
-          "burn_amount": 14.732947394207189,
-          "cumulative_burn_amount": 68.15083135726086
         },
         {
           "month": "2024-11-01",
@@ -9002,63 +8972,63 @@
         },
         {
           "month": "2024-11-01",
-          "mint": "Mobile",
-          "burn_amount": 95890.56489613153,
-          "cumulative_burn_amount": 6809846.27728501
+          "mint": "Render",
+          "burn_amount": 243655.94210942384,
+          "cumulative_burn_amount": 732723217.3649945
         },
         {
           "month": "2024-11-01",
           "mint": "Honey",
-          "burn_amount": 144047.36881246502,
-          "cumulative_burn_amount": 484861.9639433691
+          "burn_amount": 144047.36881246505,
+          "cumulative_burn_amount": 484861.96394336916
+        },
+        {
+          "month": "2024-11-01",
+          "mint": "Ionet",
+          "burn_amount": 11.594945678703498,
+          "cumulative_burn_amount": 23.118340196945105
+        },
+        {
+          "month": "2024-11-01",
+          "mint": "Mobile",
+          "burn_amount": 95890.56489613152,
+          "cumulative_burn_amount": 6809846.277285009
         },
         {
           "month": "2024-11-01",
           "mint": "IOT",
-          "burn_amount": 3330374.645350469,
-          "cumulative_burn_amount": 28260486.06858859
+          "burn_amount": 3330374.64535047,
+          "cumulative_burn_amount": 28260486.068588592
         },
         {
           "month": "2024-11-01",
           "mint": "Grass",
-          "burn_amount": 614.0717184915118,
-          "cumulative_burn_amount": 1153.768338884938
+          "burn_amount": 614.0717184915119,
+          "cumulative_burn_amount": 1153.7683388849382
         },
         {
-          "month": "2024-10-01",
+          "month": "2024-11-01",
           "mint": "Uprock",
-          "burn_amount": 190.96232675300888,
-          "cumulative_burn_amount": 3168.226076993881
+          "burn_amount": 275.52908149616786,
+          "cumulative_burn_amount": 3443.755158490049
         },
         {
-          "month": "2024-10-01",
-          "mint": "IOT",
-          "burn_amount": 1359921.2375695033,
-          "cumulative_burn_amount": 24930111.42323812
+          "month": "2024-11-01",
+          "mint": "Nosana",
+          "burn_amount": 14.732947394207187,
+          "cumulative_burn_amount": 68.15083135726086
         },
         {
-          "month": "2024-10-01",
-          "mint": "Mobile",
-          "burn_amount": 192132.6234283086,
-          "cumulative_burn_amount": 6713955.712388878
-        },
-        {
-          "month": "2024-10-01",
-          "mint": "Render",
-          "burn_amount": 249068.5275673646,
-          "cumulative_burn_amount": 732479561.4228851
+          "month": "2024-11-01",
+          "mint": "Natix",
+          "burn_amount": 19832.945014676963,
+          "cumulative_burn_amount": 28576.306165247664
         },
         {
           "month": "2024-10-01",
           "mint": "Ionet",
-          "burn_amount": 1.3105109912363713,
-          "cumulative_burn_amount": 11.523394518241606
-        },
-        {
-          "month": "2024-10-01",
-          "mint": "Nosana",
-          "burn_amount": 4.666823389661176,
-          "cumulative_burn_amount": 53.41788396305366
+          "burn_amount": 1.3105109912363715,
+          "cumulative_burn_amount": 11.523394518241608
         },
         {
           "month": "2024-10-01",
@@ -9075,38 +9045,50 @@
         {
           "month": "2024-10-01",
           "mint": "Honey",
-          "burn_amount": 60569.28047621699,
+          "burn_amount": 60569.28047621698,
           "cumulative_burn_amount": 340814.5951309041
         },
         {
           "month": "2024-10-01",
-          "mint": "Geodnet",
-          "burn_amount": 23491.40521980096,
-          "cumulative_burn_amount": 23491.40521980096
+          "mint": "Uprock",
+          "burn_amount": 190.96232675300888,
+          "cumulative_burn_amount": 3168.226076993881
         },
         {
-          "month": "2024-09-01",
-          "mint": "Nosana",
-          "burn_amount": 0.13349111895128302,
-          "cumulative_burn_amount": 48.751060573392486
-        },
-        {
-          "month": "2024-09-01",
+          "month": "2024-10-01",
           "mint": "Mobile",
-          "burn_amount": 292077.51666727406,
-          "cumulative_burn_amount": 6521823.088960569
+          "burn_amount": 192132.62342830852,
+          "cumulative_burn_amount": 6713955.712388877
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Nosana",
+          "burn_amount": 4.666823389661176,
+          "cumulative_burn_amount": 53.41788396305367
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Render",
+          "burn_amount": 249068.5275673647,
+          "cumulative_burn_amount": 732479561.4228851
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "IOT",
+          "burn_amount": 1359921.2375695033,
+          "cumulative_burn_amount": 24930111.42323812
+        },
+        {
+          "month": "2024-10-01",
+          "mint": "Geodnet",
+          "burn_amount": 23491.405219800956,
+          "cumulative_burn_amount": 23491.405219800956
         },
         {
           "month": "2024-09-01",
           "mint": "Ionet",
-          "burn_amount": 0.9578471096443935,
-          "cumulative_burn_amount": 10.212883527005234
-        },
-        {
-          "month": "2024-09-01",
-          "mint": "IOT",
-          "burn_amount": 2614758.7906805393,
-          "cumulative_burn_amount": 23570190.185668617
+          "burn_amount": 0.9578471096443933,
+          "cumulative_burn_amount": 10.212883527005236
         },
         {
           "month": "2024-09-01",
@@ -9116,14 +9098,14 @@
         },
         {
           "month": "2024-09-01",
-          "mint": "Uprock",
-          "burn_amount": 88.28348195352126,
-          "cumulative_burn_amount": 2977.2637502408725
+          "mint": "IOT",
+          "burn_amount": 2614758.7906805393,
+          "cumulative_burn_amount": 23570190.185668617
         },
         {
           "month": "2024-09-01",
           "mint": "Render",
-          "burn_amount": 184077.60449466866,
+          "burn_amount": 184077.6044946687,
           "cumulative_burn_amount": 732230492.8953177
         },
         {
@@ -9133,22 +9115,34 @@
           "cumulative_burn_amount": 8743.355180275114
         },
         {
-          "month": "2024-08-01",
-          "mint": "Ionet",
-          "burn_amount": 0.8170838369498135,
-          "cumulative_burn_amount": 9.25503641736084
+          "month": "2024-09-01",
+          "mint": "Uprock",
+          "burn_amount": 88.28348195352129,
+          "cumulative_burn_amount": 2977.2637502408725
+        },
+        {
+          "month": "2024-09-01",
+          "mint": "Mobile",
+          "burn_amount": 292077.5166672741,
+          "cumulative_burn_amount": 6521823.088960568
+        },
+        {
+          "month": "2024-09-01",
+          "mint": "Nosana",
+          "burn_amount": 0.13349111895128302,
+          "cumulative_burn_amount": 48.75106057339249
         },
         {
           "month": "2024-08-01",
-          "mint": "Honey",
-          "burn_amount": 62718.75521075167,
-          "cumulative_burn_amount": 263799.8821584359
+          "mint": "IOT",
+          "burn_amount": 2754912.539730611,
+          "cumulative_burn_amount": 20955431.39498808
         },
         {
           "month": "2024-08-01",
           "mint": "Mobile",
-          "burn_amount": 407038.72035512317,
-          "cumulative_burn_amount": 6229745.5722932955
+          "burn_amount": 407038.7203551231,
+          "cumulative_burn_amount": 6229745.572293295
         },
         {
           "month": "2024-08-01",
@@ -9158,9 +9152,9 @@
         },
         {
           "month": "2024-08-01",
-          "mint": "IOT",
-          "burn_amount": 2754912.53973061,
-          "cumulative_burn_amount": 20955431.39498808
+          "mint": "Ionet",
+          "burn_amount": 0.8170838369498133,
+          "cumulative_burn_amount": 9.255036417360841
         },
         {
           "month": "2024-08-01",
@@ -9172,7 +9166,7 @@
           "month": "2024-08-01",
           "mint": "Nosana",
           "burn_amount": 1.158293143882131,
-          "cumulative_burn_amount": 48.6175694544412
+          "cumulative_burn_amount": 48.61756945444121
         },
         {
           "month": "2024-08-01",
@@ -9181,34 +9175,28 @@
           "cumulative_burn_amount": 2888.980268287351
         },
         {
+          "month": "2024-08-01",
+          "mint": "Honey",
+          "burn_amount": 62718.75521075166,
+          "cumulative_burn_amount": 263799.8821584359
+        },
+        {
           "month": "2024-07-01",
-          "mint": "Mobile",
-          "burn_amount": 537054.8608399624,
-          "cumulative_burn_amount": 5822706.851938172
+          "mint": "Ionet",
+          "burn_amount": 2.2771726101949223,
+          "cumulative_burn_amount": 8.437952580411029
         },
         {
           "month": "2024-07-01",
           "mint": "IOT",
           "burn_amount": 1324975.2452205957,
-          "cumulative_burn_amount": 18200518.85525747
+          "cumulative_burn_amount": 18200518.855257466
         },
         {
           "month": "2024-07-01",
           "mint": "Nosana",
           "burn_amount": 3.5430090657151396,
-          "cumulative_burn_amount": 47.45927631055907
-        },
-        {
-          "month": "2024-07-01",
-          "mint": "Ionet",
-          "burn_amount": 2.277172610194922,
-          "cumulative_burn_amount": 8.437952580411027
-        },
-        {
-          "month": "2024-07-01",
-          "mint": "Honey",
-          "burn_amount": 21266.03168031145,
-          "cumulative_burn_amount": 201081.12694768424
+          "cumulative_burn_amount": 47.459276310559076
         },
         {
           "month": "2024-07-01",
@@ -9218,27 +9206,57 @@
         },
         {
           "month": "2024-07-01",
+          "mint": "Mobile",
+          "burn_amount": 537054.8608399625,
+          "cumulative_burn_amount": 5822706.851938171
+        },
+        {
+          "month": "2024-07-01",
           "mint": "Render",
           "burn_amount": 576095571.5555012,
           "cumulative_burn_amount": 576550562.0978942
         },
         {
+          "month": "2024-07-01",
+          "mint": "Honey",
+          "burn_amount": 21266.031680311447,
+          "cumulative_burn_amount": 201081.12694768424
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Nosana",
+          "burn_amount": 32.917064062084144,
+          "cumulative_burn_amount": 43.91626724484394
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Ionet",
+          "burn_amount": 6.160779970216106,
+          "cumulative_burn_amount": 6.160779970216106
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Mobile",
+          "burn_amount": 450953.4464983722,
+          "cumulative_burn_amount": 5285651.991098209
+        },
+        {
           "month": "2024-06-01",
           "mint": "Honey",
-          "burn_amount": 16009.74130039198,
+          "burn_amount": 16009.741300391981,
           "cumulative_burn_amount": 179815.0952673728
+        },
+        {
+          "month": "2024-06-01",
+          "mint": "Render",
+          "burn_amount": 110186.41173907269,
+          "cumulative_burn_amount": 454990.5423929834
         },
         {
           "month": "2024-06-01",
           "mint": "IOT",
           "burn_amount": 945203.1171918546,
-          "cumulative_burn_amount": 16875543.610036876
-        },
-        {
-          "month": "2024-06-01",
-          "mint": "Nosana",
-          "burn_amount": 32.91706406208414,
-          "cumulative_burn_amount": 43.91626724484393
+          "cumulative_burn_amount": 16875543.610036872
         },
         {
           "month": "2024-06-01",
@@ -9247,46 +9265,22 @@
           "cumulative_burn_amount": 2625.66488840782
         },
         {
-          "month": "2024-06-01",
-          "mint": "Ionet",
-          "burn_amount": 6.1607799702161055,
-          "cumulative_burn_amount": 6.1607799702161055
-        },
-        {
-          "month": "2024-06-01",
+          "month": "2024-05-01",
           "mint": "Mobile",
-          "burn_amount": 450953.4464983721,
-          "cumulative_burn_amount": 5285651.99109821
+          "burn_amount": 714987.7587794155,
+          "cumulative_burn_amount": 4834698.544599837
         },
         {
-          "month": "2024-06-01",
-          "mint": "Render",
-          "burn_amount": 110186.41173907273,
-          "cumulative_burn_amount": 454990.54239298345
+          "month": "2024-05-01",
+          "mint": "Honey",
+          "burn_amount": 107010.56801573615,
+          "cumulative_burn_amount": 163805.3539669808
         },
         {
           "month": "2024-05-01",
           "mint": "IOT",
           "burn_amount": 1384457.7763695107,
-          "cumulative_burn_amount": 15930340.492845021
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Mobile",
-          "burn_amount": 714987.7587794157,
-          "cumulative_burn_amount": 4834698.544599838
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Nosana",
-          "burn_amount": 7.125487561147312,
-          "cumulative_burn_amount": 10.999203182759794
-        },
-        {
-          "month": "2024-05-01",
-          "mint": "Honey",
-          "burn_amount": 107010.56801573618,
-          "cumulative_burn_amount": 163805.35396698082
+          "cumulative_burn_amount": 15930340.49284502
         },
         {
           "month": "2024-05-01",
@@ -9296,33 +9290,33 @@
         },
         {
           "month": "2024-05-01",
+          "mint": "Nosana",
+          "burn_amount": 7.125487561147311,
+          "cumulative_burn_amount": 10.999203182759793
+        },
+        {
+          "month": "2024-05-01",
           "mint": "Render",
-          "burn_amount": 91142.16501225231,
+          "burn_amount": 91142.1650122523,
           "cumulative_burn_amount": 344804.1306539107
         },
         {
           "month": "2024-04-01",
-          "mint": "IOT",
-          "burn_amount": 1609387.6356535286,
-          "cumulative_burn_amount": 14545882.716475511
-        },
-        {
-          "month": "2024-04-01",
-          "mint": "Render",
-          "burn_amount": 59355.067692924196,
-          "cumulative_burn_amount": 253661.9656416584
+          "mint": "Mobile",
+          "burn_amount": 861512.5418090974,
+          "cumulative_burn_amount": 4119710.7858204213
         },
         {
           "month": "2024-04-01",
           "mint": "Honey",
-          "burn_amount": 49174.231331578005,
-          "cumulative_burn_amount": 56794.785951244645
+          "burn_amount": 49174.231331578,
+          "cumulative_burn_amount": 56794.78595124464
         },
         {
           "month": "2024-04-01",
-          "mint": "Mobile",
-          "burn_amount": 861512.5418090973,
-          "cumulative_burn_amount": 4119710.7858204218
+          "mint": "IOT",
+          "burn_amount": 1609387.635653529,
+          "cumulative_burn_amount": 14545882.71647551
         },
         {
           "month": "2024-04-01",
@@ -9331,16 +9325,16 @@
           "cumulative_burn_amount": 3.8737156216124817
         },
         {
-          "month": "2024-03-01",
-          "mint": "Honey",
-          "burn_amount": 1663.435498641064,
-          "cumulative_burn_amount": 7620.55461966664
+          "month": "2024-04-01",
+          "mint": "Render",
+          "burn_amount": 59355.067692924196,
+          "cumulative_burn_amount": 253661.96564165837
         },
         {
           "month": "2024-03-01",
           "mint": "IOT",
-          "burn_amount": 4162721.179172149,
-          "cumulative_burn_amount": 12936495.080821982
+          "burn_amount": 4162721.179172148,
+          "cumulative_burn_amount": 12936495.08082198
         },
         {
           "month": "2024-03-01",
@@ -9350,27 +9344,27 @@
         },
         {
           "month": "2024-03-01",
-          "mint": "Render",
-          "burn_amount": 105286.66564732874,
-          "cumulative_burn_amount": 194306.8979487342
+          "mint": "Honey",
+          "burn_amount": 1663.435498641064,
+          "cumulative_burn_amount": 7620.55461966664
         },
         {
           "month": "2024-03-01",
           "mint": "Mobile",
           "burn_amount": 1476075.3735022536,
-          "cumulative_burn_amount": 3258198.2440113244
+          "cumulative_burn_amount": 3258198.244011324
+        },
+        {
+          "month": "2024-03-01",
+          "mint": "Render",
+          "burn_amount": 105286.66564732873,
+          "cumulative_burn_amount": 194306.89794873417
         },
         {
           "month": "2024-02-01",
           "mint": "Mobile",
-          "burn_amount": 1069473.3433344297,
-          "cumulative_burn_amount": 1782122.8705090708
-        },
-        {
-          "month": "2024-02-01",
-          "mint": "IOT",
-          "burn_amount": 4552060.276868507,
-          "cumulative_burn_amount": 8773773.901649833
+          "burn_amount": 1069473.3433344294,
+          "cumulative_burn_amount": 1782122.8705090703
         },
         {
           "month": "2024-02-01",
@@ -9380,33 +9374,21 @@
         },
         {
           "month": "2024-02-01",
-          "mint": "Nosana",
-          "burn_amount": 0.7039780542116871,
-          "cumulative_burn_amount": 1.3555039238916298
-        },
-        {
-          "month": "2024-02-01",
           "mint": "Honey",
-          "burn_amount": 385.7917661947959,
+          "burn_amount": 385.79176619479597,
           "cumulative_burn_amount": 5957.1191210255765
         },
         {
-          "month": "2024-01-01",
-          "mint": "Mobile",
-          "burn_amount": 712649.5271746411,
-          "cumulative_burn_amount": 712649.5271746411
+          "month": "2024-02-01",
+          "mint": "IOT",
+          "burn_amount": 4552060.276868507,
+          "cumulative_burn_amount": 8773773.901649833
         },
         {
-          "month": "2024-01-01",
-          "mint": "Honey",
-          "burn_amount": 5571.327354830781,
-          "cumulative_burn_amount": 5571.327354830781
-        },
-        {
-          "month": "2024-01-01",
+          "month": "2024-02-01",
           "mint": "Nosana",
-          "burn_amount": 0.6515258696799426,
-          "cumulative_burn_amount": 0.6515258696799426
+          "burn_amount": 0.703978054211687,
+          "cumulative_burn_amount": 1.3555039238916298
         },
         {
           "month": "2024-01-01",
@@ -9416,12 +9398,30 @@
         },
         {
           "month": "2024-01-01",
+          "mint": "Honey",
+          "burn_amount": 5571.327354830781,
+          "cumulative_burn_amount": 5571.327354830781
+        },
+        {
+          "month": "2024-01-01",
+          "mint": "Mobile",
+          "burn_amount": 712649.5271746409,
+          "cumulative_burn_amount": 712649.5271746409
+        },
+        {
+          "month": "2024-01-01",
           "mint": "Render",
           "burn_amount": 32393.594168670494,
           "cumulative_burn_amount": 32393.594168670494
+        },
+        {
+          "month": "2024-01-01",
+          "mint": "Nosana",
+          "burn_amount": 0.6515258696799427,
+          "cumulative_burn_amount": 0.6515258696799427
         }
       ],
-      "timestamp": 1763922578720,
+      "timestamp": 1763925440738,
       "chartId": "chart_1749823106586_qh7bf77",
       "title": "Cumulative Token Burned By DePIN",
       "apiType": "JSON"
@@ -9950,7 +9950,7 @@
           "month": "2025-02-01"
         }
       ],
-      "timestamp": 1763922578718,
+      "timestamp": 1763925440733,
       "chartId": "chart_1749824177949_mxiroyi",
       "title": "DePIN Revenue By Chain",
       "apiType": "JSON"
@@ -10061,7 +10061,7 @@
           "total_mcap_usd": null
         }
       ],
-      "timestamp": 1763922578717,
+      "timestamp": 1763925440732,
       "chartId": "chart_1749824710319_ymj0lvb",
       "title": "DePIN Token Marketcap",
       "apiType": "JSON"
@@ -10071,86 +10071,86 @@
       "data": [
         {
           "program_name": "Others",
-          "txns": 8524793
+          "txns": 6544307
         },
         {
           "program_name": "Phoenix",
-          "txns": 2196154
+          "txns": 1733599
         },
         {
           "program_name": "Jupiter V6",
-          "txns": 1602027
+          "txns": 1195042
         },
         {
           "program_name": "Meteora DLMM",
-          "txns": 654829
+          "txns": 497689
         },
         {
           "program_name": "Raydium CLMM",
-          "txns": 590428
+          "txns": 427803
         },
         {
           "program_name": "Whirlpool",
-          "txns": 496746
+          "txns": 365120
         },
         {
           "program_name": "Raydium V4",
-          "txns": 224072
+          "txns": 182570
         },
         {
           "program_name": "Hawksight",
-          "txns": 142425
+          "txns": 113495
         },
         {
           "program_name": "Pump.Fun AMM",
-          "txns": 125588
+          "txns": 99713
         },
         {
           "program_name": "Jobs Program",
-          "txns": 105192
+          "txns": 82582
         },
         {
           "program_name": "Lifinity V2",
-          "txns": 93406
-        },
-        {
-          "program_name": "Openbook V2",
-          "txns": 91453
-        },
-        {
-          "program_name": "Saros",
-          "txns": 89798
+          "txns": 76097
         },
         {
           "program_name": "Zerofi",
-          "txns": 89273
+          "txns": 69735
+        },
+        {
+          "program_name": "Openbook V2",
+          "txns": 69218
         },
         {
           "program_name": "Sage V2",
-          "txns": 86773
-        },
-        {
-          "program_name": "Stabble Swap",
-          "txns": 85513
+          "txns": 66736
         },
         {
           "program_name": "Jupiter Dca",
-          "txns": 83909
-        },
-        {
-          "program_name": "V2",
-          "txns": 79177
+          "txns": 65080
         },
         {
           "program_name": "Coinflow",
-          "txns": 77768
+          "txns": 61383
+        },
+        {
+          "program_name": "V2",
+          "txns": 60876
+        },
+        {
+          "program_name": "Saros",
+          "txns": 59627
+        },
+        {
+          "program_name": "Stabble Swap",
+          "txns": 59032
         },
         {
           "program_name": "Raydium CPMM",
-          "txns": 67973
+          "txns": 52776
         }
       ],
-      "timestamp": 1763922579745,
+      "timestamp": 1763925441771,
       "chartId": "chart_1749877794465_qobtlds",
       "title": "Top Programs By Transactions",
       "apiType": "JSON"
