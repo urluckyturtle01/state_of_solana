@@ -170,17 +170,17 @@ function ValidatorsAPIsContent() {
       <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-lg font-bold text-gray-100">{api.name}</h3>
-            <p className="text-gray-400 mt-2 leading-relaxed">{api.description}</p>
+            <h3 className="text-md font-semibold text-gray-200">{api.name}</h3>
+            <p className="text-gray-400 text-sm mt-2 leading-relaxed">{api.description}</p>
           </div>
-          <span className="px-3 py-1 bg-blue-900/30 rounded text-blue-300 text-sm font-mono">
+          <span className="px-4 py-2 bg-blue-900/30 rounded text-blue-300 text-xs font-thin">
             {api.method}
           </span>
         </div>
 
         <div className="space-y-4 mt-6">
           <div>
-            <h4 className="text-sm font-semibold text-gray-300 mb-2">Endpoint</h4>
+            <h4 className="text-xs font-semibold text-gray-300 mb-2">Endpoint</h4>
             <div className="flex items-center gap-2">
               <code className="flex-1 bg-gray-950 border border-gray-800 rounded p-3 text-sm text-gray-300 font-mono">
                 {api.endpoint}
@@ -208,7 +208,7 @@ function ValidatorsAPIsContent() {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gray-300 mb-2">Parameters</h4>
+            <h4 className="text-xs font-semibold text-gray-300 mb-2">Parameters</h4>
             <div className="bg-gray-950 border border-gray-800 rounded overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -245,14 +245,14 @@ function ValidatorsAPIsContent() {
 
       {/* Usage Examples */}
       <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-100 mb-4">Usage Examples</h3>
+        <h3 className="text-md font-semibold text-gray-200 mb-4">Usage Examples</h3>
         <div className="space-y-4">
           {usageExamples.map((example, index) => (
             <div key={index} className="bg-gray-950 border border-gray-800 rounded-lg p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h4 className="text-sm font-semibold text-gray-200">{example.title}</h4>
-                  <p className="text-xs text-gray-500 mt-1">{example.description}</p>
+                  <p className="text-xs text-gray-400 mt-1">{example.description}</p>
                 </div>
                 
               </div>
