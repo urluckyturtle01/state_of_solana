@@ -147,6 +147,10 @@ const ChartCard: React.FC<ChartCardProps> = ({
         removeContainer: false,
         logging: false, // Disable logging
         imageTimeout: 15000,
+        scrollX: -window.scrollX,
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.scrollWidth,
+        windowHeight: document.documentElement.scrollHeight,
         onclone: (clonedDoc) => {
           // STEP 1: Aggressively remove ALL modern color functions first
           const allElements = clonedDoc.querySelectorAll('*');
@@ -322,11 +326,50 @@ const ChartCard: React.FC<ChartCardProps> = ({
             .text-blue-400 { color: rgb(96, 165, 250) !important; }
             
             /* Chart elements */
-            svg text { fill: rgb(209, 213, 219) !important; }
+            svg text { 
+              fill: rgb(209, 213, 219) !important; 
+              visibility: visible !important;
+              opacity: 1 !important;
+              display: inline !important;
+            }
             svg path { stroke: currentColor !important; }
             svg rect { fill: currentColor !important; }
+            
+            /* Ensure all SVG elements are visible */
+            svg { overflow: visible !important; }
+            svg g { overflow: visible !important; }
           `;
           clonedDoc.head.appendChild(style);
+          
+          // STEP 3: Force all SVG text elements to be visible
+          const allSvgTexts = clonedDoc.querySelectorAll('svg text');
+          allSvgTexts.forEach((textElement) => {
+            const htmlTextElement = textElement as SVGTextElement;
+            // Ensure text is visible
+            htmlTextElement.style.visibility = 'visible';
+            htmlTextElement.style.opacity = '1';
+            htmlTextElement.style.display = 'inline';
+            htmlTextElement.setAttribute('visibility', 'visible');
+            htmlTextElement.setAttribute('opacity', '1');
+            
+            // Make sure fill color is set
+            if (!htmlTextElement.getAttribute('fill') || htmlTextElement.getAttribute('fill') === 'currentColor') {
+              htmlTextElement.setAttribute('fill', '#6b7280');
+            }
+          });
+          
+          // STEP 4: Ensure all SVG containers allow overflow
+          const allSvgs = clonedDoc.querySelectorAll('svg');
+          allSvgs.forEach((svg) => {
+            const htmlSvg = svg as SVGSVGElement;
+            htmlSvg.style.overflow = 'visible';
+          });
+          
+          const allSvgGroups = clonedDoc.querySelectorAll('svg g');
+          allSvgGroups.forEach((group) => {
+            const htmlGroup = group as SVGGElement;
+            htmlGroup.style.overflow = 'visible';
+          });
         },
         ignoreElements: (element) => {
           // Only ignore action buttons and edit controls
