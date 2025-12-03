@@ -8,6 +8,7 @@ import MultiSeriesLineBarChart from '@/app/admin/components/charts/MultiSeriesLi
 import LadderChart, { LadderChartData } from '@/app/admin/components/charts/LadderChart';
 import LegendItem from '@/app/components/shared/LegendItem';
 import { getColorByIndex } from '@/app/utils/chartColors';
+import { useChartDownload } from '@/app/validators/components/useChartDownload';
 
 interface ValidatorPerformanceData {
   vote_account: string;
@@ -54,6 +55,9 @@ function ValidatorsOverviewContent() {
   // Legend state
   const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
   const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
+
+  // Download functionality
+  const { downloadCSV, isDownloading } = useChartDownload();
 
   // Fetch validator data
   const fetchValidatorData = useCallback(async (voteAccount: string) => {
@@ -319,6 +323,25 @@ function ValidatorsOverviewContent() {
     });
   }, [legends]);
 
+  // Download handlers
+  const handleDownloadCumulativeData = useCallback(() => {
+    downloadCSV({
+      filename: `cumulative_stake_distribution_epoch_${selectedCumulativeEpoch}`,
+      data: cumulativeData,
+      chartTitle: 'Cumulative Stake Distribution',
+      columns: ['epoch', 'cumulative_pct_stakers', 'cumulative_pct_stake', 'vote_account']
+    });
+  }, [cumulativeData, selectedCumulativeEpoch, downloadCSV]);
+
+  const handleDownloadLadderData = useCallback(() => {
+    downloadCSV({
+      filename: `stake_concentration_ladder_epoch_${selectedLadderEpoch}`,
+      data: ladderChartData,
+      chartTitle: 'Concentration Ladder Chart',
+      columns: ['category', 'value', 'label']
+    });
+  }, [ladderChartData, selectedLadderEpoch, downloadCSV]);
+
   // Chart configurations
   const cumulativeChartConfig = {
     id: 'validator-cumulative-chart',
@@ -444,11 +467,13 @@ function ValidatorsOverviewContent() {
         {/* Cumulative Stake Distribution Chart */}
         <ChartCard
           title={cumulativeChartConfig.title}
-          description={`This chart shows how a validator’s active  stake is distributed across its stakers in epoch ${selectedCumulativeEpoch || 'N/A'}`}
+          description={`This chart shows how a validator's active  stake is distributed across its stakers in epoch ${selectedCumulativeEpoch || 'N/A'}`}
           isLoading={isCumulativeLoading}
           chart={cumulativeChartConfig}
           chartData={cumulativeData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadCumulativeData}
+          isDownloading={isDownloading}
           info={{
             title: 'Cumulative Stake Distribution',
             description: "For the selected validator, sort stake accounts from largest to smallest stake and plot the cumulative % of stakers (x-axis) against the cumulative % of that validator's total stake (y-axis)."
@@ -506,6 +531,8 @@ function ValidatorsOverviewContent() {
           chart={ladderChartConfig}
           chartData={ladderChartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadLadderData}
+          isDownloading={isDownloading}
           info={{
             title: 'Concentration Ladder Chart',
             description: 'For the selected validator, rank accounts by stake and show what percentage of total stake is held by the top 0.1%, 1%, 5%, and 10% of stakers.'

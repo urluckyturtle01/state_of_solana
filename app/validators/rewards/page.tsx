@@ -10,6 +10,7 @@ import { GenericFilter, FilterOption } from '@/app/components/shared/filters/Sta
 import { ChartConfig, YAxisConfig } from '@/app/admin/types';
 import LegendItem from '@/app/components/shared/LegendItem';
 import { getColorByIndex } from '@/app/utils/chartColors';
+import { useChartDownload } from '@/app/validators/components/useChartDownload';
 
 // Reward tab type definition
 type RewardTabType = 'average' | 'median' | 'gini';
@@ -62,6 +63,39 @@ function ValidatorsRewardsContent() {
   // Legend state
   const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
   const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
+
+  // Download functionality
+  const { downloadCSV, isDownloading } = useChartDownload();
+
+  // Download handlers
+  const handleDownloadRewardsCommissionData = useCallback(() => {
+    downloadCSV({
+      filename: `rewards_commission_distribution_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: 'Rewards & Commission Distribution',
+      columns: ['epoch', 'staking_reward', 'total_commission_collected', 'vote_account']
+    });
+  }, [chartData, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadBlockRewardsData = useCallback(() => {
+    downloadCSV({
+      filename: `block_rewards_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: 'Block Rewards',
+      columns: ['epoch', 'block_rewards_sol', 'vote_account']
+    });
+  }, [chartData, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadRewardData = useCallback(() => {
+    const rewardTabName = getRewardTabInfo(activeRewardTab).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const rewardField = getRewardTabInfo(activeRewardTab).field;
+    downloadCSV({
+      filename: `${rewardTabName}_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: getRewardTabInfo(activeRewardTab).title,
+      columns: ['epoch', rewardField, 'vote_account']
+    });
+  }, [chartData, activeRewardTab, selectedVoteAccount, downloadCSV]);
 
   // Get reward tab display info
   const getRewardTabInfo = (tabType: RewardTabType) => {
@@ -378,6 +412,8 @@ function ValidatorsRewardsContent() {
         chart={rewardsCommissionChartConfig}
         chartData={chartData}
         showSummarizeButton={false}
+        onDownloadClick={handleDownloadRewardsCommissionData}
+        isDownloading={isDownloading}
         info={{
           title: 'Rewards & Commission Distribution by Epoch',
           description: "For a validator, inflation rewards split into two parts: the validator's commission and the staking rewards."
@@ -414,6 +450,8 @@ function ValidatorsRewardsContent() {
         chart={blockRewardsChartConfig}
         chartData={chartData}
         showSummarizeButton={false}
+        onDownloadClick={handleDownloadBlockRewardsData}
+        isDownloading={isDownloading}
         info={{
           title: 'Block Rewards by Epoch',
           description: 'SOL rewards earned from block production. Reflects validator block production performance.'
@@ -453,6 +491,8 @@ function ValidatorsRewardsContent() {
           chart={rewardChartConfig}
           chartData={chartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadRewardData}
+          isDownloading={isDownloading}
           info={getRewardTabInfo(activeRewardTab).info}
           filterBar={
             <div className="flex items-center justify-between">

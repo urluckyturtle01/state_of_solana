@@ -12,6 +12,7 @@ import StakeTypeFilter, { StakeType, GenericFilter, MetricType, METRIC_TYPE_OPTI
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
 import LegendItem from '@/app/components/shared/LegendItem';
 import { getColorByIndex } from '@/app/utils/chartColors';
+import { useChartDownload } from '@/app/validators/components/useChartDownload';
 
 // Concentration type definition (internal to component)
 type ConcentrationType = 'top_01pct' | 'top_1pct' | 'top_5pct' | 'top_10pct';
@@ -220,6 +221,9 @@ function ValidatorsPerformanceContent() {
   // Legend state
   const [legends, setLegends] = useState<Record<string, Array<{label: string; color: string; value?: number; fieldId?: string}>>>({});
   const [hiddenSeries, setHiddenSeries] = useState<Record<string, string[]>>({});
+
+  // Download functionality
+  const { downloadCSV, isDownloading } = useChartDownload();
 
   // Chart configuration for total stakers vs epoch
   const stakersChartConfig: ChartConfig = {
@@ -861,6 +865,82 @@ function ValidatorsPerformanceContent() {
     ];
   }, [chartData, selectedEpoch]);
 
+  // Download handlers (defined after data transformations)
+  const handleDownloadStakersData = useCallback(() => {
+    downloadCSV({
+      filename: `total_stakers_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: 'Total Stakers by Epoch',
+      columns: ['epoch', 'total_stakers', 'vote_account']
+    });
+  }, [chartData, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadStakeData = useCallback(() => {
+    const stakeTypeName = getStakeTypeInfo(selectedStakeType).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    downloadCSV({
+      filename: `${stakeTypeName}_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: getStakeTypeInfo(selectedStakeType).title,
+      columns: ['epoch', selectedStakeType, 'vote_account']
+    });
+  }, [chartData, selectedStakeType, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadDistributionData = useCallback(() => {
+    const metricTypeName = getMetricTypeInfo(selectedMetricType).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const columns = ['epoch', selectedMetricType, 'vote_account'];
+    // Add network median field if available
+    if (getMetricTypeInfo(selectedMetricType).hasNetworkMedian) {
+      columns.push(getMetricTypeInfo(selectedMetricType).networkMedianField!);
+    }
+    downloadCSV({
+      filename: `${metricTypeName}_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: getMetricTypeInfo(selectedMetricType).title,
+      columns
+    });
+  }, [chartData, selectedMetricType, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadConcentrationData = useCallback(() => {
+    const concentrationTypeName = getConcentrationTypeInfo(selectedConcentrationType).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    downloadCSV({
+      filename: `${concentrationTypeName}_${selectedVoteAccount.slice(0, 8)}`,
+      data: chartData,
+      chartTitle: getConcentrationTypeInfo(selectedConcentrationType).title,
+      columns: ['epoch', selectedConcentrationType, 'vote_account']
+    });
+  }, [chartData, selectedConcentrationType, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadBoxPlotData = useCallback(() => {
+    downloadCSV({
+      filename: `stake_distribution_boxplot_${selectedVoteAccount.slice(0, 8)}`,
+      data: boxPlotData,
+      chartTitle: 'Stake Distribution (Box Plot)',
+      columns: ['category', 'p5', 'p10', 'p25', 'p50', 'p75', 'p90', 'p95', 'p99', 'epoch']
+    });
+  }, [boxPlotData, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadStakerTierData = useCallback(() => {
+    const tierTabName = getStakerTierTabInfo(activeStakerTierTab).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const tierField = getStakerTierTabInfo(activeStakerTierTab).field;
+    downloadCSV({
+      filename: `${tierTabName}_${selectedVoteAccount.slice(0, 8)}`,
+      data: stakerTierData,
+      chartTitle: getStakerTierTabInfo(activeStakerTierTab).title,
+      columns: ['epoch', 'tier_name', tierField, 'vote_account']
+    });
+  }, [stakerTierData, activeStakerTierTab, selectedVoteAccount, downloadCSV]);
+
+  const handleDownloadNetworkTierData = useCallback(() => {
+    const tierTabName = getNetworkTierTabInfo(activeNetworkTierTab).title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const tierField = getNetworkTierTabInfo(activeNetworkTierTab).field;
+    downloadCSV({
+      filename: `${tierTabName}_network`,
+      data: networkTierData,
+      chartTitle: getNetworkTierTabInfo(activeNetworkTierTab).title,
+      columns: ['epoch', 'tier_name', tierField]
+    });
+  }, [networkTierData, activeNetworkTierTab, downloadCSV]);
+
   // Check if staker tier data has negative values to determine if percentage mode should be disabled
   const stakerTierHasNegativeValues = useMemo(() => {
     if (!stakerTierData || stakerTierData.length === 0) return false;
@@ -1372,6 +1452,8 @@ function ValidatorsPerformanceContent() {
           chart={stakersChartConfig}
           chartData={chartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadStakersData}
+          isDownloading={isDownloading}
           info={{
             title: 'Total Stakers by Epoch',
             description: 'Unique staker accounts delegating to this validator each epoch. Growing count indicates rising popularity.'
@@ -1410,6 +1492,8 @@ function ValidatorsPerformanceContent() {
           chart={stakeChartConfig}
           chartData={chartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadStakeData}
+          isDownloading={isDownloading}
           info={getStakeTypeInfo(selectedStakeType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1470,6 +1554,8 @@ function ValidatorsPerformanceContent() {
           chart={distributionChartConfig}
           chartData={chartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadDistributionData}
+          isDownloading={isDownloading}
           info={getMetricTypeInfo(selectedMetricType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1517,6 +1603,8 @@ function ValidatorsPerformanceContent() {
           chart={concentrationChartConfig}
           chartData={chartData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadConcentrationData}
+          isDownloading={isDownloading}
           info={getConcentrationTypeInfo(selectedConcentrationType).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1569,6 +1657,8 @@ function ValidatorsPerformanceContent() {
           chart={boxPlotChartConfig}
           chartData={boxPlotData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadBoxPlotData}
+          isDownloading={isDownloading}
           legend={<BoxChartLegend />}
           legendWidth="1/6"
           info={{
@@ -1594,6 +1684,8 @@ function ValidatorsPerformanceContent() {
           chart={stakerTierChartConfig}
           chartData={stakerTierData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadStakerTierData}
+          isDownloading={isDownloading}
           info={getStakerTierTabInfo(activeStakerTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">
@@ -1651,6 +1743,8 @@ function ValidatorsPerformanceContent() {
           chart={networkTierChartConfig}
           chartData={networkTierData}
           showSummarizeButton={false}
+          onDownloadClick={handleDownloadNetworkTierData}
+          isDownloading={isDownloading}
           info={getNetworkTierTabInfo(activeNetworkTierTab).info}
           filterBar={
             <div className="flex items-center justify-between">
