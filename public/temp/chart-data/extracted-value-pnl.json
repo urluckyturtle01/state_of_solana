@@ -1,7 +1,7 @@
 {
   "pageId": "extracted-value-pnl",
   "pageName": "Extracted Value & PNL",
-  "fetchedAt": "2025-12-06T19:16:31.351Z",
+  "fetchedAt": "2025-12-06T20:23:01.580Z",
   "charts": [
     {
       "success": true,
@@ -2828,7 +2828,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1765048590235,
+      "timestamp": 1765052580525,
       "chartId": "chart_1747913013490_uo9o6kd",
       "title": "Attacks & Attackers",
       "apiType": "JSON"
@@ -5658,7 +5658,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1765048590239,
+      "timestamp": 1765052580530,
       "chartId": "chart_1747913289182_5vwaozt",
       "title": "Daily SOL Drained",
       "apiType": "JSON"
@@ -6958,12 +6958,18 @@
         },
         {
           "block_date": "2025-12-05",
-          "total_sol_drained": 14.464608183,
-          "exposed_volume": 319.436837612,
-          "sol_drained_pct": 4.528159084948511
+          "total_sol_drained": 40.554507963,
+          "exposed_volume": 792.489836396,
+          "sol_drained_pct": 5.117353699755876
+        },
+        {
+          "block_date": "2025-12-06",
+          "total_sol_drained": 5.725529866,
+          "exposed_volume": 190.711389084,
+          "sol_drained_pct": 3.0021960898612905
         }
       ],
-      "timestamp": 1765048590191,
+      "timestamp": 1765052580512,
       "chartId": "chart_1748081344058_qxcos7c",
       "title": "SOL Drained Vs Volume Exposed",
       "apiType": "JSON"
@@ -6972,31 +6978,31 @@
       "success": true,
       "data": [
         {
-          "sol_range": "5-10 sol",
-          "exposed_txns": 3
+          "sol_range": "0.5-0.1 sol",
+          "exposed_txns": 234
         },
         {
           "sol_range": ">=10 sol",
           "exposed_txns": 1
         },
         {
-          "sol_range": "0.1-0.5 sol",
-          "exposed_txns": 2413
-        },
-        {
-          "sol_range": "0.5-0.1 sol",
-          "exposed_txns": 234
-        },
-        {
-          "sol_range": "1-5 sol",
-          "exposed_txns": 86
+          "sol_range": "5-10 sol",
+          "exposed_txns": 3
         },
         {
           "sol_range": "0-0.1 sol",
-          "exposed_txns": 25441
+          "exposed_txns": 24659
+        },
+        {
+          "sol_range": "1-5 sol",
+          "exposed_txns": 85
+        },
+        {
+          "sol_range": "0.1-0.5 sol",
+          "exposed_txns": 2387
         }
       ],
-      "timestamp": 1765048591341,
+      "timestamp": 1765052581580,
       "chartId": "chart_1748081590850_soiyu3i",
       "title": "Sandwich Trades By SOL Drained",
       "apiType": "JSON"
@@ -7185,7 +7191,7 @@
           "Exposed_volume_percentage": 0.012453838969278682
         }
       ],
-      "timestamp": 1765048591351,
+      "timestamp": 1765052581579,
       "chartId": "chart_1748087853606_gysynde",
       "title": "Exposed Volume Vs DEX Volume",
       "apiType": "JSON"
@@ -7374,7 +7380,7 @@
           "Exposed_volume_percentage": 0.012453838969278682
         }
       ],
-      "timestamp": 1765048591336,
+      "timestamp": 1765052581579,
       "chartId": "chart_1748087954763_m518u4k",
       "title": "Exposed Volume %",
       "apiType": "JSON"
