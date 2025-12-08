@@ -1,7 +1,7 @@
 {
   "pageId": "extracted-value-pnl",
   "pageName": "Extracted Value & PNL",
-  "fetchedAt": "2025-12-08T19:18:54.722Z",
+  "fetchedAt": "2025-12-08T20:26:02.302Z",
   "charts": [
     {
       "success": true,
@@ -2854,7 +2854,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1765221533618,
+      "timestamp": 1765225561242,
       "chartId": "chart_1747913013490_uo9o6kd",
       "title": "Attacks & Attackers",
       "apiType": "JSON"
@@ -5710,7 +5710,7 @@
           "cumulative_exposed_volume_usd": 2287876.011479149
         }
       ],
-      "timestamp": 1765221533608,
+      "timestamp": 1765225561224,
       "chartId": "chart_1747913289182_5vwaozt",
       "title": "Daily SOL Drained",
       "apiType": "JSON"
@@ -7016,12 +7016,24 @@
         },
         {
           "block_date": "2025-12-06",
-          "total_sol_drained": 5.725529866,
-          "exposed_volume": 190.711389084,
-          "sol_drained_pct": 3.0021960898612905
+          "total_sol_drained": 21.945186409,
+          "exposed_volume": 647.656665805,
+          "sol_drained_pct": 3.388398138653201
+        },
+        {
+          "block_date": "2025-12-07",
+          "total_sol_drained": 28.786428281,
+          "exposed_volume": 629.677159637,
+          "sol_drained_pct": 4.571617032702118
+        },
+        {
+          "block_date": "2025-12-08",
+          "total_sol_drained": 7.43765574,
+          "exposed_volume": 376.440587997,
+          "sol_drained_pct": 1.9757847525355774
         }
       ],
-      "timestamp": 1765221533525,
+      "timestamp": 1765225561211,
       "chartId": "chart_1748081344058_qxcos7c",
       "title": "SOL Drained Vs Volume Exposed",
       "apiType": "JSON"
@@ -7030,31 +7042,31 @@
       "success": true,
       "data": [
         {
-          "sol_range": "0.5-0.1 sol",
-          "exposed_txns": 234
+          "sol_range": "5-10 sol",
+          "exposed_txns": 3
+        },
+        {
+          "sol_range": "0-0.1 sol",
+          "exposed_txns": 23852
         },
         {
           "sol_range": ">=10 sol",
           "exposed_txns": 1
         },
         {
-          "sol_range": "5-10 sol",
-          "exposed_txns": 3
-        },
-        {
-          "sol_range": "0-0.1 sol",
-          "exposed_txns": 24659
-        },
-        {
           "sol_range": "1-5 sol",
-          "exposed_txns": 85
+          "exposed_txns": 77
         },
         {
           "sol_range": "0.1-0.5 sol",
-          "exposed_txns": 2387
+          "exposed_txns": 2186
+        },
+        {
+          "sol_range": "0.5-0.1 sol",
+          "exposed_txns": 203
         }
       ],
-      "timestamp": 1765221534722,
+      "timestamp": 1765225562294,
       "chartId": "chart_1748081590850_soiyu3i",
       "title": "Sandwich Trades By SOL Drained",
       "apiType": "JSON"
@@ -7064,9 +7076,9 @@
       "data": [
         {
           "block_date": "2025-12-06",
-          "exposed_volume_usd": 25385.3995245433,
+          "exposed_volume_usd": 86058.5019284312,
           "dex_volume_usd": 340324513.06777126,
-          "Exposed_volume_percentage": 0.007459174567154415
+          "Exposed_volume_percentage": 0.025287188734269564
         },
         {
           "block_date": "2025-12-05",
@@ -7243,7 +7255,7 @@
           "Exposed_volume_percentage": 0.014992052643932264
         }
       ],
-      "timestamp": 1765221534721,
+      "timestamp": 1765225562302,
       "chartId": "chart_1748087853606_gysynde",
       "title": "Exposed Volume Vs DEX Volume",
       "apiType": "JSON"
@@ -7253,9 +7265,9 @@
       "data": [
         {
           "block_date": "2025-12-06",
-          "exposed_volume_usd": 25385.3995245433,
+          "exposed_volume_usd": 86058.5019284312,
           "dex_volume_usd": 340324513.06777126,
-          "Exposed_volume_percentage": 0.007459174567154415
+          "Exposed_volume_percentage": 0.025287188734269564
         },
         {
           "block_date": "2025-12-05",
@@ -7432,7 +7444,7 @@
           "Exposed_volume_percentage": 0.014992052643932264
         }
       ],
-      "timestamp": 1765221534720,
+      "timestamp": 1765225562298,
       "chartId": "chart_1748087954763_m518u4k",
       "title": "Exposed Volume %",
       "apiType": "JSON"
