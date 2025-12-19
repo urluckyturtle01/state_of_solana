@@ -1,7 +1,7 @@
 {
   "pageId": "raydium-financials",
   "pageName": "Financials",
-  "fetchedAt": "2025-12-19T05:24:31.753Z",
+  "fetchedAt": "2025-12-19T06:35:06.131Z",
   "charts": [
     {
       "success": true,
@@ -4667,7 +4667,7 @@
           "parameters": {
             "Date Part": "D"
           },
-          "timestamp": 1766121866148
+          "timestamp": 1766126101522
         },
         {
           "data": [
@@ -9330,7 +9330,7 @@
           "parameters": {
             "Date Part": "W"
           },
-          "timestamp": 1766121866457
+          "timestamp": 1766126101772
         },
         {
           "data": [
@@ -13993,7 +13993,7 @@
           "parameters": {
             "Date Part": "M"
           },
-          "timestamp": 1766121866751
+          "timestamp": 1766126102011
         },
         {
           "data": [
@@ -18656,7 +18656,7 @@
           "parameters": {
             "Date Part": "Q"
           },
-          "timestamp": 1766121867046
+          "timestamp": 1766126102252
         },
         {
           "data": [
@@ -23319,7 +23319,7 @@
           "parameters": {
             "Date Part": "Y"
           },
-          "timestamp": 1766121867352
+          "timestamp": 1766126102499
         }
       ],
       "data": [
@@ -27979,7 +27979,7 @@
           "Protocol fees": 1458.1431953225
         }
       ],
-      "timestamp": 1766121867553,
+      "timestamp": 1766126102699,
       "chartId": "chart_1748935655865_ysfoa3j",
       "title": "Fees And Revenue",
       "parameters": {
@@ -48376,7 +48376,7 @@
               "Protocol_fees": 1096.4283149951
             }
           ],
-          "timestamp": 1766121866244
+          "timestamp": 1766126101559
         }
       ],
       "data": [
@@ -68745,7 +68745,7 @@
           "Protocol_fees": 1096.4283149951
         }
       ],
-      "timestamp": 1766121866444,
+      "timestamp": 1766126101759,
       "chartId": "chart_1748936189726_ie9crds",
       "title": "Revenue By Product",
       "totalCombinations": 1,
@@ -77131,7 +77131,7 @@
               "Gross Profit": 1458.1431953225
             }
           ],
-          "timestamp": 1766121866418
+          "timestamp": 1766126101543
         }
       ],
       "data": [
@@ -85506,7 +85506,7 @@
           "Gross Profit": 1458.1431953225
         }
       ],
-      "timestamp": 1766121866618,
+      "timestamp": 1766126101743,
       "chartId": "chart_1748936586106_5qdpcxr",
       "title": "Revenue Sources",
       "totalCombinations": 1,
@@ -114027,7 +114027,7 @@
               "revenue": 193.14032068283487
             }
           ],
-          "timestamp": 1766121868959
+          "timestamp": 1766126103786
         }
       ],
       "data": [
@@ -142537,7 +142537,7 @@
           "revenue": 193.14032068283487
         }
       ],
-      "timestamp": 1766121869160,
+      "timestamp": 1766126103986,
       "chartId": "chart_1748936802751_n6liytd",
       "title": "Swap Revenue By Pool Category",
       "totalCombinations": 1,
@@ -142553,14 +142553,34 @@
         {
           "data": [
             {
+              "block_date": "2025-12-18",
+              "product": "CLMM",
+              "treasury_usd": 6898.253802055681
+            },
+            {
+              "block_date": "2025-12-18",
+              "product": "CPMM",
+              "treasury_usd": 1335.2388489361608
+            },
+            {
+              "block_date": "2025-12-17",
+              "product": "CLMM",
+              "treasury_usd": 7466.714817311552
+            },
+            {
+              "block_date": "2025-12-17",
+              "product": "CPMM",
+              "treasury_usd": 2122.9696126664703
+            },
+            {
               "block_date": "2025-12-16",
               "product": "CLMM",
-              "treasury_usd": 6499.353856092084
+              "treasury_usd": 6501.617721711141
             },
             {
               "block_date": "2025-12-16",
               "product": "CPMM",
-              "treasury_usd": 1300.7927755872465
+              "treasury_usd": 1301.4170170004734
             },
             {
               "block_date": "2025-12-15",
@@ -149033,19 +149053,39 @@
               "treasury_usd": 2164.642664317746
             }
           ],
-          "timestamp": 1766121868853
+          "timestamp": 1766126103763
         }
       ],
       "data": [
         {
+          "block_date": "2025-12-18",
+          "product": "CLMM",
+          "treasury_usd": 6898.253802055681
+        },
+        {
+          "block_date": "2025-12-18",
+          "product": "CPMM",
+          "treasury_usd": 1335.2388489361608
+        },
+        {
+          "block_date": "2025-12-17",
+          "product": "CLMM",
+          "treasury_usd": 7466.714817311552
+        },
+        {
+          "block_date": "2025-12-17",
+          "product": "CPMM",
+          "treasury_usd": 2122.9696126664703
+        },
+        {
           "block_date": "2025-12-16",
           "product": "CLMM",
-          "treasury_usd": 6499.353856092084
+          "treasury_usd": 6501.617721711141
         },
         {
           "block_date": "2025-12-16",
           "product": "CPMM",
-          "treasury_usd": 1300.7927755872465
+          "treasury_usd": 1301.4170170004734
         },
         {
           "block_date": "2025-12-15",
@@ -155518,7 +155558,7 @@
           "treasury_usd": 2164.642664317746
         }
       ],
-      "timestamp": 1766121869053,
+      "timestamp": 1766126103963,
       "chartId": "chart_1748936965692_8woui2m",
       "title": "Treasury Revenue By Product",
       "totalCombinations": 1,
@@ -160546,7 +160586,7 @@
               "Infrastructure Cost": 0
             }
           ],
-          "timestamp": 1766121868861
+          "timestamp": 1766126103771
         }
       ],
       "data": [
@@ -165563,7 +165603,7 @@
           "Infrastructure Cost": 0
         }
       ],
-      "timestamp": 1766121869062,
+      "timestamp": 1766126103971,
       "chartId": "chart_1748937346377_c452g0f",
       "title": "Cashflow",
       "totalCombinations": 1,
@@ -165702,7 +165742,7 @@
           "Balance": 30145.733498200134
         }
       ],
-      "timestamp": 1766121870250,
+      "timestamp": 1766126105021,
       "chartId": "chart_1748937874895_ab9j7qj",
       "title": "Treasury Fund Flow",
       "apiType": "JSON"
@@ -165836,7 +165876,7 @@
           "Balance": 30145.733498200134
         }
       ],
-      "timestamp": 1766121870258,
+      "timestamp": 1766126105019,
       "chartId": "chart_1748938023137_x9zvrad",
       "title": "Treasury Fund Balance",
       "apiType": "JSON"
@@ -176315,7 +176355,7 @@
           "Balance": 241590961.04797626
         }
       ],
-      "timestamp": 1766121870470,
+      "timestamp": 1766126105058,
       "chartId": "chart_1748938178401_36oxl80",
       "title": "Raydium Assets",
       "apiType": "JSON"
@@ -183870,7 +183910,7 @@
           "cumulative_usdc_spent": null
         }
       ],
-      "timestamp": 1766121871753,
+      "timestamp": 1766126106131,
       "chartId": "chart_1752242932993_6u5eh1s",
       "title": "Total USD Spent To Buy RAY",
       "apiType": "JSON"
