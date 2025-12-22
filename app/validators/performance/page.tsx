@@ -15,13 +15,13 @@ import { getColorByIndex } from '@/app/utils/chartColors';
 import { useChartDownload } from '@/app/validators/components/useChartDownload';
 
 // Concentration type definition (internal to component)
-type ConcentrationType = 'top_01pct' | 'top_1pct' | 'top_5pct' | 'top_10pct';
+type ConcentrationType = 'top_01pct_concentration' | 'top_1pct_concentration' | 'top_5pct_concentration' | 'top_10pct_concentration';
 
 const CONCENTRATION_TYPE_OPTIONS = [
-  { value: 'top_01pct' as ConcentrationType, label: 'Top 0.1% Concentration', description: 'Concentration among top 0.1% of stakers' },
-  { value: 'top_1pct' as ConcentrationType, label: 'Top 1% Concentration', description: 'Concentration among top 1% of stakers' },
-  { value: 'top_5pct' as ConcentrationType, label: 'Top 5% Concentration', description: 'Concentration among top 5% of stakers' },
-  { value: 'top_10pct' as ConcentrationType, label: 'Top 10% Concentration', description: 'Concentration among top 10% of stakers' },
+  { value: 'top_01pct_concentration' as ConcentrationType, label: 'Top 0.1% Concentration', description: 'Concentration among top 0.1% of stakers' },
+  { value: 'top_1pct_concentration' as ConcentrationType, label: 'Top 1% Concentration', description: 'Concentration among top 1% of stakers' },
+  { value: 'top_5pct_concentration' as ConcentrationType, label: 'Top 5% Concentration', description: 'Concentration among top 5% of stakers' },
+  { value: 'top_10pct_concentration' as ConcentrationType, label: 'Top 10% Concentration', description: 'Concentration among top 10% of stakers' },
 ];
 
 // Reward tab type definition
@@ -155,10 +155,10 @@ interface ValidatorPerformanceData {
   p95: number;
   p99: number;
   // Concentration metrics
-  top_01pct: number;
-  top_1pct: number;
-  top_5pct: number;
-  top_10pct: number;
+  top_01pct_concentration: number;
+  top_1pct_concentration: number;
+  top_5pct_concentration: number;
+  top_10pct_concentration: number;
 }
 
 interface ValidatorStakerTierData {
@@ -196,7 +196,7 @@ function ValidatorsPerformanceContent() {
   );
   const [selectedStakeType, setSelectedStakeType] = useState<StakeType>('total_stake');
   const [selectedMetricType, setSelectedMetricType] = useState<MetricType>('nakamoto_coeff_33');
-  const [selectedConcentrationType, setSelectedConcentrationType] = useState<ConcentrationType>('top_1pct');
+  const [selectedConcentrationType, setSelectedConcentrationType] = useState<ConcentrationType>('top_1pct_concentration');
   const [selectedEpoch, setSelectedEpoch] = useState<number | null>(null);
   const [activeRewardTab, setActiveRewardTab] = useState<RewardTabType>('total');
   const [activeRewardRateTab, setActiveRewardRateTab] = useState<RewardRateTabType>('avg_rate');
@@ -352,7 +352,7 @@ function ValidatorsPerformanceContent() {
   // Get concentration type display info
   const getConcentrationTypeInfo = (concentrationType: ConcentrationType) => {
     switch (concentrationType) {
-      case 'top_01pct':
+      case 'top_01pct_concentration':
         return { 
           title: 'Top 0.1% Stake Concentration by Epoch', 
           description: 'Share of total network stake held by the largest 0.1% of validators per epoch.',
@@ -362,7 +362,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 0.1% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_1pct':
+      case 'top_1pct_concentration':
         return { 
           title: 'Top 1% Stake Concentration by Epoch', 
           description: 'Share of total network stake held by the largest 1% of validators per epoch.',
@@ -372,7 +372,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 1% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_5pct':
+      case 'top_5pct_concentration':
         return { 
           title: 'Top 5% Stake Concentration by Epoch', 
           description: 'Share of total network stake held by the largest 5% of validators per epoch.',
@@ -382,7 +382,7 @@ function ValidatorsPerformanceContent() {
             description: '% of total stake held by the top 5% stakers each epoch. Higher values suggest centralization risk.'
           }
         };
-      case 'top_10pct':
+      case 'top_10pct_concentration':
         return { 
           title: 'Top 10% Stake Concentration by Epoch', 
           description: 'Share of total network stake held by the largest 10% of validators per epoch.',
@@ -843,23 +843,23 @@ function ValidatorsPerformanceContent() {
 
     return [
       {
-        category: 'top_01pct',
-        value: epochData.top_01pct,
+        category: 'top_01pct_concentration',
+        value: epochData.top_01pct_concentration,
         label: 'Top 0.1% Concentration'
       },
       {
-        category: 'top_1pct',
-        value: epochData.top_1pct,
+        category: 'top_1pct_concentration',
+        value: epochData.top_1pct_concentration,
         label: 'Top 1% Concentration'
       },
       {
-        category: 'top_5pct',
-        value: epochData.top_5pct,
+        category: 'top_5pct_concentration',
+        value: epochData.top_5pct_concentration,
         label: 'Top 5% Concentration'
       },
       {
-        category: 'top_10pct',
-        value: epochData.top_10pct,
+        category: 'top_10pct_concentration',
+        value: epochData.top_10pct_concentration,
         label: 'Top 10% Concentration'
       }
     ];

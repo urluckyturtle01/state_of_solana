@@ -17,10 +17,10 @@ interface ValidatorPerformanceData {
   total_commission_collected: number;
  staking_reward: number;
   block_rewards_sol: number;
-  top_01pct: number;
-  top_1pct: number;
-  top_5pct: number;
-  top_10pct: number;
+  top_01pct_concentration: number;
+  top_1pct_concentration: number;
+  top_5pct_concentration: number;
+  top_10pct_concentration: number;
   epoch: number;
   [key: string]: any;
 }
@@ -233,23 +233,23 @@ function ValidatorsOverviewContent() {
 
     return [
       {
-        category: 'top_01pct',
-        value: epochData.top_01pct,
+        category: 'top_01pct_concentration',
+        value: epochData.top_01pct_concentration,
         label: 'Top 0.1% Concentration'
       },
       {
-        category: 'top_1pct',
-        value: epochData.top_1pct,
+        category: 'top_1pct_concentration',
+        value: epochData.top_1pct_concentration,
         label: 'Top 1% Concentration'
       },
       {
-        category: 'top_5pct',
-        value: epochData.top_5pct,
+        category: 'top_5pct_concentration',
+        value: epochData.top_5pct_concentration,
         label: 'Top 5% Concentration'
       },
       {
-        category: 'top_10pct',
-        value: epochData.top_10pct,
+        category: 'top_10pct_concentration',
+        value: epochData.top_10pct_concentration,
         label: 'Top 10% Concentration'
       }
     ];

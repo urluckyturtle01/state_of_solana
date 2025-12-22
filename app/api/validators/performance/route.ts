@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Call the external API
     const response = await fetch(
-      'http://84.32.32.160:9080/validators/validator_staker_metrics',
+      'http://84.32.32.160:9080/validator-staker-metrics',
       {
         method: 'POST',
         headers: {

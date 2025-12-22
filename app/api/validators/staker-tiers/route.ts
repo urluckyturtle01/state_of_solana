@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Call the external API for validator stake tier distribution data
     const response = await fetch(
-      'http://84.32.32.160:9080/validator_stake_tier_distribution',
+      'http://84.32.32.160:9080/validator-stake-tier-distribution',
       {
         method: 'POST',
         headers: {

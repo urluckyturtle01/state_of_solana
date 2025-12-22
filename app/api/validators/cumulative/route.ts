@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Call the external API for Lorenz curve (cumulative percentage) data
     const response = await fetch(
-      'http://84.32.32.160:9080/validator_lorenz_curve',
+      'http://84.32.32.160:9080/validator-lorenz-curve',
       {
         method: 'POST',
         headers: {
