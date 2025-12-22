@@ -1,7 +1,7 @@
 {
   "pageId": "cu-overspending",
   "pageName": "CU Overspending",
-  "fetchedAt": "2025-12-21T23:20:10.055Z",
+  "fetchedAt": "2025-12-22T01:54:31.533Z",
   "charts": [
     {
       "success": true,
@@ -907,7 +907,7 @@
           "txns": 1596183
         }
       ],
-      "timestamp": 1766359210037,
+      "timestamp": 1766368471531,
       "chartId": "chart_1748203416425_8xpb11d",
       "title": "Cu Overspending",
       "apiType": "JSON"
@@ -940,7 +940,7 @@
           "txns": 171004868
         }
       ],
-      "timestamp": 1766359209981,
+      "timestamp": 1766368471488,
       "chartId": "chart_1748204829942_o15ujsb",
       "title": "Total Cu Overspending - Last 30 Days",
       "apiType": "JSON"
@@ -949,133 +949,173 @@
       "success": true,
       "data": [
         {
+          "partition_0": "2025-11-27",
+          "priorty_fee": 663.765867428,
+          "consumed_cu_fee_paid": 282.315792274,
+          "unused_cu_fee_paid": 274.984829677,
+          "priorty_fee_usd": 94461.84560269311,
+          "consumed_cu_fee_paid_usd": 40176.923957123036,
+          "unused_cu_fee_paid_usd": 39133.64003588096,
+          "unused_cu_fee_paid_percentage": 41.427985856297155
+        },
+        {
+          "partition_0": "2025-12-12",
+          "priorty_fee": 788.142747129,
+          "consumed_cu_fee_paid": 274.481009545,
+          "unused_cu_fee_paid": 388.920269084,
+          "priorty_fee_usd": 106790.71403374124,
+          "consumed_cu_fee_paid_usd": 37191.26148757799,
+          "unused_cu_fee_paid_usd": 52697.39953703738,
+          "unused_cu_fee_paid_percentage": 49.34642493390135
+        },
+        {
           "partition_0": "2025-12-17",
           "priorty_fee": 750.102795887,
           "consumed_cu_fee_paid": 269.540375733,
           "unused_cu_fee_paid": 378.365579455,
-          "priorty_fee_usd": 95409.24642985902,
-          "consumed_cu_fee_paid_usd": 34284.15981398462,
-          "unused_cu_fee_paid_usd": 48126.170184595285,
+          "priorty_fee_usd": 95409.24642985915,
+          "consumed_cu_fee_paid_usd": 34284.15981398467,
+          "unused_cu_fee_paid_usd": 48126.17018459535,
           "unused_cu_fee_paid_percentage": 50.441830310415114
         },
         {
-          "partition_0": "2025-11-21",
-          "priorty_fee": 853.210705316,
-          "consumed_cu_fee_paid": 337.816626721,
-          "unused_cu_fee_paid": 336.986039648,
-          "priorty_fee_usd": 109412.13057870611,
-          "consumed_cu_fee_paid_usd": 43320.17477531168,
-          "unused_cu_fee_paid_usd": 43213.663803611664,
-          "unused_cu_fee_paid_percentage": 39.496227315056004
-        },
-        {
-          "partition_0": "2025-12-07",
-          "priorty_fee": 681.968510665,
-          "consumed_cu_fee_paid": 233.2235939,
-          "unused_cu_fee_paid": 326.094191581,
-          "priorty_fee_usd": 90152.93582240303,
-          "consumed_cu_fee_paid_usd": 30831.030119901356,
-          "unused_cu_fee_paid_usd": 43108.073563387,
-          "unused_cu_fee_paid_percentage": 47.81660538299922
-        },
-        {
-          "partition_0": "2025-11-25",
-          "priorty_fee": 624.666665382,
-          "consumed_cu_fee_paid": 242.440204896,
-          "unused_cu_fee_paid": 281.553032621,
-          "priorty_fee_usd": 85367.98272975223,
-          "consumed_cu_fee_paid_usd": 33132.2805770383,
-          "unused_cu_fee_paid_usd": 38477.504496899135,
-          "unused_cu_fee_paid_percentage": 45.072523991467186
-        },
-        {
-          "partition_0": "2025-12-08",
-          "priorty_fee": 854.730238622,
-          "consumed_cu_fee_paid": 264.457371168,
-          "unused_cu_fee_paid": 485.034493448,
-          "priorty_fee_usd": 116018.31621163036,
-          "consumed_cu_fee_paid_usd": 35896.58763229322,
-          "unused_cu_fee_paid_usd": 65837.01230123953,
-          "unused_cu_fee_paid_percentage": 56.747084814733455
-        },
-        {
-          "partition_0": "2025-12-04",
-          "priorty_fee": 2147.597079381,
-          "consumed_cu_fee_paid": 764.188582022,
-          "unused_cu_fee_paid": 1187.480369204,
-          "priorty_fee_usd": 306244.56844594463,
-          "consumed_cu_fee_paid_usd": 108972.30433005598,
-          "unused_cu_fee_paid_usd": 169333.16621464543,
-          "unused_cu_fee_paid_percentage": 55.29344310461934
-        },
-        {
-          "partition_0": "2025-12-16",
-          "priorty_fee": 712.88859623,
-          "consumed_cu_fee_paid": 250.737927257,
-          "unused_cu_fee_paid": 360.993994854,
-          "priorty_fee_usd": 91038.32435972962,
-          "consumed_cu_fee_paid_usd": 32020.095245771663,
-          "unused_cu_fee_paid_usd": 46100.17409344276,
-          "unused_cu_fee_paid_percentage": 50.63820585194662
+          "partition_0": "2025-11-22",
+          "priorty_fee": 542.227883978,
+          "consumed_cu_fee_paid": 195.176810041,
+          "unused_cu_fee_paid": 263.663957689,
+          "priorty_fee_usd": 68991.90664906078,
+          "consumed_cu_fee_paid_usd": 24833.87641303317,
+          "unused_cu_fee_paid_usd": 33548.03338800528,
+          "unused_cu_fee_paid_percentage": 48.62604183220089
         },
         {
           "partition_0": "2025-12-02",
           "priorty_fee": 810.376158177,
           "consumed_cu_fee_paid": 290.871057325,
           "unused_cu_fee_paid": 401.495986572,
-          "priorty_fee_usd": 108555.0033654209,
-          "consumed_cu_fee_paid_usd": 38964.01478277731,
-          "unused_cu_fee_paid_usd": 53782.92257705695,
+          "priorty_fee_usd": 108555.00336542074,
+          "consumed_cu_fee_paid_usd": 38964.01478277725,
+          "unused_cu_fee_paid_usd": 53782.92257705687,
           "unused_cu_fee_paid_percentage": 49.54439768751271
         },
         {
-          "partition_0": "2025-11-26",
-          "priorty_fee": 743.473260181,
-          "consumed_cu_fee_paid": 291.206808586,
-          "unused_cu_fee_paid": 327.947690518,
-          "priorty_fee_usd": 103318.82003146248,
-          "consumed_cu_fee_paid_usd": 40468.36041004179,
-          "unused_cu_fee_paid_usd": 45574.15879101566,
-          "unused_cu_fee_paid_percentage": 44.110219974577234
+          "partition_0": "2025-12-14",
+          "priorty_fee": 535.672750229,
+          "consumed_cu_fee_paid": 177.246286981,
+          "unused_cu_fee_paid": 277.582036569,
+          "priorty_fee_usd": 70194.8008288945,
+          "consumed_cu_fee_paid_usd": 23226.434062538214,
+          "unused_cu_fee_paid_usd": 36374.4763240432,
+          "unused_cu_fee_paid_percentage": 51.819331196207706
         },
         {
-          "partition_0": "2025-12-20",
-          "priorty_fee": 478.481704499,
-          "consumed_cu_fee_paid": 173.08969883,
-          "unused_cu_fee_paid": 252.60156471,
-          "priorty_fee_usd": 60325.48414864303,
-          "consumed_cu_fee_paid_usd": 21822.6105301052,
-          "unused_cu_fee_paid_usd": 31847.219119466623,
-          "unused_cu_fee_paid_percentage": 52.79231417520749
+          "partition_0": "2025-12-05",
+          "priorty_fee": 655.227292293,
+          "consumed_cu_fee_paid": 246.732199521,
+          "unused_cu_fee_paid": 316.122284008,
+          "priorty_fee_usd": 88917.62544312232,
+          "consumed_cu_fee_paid_usd": 33482.79529839173,
+          "unused_cu_fee_paid_usd": 42899.377321844164,
+          "unused_cu_fee_paid_percentage": 48.246202154021184
         },
         {
-          "partition_0": "2025-12-06",
-          "priorty_fee": 659.83780673,
-          "consumed_cu_fee_paid": 239.916092383,
-          "unused_cu_fee_paid": 312.950436499,
-          "priorty_fee_usd": 87677.09214008527,
-          "consumed_cu_fee_paid_usd": 31879.26657612831,
-          "unused_cu_fee_paid_usd": 41583.831627020365,
-          "unused_cu_fee_paid_percentage": 47.428388204960285
+          "partition_0": "2025-11-24",
+          "priorty_fee": 629.285613911,
+          "consumed_cu_fee_paid": 238.272916419,
+          "unused_cu_fee_paid": 273.299434573,
+          "priorty_fee_usd": 83499.94620823866,
+          "consumed_cu_fee_paid_usd": 31616.447705223574,
+          "unused_cu_fee_paid_usd": 36264.11851966323,
+          "unused_cu_fee_paid_percentage": 43.43011003770583
         },
         {
-          "partition_0": "2025-12-11",
-          "priorty_fee": 860.437871093,
-          "consumed_cu_fee_paid": 295.934830738,
-          "unused_cu_fee_paid": 429.44698467,
-          "priorty_fee_usd": 114531.68686805584,
-          "consumed_cu_fee_paid_usd": 39391.473232554075,
-          "unused_cu_fee_paid_usd": 57163.090127792675,
-          "unused_cu_fee_paid_percentage": 49.91028394931997
+          "partition_0": "2025-12-09",
+          "priorty_fee": 963.388414492,
+          "consumed_cu_fee_paid": 368.894954124,
+          "unused_cu_fee_paid": 476.924792762,
+          "priorty_fee_usd": 132245.1341294417,
+          "consumed_cu_fee_paid_usd": 50638.519162104494,
+          "unused_cu_fee_paid_usd": 65467.865545927845,
+          "unused_cu_fee_paid_percentage": 49.50493337762267
+        },
+        {
+          "partition_0": "2025-12-15",
+          "priorty_fee": 740.965284529,
+          "consumed_cu_fee_paid": 255.563779976,
+          "unused_cu_fee_paid": 365.280260036,
+          "priorty_fee_usd": 95889.57575446051,
+          "consumed_cu_fee_paid_usd": 33072.942756936696,
+          "unused_cu_fee_paid_usd": 47271.53875852086,
+          "unused_cu_fee_paid_percentage": 49.29789123227185
+        },
+        {
+          "partition_0": "2025-12-13",
+          "priorty_fee": 537.268501838,
+          "consumed_cu_fee_paid": 174.67917134,
+          "unused_cu_fee_paid": 286.52954874,
+          "priorty_fee_usd": 71459.91774123159,
+          "consumed_cu_fee_paid_usd": 23233.372461553132,
+          "unused_cu_fee_paid_usd": 38110.140299210114,
+          "unused_cu_fee_paid_percentage": 53.330792287241856
+        },
+        {
+          "partition_0": "2025-11-29",
+          "priorty_fee": 622.529949618,
+          "consumed_cu_fee_paid": 256.997682358,
+          "unused_cu_fee_paid": 292.555810382,
+          "priorty_fee_usd": 85129.92677283646,
+          "consumed_cu_fee_paid_usd": 35144.00213732726,
+          "unused_cu_fee_paid_usd": 40006.516521927944,
+          "unused_cu_fee_paid_percentage": 46.99465633123669
+        },
+        {
+          "partition_0": "2025-11-23",
+          "priorty_fee": 615.724453429,
+          "consumed_cu_fee_paid": 176.777325561,
+          "unused_cu_fee_paid": 335.140436988,
+          "priorty_fee_usd": 80569.7098364015,
+          "consumed_cu_fee_paid_usd": 23131.934661333406,
+          "unused_cu_fee_paid_usd": 43854.304652335224,
+          "unused_cu_fee_paid_percentage": 54.430262615295895
+        },
+        {
+          "partition_0": "2025-12-10",
+          "priorty_fee": 819.446569441,
+          "consumed_cu_fee_paid": 304.95292346,
+          "unused_cu_fee_paid": 393.434717954,
+          "priorty_fee_usd": 113198.22415268523,
+          "consumed_cu_fee_paid_usd": 42126.15034728898,
+          "unused_cu_fee_paid_usd": 54349.01194691252,
+          "unused_cu_fee_paid_percentage": 48.012247854352296
+        },
+        {
+          "partition_0": "2025-12-18",
+          "priorty_fee": 722.853529517,
+          "consumed_cu_fee_paid": 251.146992597,
+          "unused_cu_fee_paid": 358.707073271,
+          "priorty_fee_usd": 89625.32043543165,
+          "consumed_cu_fee_paid_usd": 31139.26787206998,
+          "unused_cu_fee_paid_usd": 44475.45051879442,
+          "unused_cu_fee_paid_percentage": 49.623756213887866
+        },
+        {
+          "partition_0": "2025-12-01",
+          "priorty_fee": 737.951138227,
+          "consumed_cu_fee_paid": 276.3571198,
+          "unused_cu_fee_paid": 341.759663325,
+          "priorty_fee_usd": 93788.12106557532,
+          "consumed_cu_fee_paid_usd": 35122.941976089474,
+          "unused_cu_fee_paid_usd": 43435.12059113539,
+          "unused_cu_fee_paid_percentage": 46.31196370888608
         },
         {
           "partition_0": "2025-11-28",
           "priorty_fee": 644.650845192,
           "consumed_cu_fee_paid": 245.669943918,
           "unused_cu_fee_paid": 291.651398287,
-          "priorty_fee_usd": 90241.7917470269,
-          "consumed_cu_fee_paid_usd": 34390.237882879075,
-          "unused_cu_fee_paid_usd": 40826.976251161,
+          "priorty_fee_usd": 90241.79174702668,
+          "consumed_cu_fee_paid_usd": 34390.237882878995,
+          "unused_cu_fee_paid_usd": 40826.97625116091,
           "unused_cu_fee_paid_percentage": 45.24176156166146
         },
         {
@@ -1089,177 +1129,137 @@
           "unused_cu_fee_paid_percentage": 46.459602336456506
         },
         {
-          "partition_0": "2025-12-14",
-          "priorty_fee": 535.672750229,
-          "consumed_cu_fee_paid": 177.246286981,
-          "unused_cu_fee_paid": 277.582036569,
-          "priorty_fee_usd": 70194.80082889456,
-          "consumed_cu_fee_paid_usd": 23226.434062538232,
-          "unused_cu_fee_paid_usd": 36374.47632404322,
-          "unused_cu_fee_paid_percentage": 51.819331196207706
+          "partition_0": "2025-12-11",
+          "priorty_fee": 860.437871093,
+          "consumed_cu_fee_paid": 295.934830738,
+          "unused_cu_fee_paid": 429.44698467,
+          "priorty_fee_usd": 114531.68686805603,
+          "consumed_cu_fee_paid_usd": 39391.47323255414,
+          "unused_cu_fee_paid_usd": 57163.09012779278,
+          "unused_cu_fee_paid_percentage": 49.91028394931997
         },
         {
-          "partition_0": "2025-11-23",
-          "priorty_fee": 615.724453429,
-          "consumed_cu_fee_paid": 176.777325561,
-          "unused_cu_fee_paid": 335.140436988,
-          "priorty_fee_usd": 80569.70983640145,
-          "consumed_cu_fee_paid_usd": 23131.93466133339,
-          "unused_cu_fee_paid_usd": 43854.304652335195,
-          "unused_cu_fee_paid_percentage": 54.430262615295895
+          "partition_0": "2025-12-06",
+          "priorty_fee": 659.83780673,
+          "consumed_cu_fee_paid": 239.916092383,
+          "unused_cu_fee_paid": 312.950436499,
+          "priorty_fee_usd": 87677.09214008525,
+          "consumed_cu_fee_paid_usd": 31879.266576128302,
+          "unused_cu_fee_paid_usd": 41583.83162702036,
+          "unused_cu_fee_paid_percentage": 47.428388204960285
         },
         {
-          "partition_0": "2025-12-05",
-          "priorty_fee": 655.227292293,
-          "consumed_cu_fee_paid": 246.732199521,
-          "unused_cu_fee_paid": 316.122284008,
-          "priorty_fee_usd": 88917.62544312245,
-          "consumed_cu_fee_paid_usd": 33482.79529839178,
-          "unused_cu_fee_paid_usd": 42899.37732184423,
-          "unused_cu_fee_paid_percentage": 48.246202154021184
-        },
-        {
-          "partition_0": "2025-12-19",
-          "priorty_fee": 698.307061978,
-          "consumed_cu_fee_paid": 236.331343169,
-          "unused_cu_fee_paid": 367.550472616,
-          "priorty_fee_usd": 86908.63540040632,
-          "consumed_cu_fee_paid_usd": 29412.89821555608,
-          "unused_cu_fee_paid_usd": 45743.930936842415,
-          "unused_cu_fee_paid_percentage": 52.634506025886296
-        },
-        {
-          "partition_0": "2025-12-12",
-          "priorty_fee": 788.142747129,
-          "consumed_cu_fee_paid": 274.481009545,
-          "unused_cu_fee_paid": 388.920269084,
-          "priorty_fee_usd": 106790.71403374126,
-          "consumed_cu_fee_paid_usd": 37191.261487578,
-          "unused_cu_fee_paid_usd": 52697.399537037396,
-          "unused_cu_fee_paid_percentage": 49.34642493390135
-        },
-        {
-          "partition_0": "2025-11-27",
-          "priorty_fee": 663.765867428,
-          "consumed_cu_fee_paid": 282.315792274,
-          "unused_cu_fee_paid": 274.984829677,
-          "priorty_fee_usd": 94461.84560269315,
-          "consumed_cu_fee_paid_usd": 40176.92395712306,
-          "unused_cu_fee_paid_usd": 39133.64003588098,
-          "unused_cu_fee_paid_percentage": 41.427985856297155
-        },
-        {
-          "partition_0": "2025-11-22",
-          "priorty_fee": 542.227883978,
-          "consumed_cu_fee_paid": 195.176810041,
-          "unused_cu_fee_paid": 263.663957689,
-          "priorty_fee_usd": 68991.90664906081,
-          "consumed_cu_fee_paid_usd": 24833.876413033184,
-          "unused_cu_fee_paid_usd": 33548.03338800529,
-          "unused_cu_fee_paid_percentage": 48.62604183220089
-        },
-        {
-          "partition_0": "2025-11-20",
-          "priorty_fee": 720.71858588,
-          "consumed_cu_fee_paid": 285.504376951,
-          "unused_cu_fee_paid": 293.093606764,
-          "priorty_fee_usd": 99644.81098267321,
-          "consumed_cu_fee_paid_usd": 39473.14559853054,
-          "unused_cu_fee_paid_usd": 40522.41418274098,
-          "unused_cu_fee_paid_percentage": 40.666858397460594
-        },
-        {
-          "partition_0": "2025-12-01",
-          "priorty_fee": 737.951138227,
-          "consumed_cu_fee_paid": 276.3571198,
-          "unused_cu_fee_paid": 341.759663325,
-          "priorty_fee_usd": 93788.12106557525,
-          "consumed_cu_fee_paid_usd": 35122.941976089445,
-          "unused_cu_fee_paid_usd": 43435.12059113535,
-          "unused_cu_fee_paid_percentage": 46.31196370888608
+          "partition_0": "2025-12-21",
+          "priorty_fee": 469.510931647,
+          "consumed_cu_fee_paid": 163.560679622,
+          "unused_cu_fee_paid": 252.859654899,
+          "priorty_fee_usd": 58689.70824040107,
+          "consumed_cu_fee_paid_usd": 20445.378200127005,
+          "unused_cu_fee_paid_usd": 31607.910213576037,
+          "unused_cu_fee_paid_percentage": 53.8559675302963
         },
         {
           "partition_0": "2025-12-03",
           "priorty_fee": 687.874383689,
           "consumed_cu_fee_paid": 257.714154028,
           "unused_cu_fee_paid": 332.013523105,
-          "priorty_fee_usd": 97484.42130895736,
-          "consumed_cu_fee_paid_usd": 36522.8241729462,
-          "unused_cu_fee_paid_usd": 47052.40801825289,
+          "priorty_fee_usd": 97484.42130895749,
+          "consumed_cu_fee_paid_usd": 36522.82417294625,
+          "unused_cu_fee_paid_usd": 47052.40801825296,
           "unused_cu_fee_paid_percentage": 48.266592124632616
         },
         {
-          "partition_0": "2025-11-29",
-          "priorty_fee": 622.529949618,
-          "consumed_cu_fee_paid": 256.997682358,
-          "unused_cu_fee_paid": 292.555810382,
-          "priorty_fee_usd": 85129.92677283657,
-          "consumed_cu_fee_paid_usd": 35144.002137327305,
-          "unused_cu_fee_paid_usd": 40006.516521927995,
-          "unused_cu_fee_paid_percentage": 46.99465633123669
+          "partition_0": "2025-12-16",
+          "priorty_fee": 712.88859623,
+          "consumed_cu_fee_paid": 250.737927257,
+          "unused_cu_fee_paid": 360.993994854,
+          "priorty_fee_usd": 91038.32435972954,
+          "consumed_cu_fee_paid_usd": 32020.095245771638,
+          "unused_cu_fee_paid_usd": 46100.174093442714,
+          "unused_cu_fee_paid_percentage": 50.63820585194662
         },
         {
-          "partition_0": "2025-12-13",
-          "priorty_fee": 537.268501838,
-          "consumed_cu_fee_paid": 174.67917134,
-          "unused_cu_fee_paid": 286.52954874,
-          "priorty_fee_usd": 71459.91774123165,
-          "consumed_cu_fee_paid_usd": 23233.372461553154,
-          "unused_cu_fee_paid_usd": 38110.14029921014,
-          "unused_cu_fee_paid_percentage": 53.330792287241856
+          "partition_0": "2025-12-20",
+          "priorty_fee": 558.281157073,
+          "consumed_cu_fee_paid": 198.164581296,
+          "unused_cu_fee_paid": 297.887020178,
+          "priorty_fee_usd": 70381.75141013763,
+          "consumed_cu_fee_paid_usd": 24982.341106034084,
+          "unused_cu_fee_paid_usd": 37554.214282272806,
+          "unused_cu_fee_paid_percentage": 53.35788543173932
         },
         {
-          "partition_0": "2025-12-10",
-          "priorty_fee": 819.446569441,
-          "consumed_cu_fee_paid": 304.95292346,
-          "unused_cu_fee_paid": 393.434717954,
-          "priorty_fee_usd": 113198.22415268519,
-          "consumed_cu_fee_paid_usd": 42126.15034728897,
-          "unused_cu_fee_paid_usd": 54349.0119469125,
-          "unused_cu_fee_paid_percentage": 48.012247854352296
+          "partition_0": "2025-11-26",
+          "priorty_fee": 743.473260181,
+          "consumed_cu_fee_paid": 291.206808586,
+          "unused_cu_fee_paid": 327.947690518,
+          "priorty_fee_usd": 103318.82003146232,
+          "consumed_cu_fee_paid_usd": 40468.36041004173,
+          "unused_cu_fee_paid_usd": 45574.158791015594,
+          "unused_cu_fee_paid_percentage": 44.110219974577234
         },
         {
-          "partition_0": "2025-12-18",
-          "priorty_fee": 722.853529517,
-          "consumed_cu_fee_paid": 251.146992597,
-          "unused_cu_fee_paid": 358.707073271,
-          "priorty_fee_usd": 89625.3204354316,
-          "consumed_cu_fee_paid_usd": 31139.267872069962,
-          "unused_cu_fee_paid_usd": 44475.450518794394,
-          "unused_cu_fee_paid_percentage": 49.623756213887866
+          "partition_0": "2025-11-21",
+          "priorty_fee": 853.210705316,
+          "consumed_cu_fee_paid": 337.816626721,
+          "unused_cu_fee_paid": 336.986039648,
+          "priorty_fee_usd": 109412.13057870607,
+          "consumed_cu_fee_paid_usd": 43320.174775311665,
+          "unused_cu_fee_paid_usd": 43213.66380361165,
+          "unused_cu_fee_paid_percentage": 39.496227315056004
         },
         {
-          "partition_0": "2025-12-09",
-          "priorty_fee": 963.388414492,
-          "consumed_cu_fee_paid": 368.894954124,
-          "unused_cu_fee_paid": 476.924792762,
-          "priorty_fee_usd": 132245.1341294419,
-          "consumed_cu_fee_paid_usd": 50638.51916210458,
-          "unused_cu_fee_paid_usd": 65467.865545927954,
-          "unused_cu_fee_paid_percentage": 49.50493337762267
+          "partition_0": "2025-12-07",
+          "priorty_fee": 681.968510665,
+          "consumed_cu_fee_paid": 233.2235939,
+          "unused_cu_fee_paid": 326.094191581,
+          "priorty_fee_usd": 90152.93582240309,
+          "consumed_cu_fee_paid_usd": 30831.030119901377,
+          "unused_cu_fee_paid_usd": 43108.07356338703,
+          "unused_cu_fee_paid_percentage": 47.81660538299922
         },
         {
-          "partition_0": "2025-11-24",
-          "priorty_fee": 629.285613911,
-          "consumed_cu_fee_paid": 238.272916419,
-          "unused_cu_fee_paid": 273.299434573,
-          "priorty_fee_usd": 83499.94620823862,
-          "consumed_cu_fee_paid_usd": 31616.447705223563,
-          "unused_cu_fee_paid_usd": 36264.11851966321,
-          "unused_cu_fee_paid_percentage": 43.43011003770583
+          "partition_0": "2025-12-08",
+          "priorty_fee": 854.730238622,
+          "consumed_cu_fee_paid": 264.457371168,
+          "unused_cu_fee_paid": 485.034493448,
+          "priorty_fee_usd": 116018.31621163014,
+          "consumed_cu_fee_paid_usd": 35896.58763229316,
+          "unused_cu_fee_paid_usd": 65837.0123012394,
+          "unused_cu_fee_paid_percentage": 56.747084814733455
         },
         {
-          "partition_0": "2025-12-15",
-          "priorty_fee": 740.965284529,
-          "consumed_cu_fee_paid": 255.563779976,
-          "unused_cu_fee_paid": 365.280260036,
-          "priorty_fee_usd": 95889.57575446047,
-          "consumed_cu_fee_paid_usd": 33072.94275693668,
-          "unused_cu_fee_paid_usd": 47271.53875852084,
-          "unused_cu_fee_paid_percentage": 49.29789123227185
+          "partition_0": "2025-12-04",
+          "priorty_fee": 2147.597079381,
+          "consumed_cu_fee_paid": 764.188582022,
+          "unused_cu_fee_paid": 1187.480369204,
+          "priorty_fee_usd": 306244.5684459451,
+          "consumed_cu_fee_paid_usd": 108972.30433005615,
+          "unused_cu_fee_paid_usd": 169333.1662146457,
+          "unused_cu_fee_paid_percentage": 55.29344310461934
+        },
+        {
+          "partition_0": "2025-11-25",
+          "priorty_fee": 624.666665382,
+          "consumed_cu_fee_paid": 242.440204896,
+          "unused_cu_fee_paid": 281.553032621,
+          "priorty_fee_usd": 85367.98272975226,
+          "consumed_cu_fee_paid_usd": 33132.28057703831,
+          "unused_cu_fee_paid_usd": 38477.50449689915,
+          "unused_cu_fee_paid_percentage": 45.072523991467186
+        },
+        {
+          "partition_0": "2025-12-19",
+          "priorty_fee": 698.307061978,
+          "consumed_cu_fee_paid": 236.331343169,
+          "unused_cu_fee_paid": 367.550472616,
+          "priorty_fee_usd": 86908.63540040635,
+          "consumed_cu_fee_paid_usd": 29412.898215556095,
+          "unused_cu_fee_paid_usd": 45743.93093684244,
+          "unused_cu_fee_paid_percentage": 52.634506025886296
         }
       ],
-      "timestamp": 1766359210055,
+      "timestamp": 1766368471533,
       "chartId": "chart_1748205678451_hrbbfn8",
       "title": "Priority Fee Breakdown",
       "apiType": "JSON"
