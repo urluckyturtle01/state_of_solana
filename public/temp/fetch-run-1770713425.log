@@ -1,0 +1,217 @@
+
+======================================================================
+🚀 DEX DATA FETCHER - SMART INCREMENTAL
+======================================================================
+
+📋 Features:
+  ✓ Smart freshness check (skip if data up-to-date)
+  ✓ Auto refresh old data (isIncremental=false)
+  ✓ Incremental updates (isIncremental=true)
+  ✓ Run queries ONE BY ONE (sequential)
+  ✓ Smart config updates (only if changed)
+======================================================================
+
+
+======================================================================
+📂 Processing folder: compute
+======================================================================
+Found 4 SQL files
+
+📊 Processing: cu_by_dex
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: cu_by_category
+   📅 Last date in data: 2026-02-06
+   🔄 Fetching incremental data from 2026-02-07
+   ❌ Error: Execution failed on sql '-- Description: Daily compute units by category
+-- Shows CU consumption proportion by protocol type
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Perp
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade', 'perp'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp', 'perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift', 'perp'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'launchpad'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')
+    ) AS t(program, program_name, category)
+)
+
+SELECT 
+    block_date,
+    category,
+    total_compute_units,
+    ROUND(total_compute_units * 100.0 / SUM(total_compute_units) OVER (PARTITION BY block_date), 2) as cu_percentage
+FROM (
+    SELECT 
+        d.block_date,
+        COALESCE(p.category, 'other') as category,
+        SUM(d.compute_units_consumed) as total_compute_units
+    FROM 
+    (
+        SELECT DISTINCT block_date, block_slot, tx_index, outer_program, compute_units_consumed
+        FROM solana.dex_trades
+        WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    ) d
+     JOIN program_names p ON d.outer_program = p.program
+    GROUP BY d.block_date, COALESCE(p.category, 'other')
+)
+ORDER BY block_date, total_compute_units DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=ADMINISTRATIVELY_KILLED, message="Query killed. Message: Killed via web UI", query_id=20260210_085026_00262_97zny)
+[SQL: -- Description: Daily compute units by category
+-- Shows CU consumption proportion by protocol type
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Perp
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade', 'perp'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp', 'perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift', 'perp'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'launchpad'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')
+    ) AS t(program, program_name, category)
+)
+
+SELECT 
+    block_date,
+    category,
+    total_compute_units,
+    ROUND(total_compute_units * 100.0 / SUM(total_compute_units) OVER (PARTITION BY block_date), 2) as cu_percentage
+FROM (
+    SELECT 
+        d.block_date,
+        COALESCE(p.category, 'other') as category,
+        SUM(d.compute_units_consumed) as total_compute_units
+    FROM 
+    (
+        SELECT DISTINCT block_date, block_slot, tx_index, outer_program, compute_units_consumed
+        FROM solana.dex_trades
+        WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    ) d
+     JOIN program_names p ON d.outer_program = p.program
+    GROUP BY d.block_date, COALESCE(p.category, 'other')
+)
+ORDER BY block_date, total_compute_units DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+📊 Processing: dex_cu_share
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05

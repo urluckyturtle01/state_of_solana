@@ -1,0 +1,1109 @@
+
+======================================================================
+🚀 DEX DATA FETCHER - SMART INCREMENTAL
+======================================================================
+
+📋 Features:
+  ✓ Smart freshness check (skip if data up-to-date)
+  ✓ Auto refresh old data (isIncremental=false)
+  ✓ Incremental updates (isIncremental=true)
+  ✓ Run queries ONE BY ONE (sequential)
+  ✓ Smart config updates (only if changed)
+======================================================================
+
+
+======================================================================
+📂 Processing folder: compute
+======================================================================
+Found 4 SQL files
+
+📊 Processing: cu_by_dex
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: cu_by_category
+   📅 Last date in data: 2026-02-06
+   🔄 Fetching incremental data from 2026-02-07
+   ✅ Fetched 753 new rows
+💾 dex-compute.json: ✅ 1 unchanged
+
+📊 Processing: dex_cu_share
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 184 new rows
+💾 dex-compute.json: ✏️  1 updated
+
+📊 Processing: avg_cu_per_trade
+   📅 Last date in data: 2026-02-06
+   🔄 Fetching incremental data from 2026-02-07
+   ✅ Fetched 184 new rows
+💾 dex-compute.json: ✅ 2 unchanged
+
+======================================================================
+📂 Processing folder: network_fees
+======================================================================
+Found 4 SQL files
+
+📊 Processing: priority_distribution
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: dex_fee_share
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 5 new rows
+💾 dex-network-fees.json: ✏️  4 updated
+
+📊 Processing: trades_by_fee_type
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 5 new rows
+💾 dex-network-fees.json: ✏️  2 updated
+
+📊 Processing: jito_distribution
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 5 new rows
+💾 dex-network-fees.json: ✏️  1 updated
+
+======================================================================
+📂 Processing folder: prop_amm
+======================================================================
+Found 5 SQL files
+
+📊 Processing: prop_amm_vs_other_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: prop_amm_pool_category_share
+   📅 Last date in data: 2025-01-14
+   🔄 Fetching incremental data from 2025-01-15
+   ✅ Fetched 1158 new rows
+💾 dex-prop-amm.json: ✅ 1 unchanged
+
+📊 Processing: prop_amm_direct_vs_aggregator
+   📅 Last date in data: 2025-01-14
+   🔄 Fetching incremental data from 2025-01-15
+   ✅ Fetched 391 new rows
+💾 dex-prop-amm.json: ✅ 1 unchanged
+
+📊 Processing: total_pool_category_share
+   📅 Last date in data: 2026-02-08
+   🔄 Fetching incremental data from 2026-02-09
+   ✅ Fetched 3 new rows
+💾 dex-prop-amm.json: ✅ 1 unchanged
+
+📊 Processing: prop_amm_by_program
+   📅 Last date in data: 2025-01-14
+   🔄 Fetching incremental data from 2025-01-15
+   ✅ Fetched 2087 new rows
+💾 dex-prop-amm.json: ✅ 2 unchanged
+
+======================================================================
+📂 Processing folder: summary
+======================================================================
+Found 3 SQL files
+
+📊 Processing: daily_cumulative_traders_by_category
+   📥 No existing data for this SQL, fetching full dataset
+   ✅ Fetched 1379 rows
+💾 dex-summary.json: 🆕 2 new
+
+📊 Processing: daily_cumulative_traders_by_program
+   📥 No existing data for this SQL, fetching full dataset
+   ✅ Fetched 3447 rows
+💾 dex-summary.json: 🆕 2 new
+
+📊 Processing: monthly_summary
+   📥 No existing data for this SQL, fetching full dataset
+   ✅ Fetched 3 rows
+💾 dex-summary.json: 🆕 3 new
+
+======================================================================
+📂 Processing folder: tokens
+======================================================================
+Found 4 SQL files
+
+📊 Processing: stablecoin_volume
+   📥 No existing data, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: Token volume breakdown by category (Stablecoins, SOL, Other tokens)
+-- Shows volume share across all token types using UNION of bought and sold tokens
+
+/*
+Logic:
+- UNION bought and sold tokens to count volume from both sides
+- Categorize tokens into: Stablecoins, SOL, Other
+- Calculate total volume in USD for each category
+- Show market share percentage
+*/
+
+WITH stablecoins AS (
+    SELECT mint, name FROM (
+        VALUES 
+            ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'USDC'),
+            ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 'USDT'),
+            ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo', 'PYUSD'),
+            ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT', 'USDe'),
+            ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', 'USDS'),
+            ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u', 'FDUSD'),
+            ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', 'EURC'),
+            ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X', 'sUSD'),
+            ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9', 'AUSD'),
+            ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg', 'EUROe'),
+            ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6', 'USDY'),
+            ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH', 'USDG'),
+            ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1', 'VGBP'),
+            ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519', 'VEUR'),
+            ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch', 'VCHF'),
+            ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R', 'VNXAU'),
+            ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g', 'GYEN'),
+            ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4', 'ZUSD'),
+            ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj', 'syrupUSDC'),
+            ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG', 'USX')
+    ) AS t(mint, name)
+),
+-- UNION bought and sold tokens
+all_tokens AS (
+    SELECT 
+        t.block_date,
+        t.block_time,
+        t.token_bought_mint as mint,
+        t.token_bought_amount as amount,
+        t.signer
+    FROM solana.dex_trades t
+    WHERE t.block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND t.block_date < CURRENT_DATE
+    
+    UNION ALL
+    
+    SELECT 
+        t.block_date,
+        t.block_time,
+        t.token_sold_mint as mint,
+        t.token_sold_amount as amount,
+        t.signer
+    FROM solana.dex_trades t
+    WHERE t.block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND t.block_date < CURRENT_DATE
+),
+-- Categorize and calculate volume
+token_volume AS (
+    SELECT 
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END as token_category,
+        COALESCE(s.name, 
+            CASE WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL' ELSE NULL END
+        ) as token_name,
+        at.mint,
+        COUNT(DISTINCT at.signer) as unique_traders,
+        SUM(at.amount * COALESCE(p.price_in_usd, 0)) as volume_usd
+    FROM all_tokens at
+    LEFT JOIN stablecoins s ON at.mint = s.mint
+    LEFT JOIN solana.token_prices_1m p ON at.mint = p.mint
+        AND DATE_TRUNC('minute', at.block_time) = p.minute
+        AND p.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    GROUP BY 
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END,
+        COALESCE(s.name, 
+            CASE WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL' ELSE NULL END
+        ),
+        at.mint
+),
+-- Calculate totals for percentage
+total_volume AS (
+    SELECT SUM(volume_usd) as total_volume_usd
+    FROM token_volume
+)
+
+SELECT 
+    tv.token_category,
+    tv.token_name,
+    tv.unique_traders,
+    ROUND(tv.volume_usd, 2) as volume_usd,
+    ROUND(tv.volume_usd * 100.0 / t.total_volume_usd, 2) as volume_share_pct
+FROM token_volume tv
+CROSS JOIN total_volume t
+ORDER BY tv.volume_usd DESC
+
+': (trino.exceptions.TrinoQueryError) TrinoQueryError(type=INTERNAL_ERROR, name=PAGE_TRANSPORT_ERROR, message="Error fetching http://10.42.5.116:8080/v1/task/20260210_091551_00304_97zny.7.22.0/results/21/16: Expected response code to be 200, but was 503:
+Trino server is still initializing
+", query_id=20260210_091551_00304_97zny)
+[SQL: -- Description: Token volume breakdown by category (Stablecoins, SOL, Other tokens)
+-- Shows volume share across all token types using UNION of bought and sold tokens
+
+/*
+Logic:
+- UNION bought and sold tokens to count volume from both sides
+- Categorize tokens into: Stablecoins, SOL, Other
+- Calculate total volume in USD for each category
+- Show market share percentage
+*/
+
+WITH stablecoins AS (
+    SELECT mint, name FROM (
+        VALUES 
+            ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'USDC'),
+            ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 'USDT'),
+            ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo', 'PYUSD'),
+            ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT', 'USDe'),
+            ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', 'USDS'),
+            ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u', 'FDUSD'),
+            ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', 'EURC'),
+            ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X', 'sUSD'),
+            ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9', 'AUSD'),
+            ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg', 'EUROe'),
+            ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6', 'USDY'),
+            ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH', 'USDG'),
+            ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1', 'VGBP'),
+            ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519', 'VEUR'),
+            ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch', 'VCHF'),
+            ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R', 'VNXAU'),
+            ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g', 'GYEN'),
+            ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4', 'ZUSD'),
+            ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj', 'syrupUSDC'),
+            ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG', 'USX')
+    ) AS t(mint, name)
+),
+-- UNION bought and sold tokens
+all_tokens AS (
+    SELECT 
+        t.block_date,
+        t.block_time,
+        t.token_bought_mint as mint,
+        t.token_bought_amount as amount,
+        t.signer
+    FROM solana.dex_trades t
+    WHERE t.block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND t.block_date < CURRENT_DATE
+    
+    UNION ALL
+    
+    SELECT 
+        t.block_date,
+        t.block_time,
+        t.token_sold_mint as mint,
+        t.token_sold_amount as amount,
+        t.signer
+    FROM solana.dex_trades t
+    WHERE t.block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND t.block_date < CURRENT_DATE
+),
+-- Categorize and calculate volume
+token_volume AS (
+    SELECT 
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END as token_category,
+        COALESCE(s.name, 
+            CASE WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL' ELSE NULL END
+        ) as token_name,
+        at.mint,
+        COUNT(DISTINCT at.signer) as unique_traders,
+        SUM(at.amount * COALESCE(p.price_in_usd, 0)) as volume_usd
+    FROM all_tokens at
+    LEFT JOIN stablecoins s ON at.mint = s.mint
+    LEFT JOIN solana.token_prices_1m p ON at.mint = p.mint
+        AND DATE_TRUNC('minute', at.block_time) = p.minute
+        AND p.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    GROUP BY 
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END,
+        COALESCE(s.name, 
+            CASE WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL' ELSE NULL END
+        ),
+        at.mint
+),
+-- Calculate totals for percentage
+total_volume AS (
+    SELECT SUM(volume_usd) as total_volume_usd
+    FROM token_volume
+)
+
+SELECT 
+    tv.token_category,
+    tv.token_name,
+    tv.unique_traders,
+    ROUND(tv.volume_usd, 2) as volume_usd,
+    ROUND(tv.volume_usd * 100.0 / t.total_volume_usd, 2) as volume_share_pct
+FROM token_volume tv
+CROSS JOIN total_volume t
+ORDER BY tv.volume_usd DESC
+
+]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+
+📊 Processing: top_tokens_by_volume
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: (trino.exceptions.TrinoConnectionError) failed to fetch: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')", ConnectionResetError(104, 'Connection reset by peer'))
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+📊 Processing: new_token_velocity
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: New token trading velocity
+-- How quickly new tokens gain trading activity and volume (first 7 days)
+
+/*
+Logic:
+- Find first trade date for each token (within Dec)
+- Count trades, traders, and volume in first 7 days of listing
+- Higher velocity = faster adoption
+- Volume calculation priority: SOL → stablecoin → token price
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+token_first_trade AS (
+    SELECT 
+        token_sold_mint as mint,
+        MIN(block_date) as first_trade_date
+    FROM solana.dex_trades
+    WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    GROUP BY token_sold_mint
+    
+    UNION
+    
+    SELECT 
+        token_bought_mint as mint,
+        MIN(block_date) as first_trade_date
+    FROM solana.dex_trades
+    WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    GROUP BY token_bought_mint
+),
+
+token_first AS (
+    SELECT mint, MIN(first_trade_date) as first_trade_date
+    FROM token_first_trade
+    GROUP BY mint
+),
+
+first_week_activity AS (
+    SELECT 
+        f.mint,
+        f.first_trade_date,
+        COUNT(*) as trades_first_week,
+        COUNT(DISTINCT t.signer) as traders_first_week,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_first_week_usd
+    FROM token_first f
+    JOIN solana.dex_trades t ON (t.token_sold_mint = f.mint OR t.token_bought_mint = f.mint)
+        AND t.block_date BETWEEN f.first_trade_date AND f.first_trade_date + INTERVAL '7' DAY
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE f.first_trade_date >= CURRENT_DATE - INTERVAL '6' MONTH
+    GROUP BY f.mint, f.first_trade_date
+)
+
+SELECT 
+    a.mint,
+    f.symbol,
+    f.name,
+    a.first_trade_date,
+    a.trades_first_week,
+    a.traders_first_week,
+    ROUND(a.volume_first_week_usd, 2) as volume_first_week_usd
+FROM first_week_activity a
+LEFT JOIN solana.fungible_token_info f ON a.mint = f.address
+ORDER BY a.volume_first_week_usd DESC
+LIMIT 100
+
+': (trino.exceptions.TrinoQueryError) TrinoQueryError(type=INSUFFICIENT_RESOURCES, name=EXCEEDED_LOCAL_MEMORY_LIMIT, message="Query exceeded per-node memory limit of 25GB [Allocated: 25.00GB, Delta: 3.98MB, Top Consumers: {NestedLoopBuildOperator=23.10GB, TableScanOperator=1.61GB, LazyOutputBuffer=226.96MB}]", query_id=20260210_091813_00311_97zny)
+[SQL: -- Description: New token trading velocity
+-- How quickly new tokens gain trading activity and volume (first 7 days)
+
+/*
+Logic:
+- Find first trade date for each token (within Dec)
+- Count trades, traders, and volume in first 7 days of listing
+- Higher velocity = faster adoption
+- Volume calculation priority: SOL → stablecoin → token price
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+token_first_trade AS (
+    SELECT 
+        token_sold_mint as mint,
+        MIN(block_date) as first_trade_date
+    FROM solana.dex_trades
+    WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    GROUP BY token_sold_mint
+    
+    UNION
+    
+    SELECT 
+        token_bought_mint as mint,
+        MIN(block_date) as first_trade_date
+    FROM solana.dex_trades
+    WHERE block_date >= CURRENT_DATE - INTERVAL '6' MONTH AND block_date < CURRENT_DATE
+    GROUP BY token_bought_mint
+),
+
+token_first AS (
+    SELECT mint, MIN(first_trade_date) as first_trade_date
+    FROM token_first_trade
+    GROUP BY mint
+),
+
+first_week_activity AS (
+    SELECT 
+        f.mint,
+        f.first_trade_date,
+        COUNT(*) as trades_first_week,
+        COUNT(DISTINCT t.signer) as traders_first_week,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_first_week_usd
+    FROM token_first f
+    JOIN solana.dex_trades t ON (t.token_sold_mint = f.mint OR t.token_bought_mint = f.mint)
+        AND t.block_date BETWEEN f.first_trade_date AND f.first_trade_date + INTERVAL '7' DAY
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE f.first_trade_date >= CURRENT_DATE - INTERVAL '6' MONTH
+    GROUP BY f.mint, f.first_trade_date
+)
+
+SELECT 
+    a.mint,
+    f.symbol,
+    f.name,
+    a.first_trade_date,
+    a.trades_first_week,
+    a.traders_first_week,
+    ROUND(a.volume_first_week_usd, 2) as volume_first_week_usd
+FROM first_week_activity a
+LEFT JOIN solana.fungible_token_info f ON a.mint = f.address
+ORDER BY a.volume_first_week_usd DESC
+LIMIT 100
+
+]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+
+📊 Processing: top_token_pairs
+   📥 No existing data, fetching full dataset
+   ✅ Fetched 100 rows
+💾 dex-tokens.json: ✅ 1 unchanged
+
+======================================================================
+📂 Processing folder: traders
+======================================================================
+Found 5 SQL files
+
+📊 Processing: traders_jito_usage
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: traders_by_category
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 25 new rows
+💾 dex-traders.json: ✅ 1 unchanged
+
+📊 Processing: traders_by_program
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 104 new rows
+💾 dex-traders.json: ✅ 1 unchanged
+
+📊 Processing: traders_by_frequency_and_fees
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: Daily active traders by transaction frequency and total fees
+-- Segments traders by how often they trade and how much they pay in fees
+
+SELECT 
+    block_date,
+    frequency_bucket,
+    COUNT(DISTINCT signer) as trader_count,
+    ROUND(SUM(total_fees_sol), 4) as total_fees_sol,
+    ROUND(AVG(total_fees_sol), 6) as avg_fees_per_trader_sol,
+    ROUND(SUM(txn_count), 0) as total_txns,
+    ROUND(AVG(txn_count), 2) as avg_txns_per_trader
+FROM (
+    SELECT 
+        block_date,
+        signer,
+        COUNT(*) as txn_count,
+        SUM(total_fee) as total_fees_sol,
+        CASE 
+            WHEN COUNT(*) = 1 THEN '1_txn'
+            WHEN COUNT(*) BETWEEN 2 AND 5 THEN '2-5_txns'
+            WHEN COUNT(*) BETWEEN 6 AND 10 THEN '6-10_txns'
+            WHEN COUNT(*) BETWEEN 11 AND 20 THEN '11-20_txns'
+            WHEN COUNT(*) BETWEEN 21 AND 50 THEN '21-50_txns'
+            ELSE '51+_txns'
+        END as frequency_bucket
+    FROM (
+        SELECT DISTINCT block_date, block_slot, tx_index, signer, txn_fee + priority_fee + jito_tips as total_fee
+        FROM solana.dex_trades
+        WHERE block_date >= DATE '2025-01-01' AND block_date < CURRENT_DATE
+    )
+    GROUP BY block_date, signer
+)
+GROUP BY block_date, frequency_bucket
+ORDER BY block_date, 
+    CASE frequency_bucket
+        WHEN '1_txn' THEN 1
+        WHEN '2-5_txns' THEN 2
+        WHEN '6-10_txns' THEN 3
+        WHEN '11-20_txns' THEN 4
+        WHEN '21-50_txns' THEN 5
+        WHEN '51+_txns' THEN 6
+    END
+': (trino.exceptions.TrinoQueryError) TrinoQueryError(type=INSUFFICIENT_RESOURCES, name=EXCEEDED_SPILL_LIMIT, message="Query exceeded per-query local spill limit of 10GB", query_id=20260210_092348_00322_97zny)
+[SQL: -- Description: Daily active traders by transaction frequency and total fees
+-- Segments traders by how often they trade and how much they pay in fees
+
+SELECT 
+    block_date,
+    frequency_bucket,
+    COUNT(DISTINCT signer) as trader_count,
+    ROUND(SUM(total_fees_sol), 4) as total_fees_sol,
+    ROUND(AVG(total_fees_sol), 6) as avg_fees_per_trader_sol,
+    ROUND(SUM(txn_count), 0) as total_txns,
+    ROUND(AVG(txn_count), 2) as avg_txns_per_trader
+FROM (
+    SELECT 
+        block_date,
+        signer,
+        COUNT(*) as txn_count,
+        SUM(total_fee) as total_fees_sol,
+        CASE 
+            WHEN COUNT(*) = 1 THEN '1_txn'
+            WHEN COUNT(*) BETWEEN 2 AND 5 THEN '2-5_txns'
+            WHEN COUNT(*) BETWEEN 6 AND 10 THEN '6-10_txns'
+            WHEN COUNT(*) BETWEEN 11 AND 20 THEN '11-20_txns'
+            WHEN COUNT(*) BETWEEN 21 AND 50 THEN '21-50_txns'
+            ELSE '51+_txns'
+        END as frequency_bucket
+    FROM (
+        SELECT DISTINCT block_date, block_slot, tx_index, signer, txn_fee + priority_fee + jito_tips as total_fee
+        FROM solana.dex_trades
+        WHERE block_date >= DATE '2025-01-01' AND block_date < CURRENT_DATE
+    )
+    GROUP BY block_date, signer
+)
+GROUP BY block_date, frequency_bucket
+ORDER BY block_date, 
+    CASE frequency_bucket
+        WHEN '1_txn' THEN 1
+        WHEN '2-5_txns' THEN 2
+        WHEN '6-10_txns' THEN 3
+        WHEN '11-20_txns' THEN 4
+        WHEN '21-50_txns' THEN 5
+        WHEN '51+_txns' THEN 6
+    END
+]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+
+📊 Processing: daily_active_traders
+   📅 Last date in data: 2026-02-06
+   🔄 Fetching incremental data from 2026-02-07
+   ✅ Fetched 3 new rows
+💾 dex-traders.json: ✅ 1 unchanged
+
+======================================================================
+📂 Processing folder: volume
+======================================================================
+Found 5 SQL files
+
+📊 Processing: daily_and_cumulative_volume
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: volume_by_trader_frequency
+   📅 Last date in data: 2026-02-04
+   🔄 Fetching incremental data from 2026-02-05
+   ✅ Fetched 30 new rows
+💾 dex-volume.json: ✅ 2 unchanged
+
+📊 Processing: volume_by_pool_category
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: Total volume by pool category
+-- Shows volume distribution across SOL-stable, stable-stable, and others
+-- Priority-based volume calculation for accurate USD valuation
+
+/*
+Logic:
+- SOL-stable: one token is SOL, other is stablecoin
+- Stable-stable: both tokens are stablecoins
+- Others: everything else
+- Volume calculation priority: SOL → stablecoin → token price
+- Daily and cumulative totals per category
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+categorized_trades AS (
+    SELECT 
+        t.block_date,
+        CASE
+            WHEN (t.token_sold_mint = 'So11111111111111111111111111111111111111112' AND sb.mint IS NOT NULL) 
+              OR (ss.mint IS NOT NULL AND t.token_bought_mint = 'So11111111111111111111111111111111111111112') THEN 'SOL-stable'
+            WHEN ss.mint IS NOT NULL AND sb.mint IS NOT NULL THEN 'stable-stable'
+            ELSE 'others'
+        END as pool_category,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date >= DATE '2025-01-01' 
+      AND t.block_date < CURRENT_DATE
+    GROUP BY t.block_date, pool_category
+)
+
+SELECT 
+    block_date,
+    pool_category,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY pool_category ORDER BY block_date), 2) as cumulative_volume_usd,
+    ROUND(volume_usd * 100.0 / SUM(volume_usd) OVER (PARTITION BY block_date), 2) as daily_volume_share_pct
+FROM categorized_trades
+ORDER BY block_date, daily_volume_usd DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 79:28: Column 'pool_category' cannot be resolved", query_id=20260210_092835_00329_97zny)
+[SQL: -- Description: Total volume by pool category
+-- Shows volume distribution across SOL-stable, stable-stable, and others
+-- Priority-based volume calculation for accurate USD valuation
+
+/*
+Logic:
+- SOL-stable: one token is SOL, other is stablecoin
+- Stable-stable: both tokens are stablecoins
+- Others: everything else
+- Volume calculation priority: SOL → stablecoin → token price
+- Daily and cumulative totals per category
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+categorized_trades AS (
+    SELECT 
+        t.block_date,
+        CASE
+            WHEN (t.token_sold_mint = 'So11111111111111111111111111111111111111112' AND sb.mint IS NOT NULL) 
+              OR (ss.mint IS NOT NULL AND t.token_bought_mint = 'So11111111111111111111111111111111111111112') THEN 'SOL-stable'
+            WHEN ss.mint IS NOT NULL AND sb.mint IS NOT NULL THEN 'stable-stable'
+            ELSE 'others'
+        END as pool_category,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date >= DATE '2025-01-01' 
+      AND t.block_date < CURRENT_DATE
+    GROUP BY t.block_date, pool_category
+)
+
+SELECT 
+    block_date,
+    pool_category,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY pool_category ORDER BY block_date), 2) as cumulative_volume_usd,
+    ROUND(volume_usd * 100.0 / SUM(volume_usd) OVER (PARTITION BY block_date), 2) as daily_volume_share_pct
+FROM categorized_trades
+ORDER BY block_date, daily_volume_usd DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+📊 Processing: volume_by_top_pools
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: Volume by top 20 pools (cumulative)
+-- Shows cumulative volume for the top 20 trading pools by total volume
+-- Priority-based volume calculation for accurate USD valuation
+
+/*
+Logic:
+- Pool defined as token pair (token_sold_mint + token_bought_mint)
+- Identifies top 20 pools by cumulative volume
+- Volume calculation priority: SOL → stablecoin → token price
+- Shows cumulative volume per pool
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+pool_volume AS (
+    SELECT 
+        LEAST(t.token_sold_mint, t.token_bought_mint) as token_a,
+        GREATEST(t.token_sold_mint, t.token_bought_mint) as token_b,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as cumulative_volume_usd,
+        COUNT(DISTINCT (t.block_slot, t.tx_index)) as txn_count
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date >= DATE '2025-01-01' 
+      AND t.block_date < CURRENT_DATE
+    GROUP BY token_a, token_b
+),
+
+ranked_pools AS (
+    SELECT 
+        token_a,
+        token_b,
+        cumulative_volume_usd,
+        txn_count,
+        ROW_NUMBER() OVER (ORDER BY cumulative_volume_usd DESC) as pool_rank
+    FROM pool_volume
+)
+
+SELECT 
+    pool_rank,
+    token_a,
+    token_b,
+    ROUND(cumulative_volume_usd, 2) as cumulative_volume_usd,
+    txn_count,
+    ROUND(cumulative_volume_usd * 100.0 / SUM(cumulative_volume_usd) OVER (), 2) as volume_share_pct
+FROM ranked_pools
+WHERE pool_rank <= 20
+ORDER BY pool_rank
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=COLUMN_NOT_FOUND, message="line 74:14: Column 'token_a' cannot be resolved", query_id=20260210_092835_00331_97zny)
+[SQL: -- Description: Volume by top 20 pools (cumulative)
+-- Shows cumulative volume for the top 20 trading pools by total volume
+-- Priority-based volume calculation for accurate USD valuation
+
+/*
+Logic:
+- Pool defined as token pair (token_sold_mint + token_bought_mint)
+- Identifies top 20 pools by cumulative volume
+- Volume calculation priority: SOL → stablecoin → token price
+- Shows cumulative volume per pool
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+
+pool_volume AS (
+    SELECT 
+        LEAST(t.token_sold_mint, t.token_bought_mint) as token_a,
+        GREATEST(t.token_sold_mint, t.token_bought_mint) as token_b,
+        SUM(
+            CASE 
+                -- Priority 1: If SOL is bought, use SOL amount * price
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 2: If SOL is sold, use SOL amount * price
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                -- Priority 3: If stablecoin is bought, use stablecoin amount * price
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                -- Priority 4: If stablecoin is sold, use stablecoin amount * price
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                -- Priority 5: Neither has SOL or stablecoin, use bought token price
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as cumulative_volume_usd,
+        COUNT(DISTINCT (t.block_slot, t.tx_index)) as txn_count
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date >= DATE '2025-01-01' 
+      AND t.block_date < CURRENT_DATE
+    GROUP BY token_a, token_b
+),
+
+ranked_pools AS (
+    SELECT 
+        token_a,
+        token_b,
+        cumulative_volume_usd,
+        txn_count,
+        ROW_NUMBER() OVER (ORDER BY cumulative_volume_usd DESC) as pool_rank
+    FROM pool_volume
+)
+
+SELECT 
+    pool_rank,
+    token_a,
+    token_b,
+    ROUND(cumulative_volume_usd, 2) as cumulative_volume_usd,
+    txn_count,
+    ROUND(cumulative_volume_usd * 100.0 / SUM(cumulative_volume_usd) OVER (), 2) as volume_share_pct
+FROM ranked_pools
+WHERE pool_rank <= 20
+ORDER BY pool_rank
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+📊 Processing: volume_by_dex
+   📅 Last date in data: 2026-02-06
+   🔄 Fetching incremental data from 2026-02-07
+   ✅ Fetched 84 new rows
+💾 dex-volume.json: ✅ 2 unchanged
+
+======================================================================
+🎉 DEX DATA FETCH COMPLETE!
+======================================================================

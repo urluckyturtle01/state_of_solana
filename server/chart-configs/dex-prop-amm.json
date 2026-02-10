@@ -1,0 +1,289 @@
+{
+  "pageId": "dex-prop-amm",
+  "pageName": "DEX Prop Amm",
+  "chartCount": 7,
+  "lastUpdated": "2026-02-10T09:00:33.004802",
+  "charts": [
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
+      "title": "Volume by DEX Type",
+      "subtitle": "",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "volume_share_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "volume_share_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T06:30:11.309288",
+      "updatedAt": "2026-02-07T06:30:11.309288"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000007",
+      "title": "Transactions by DEX Type",
+      "subtitle": "",
+      "chartType": "dual-axis",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_count",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "txn_share_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "txn_count"
+        ],
+        "rightAxisFields": [
+          "txn_share_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T06:30:11.309295",
+      "updatedAt": "2026-02-07T06:30:11.309295"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000004",
+      "title": "Prop Amm Pool Category Share",
+      "subtitle": "Daily prop AMM volume by pool category - SOL-stable, stable-stable, others",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "pct_of_prop_amm_volume",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": "pool_category"
+      },
+      "page": "dex-prop-amm",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "pct_of_prop_amm_volume"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.048973",
+      "updatedAt": "2026-02-07T08:14:39.048973"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000006",
+      "title": "Prop Amm Direct Vs Aggregator",
+      "subtitle": "Daily prop AMM volume routed directly vs through aggregators",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "pct_of_prop_volume",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": "route_type"
+      },
+      "page": "dex-prop-amm",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "pct_of_prop_volume"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.051467",
+      "updatedAt": "2026-02-07T08:14:39.051467"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000005",
+      "title": "Total Pool Category Share",
+      "subtitle": "Daily volume by pool category across all DEXs",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "pool_category"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.053992",
+      "updatedAt": "2026-02-09T08:29:17.066282"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
+      "title": "Prop Amm Volume By Program",
+      "subtitle": "Daily volume by individual prop AMM program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.056864",
+      "updatedAt": "2026-02-07T08:14:39.056864"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000002",
+      "title": "Prop Amm Txns By Program",
+      "subtitle": "Daily transaction count by prop AMM program",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.056868",
+      "updatedAt": "2026-02-07T08:14:39.056868"
+    }
+  ]
+}

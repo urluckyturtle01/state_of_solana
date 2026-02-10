@@ -1,0 +1,87 @@
+{
+  "pageId": "dflow-stats-trades",
+  "pageName": "Trades",
+  "chartCount": 3,
+  "lastUpdated": "2026-01-01T06:31:07.868Z",
+  "charts": [
+    {
+      "id": "chart_1767033743154_kz03rpg",
+      "title": "Cumulative Trades",
+      "subtitle": "",
+      "page": "dflow-stats-trades",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14082/results.json",
+      "apiKey": "RdbhNCXVhnwFGKPToDkqmcZZQFtwNQoo2d3Gadqs&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "cumulative_Trades",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-29T18:42:23.154Z",
+      "updatedAt": "2025-12-29T18:42:23.600Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1767033825631_ca3bwet",
+      "title": "Monthly Trades",
+      "subtitle": "",
+      "page": "dflow-stats-trades",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14084/results.json",
+      "apiKey": "oJovN93pjIDVFmvwXYiZfNf2MMhZ2FEcNOdTojf8&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "Trades",
+        "groupBy": ""
+      },
+      "additionalOptions": {},
+      "createdAt": "2025-12-29T18:43:45.631Z",
+      "updatedAt": "2025-12-29T18:43:45.863Z"
+    },
+    {
+      "id": "chart_1767033909873_5qsqgs3",
+      "title": "Monthly Trades Share",
+      "subtitle": "",
+      "page": "dflow-stats-trades",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14089/results.json",
+      "apiKey": "vBkOROgEFNUmyx0blZlkWJNKuM7LZI9Q1amKHlkF&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "Trades",
+        "groupBy": "dex"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-12-29T18:45:09.873Z",
+      "updatedAt": "2025-12-29T18:45:10.064Z"
+    }
+  ]
+}

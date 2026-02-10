@@ -1,0 +1,105 @@
+
+======================================================================
+🚀 DEX DATA FETCHER - SMART INCREMENTAL
+======================================================================
+
+📋 Features:
+  ✓ Smart freshness check (skip if data up-to-date)
+  ✓ Auto refresh old data (isIncremental=false)
+  ✓ Incremental updates (isIncremental=true)
+  ✓ Run queries ONE BY ONE (sequential)
+  ✓ Smart config updates (only if changed)
+======================================================================
+
+
+======================================================================
+📂 Processing folder: compute
+======================================================================
+Found 4 SQL files
+
+📊 Processing: cu_by_dex
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: cu_by_category
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: dex_cu_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: avg_cu_per_trade
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+======================================================================
+📂 Processing folder: network_fees
+======================================================================
+Found 4 SQL files
+
+📊 Processing: priority_distribution
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: dex_fee_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: trades_by_fee_type
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: jito_distribution
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+======================================================================
+📂 Processing folder: prop_amm
+======================================================================
+Found 5 SQL files
+
+📊 Processing: prop_amm_vs_other_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: prop_amm_pool_category_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: prop_amm_direct_vs_aggregator
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: total_pool_category_share
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: prop_amm_by_program
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+======================================================================
+📂 Processing folder: summary
+======================================================================
+Found 3 SQL files
+
+📊 Processing: daily_cumulative_traders_by_category
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: daily_cumulative_traders_by_program
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+📊 Processing: monthly_summary
+   📅 Last date in data: 2026-02-09
+   ⏭️  Data is fresh (up-to-date), skipping
+
+======================================================================
+📂 Processing folder: tokens
+======================================================================
+Found 4 SQL files
+
+📊 Processing: stablecoin_volume
+   📥 No existing data, fetching full dataset

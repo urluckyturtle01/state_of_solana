@@ -1,0 +1,1 @@
+// Screenshot components removed - functionality now integrated into ChartCard 

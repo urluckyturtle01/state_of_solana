@@ -1,0 +1,218 @@
+{
+  "timestamp": "2025-07-12T11:13:21.612Z",
+  "summary": {
+    "totalTests": 9,
+    "passed": 9,
+    "failed": 0,
+    "totalExecutionTime": 5238.558291912079,
+    "results": [
+      {
+        "name": "API Catalog Load",
+        "success": true,
+        "executionTime": 2542.4690833091736,
+        "details": {
+          "catalogSize": 185,
+          "domains": [
+            "mev",
+            "compute-units",
+            "wrapped-btc",
+            "overview",
+            "test",
+            "raydium",
+            "stablecoins",
+            "dex",
+            "rev"
+          ],
+          "storeType": "mock",
+          "initialized": true
+        }
+      },
+      {
+        "name": "Vector Store Initialization",
+        "success": true,
+        "executionTime": 4.089542388916016,
+        "details": {
+          "initialized": true
+        }
+      },
+      {
+        "name": "API Search Functionality",
+        "success": true,
+        "executionTime": 10.921292304992676,
+        "details": {
+          "searchResults": [
+            {
+              "query": "Show DEX volume trends over time",
+              "foundApis": 3,
+              "executionTime": 4,
+              "relevantApis": [
+                "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+                "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+                "https://analytics.topledger.xyz/helium/api/queries/13604/results.json_GET"
+              ]
+            },
+            {
+              "query": "Compare USDC and USDT stablecoin usage",
+              "foundApis": 3,
+              "executionTime": 3,
+              "relevantApis": [
+                "https://analytics.topledger.xyz/tl/api/queries/13409/results.json_GET",
+                "https://analytics.topledger.xyz/tl/api/queries/12781/results.json_GET",
+                "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET"
+              ]
+            },
+            {
+              "query": "Display compute unit pricing trends",
+              "foundApis": 3,
+              "executionTime": 3,
+              "relevantApis": [
+                "https://analytics.topledger.xyz/solanafm/api/queries/13448/results.json_GET",
+                "https://analytics.topledger.xyz/solanafm/api/queries/13446/results.json_GET",
+                "https://analytics.topledger.xyz/solanafm/api/queries/13447/results.json_GET"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "Chart Spec Generation",
+        "success": true,
+        "executionTime": 12.973750114440918,
+        "details": {
+          "chartSpecs": [
+            {
+              "query": "Show DEX volume trends over time",
+              "chartType": "area",
+              "confidence": 0.8999999999999999,
+              "hasValidSpec": true
+            },
+            {
+              "query": "Compare USDC and USDT stablecoin usage",
+              "chartType": "area",
+              "confidence": 1,
+              "hasValidSpec": true
+            },
+            {
+              "query": "Display compute unit pricing trends",
+              "chartType": "line",
+              "confidence": 1,
+              "hasValidSpec": true
+            }
+          ]
+        }
+      },
+      {
+        "name": "Caching System",
+        "success": true,
+        "executionTime": 7.749374866485596,
+        "details": {
+          "cacheWorking": true,
+          "cachedQuery": "Test cache query for integration test",
+          "cachedConfidence": 0.95
+        }
+      },
+      {
+        "name": "Analytics System",
+        "success": true,
+        "executionTime": 12.279959201812744,
+        "details": {
+          "analyticsWorking": true,
+          "totalQueries": 5,
+          "systemMetrics": {
+            "totalQueries": 5,
+            "uniqueQueries": 2,
+            "cacheHitRate": 0.6,
+            "avgProcessingTime": 1155.6,
+            "successRate": 1,
+            "popularDomains": {
+              "https://analytics.topledger.xyz/tl/api/queries/12439/results.json_GET": 4,
+              "https://analytics.topledger.xyz/tl/api/queries/12435/results.json_GET": 4,
+              "https://analytics.topledger.xyz/tl/api/queries/12401/results.json_GET": 4,
+              "test": 2
+            },
+            "errorTypes": {},
+            "timeDistribution": {
+              "16:00": 5
+            }
+          }
+        }
+      },
+      {
+        "name": "NLP API Endpoint",
+        "success": true,
+        "executionTime": 2292.048334121704,
+        "details": {
+          "nlpApiWorking": true,
+          "responseReceived": true,
+          "hasConfiguration": true,
+          "hasMatchingApis": true,
+          "cacheUsed": false,
+          "processingTime": 2253
+        }
+      },
+      {
+        "name": "End-to-End Workflow",
+        "success": true,
+        "executionTime": 6.879667282104492,
+        "details": {
+          "query": "Show stablecoin trading volume over time",
+          "steps": [
+            {
+              "step": "cache_miss",
+              "success": true
+            },
+            {
+              "step": "api_search",
+              "success": true,
+              "data": {
+                "foundApis": 5,
+                "executionTime": 3
+              }
+            },
+            {
+              "step": "chart_spec_generation",
+              "success": true,
+              "data": {
+                "chartType": "area",
+                "confidence": 0.9999999999999999
+              }
+            },
+            {
+              "step": "cache_store",
+              "success": true
+            },
+            {
+              "step": "analytics_logged",
+              "success": true
+            }
+          ],
+          "totalTime": 5.3100409507751465,
+          "success": true
+        }
+      },
+      {
+        "name": "Performance Benchmark",
+        "success": true,
+        "executionTime": 348.5125422477722,
+        "details": {
+          "benchmarkCompleted": true,
+          "tokenReduction": 97.78288107259249,
+          "speedImprovement": 99.9199542650057,
+          "costSavings": 97.78666033434651,
+          "accuracyChange": -3.600000000000003
+        }
+      }
+    ],
+    "systemHealth": {
+      "caching": true,
+      "analytics": true,
+      "vectorSearch": true,
+      "chartGeneration": true,
+      "nlpApi": true
+    }
+  },
+  "systemStatus": "HEALTHY",
+  "recommendations": [
+    "System performance is slow - consider optimizing vector search or caching strategies"
+  ]
+}

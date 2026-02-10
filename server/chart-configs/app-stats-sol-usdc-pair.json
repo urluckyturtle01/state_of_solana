@@ -1,0 +1,331 @@
+{
+  "pageId": "app-stats-sol-usdc-pair",
+  "pageName": "SOL-USDC Pair",
+  "chartCount": 8,
+  "lastUpdated": "2026-01-01T06:31:07.867Z",
+  "charts": [
+    {
+      "id": "chart_1767085717121_m8rv55a",
+      "title": "Daily Volume",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14581/results",
+      "apiKey": "HNfttB6xnPfCO0a2Pe92DGWA1z9dvr3ZYDvJl5m8&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transaction_Volume",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-30T09:08:37.120Z",
+      "updatedAt": "2025-12-30T09:08:38.600Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          },
+          {
+            "urlParam": "appId",
+            "apiParamPath": "app_id",
+            "transform": "number",
+            "defaultValue": "147"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767095083322_1aspo4p",
+      "title": "Daily Transactions",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14581/results",
+      "apiKey": "HNfttB6xnPfCO0a2Pe92DGWA1z9dvr3ZYDvJl5m8&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transactions",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-30T11:44:43.322Z",
+      "updatedAt": "2025-12-30T11:44:43.932Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          },
+          {
+            "urlParam": "appId",
+            "apiParamPath": "app_id",
+            "transform": "number",
+            "defaultValue": "147"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767097161072_zia5xwq",
+      "title": "Daily Volume (all App Ids)",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14588/results",
+      "apiKey": "o4Kj0JH5l2367vDnDXKH5fGhUoAksB04yPMPSrgy&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transaction_Volume",
+        "groupBy": "app_id"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-12-30T12:19:21.072Z",
+      "updatedAt": "2025-12-30T12:19:22.848Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767097960628_q8r0xg2",
+      "title": "Daily Transactions (all App Ids)",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14588/results",
+      "apiKey": "o4Kj0JH5l2367vDnDXKH5fGhUoAksB04yPMPSrgy&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transactions",
+        "groupBy": "app_id"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-12-30T12:32:40.628Z",
+      "updatedAt": "2025-12-30T12:32:41.811Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767098188217_60y5u7v",
+      "title": "Transaction Volume Share By App Id",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14255/results",
+      "apiKey": "IpG2weoMnDxH9Qr82NcRkZgpKwIMkmj0vg1ytO2N&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "app_id",
+        "yAxis": "Total_Transaction_Volume",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-30T12:36:28.217Z",
+      "updatedAt": "2025-12-30T12:36:28.722Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767099301285_d47i665",
+      "title": "Total Transactions Share By App Id",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14255/results",
+      "apiKey": "IpG2weoMnDxH9Qr82NcRkZgpKwIMkmj0vg1ytO2N&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "app_id",
+        "yAxis": "Total_Transactions",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-30T12:55:01.285Z",
+      "updatedAt": "2025-12-30T12:55:03.225Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767242970386_a3makox",
+      "title": "Distribution Of Order Size",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14582/results",
+      "apiKey": "isTpNAcdNxuqVnaP97p8V8VjNTM08j050ySuIN4C&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Volume_cohort",
+        "yAxis": "Transactions",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T04:49:30.386Z",
+      "updatedAt": "2026-01-01T04:49:31.019Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          },
+          {
+            "urlParam": "app_id",
+            "apiParamPath": "app_id",
+            "transform": "string",
+            "defaultValue": "147"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767243321936_bsvolnv",
+      "title": "Distribution Of Order Size",
+      "subtitle": "",
+      "page": "app-stats-sol-usdc-pair",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14583/results",
+      "apiKey": "q6dxgWz4RlEv7paOjXCqT5387QLTAQcIA7NnbmXS&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Volume_cohort",
+        "yAxis": "Transactions",
+        "groupBy": "app_id"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2026-01-01T04:55:21.936Z",
+      "updatedAt": "2026-01-01T04:55:22.201Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    }
+  ]
+}

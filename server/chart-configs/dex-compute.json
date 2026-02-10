@@ -1,0 +1,177 @@
+{
+  "pageId": "dex-compute",
+  "pageName": "DEX Compute",
+  "chartCount": 5,
+  "lastUpdated": "2026-02-10T08:54:14.610763",
+  "charts": [
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
+      "title": "Cu By Dex",
+      "subtitle": "Daily compute units consumed by DEX program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_compute_units",
+            "type": "bar",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-compute",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142463",
+      "updatedAt": "2026-02-07T06:25:53.987909"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
+      "title": "Cu By Category",
+      "subtitle": "Daily compute units consumed by protocol category",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_compute_units",
+            "type": "bar",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-compute",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142476",
+      "updatedAt": "2026-02-07T06:46:08.094007"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
+      "title": "Dex Cu Share",
+      "subtitle": "DEX compute units as percentage of total Solana network compute",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "dex_cu_consumed",
+            "type": "bar",
+            "unit": "CU"
+          },
+          {
+            "field": "non_dex_cu",
+            "type": "bar",
+            "unit": "CU"
+          },
+          {
+            "field": "dex_cu_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "dex_cu_consumed",
+          "non_dex_cu"
+        ],
+        "rightAxisFields": [
+          "dex_cu_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142482",
+      "updatedAt": "2026-02-10T08:53:44.972514"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
+      "title": "Avg Cu Per Trade",
+      "subtitle": "Daily average and median compute units per DEX transaction",
+      "chartType": "line",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_compute_units",
+            "type": "line",
+            "unit": "CU"
+          },
+          {
+            "field": "median_compute_units",
+            "type": "line",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "createdAt": "2026-02-07T11:11:09.835869",
+      "updatedAt": "2026-02-07T11:11:09.835869"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
+      "title": "Cu Percentiles Per Trade",
+      "subtitle": "Daily p90 and p99 compute units showing tail distribution",
+      "chartType": "line",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p90_compute_units",
+            "type": "line",
+            "unit": "CU"
+          },
+          {
+            "field": "p99_compute_units",
+            "type": "line",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "createdAt": "2026-02-07T11:11:09.835889",
+      "updatedAt": "2026-02-07T11:11:09.835889"
+    }
+  ]
+}

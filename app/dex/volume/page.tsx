@@ -1,0 +1,26 @@
+import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
+import React, { Suspense } from 'react';
+import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
+
+// Create a loading component for Suspense fallback
+
+
+// SEO Structured Data
+const structuredData = generateStructuredData('/dex/volume');
+
+export default function DexVolumePage() {
+  return (
+    <div className="space-y-4">
+      
+        <EnhancedDashboardRenderer 
+          pageId="dex-volume" 
+          enableCaching={true}
+          overrideCounters={[]}
+          overrideTables={[]}
+        />
+      
+    </div>
+  );
+} 
+
+export const metadata = generateNextMetadata('/dex/volume');

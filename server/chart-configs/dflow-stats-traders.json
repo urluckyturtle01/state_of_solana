@@ -1,0 +1,59 @@
+{
+  "pageId": "dflow-stats-traders",
+  "pageName": "Traders",
+  "chartCount": 2,
+  "lastUpdated": "2026-01-01T06:31:07.868Z",
+  "charts": [
+    {
+      "id": "chart_1767034066036_mu4g3eq",
+      "title": "Monthly Traders",
+      "subtitle": "",
+      "page": "dflow-stats-traders",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14085/results.json",
+      "apiKey": "vuPzNdfkNLVDAjNeS4CPH8zdzl3FqvPIc5znKZzF&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": [
+          {
+            "field": "Active_Traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "New_Traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-29T18:47:46.036Z",
+      "updatedAt": "2025-12-29T18:47:46.225Z"
+    },
+    {
+      "id": "chart_1767244852533_qdr7oh1",
+      "title": "Cumulative Traders",
+      "subtitle": "",
+      "page": "dflow-stats-traders",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14085/results.json",
+      "apiKey": "vuPzNdfkNLVDAjNeS4CPH8zdzl3FqvPIc5znKZzF",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Month",
+        "yAxis": "Cumulative_Traders",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:20:52.533Z",
+      "updatedAt": "2026-01-01T05:20:54.249Z"
+    }
+  ]
+}

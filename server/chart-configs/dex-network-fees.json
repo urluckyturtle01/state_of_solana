@@ -1,0 +1,352 @@
+{
+  "pageId": "dex-network-fees",
+  "pageName": "DEX Network Fees",
+  "chartCount": 8,
+  "lastUpdated": "2026-02-10T08:54:21.532156",
+  "charts": [
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000007",
+      "title": "Priority Fee Distribution",
+      "subtitle": "Daily priority fee percentiles (p25, p50, p75, p90, p99) in SOL",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "priority_trade_count",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "p50_priority_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          },
+          {
+            "field": "p90_priority_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          },
+          {
+            "field": "p99_priority_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "priority_trade_count"
+        ],
+        "rightAxisFields": [
+          "p50_priority_sol",
+          "p90_priority_sol",
+          "p99_priority_sol"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076100",
+      "updatedAt": "2026-02-07T06:27:46.743534"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000001",
+      "title": "Daily Dex Fee Share",
+      "subtitle": "Daily DEX fees vs total network fees in SOL with percentage share",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_network_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "daily_dex_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "daily_dex_fee_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "daily_network_fee_sol",
+          "daily_dex_fee_sol"
+        ],
+        "rightAxisFields": [
+          "daily_dex_fee_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076111",
+      "updatedAt": "2026-02-10T08:54:17.924971"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000002",
+      "title": "Daily Dex Jito Share",
+      "subtitle": "Daily DEX Jito tips vs total network Jito tips with percentage share",
+      "chartType": "dual-axis",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_network_jito_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "daily_dex_jito_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "daily_dex_jito_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "daily_network_jito_sol",
+          "daily_dex_jito_sol"
+        ],
+        "rightAxisFields": [
+          "daily_dex_jito_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076117",
+      "updatedAt": "2026-02-10T08:54:17.924986"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000003",
+      "title": "Cumulative Dex Fee Share",
+      "subtitle": "Cumulative DEX fees vs network fees with running percentage",
+      "chartType": "dual-axis",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cum_network_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_dex_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_dex_fee_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "cum_network_fee_sol",
+          "cum_dex_fee_sol"
+        ],
+        "rightAxisFields": [
+          "cum_dex_fee_pct"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076121",
+      "updatedAt": "2026-02-10T08:54:17.924994"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000004",
+      "title": "Cumulative Dex Jito Share",
+      "subtitle": "Cumulative DEX Jito tips vs network with running percentage",
+      "chartType": "dual-axis",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cum_network_jito_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_dex_jito_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_dex_jito_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "cum_network_jito_sol",
+          "cum_dex_jito_sol"
+        ],
+        "rightAxisFields": [
+          "cum_dex_jito_pct"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076125",
+      "updatedAt": "2026-02-10T08:54:17.925000"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000005",
+      "title": "Trades By Fee Type",
+      "subtitle": "Daily DEX trades breakdown by fee type - Jito, Priority, Base only",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "jito_trades",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "priority_trades",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "base_only_trades",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "createdAt": "2026-02-03T14:46:02.076129",
+      "updatedAt": "2026-02-10T08:54:20.251756"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000006",
+      "title": "Fee Type Distribution Pct",
+      "subtitle": "Percentage of trades using Jito, Priority fees, or base fee only",
+      "chartType": "line",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "jito_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "priority_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "base_only_pct",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "createdAt": "2026-02-03T14:46:02.076133",
+      "updatedAt": "2026-02-10T08:54:20.251771"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000008",
+      "title": "Jito Tips Distribution",
+      "subtitle": "Daily Jito tips percentiles (p25, p50, p75, p90, p99) in SOL",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "jito_trade_count",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "p50_jito_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          },
+          {
+            "field": "p90_jito_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          },
+          {
+            "field": "p99_jito_sol",
+            "type": "line",
+            "unit": "SOL",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "jito_trade_count"
+        ],
+        "rightAxisFields": [
+          "p50_jito_sol",
+          "p90_jito_sol",
+          "p99_jito_sol"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-03T14:46:02.076137",
+      "updatedAt": "2026-02-10T08:54:21.532143"
+    }
+  ]
+}

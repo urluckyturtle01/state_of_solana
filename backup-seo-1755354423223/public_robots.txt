@@ -1,0 +1,38 @@
+# Robots.txt for research.topledger.xyz
+# Generated automatically
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://research.topledger.xyz/sitemap.xml
+
+# Allow search engines to index all chart pages
+Allow: /share/chart/*
+
+# Allow all dashboard pages
+Allow: /overview/*
+Allow: /dex/*
+Allow: /protocol-revenue/*
+Allow: /stablecoins/*
+Allow: /rev/*
+Allow: /mev/*
+Allow: /compute-units/*
+Allow: /wrapped-btc/*
+Allow: /launchpads/*
+Allow: /xstocks/*
+Allow: /sf-dashboards/*
+Allow: /projects/*
+
+# Disallow admin pages from search engines
+Disallow: /admin/
+Disallow: /api/
+
+# Allow blogs
+Allow: /blogs/*
+
+# Common crawl delays
+Crawl-delay: 1
+
+# Host
+Host: https://research.topledger.xyz

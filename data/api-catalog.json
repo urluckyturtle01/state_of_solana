@@ -1,0 +1,4787 @@
+{
+  "entries": [
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json_GET",
+      "domain": "mev",
+      "title": " SOL drained vs volume exposed",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13460/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "exposed_volume": "volume",
+        "sol_drained_pct": "percentage",
+        "total_sol_drained": "metrics"
+      },
+      "keywords": [
+        "sol",
+        "drained",
+        "volume",
+        "exposed",
+        "block",
+        "date",
+        "pct",
+        "total",
+        "extracted value pnl"
+      ],
+      "description": " SOL drained vs volume exposed",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13444/results.json_GET",
+      "domain": "compute-units",
+      "title": "Account bytes vs data bytes",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13444/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "account_bytes": "count"
+      },
+      "keywords": [
+        "account",
+        "bytes",
+        "data",
+        "block",
+        "date",
+        "transaction bytes"
+      ],
+      "description": "Account bytes vs data bytes",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Average holding per wallet",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13418/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_holding": "metrics"
+      },
+      "keywords": [
+        "average",
+        "holding",
+        "per",
+        "wallet",
+        "block",
+        "date",
+        "avg",
+        "holders supply"
+      ],
+      "description": "Average holding per wallet",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12595/results_GET",
+      "domain": "overview",
+      "title": "Average stablecoin supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12595/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Avg_Supply": "supply",
+        "mint": "metric"
+      },
+      "keywords": [
+        "average",
+        "stablecoin",
+        "supply",
+        "block",
+        "date",
+        "avg",
+        "mint",
+        "sf overview"
+      ],
+      "description": "Average stablecoin supply",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13448/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg & Median CU price",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13448/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "99.99 percentile compute unit price": "price",
+        "99 percentile compute unit price": "price",
+        "avg_compute_unit_price": "price",
+        "median_compute_unit_price": "price"
+      },
+      "keywords": [
+        "avg",
+        "median",
+        "price",
+        "block",
+        "date",
+        "99.99",
+        "percentile",
+        "compute",
+        "unit",
+        "compute units"
+      ],
+      "description": "Avg & Median CU price",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13447/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg CU allocated & consumed per transaction",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13447/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "avg_cu_allocated": "metrics",
+        "avg_cu_consumed": "metrics"
+      },
+      "keywords": [
+        "avg",
+        "allocated",
+        "consumed",
+        "per",
+        "transaction",
+        "partition",
+        "compute units"
+      ],
+      "description": "Avg CU allocated & consumed per transaction",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13455/results.json_GET",
+      "domain": "compute-units",
+      "title": "Avg CU consumed per block",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13455/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "avg_consumed_cu_per_block": "metrics"
+      },
+      "keywords": [
+        "avg",
+        "consumed",
+        "per",
+        "block",
+        "partition",
+        "compute units"
+      ],
+      "description": "Avg CU consumed per block",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json_GET",
+      "domain": "test",
+      "title": "bhbhb",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12800/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "trades": "count"
+      },
+      "keywords": [
+        "bhbhb",
+        "month",
+        "volume",
+        "trades",
+        "test"
+      ],
+      "description": "bhbhb",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13445/results.json_GET",
+      "domain": "compute-units",
+      "title": "Byte size quantiles",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13445/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "byte_size_25th_percentile": "percentage",
+        "byte_size_median": "metric",
+        "byte_size_75th_percentile": "percentage",
+        "byte_size_90th_percentile": "percentage"
+      },
+      "keywords": [
+        "byte",
+        "size",
+        "quantiles",
+        "partition",
+        "25th",
+        "percentile",
+        "median",
+        "75th",
+        "90th",
+        "transaction bytes"
+      ],
+      "description": "Byte size quantiles",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13487/results.json_GET",
+      "domain": "raydium",
+      "title": "Cashflow",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13487/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Launchlab Revenue": "revenue",
+        "Ray_Buyback": "metric",
+        "Treasury": "metric",
+        "Infrastructure Cost": "metric"
+      },
+      "keywords": [
+        "cashflow",
+        "block",
+        "date",
+        "launchlab",
+        "revenue",
+        "ray",
+        "buyback",
+        "treasury",
+        "infrastructure",
+        "cost",
+        "raydium financials"
+      ],
+      "description": "Cashflow",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13631/results.json_GET",
+      "domain": "overview",
+      "title": "CEX Orca Holdings",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13631/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holdings": "metric",
+        "cex_name": "metric"
+      },
+      "keywords": [
+        "cex",
+        "orca",
+        "holdings",
+        "month",
+        "name",
+        "orca protocol token"
+      ],
+      "description": "CEX Orca Holdings",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13538/results.json_GET",
+      "domain": "raydium",
+      "title": "CEX Ray Holdings",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13538/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holdings": "metric",
+        "cex_name": "metric"
+      },
+      "keywords": [
+        "cex",
+        "ray",
+        "holdings",
+        "month",
+        "name",
+        "raydium protocol token"
+      ],
+      "description": "CEX Ray Holdings",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13449/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU consumed by ecosystem",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13449/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "total_cu_consumed": "metrics",
+        "category": "metric"
+      },
+      "keywords": [
+        "consumed",
+        "ecosystem",
+        "partition",
+        "total",
+        "category",
+        "compute units"
+      ],
+      "description": "CU consumed by ecosystem",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13450/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU consumed by ecosystem - last 30 days",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13450/results.json",
+      "method": "GET",
+      "response_schema": {
+        "category": "metric",
+        "total_cu_consumed": "metrics"
+      },
+      "keywords": [
+        "consumed",
+        "ecosystem",
+        "last",
+        "days",
+        "category",
+        "total",
+        "compute units"
+      ],
+      "description": "CU consumed by ecosystem - last 30 days",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13453/results.json_GET",
+      "domain": "compute-units",
+      "title": "CU overspending",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13453/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "txns": "metric",
+        "overspent_fee_bucket": "metric"
+      },
+      "keywords": [
+        "overspending",
+        "partition",
+        "txns",
+        "overspent",
+        "fee",
+        "bucket",
+        "cu overspending"
+      ],
+      "description": "CU overspending",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12899/results_GET",
+      "domain": "stablecoins",
+      "title": "Daily avg p2p transfer size",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12899/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Avg_P2P_Transfer_Size": "metrics"
+      },
+      "keywords": [
+        "daily",
+        "avg",
+        "p2p",
+        "transfer",
+        "size",
+        "block",
+        "date",
+        "liquidity velocity"
+      ],
+      "description": "Daily avg p2p transfer size",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json_GET",
+      "domain": "overview",
+      "title": "Daily fee",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12525/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_txn_fee_sol": "metrics",
+        "median_txn_fee_sol": "metrics"
+      },
+      "keywords": [
+        "daily",
+        "fee",
+        "block",
+        "date",
+        "avg",
+        "txn",
+        "sol",
+        "median",
+        "sf overview"
+      ],
+      "description": "Daily fee",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json_GET",
+      "domain": "overview",
+      "title": "Daily holders",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13528/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Block_date": "time",
+        "Holders": "count",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "daily",
+        "holders",
+        "block",
+        "date",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Daily holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Holders",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13608/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Holders": "count"
+      },
+      "keywords": [
+        "daily",
+        "holders",
+        "block",
+        "date",
+        "metaplex competetive landscape"
+      ],
+      "description": "Daily Holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json_GET",
+      "domain": "overview",
+      "title": "Daily marketcap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13521/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Block_date": "time",
+        "Marketcap": "metric",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "block",
+        "date",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Daily marketcap",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13627/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Marketcap",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13627/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Morketcap": "metric"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "block",
+        "date",
+        "morketcap",
+        "orca protocol token"
+      ],
+      "description": "Daily Marketcap",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13371/results.json_GET",
+      "domain": "overview",
+      "title": "Daily marketcap by asset",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13371/results.json",
+      "method": "GET",
+      "response_schema": {
+        "date": "time"
+      },
+      "keywords": [
+        "daily",
+        "marketcap",
+        "asset",
+        "date",
+        "sf rwa"
+      ],
+      "description": "Daily marketcap by asset",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13288/results.json_GET",
+      "domain": "overview",
+      "title": "Daily mobile rewards",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13288/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "mobile_reward": "metric"
+      },
+      "keywords": [
+        "daily",
+        "mobile",
+        "rewards",
+        "partition",
+        "reward",
+        "helium financials"
+      ],
+      "description": "Daily mobile rewards",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json_GET",
+      "domain": "overview",
+      "title": "Daily solana annualized volatility",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13228/results.json",
+      "method": "GET",
+      "response_schema": {
+        "day": "metric",
+        "volatility_7d": "metric",
+        "volatility_30d": "metric",
+        "volatility_90d": "metric"
+      },
+      "keywords": [
+        "daily",
+        "solana",
+        "annualized",
+        "volatility",
+        "day",
+        "30d",
+        "90d",
+        "market dynamics"
+      ],
+      "description": "Daily solana annualized volatility",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json_GET",
+      "domain": "overview",
+      "title": "Daily supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13271/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "supply": "supply",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "daily",
+        "supply",
+        "block",
+        "date",
+        "symbol",
+        "sf bitcoin on solana"
+      ],
+      "description": "Daily supply",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13032/results.json_GET",
+      "domain": "overview",
+      "title": "Daily Supply",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13032/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "token_supply": "supply",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "daily",
+        "supply",
+        "block",
+        "date",
+        "token",
+        "symbol",
+        "sf stablecoins"
+      ],
+      "description": "Daily Supply",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json_GET",
+      "domain": "dex",
+      "title": "Daily traders",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13181/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "active_traders": "count",
+        "new_traders": "count"
+      },
+      "keywords": [
+        "daily",
+        "traders",
+        "month",
+        "active",
+        "new"
+      ],
+      "description": "Daily traders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json_GET",
+      "domain": "overview",
+      "title": "Daily traders",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13370/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "traders": "count"
+      },
+      "keywords": [
+        "daily",
+        "traders",
+        "block",
+        "date",
+        "sf ai tokens"
+      ],
+      "description": "Daily traders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13168/results_GET",
+      "domain": "overview",
+      "title": "dApp revenue by ecosystem",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13168/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "dAPP Revenue": "revenue",
+        "Segment": "metric"
+      },
+      "keywords": [
+        "dapp",
+        "revenue",
+        "ecosystem",
+        "block",
+        "date",
+        "segment",
+        "total"
+      ],
+      "description": "dApp revenue by ecosystem",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/5023/results.json_GET",
+      "domain": "overview",
+      "title": "dc burn",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/5023/results.json",
+      "method": "GET",
+      "response_schema": {
+        "week": "time",
+        "weekly_dc_burn": "time",
+        "cumulative_dc_burn": "metric"
+      },
+      "keywords": [
+        "burn",
+        "week",
+        "weekly",
+        "cumulative",
+        "helium financials"
+      ],
+      "description": "dc burn",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json_GET",
+      "domain": "overview",
+      "title": "DC Burned for network usage",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/12380/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "dc_burned": "supply",
+        "subdao": "metric"
+      },
+      "keywords": [
+        "burned",
+        "for",
+        "network",
+        "usage",
+        "month",
+        "subdao",
+        "helium traction"
+      ],
+      "description": "DC Burned for network usage",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json_GET",
+      "domain": "overview",
+      "title": "Defi capital efficiency",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12528/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "capital_efficency": "metric"
+      },
+      "keywords": [
+        "defi",
+        "capital",
+        "efficiency",
+        "month",
+        "efficency",
+        "sf overview"
+      ],
+      "description": "Defi capital efficiency",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12614/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN funding",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12614/results.json",
+      "method": "GET",
+      "response_schema": {
+        "quarter": "time",
+        "total_amount_raised": "metrics"
+      },
+      "keywords": [
+        "depin",
+        "funding",
+        "quarter",
+        "total",
+        "amount",
+        "raised",
+        "sf depin"
+      ],
+      "description": "DePIN funding",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12624/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN projects revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12624/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "revenue": "revenue",
+        "name": "metric"
+      },
+      "keywords": [
+        "depin",
+        "projects",
+        "revenue",
+        "month",
+        "name",
+        "sf depin"
+      ],
+      "description": "DePIN projects revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13252/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13252/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "depin",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform"
+      ],
+      "description": "DePIN revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12619/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN revenue by chain",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12619/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "total_revenue": "revenue",
+        "chain": "metric"
+      },
+      "keywords": [
+        "depin",
+        "revenue",
+        "chain",
+        "month",
+        "total",
+        "sf depin"
+      ],
+      "description": "DePIN revenue by chain",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12368/results.json_GET",
+      "domain": "overview",
+      "title": "DePIN Token Marketcap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12368/results.json",
+      "method": "GET",
+      "response_schema": {
+        "blockchain": "metric",
+        "circulating_mcap_usd": "metric"
+      },
+      "keywords": [
+        "depin",
+        "token",
+        "marketcap",
+        "blockchain",
+        "circulating",
+        "mcap",
+        "usd",
+        "sf depin"
+      ],
+      "description": "DePIN Token Marketcap",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13515/results.json_GET",
+      "domain": "raydium",
+      "title": "DEX Swap volume",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13515/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Dex_Volume": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "dex",
+        "swap",
+        "volume",
+        "block",
+        "date",
+        "mint",
+        "raydium protocol token"
+      ],
+      "description": "DEX Swap volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json_GET",
+      "domain": "dex",
+      "title": "DEX TVL",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13461/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "TVL": "tvl"
+      },
+      "keywords": [
+        "dex",
+        "tvl",
+        "block",
+        "date"
+      ],
+      "description": "DEX TVL",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json_GET",
+      "domain": "dex",
+      "title": "DEX TVL Daily",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12435/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "Program_Type": "metric"
+      },
+      "keywords": [
+        "dex",
+        "tvl",
+        "daily",
+        "block",
+        "date",
+        "program",
+        "type"
+      ],
+      "description": "DEX TVL Daily",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json_GET",
+      "domain": "dex",
+      "title": "Dex volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13192/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Volume": "volume"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date"
+      ],
+      "description": "Dex volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12594/results_GET",
+      "domain": "overview",
+      "title": "DEX volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12594/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume": "volume"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "sf overview"
+      ],
+      "description": "DEX volume",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json_GET",
+      "domain": "raydium",
+      "title": "DEX Volume",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13549/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume": "volume",
+        "Dex": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "raydium competetive landscape"
+      ],
+      "description": "DEX Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json_GET",
+      "domain": "overview",
+      "title": "DEX Volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12291/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Dex_Volume": "volume",
+        "Symbol": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "month",
+        "symbol",
+        "sf stablecoins"
+      ],
+      "description": "DEX Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json_GET",
+      "domain": "dex",
+      "title": "Dex Volume Aggregator vs Direct Share",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13234/results.json",
+      "method": "GET",
+      "response_schema": {
+        "dex": "metric",
+        "Volume": "volume",
+        "medium": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "aggregator",
+        "direct",
+        "share",
+        "medium",
+        "aggregators"
+      ],
+      "description": "Dex Volume Aggregator vs Direct Share",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json_GET",
+      "domain": "dex",
+      "title": "DEX Volume Share",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12428/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "aggregator": "metric"
+      },
+      "keywords": [
+        "dex",
+        "volume",
+        "share",
+        "month",
+        "aggregator",
+        "aggregators"
+      ],
+      "description": "DEX Volume Share",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12401/results.json_GET",
+      "domain": "dex",
+      "title": "Distribution by Token Category",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12401/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Volume": "volume",
+        "mint_category": "metric"
+      },
+      "keywords": [
+        "distribution",
+        "token",
+        "category",
+        "block",
+        "date",
+        "volume",
+        "mint"
+      ],
+      "description": "Distribution by Token Category",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json_GET",
+      "domain": "dex",
+      "title": "Distribution by traders' trade frequency",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12392/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Signers": "metric",
+        "monthly_transactions": "time"
+      },
+      "keywords": [
+        "distribution",
+        "traders",
+        "trade",
+        "frequency",
+        "month",
+        "signers",
+        "monthly",
+        "transactions"
+      ],
+      "description": "Distribution by traders' trade frequency",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12551/results.json_GET",
+      "domain": "overview",
+      "title": "Ecosystem treasury balance",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12551/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "monthly_realm_balance": "time",
+        "category": "metric"
+      },
+      "keywords": [
+        "ecosystem",
+        "treasury",
+        "balance",
+        "month",
+        "monthly",
+        "realm",
+        "category",
+        "sf treasury"
+      ],
+      "description": "Ecosystem treasury balance",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13241/results.json_GET",
+      "domain": "overview",
+      "title": "Ecosystem wise top dApp's revenue - since Jan'25",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13241/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Segment": "metric",
+        "protocol_revenue": "revenue",
+        "Dapp": "metric"
+      },
+      "keywords": [
+        "ecosystem",
+        "wise",
+        "top",
+        "dapp",
+        "revenue",
+        "since",
+        "jan",
+        "segment",
+        "protocol",
+        "total"
+      ],
+      "description": "Ecosystem wise top dApp's revenue - since Jan'25",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13468/results.json_GET",
+      "domain": "mev",
+      "title": "Exposed volume vs DEX volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13468/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "dex_volume_usd": "volume",
+        "exposed_volume_usd": "volume"
+      },
+      "keywords": [
+        "exposed",
+        "volume",
+        "dex",
+        "block",
+        "date",
+        "usd",
+        "extracted value pnl"
+      ],
+      "description": "Exposed volume vs DEX volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12988/results.json_GET",
+      "domain": "test",
+      "title": "fee",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12988/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_Date": "time",
+        "fee_sol": "metric"
+      },
+      "keywords": [
+        "fee",
+        "block",
+        "date",
+        "sol",
+        "test"
+      ],
+      "description": "fee",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13467/results_GET",
+      "domain": "raydium",
+      "title": "Fee & Revenue",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13467/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Fees": "revenue",
+        "Protocol_fees": "revenue"
+      },
+      "keywords": [
+        "fee",
+        "revenue",
+        "block",
+        "date",
+        "fees",
+        "protocol",
+        "raydium financials"
+      ],
+      "description": "Fee & Revenue",
+      "aggregation_types": [
+        "daily",
+        "weekly",
+        "monthly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13309/results.json_GET",
+      "domain": "overview",
+      "title": "funding by protocol category",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13309/results.json",
+      "method": "GET",
+      "response_schema": {
+        "subsector": "metric",
+        "amount": "volume"
+      },
+      "keywords": [
+        "funding",
+        "protocol",
+        "category",
+        "subsector",
+        "amount",
+        "sf vc funding"
+      ],
+      "description": "funding by protocol category",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13307/results.json_GET",
+      "domain": "overview",
+      "title": "Funding by protocol category",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13307/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "amount": "volume",
+        "subsector": "metric"
+      },
+      "keywords": [
+        "funding",
+        "protocol",
+        "category",
+        "month",
+        "amount",
+        "subsector",
+        "sf vc funding"
+      ],
+      "description": "Funding by protocol category",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13212/results_GET",
+      "domain": "rev",
+      "title": "Gross & net SOL issuance",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13212/results",
+      "method": "GET",
+      "response_schema": {
+        "backfilling_epoch_date": "time",
+        "gross_sol_issuance": "metric",
+        "net_sol_issuance": "metric"
+      },
+      "keywords": [
+        "gross",
+        "net",
+        "sol",
+        "issuance",
+        "backfilling",
+        "epoch",
+        "date",
+        "rev issuance burn"
+      ],
+      "description": "Gross & net SOL issuance",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13604/results.json_GET",
+      "domain": "overview",
+      "title": "Helium stats",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13604/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Dex_Volume": "volume",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "helium",
+        "stats",
+        "block",
+        "date",
+        "dex",
+        "volume",
+        "symbol",
+        "helium protocol token"
+      ],
+      "description": "Helium stats",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/7454/results.json_GET",
+      "domain": "overview",
+      "title": "IOT data transfer by payload size",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/7454/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "count": "count",
+        "payloadsize_group": "metric"
+      },
+      "keywords": [
+        "iot",
+        "data",
+        "transfer",
+        "payload",
+        "size",
+        "month",
+        "count",
+        "payloadsize",
+        "group",
+        "helium traction"
+      ],
+      "description": "IOT data transfer by payload size",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13290/results.json_GET",
+      "domain": "overview",
+      "title": "IOT rewards",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13290/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "total_reward_usd": "metrics",
+        "cumulative_reward_usd": "metric"
+      },
+      "keywords": [
+        "iot",
+        "rewards",
+        "partition",
+        "total",
+        "reward",
+        "usd",
+        "cumulative",
+        "helium financials"
+      ],
+      "description": "IOT rewards",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13289/results.json_GET",
+      "domain": "overview",
+      "title": "IOT rewards",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13289/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "iot_reward": "metric"
+      },
+      "keywords": [
+        "iot",
+        "rewards",
+        "partition",
+        "reward",
+        "helium financials"
+      ],
+      "description": "IOT rewards",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13369/results.json_GET",
+      "domain": "overview",
+      "title": "Market cap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13369/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "market_cap": "metric",
+        "token_name": "metric"
+      },
+      "keywords": [
+        "market",
+        "cap",
+        "block",
+        "date",
+        "token",
+        "name",
+        "sf ai tokens"
+      ],
+      "description": "Market cap",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13169/results.json_GET",
+      "domain": "overview",
+      "title": "Memecoin launchpad revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13169/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "memecoin",
+        "launchpad",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform",
+        "dex ecosystem"
+      ],
+      "description": "Memecoin launchpad revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13182/results.json_GET",
+      "domain": "overview",
+      "title": "Memecoin trading platform revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13182/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "memecoin",
+        "trading",
+        "platform",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "dex ecosystem"
+      ],
+      "description": "Memecoin trading platform revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12796/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Mints",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12796/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Mint_Amount": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "mints",
+        "block",
+        "date",
+        "mint",
+        "amount",
+        "mint burn"
+      ],
+      "description": "Mints",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13047/results.json_GET",
+      "domain": "overview",
+      "title": "Mobile data transfer",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13047/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "count": "count",
+        "payloadsize_group": "metric"
+      },
+      "keywords": [
+        "mobile",
+        "data",
+        "transfer",
+        "month",
+        "count",
+        "payloadsize",
+        "group",
+        "helium traction"
+      ],
+      "description": "Mobile data transfer",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/7479/results.json_GET",
+      "domain": "overview",
+      "title": "Mobile rewards",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/7479/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "total_reward_usd": "metrics",
+        "cumulative_reward_usd": "metric"
+      },
+      "keywords": [
+        "mobile",
+        "rewards",
+        "partition",
+        "total",
+        "reward",
+        "usd",
+        "cumulative",
+        "helium financials"
+      ],
+      "description": "Mobile rewards",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/6601/results.json_GET",
+      "domain": "overview",
+      "title": "mobile subscriber nft",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/6601/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "daily_subscribers": "metric",
+        "cumulative_subscriber": "metric"
+      },
+      "keywords": [
+        "mobile",
+        "subscriber",
+        "nft",
+        "block",
+        "date",
+        "daily",
+        "subscribers",
+        "cumulative",
+        "helium traction"
+      ],
+      "description": "mobile subscriber nft",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12924/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly active & new wallets",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12924/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Active_Wallet": "metric",
+        "New_Wallet": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "active",
+        "new",
+        "wallets",
+        "month",
+        "wallet",
+        "dashboard"
+      ],
+      "description": "Monthly active & new wallets",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13502/results.json_GET",
+      "domain": "raydium",
+      "title": "Monthly active and new wallets",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13502/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Active_Wallets": "metric",
+        "New_Wallets": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "active",
+        "and",
+        "new",
+        "wallets",
+        "month",
+        "raydium traction"
+      ],
+      "description": "Monthly active and new wallets",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Active Wallets",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/4540/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "#users": "count"
+      },
+      "keywords": [
+        "monthly",
+        "active",
+        "wallets",
+        "month",
+        "#users",
+        "metaplex traction"
+      ],
+      "description": "Monthly Active Wallets",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13029/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly capital efficiency",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13029/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Capital_Efficiency": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "capital",
+        "efficiency",
+        "month",
+        "sf defi"
+      ],
+      "description": "Monthly capital efficiency",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13030/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly capital efficiency by DEXs",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13030/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "Capital_Efficiency_perc": "metric",
+        "dex": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "capital",
+        "efficiency",
+        "dexs",
+        "month",
+        "perc",
+        "dex",
+        "sf defi"
+      ],
+      "description": "Monthly capital efficiency by DEXs",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13610/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly CEX MPLX Holdings",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13610/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holdings": "metric",
+        "cex_name": "metric",
+        "MPLX": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "cex",
+        "mplx",
+        "holdings",
+        "month",
+        "name",
+        "metaplex protocol token"
+      ],
+      "description": "Monthly CEX MPLX Holdings",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13272/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Dex volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13272/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Volume": "volume",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "dex",
+        "volume",
+        "month",
+        "symbol",
+        "sf bitcoin on solana"
+      ],
+      "description": "Monthly Dex volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13609/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Dex Volume",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13609/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Dex_Volume": "volume"
+      },
+      "keywords": [
+        "monthly",
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "metaplex protocol token"
+      ],
+      "description": "Monthly Dex Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13027/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly DEX volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13027/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "dex": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "dex",
+        "volume",
+        "month",
+        "sf defi"
+      ],
+      "description": "Monthly DEX volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13520/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly DEX volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13520/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Dex_Volume": "volume",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "dex",
+        "volume",
+        "month",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Monthly DEX volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/12052/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Digital Assets Minted",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/12052/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "tm_fungible": "metric",
+        "tm_non_fungible": "metric",
+        "mpl_core": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "digital",
+        "assets",
+        "minted",
+        "month",
+        "fungible",
+        "non",
+        "mpl",
+        "core",
+        "metaplex traction"
+      ],
+      "description": "Monthly Digital Assets Minted",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12524/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly fee payers",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12524/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "existing_fee_payers": "metric",
+        "new_fee_payers": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "fee",
+        "payers",
+        "month",
+        "existing",
+        "new",
+        "sf overview"
+      ],
+      "description": "Monthly fee payers",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13611/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly MPLX Dex Pool TVL",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13611/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Amount_in_Pool": "volume"
+      },
+      "keywords": [
+        "monthly",
+        "mplx",
+        "dex",
+        "pool",
+        "tvl",
+        "month",
+        "amount",
+        "metaplex protocol token"
+      ],
+      "description": "Monthly MPLX Dex Pool TVL",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13572/results.json_GET",
+      "domain": "raydium",
+      "title": "Monthly protocol revenue",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13572/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Protocol_fees": "revenue",
+        "Project": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "protocol",
+        "revenue",
+        "block",
+        "date",
+        "fees",
+        "project",
+        "raydium competetive landscape"
+      ],
+      "description": "Monthly protocol revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/11220/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Rewards by DePIN",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/11220/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "reward_usd": "metric",
+        "depin": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "rewards",
+        "depin",
+        "month",
+        "reward",
+        "usd",
+        "sf depin"
+      ],
+      "description": "Monthly Rewards by DePIN",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12788/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Monthly stablecoin transfer from exchange",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12788/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "name": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "stablecoin",
+        "transfer",
+        "from",
+        "exchange",
+        "month",
+        "volume",
+        "name",
+        "cexs"
+      ],
+      "description": "Monthly stablecoin transfer from exchange",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12789/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Monthly stablecoin transfer to exchange",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12789/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume": "volume",
+        "name": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "stablecoin",
+        "transfer",
+        "exchange",
+        "month",
+        "volume",
+        "name",
+        "cexs"
+      ],
+      "description": "Monthly stablecoin transfer to exchange",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Monthly Stablecoin transfer velocity",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12455/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "velocity": "metric",
+        "mint_name": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "stablecoin",
+        "transfer",
+        "velocity",
+        "month",
+        "mint",
+        "name",
+        "liquidity velocity"
+      ],
+      "description": "Monthly Stablecoin transfer velocity",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/10247/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly TM Fungible and Non-Fungible Mints",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/10247/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "mints": "metric",
+        "token_type": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "fungible",
+        "and",
+        "non",
+        "mints",
+        "month",
+        "token",
+        "type",
+        "metaplex traction"
+      ],
+      "description": "Monthly TM Fungible and Non-Fungible Mints",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/2363/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Total Mints by Program",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/2363/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "token_metadata_nfts": "metric",
+        "compressed_nfts": "metric",
+        "Bubblegum_v2_cNFTs": "metric",
+        "core_nft": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "total",
+        "mints",
+        "program",
+        "month",
+        "token",
+        "metadata",
+        "nfts",
+        "compressed",
+        "bubblegum",
+        "cnfts",
+        "core",
+        "nft",
+        "metaplex traction"
+      ],
+      "description": "Monthly Total Mints by Program",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13557/results.json_GET",
+      "domain": "raydium",
+      "title": "Monthly Traders",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13557/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Traders": "count",
+        "Dex": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "traders",
+        "month",
+        "dex",
+        "raydium competetive landscape"
+      ],
+      "description": "Monthly Traders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13625/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Trades",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13625/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "trades": "count"
+      },
+      "keywords": [
+        "monthly",
+        "trades",
+        "month",
+        "orca traction"
+      ],
+      "description": "Monthly Trades",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13678/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Transactions",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13678/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "transactions": "count"
+      },
+      "keywords": [
+        "monthly",
+        "transactions",
+        "block",
+        "date",
+        "metaplex traction"
+      ],
+      "description": "Monthly Transactions",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/11246/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Transactions",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/11246/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "txns": "metric",
+        "depin": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "transactions",
+        "month",
+        "txns",
+        "depin",
+        "sf depin"
+      ],
+      "description": "Monthly Transactions",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/1270/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Transactions by Program",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/1270/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "total_txn": "metrics",
+        "protocol": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "transactions",
+        "program",
+        "month",
+        "total",
+        "txn",
+        "protocol",
+        "metaplex traction"
+      ],
+      "description": "Monthly Transactions by Program",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/11375/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly Transactions by Reward Receiver",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/11375/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "txns": "metric",
+        "depin": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "transactions",
+        "reward",
+        "receiver",
+        "month",
+        "txns",
+        "depin",
+        "sf depin"
+      ],
+      "description": "Monthly Transactions by Reward Receiver",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly transfer count",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13270/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "transfers": "metric",
+        "mint_name": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "transfer",
+        "count",
+        "month",
+        "transfers",
+        "mint",
+        "name",
+        "sf bitcoin on solana"
+      ],
+      "description": "Monthly transfer count",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13522/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly transfers",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13522/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Transactions": "count",
+        "Mint": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "transfers",
+        "month",
+        "transactions",
+        "mint",
+        "sf consumer"
+      ],
+      "description": "Monthly transfers",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13028/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly TVL",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13028/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "TVL": "tvl",
+        "dex": "metric"
+      },
+      "keywords": [
+        "monthly",
+        "tvl",
+        "month",
+        "dex",
+        "sf defi"
+      ],
+      "description": "Monthly TVL",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13304/results.json_GET",
+      "domain": "overview",
+      "title": "Monthly VC funding flow",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13304/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "amount": "volume"
+      },
+      "keywords": [
+        "monthly",
+        "funding",
+        "flow",
+        "month",
+        "amount",
+        "sf vc funding"
+      ],
+      "description": "Monthly VC funding flow",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13514/results.json_GET",
+      "domain": "overview",
+      "title": "Net inflow from CEXs",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13514/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "monthly_inflow": "time"
+      },
+      "keywords": [
+        "net",
+        "inflow",
+        "from",
+        "cexs",
+        "month",
+        "monthly",
+        "sf stablecoins"
+      ],
+      "description": "Net inflow from CEXs",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13163/results.json_GET",
+      "domain": "overview",
+      "title": "Network & dApp Revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13163/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Network Revenue": "revenue",
+        "dApp Revenue": "revenue"
+      },
+      "keywords": [
+        "network",
+        "dapp",
+        "revenue",
+        "block",
+        "date",
+        "protocol revenue summary"
+      ],
+      "description": "Network & dApp Revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13510/results.json_GET",
+      "domain": "raydium",
+      "title": "New and Churned Holders",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13510/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Holders": "count",
+        "Last_Month_Churn": "time",
+        "New_Holders": "count"
+      },
+      "keywords": [
+        "new",
+        "and",
+        "churned",
+        "holders",
+        "month",
+        "last",
+        "churn",
+        "raydium protocol token"
+      ],
+      "description": "New and Churned Holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13577/results.json_GET",
+      "domain": "raydium",
+      "title": "New launchpad volume trends",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13577/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Volume": "volume",
+        "platform": "metric"
+      },
+      "keywords": [
+        "new",
+        "launchpad",
+        "volume",
+        "trends",
+        "block",
+        "date",
+        "platform",
+        "raydium competetive landscape"
+      ],
+      "description": "New launchpad volume trends",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13172/results.json_GET",
+      "domain": "overview",
+      "title": "NFT marketplace revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13172/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "nft",
+        "marketplace",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform",
+        "nft ecosystem"
+      ],
+      "description": "NFT marketplace revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13249/results.json_GET",
+      "domain": "overview",
+      "title": "Non-vote transaction fees",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13249/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_base_fee_sol": "metrics",
+        "avg_priority_fee_sol": "metrics",
+        "median_priority_fee_sol": "metrics"
+      },
+      "keywords": [
+        "non",
+        "vote",
+        "transaction",
+        "fees",
+        "block",
+        "date",
+        "avg",
+        "base",
+        "fee",
+        "sol",
+        "priority",
+        "median",
+        "network usage"
+      ],
+      "description": "Non-vote transaction fees",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12588/results_GET",
+      "domain": "overview",
+      "title": "Non-vote transactions",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12588/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "successful_txns": "metric",
+        "failed_txns": "metric"
+      },
+      "keywords": [
+        "non",
+        "vote",
+        "transactions",
+        "block",
+        "date",
+        "successful",
+        "txns",
+        "failed",
+        "sf overview"
+      ],
+      "description": "Non-vote transactions",
+      "aggregation_types": [
+        "daily",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13454/results.json_GET",
+      "domain": "compute-units",
+      "title": "Priority fee breakdown",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13454/results.json",
+      "method": "GET",
+      "response_schema": {
+        "partition_0": "time",
+        "priorty_fee": "metric",
+        "unused_cu_fee_paid": "metric",
+        "unused_cu_fee_paid_percentage": "percentage"
+      },
+      "keywords": [
+        "priority",
+        "fee",
+        "breakdown",
+        "partition",
+        "priorty",
+        "unused",
+        "paid",
+        "percentage",
+        "cu overspending"
+      ],
+      "description": "Priority fee breakdown",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/10490/results.json_GET",
+      "domain": "overview",
+      "title": "Protocol Fee used to buy MPLX",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/10490/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month_no": "time",
+        "SOL": "metric"
+      },
+      "keywords": [
+        "protocol",
+        "fee",
+        "used",
+        "buy",
+        "mplx",
+        "month",
+        "sol",
+        "metaplex financials"
+      ],
+      "description": "Protocol Fee used to buy MPLX",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/10993/results.json_GET",
+      "domain": "overview",
+      "title": "Protocol Fees and Revenue",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/10993/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Protocol_revenue_usd": "revenue",
+        "Protocol_fee_usd": "metric"
+      },
+      "keywords": [
+        "protocol",
+        "fees",
+        "and",
+        "revenue",
+        "block",
+        "date",
+        "usd",
+        "fee",
+        "orca financials"
+      ],
+      "description": "Protocol Fees and Revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/13637/results.json_GET",
+      "domain": "overview",
+      "title": "Protocol Revenue by Pool type",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/13637/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Protocol_revenue_usd": "revenue",
+        "Swap_Mint_Type": "metric"
+      },
+      "keywords": [
+        "protocol",
+        "revenue",
+        "pool",
+        "type",
+        "block",
+        "date",
+        "usd",
+        "swap",
+        "mint",
+        "orca financials"
+      ],
+      "description": "Protocol Revenue by Pool type",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/helium/api/queries/13601/results.json_GET",
+      "domain": "overview",
+      "title": "Protocol token holders",
+      "url": "https://analytics.topledger.xyz/helium/api/queries/13601/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Holders": "count",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "protocol",
+        "token",
+        "holders",
+        "block",
+        "date",
+        "symbol",
+        "helium protocol token"
+      ],
+      "description": "Protocol token holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13511/results.json_GET",
+      "domain": "raydium",
+      "title": "Ray Price Stats",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13511/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "Avg_price": "price",
+        "Max_Price": "price",
+        "Median_price": "price",
+        "Min_Price": "price",
+        "Standard_Deviation": "metric"
+      },
+      "keywords": [
+        "ray",
+        "price",
+        "stats",
+        "month",
+        "avg",
+        "max",
+        "median",
+        "min",
+        "standard",
+        "deviation",
+        "raydium protocol token"
+      ],
+      "description": "Ray Price Stats",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13507/results.json_GET",
+      "domain": "raydium",
+      "title": "Ray Token Marketcap",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13507/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Morketcap": "metric"
+      },
+      "keywords": [
+        "ray",
+        "token",
+        "marketcap",
+        "block",
+        "date",
+        "morketcap",
+        "raydium protocol token"
+      ],
+      "description": "Ray Token Marketcap",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13556/results.json_GET",
+      "domain": "raydium",
+      "title": "Raydium Assets",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13556/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Balance": "metric",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "raydium",
+        "assets",
+        "block",
+        "date",
+        "balance",
+        "symbol",
+        "raydium financials"
+      ],
+      "description": "Raydium Assets",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12550/results.json_GET",
+      "domain": "overview",
+      "title": "Realms treasury balance",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12550/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "monthly_realm_balance": "time"
+      },
+      "keywords": [
+        "realms",
+        "treasury",
+        "balance",
+        "month",
+        "monthly",
+        "realm",
+        "sf treasury"
+      ],
+      "description": "Realms treasury balance",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/metaplex/api/queries/13606/results.json_GET",
+      "domain": "overview",
+      "title": "Revenue",
+      "url": "https://analytics.topledger.xyz/metaplex/api/queries/13606/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Metaplex_Revenue": "revenue"
+      },
+      "keywords": [
+        "revenue",
+        "block",
+        "date",
+        "metaplex",
+        "metaplex financials"
+      ],
+      "description": "Revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13469/results.json_GET",
+      "domain": "raydium",
+      "title": "Revenue by product",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13469/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Protocol_fees": "revenue",
+        "Product": "metric"
+      },
+      "keywords": [
+        "revenue",
+        "product",
+        "block",
+        "date",
+        "protocol",
+        "fees",
+        "raydium financials"
+      ],
+      "description": "Revenue by product",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13478/results.json_GET",
+      "domain": "raydium",
+      "title": "Revenue sources",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13478/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Swap Revenue": "revenue",
+        "Pool_Creation Revenue": "revenue",
+        "Launchlab Revenue": "revenue",
+        "Infrastructure Cost": "metric",
+        "Total Revenue": "revenue",
+        "Gross Profit": "revenue"
+      },
+      "keywords": [
+        "revenue",
+        "sources",
+        "block",
+        "date",
+        "swap",
+        "pool",
+        "creation",
+        "launchlab",
+        "infrastructure",
+        "cost",
+        "total",
+        "gross",
+        "profit",
+        "raydium financials"
+      ],
+      "description": "Revenue sources",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13459/results.json_GET",
+      "domain": "mev",
+      "title": "Sandwich trades by SOL drained",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13459/results.json",
+      "method": "GET",
+      "response_schema": {
+        "sol_range": "metric",
+        "exposed_txns": "metric"
+      },
+      "keywords": [
+        "sandwich",
+        "trades",
+        "sol",
+        "drained",
+        "range",
+        "exposed",
+        "txns",
+        "extracted value pnl"
+      ],
+      "description": "Sandwich trades by SOL drained",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13230/results_GET",
+      "domain": "rev",
+      "title": "SOL burn",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13230/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "sol_burn": "metric",
+        "cumulative_sol_burn": "metric"
+      },
+      "keywords": [
+        "sol",
+        "burn",
+        "block",
+        "date",
+        "cumulative",
+        "rev issuance burn"
+      ],
+      "description": "SOL burn",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13426/results.json_GET",
+      "domain": "overview",
+      "title": "SOL marketcap",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13426/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "mcap_usd": "metric"
+      },
+      "keywords": [
+        "sol",
+        "marketcap",
+        "block",
+        "date",
+        "mcap",
+        "usd",
+        "market dynamics"
+      ],
+      "description": "SOL marketcap",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13428/results.json_GET",
+      "domain": "overview",
+      "title": "SOL price",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13428/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "price": "price"
+      },
+      "keywords": [
+        "sol",
+        "price",
+        "block",
+        "date",
+        "market dynamics"
+      ],
+      "description": "SOL price",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12586/results_GET",
+      "domain": "overview",
+      "title": "Solana real economic value",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12586/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "base_fees": "revenue",
+        "priority_fees": "revenue",
+        "jito_total_tips": "metrics",
+        "vote_fees": "revenue"
+      },
+      "keywords": [
+        "solana",
+        "real",
+        "economic",
+        "value",
+        "block",
+        "date",
+        "base",
+        "fees",
+        "priority",
+        "jito",
+        "total",
+        "tips",
+        "vote",
+        "sf overview"
+      ],
+      "description": "Solana real economic value",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13171/results.json_GET",
+      "domain": "overview",
+      "title": "Spot DEX revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13171/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "spot",
+        "dex",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform",
+        "dex ecosystem"
+      ],
+      "description": "Spot DEX revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12521/results.json_GET",
+      "domain": "overview",
+      "title": "Squads treasury balance",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12521/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "balance_usd": "metric"
+      },
+      "keywords": [
+        "squads",
+        "treasury",
+        "balance",
+        "month",
+        "usd",
+        "sf treasury"
+      ],
+      "description": "Squads treasury balance",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12795/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Stablecoin dex volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12795/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "dex_volume_usd": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "stablecoin",
+        "dex",
+        "volume",
+        "block",
+        "date",
+        "usd",
+        "mint",
+        "transaction activity"
+      ],
+      "description": "Stablecoin dex volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13457/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Stablecoin net inflow",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13457/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "monthly_inflow": "time"
+      },
+      "keywords": [
+        "stablecoin",
+        "net",
+        "inflow",
+        "month",
+        "monthly",
+        "cexs"
+      ],
+      "description": "Stablecoin net inflow",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12905/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Stablecoin TVL in DEX pools",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12905/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl_dex_pool": "tvl"
+      },
+      "keywords": [
+        "stablecoin",
+        "tvl",
+        "dex",
+        "pools",
+        "block",
+        "date",
+        "pool",
+        "stablecoins tvl"
+      ],
+      "description": "Stablecoin TVL in DEX pools",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13372/results.json_GET",
+      "domain": "overview",
+      "title": "Stablecoins vs RWA marketcap",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13372/results.json",
+      "method": "GET",
+      "response_schema": {
+        "category": "metric",
+        "marketcap": "metric"
+      },
+      "keywords": [
+        "stablecoins",
+        "rwa",
+        "marketcap",
+        "category",
+        "sf rwa"
+      ],
+      "description": "Stablecoins vs RWA marketcap",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Supply",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13417/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "supply": "supply",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "supply",
+        "block",
+        "date",
+        "symbol",
+        "holders supply"
+      ],
+      "description": "Supply",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13484/results.json_GET",
+      "domain": "raydium",
+      "title": "Swap revenue by pool category",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13484/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "revenue": "revenue",
+        "pool_type": "metric"
+      },
+      "keywords": [
+        "swap",
+        "revenue",
+        "pool",
+        "category",
+        "block",
+        "date",
+        "type",
+        "raydium financials"
+      ],
+      "description": "Swap revenue by pool category",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13170/results.json_GET",
+      "domain": "overview",
+      "title": "Telegram bot revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13170/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "telegram",
+        "bot",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "platform",
+        "dex ecosystem"
+      ],
+      "description": "Telegram bot revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/11221/results.json_GET",
+      "domain": "overview",
+      "title": "Token Burned by DePIN",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/11221/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "burn_amount": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "token",
+        "burned",
+        "depin",
+        "month",
+        "burn",
+        "amount",
+        "mint",
+        "sf depin"
+      ],
+      "description": "Token Burned by DePIN",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13559/results.json_GET",
+      "domain": "raydium",
+      "title": "Top 5 pool volumes across DEXs",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13559/results.json",
+      "method": "GET",
+      "response_schema": {
+        "dex": "metric",
+        "volume_usd": "volume",
+        "pool": "metric"
+      },
+      "keywords": [
+        "top",
+        "pool",
+        "volumes",
+        "across",
+        "dexs",
+        "dex",
+        "volume",
+        "usd",
+        "raydium competetive landscape"
+      ],
+      "description": "Top 5 pool volumes across DEXs",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12535/results.json_GET",
+      "domain": "overview",
+      "title": "Top dApp's revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12535/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "protocol_revenue_usd": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "top",
+        "dapp",
+        "revenue",
+        "block",
+        "date",
+        "protocol",
+        "usd",
+        "platform",
+        "protocol revenue summary"
+      ],
+      "description": "Top dApp's revenue",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12589/results_GET",
+      "domain": "overview",
+      "title": "Top dApp's revenue",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12589/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "dapp_revenue": "revenue",
+        "platform": "metric"
+      },
+      "keywords": [
+        "top",
+        "dapp",
+        "revenue",
+        "block",
+        "date",
+        "platform",
+        "sf overview"
+      ],
+      "description": "Top dApp's revenue",
+      "aggregation_types": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13165/results.json_GET",
+      "domain": "overview",
+      "title": "Top dApp's revenue - since Jan'24",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13165/results.json",
+      "method": "GET",
+      "response_schema": {
+        "platform": "metric",
+        "dapp_revenue": "revenue"
+      },
+      "keywords": [
+        "top",
+        "dapp",
+        "revenue",
+        "since",
+        "jan",
+        "platform",
+        "total"
+      ],
+      "description": "Top dApp's revenue - since Jan'24",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13392/results.json_GET",
+      "domain": "mev",
+      "title": "Top DEXs used - by SOL drained",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13392/results.json",
+      "method": "GET",
+      "response_schema": {
+        "dex": "metric",
+        "total_sol_drained": "metrics"
+      },
+      "keywords": [
+        "top",
+        "dexs",
+        "used",
+        "sol",
+        "drained",
+        "dex",
+        "total",
+        "dex token hotspots"
+      ],
+      "description": "Top DEXs used - by SOL drained",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12503/results.json_GET",
+      "domain": "overview",
+      "title": "Top ecosystem categories by treasury net worth",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12503/results.json",
+      "method": "GET",
+      "response_schema": {
+        "ecosystem": "metric",
+        "tvl": "tvl"
+      },
+      "keywords": [
+        "top",
+        "ecosystem",
+        "categories",
+        "treasury",
+        "net",
+        "worth",
+        "tvl",
+        "sf treasury"
+      ],
+      "description": "Top ecosystem categories by treasury net worth",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13231/results.json_GET",
+      "domain": "dex",
+      "title": "Top Memecoins by Volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13231/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "top",
+        "memecoins",
+        "volume",
+        "month",
+        "usd",
+        "mint"
+      ],
+      "description": "Top Memecoins by Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13225/results.json_GET",
+      "domain": "dex",
+      "title": "Top Pools by TVL",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13225/results.json",
+      "method": "GET",
+      "response_schema": {
+        "pool": "metric",
+        "tvl": "tvl"
+      },
+      "keywords": [
+        "top",
+        "pools",
+        "tvl",
+        "pool"
+      ],
+      "description": "Top Pools by TVL",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13279/results.json_GET",
+      "domain": "overview",
+      "title": "Top program by fee payer",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13279/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "fee_payer": "metric",
+        "program": "metric"
+      },
+      "keywords": [
+        "top",
+        "program",
+        "fee",
+        "payer",
+        "month",
+        "sf bitcoin on solana"
+      ],
+      "description": "Top program by fee payer",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13278/results.json_GET",
+      "domain": "overview",
+      "title": "Top Program by Transfer Volume",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13278/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "program": "metric"
+      },
+      "keywords": [
+        "top",
+        "program",
+        "transfer",
+        "volume",
+        "month",
+        "usd",
+        "sf bitcoin on solana"
+      ],
+      "description": "Top Program by Transfer Volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/11609/results.json_GET",
+      "domain": "overview",
+      "title": "Top programs By transactions",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/11609/results.json",
+      "method": "GET",
+      "response_schema": {
+        "program_name": "metric",
+        "txns": "metric"
+      },
+      "keywords": [
+        "top",
+        "programs",
+        "transactions",
+        "program",
+        "name",
+        "txns",
+        "sf depin"
+      ],
+      "description": "Top programs By transactions",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12781/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Top stablecoins by holders",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12781/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "holders": "count",
+        "mint_name": "metric"
+      },
+      "keywords": [
+        "top",
+        "stablecoins",
+        "holders",
+        "block",
+        "date",
+        "mint",
+        "name",
+        "stablecoin usage"
+      ],
+      "description": "Top stablecoins by holders",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12502/results.json_GET",
+      "domain": "overview",
+      "title": "Top teams by treasury balance",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12502/results.json",
+      "method": "GET",
+      "response_schema": {
+        "team": "metric",
+        "tvl": "tvl"
+      },
+      "keywords": [
+        "top",
+        "teams",
+        "treasury",
+        "balance",
+        "team",
+        "tvl",
+        "sf treasury"
+      ],
+      "description": "Top teams by treasury balance",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13391/results.json_GET",
+      "domain": "mev",
+      "title": "Top tokens attacked - by SOL drained",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13391/results.json",
+      "method": "GET",
+      "response_schema": {
+        "token": "metric",
+        "total_sol_drained": "metrics"
+      },
+      "keywords": [
+        "top",
+        "tokens",
+        "attacked",
+        "sol",
+        "drained",
+        "token",
+        "total",
+        "dex token hotspots"
+      ],
+      "description": "Top tokens attacked - by SOL drained",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13456/results.json_GET",
+      "domain": "compute-units",
+      "title": "Total CU overspending - last 30 days",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13456/results.json",
+      "method": "GET",
+      "response_schema": {
+        "overspent_fee_bucket": "metric",
+        "txns": "metric"
+      },
+      "keywords": [
+        "total",
+        "overspending",
+        "last",
+        "days",
+        "overspent",
+        "fee",
+        "bucket",
+        "txns",
+        "cu overspending"
+      ],
+      "description": "Total CU overspending - last 30 days",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13227/results_GET",
+      "domain": "rev",
+      "title": "Total economic value",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13227/results",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "real_economic_value": "metric",
+        "sol_issuance": "metric",
+        "total_economic_value": "metrics"
+      },
+      "keywords": [
+        "total",
+        "economic",
+        "value",
+        "month",
+        "real",
+        "sol",
+        "issuance",
+        "rev total economic value"
+      ],
+      "description": "Total economic value",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13388/results.json_GET",
+      "domain": "mev",
+      "title": "Total sol drained - last 30 days",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13388/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "cumulative_sol_drained": "metric",
+        "SOL": "metric"
+      },
+      "keywords": [
+        "total",
+        "sol",
+        "drained",
+        "last",
+        "days",
+        "block",
+        "date",
+        "cumulative",
+        "mev summary"
+      ],
+      "description": "Total sol drained - last 30 days",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13422/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Total wrapped BTC trade volume - by pool type",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13422/results.json",
+      "method": "GET",
+      "response_schema": {
+        "pair": "metric",
+        "volume": "volume"
+      },
+      "keywords": [
+        "total",
+        "wrapped",
+        "btc",
+        "trade",
+        "volume",
+        "pool",
+        "type",
+        "pair",
+        "dex activity"
+      ],
+      "description": "Total wrapped BTC trade volume - by pool type",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12540/results.json_GET",
+      "domain": "overview",
+      "title": "TPS",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12540/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "avg_daily_tps": "metrics"
+      },
+      "keywords": [
+        "tps",
+        "block",
+        "date",
+        "avg",
+        "daily",
+        "sf overview"
+      ],
+      "description": "TPS",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13504/results.json_GET",
+      "domain": "raydium",
+      "title": "Trades by Lifetime trade volume",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13504/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "trades": "count",
+        "lifetime_volume_usd": "volume"
+      },
+      "keywords": [
+        "trades",
+        "lifetime",
+        "trade",
+        "volume",
+        "month",
+        "usd",
+        "raydium traction"
+      ],
+      "description": "Trades by Lifetime trade volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13443/results.json_GET",
+      "domain": "compute-units",
+      "title": "Transaction bytes",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13443/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "total_txns": "metrics",
+        "max_byte_size_txns_percentage": "percentage",
+        "max_byte_size_txns": "metrics"
+      },
+      "keywords": [
+        "transaction",
+        "bytes",
+        "block",
+        "date",
+        "total",
+        "txns",
+        "max",
+        "byte",
+        "size",
+        "percentage",
+        "transaction bytes"
+      ],
+      "description": "Transaction bytes",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12976/results_GET",
+      "domain": "overview",
+      "title": "Transaction count",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12976/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Total_Vote_Transactions": "count",
+        "Total_Non_Vote_Transactions": "count",
+        "Succeesful_Transactions_perc": "count",
+        "Successful_Non_Vote_Transactiosn_perc": "metric"
+      },
+      "keywords": [
+        "transaction",
+        "count",
+        "block",
+        "date",
+        "total",
+        "vote",
+        "transactions",
+        "non",
+        "succeesful",
+        "perc",
+        "successful",
+        "transactiosn",
+        "network usage"
+      ],
+      "description": "Transaction count",
+      "aggregation_types": [
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13207/results_GET",
+      "domain": "rev",
+      "title": "Transaction fees + Jito tips",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13207/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "jito_total_tips": "metrics",
+        "base_fee": "metric",
+        "priority_fee": "metric",
+        "vote_fees": "revenue"
+      },
+      "keywords": [
+        "transaction",
+        "fees",
+        "jito",
+        "tips",
+        "block",
+        "date",
+        "total",
+        "base",
+        "fee",
+        "priority",
+        "vote",
+        "rev cost capacity"
+      ],
+      "description": "Transaction fees + Jito tips",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json_GET",
+      "domain": "rev",
+      "title": "Transactions summary",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "total_vote_transactions": "count",
+        "total_non_vote_transactions": "count",
+        "succeesful_transactions_perc": "count",
+        "successful_non_vote_transactions_perc": "count"
+      },
+      "keywords": [
+        "transactions",
+        "summary",
+        "block",
+        "date",
+        "total",
+        "vote",
+        "non",
+        "succeesful",
+        "perc",
+        "successful",
+        "rev cost capacity"
+      ],
+      "description": "Transactions summary",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12916/results.json_GET",
+      "domain": "overview",
+      "title": "Transactions summary",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12916/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "Total_TPS": "metrics",
+        "Success_TPS": "metric",
+        "Failed_TPS": "metric",
+        "Real_TPS": "metric"
+      },
+      "keywords": [
+        "transactions",
+        "summary",
+        "block",
+        "date",
+        "total",
+        "tps",
+        "success",
+        "failed",
+        "real",
+        "network usage"
+      ],
+      "description": "Transactions summary",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13446/results.json_GET",
+      "domain": "compute-units",
+      "title": "Transactions using compute budget program",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13446/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "compute_txns": "metric",
+        "non_compute_txns": "metric"
+      },
+      "keywords": [
+        "transactions",
+        "using",
+        "compute",
+        "budget",
+        "program",
+        "block",
+        "date",
+        "txns",
+        "non",
+        "compute units"
+      ],
+      "description": "Transactions using compute budget program",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13409/results.json_GET",
+      "domain": "stablecoins",
+      "title": "Transfer volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13409/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume_usd": "volume",
+        "mint_name": "metric"
+      },
+      "keywords": [
+        "transfer",
+        "volume",
+        "block",
+        "date",
+        "usd",
+        "mint",
+        "name",
+        "stablecoin usage"
+      ],
+      "description": "Transfer volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13493/results.json_GET",
+      "domain": "raydium",
+      "title": "Treasury fund flow",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13493/results.json",
+      "method": "GET",
+      "response_schema": {
+        "Month": "time",
+        "flow": "metric"
+      },
+      "keywords": [
+        "treasury",
+        "fund",
+        "flow",
+        "month",
+        "raydium financials"
+      ],
+      "description": "Treasury fund flow",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13486/results.json_GET",
+      "domain": "raydium",
+      "title": "Treasury revenue by product",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13486/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "treasury_usd": "metric",
+        "product": "metric"
+      },
+      "keywords": [
+        "treasury",
+        "revenue",
+        "product",
+        "block",
+        "date",
+        "usd",
+        "raydium financials"
+      ],
+      "description": "Treasury revenue by product",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12459/results.json_GET",
+      "domain": "overview",
+      "title": "TVL",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12459/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl"
+      },
+      "keywords": [
+        "tvl",
+        "block",
+        "date",
+        "market dynamics"
+      ],
+      "description": "TVL",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13516/results.json_GET",
+      "domain": "raydium",
+      "title": "TVL  in DEX Pools",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13516/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "amount_usd_in_pools": "volume",
+        "mint": "metric"
+      },
+      "keywords": [
+        "tvl",
+        "dex",
+        "pools",
+        "month",
+        "amount",
+        "usd",
+        "mint",
+        "raydium protocol token"
+      ],
+      "description": "TVL  in DEX Pools",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12901/results.json_GET",
+      "domain": "test",
+      "title": "uhjnjbnj",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12901/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume_sol": "volume",
+        "trades": "count"
+      },
+      "keywords": [
+        "uhjnjbnj",
+        "block",
+        "date",
+        "volume",
+        "sol",
+        "trades",
+        "test"
+      ],
+      "description": "uhjnjbnj",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/9153/results.json_GET",
+      "domain": "overview",
+      "title": "Validator Decentralization Score",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/9153/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "vds": "metric"
+      },
+      "keywords": [
+        "validator",
+        "decentralization",
+        "score",
+        "block",
+        "date",
+        "vds",
+        "sf overview"
+      ],
+      "description": "Validator Decentralization Score",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13036/results.json_GET",
+      "domain": "overview",
+      "title": "Validators",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13036/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "validators_count": "count"
+      },
+      "keywords": [
+        "validators",
+        "block",
+        "date",
+        "count",
+        "sf overview"
+      ],
+      "description": "Validators",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13308/results.json_GET",
+      "domain": "overview",
+      "title": "VC funding by sector",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13308/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "amount": "volume",
+        "sector": "metric"
+      },
+      "keywords": [
+        "funding",
+        "sector",
+        "month",
+        "amount",
+        "sf vc funding"
+      ],
+      "description": "VC funding by sector",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/13305/results.json_GET",
+      "domain": "overview",
+      "title": "VC funding by sectors",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/13305/results.json",
+      "method": "GET",
+      "response_schema": {
+        "sector": "metric",
+        "amount": "volume"
+      },
+      "keywords": [
+        "funding",
+        "sectors",
+        "sector",
+        "amount",
+        "sf vc funding"
+      ],
+      "description": "VC funding by sectors",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solana/api/queries/12569/results.json_GET",
+      "domain": "overview",
+      "title": "Velocity",
+      "url": "https://analytics.topledger.xyz/solana/api/queries/12569/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "velocity": "metric"
+      },
+      "keywords": [
+        "velocity",
+        "month",
+        "sf overview"
+      ],
+      "description": "Velocity",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12439/results.json_GET",
+      "domain": "dex",
+      "title": "Velocity By DEX Program Category",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12439/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "velocity": "metric",
+        "program_type": "metric"
+      },
+      "keywords": [
+        "velocity",
+        "dex",
+        "program",
+        "category",
+        "block",
+        "date",
+        "type",
+        "dex summary"
+      ],
+      "description": "Velocity By DEX Program Category",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13503/results.json_GET",
+      "domain": "raydium",
+      "title": "Volume by Pool Age",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13503/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "pool_age": "metric"
+      },
+      "keywords": [
+        "volume",
+        "pool",
+        "age",
+        "month",
+        "usd",
+        "raydium traction"
+      ],
+      "description": "Volume by Pool Age",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/orca/api/queries/10859/results.json_GET",
+      "domain": "overview",
+      "title": "Volume by Pool Age",
+      "url": "https://analytics.topledger.xyz/orca/api/queries/10859/results.json",
+      "method": "GET",
+      "response_schema": {
+        "days_since_pool_creation": "metric",
+        "volume_in_usd": "volume"
+      },
+      "keywords": [
+        "volume",
+        "pool",
+        "age",
+        "days",
+        "since",
+        "creation",
+        "usd",
+        "orca traction"
+      ],
+      "description": "Volume by Pool Age",
+      "chart_types": [
+        "bar",
+        "area"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13499/results_GET",
+      "domain": "raydium",
+      "title": "Volume by Pool Type",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13499/results",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume_usd": "volume",
+        "pool_type": "metric"
+      },
+      "keywords": [
+        "volume",
+        "pool",
+        "type",
+        "block",
+        "date",
+        "usd",
+        "raydium traction"
+      ],
+      "description": "Volume by Pool Type",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/solanafm/api/queries/13497/results.json_GET",
+      "domain": "raydium",
+      "title": "Volume by Product",
+      "url": "https://analytics.topledger.xyz/solanafm/api/queries/13497/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "volume_usd": "volume",
+        "product": "metric"
+      },
+      "keywords": [
+        "volume",
+        "product",
+        "block",
+        "date",
+        "usd",
+        "raydium traction"
+      ],
+      "description": "Volume by Product",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12422/results.json_GET",
+      "domain": "dex",
+      "title": "Volume distribution by traders' lifetime trade volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12422/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "wallet_lifetime_trade_vol": "time"
+      },
+      "keywords": [
+        "volume",
+        "distribution",
+        "traders",
+        "lifetime",
+        "trade",
+        "month",
+        "usd",
+        "wallet",
+        "vol"
+      ],
+      "description": "Volume distribution by traders' lifetime trade volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/12929/results.json_GET",
+      "domain": "overview",
+      "title": "Wallet by txns cohort",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/12929/results.json",
+      "method": "GET",
+      "response_schema": {
+        "txns_cohort": "metric",
+        "wallet_count": "count"
+      },
+      "keywords": [
+        "wallet",
+        "txns",
+        "cohort",
+        "count",
+        "dashboard"
+      ],
+      "description": "Wallet by txns cohort",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13248/results.json_GET",
+      "domain": "overview",
+      "title": "Wallet's current SOL holding",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13248/results.json",
+      "method": "GET",
+      "response_schema": {
+        "balance_cohort": "metric",
+        "wallets": "metric"
+      },
+      "keywords": [
+        "wallet",
+        "current",
+        "sol",
+        "holding",
+        "balance",
+        "cohort",
+        "wallets",
+        "dashboard"
+      ],
+      "description": "Wallet's current SOL holding",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13250/results.json_GET",
+      "domain": "overview",
+      "title": "Wallet's SOL balance change - since Jan'25",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13250/results.json",
+      "method": "GET",
+      "response_schema": {
+        "sol_change_cohort": "metric",
+        "wallets": "metric"
+      },
+      "keywords": [
+        "wallet",
+        "sol",
+        "balance",
+        "change",
+        "since",
+        "jan",
+        "cohort",
+        "wallets",
+        "dashboard"
+      ],
+      "description": "Wallet's SOL balance change - since Jan'25",
+      "chart_types": [
+        "bar",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13427/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC trade volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13427/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "trade",
+        "volume",
+        "month",
+        "usd",
+        "symbol",
+        "dex activity"
+      ],
+      "description": "Wrapped BTC trade volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13424/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC trade volume - by pool type",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13424/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "pair": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "trade",
+        "volume",
+        "pool",
+        "type",
+        "month",
+        "usd",
+        "pair",
+        "dex activity"
+      ],
+      "description": "Wrapped BTC trade volume - by pool type",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13421/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC trades",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13421/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "trades": "count"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "trades",
+        "month",
+        "dex activity"
+      ],
+      "description": "Wrapped BTC trades",
+      "chart_types": [
+        "line",
+        "bar"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC transfer volume",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13419/results.json",
+      "method": "GET",
+      "response_schema": {
+        "month": "time",
+        "volume_usd": "volume",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "transfer",
+        "volume",
+        "month",
+        "usd",
+        "symbol",
+        "transfers"
+      ],
+      "description": "Wrapped BTC transfer volume",
+      "chart_types": [
+        "area",
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13432/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC TVL by DEX",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13432/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "Dex": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "tvl",
+        "dex",
+        "block",
+        "date",
+        "btc tvl"
+      ],
+      "description": "Wrapped BTC TVL by DEX",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13434/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC TVL by Perpetual",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13434/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "protocol": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "tvl",
+        "perpetual",
+        "block",
+        "date",
+        "protocol",
+        "btc tvl"
+      ],
+      "description": "Wrapped BTC TVL by Perpetual",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13431/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC TVL in DEXs",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13431/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "tvl",
+        "dexs",
+        "block",
+        "date",
+        "symbol",
+        "btc tvl"
+      ],
+      "description": "Wrapped BTC TVL in DEXs",
+      "chart_types": [
+        "line"
+      ]
+    },
+    {
+      "id": "https://analytics.topledger.xyz/tl/api/queries/13433/results.json_GET",
+      "domain": "wrapped-btc",
+      "title": "Wrapped BTC TVL in Perpetuals",
+      "url": "https://analytics.topledger.xyz/tl/api/queries/13433/results.json",
+      "method": "GET",
+      "response_schema": {
+        "block_date": "time",
+        "tvl": "tvl",
+        "symbol": "metric"
+      },
+      "keywords": [
+        "wrapped",
+        "btc",
+        "tvl",
+        "perpetuals",
+        "block",
+        "date",
+        "symbol",
+        "btc tvl"
+      ],
+      "description": "Wrapped BTC TVL in Perpetuals",
+      "chart_types": [
+        "line"
+      ]
+    }
+  ],
+  "version": "1.0.0",
+  "last_updated": "2025-07-12T10:42:52.441Z"
+}

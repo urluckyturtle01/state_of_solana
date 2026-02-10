@@ -1,0 +1,101 @@
+{
+  "pageId": "dflow-stats-volume",
+  "pageName": "Volume",
+  "chartCount": 3,
+  "lastUpdated": "2026-01-01T06:31:07.868Z",
+  "charts": [
+    {
+      "id": "chart_1767001408921_kqgg6mx",
+      "title": "Daily Volume",
+      "subtitle": "",
+      "page": "dflow-stats-volume",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14082/results.json",
+      "apiKey": "RdbhNCXVhnwFGKPToDkqmcZZQFtwNQoo2d3Gadqs&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "volume",
+        "groupBy": ""
+      },
+      "createdAt": "2025-12-29T09:43:28.921Z",
+      "updatedAt": "2025-12-29T09:43:30.221Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "chart_1767002058929_e04j24d",
+      "title": "Cumulative Volume",
+      "subtitle": "",
+      "page": "dflow-stats-volume",
+      "section": "",
+      "chartType": "area",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14082/results.json",
+      "apiKey": "RdbhNCXVhnwFGKPToDkqmcZZQFtwNQoo2d3Gadqs&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "cumulative_volume",
+        "groupBy": ""
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2025-12-29T09:54:18.929Z",
+      "updatedAt": "2025-12-29T09:54:20.302Z"
+    },
+    {
+      "id": "chart_1767003327284_c5de1g7",
+      "title": "Monthly Volume Share",
+      "subtitle": "",
+      "page": "dflow-stats-volume",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14089/results.json",
+      "apiKey": "vBkOROgEFNUmyx0blZlkWJNKuM7LZI9Q1amKHlkF&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": "Volume",
+        "groupBy": "dex"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2025-12-29T10:15:27.284Z",
+      "updatedAt": "2025-12-29T10:15:27.833Z"
+    }
+  ]
+}

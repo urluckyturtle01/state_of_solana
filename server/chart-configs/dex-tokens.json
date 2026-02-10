@@ -1,0 +1,133 @@
+{
+  "pageId": "dex-tokens",
+  "pageName": "DEX Tokens",
+  "chartCount": 3,
+  "lastUpdated": "2026-02-10T09:23:43.134021",
+  "charts": [
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
+      "title": "Token Volume By Category",
+      "subtitle": "Volume breakdown by token category - SOL, Stablecoins, Other tokens",
+      "chartType": "pie",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "token_category",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "pie",
+            "unit": "$"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-10T07:41:47.541286",
+      "updatedAt": "2026-02-10T07:41:47.541286"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000003",
+      "title": "Token Category Market Share",
+      "subtitle": "Percentage of total volume by token category",
+      "chartType": "dual-axis",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "token_category",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "volume_share_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "volume_share_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-10T07:41:47.541302",
+      "updatedAt": "2026-02-10T07:41:47.541302"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
+      "title": "Top Token Pairs",
+      "subtitle": "Top trading pairs by cumulative volume",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "pool",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "trade_count",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "trade_count"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-04T10:26:21.729624",
+      "updatedAt": "2026-02-07T06:00:44.855643"
+    }
+  ]
+}

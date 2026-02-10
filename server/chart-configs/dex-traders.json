@@ -1,0 +1,185 @@
+{
+  "pageId": "dex-traders",
+  "pageName": "DEX Traders",
+  "chartCount": 6,
+  "lastUpdated": "2026-02-10T09:28:11.259881",
+  "charts": [
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000002",
+      "title": "Traders By Frequency",
+      "subtitle": "Daily traders segmented by transaction frequency buckets",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "trader_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "frequency_bucket"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T10:44:12.911322",
+      "updatedAt": "2026-02-07T10:44:12.911322"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000003",
+      "title": "Fees By Frequency Bucket",
+      "subtitle": "Total fees paid by traders in each frequency bucket",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_fees_sol",
+            "type": "bar",
+            "unit": "SOL"
+          }
+        ],
+        "groupBy": "frequency_bucket"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T10:44:12.911329",
+      "updatedAt": "2026-02-07T10:44:12.911329"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000006",
+      "title": "Traders Jito Usage",
+      "subtitle": "Daily traders using Jito tips vs non-Jito traders",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "jito_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "non_jito_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "jito_traders_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-traders",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "jito_traders",
+          "non_jito_traders"
+        ],
+        "rightAxisFields": [
+          "jito_traders_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-04T09:28:02.875295",
+      "updatedAt": "2026-02-07T06:34:18.217637"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000004",
+      "title": "Traders By Category",
+      "subtitle": "Daily unique traders by protocol category",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T09:13:02.135650",
+      "updatedAt": "2026-02-07T09:13:02.135650"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000005",
+      "title": "Traders By Program",
+      "subtitle": "Daily unique traders by DEX program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T09:13:02.158639",
+      "updatedAt": "2026-02-07T09:13:02.158639"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
+      "title": "Daily Active Traders",
+      "subtitle": "Daily unique traders with growth metrics and cumulative total",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "daily_growth_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "apiEndpoint": "/api/temp-chart-data/dex-traders/dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
+      "page": "dex-traders",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "active_traders",
+          "cumulative_traders"
+        ],
+        "rightAxisFields": [
+          "daily_growth_pct"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-07T09:19:48.267112",
+      "updatedAt": "2026-02-07T09:19:48.267112"
+    }
+  ]
+}

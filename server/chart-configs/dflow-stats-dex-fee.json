@@ -1,0 +1,121 @@
+{
+  "pageId": "dflow-stats-dex-fee",
+  "pageName": "DEX Fee",
+  "chartCount": 3,
+  "lastUpdated": "2026-01-01T06:31:07.869Z",
+  "charts": [
+    {
+      "id": "chart_1767245226289_1ie567l",
+      "title": "Fees",
+      "subtitle": "",
+      "page": "dflow-stats-dex-fee",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14394/results.json",
+      "apiKey": "Hd18ZzMHmeZeDz9nND2kbL98IJKFQLwAB1hqBR9B&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "fees",
+        "groupBy": "Dex"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true,
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      },
+      "createdAt": "2026-01-01T05:27:06.289Z",
+      "updatedAt": "2026-01-01T06:16:54.819Z"
+    },
+    {
+      "id": "chart_1767245399556_wgc097o",
+      "title": "Fee Share By DEX",
+      "subtitle": "",
+      "page": "dflow-stats-dex-fee",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14400/results.json",
+      "apiKey": "SUyA1Iz2zkHOuGSrUsvFfnBlO6nOMISCqiZGXZLi&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "Dex",
+        "yAxis": "fees",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:29:59.556Z",
+      "updatedAt": "2026-01-01T05:30:00.057Z"
+    },
+    {
+      "id": "chart_1767248857728_svj4bo9",
+      "title": "Volume - Mon",
+      "subtitle": "",
+      "page": "dflow-stats-dex-fee",
+      "section": "",
+      "chartType": "dual-axis",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14508/results.json",
+      "apiKey": "h4otukCWX7ct5j8BA49jhS6HiM2bmI0sHfj9hWsI",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "hour",
+        "yAxis": [
+          {
+            "field": "Volume",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "cumulative_volume",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "dualAxisConfig": {
+        "leftAxisType": "bar",
+        "rightAxisType": "line",
+        "leftAxisFields": [
+          "Volume"
+        ],
+        "rightAxisFields": [
+          "cumulative_volume"
+        ]
+      },
+      "createdAt": "2026-01-01T06:27:37.728Z",
+      "updatedAt": "2026-01-01T06:27:38.012Z",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

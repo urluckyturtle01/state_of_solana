@@ -1,0 +1,248 @@
+{
+  "pageId": "app-stats-overall-stats",
+  "pageName": "Overall Stats",
+  "chartCount": 6,
+  "lastUpdated": "2026-01-01T06:31:07.867Z",
+  "charts": [
+    {
+      "id": "chart_1767243628928_69qztup",
+      "title": "Daily Volume",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14585/results",
+      "apiKey": "wPASnFgnTpicwe1qtuwIGjBnuwzHBNEH2LLo0IqW&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transaction_Volume",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:00:28.928Z",
+      "updatedAt": "2026-01-01T05:00:29.148Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          },
+          {
+            "urlParam": "app_id",
+            "apiParamPath": "app_id",
+            "transform": "string",
+            "defaultValue": "147"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767243705724_t48b58l",
+      "title": "Daily Transactions",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14585/results",
+      "apiKey": "wPASnFgnTpicwe1qtuwIGjBnuwzHBNEH2LLo0IqW",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transactions",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:01:45.724Z",
+      "updatedAt": "2026-01-01T05:01:47.247Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          },
+          {
+            "urlParam": "app_id",
+            "apiParamPath": "app_id",
+            "transform": "string",
+            "defaultValue": "147"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767243914336_866qiw5",
+      "title": "Daily Volume (all App Ids)",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14590/results",
+      "apiKey": "hvHcZmt2u2PuH0tWedczoIXG9RGrCTzubeqcviIp",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transaction_Volume",
+        "groupBy": "app_id"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2026-01-01T05:05:14.336Z",
+      "updatedAt": "2026-01-01T05:05:14.640Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767244031272_e2slwqp",
+      "title": "Daily Transactions (all App Ids)",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "bar",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14590/results",
+      "apiKey": "hvHcZmt2u2PuH0tWedczoIXG9RGrCTzubeqcviIp&max_age=86400",
+      "isStacked": true,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": "Transactions",
+        "groupBy": "app_id"
+      },
+      "additionalOptions": {
+        "showTooltipTotal": true
+      },
+      "createdAt": "2026-01-01T05:07:11.272Z",
+      "updatedAt": "2026-01-01T05:07:11.840Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767244234698_5nd15hf",
+      "title": "Transaction Volume Share By App Id",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14337/results",
+      "apiKey": "kllIeJLFEyS1Jk6Hc1HiUCsszHw4p5KIbbMnWiJD&max_age=86400",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "app_id",
+        "yAxis": "Total_Transaction_Volume",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:10:34.698Z",
+      "updatedAt": "2026-01-01T05:10:35.429Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart_1767244311108_ezwsflc",
+      "title": "Total Transactions Share By App Id",
+      "subtitle": "",
+      "page": "app-stats-overall-stats",
+      "section": "",
+      "chartType": "pie",
+      "apiEndpoint": "https://analytics.topledger.xyz/dflow/api/queries/14337/results",
+      "apiKey": "kllIeJLFEyS1Jk6Hc1HiUCsszHw4p5KIbbMnWiJD",
+      "isStacked": false,
+      "colorScheme": "default",
+      "width": 2,
+      "dataMapping": {
+        "xAxis": "app_id",
+        "yAxis": "Total_Transactions",
+        "groupBy": ""
+      },
+      "createdAt": "2026-01-01T05:11:51.108Z",
+      "updatedAt": "2026-01-01T05:11:51.619Z",
+      "postApiConfig": {
+        "enabled": true,
+        "parameterMappings": [
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.start",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-01"
+          },
+          {
+            "urlParam": "Block Date",
+            "apiParamPath": "Block Date.end",
+            "transform": "date_yyyy_mm_dd",
+            "defaultValue": "2025-12-11"
+          }
+        ]
+      }
+    }
+  ]
+}
