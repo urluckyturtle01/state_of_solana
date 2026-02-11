@@ -354,14 +354,15 @@ async function fetchChartDataWithAllParameters(chart) {
 async function fetchAllChartData() {
   console.log('🚀 Starting to fetch chart data for all pages...');
   
-  // Filter out DEX files (handled by Python script) and internal files
+  // Filter out DEX and Stablecoins files (handled by Python script) and internal files
   const configFiles = fs.readdirSync(tempDir).filter(f => 
     f.endsWith('.json') && 
     !f.startsWith('_') && 
-    !f.startsWith('dex-')  // Exclude DEX data (handled by fetch-dex-data.py)
+    !f.startsWith('dex-') &&  // Exclude DEX data (handled by fetch-dex-data.py)
+    !f.startsWith('stablecoins-')  // Exclude Stablecoins data (handled by fetch-dex-data.py)
   );
   
-  console.log(`ℹ️  Excluding DEX pages (handled by Python script)`);
+  console.log(`ℹ️  Excluding DEX and Stablecoins pages (handled by Python script)`);
   
   let totalCharts = 0;
   let successCount = 0;

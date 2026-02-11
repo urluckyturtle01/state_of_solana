@@ -24,14 +24,14 @@ const MENU_PAGES = {
     { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
     { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' }
   ],
-  stablecoins: [
-    { id: 'stablecoin-usage', name: 'Stablecoin Usage', path: '/stablecoins/stablecoin-usage' },
-    { id: 'transaction-activity', name: 'Transaction Activity', path: '/stablecoins/transaction-activity' },
-    { id: 'liquidity-velocity', name: 'Liquidity Velocity', path: '/stablecoins/liquidity-velocity' },
-    { id: 'mint-burn', name: 'Mint & Burn', path: '/stablecoins/mint-burn' },
-    { id: 'cexs', name: 'CEXs', path: '/stablecoins/cexs' },
-    { id: 'stablecoins-tvl', name: 'TVL', path: '/stablecoins/tvl' }
-  ],
+  // Stablecoins pages excluded - handled by fetch-dex-data.py
+  // stablecoins: [
+  //   { id: 'stablecoins-summary', name: 'Summary', path: '/stablecoins/summary' },
+  //   { id: 'stablecoins-mint-burns', name: 'Mint & Burns', path: '/stablecoins/mint-burns' },
+  //   { id: 'stablecoins-transfers', name: 'Transfers', path: '/stablecoins/transfers' },
+  //   { id: 'stablecoins-tvl', name: 'TVL', path: '/stablecoins/tvl' },
+  //   { id: 'stablecoins-platform-exchange', name: 'Platform Exchange', path: '/stablecoins/platform-exchange' }
+  // ],
   "protocol-revenue": [
     { id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
     { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
@@ -179,7 +179,7 @@ async function createPageConfigs() {
     const allPageIds = getAllPageIds();
     
     console.log(`Processing ${allCharts.length} charts for ${allPageIds.length} pages...`);
-    console.log(`ℹ️  Excluding DEX pages (handled by Python script)`);
+    console.log(`ℹ️  Excluding DEX and Stablecoins pages (handled by Python script)`);
     
     // Create chart-configs directory in secure location if it doesn't exist
     const configDir = path.join('/root/state_of_solana', 'server', 'chart-configs');
@@ -195,10 +195,10 @@ async function createPageConfigs() {
       chartsByPage[pageId] = [];
     });
     
-    // Group charts by their page property (exclude DEX pages - handled by Python)
+    // Group charts by their page property (exclude DEX and Stablecoins pages - handled by Python)
     allCharts.forEach(chart => {
-      // Skip DEX charts - they're handled by fetch-dex-data.py
-      if (chart.page && chart.page.startsWith('dex-')) {
+      // Skip DEX and Stablecoins charts - they're handled by fetch-dex-data.py
+      if (chart.page && (chart.page.startsWith('dex-') || chart.page.startsWith('stablecoins-'))) {
         return;
       }
       
