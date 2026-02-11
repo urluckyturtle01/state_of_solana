@@ -54,6 +54,7 @@ import yaml
 from datetime import datetime, timedelta, date
 import re
 import numpy as np
+import hashlib
 
 def convert_to_json_safe(obj):
     """Convert numpy/pandas types to JSON-safe Python types."""
@@ -86,7 +87,7 @@ def convert_to_json_safe(obj):
 
 class DexDataFetcher:
     def __init__(self):
-        self.base_path = Path("/root/tl-reserach-tool-sqls/dex-trades")
+        self.sql_base_path = Path("/root/tl-reserach-tool-sqls")
         self.data_dir = Path("/root/state_of_solana/public/temp/chart-data")
         self.config_dir = Path("/root/state_of_solana/server/chart-configs")
         self.client = None
@@ -94,6 +95,39 @@ class DexDataFetcher:
         # Ensure directories exist
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.config_dir.mkdir(parents=True, exist_ok=True)
+    
+    def get_sql_hash(self, sql_file):
+        """Calculate hash of SQL file content to detect changes."""
+        try:
+            with open(sql_file, 'rb') as f:
+                content = f.read()
+                return hashlib.md5(content).hexdigest()
+        except Exception as e:
+            print(f"   ⚠️  Error calculating SQL hash: {e}", flush=True)
+            return None
+    
+    def has_sql_changed(self, page_id, sql_name, current_hash):
+        """Check if SQL file has changed since last run."""
+        data_file = self.data_dir / f"{page_id}.json"
+        if not data_file.exists():
+            return True  # No data file, treat as changed
+        
+        try:
+            with open(data_file) as f:
+                data = json.load(f)
+            
+            # Check if any chart from this SQL has stored hash
+            for chart in data.get('charts', []):
+                if chart.get('sqlFile') == sql_name:
+                    stored_hash = chart.get('sqlHash')
+                    if stored_hash and stored_hash != current_hash:
+                        return True  # Hash changed
+                    elif stored_hash == current_hash:
+                        return False  # Hash matches
+            return True  # No stored hash found, treat as changed
+        except Exception as e:
+            print(f"   ⚠️  Error checking SQL hash: {e}", flush=True)
+            return True  # On error, force re-fetch
     
     def connect(self):
         """Connect to Trino."""
@@ -391,7 +425,7 @@ class DexDataFetcher:
         with open(config_file, 'w') as f:
             json.dump(config_data, f, indent=2)
     
-    def save_data(self, page_id, folder, config, data, sql_name, is_incremental_update=False):
+    def save_data(self, page_id, folder, config, data, sql_name, is_incremental_update=False, sql_hash=None):
         """Save data and config files with smart merging."""
         # Check if YAML has multiple charts or single chart
         if 'charts' in config:
@@ -467,12 +501,15 @@ class DexDataFetcher:
                 # Not incremental or no existing data, use new data as-is
                 chart_data_safe = convert_to_json_safe(new_data_records)
             
-            charts_data.append({
+            chart_entry = {
                 'chartId': chart_id,
                 'success': True,
                 'data': chart_data_safe,
                 'sqlFile': sql_name
-            })
+            }
+            if sql_hash:
+                chart_entry['sqlHash'] = sql_hash
+            charts_data.append(chart_entry)
         
         # Load existing data file and merge charts
         data_file = self.data_dir / f"{page_id}.json"
@@ -706,15 +743,20 @@ class DexDataFetcher:
             print(f"   ⚠️  Error checking data freshness: {e}", flush=True)
             return False
     
-    def process_folder(self, folder_name):
-        """Process all SQL files in a folder."""
-        folder_path = self.base_path / folder_name
+    def process_folder(self, category, folder_name):
+        """Process all SQL files in a folder.
+        
+        Args:
+            category: 'dex-trades' or 'stablecoins'
+            folder_name: folder name within the category
+        """
+        folder_path = self.sql_base_path / category / folder_name
         if not folder_path.exists():
-            print(f"⚠️  Folder not found: {folder_name}", flush=True)
+            print(f"⚠️  Folder not found: {category}/{folder_name}", flush=True)
             return
         
         print(f"\n{'='*70}", flush=True)
-        print(f"📂 Processing folder: {folder_name}", flush=True)
+        print(f"📂 Processing: {category}/{folder_name}", flush=True)
         print(f"{'='*70}", flush=True)
         
         # Find all SQL files
@@ -742,8 +784,16 @@ class DexDataFetcher:
             with open(config_file) as f:
                 config = yaml.safe_load(f)
             
-            # Determine page_id
-            page_id = f"dex-{folder_name.replace('_', '-')}"
+            # Calculate SQL hash to detect changes
+            sql_hash = self.get_sql_hash(sql_file)
+            
+            # Determine page_id based on category
+            if category == 'dex-trades':
+                page_id = f"dex-{folder_name.replace('_', '-')}"
+            elif category == 'stablecoins':
+                page_id = f"stablecoins-{folder_name.replace('_', '-')}"
+            else:
+                page_id = f"{category}-{folder_name.replace('_', '-')}"
             
             # Extract chart IDs from config
             if 'charts' in config:
@@ -761,6 +811,13 @@ class DexDataFetcher:
             # Check for incremental fetch (from queryRunConfig)
             query_run_config = config.get('queryRunConfig', {})
             is_incremental = query_run_config.get('isIncremental', False)
+            # Check if SQL file has changed
+            sql_changed = self.has_sql_changed(page_id, sql_name, sql_hash) if sql_hash else True
+            if sql_changed and data_exists:
+                print(f"   🔄 SQL file changed, forcing full re-fetch", flush=True)
+                # Force re-fetch by treating data as non-existent
+                data_exists = False
+
             is_cumulative = query_run_config.get('isCumulative', False)
             
             # For non-incremental queries, check if data is fresh
@@ -783,7 +840,7 @@ class DexDataFetcher:
                     df = self.fetch_query(sql_file, config)
                     if df is not None and not df.empty:
                         print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False)
+                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
                     elif df is not None:
                         print(f"   ⚠️  Query returned 0 rows", flush=True)
                     else:
@@ -839,7 +896,7 @@ class DexDataFetcher:
                                             pass
                                     
                                     # Save with incremental merge (save_data will merge per-chart)
-                                    self.save_data(page_id, folder_name, config, new_df, sql_name, is_incremental_update=True)
+                                    self.save_data(page_id, folder_name, config, new_df, sql_name, is_incremental_update=True, sql_hash=sql_hash)
                                 else:
                                     print(f"   ℹ️  No new data since {last_date.date()}", flush=True)
                             else:
@@ -853,7 +910,7 @@ class DexDataFetcher:
                         df = self.fetch_query(sql_file, config)
                         if df is not None and not df.empty:
                             print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                            self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False)
+                            self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
                         elif df is not None:
                             print(f"   ⚠️  Query returned 0 rows", flush=True)
                         else:
@@ -864,7 +921,7 @@ class DexDataFetcher:
                     df = self.fetch_query(sql_file, config)
                     if df is not None and not df.empty:
                         print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False)
+                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
                     elif df is not None:
                         print(f"   ⚠️  Query returned 0 rows", flush=True)
                     else:
@@ -879,7 +936,7 @@ class DexDataFetcher:
                 df = self.fetch_query(sql_file, config)
                 if df is not None and not df.empty:
                     print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                    self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False)
+                    self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
                 elif df is not None:
                     print(f"   ⚠️  Query returned 0 rows", flush=True)
                 else:
@@ -888,7 +945,7 @@ class DexDataFetcher:
     def run(self):
         """Run the fetcher for all folders."""
         print("\n" + "="*70, flush=True)
-        print("🚀 DEX DATA FETCHER - SMART INCREMENTAL", flush=True)
+        print("🚀 DATA FETCHER - SMART INCREMENTAL", flush=True)
         print("="*70, flush=True)
         print("\n📋 Features:", flush=True)
         print("  ✓ Smart freshness check (skip if data up-to-date)", flush=True)
@@ -896,21 +953,31 @@ class DexDataFetcher:
         print("  ✓ Incremental updates (isIncremental=true)", flush=True)
         print("  ✓ Run queries ONE BY ONE (sequential)", flush=True)
         print("  ✓ Smart config updates (only if changed)", flush=True)
+        print("  ✓ SQL change detection (auto re-fetch if SQL modified)", flush=True)
         print("="*70 + "\n", flush=True)
         
-        folders = ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume']
+        # Define categories and their folders
+        categories = {
+            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
+            'stablecoins': ['summary', 'mint_burns', 'transfers']
+        }
         
-        for folder in folders:
-            try:
-                self.process_folder(folder)
-            except Exception as e:
-                print(f"\n❌ Error processing {folder}: {e}", flush=True)
-                import traceback
-                traceback.print_exc()
-                continue
+        for category, folders in categories.items():
+            print(f"\n{'='*70}", flush=True)
+            print(f"📦 Processing category: {category.upper()}", flush=True)
+            print(f"{'='*70}", flush=True)
+            
+            for folder in folders:
+                try:
+                    self.process_folder(category, folder)
+                except Exception as e:
+                    print(f"\n❌ Error processing {category}/{folder}: {e}", flush=True)
+                    import traceback
+                    traceback.print_exc()
+                    continue
         
         print("\n" + "="*70, flush=True)
-        print("🎉 DEX DATA FETCH COMPLETE!", flush=True)
+        print("🎉 DATA FETCH COMPLETE!", flush=True)
         print("="*70, flush=True)
 
 if __name__ == "__main__":
