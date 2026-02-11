@@ -6,43 +6,37 @@ interface StablecoinsTabsHeaderProps {
   activeTab?: string;
 }
 
-export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }: StablecoinsTabsHeaderProps) {
+export default function StablecoinsTabsHeader({ activeTab = "summary" }: StablecoinsTabsHeaderProps) {
   const tabs: Tab[] = [
     { 
-      name: "Stablecoin Usage", 
-      path: "/stablecoins/stablecoin-usage",
-      key: "stablecoin-usage",
-      icon: "M6 20V10M12 20V4M18 20V14"
+      name: "Summary", 
+      path: "/stablecoins/summary",
+      key: "summary",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+    },
+    { 
+      name: "Mint & Burns", 
+      path: "/stablecoins/mint_burns",
+      key: "mint_burns",
+      icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
     },
     { 
       name: "Transfers", 
-      path: "/stablecoins/transaction-activity",
-      key: "transaction-activity",
-      icon: "M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4m4-4H3"
-    },
-    { 
-      name: "Velocity", 
-      path: "/stablecoins/liquidity-velocity",
-      key: "liquidity-velocity",
-      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-    },
-    { 
-      name: "Mint & Burn", 
-      path: "/stablecoins/mint-burn",
-      key: "mint-burn",
-      icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+      path: "/stablecoins/transfers",
+      key: "transfers",
+      icon: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
     },
     { 
       name: "CEXs", 
       path: "/stablecoins/cexs",
       key: "cexs",
-      icon: "M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4m-8 4h3m10 0h3M12 4v3m0 10v3m4.5-13.5l-2 2m-5 5l-2 2m9 0l-2-2m-5-5l-2-2"
+      icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
     },
     { 
-      name: "TVL", 
-      path: "/stablecoins/tvl",
-      key: "tvl",
-      icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+      name: "DEX Activity", 
+      path: "/stablecoins/dex_activity",
+      key: "dex_activity",
+      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
     }
   ];
   
@@ -51,8 +45,8 @@ export default function StablecoinsTabsHeader({ activeTab = "stablecoin-usage" }
       tabs={tabs} 
       activeTab={activeTab}
       title="Stablecoins"
-      description="Stablecoin usage, flows and performance on Solana"
+      description="Stablecoin metrics and analytics on Solana"
       showDivider={true}
     />
   );
-} 
+}

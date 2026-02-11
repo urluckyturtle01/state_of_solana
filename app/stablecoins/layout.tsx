@@ -15,7 +15,7 @@ export default function StablecoinsLayout({ children }: StablecoinsLayoutProps) 
   // Extract the active tab from pathname
   // /stablecoins -> overview, /stablecoins/supply -> supply, etc.
   const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'stablecoin-usage';
+  const activeTab = pathname.split('/')[2] || 'summary';
   //const activeTab = pathSegments.length > 2 ? pathSegments[2] : "overview";
   
   return (

@@ -14,7 +14,7 @@ export default function StablecoinsPage() {
   const router = useRouter();
   
   useEffect(() => {
-    router.replace("/stablecoins/stablecoin-usage");
+    router.replace("/stablecoins/summary");
   }, [router]);
   
   return (

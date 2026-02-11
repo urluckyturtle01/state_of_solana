@@ -1,0 +1,74 @@
+{
+  "pageId": "stablecoins-summary",
+  "pageName": "DEX Summary",
+  "chartCount": 3,
+  "lastUpdated": "2026-02-11T09:13:18.460284",
+  "charts": [
+    {
+      "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000001",
+      "title": "Stablecoin Supply",
+      "subtitle": "Total circulating supply for each stablecoin by day",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "supply",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-summary",
+      "createdAt": "2026-02-11T09:13:18.460271",
+      "updatedAt": "2026-02-11T09:13:18.460271"
+    },
+    {
+      "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000002",
+      "title": "Stablecoin Holders",
+      "subtitle": "Number of unique holders for each stablecoin",
+      "chartType": "line",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "holders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-summary",
+      "createdAt": "2026-02-11T09:13:18.460277",
+      "updatedAt": "2026-02-11T09:13:18.460277"
+    },
+    {
+      "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000003",
+      "title": "Average Balance Per Holder",
+      "subtitle": "Average stablecoin balance per holder by mint",
+      "chartType": "line",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_balance_per_holder",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-summary",
+      "createdAt": "2026-02-11T09:13:18.460280",
+      "updatedAt": "2026-02-11T09:13:18.460280"
+    }
+  ]
+}

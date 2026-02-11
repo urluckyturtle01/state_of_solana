@@ -1,0 +1,70 @@
+{
+  "pageId": "stablecoins-mint-burns",
+  "pageName": "DEX Mint Burns",
+  "chartCount": 2,
+  "lastUpdated": "2026-02-11T09:13:46.702252",
+  "charts": [
+    {
+      "id": "stablecoins-mint-burns-3c4d5e6f-3333-4000-8000-000000000001",
+      "title": "Mint Amount",
+      "subtitle": "Daily amount of stablecoins minted",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "mint_amount",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-mint-burns",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:13:46.702243",
+      "updatedAt": "2026-02-11T09:13:46.702243"
+    },
+    {
+      "id": "stablecoins-mint-burns-3c4d5e6f-3333-4000-8000-000000000002",
+      "title": "Burn Amount",
+      "subtitle": "Daily amount of stablecoins burned",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "burn_amount",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-mint-burns",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:13:46.702248",
+      "updatedAt": "2026-02-11T09:13:46.702248"
+    }
+  ]
+}

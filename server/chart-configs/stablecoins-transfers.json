@@ -1,0 +1,256 @@
+{
+  "pageId": "stablecoins-transfers",
+  "pageName": "DEX Transfers",
+  "chartCount": 8,
+  "lastUpdated": "2026-02-11T09:14:14.868365",
+  "charts": [
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000001",
+      "title": "Transfer Volume",
+      "subtitle": "Daily stablecoin transfer volume in USD",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868337",
+      "updatedAt": "2026-02-11T09:14:14.868337"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000002",
+      "title": "P2P Transfer Volume",
+      "subtitle": "Daily peer-to-peer transfer volume (direct transfers without program interaction)",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p2p_volume",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868344",
+      "updatedAt": "2026-02-11T09:14:14.868344"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000003",
+      "title": "Transfer Count",
+      "subtitle": "Total number of transfers per day",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "transfers",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868348",
+      "updatedAt": "2026-02-11T09:14:14.868348"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000004",
+      "title": "P2P Transfer Count",
+      "subtitle": "Number of peer-to-peer transfers per day",
+      "chartType": "bar",
+      "order": 4,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p2p_transfers",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868351",
+      "updatedAt": "2026-02-11T09:14:14.868351"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000005",
+      "title": "Average Transfer Size",
+      "subtitle": "Average transfer amount in USD",
+      "chartType": "line",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_transfer_size",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868353",
+      "updatedAt": "2026-02-11T09:14:14.868353"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000006",
+      "title": "P2P Average Transfer Size",
+      "subtitle": "Average peer-to-peer transfer amount in USD",
+      "chartType": "line",
+      "order": 6,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p2p_avg_transfer_size",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868356",
+      "updatedAt": "2026-02-11T09:14:14.868356"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000007",
+      "title": "Velocity",
+      "subtitle": "Transfer velocity - 30-day rolling volume divided by supply",
+      "chartType": "line",
+      "order": 7,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "velocity",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868358",
+      "updatedAt": "2026-02-11T09:14:14.868358"
+    },
+    {
+      "id": "stablecoins-transfers-2b3c4d5e-2222-4000-8000-000000000008",
+      "title": "P2P Velocity",
+      "subtitle": "P2P transfer velocity - 30-day rolling P2P volume divided by supply",
+      "chartType": "line",
+      "order": 8,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p2p_velocity",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "mint"
+      },
+      "page": "stablecoins-transfers",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-11T09:14:14.868360",
+      "updatedAt": "2026-02-11T09:14:14.868360"
+    }
+  ]
+}

@@ -5,14 +5,14 @@ import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard
 // Create a loading component for Suspense fallback
 
 // SEO Structured Data
-const structuredData = generateStructuredData('/stablecoins/cexs');
+const structuredData = generateStructuredData('/stablecoins/dex_activity');
 
-export default function CexsPage() {
+export default function DexActivityPage() {
   return (
     <div className="space-y-6">
       
         <EnhancedDashboardRenderer 
-          pageId="stablecoins-cexs" 
+          pageId="stablecoins-dex-activity" 
           enableCaching={true}
           overrideCounters={[]}
           overrideTables={[]}
@@ -22,4 +22,4 @@ export default function CexsPage() {
   );
 } 
 
-export const metadata = generateNextMetadata('/stablecoins/cexs');
+export const metadata = generateNextMetadata('/stablecoins/dex_activity');
