@@ -2,7 +2,7 @@
   "pageId": "dex-prop-amm",
   "pageName": "DEX Prop Amm",
   "chartCount": 7,
-  "lastUpdated": "2026-02-12T12:14:41.761756",
+  "lastUpdated": "2026-02-12T12:52:16.158840",
   "charts": [
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000005",
@@ -34,68 +34,6 @@
       },
       "createdAt": "2026-02-07T08:14:39.053992",
       "updatedAt": "2026-02-09T08:29:17.066282"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
-      "title": "Prop Amm Volume By Program",
-      "subtitle": "Daily volume by individual prop AMM program",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-07T08:14:39.056864",
-      "updatedAt": "2026-02-07T08:14:39.056864"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000002",
-      "title": "Prop Amm Txns By Program",
-      "subtitle": "Daily transaction count by prop AMM program",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "txn_count",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-07T08:14:39.056868",
-      "updatedAt": "2026-02-07T08:14:39.056868"
     },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
@@ -284,6 +222,68 @@
       },
       "createdAt": "2026-02-07T08:14:39.051467",
       "updatedAt": "2026-02-07T08:14:39.051467"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
+      "title": "Prop Amm Volume By Program",
+      "subtitle": "Daily volume by individual prop AMM program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.056864",
+      "updatedAt": "2026-02-07T08:14:39.056864"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000002",
+      "title": "Prop Amm Txns By Program",
+      "subtitle": "Daily transaction count by prop AMM program",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-07T08:14:39.056868",
+      "updatedAt": "2026-02-07T08:14:39.056868"
     }
   ]
 }

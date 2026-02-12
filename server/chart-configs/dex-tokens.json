@@ -1,8 +1,8 @@
 {
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
-  "chartCount": 3,
-  "lastUpdated": "2026-02-12T11:53:01.027942",
+  "chartCount": 4,
+  "lastUpdated": "2026-02-12T13:23:40.857163",
   "charts": [
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
@@ -128,6 +128,50 @@
       },
       "createdAt": "2026-02-10T07:41:47.541302",
       "updatedAt": "2026-02-10T07:41:47.541302"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
+      "title": "New Token Velocity",
+      "subtitle": "New token adoption metrics - trades, traders, volume in first 7 days",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "first_trade_date",
+        "yAxis": [
+          {
+            "field": "trades_first_week",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "traders_first_week",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "volume_first_week_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "trades_first_week",
+          "traders_first_week"
+        ],
+        "rightAxisFields": [
+          "volume_first_week_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-12T13:23:40.857147",
+      "updatedAt": "2026-02-12T13:23:40.857147"
     }
   ]
 }
