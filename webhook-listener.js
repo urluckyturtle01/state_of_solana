@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const PORT = 9011;
+const PORT = 9000;
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'your-webhook-secret-here'; // Set in .env
 const AUTO_UPDATE_SCRIPT = path.join(__dirname, 'auto-update-dex.sh');
 const ALLOWED_REPO = 'Topledger/tl-reserach-tool-sqls'; // Only listen to this repo
