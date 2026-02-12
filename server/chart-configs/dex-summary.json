@@ -2,7 +2,7 @@
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
   "chartCount": 7,
-  "lastUpdated": "2026-02-11T09:06:10.758495",
+  "lastUpdated": "2026-02-12T08:34:54.682975",
   "charts": [
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000003",
@@ -47,6 +47,50 @@
       "page": "dex-summary",
       "createdAt": "2026-02-10T09:11:30.626596",
       "updatedAt": "2026-02-10T09:11:30.626596"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",
+      "title": "Cumulative Traders By Category",
+      "subtitle": "Cumulative unique traders by protocol category",
+      "chartType": "line",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-10T09:01:40.816036",
+      "updatedAt": "2026-02-10T09:01:40.816036"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000002",
+      "title": "Daily New Traders By Category",
+      "subtitle": "Daily new unique traders added per category",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_change",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-10T09:01:40.816044",
+      "updatedAt": "2026-02-10T09:01:40.816044"
     },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000005",
@@ -176,50 +220,6 @@
       },
       "createdAt": "2026-02-10T09:15:30.910388",
       "updatedAt": "2026-02-10T09:15:30.910388"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",
-      "title": "Cumulative Traders By Category",
-      "subtitle": "Cumulative unique traders by protocol category",
-      "chartType": "line",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-10T09:01:40.816036",
-      "updatedAt": "2026-02-10T09:01:40.816036"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000002",
-      "title": "Daily New Traders By Category",
-      "subtitle": "Daily new unique traders added per category",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-10T09:01:40.816044",
-      "updatedAt": "2026-02-10T09:01:40.816044"
     }
   ]
 }
