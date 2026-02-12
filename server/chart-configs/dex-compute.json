@@ -2,39 +2,8 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-02-12T08:08:42.495081",
+  "lastUpdated": "2026-02-12T12:14:41.670842",
   "charts": [
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
-      "title": "Cu By Category",
-      "subtitle": "Daily compute units consumed by protocol category",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_compute_units",
-            "type": "bar",
-            "unit": "CU"
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-compute",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-03T14:34:27.142476",
-      "updatedAt": "2026-02-07T06:46:08.094007"
-    },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
       "title": "Cu By Dex",
@@ -65,6 +34,37 @@
       },
       "createdAt": "2026-02-03T14:34:27.142463",
       "updatedAt": "2026-02-07T06:25:53.987909"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
+      "title": "Cu By Category",
+      "subtitle": "Daily compute units consumed by protocol category",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_compute_units",
+            "type": "bar",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-compute",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142476",
+      "updatedAt": "2026-02-07T06:46:08.094007"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",

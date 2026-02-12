@@ -2,7 +2,7 @@
   "pageId": "dex-traders",
   "pageName": "DEX Traders",
   "chartCount": 6,
-  "lastUpdated": "2026-02-12T09:02:10.212715",
+  "lastUpdated": "2026-02-12T12:25:54.174820",
   "charts": [
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000002",
@@ -47,51 +47,6 @@
       "page": "dex-traders",
       "createdAt": "2026-02-07T10:44:12.911329",
       "updatedAt": "2026-02-07T10:44:12.911329"
-    },
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
-      "title": "Daily Active Traders",
-      "subtitle": "Daily unique traders with growth metrics and cumulative total",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "active_traders",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "daily_growth_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "apiEndpoint": "/api/temp-chart-data/dex-traders/dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
-      "page": "dex-traders",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "active_traders",
-          "cumulative_traders"
-        ],
-        "rightAxisFields": [
-          "daily_growth_pct"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
-      },
-      "createdAt": "2026-02-07T09:19:48.267112",
-      "updatedAt": "2026-02-07T09:19:48.267112"
     },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000006",
@@ -180,6 +135,50 @@
       "page": "dex-traders",
       "createdAt": "2026-02-07T09:13:02.158639",
       "updatedAt": "2026-02-07T09:13:02.158639"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
+      "title": "Daily Active Traders",
+      "subtitle": "Daily unique traders with growth metrics and cumulative total",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          },
+          {
+            "field": "daily_growth_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-traders",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "active_traders",
+          "cumulative_traders"
+        ],
+        "rightAxisFields": [
+          "daily_growth_pct"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-07T09:19:48.267112",
+      "updatedAt": "2026-02-07T09:19:48.267112"
     }
   ]
 }
