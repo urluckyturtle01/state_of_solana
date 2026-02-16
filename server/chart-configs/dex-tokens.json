@@ -2,55 +2,8 @@
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
   "chartCount": 4,
-  "lastUpdated": "2026-02-12T13:23:40.857163",
+  "lastUpdated": "2026-02-16T11:50:03.969170",
   "charts": [
-    {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
-      "title": "Top Token Pairs",
-      "subtitle": "Top trading pairs by cumulative volume",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "pool",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "trade_count",
-            "type": "line",
-            "unit": "",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-tokens",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "trade_count"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-04T10:26:21.729624",
-      "updatedAt": "2026-02-07T06:00:44.855643"
-    },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
       "title": "Token Volume By Category",
@@ -172,6 +125,53 @@
       },
       "createdAt": "2026-02-12T13:23:40.857147",
       "updatedAt": "2026-02-12T13:23:40.857147"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
+      "title": "Top Token Pairs",
+      "subtitle": "Top trading pairs by cumulative volume",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "pool",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "trade_count",
+            "type": "line",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "trade_count"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-04T10:26:21.729624",
+      "updatedAt": "2026-02-07T06:00:44.855643"
     }
   ]
 }
