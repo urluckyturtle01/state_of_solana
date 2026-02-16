@@ -2,8 +2,70 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-02-16T11:21:52.854155",
+  "lastUpdated": "2026-02-16T13:39:25.349866",
   "charts": [
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
+      "title": "Cu By Dex",
+      "subtitle": "Daily compute units consumed by DEX program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_compute_units",
+            "type": "bar",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-compute",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142463",
+      "updatedAt": "2026-02-07T06:25:53.987909"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
+      "title": "Cu By Category",
+      "subtitle": "Daily compute units consumed by protocol category",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_compute_units",
+            "type": "bar",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-compute",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-03T14:34:27.142476",
+      "updatedAt": "2026-02-07T06:46:08.094007"
+    },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
       "title": "Dex Cu Share",
@@ -110,68 +172,6 @@
       "page": "dex-compute",
       "createdAt": "2026-02-07T11:11:09.835889",
       "updatedAt": "2026-02-07T11:11:09.835889"
-    },
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
-      "title": "Cu By Dex",
-      "subtitle": "Daily compute units consumed by DEX program",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_compute_units",
-            "type": "bar",
-            "unit": "CU"
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-compute",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-03T14:34:27.142463",
-      "updatedAt": "2026-02-07T06:25:53.987909"
-    },
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
-      "title": "Cu By Category",
-      "subtitle": "Daily compute units consumed by protocol category",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_compute_units",
-            "type": "bar",
-            "unit": "CU"
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-compute",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-03T14:34:27.142476",
-      "updatedAt": "2026-02-07T06:46:08.094007"
     }
   ]
 }
