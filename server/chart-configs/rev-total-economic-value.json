@@ -2,13 +2,13 @@
   "pageId": "rev-total-economic-value",
   "pageName": "DEX Total Economic Value",
   "chartCount": 4,
-  "lastUpdated": "2026-02-17T09:17:04.220070",
+  "lastUpdated": "2026-02-17T11:49:37.220598",
   "charts": [
     {
       "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000007",
       "title": "REV vs TEV per Epoch",
-      "subtitle": "Real Economic Value vs Total Economic Value in SOL and USD",
-      "chartType": "line",
+      "subtitle": "Real Economic Value vs Total Economic Value",
+      "chartType": "bar",
       "order": 1,
       "isStacked": false,
       "dataMapping": {
@@ -16,25 +16,25 @@
         "yAxis": [
           {
             "field": "epoch_rev_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "epoch_tev_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "epoch_rev_usd",
-            "type": "line",
-            "unit": "$"
-            
+            "type": "bar",
+            "unit": "$",
+            "rightAxis": true
           },
           {
             "field": "epoch_tev_usd",
-            "type": "line",
-            "unit": "$"
-            
+            "type": "bar",
+            "unit": "$",
+            "rightAxis": true
           }
         ],
         "groupBy": ""
@@ -42,27 +42,27 @@
       "page": "rev-total-economic-value",
       "additionalOptions": {
         "filters": {
-        "currencyFilter": {
-          "paramName": "currency",
-          "options": [
-            "USD",
-            "SOL"
-          ],
-          "type": "field_switcher",
-          "columnMappings": {
-            "USD": "epoch_rev_usd, epoch_tev_usd",
-            "SOL": "epoch_rev_sol, epoch_tev_sol"
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "epoch_rev_usd, epoch_tev_usd",
+              "SOL": "epoch_rev_sol, epoch_tev_sol"
+            }
           }
-        }
         }
       },
       "createdAt": "2026-02-17T08:23:16.923074",
-      "updatedAt": "2026-02-17T09:17:04.220033"
+      "updatedAt": "2026-02-17T11:42:45.308850"
     },
     {
       "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000008",
       "title": "REV vs Issuance per Epoch",
-      "subtitle": "REV (fees + tips) + issuance (inflation) stacked = TEV, with USD",
+      "subtitle": "REV (fees + tips) + issuance (inflation) stacked = TEV",
       "chartType": "dual-axis",
       "order": 2,
       "isStacked": true,
@@ -81,7 +81,7 @@
           },
           {
             "field": "epoch_tev_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -98,10 +98,10 @@
           "epoch_tev_usd"
         ],
         "leftAxisType": "bar",
-        "rightAxisType": "line"
+        "rightAxisType": "bar"
       },
       "createdAt": "2026-02-17T08:23:16.923083",
-      "updatedAt": "2026-02-17T08:23:16.923083"
+      "updatedAt": "2026-02-17T11:42:45.308862"
     },
     {
       "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000009",
@@ -128,8 +128,8 @@
     {
       "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000010",
       "title": "Cumulative REV vs TEV",
-      "subtitle": "Running total of REV and TEV in SOL and USD",
-      "chartType": "line",
+      "subtitle": "Running total of REV and TEV",
+      "chartType": "bar",
       "order": 4,
       "isStacked": false,
       "dataMapping": {
@@ -137,23 +137,23 @@
         "yAxis": [
           {
             "field": "cum_rev_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "cum_tev_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "cum_rev_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           },
           {
             "field": "cum_tev_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -163,22 +163,22 @@
       "page": "rev-total-economic-value",
       "additionalOptions": {
         "filters": {
-        "currencyFilter": {
-          "paramName": "currency",
-          "options": [
-            "USD",
-            "SOL"
-          ],
-          "type": "field_switcher",
-          "columnMappings": {
-            "USD": "cum_rev_usd, cum_tev_usd",
-            "SOL": "cum_rev_sol, cum_tev_sol"
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "cum_rev_usd, cum_tev_usd",
+              "SOL": "cum_rev_sol, cum_tev_sol"
+            }
           }
-        }
         }
       },
       "createdAt": "2026-02-17T08:23:16.923090",
-      "updatedAt": "2026-02-17T09:17:04.220064"
+      "updatedAt": "2026-02-17T11:42:45.308876"
     }
   ]
 }

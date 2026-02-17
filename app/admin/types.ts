@@ -38,9 +38,10 @@ export const CHART_TYPES = [
   { id: 'pie', name: 'Pie Chart' },
   { id: 'area', name: 'Area Chart' },
   { id: 'stacked-area', name: 'Stacked Area Chart' },
+  { id: 'counter', name: 'Counter' },
 ] as const;
 
-export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie' | 'box';
+export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie' | 'box' | 'counter';
 
 // Percentage field configuration for weighted average calculation
 export interface PercentageFieldConfig {

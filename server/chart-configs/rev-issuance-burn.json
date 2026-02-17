@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "DEX Issuance And Burn",
   "chartCount": 7,
-  "lastUpdated": "2026-02-17T09:50:26.354761",
+  "lastUpdated": "2026-02-17T11:49:12.395530",
   "charts": [
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000031",
@@ -44,8 +44,8 @@
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000032",
       "title": "Issuance vs Burn per Epoch",
-      "subtitle": "SOL issuance (inflation) vs burn (50% base fees) in SOL and USD",
-      "chartType": "line",
+      "subtitle": "SOL issuance (inflation) vs burn (50% base fees)",
+      "chartType": "bar",
       "order": 2,
       "isStacked": false,
       "dataMapping": {
@@ -63,13 +63,13 @@
           },
           {
             "field": "epoch_issuance_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           },
           {
             "field": "epoch_burn_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -94,13 +94,13 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282735",
-      "updatedAt": "2026-02-17T09:50:26.354694"
+      "updatedAt": "2026-02-17T11:42:11.004829"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000033",
       "title": "Net Issuance per Epoch",
-      "subtitle": "Net SOL issuance (issuance - burn) in SOL and USD",
-      "chartType": "line",
+      "subtitle": "Net SOL issuance (issuance - burn)",
+      "chartType": "bar",
       "order": 3,
       "isStacked": false,
       "dataMapping": {
@@ -113,7 +113,7 @@
           },
           {
             "field": "epoch_net_issuance_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -138,7 +138,7 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282745",
-      "updatedAt": "2026-02-17T09:50:26.354703"
+      "updatedAt": "2026-02-17T11:42:11.004835"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000034",
@@ -166,7 +166,7 @@
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000035",
       "title": "Rewards Breakdown per Epoch",
       "subtitle": "Staking rewards, voting rewards, and block production rewards",
-      "chartType": "line",
+      "chartType": "bar",
       "order": 5,
       "isStacked": true,
       "dataMapping": {
@@ -189,7 +189,7 @@
           },
           {
             "field": "block_rewards_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -214,13 +214,13 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282754",
-      "updatedAt": "2026-02-17T09:50:26.354717"
+      "updatedAt": "2026-02-17T11:42:11.004848"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000036",
       "title": "Cumulative Issuance vs Burn",
-      "subtitle": "Running total of issuance and burn in SOL and USD",
-      "chartType": "line",
+      "subtitle": "Running total of issuance and burn",
+      "chartType": "bar",
       "order": 6,
       "isStacked": false,
       "dataMapping": {
@@ -228,23 +228,23 @@
         "yAxis": [
           {
             "field": "cum_issuance_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "cum_burn_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "cum_issuance_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           },
           {
             "field": "cum_burn_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -269,13 +269,13 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282758",
-      "updatedAt": "2026-02-17T09:50:26.354725"
+      "updatedAt": "2026-02-17T11:42:11.004854"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000037",
       "title": "Cumulative Net Issuance",
-      "subtitle": "Running total of net issuance (issuance - burn) in SOL and USD",
-      "chartType": "line",
+      "subtitle": "Running total of net issuance (issuance - burn)",
+      "chartType": "bar",
       "order": 7,
       "isStacked": false,
       "dataMapping": {
@@ -283,12 +283,12 @@
         "yAxis": [
           {
             "field": "cum_net_issuance_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "cum_net_issuance_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -313,7 +313,7 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282761",
-      "updatedAt": "2026-02-17T09:50:26.354732"
+      "updatedAt": "2026-02-17T11:42:11.004859"
     }
   ]
 }

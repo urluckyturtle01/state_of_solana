@@ -105,7 +105,9 @@ const ICONS = {
 };
 
 interface CounterRendererProps {
-  counterConfig: CounterConfig;
+  counterConfig?: CounterConfig;
+  chartConfig?: any; // ChartConfig with chartType: "counter"
+  chartData?: any[]; // Pre-loaded chart data
   isLoading?: boolean;
 }
 
@@ -531,6 +533,8 @@ const isRecentlyCreated = (counter: CounterConfig): boolean => {
 
 const CounterRenderer: React.FC<CounterRendererProps> = ({ 
   counterConfig,
+  chartConfig,
+  chartData,
   isLoading = false
 }) => {
   const [value, setValue] = useState<string>("Loading...");
@@ -538,9 +542,94 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [loadState, setLoadState] = useState<'loading' | 'success' | 'error'>('loading');
 
+  // Determine if we're using counterConfig or chartConfig
+  const isChartMode = !!chartConfig;
+  const hasChartData = chartData && chartData.length > 0;
+  const config = counterConfig || chartConfig;
+
+  // Debug logging
+  useEffect(() => {
+    console.log('=== CounterRenderer Props Changed ===');
+    console.log('counterConfig:', counterConfig?.id);
+    console.log('chartConfig:', chartConfig?.id);
+    console.log('chartData:', chartData);
+    console.log('isChartMode:', isChartMode);
+    console.log('hasChartData:', hasChartData);
+  }, [counterConfig, chartConfig, chartData, isChartMode, hasChartData]);
+
+  // Separate effect to process chart data immediately when it arrives
+  useEffect(() => {
+    if (!chartConfig || !chartData || chartData.length === 0) {
+      return;
+    }
+
+    console.log('🔵 PROCESSING CHART DATA NOW');
+    console.log('Chart ID:', chartConfig.id);
+    console.log('Data rows:', chartData.length);
+    console.log('Full data:', JSON.stringify(chartData));
+
+    const rowIndex = chartConfig.rowIndex || 0;
+    const row = chartData[rowIndex];
+    
+    console.log('Row index:', rowIndex, 'Row:', JSON.stringify(row));
+
+    if (!row) {
+      setValue('NO ROW');
+      setError('No row at index ' + rowIndex);
+      return;
+    }
+
+    // Get field name
+    const yAxis = chartConfig.dataMapping?.yAxis;
+    let fieldName = '';
+    
+    if (Array.isArray(yAxis)) {
+      const first = yAxis[0];
+      fieldName = typeof first === 'string' ? first : first?.field || '';
+    } else if (typeof yAxis === 'string') {
+      fieldName = yAxis;
+    }
+
+    console.log('Field name:', fieldName);
+
+    const rawValue = row[fieldName];
+    console.log('Raw value from row:', rawValue);
+
+    if (!rawValue && rawValue !== 0) {
+      setValue('NO VALUE');
+      setError(`Field ${fieldName} not found. Available: ${Object.keys(row).join(', ')}`);
+      return;
+    }
+
+    const num = Number(rawValue);
+    console.log('Converted to number:', num);
+
+    // Format
+    let formatted = '';
+    if (num >= 1000000000000) {
+      formatted = `${(num / 1000000000000).toFixed(1)}T`;
+    } else if (num >= 1000000000) {
+      formatted = `${(num / 1000000000).toFixed(1)}B`;
+    } else if (num >= 1000000) {
+      formatted = `${(num / 1000000).toFixed(1)}M`;
+    } else {
+      formatted = num.toFixed(0);
+    }
+
+    const prefix = chartConfig.prefix || '';
+    const suffix = chartConfig.suffix || '';
+    const final = `${prefix}${formatted}${suffix}`;
+    
+    console.log('🟢 FINAL VALUE:', final);
+    setValue(final);
+    setLoadState('success');
+    setError(null);
+
+  }, [chartData, chartConfig]);
+
   // Clear cache for newly created counters to ensure they're displayed
   useEffect(() => {
-    if (isRecentlyCreated(counterConfig)) {
+    if (counterConfig && isRecentlyCreated(counterConfig)) {
       // Clear localStorage cache for this page
       if (typeof window !== 'undefined' && counterConfig.page) {
         try {
@@ -565,32 +654,160 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
 
   // Start prefetching data as soon as component renders
   useEffect(() => {
-    if (!isLoading && counterConfig.apiEndpoint) {
+    if (!isLoading && counterConfig?.apiEndpoint) {
       prefetchCounterData(counterConfig.apiEndpoint, counterConfig.apiKey);
     }
-  }, [counterConfig.apiEndpoint, counterConfig.apiKey, isLoading]);
+  }, [counterConfig?.apiEndpoint, counterConfig?.apiKey, isLoading]);
 
   // Get icon based on icon name in config
   const getIcon = () => {
-    if (!counterConfig.icon || !ICONS[counterConfig.icon as keyof typeof ICONS]) {
-      // Default to revenue icon if not specified or invalid
+    const iconName = counterConfig?.icon || chartConfig?.icon || 'chart';
+    if (!ICONS[iconName as keyof typeof ICONS]) {
+      // Default to chart icon if not specified or invalid
       return ICONS.chart;
     }
-    return ICONS[counterConfig.icon as keyof typeof ICONS];
+    return ICONS[iconName as keyof typeof ICONS];
   };
 
   // Fetch data from API when component mounts
   useEffect(() => {
     let isMounted = true;
     const loadCounterData = async () => {
-      if (isLoading) return;
+      console.log('loadCounterData called:', { isLoading, isChartMode, hasChartData });
+      
+      if (isLoading) {
+        console.log('Is loading, skipping');
+        return;
+      }
 
       try {
         setLoadState('loading');
         
+        // If chart mode (data provided directly), process it immediately
+        if (isChartMode && hasChartData) {
+          console.log('=== COUNTER CHART MODE START ===');
+          console.log('chartConfig:', JSON.stringify(chartConfig, null, 2));
+          console.log('chartData length:', chartData!.length);
+          console.log('chartData:', JSON.stringify(chartData, null, 2));
+          
+          // Extract value from chart data
+          const rowIndex = chartConfig!.rowIndex || 0;
+          console.log('Using rowIndex:', rowIndex);
+          
+          const actualIndex = Math.min(rowIndex, chartData!.length - 1);
+          console.log('Actual array index:', actualIndex);
+          
+          const row = chartData![actualIndex];
+          
+          if (!row) {
+            console.error('ROW IS NULL/UNDEFINED');
+            throw new Error('No data available in chart');
+          }
+          
+          console.log('Selected row:', JSON.stringify(row, null, 2));
+          
+          // Extract field name from yAxis (handle both string and object formats)
+          let valueField: string;
+          const yAxis = chartConfig.dataMapping?.yAxis;
+          
+          if (Array.isArray(yAxis) && yAxis.length > 0) {
+            const firstField = yAxis[0];
+            valueField = typeof firstField === 'string' ? firstField : firstField.field;
+          } else if (typeof yAxis === 'string') {
+            valueField = yAxis;
+          } else if (typeof yAxis === 'object' && yAxis !== null && 'field' in yAxis) {
+            valueField = (yAxis as any).field;
+          } else {
+            throw new Error('No valueField specified in chart config');
+          }
+          
+          console.log('Extracted valueField:', valueField);
+          
+          const rawValue = row[valueField];
+          console.log('Raw value from data:', rawValue);
+          
+          if (rawValue === undefined || rawValue === null) {
+            console.error('Available fields in row:', Object.keys(row));
+            throw new Error(`Field "${valueField}" not found in data`);
+          }
+          
+          const numericValue = Number(rawValue);
+          if (isNaN(numericValue)) {
+            throw new Error(`Value is not a number: ${rawValue}`);
+          }
+          
+          // Format value with prefix and suffix
+          const prefix = chartConfig.prefix || '';
+          const suffix = chartConfig.suffix || '';
+          
+          let formattedValue = String(numericValue);
+          if (numericValue >= 1000000000000) {
+            formattedValue = `${(numericValue / 1000000000000).toFixed(1)}T`;
+          } else if (numericValue >= 1000000000) {
+            formattedValue = `${(numericValue / 1000000000).toFixed(1)}B`;
+          } else if (numericValue >= 1000000) {
+            formattedValue = `${(numericValue / 1000000).toFixed(1)}M`;
+          } else if (numericValue >= 1000) {
+            formattedValue = `${(numericValue / 1000).toFixed(1)}K`;
+          } else {
+            formattedValue = numericValue.toFixed(0);
+          }
+          
+          const finalValue = `${prefix}${formattedValue}${suffix}`;
+          console.log('Setting counter value:', finalValue);
+          setValue(finalValue);
+          setLoadState('success');
+          
+          if (!isMounted) return;
+          return;
+        }
+        
+        // If in chart mode but no data yet
+        if (isChartMode && !hasChartData) {
+          // Check if we have an apiEndpoint to fall back to
+          if (!chartConfig?.apiEndpoint) {
+            // No apiEndpoint and no data yet - keep loading state
+            console.log('Counter in chart mode, waiting for data to load...');
+            return;
+          }
+          // If we have apiEndpoint, continue to fetch from API
+          console.log('Counter in chart mode without data, falling back to apiEndpoint');
+        }
+        
+        // Otherwise, fetch from API using traditional counter config or chart config
+        let valueFieldForAPI = '';
+        if (chartConfig?.dataMapping?.yAxis) {
+          const yAxis = chartConfig.dataMapping.yAxis;
+          if (Array.isArray(yAxis) && yAxis.length > 0) {
+            const firstField = yAxis[0];
+            valueFieldForAPI = typeof firstField === 'string' ? firstField : firstField.field;
+          } else if (typeof yAxis === 'string') {
+            valueFieldForAPI = yAxis;
+          } else if (typeof yAxis === 'object' && yAxis !== null && 'field' in yAxis) {
+            valueFieldForAPI = (yAxis as any).field;
+          }
+        }
+        
+        const configToUse = counterConfig || (chartConfig ? {
+          ...chartConfig,
+          valueField: valueFieldForAPI,
+          rowIndex: chartConfig.rowIndex || 0,
+          prefix: chartConfig.prefix || '',
+          suffix: chartConfig.suffix || '',
+        } : null);
+        
+        if (!configToUse) {
+          throw new Error('Neither chart data nor valid config provided');
+        }
+        
+        // Check if apiEndpoint is available
+        if (!configToUse.apiEndpoint) {
+          throw new Error('No data source available: Neither chartData nor apiEndpoint provided');
+        }
+        
         // Fetch data using our specialized function
         const startTime = performance.now();
-        const result = await fetchAndProcessCounter(counterConfig);
+        const result = await fetchAndProcessCounter(configToUse as CounterConfig);
         const endTime = performance.now();
         
         // If component was unmounted during the async operation, don't update state
@@ -609,9 +826,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
           const num = Number(result.value);
           
           // Check if prefix indicates currency
-          const isCurrency = counterConfig.prefix === '$' || counterConfig.prefix === '€' || counterConfig.prefix === '£';
+          const isCurrency = configToUse?.prefix === '$' || configToUse?.prefix === '€' || configToUse?.prefix === '£';
           // Check if suffix indicates percentage
-          const isPercentage = counterConfig.suffix === '%';
+          const isPercentage = configToUse?.suffix === '%';
           
           if (isPercentage) {
             // For percentages, show 1 decimal place
@@ -637,28 +854,30 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
         }
 
         // Apply prefix and suffix
-        if (typeof counterConfig.prefix === 'string' && counterConfig.prefix !== '') {
-          formattedValue = `${counterConfig.prefix}${formattedValue}`;
+        if (typeof configToUse?.prefix === 'string' && configToUse.prefix !== '') {
+          formattedValue = `${configToUse.prefix}${formattedValue}`;
         }
-        if (typeof counterConfig.suffix === 'string' && counterConfig.suffix !== '') {
-          formattedValue = `${formattedValue} ${counterConfig.suffix}`;
+        if (typeof configToUse?.suffix === 'string' && configToUse.suffix !== '') {
+          formattedValue = `${formattedValue} ${configToUse.suffix}`;
         }
 
         setValue(formattedValue);
         setLoadState('success');
 
         // Set trend if available - improve logging here
-        if (counterConfig.trendConfig && result.previousValue !== undefined) {
+        if (configToUse?.trendConfig && result.previousValue !== undefined) {
           setTrend({
             value: parseFloat(result.previousValue.toFixed(1)), // Format to 1 decimal place
-            label: counterConfig.trendConfig.label || 'vs. previous period'
+            label: configToUse.trendConfig.label || 'vs. previous period'
           });
         }
       } catch (error) {
         if (!isMounted) return;
         console.error('Error loading counter data:', error);
-        setError(`Error: ${error instanceof Error ? error.message : String(error)}`);
-        setValue("Error");
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        console.error('Full error:', errorMsg);
+        setError(`Error: ${errorMsg}`);
+        setValue("0"); // Show 0 on error to match the screenshot
         setLoadState('error');
       }
     };
@@ -670,34 +889,59 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
       isMounted = false;
     };
   }, [
-    counterConfig.apiEndpoint,
-    counterConfig.apiKey,
-    counterConfig.valueField,
-    counterConfig.rowIndex,
-    counterConfig.prefix,
-    counterConfig.suffix,
-    counterConfig.trendConfig,
-    isLoading
+    counterConfig?.apiEndpoint,
+    counterConfig?.apiKey,
+    counterConfig?.valueField,
+    counterConfig?.rowIndex,
+    counterConfig?.prefix,
+    counterConfig?.suffix,
+    counterConfig?.trendConfig,
+    isLoading,
+    isChartMode,
+    hasChartData,
+    chartData,
+    chartConfig
   ]);
 
+  console.log('=== CounterRenderer FINAL RENDER ===', { 
+    hasError: !!error, 
+    error, 
+    value, 
+    loadState,
+    configTitle: config?.title,
+    isChartMode,
+    hasChartData
+  });
+
   if (error) {
+    console.error('=== SHOWING ERROR UI ===', error);
     return (
-      <div className="bg-red-500/10 p-4 rounded-md border border-red-800/20">
-        <h3 className="text-sm font-medium text-red-400">Error Loading Counter</h3>
-        <p className="mt-1 text-xs text-gray-400">{error}</p>
+      <div className="bg-red-500/10 p-4 rounded-md border border-red-800/50">
+        <h3 className="text-sm font-medium text-red-400">❌ Error Loading Counter</h3>
+        <p className="mt-1 text-xs text-gray-300 font-mono">{error}</p>
+        <p className="mt-2 text-xs text-gray-500">Chart ID: {config?.id}</p>
       </div>
     );
   }
 
+  // Final value display logic
+  const displayValue = loadState === 'loading' ? 'Loading...' : value || '0';
+  
+  console.log('=== CounterRenderer returning Counter component ===', {
+    displayValue,
+    originalValue: value,
+    loadState
+  });
+
   return (
     <Counter
-      title={counterConfig.title}
-      value={value}
+      title={config?.title || 'Counter'}
+      value={displayValue}
       trend={trend}
       icon={getIcon()}
-      variant={counterConfig.variant || "blue"}
+      variant={config?.variant || "blue"}
       isLoading={isLoading || loadState === 'loading'}
-      className={counterConfig.width && counterConfig.width > 1 ? "h-full" : ""}
+      className={config?.width && config?.width > 1 ? "h-full" : ""}
     />
   );
 };

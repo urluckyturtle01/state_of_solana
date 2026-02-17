@@ -1,9 +1,177 @@
 {
   "pageId": "rev-cost-capacity",
   "pageName": "DEX Cost And Capacity",
-  "chartCount": 6,
-  "lastUpdated": "2026-02-17T09:49:47.242612",
+  "chartCount": 10,
+  "lastUpdated": "2026-02-17T11:48:41.946959",
   "charts": [
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000027",
+      "title": "Fee Concentration by Percentile",
+      "subtitle": "Share of total daily fee from top 1%, 5%, 10% successful non-vote txns",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "top1_fee_share_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "top5_fee_share_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "top10_fee_share_pct",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "createdAt": "2026-02-17T11:40:53.804202",
+      "updatedAt": "2026-02-17T11:40:53.804202"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000028",
+      "title": "Fee by Percentile Bucket",
+      "subtitle": "Daily fee from top 1%, 5%, 10% successful non-vote txns",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "top1_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "top5_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "top10_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "top10_fee_usd",
+            "type": "bar",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "top10_fee_usd",
+              "SOL": "top10_fee_sol"
+            }
+          }
+        }
+      },
+      "createdAt": "2026-02-17T11:40:53.804217",
+      "updatedAt": "2026-02-17T11:40:53.804217"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000029",
+      "title": "Transaction Count by Percentile",
+      "subtitle": "Successful non-vote txn count in top 1%, 5%, 10% fee buckets",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "top1_txn_count",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "top5_txn_count",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "top10_txn_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "createdAt": "2026-02-17T11:40:53.804224",
+      "updatedAt": "2026-02-17T11:40:53.804224"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000030",
+      "title": "Unique Fee Payers by Percentile",
+      "subtitle": "Distinct fee payers in top 1%, 5%, 10% fee buckets (successful non-vote txns)",
+      "chartType": "dual-axis",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "top1_fee_payers",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "top5_fee_payers",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "top10_fee_payers",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "total_fee_payers",
+            "type": "bar",
+            "unit": "",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "top1_fee_payers",
+          "top5_fee_payers",
+          "top10_fee_payers"
+        ],
+        "rightAxisFields": [
+          "total_fee_payers"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "bar"
+      },
+      "createdAt": "2026-02-17T11:40:53.804229",
+      "updatedAt": "2026-02-17T11:40:53.804229"
+    },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000001",
       "title": "Daily Transactions (Success vs Failed)",
@@ -51,8 +219,8 @@
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000002",
       "title": "Daily Fee (Success vs Failed)",
-      "subtitle": "Successful and failed fee in SOL (left) and USD (right)",
-      "chartType": "line",
+      "subtitle": "Successful and failed fee in SOL and USD",
+      "chartType": "bar",
       "order": 2,
       "isStacked": true,
       "dataMapping": {
@@ -70,13 +238,13 @@
           },
           {
             "field": "successful_fee_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           },
           {
             "field": "failed_fee_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -101,7 +269,7 @@
         }
       },
       "createdAt": "2026-02-17T08:58:36.931485",
-      "updatedAt": "2026-02-17T09:49:47.242565"
+      "updatedAt": "2026-02-17T11:41:29.200090"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000019",
@@ -144,7 +312,7 @@
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000020",
       "title": "Max Fee Day (Success vs Failed)",
       "subtitle": "Daily fee with peak day reference lines in SOL and USD",
-      "chartType": "line",
+      "chartType": "bar",
       "order": 4,
       "isStacked": false,
       "dataMapping": {
@@ -157,23 +325,23 @@
           },
           {
             "field": "max_successful_fee_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "max_failed_fee_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "max_successful_fee_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           },
           {
             "field": "max_failed_fee_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -198,12 +366,12 @@
         }
       },
       "createdAt": "2026-02-17T08:58:36.931494",
-      "updatedAt": "2026-02-17T09:49:47.242587"
+      "updatedAt": "2026-02-17T11:41:29.200166"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
       "title": "Cost Per Transaction (Avg, Median, Stddev)",
-      "subtitle": "Average, median, and std deviation in SOL (left) and USD (right)",
+      "subtitle": "Average, median, and std deviation in SOL and USD",
       "chartType": "line",
       "order": 5,
       "isStacked": false,
@@ -258,13 +426,13 @@
         }
       },
       "createdAt": "2026-02-17T08:58:36.931497",
-      "updatedAt": "2026-02-17T09:49:47.242596"
+      "updatedAt": "2026-02-17T11:41:29.200173"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000026",
       "title": "Max Cost Per Transaction",
       "subtitle": "Daily maximum single transaction cost in SOL and USD",
-      "chartType": "line",
+      "chartType": "bar",
       "order": 6,
       "isStacked": false,
       "dataMapping": {
@@ -272,12 +440,12 @@
         "yAxis": [
           {
             "field": "max_cost_per_txn_sol",
-            "type": "line",
+            "type": "bar",
             "unit": "SOL"
           },
           {
             "field": "max_cost_per_txn_usd",
-            "type": "line",
+            "type": "bar",
             "unit": "$",
             "rightAxis": true
           }
@@ -302,7 +470,7 @@
         }
       },
       "createdAt": "2026-02-17T08:58:36.931500",
-      "updatedAt": "2026-02-17T09:49:47.242603"
+      "updatedAt": "2026-02-17T11:41:29.200178"
     }
   ]
 }

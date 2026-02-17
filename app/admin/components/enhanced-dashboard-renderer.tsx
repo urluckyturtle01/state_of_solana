@@ -290,8 +290,43 @@ const preloadTableConfigs = async (pageId: string, forceRefresh = false): Promis
 
 // Memoized Counter component for better performance
 const MemoizedCounterRenderer = React.memo(CounterRenderer, (prevProps, nextProps) => {
-  return prevProps.counterConfig.id === nextProps.counterConfig.id &&
-         JSON.stringify(prevProps.counterConfig) === JSON.stringify(nextProps.counterConfig);
+  const prevId = prevProps.counterConfig?.id || prevProps.chartConfig?.id;
+  const nextId = nextProps.counterConfig?.id || nextProps.chartConfig?.id;
+  
+  // If IDs are different, definitely re-render
+  if (prevId !== nextId) return false;
+  
+  // Check if chartData changed (from undefined to defined, or vice versa)
+  const prevHasData = prevProps.chartData && prevProps.chartData.length > 0;
+  const nextHasData = nextProps.chartData && nextProps.chartData.length > 0;
+  
+  // If data availability changed, re-render
+  if (prevHasData !== nextHasData) {
+    console.log('Counter data availability changed, re-rendering');
+    return false;
+  }
+  
+  // If both have data, check if the data changed
+  if (prevHasData && nextHasData) {
+    const dataChanged = JSON.stringify(prevProps.chartData) !== JSON.stringify(nextProps.chartData);
+    if (dataChanged) {
+      console.log('Counter data changed, re-rendering');
+      return false;
+    }
+  }
+  
+  // Check if config changed
+  const prevConfig = prevProps.counterConfig || prevProps.chartConfig;
+  const nextConfig = nextProps.counterConfig || nextProps.chartConfig;
+  const configChanged = JSON.stringify(prevConfig) !== JSON.stringify(nextConfig);
+  
+  if (configChanged) {
+    console.log('Counter config changed, re-rendering');
+    return false;
+  }
+  
+  // No changes, skip re-render
+  return true;
 });
 
 // Memoized Table component for better performance  
@@ -304,8 +339,10 @@ const MemoizedTableRenderer = React.memo(TableRenderer, (prevProps, nextProps) =
 interface EnhancedDashboardState {
   counters: CounterConfig[];
   tables: TableConfig[];
+  charts: ChartConfig[];
   isLoadingCounters: boolean;
   isLoadingTables: boolean;
+  isLoadingCharts: boolean;
   isInitialLoadComplete: boolean;
   error: string | null;
   refreshTrigger: number;
@@ -324,8 +361,10 @@ export default React.memo(function EnhancedDashboardRenderer({
   const [state, setState] = useState<EnhancedDashboardState>({
     counters: [],
     tables: [],
+    charts: [],
     isLoadingCounters: true,
     isLoadingTables: true,
+    isLoadingCharts: true,
     isInitialLoadComplete: false,
     error: null,
     refreshTrigger: 0
@@ -415,12 +454,22 @@ export default React.memo(function EnhancedDashboardRenderer({
       return;
     }
     
-    // Load counters and tables AFTER charts are displayed (in DashboardRenderer)
-    // This prevents blocking the initial chart render
-    setTimeout(async () => {
+    // Load charts first, then counters and tables
+    (async () => {
       if (!isMountedRef.current) return;
       
       try {
+        // Load charts immediately
+        const freshCharts = overrideCharts || await getChartConfigsByPage(pageId);
+        
+        if (isMountedRef.current) {
+          updateState({
+            charts: freshCharts || [],
+            isLoadingCharts: false
+          });
+        }
+        
+        // Then load counters and tables
         const loadPromises: Promise<any>[] = [];
         
         // Load counters
@@ -456,12 +505,13 @@ export default React.memo(function EnhancedDashboardRenderer({
             error: 'Failed to load some components. Please try refreshing the page.',
             isLoadingCounters: false,
             isLoadingTables: false,
+            isLoadingCharts: false,
             isInitialLoadComplete: true
           });
         }
       }
-    }, 100); // Load after 100ms delay to let charts render first
-  }, [pageId, overrideCounters, overrideTables, state.refreshTrigger, updateState]);
+    })();
+  }, [pageId, overrideCharts, overrideCounters, overrideTables, state.refreshTrigger, updateState]);
 
   // Replace the individual load functions with the parallel loader
   useEffect(() => {
@@ -562,19 +612,149 @@ export default React.memo(function EnhancedDashboardRenderer({
     );
   }, [state.tables, state.isLoadingTables, state.isInitialLoadComplete, section]);
 
+  // Separate counter-type charts from regular charts
+  const { counterCharts, regularCharts } = useMemo(() => {
+    const charts = state.charts;
+    const counters = charts.filter(chart => chart.chartType === 'counter');
+    const regulars = charts.filter(chart => chart.chartType !== 'counter');
+    
+    console.log('Chart separation:', {
+      total: charts.length,
+      counters: counters.length,
+      regular: regulars.length,
+      counterIds: counters.map(c => c.id)
+    });
+    
+    return {
+      counterCharts: counters,
+      regularCharts: regulars
+    };
+  }, [state.charts]);
+
+  // Load data for counter-type charts from temp files
+  const [counterChartsData, setCounterChartsData] = useState<Record<string, any[]>>({});
+  const [isLoadingCounterData, setIsLoadingCounterData] = useState(false);
+
+  useEffect(() => {
+    const loadCounterData = async () => {
+      if (counterCharts.length === 0) return;
+
+      setIsLoadingCounterData(true);
+      console.log('Loading counter chart data for:', counterCharts.length, 'counters');
+
+      const dataPromises = counterCharts.map(async (chart: any) => {
+        try {
+          // First try to load from temp file
+          const response = await fetch(`/temp/chart-data/${pageId}.json`);
+          if (response.ok) {
+            const pageData = await response.json();
+            
+            console.log(`Loaded page data for ${pageId}, looking for chart ${chart.id}`);
+            console.log('Available chart IDs in data:', pageData.charts?.map((c: any) => c.chartId));
+            
+            // Find the chart data by matching chart ID
+            const chartDataEntry = pageData.charts?.find((c: any) => c.chartId === chart.id);
+            if (chartDataEntry?.data) {
+              console.log(`Found data for counter ${chart.id}:`, chartDataEntry.data.length, 'rows');
+              return { chartId: chart.id, data: chartDataEntry.data };
+            } else {
+              console.log(`No data found for counter ${chart.id} in page data`);
+            }
+          }
+          
+          // If no temp file or chart not found, return null (will use apiEndpoint)
+          return { chartId: chart.id, data: null };
+        } catch (error) {
+          console.log(`Error loading temp data for counter chart ${chart.id}:`, error);
+          return { chartId: chart.id, data: null };
+        }
+      });
+
+      const results = await Promise.all(dataPromises);
+      const dataMap: Record<string, any[]> = {};
+      
+      results.forEach(result => {
+        if (result.data) {
+          dataMap[result.chartId] = result.data;
+        }
+      });
+
+      console.log('Counter charts data loaded:', Object.keys(dataMap).length, 'charts with data');
+      setCounterChartsData(dataMap);
+      setIsLoadingCounterData(false);
+    };
+
+    loadCounterData();
+  }, [counterCharts, pageId]);
+
   return (
     <div className="space-y-4">
       {/* Render counters at the top */}
       {renderCounters}
       
+      {/* Render counter-type charts as counters */}
+      {counterCharts.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-0 mt-0">
+          {isLoadingCounterData ? (
+            // Show loading skeleton while data loads
+            counterCharts.map((chart: any) => (
+              <div 
+                key={chart.id} 
+                className={`col-span-1 ${
+                  (chart.width || 1) === 1 ? 'md:col-span-2' : 
+                  (chart.width || 1) === 2 ? 'md:col-span-3' : 
+                  'md:col-span-6'
+                }`}
+              >
+                <div className="bg-gray-900/20 border border-gray-800/50 rounded-lg p-4 animate-pulse">
+                  <div className="h-4 bg-gray-700/50 rounded w-3/4 mb-2"></div>
+                  <div className="h-8 bg-gray-700/50 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))
+          ) : (
+            // Render actual counters once data is loaded
+            counterCharts.map((chart: any) => {
+              const dataForChart = counterChartsData[chart.id];
+              console.log('Rendering counter:', {
+                id: chart.id,
+                hasData: !!dataForChart,
+                dataLength: dataForChart?.length,
+                firstRow: dataForChart?.[0],
+                lastRow: dataForChart?.[dataForChart.length - 1]
+              });
+              
+              return (
+                <div 
+                  key={chart.id} 
+                  className={`col-span-1 ${
+                    (chart.width || 1) === 1 ? 'md:col-span-2' : // 1/3 width = 2 of 6 columns
+                    (chart.width || 1) === 2 ? 'md:col-span-3' : // 1/2 width = 3 of 6 columns
+                    'md:col-span-6' // Full width = 6 of 6 columns
+                  }`}
+                >
+                  <CounterRenderer 
+                    key={`counter-${chart.id}-${dataForChart?.length || 'no-data'}`}
+                    chartConfig={chart}
+                    chartData={dataForChart}
+                  />
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
+      
       {/* Render charts immediately without lazy loading */}
-      <DashboardRenderer
-        pageId={pageId}
-        overrideCharts={overrideCharts}
-        enableCaching={enableCaching}
-        section={section}
-        urlParams={urlParams}
-      />
+      {!state.isLoadingCharts && (
+        <DashboardRenderer
+          pageId={pageId}
+          overrideCharts={regularCharts}
+          enableCaching={enableCaching}
+          section={section}
+          urlParams={urlParams}
+        />
+      )}
       
       {/* Render tables below charts */}
       {renderTables}

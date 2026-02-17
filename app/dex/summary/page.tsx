@@ -14,8 +14,8 @@ export default function SummaryPage() {
         <EnhancedDashboardRenderer 
           pageId="dex-summary" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>
