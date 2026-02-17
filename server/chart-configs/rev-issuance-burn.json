@@ -1,356 +1,295 @@
 {
   "pageId": "rev-issuance-burn",
-  "pageName": "Issuance & Burn",
-  "chartCount": 5,
-  "lastUpdated": "2026-01-01T06:31:07.840Z",
+  "pageName": "DEX Issuance And Burn",
+  "chartCount": 7,
+  "lastUpdated": "2026-02-17T08:59:12.282768",
   "charts": [
     {
-      "id": "chart_1748090558074_b8llrdw",
-      "title": "Gross & Net SOL Issuance",
-      "subtitle": "",
-      "page": "rev-issuance-burn",
-      "section": "",
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000031",
+      "title": "Fee Breakdown per Epoch",
+      "subtitle": "Non-vote base fee, priority fee, vote fee, and Jito tips per epoch",
       "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results.json",
-      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
+      "order": 1,
+      "isStacked": true,
       "dataMapping": {
-        "xAxis": "backfilling_epoch_date",
+        "xAxis": "epoch",
         "yAxis": [
           {
-            "field": "gross_sol_issuance_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "net_sol_issuance_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "gross_sol_issuance_usd",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "net_sol_issuance_usd",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "gross_sol_issuance_usd, net_sol_issuance_usd",
-              "SOL": "gross_sol_issuance_sol, net_sol_issuance_sol",
-              "USDe": ""
-            }
-          }
-        },
-        "enableTimeAggregation": true
-      },
-      "createdAt": "2025-05-24T12:42:38.074Z",
-      "updatedAt": "2025-07-17T12:28:12.746Z"
-    },
-    {
-      "id": "chart_1748096163584_3k0589a",
-      "title": "Block Rewards & SOL Burn",
-      "subtitle": "",
-      "page": "rev-issuance-burn",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results.json",
-      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "backfilling_epoch_date",
-        "yAxis": [
-          {
-            "field": "staking_reward_sol",
-            "type": "line",
+            "field": "non_vote_base_fee_sol",
+            "type": "bar",
             "unit": "SOL"
           },
           {
-            "field": "voting_reward_sol",
-            "type": "line",
+            "field": "priority_fee_sol",
+            "type": "bar",
             "unit": "SOL"
           },
           {
-            "field": "sol_burn_sol",
-            "type": "line",
+            "field": "vote_fee_sol",
+            "type": "bar",
             "unit": "SOL"
           },
           {
-            "field": "staking_reward_usd",
-            "type": "line",
-            "unit": "$"
-          },
-          {
-            "field": "voting_reward_usd",
-            "type": "line",
-            "unit": "$"
-          },
-          {
-            "field": "sol_burn_usd",
-            "type": "line",
-            "unit": "$"
+            "field": "jito_tips_sol",
+            "type": "bar",
+            "unit": "SOL"
           }
         ],
         "groupBy": ""
       },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "staking_reward_usd, voting_reward_usd, sol_burn_usd",
-              "SOL": "staking_reward_sol, voting_reward_sol, sol_burn_sol",
-              "USDe": ""
-            }
-          }
-        },
-        "showTooltipTotal": false,
-        "enableTimeAggregation": true
-      },
-      "createdAt": "2025-05-24T14:16:03.584Z",
-      "updatedAt": "2025-07-17T09:41:32.938Z"
+      "page": "rev-issuance-burn",
+      "createdAt": "2026-02-17T08:59:12.282725",
+      "updatedAt": "2026-02-17T08:59:12.282725"
     },
     {
-      "id": "chart_1748096750749_oyb36qv",
-      "title": "Block Rewards & Jito Commission",
-      "subtitle": "",
-      "page": "rev-issuance-burn",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results",
-      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "backfilling_epoch_date",
-        "yAxis": [
-          {
-            "field": "jito_labs_commission_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "staking_reward_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "voting_reward_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "gross_sol_issuance_sol",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "jito_labs_commission_usd",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "staking_reward_usd",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "voting_reward_usd",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "gross_sol_issuance_usd",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "jito_labs_commission_usd, staking_reward_usd, voting_reward_usd, gross_sol_issuance_usd",
-              "SOL": "jito_labs_commission_sol, staking_reward_sol, voting_reward_sol, gross_sol_issuance_sol",
-              "USDe": ""
-            }
-          }
-        },
-        "enableTimeAggregation": true
-      },
-      "createdAt": "2025-05-24T14:25:50.749Z",
-      "updatedAt": "2025-07-17T12:56:49.920Z"
-    },
-    {
-      "id": "chart_1748097567884_gi21k4e",
-      "title": "SOL Burn Ratio",
-      "subtitle": "",
-      "page": "rev-issuance-burn",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13212/results",
-      "apiKey": "fJpv71SeTrORlyPx2dVbdTt07HrwuKbUobmb7Uzj&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "backfilling_epoch_date",
-        "yAxis": [
-          {
-            "field": "burn_ratio",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "additionalOptions": {},
-      "createdAt": "2025-05-24T14:39:27.884Z",
-      "updatedAt": "2025-07-17T09:31:15.499Z"
-    },
-    {
-      "id": "chart_1748098359787_140uotb",
-      "title": "SOL Burn",
-      "subtitle": "",
-      "page": "rev-issuance-burn",
-      "section": "",
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000032",
+      "title": "Issuance vs Burn per Epoch",
+      "subtitle": "SOL issuance (inflation) vs burn (50% base fees) in SOL and USD",
       "chartType": "dual-axis",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13230/results.json",
-      "apiKey": "OUAKufVU3UKpwQd06ZUu3lYqrEM2W7cowtH5IoGV&max_age=86400",
+      "order": 2,
       "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": "epoch",
         "yAxis": [
           {
-            "field": "sol_burn_sol",
+            "field": "epoch_issuance_sol",
             "type": "bar",
-            "rightAxis": false
+            "unit": "SOL"
           },
           {
-            "field": "sol_burn_usd",
+            "field": "epoch_burn_sol",
             "type": "bar",
-            "rightAxis": false,
-            "unit": "$"
+            "unit": "SOL"
           },
           {
-            "field": "cumulative_sol_burn_sol",
+            "field": "epoch_issuance_usd",
             "type": "line",
+            "unit": "$",
             "rightAxis": true
           },
           {
-            "field": "cumulative_sol_burn_usd",
+            "field": "epoch_burn_usd",
             "type": "line",
-            "rightAxis": true,
-            "unit": "$"
+            "unit": "$",
+            "rightAxis": true
           }
         ],
         "groupBy": ""
       },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "sol_burn_usd, cumulative_sol_burn_usd",
-              "SOL": "sol_burn_sol, cumulative_sol_burn_sol",
-              "USDe": ""
-            }
-          }
-        },
-        "enableTimeAggregation": true
-      },
-      "createdAt": "2025-05-24T14:52:39.787Z",
-      "updatedAt": "2025-07-18T07:36:39.902Z",
+      "page": "rev-issuance-burn",
       "dualAxisConfig": {
-        "leftAxisType": "bar",
-        "rightAxisType": "line",
         "leftAxisFields": [
-          "sol_burn_sol",
-          "sol_burn_usd"
+          "epoch_issuance_sol",
+          "epoch_burn_sol"
         ],
         "rightAxisFields": [
-          "cumulative_sol_burn_sol",
-          "cumulative_sol_burn_usd"
-        ]
-      }
+          "epoch_issuance_usd",
+          "epoch_burn_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:59:12.282735",
+      "updatedAt": "2026-02-17T08:59:12.282735"
+    },
+    {
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000033",
+      "title": "Net Issuance per Epoch",
+      "subtitle": "Net SOL issuance (issuance - burn) in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "epoch_net_issuance_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "epoch_net_issuance_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-issuance-burn",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "epoch_net_issuance_sol"
+        ],
+        "rightAxisFields": [
+          "epoch_net_issuance_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:59:12.282745",
+      "updatedAt": "2026-02-17T08:59:12.282745"
+    },
+    {
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000034",
+      "title": "Burn as % of Issuance",
+      "subtitle": "Epoch burn percentage relative to total inflation issuance",
+      "chartType": "line",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "burn_as_pct_of_issuance",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-issuance-burn",
+      "createdAt": "2026-02-17T08:59:12.282749",
+      "updatedAt": "2026-02-17T08:59:12.282749"
+    },
+    {
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000035",
+      "title": "Rewards Breakdown per Epoch",
+      "subtitle": "Staking rewards, voting rewards, and block production rewards",
+      "chartType": "dual-axis",
+      "order": 5,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "staking_rewards_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "voting_rewards_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "block_rewards_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "block_rewards_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-issuance-burn",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "staking_rewards_sol",
+          "voting_rewards_sol",
+          "block_rewards_sol"
+        ],
+        "rightAxisFields": [
+          "block_rewards_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:59:12.282754",
+      "updatedAt": "2026-02-17T08:59:12.282754"
+    },
+    {
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000036",
+      "title": "Cumulative Issuance vs Burn",
+      "subtitle": "Running total of issuance and burn in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 6,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "cum_issuance_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_burn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_issuance_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          },
+          {
+            "field": "cum_burn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-issuance-burn",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "cum_issuance_sol",
+          "cum_burn_sol"
+        ],
+        "rightAxisFields": [
+          "cum_issuance_usd",
+          "cum_burn_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:59:12.282758",
+      "updatedAt": "2026-02-17T08:59:12.282758"
+    },
+    {
+      "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000037",
+      "title": "Cumulative Net Issuance",
+      "subtitle": "Running total of net issuance (issuance - burn) in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 7,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "cum_net_issuance_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_net_issuance_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-issuance-burn",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "cum_net_issuance_sol"
+        ],
+        "rightAxisFields": [
+          "cum_net_issuance_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:59:12.282761",
+      "updatedAt": "2026-02-17T08:59:12.282761"
     }
   ]
 }

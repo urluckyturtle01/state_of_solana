@@ -1,85 +1,176 @@
 {
   "pageId": "rev-total-economic-value",
-  "pageName": "Total Economic Value",
-  "chartCount": 1,
-  "lastUpdated": "2026-01-01T06:31:07.840Z",
+  "pageName": "DEX Total Economic Value",
+  "chartCount": 4,
+  "lastUpdated": "2026-02-17T08:59:38.821665",
   "charts": [
     {
-      "id": "chart_1748107463573_rl688e8",
-      "title": "Total Economic Value",
-      "subtitle": "Total economic value combines SOL Issuance and REV",
-      "page": "rev-total-economic-value",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13227/results.json",
-      "apiKey": "ic32Un4g6DkouRC8CKL6zvulzZH765l0iyLn5UEf&max_age=86400",
+      "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000007",
+      "title": "REV vs TEV per Epoch",
+      "subtitle": "Real Economic Value vs Total Economic Value in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 1,
       "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
       "dataMapping": {
-        "xAxis": "month",
+        "xAxis": "epoch",
         "yAxis": [
           {
-            "field": "real_economic_value",
+            "field": "epoch_rev_sol",
             "type": "bar",
             "unit": "SOL"
           },
           {
-            "field": "total_economic_value",
+            "field": "epoch_tev_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "epoch_rev_usd",
             "type": "line",
-            "unit": "SOL"
+            "unit": "$",
+            "rightAxis": true
           },
           {
-            "field": "sol_issuance",
-            "type": "bar",
-            "unit": "SOL"
-          },
-          {
-            "field": "real_economic_value_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "total_economic_value_usd",
+            "field": "epoch_tev_usd",
             "type": "line",
-            "unit": "$"
-          },
-          {
-            "field": "sol_issuance_usd",
-            "type": "bar",
-            "unit": "$"
+            "unit": "$",
+            "rightAxis": true
           }
         ],
         "groupBy": ""
       },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "real_economic_value_usd, total_economic_value_usd, sol_issuance_usd",
-              "SOL": "real_economic_value, total_economic_value, sol_issuance",
-              "USDe": ""
-            }
-          }
-        },
-        "enableTimeAggregation": true
+      "page": "rev-total-economic-value",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "epoch_rev_sol",
+          "epoch_tev_sol"
+        ],
+        "rightAxisFields": [
+          "epoch_rev_usd",
+          "epoch_tev_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
       },
-      "createdAt": "2025-05-24T17:24:23.573Z",
-      "updatedAt": "2025-07-17T14:16:46.177Z"
+      "createdAt": "2026-02-17T08:23:16.923074",
+      "updatedAt": "2026-02-17T08:23:16.923074"
+    },
+    {
+      "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000008",
+      "title": "REV vs Issuance per Epoch",
+      "subtitle": "REV (fees + tips) + issuance (inflation) stacked = TEV, with USD",
+      "chartType": "dual-axis",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "epoch_rev_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "epoch_issuance_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "epoch_tev_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-total-economic-value",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "epoch_rev_sol",
+          "epoch_issuance_sol"
+        ],
+        "rightAxisFields": [
+          "epoch_tev_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:23:16.923083",
+      "updatedAt": "2026-02-17T08:23:16.923083"
+    },
+    {
+      "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000009",
+      "title": "REV as % of TEV",
+      "subtitle": "Percentage of Total Economic Value from real economic activity",
+      "chartType": "line",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "rev_pct_of_tev",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-total-economic-value",
+      "createdAt": "2026-02-17T08:23:16.923087",
+      "updatedAt": "2026-02-17T08:23:16.923087"
+    },
+    {
+      "id": "rev-total-economic-value-a0b1c2d3-8888-4000-8000-000000000010",
+      "title": "Cumulative REV vs TEV",
+      "subtitle": "Running total of REV and TEV in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "epoch",
+        "yAxis": [
+          {
+            "field": "cum_rev_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_tev_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "cum_rev_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          },
+          {
+            "field": "cum_tev_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-total-economic-value",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "cum_rev_sol",
+          "cum_tev_sol"
+        ],
+        "rightAxisFields": [
+          "cum_rev_usd",
+          "cum_tev_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:23:16.923090",
+      "updatedAt": "2026-02-17T08:23:16.923090"
     }
   ]
 }

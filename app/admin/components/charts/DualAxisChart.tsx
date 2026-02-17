@@ -801,20 +801,48 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       return;
     }
     
-    // Calculate bar width and find closest bar
-    const barWidth = innerWidth / chartData.length;
+    // Create xScale to properly map mouse position to x-axis values
+    const sortedXValues = currentData
+      .map(d => String(d[xKey]))
+      .sort((a, b) => {
+        // If they're dates, sort chronologically 
+        if ((a.match(/^\d{4}-\d{2}-\d{2}/) || /^\w+\s\d{1,2}$/.test(a)) &&
+            (b.match(/^\d{4}-\d{2}-\d{2}/) || /^\w+\s\d{1,2}$/.test(b))) {
+          const dateA = new Date(a);
+          const dateB = new Date(b);
+          if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+            return dateA.getTime() - dateB.getTime();
+          }
+        }
+        
+        // If they're numeric values, sort numerically
+        const numA = Number(a);
+        const numB = Number(b);
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        }
+        
+        // For strings, sort alphabetically
+        return a.localeCompare(b);
+      });
+    
+    // Calculate bar width based on number of data points
+    const barWidth = innerWidth / sortedXValues.length;
     const barIndex = Math.floor(adjustedMouseX / barWidth);
     
     // Validate the index
-    if (barIndex < 0 || barIndex >= chartData.length) {
+    if (barIndex < 0 || barIndex >= sortedXValues.length) {
       if (tooltip.visible) {
         setTooltip(prev => ({ ...prev, visible: false }));
       }
       return;
     }
     
-    // Get the data point at this index
-    const dataPoint = chartData[barIndex];
+    // Get the x-value at this position
+    const hoveredXValue = sortedXValues[barIndex];
+    
+    // Find the data point with this x-value
+    const dataPoint = currentData.find(d => String(d[xKey]) === hoveredXValue);
     if (!dataPoint) {
       if (tooltip.visible) {
         setTooltip(prev => ({ ...prev, visible: false }));

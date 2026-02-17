@@ -792,6 +792,15 @@ class DexDataFetcher:
                 page_id = f"dex-{folder_name.replace('_', '-')}"
             elif category == 'stablecoins':
                 page_id = f"stablecoins-{folder_name.replace('_', '-')}"
+            elif category == 'rev':
+                # Map SQL folder names to page IDs
+                rev_folder_mapping = {
+                    'cost_and_capacity': 'cost-capacity',
+                    'issuance_and_burn': 'issuance-burn',
+                    'total_economic_value': 'total-economic-value'
+                }
+                mapped_name = rev_folder_mapping.get(folder_name, folder_name.replace('_', '-'))
+                page_id = f"rev-{mapped_name}"
             else:
                 page_id = f"{category}-{folder_name.replace('_', '-')}"
             
@@ -958,8 +967,9 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
-            'stablecoins': ['summary', 'mint_burns', 'transfers']
+           # 'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
+           # 'stablecoins': ['summary', 'mint_burns', 'transfers'],
+            'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value']
         }
         
         for category, folders in categories.items():

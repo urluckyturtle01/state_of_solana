@@ -1,0 +1,115 @@
+
+======================================================================
+🚀 DATA FETCHER - SMART INCREMENTAL
+======================================================================
+
+📋 Features:
+  ✓ Smart freshness check (skip if data up-to-date)
+  ✓ Auto refresh old data (isIncremental=false)
+  ✓ Incremental updates (isIncremental=true)
+  ✓ Run queries ONE BY ONE (sequential)
+  ✓ Smart config updates (only if changed)
+  ✓ SQL change detection (auto re-fetch if SQL modified)
+======================================================================
+
+
+======================================================================
+📦 Processing category: DEX-TRADES
+======================================================================
+
+======================================================================
+📂 Processing: dex-trades/compute
+======================================================================
+Found 4 SQL files
+
+📊 Processing: cu_by_dex
+   📅 Last date in data: 2026-02-11
+   🔄 Fetching incremental data from 2026-02-12
+   ✅ Fetched 3739 new rows
+💾 dex-compute.json: ✅ 1 unchanged
+
+📊 Processing: cu_by_category
+   📅 Last date in data: 2026-02-11
+   🔄 Fetching incremental data from 2026-02-12
+Traceback (most recent call last):
+  File "/root/state_of_solana/public/temp/fetch-dex-data.py", line 985, in <module>
+    fetcher.run()
+  File "/root/state_of_solana/public/temp/fetch-dex-data.py", line 972, in run
+    self.process_folder(category, folder)
+  File "/root/state_of_solana/public/temp/fetch-dex-data.py", line 878, in process_folder
+    new_df = self.client.query(modified_sql)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/tl-reserach-tool-sqls/trino_client.py", line 83, in query
+    return pd.read_sql(sql, self._connection)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/sql.py", line 730, in read_sql
+    return pandas_sql.read_query(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/sql.py", line 1856, in read_query
+    result = self.execute(sql, params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/sql.py", line 1679, in execute
+    return execute_function(sql, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/sqlalchemy/engine/base.py", line 1779, in exec_driver_sql
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/usr/local/lib/python3.12/dist-packages/sqlalchemy/engine/base.py", line 2366, in _handle_dbapi_exception
+    raise exc_info[1].with_traceback(exc_info[2])
+  File "/usr/local/lib/python3.12/dist-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/usr/local/lib/python3.12/dist-packages/trino/sqlalchemy/dialect.py", line 442, in do_execute
+    cursor.execute(statement, parameters)
+  File "/usr/local/lib/python3.12/dist-packages/trino/dbapi.py", line 640, in execute
+    self._iterator = iter(self._query.execute())
+                          ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/trino/client.py", line 909, in execute
+    self._result.rows += self.fetch()
+                         ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/trino/client.py", line 926, in fetch
+    response = self._request.get(self._request.next_uri)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/trino/client.py", line 653, in get
+    return self._get(
+           ^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/trino/client.py", line 1006, in decorated
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/requests/sessions.py", line 602, in get
+    return self.request("GET", url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 791, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 537, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/urllib3/connection.py", line 461, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1428, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 292, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 707, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

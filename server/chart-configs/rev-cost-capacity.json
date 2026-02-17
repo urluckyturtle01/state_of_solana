@@ -1,131 +1,31 @@
 {
   "pageId": "rev-cost-capacity",
-  "pageName": "Cost & Capacity",
-  "chartCount": 3,
-  "lastUpdated": "2026-01-01T06:31:07.839Z",
+  "pageName": "DEX Cost And Capacity",
+  "chartCount": 6,
+  "lastUpdated": "2026-02-17T08:58:36.931506",
   "charts": [
     {
-      "id": "chart_1748007531839_4qciy9d",
-      "title": "Transaction Fees + Jito Tips",
-      "subtitle": "",
-      "page": "rev-cost-capacity",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13207/results.json",
-      "apiKey": "9zbkGgIfDrhCnAhfd5OMJe4z4JxJiB0d4SuO3ynF&max_age=86400",
-      "isStacked": true,
-      "colorScheme": "default",
-      "width": 2,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "base_fee_sol",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "priority_fee_sol",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "jito_total_tips_sol",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "vote_fee_sol",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "base_fee_usd",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "priority_fee_usd",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "jito_total_tips_usd",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "vote_fee_usd",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "additionalOptions": {
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ]
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "base_fee_usd, priority_fee_usd, jito_total_tips_usd, vote_fee_usd",
-              "SOL": "base_fee_sol, priority_fee_sol, jito_total_tips_sol, vote_fee_sol",
-              "USDe": ""
-            }
-          }
-        },
-        "enableTimeAggregation": true
-      },
-      "createdAt": "2025-05-23T13:38:51.839Z",
-      "updatedAt": "2025-07-17T14:31:45.555Z"
-    },
-    {
-      "id": "chart_1748008463492_z8recfh",
-      "title": "Transactions Summary",
-      "subtitle": "",
-      "page": "rev-cost-capacity",
-      "section": "",
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000001",
+      "title": "Daily Transactions (Success vs Failed)",
+      "subtitle": "Stacked successful and failed transactions with failure rate",
       "chartType": "dual-axis",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json",
-      "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
+      "order": 1,
+      "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "total_vote_transactions",
-            "type": "line",
+            "field": "successful_txns",
+            "type": "bar",
             "unit": ""
           },
           {
-            "field": "total_non_vote_transactions",
-            "type": "line",
+            "field": "failed_txns",
+            "type": "bar",
             "unit": ""
           },
           {
-            "field": "succeesful_transactions_perc",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          },
-          {
-            "field": "successful_non_vote_transactions_perc",
+            "field": "failure_rate_pct",
             "type": "line",
             "unit": "%",
             "rightAxis": true
@@ -133,61 +33,260 @@
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-05-23T13:54:23.492Z",
-      "updatedAt": "2025-07-11T08:40:16.072Z",
+      "page": "rev-cost-capacity",
       "dualAxisConfig": {
-        "leftAxisType": "bar",
-        "rightAxisType": "line",
         "leftAxisFields": [
-          "total_vote_transactions",
-          "total_non_vote_transactions"
+          "successful_txns",
+          "failed_txns"
         ],
         "rightAxisFields": [
-          "succeesful_transactions_perc",
-          "successful_non_vote_transactions_perc"
-        ]
-      }
+          "failure_rate_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:58:36.931478",
+      "updatedAt": "2026-02-17T08:58:36.931478"
     },
     {
-      "id": "chart_1748009281407_ia1dy03",
-      "title": "TPS Summary",
-      "subtitle": "Real TPS is the number of non-vote transactions per second",
-      "page": "rev-cost-capacity",
-      "section": "",
-      "chartType": "bar",
-      "apiEndpoint": "https://analytics.topledger.xyz/tl/api/queries/13210/results.json",
-      "apiKey": "YDy7XJllrBVuLP5gf1Tx5MclZNpS4euKeyli2Lz6&max_age=86400",
-      "isStacked": false,
-      "colorScheme": "default",
-      "width": 2,
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000002",
+      "title": "Daily Fee (Success vs Failed)",
+      "subtitle": "Successful and failed fee in SOL (left) and USD (right)",
+      "chartType": "dual-axis",
+      "order": 2,
+      "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "total_tps",
-            "type": "line",
-            "unit": ""
+            "field": "successful_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
           },
           {
-            "field": "success_tps",
-            "type": "line",
-            "unit": ""
+            "field": "failed_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
           },
           {
-            "field": "failed_tps",
+            "field": "successful_fee_usd",
             "type": "line",
-            "unit": ""
+            "unit": "$",
+            "rightAxis": true
           },
           {
-            "field": "real_tps",
+            "field": "failed_fee_usd",
             "type": "line",
-            "unit": ""
+            "unit": "$",
+            "rightAxis": true
           }
         ],
         "groupBy": ""
       },
-      "createdAt": "2025-05-23T14:08:01.407Z",
-      "updatedAt": "2025-07-11T09:17:02.202Z"
+      "page": "rev-cost-capacity",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "successful_fee_sol",
+          "failed_fee_sol"
+        ],
+        "rightAxisFields": [
+          "successful_fee_usd",
+          "failed_fee_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:58:36.931485",
+      "updatedAt": "2026-02-17T08:58:36.931485"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000019",
+      "title": "Failed Fee Percentage by Type",
+      "subtitle": "Daily % of fee wasted on failed txns - base, priority, Jito, total",
+      "chartType": "line",
+      "order": 3,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "failed_base_fee_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "failed_priority_fee_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "failed_jito_tips_pct",
+            "type": "line",
+            "unit": "%"
+          },
+          {
+            "field": "failed_total_fee_pct",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "createdAt": "2026-02-17T08:58:36.931490",
+      "updatedAt": "2026-02-17T08:58:36.931490"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000020",
+      "title": "Max Fee Day (Success vs Failed)",
+      "subtitle": "Daily fee with peak day reference lines in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "successful_fee_sol",
+            "type": "bar",
+            "unit": "SOL"
+          },
+          {
+            "field": "max_successful_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "max_failed_fee_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "max_successful_fee_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          },
+          {
+            "field": "max_failed_fee_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "successful_fee_sol",
+          "max_successful_fee_sol",
+          "max_failed_fee_sol"
+        ],
+        "rightAxisFields": [
+          "max_successful_fee_usd",
+          "max_failed_fee_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:58:36.931494",
+      "updatedAt": "2026-02-17T08:58:36.931494"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
+      "title": "Cost Per Transaction (Avg, Median, Stddev)",
+      "subtitle": "Average, median, and std deviation in SOL (left) and USD (right)",
+      "chartType": "dual-axis",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "median_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "stddev_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "avg_cost_per_txn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          },
+          {
+            "field": "median_cost_per_txn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "avg_cost_per_txn_sol",
+          "median_cost_per_txn_sol",
+          "stddev_cost_per_txn_sol"
+        ],
+        "rightAxisFields": [
+          "avg_cost_per_txn_usd",
+          "median_cost_per_txn_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:58:36.931497",
+      "updatedAt": "2026-02-17T08:58:36.931497"
+    },
+    {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000026",
+      "title": "Max Cost Per Transaction",
+      "subtitle": "Daily maximum single transaction cost in SOL and USD",
+      "chartType": "dual-axis",
+      "order": 6,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "max_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "max_cost_per_txn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "max_cost_per_txn_sol"
+        ],
+        "rightAxisFields": [
+          "max_cost_per_txn_usd"
+        ],
+        "leftAxisType": "line",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T08:58:36.931500",
+      "updatedAt": "2026-02-17T08:58:36.931500"
     }
   ]
 }
