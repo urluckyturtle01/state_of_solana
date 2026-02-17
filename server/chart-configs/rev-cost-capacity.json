@@ -2,7 +2,7 @@
   "pageId": "rev-cost-capacity",
   "pageName": "DEX Cost And Capacity",
   "chartCount": 6,
-  "lastUpdated": "2026-02-17T08:58:36.931506",
+  "lastUpdated": "2026-02-17T09:49:47.242612",
   "charts": [
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000001",
@@ -52,7 +52,7 @@
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000002",
       "title": "Daily Fee (Success vs Failed)",
       "subtitle": "Successful and failed fee in SOL (left) and USD (right)",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 2,
       "isStacked": true,
       "dataMapping": {
@@ -84,20 +84,24 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "successful_fee_sol",
-          "failed_fee_sol"
-        ],
-        "rightAxisFields": [
-          "successful_fee_usd",
-          "failed_fee_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "successful_fee_usd, failed_fee_usd",
+              "SOL": "successful_fee_sol, failed_fee_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:58:36.931485",
-      "updatedAt": "2026-02-17T08:58:36.931485"
+      "updatedAt": "2026-02-17T09:49:47.242565"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000019",
@@ -140,7 +144,7 @@
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000020",
       "title": "Max Fee Day (Success vs Failed)",
       "subtitle": "Daily fee with peak day reference lines in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 4,
       "isStacked": false,
       "dataMapping": {
@@ -177,27 +181,30 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "successful_fee_sol",
-          "max_successful_fee_sol",
-          "max_failed_fee_sol"
-        ],
-        "rightAxisFields": [
-          "max_successful_fee_usd",
-          "max_failed_fee_usd"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "max_successful_fee_usd, max_failed_fee_usd",
+              "SOL": "max_successful_fee_sol, max_failed_fee_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:58:36.931494",
-      "updatedAt": "2026-02-17T08:58:36.931494"
+      "updatedAt": "2026-02-17T09:49:47.242587"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
       "title": "Cost Per Transaction (Avg, Median, Stddev)",
       "subtitle": "Average, median, and std deviation in SOL (left) and USD (right)",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 5,
       "isStacked": false,
       "dataMapping": {
@@ -234,27 +241,30 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "avg_cost_per_txn_sol",
-          "median_cost_per_txn_sol",
-          "stddev_cost_per_txn_sol"
-        ],
-        "rightAxisFields": [
-          "avg_cost_per_txn_usd",
-          "median_cost_per_txn_usd"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "avg_cost_per_txn_usd, median_cost_per_txn_usd",
+              "SOL": "avg_cost_per_txn_sol, median_cost_per_txn_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:58:36.931497",
-      "updatedAt": "2026-02-17T08:58:36.931497"
+      "updatedAt": "2026-02-17T09:49:47.242596"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000026",
       "title": "Max Cost Per Transaction",
       "subtitle": "Daily maximum single transaction cost in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 6,
       "isStacked": false,
       "dataMapping": {
@@ -275,18 +285,24 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "max_cost_per_txn_sol"
-        ],
-        "rightAxisFields": [
-          "max_cost_per_txn_usd"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "max_cost_per_txn_usd",
+              "SOL": "max_cost_per_txn_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:58:36.931500",
-      "updatedAt": "2026-02-17T08:58:36.931500"
+      "updatedAt": "2026-02-17T09:49:47.242603"
     }
   ]
 }

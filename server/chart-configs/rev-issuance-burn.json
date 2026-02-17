@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "DEX Issuance And Burn",
   "chartCount": 7,
-  "lastUpdated": "2026-02-17T08:59:12.282768",
+  "lastUpdated": "2026-02-17T09:50:26.354761",
   "charts": [
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000031",
@@ -45,7 +45,7 @@
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000032",
       "title": "Issuance vs Burn per Epoch",
       "subtitle": "SOL issuance (inflation) vs burn (50% base fees) in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 2,
       "isStacked": false,
       "dataMapping": {
@@ -77,26 +77,30 @@
         "groupBy": ""
       },
       "page": "rev-issuance-burn",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "epoch_issuance_sol",
-          "epoch_burn_sol"
-        ],
-        "rightAxisFields": [
-          "epoch_issuance_usd",
-          "epoch_burn_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "epoch_issuance_usd, epoch_burn_usd",
+              "SOL": "epoch_issuance_sol, epoch_burn_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:59:12.282735",
-      "updatedAt": "2026-02-17T08:59:12.282735"
+      "updatedAt": "2026-02-17T09:50:26.354694"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000033",
       "title": "Net Issuance per Epoch",
       "subtitle": "Net SOL issuance (issuance - burn) in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 3,
       "isStacked": false,
       "dataMapping": {
@@ -117,18 +121,24 @@
         "groupBy": ""
       },
       "page": "rev-issuance-burn",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "epoch_net_issuance_sol"
-        ],
-        "rightAxisFields": [
-          "epoch_net_issuance_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "epoch_net_issuance_usd",
+              "SOL": "epoch_net_issuance_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:59:12.282745",
-      "updatedAt": "2026-02-17T08:59:12.282745"
+      "updatedAt": "2026-02-17T09:50:26.354703"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000034",
@@ -156,7 +166,7 @@
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000035",
       "title": "Rewards Breakdown per Epoch",
       "subtitle": "Staking rewards, voting rewards, and block production rewards",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 5,
       "isStacked": true,
       "dataMapping": {
@@ -187,26 +197,30 @@
         "groupBy": ""
       },
       "page": "rev-issuance-burn",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "staking_rewards_sol",
-          "voting_rewards_sol",
-          "block_rewards_sol"
-        ],
-        "rightAxisFields": [
-          "block_rewards_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "block_rewards_usd",
+              "SOL": "block_rewards_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:59:12.282754",
-      "updatedAt": "2026-02-17T08:59:12.282754"
+      "updatedAt": "2026-02-17T09:50:26.354717"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000036",
       "title": "Cumulative Issuance vs Burn",
       "subtitle": "Running total of issuance and burn in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 6,
       "isStacked": false,
       "dataMapping": {
@@ -238,26 +252,30 @@
         "groupBy": ""
       },
       "page": "rev-issuance-burn",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "cum_issuance_sol",
-          "cum_burn_sol"
-        ],
-        "rightAxisFields": [
-          "cum_issuance_usd",
-          "cum_burn_usd"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "cum_issuance_usd, cum_burn_usd",
+              "SOL": "cum_issuance_sol, cum_burn_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:59:12.282758",
-      "updatedAt": "2026-02-17T08:59:12.282758"
+      "updatedAt": "2026-02-17T09:50:26.354725"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000037",
       "title": "Cumulative Net Issuance",
       "subtitle": "Running total of net issuance (issuance - burn) in SOL and USD",
-      "chartType": "dual-axis",
+      "chartType": "line",
       "order": 7,
       "isStacked": false,
       "dataMapping": {
@@ -278,18 +296,24 @@
         "groupBy": ""
       },
       "page": "rev-issuance-burn",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "cum_net_issuance_sol"
-        ],
-        "rightAxisFields": [
-          "cum_net_issuance_usd"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
+      "additionalOptions": {
+        "filters": {
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "cum_net_issuance_usd",
+              "SOL": "cum_net_issuance_sol"
+            }
+          }
+        }
       },
       "createdAt": "2026-02-17T08:59:12.282761",
-      "updatedAt": "2026-02-17T08:59:12.282761"
+      "updatedAt": "2026-02-17T09:50:26.354732"
     }
   ]
 }

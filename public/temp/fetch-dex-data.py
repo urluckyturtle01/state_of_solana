@@ -106,6 +106,68 @@ class DexDataFetcher:
             print(f"   ⚠️  Error calculating SQL hash: {e}", flush=True)
             return None
     
+    def detect_currency_columns(self, y_axis):
+        """
+        Detect if columns represent the same metrics in different currencies.
+        Returns (has_currency_pattern, currency_mapping, base_chart_type) or (False, None, None)
+        """
+        if not isinstance(y_axis, list):
+            return False, None, None
+        
+        # Extract field names
+        field_names = []
+        field_types = {}
+        for field in y_axis:
+            if isinstance(field, dict):
+                field_name = field['field']
+                field_names.append(field_name)
+                field_types[field_name] = field.get('type', 'bar')
+            else:
+                field_names.append(field)
+                field_types[field] = 'bar'
+        
+        # Group fields by base name (removing _usd, _sol suffixes)
+        groups = {}
+        for field_name in field_names:
+            # Check for currency suffixes
+            base_name = None
+            currency = None
+            
+            if field_name.endswith('_usd'):
+                base_name = field_name[:-4]
+                currency = 'USD'
+            elif field_name.endswith('_sol'):
+                base_name = field_name[:-4]
+                currency = 'SOL'
+            
+            if base_name and currency:
+                if base_name not in groups:
+                    groups[base_name] = {}
+                groups[base_name][currency] = field_name
+        
+        # Check if we have valid currency groups (both USD and SOL for at least one metric)
+        valid_groups = {k: v for k, v in groups.items() if 'USD' in v and 'SOL' in v}
+        
+        if not valid_groups:
+            return False, None, None
+        
+        # Build currency mapping
+        usd_fields = []
+        sol_fields = []
+        for base_name, currencies in valid_groups.items():
+            usd_fields.append(currencies['USD'])
+            sol_fields.append(currencies['SOL'])
+        
+        # Determine chart type from the first field
+        base_chart_type = field_types.get(usd_fields[0], 'bar')
+        
+        currency_mapping = {
+            'USD': ', '.join(usd_fields),
+            'SOL': ', '.join(sol_fields)
+        }
+        
+        return True, currency_mapping, base_chart_type
+    
     def has_sql_changed(self, page_id, sql_name, current_hash):
         """Check if SQL file has changed since last run."""
         data_file = self.data_dir / f"{page_id}.json"
@@ -351,49 +413,87 @@ class DexDataFetcher:
             
             # Otherwise create new minimal config (shouldn't happen for skipped queries)
             y_axis = chart_def['dataMapping'].get('yAxis', [])
-            right_axis_fields = []
-            left_axis_fields = []
-            left_axis_type = 'bar'
-            right_axis_type = 'line'
             
-            if isinstance(y_axis, list):
-                for field in y_axis:
-                    if isinstance(field, dict):
-                        field_name = field['field']
-                        if field.get('rightAxis'):
-                            right_axis_fields.append(field_name)
-                            if field.get('type'):
-                                right_axis_type = field['type']
-                        else:
-                            left_axis_fields.append(field_name)
-                            if field.get('type'):
-                                left_axis_type = field['type']
+            # Check for currency column patterns
+            has_currency_pattern, currency_mapping, base_chart_type = self.detect_currency_columns(y_axis)
             
-            chart_type = 'dual-axis' if right_axis_fields else chart_def['chartType']
-            
-            chart_config = {
-                "id": chart_id,
-                "title": chart_def['title'],
-                "subtitle": chart_def.get('subtitle', ''),
-                "chartType": chart_type,
-                "order": i + 1,
-                "isStacked": chart_def.get('isStacked', False),
-                "dataMapping": chart_def['dataMapping'],
-                "page": page_id
-            }
-            
-            if right_axis_fields:
-                chart_config["dualAxisConfig"] = {
-                    "leftAxisFields": left_axis_fields,
-                    "rightAxisFields": right_axis_fields,
-                    "leftAxisType": left_axis_type,
-                    "rightAxisType": right_axis_type
+            if has_currency_pattern:
+                # Currency pattern detected - use single-axis with currency filter
+                chart_type = base_chart_type
+                
+                chart_config = {
+                    "id": chart_id,
+                    "title": chart_def['title'],
+                    "subtitle": chart_def.get('subtitle', ''),
+                    "chartType": chart_type,
+                    "order": i + 1,
+                    "isStacked": chart_def.get('isStacked', False),
+                    "dataMapping": chart_def['dataMapping'],
+                    "page": page_id
                 }
-            
-            if is_cumulative:
-                chart_config["additionalOptions"] = {
-                    "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                
+                # Add currency filter in additionalOptions.filters
+                additional_options = {}
+                if is_cumulative:
+                    additional_options["timeAggregationOptions"] = ["D", "W", "M", "Q", "Y"]
+                
+                additional_options["filters"] = {
+                    "currencyFilter": {
+                        "paramName": "currency",
+                        "options": ["USD", "SOL"],
+                        "type": "field_switcher",
+                        "columnMappings": currency_mapping
+                    }
                 }
+                
+                chart_config["additionalOptions"] = additional_options
+                
+            else:
+                # No currency pattern - use original dual-axis detection logic
+                right_axis_fields = []
+                left_axis_fields = []
+                left_axis_type = 'bar'
+                right_axis_type = 'line'
+                
+                if isinstance(y_axis, list):
+                    for field in y_axis:
+                        if isinstance(field, dict):
+                            field_name = field['field']
+                            if field.get('rightAxis'):
+                                right_axis_fields.append(field_name)
+                                if field.get('type'):
+                                    right_axis_type = field['type']
+                            else:
+                                left_axis_fields.append(field_name)
+                                if field.get('type'):
+                                    left_axis_type = field['type']
+                
+                chart_type = 'dual-axis' if right_axis_fields else chart_def['chartType']
+                
+                chart_config = {
+                    "id": chart_id,
+                    "title": chart_def['title'],
+                    "subtitle": chart_def.get('subtitle', ''),
+                    "chartType": chart_type,
+                    "order": i + 1,
+                    "isStacked": chart_def.get('isStacked', False),
+                    "dataMapping": chart_def['dataMapping'],
+                    "page": page_id
+                }
+                
+                # Add dual-axis config if needed
+                if right_axis_fields:
+                    chart_config["dualAxisConfig"] = {
+                        "leftAxisFields": left_axis_fields,
+                        "rightAxisFields": right_axis_fields,
+                        "leftAxisType": left_axis_type,
+                        "rightAxisType": right_axis_type
+                    }
+                
+                if is_cumulative:
+                    chart_config["additionalOptions"] = {
+                        "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                    }
             
             now_iso = datetime.now().isoformat()
             chart_config["createdAt"] = now_iso
@@ -575,54 +675,92 @@ class DexDataFetcher:
         for i, chart_def in enumerate(chart_configs_list):
             chart_id = f"{page_id}-{chart_def['id']}"
             
-            # Parse yAxis to detect dual-axis
+            # Parse yAxis to detect currency patterns or dual-axis
             y_axis = chart_def['dataMapping'].get('yAxis', [])
-            right_axis_fields = []
-            left_axis_fields = []
-            left_axis_type = 'bar'
-            right_axis_type = 'line'
             
-            if isinstance(y_axis, list):
-                for field in y_axis:
-                    if isinstance(field, dict):
-                        field_name = field['field']
-                        if field.get('rightAxis'):
-                            right_axis_fields.append(field_name)
-                            if field.get('type'):
-                                right_axis_type = field['type']
-                        else:
-                            left_axis_fields.append(field_name)
-                            if field.get('type'):
-                                left_axis_type = field['type']
+            # First, check for currency column patterns
+            has_currency_pattern, currency_mapping, base_chart_type = self.detect_currency_columns(y_axis)
             
-            chart_type = 'dual-axis' if right_axis_fields else chart_def['chartType']
-            
-            # Build chart config
-            chart_config = {
-                "id": chart_id,
-                "title": chart_def['title'],
-                "subtitle": chart_def.get('subtitle', ''),
-                "chartType": chart_type,
-                "order": i + 1,
-                "isStacked": chart_def.get('isStacked', False),
-                "dataMapping": chart_def['dataMapping'],
-                "page": page_id
-            }
-            
-            # Add dual-axis config if needed
-            if right_axis_fields:
-                chart_config["dualAxisConfig"] = {
-                    "leftAxisFields": left_axis_fields,
-                    "rightAxisFields": right_axis_fields,
-                    "leftAxisType": left_axis_type,
-                    "rightAxisType": right_axis_type
+            if has_currency_pattern:
+                # Transform to single-axis chart with currency filter
+                chart_type = base_chart_type
+                
+                # Build chart config with currency filter
+                chart_config = {
+                    "id": chart_id,
+                    "title": chart_def['title'],
+                    "subtitle": chart_def.get('subtitle', ''),
+                    "chartType": chart_type,
+                    "order": i + 1,
+                    "isStacked": chart_def.get('isStacked', False),
+                    "dataMapping": chart_def['dataMapping'],
+                    "page": page_id
                 }
-            
-            # Add time aggregation options for cumulative charts
-            if is_cumulative:
-                chart_config["additionalOptions"] = {
-                    "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                
+                # Add currency filter in additionalOptions.filters
+                additional_options = {}
+                if is_cumulative:
+                    additional_options["timeAggregationOptions"] = ["D", "W", "M", "Q", "Y"]
+                
+                additional_options["filters"] = {
+                    "currencyFilter": {
+                        "paramName": "currency",
+                        "options": ["USD", "SOL"],
+                        "type": "field_switcher",
+                        "columnMappings": currency_mapping
+                    }
                 }
+                
+                chart_config["additionalOptions"] = additional_options
+                
+            else:
+                # Original dual-axis detection logic
+                right_axis_fields = []
+                left_axis_fields = []
+                left_axis_type = 'bar'
+                right_axis_type = 'line'
+                
+                if isinstance(y_axis, list):
+                    for field in y_axis:
+                        if isinstance(field, dict):
+                            field_name = field['field']
+                            if field.get('rightAxis'):
+                                right_axis_fields.append(field_name)
+                                if field.get('type'):
+                                    right_axis_type = field['type']
+                            else:
+                                left_axis_fields.append(field_name)
+                                if field.get('type'):
+                                    left_axis_type = field['type']
+                
+                chart_type = 'dual-axis' if right_axis_fields else chart_def['chartType']
+                
+                # Build chart config
+                chart_config = {
+                    "id": chart_id,
+                    "title": chart_def['title'],
+                    "subtitle": chart_def.get('subtitle', ''),
+                    "chartType": chart_type,
+                    "order": i + 1,
+                    "isStacked": chart_def.get('isStacked', False),
+                    "dataMapping": chart_def['dataMapping'],
+                    "page": page_id
+                }
+                
+                # Add dual-axis config if needed
+                if right_axis_fields:
+                    chart_config["dualAxisConfig"] = {
+                        "leftAxisFields": left_axis_fields,
+                        "rightAxisFields": right_axis_fields,
+                        "leftAxisType": left_axis_type,
+                        "rightAxisType": right_axis_type
+                    }
+                
+                # Add time aggregation options for cumulative charts
+                if is_cumulative:
+                    chart_config["additionalOptions"] = {
+                        "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                    }
             
             # Check if this chart exists and if it changed
             existing_chart = existing_charts_map.get(chart_id)
