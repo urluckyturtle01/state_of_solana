@@ -885,10 +885,16 @@ class DexDataFetcher:
         """Process all SQL files in a folder.
         
         Args:
-            category: 'dex-trades' or 'stablecoins'
+            category: 'dex-trades' or 'stablecoins' or 'rev' or 'aggregators'
             folder_name: folder name within the category
         """
-        folder_path = self.sql_base_path / category / folder_name
+        # Map category name to SQL folder name (handle case sensitivity)
+        category_sql_folder_mapping = {
+            'aggregators': 'Aggregators'
+        }
+        sql_category_folder = category_sql_folder_mapping.get(category, category)
+        
+        folder_path = self.sql_base_path / sql_category_folder / folder_name
         if not folder_path.exists():
             print(f"⚠️  Folder not found: {category}/{folder_name}", flush=True)
             return
@@ -939,6 +945,9 @@ class DexDataFetcher:
                 }
                 mapped_name = rev_folder_mapping.get(folder_name, folder_name.replace('_', '-'))
                 page_id = f"rev-{mapped_name}"
+            elif category == 'aggregators':
+                # Aggregators folder names are already lowercase (summary, traders)
+                page_id = f"aggregators-{folder_name.replace('_', '-')}"
             else:
                 page_id = f"{category}-{folder_name.replace('_', '-')}"
             
@@ -1105,9 +1114,10 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-           # 'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
-           # 'stablecoins': ['summary', 'mint_burns', 'transfers'],
-            'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value']
+            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
+            #'stablecoins': ['summary', 'mint_burns', 'transfers'],
+            #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
+            'aggregators': ['summary', 'traders']
         }
         
         for category, folders in categories.items():

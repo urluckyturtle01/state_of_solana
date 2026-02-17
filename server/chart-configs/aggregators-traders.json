@@ -1,0 +1,30 @@
+{
+  "pageId": "aggregators-traders",
+  "pageName": "DEX Traders",
+  "chartCount": 1,
+  "lastUpdated": "2026-02-17T10:10:37.806422",
+  "charts": [
+    {
+      "id": "aggregators-traders-a1b2c3d4-2222-4000-8000-000000000001",
+      "title": "Active Traders By Aggregator",
+      "subtitle": "Unique traders per aggregator",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "aggregators-traders",
+      "createdAt": "2026-02-17T10:10:37.806413",
+      "updatedAt": "2026-02-17T10:10:37.806413"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "pageId": "aggregators-summary",
+  "pageName": "DEX Summary",
+  "chartCount": 3,
+  "lastUpdated": "2026-02-17T10:09:26.627548",
+  "charts": [
+    {
+      "id": "aggregators-summary-a1b2c3d4-1111-4000-8000-000000000001",
+      "title": "Volume By Aggregator",
+      "subtitle": "Trading volume by aggregator (Jupiter, OKX, Titan, etc.)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "aggregators-summary",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-17T10:08:56.932896",
+      "updatedAt": "2026-02-17T10:08:56.932896"
+    },
+    {
+      "id": "aggregators-summary-a1b2c3d4-1111-4000-8000-000000000002",
+      "title": "Swaps By Aggregator",
+      "subtitle": "Trade count by aggregator",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "swaps",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "aggregators-summary",
+      "additionalOptions": {
+        "timeAggregationOptions": [
+          "D",
+          "W",
+          "M",
+          "Q",
+          "Y"
+        ]
+      },
+      "createdAt": "2026-02-17T10:08:56.932905",
+      "updatedAt": "2026-02-17T10:08:56.932905"
+    },
+    {
+      "id": "aggregators-summary-a1b2c3d4-3333-4000-8000-000000000001",
+      "title": "Avg Trade Volume By Aggregator",
+      "subtitle": "Average volume per transaction (volume / distinct tx_count)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_trade_volume",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "aggregators-summary",
+      "createdAt": "2026-02-17T10:09:26.627540",
+      "updatedAt": "2026-02-17T10:09:26.627540"
+    }
+  ]
+}
