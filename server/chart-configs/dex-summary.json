@@ -6,11 +6,16 @@
   "charts": [
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000005",
-      "title": "Monthly Volume And Traders",
-      "subtitle": "Monthly trading volume with unique traders count",
-      "chartType": "dual-axis",
+      "title": "Latest Monthly Volume",
+      "subtitle": "Current month trading volume",
+      "chartType": "counter",
       "order": 1,
-      "isStacked": false,
+      "width": 1,
+      "rowIndex": 2,
+      "prefix": "$",
+      "suffix": "",
+      "variant": "blue",
+      "icon": "chart",
       "dataMapping": {
         "xAxis": "month",
         "yAxis": [
@@ -18,38 +23,13 @@
             "field": "volume_usd",
             "type": "bar",
             "unit": "$"
-          },
-          {
-            "field": "unique_traders",
-            "type": "line",
-            "unit": "",
-            "rightAxis": true
           }
         ],
         "groupBy": ""
       },
       "page": "dex-summary",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "unique_traders"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
       "createdAt": "2026-02-10T09:15:30.910374",
-      "updatedAt": "2026-02-10T09:15:30.910374"
+      "updatedAt": "2026-02-17T10:30:00.000000"
     },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000006",
