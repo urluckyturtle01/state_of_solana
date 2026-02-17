@@ -14,11 +14,7 @@ const MENU_PAGES = {
   //   { id: 'volume', name: 'Volume', path: '/dex/volume' },
   //   ...
   // ],
-  rev: [
-    { id: 'rev-cost-capacity', name: 'Cost & Capacity', path: '/rev/cost-capacity' },
-    { id: 'rev-issuance-burn', name: 'Issuance & Burn', path: '/rev/issuance-burn' },
-    { id: 'rev-total-economic-value', name: 'Total Economic Value', path: '/rev/total-economic-value' }
-  ],
+  
   mev: [
     { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
     { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
