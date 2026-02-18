@@ -1,209 +1,9 @@
 {
   "pageId": "dex-prop-amm",
   "pageName": "DEX Prop Amm",
-  "chartCount": 9,
-  "lastUpdated": "2026-02-18T13:28:09.410757",
+  "chartCount": 11,
+  "lastUpdated": "2026-02-18T16:03:33.599673",
   "charts": [
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
-      "title": "Prop AMM vs Other DEX Volume",
-      "subtitle": "Daily volume split prop_amm vs other with volume share %",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "volume_share_pct",
-            "type": "bar",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": "dex_type"
-      },
-      "page": "dex-prop-amm",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "volume_share_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "bar"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-07T06:30:11.309288",
-      "updatedAt": "2026-02-18T13:21:24.960236"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000004",
-      "title": "Prop AMM vs Other DEX Txns",
-      "subtitle": "Daily txn count split prop_amm vs other with txn share %",
-      "chartType": "dual-axis",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "txn_count",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "txn_share_pct",
-            "type": "bar",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": "dex_type"
-      },
-      "page": "dex-prop-amm",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "txn_count"
-        ],
-        "rightAxisFields": [
-          "txn_share_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "bar"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-07T08:14:39.048973",
-      "updatedAt": "2026-02-18T13:21:24.960255"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000005",
-      "title": "Pool Category Volume (Prop AMM vs Total)",
-      "subtitle": "Prop AMM volume vs total DEX volume by SOL-stable, stable-stable, others",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "prop_amm_volume_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "total_volume_usd",
-            "type": "bar",
-            "unit": "$",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": "pool_category"
-      },
-      "page": "dex-prop-amm",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "prop_amm_volume_usd"
-        ],
-        "rightAxisFields": [
-          "total_volume_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "bar"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-07T08:14:39.053992",
-      "updatedAt": "2026-02-18T13:25:07.108680"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000006",
-      "title": "Pool Category Share (Prop AMM vs Total)",
-      "subtitle": "% split of pool categories: prop AMM share vs total DEX share",
-      "chartType": "dual-axis",
-      "order": 2,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "pct_of_prop_amm_volume",
-            "type": "line",
-            "unit": "%"
-          },
-          {
-            "field": "pct_of_total_volume",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": "pool_category"
-      },
-      "page": "dex-prop-amm",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "pct_of_prop_amm_volume"
-        ],
-        "rightAxisFields": [
-          "pct_of_total_volume"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
-      },
-      "createdAt": "2026-02-07T08:14:39.051467",
-      "updatedAt": "2026-02-18T13:25:07.108693"
-    },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
       "title": "Prop AMM Daily Volume by Program",
@@ -355,6 +155,186 @@
       },
       "createdAt": "2026-02-18T13:25:58.843790",
       "updatedAt": "2026-02-18T13:25:58.843790"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
+      "title": "Prop AMM vs Other DEX Volume",
+      "subtitle": "Daily volume split prop_amm vs other",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T06:30:11.309288",
+      "updatedAt": "2026-02-18T15:53:27.132677"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000010",
+      "title": "Prop AMM vs Other Volume Share",
+      "subtitle": "Percentage share of total volume by prop_amm vs other",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_share_pct",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-18T15:53:27.132693",
+      "updatedAt": "2026-02-18T15:53:27.132693"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000004",
+      "title": "Prop AMM vs Other DEX Txns",
+      "subtitle": "Daily txn count split prop_amm vs other",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T08:14:39.048973",
+      "updatedAt": "2026-02-18T15:53:27.132698"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000011",
+      "title": "Prop AMM vs Other Txn Share",
+      "subtitle": "Percentage share of total txns by prop_amm vs other",
+      "chartType": "bar",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_share_pct",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-18T15:53:27.132704",
+      "updatedAt": "2026-02-18T15:53:27.132704"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000005",
+      "title": "Pool Category Volume (Prop AMM vs Total)",
+      "subtitle": "Prop AMM volume vs total DEX volume by SOL-stable, stable-stable, others",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "prop_amm_volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "pool_category"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T08:14:39.053992",
+      "updatedAt": "2026-02-18T15:01:31.158716"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000006",
+      "title": "Pool Category Share (Prop AMM vs Total)",
+      "subtitle": "% split of pool categories: prop AMM share vs total DEX share",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "pct_of_prop_amm_volume",
+            "type": "line",
+            "unit": "%"
+          }
+        ],
+        "groupBy": "pool_category"
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-07T08:14:39.051467",
+      "updatedAt": "2026-02-18T15:01:31.158729"
     },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000007",
