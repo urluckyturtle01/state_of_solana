@@ -1,0 +1,84 @@
+{
+  "pageId": "dex-volume",
+  "pageName": "DEX Volume",
+  "chartCount": 2,
+  "lastUpdated": "2026-02-18T13:41:34.021708",
+  "charts": [
+    {
+      "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000002",
+      "title": "Daily Volume By Dex",
+      "subtitle": "Daily trading volume by DEX program",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-volume",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-18T13:41:34.021688",
+      "updatedAt": "2026-02-18T13:41:34.021688"
+    },
+    {
+      "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000003",
+      "title": "Cumulative Volume By Dex",
+      "subtitle": "Cumulative trading volume by DEX program",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_volume_usd",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-volume",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-18T13:41:34.021702",
+      "updatedAt": "2026-02-18T13:41:34.021702"
+    }
+  ]
+}
