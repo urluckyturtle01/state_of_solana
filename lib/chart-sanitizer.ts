@@ -22,6 +22,13 @@ export interface PublicChartConfig {
   dualAxisConfig?: any;
   createdAt?: string;
   updatedAt?: string;
+  // Counter-specific fields
+  rowIndex?: number;
+  prefix?: string;
+  suffix?: string;
+  variant?: string;
+  icon?: string;
+  order?: number;
 }
 
 /**
@@ -52,6 +59,13 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     dualAxisConfig,
     createdAt,
     updatedAt,
+    // Counter-specific fields
+    rowIndex,
+    prefix,
+    suffix,
+    variant,
+    icon,
+    order,
     
     // Ignore any other fields (safety net)
     ...rest
@@ -76,6 +90,13 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     dualAxisConfig,
     createdAt,
     updatedAt,
+    // Counter-specific fields
+    rowIndex,
+    prefix,
+    suffix,
+    variant,
+    icon,
+    order,
   };
 }
 

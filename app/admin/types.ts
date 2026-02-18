@@ -124,6 +124,17 @@ export interface ChartConfig {
   dualAxisConfig?: DualAxisConfig;
   // POST API configuration for charts that fetch data with URL parameters
   postApiConfig?: PostApiConfig;
+  // Counter-specific fields (when chartType is 'counter')
+  rowIndex?: number;
+  prefix?: string;
+  suffix?: string;
+  variant?: CounterVariant;
+  icon?: string;
+  order?: number;
+  trendConfig?: {
+    valueField: string;
+    label?: string;
+  };
   createdAt?: string;
   updatedAt?: string;
   // Callback for filter changes

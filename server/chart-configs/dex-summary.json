@@ -1,8 +1,8 @@
 {
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
-  "chartCount": 7,
-  "lastUpdated": "2026-02-16T13:44:26.962870",
+  "chartCount": 10,
+  "lastUpdated": "2026-02-17T18:45:00.000000",
   "charts": [
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000005",
@@ -32,12 +32,17 @@
       "updatedAt": "2026-02-17T10:30:00.000000"
     },
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000006",
-      "title": "Monthly Fees Summary",
-      "subtitle": "Monthly total fees, priority fees, and Jito tips in SOL",
-      "chartType": "bar",
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000008",
+      "title": "Total Fees (SOL)",
+      "subtitle": "Latest monthly total fees",
+      "chartType": "counter",
       "order": 2,
-      "isStacked": false,
+      "width": 1,
+      "rowIndex": 2,
+      "prefix": "",
+      "suffix": " SOL",
+      "variant": "purple",
+      "icon": "revenue",
       "dataMapping": {
         "xAxis": "month",
         "yAxis": [
@@ -45,12 +50,56 @@
             "field": "total_fees_sol",
             "type": "bar",
             "unit": "SOL"
-          },
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-17T18:45:00.000000",
+      "updatedAt": "2026-02-17T18:45:00.000000"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000009",
+      "title": "Priority Fees (SOL)",
+      "subtitle": "Latest monthly priority fees",
+      "chartType": "counter",
+      "order": 3,
+      "width": 1,
+      "rowIndex": 2,
+      "prefix": "",
+      "suffix": " SOL",
+      "variant": "emerald",
+      "icon": "fire",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
           {
             "field": "priority_fees_sol",
             "type": "bar",
             "unit": "SOL"
-          },
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-17T18:45:00.000000",
+      "updatedAt": "2026-02-17T18:45:00.000000"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000010",
+      "title": "Jito Tips (SOL)",
+      "subtitle": "Latest monthly Jito tips",
+      "chartType": "counter",
+      "order": 4,
+      "width": 1,
+      "rowIndex": 2,
+      "prefix": "",
+      "suffix": " SOL",
+      "variant": "amber",
+      "icon": "percent",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
           {
             "field": "jito_tips_sol",
             "type": "bar",
@@ -60,17 +109,8 @@
         "groupBy": ""
       },
       "page": "dex-summary",
-      "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
-      },
-      "createdAt": "2026-02-10T09:15:30.910384",
-      "updatedAt": "2026-02-10T09:15:30.910384"
+      "createdAt": "2026-02-17T18:45:00.000000",
+      "updatedAt": "2026-02-17T18:45:00.000000"
     },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000007",
@@ -102,13 +142,14 @@
       },
       "page": "dex-summary",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": ["D", "W", "M", "Q", "Y"],
+            "activeValue": "M"
+          }
+        }
       },
       "createdAt": "2026-02-10T09:15:30.910388",
       "updatedAt": "2026-02-10T09:15:30.910388"

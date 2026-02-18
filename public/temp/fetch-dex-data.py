@@ -700,16 +700,29 @@ class DexDataFetcher:
                 # Add currency filter in additionalOptions.filters
                 additional_options = {}
                 if is_cumulative:
-                    additional_options["timeAggregationOptions"] = ["D", "W", "M", "Q", "Y"]
-                
-                additional_options["filters"] = {
-                    "currencyFilter": {
-                        "paramName": "currency",
-                        "options": ["USD", "SOL"],
-                        "type": "field_switcher",
-                        "columnMappings": currency_mapping
+                    additional_options["enableTimeAggregation"] = True
+                    additional_options["filters"] = {
+                        "timeFilter": {
+                            "paramName": "Date Part",
+                            "options": ["D", "W", "M", "Q", "Y"],
+                            "activeValue": "D"
+                        },
+                        "currencyFilter": {
+                            "paramName": "currency",
+                            "options": ["USD", "SOL"],
+                            "type": "field_switcher",
+                            "columnMappings": currency_mapping
+                        }
                     }
-                }
+                else:
+                    additional_options["filters"] = {
+                        "currencyFilter": {
+                            "paramName": "currency",
+                            "options": ["USD", "SOL"],
+                            "type": "field_switcher",
+                            "columnMappings": currency_mapping
+                        }
+                    }
                 
                 chart_config["additionalOptions"] = additional_options
                 
@@ -759,7 +772,14 @@ class DexDataFetcher:
                 # Add time aggregation options for cumulative charts
                 if is_cumulative:
                     chart_config["additionalOptions"] = {
-                        "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                        "enableTimeAggregation": True,
+                        "filters": {
+                            "timeFilter": {
+                                "paramName": "Date Part",
+                                "options": ["D", "W", "M", "Q", "Y"],
+                                "activeValue": "D"
+                            }
+                        }
                     }
             
             # Check if this chart exists and if it changed

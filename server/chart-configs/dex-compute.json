@@ -24,13 +24,14 @@
       },
       "page": "dex-compute",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": ["D", "W", "M", "Q", "Y"],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-03T14:34:27.142463",
       "updatedAt": "2026-02-07T06:25:53.987909"
@@ -55,13 +56,14 @@
       },
       "page": "dex-compute",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": ["D", "W", "M", "Q", "Y"],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-03T14:34:27.142476",
       "updatedAt": "2026-02-07T06:46:08.094007"
@@ -108,13 +110,14 @@
         "rightAxisType": "line"
       },
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": ["D", "W", "M", "Q", "Y"],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-03T14:34:27.142482",
       "updatedAt": "2026-02-10T08:53:44.972514"

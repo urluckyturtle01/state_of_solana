@@ -14,8 +14,7 @@ export default function DexPropAmmPage() {
         <EnhancedDashboardRenderer 
           pageId="dex-prop-amm" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          
         />
       
     </div>

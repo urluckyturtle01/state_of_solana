@@ -462,6 +462,12 @@ export default React.memo(function EnhancedDashboardRenderer({
         // Load charts immediately
         const freshCharts = overrideCharts || await getChartConfigsByPage(pageId);
         
+        console.log('📊 Loaded charts for', pageId, ':', freshCharts?.length || 0, 'charts');
+        if (freshCharts && freshCharts.length > 0) {
+          console.log('📊 First 3 chart IDs:', freshCharts.slice(0, 3).map(c => c.id));
+          console.log('📊 Counter charts:', freshCharts.filter(c => c.chartType === 'counter').map(c => ({ id: c.id, title: c.title })));
+        }
+        
         if (isMountedRef.current) {
           updateState({
             charts: freshCharts || [],
@@ -618,12 +624,14 @@ export default React.memo(function EnhancedDashboardRenderer({
     const counters = charts.filter(chart => chart.chartType === 'counter');
     const regulars = charts.filter(chart => chart.chartType !== 'counter');
     
-    console.log('Chart separation:', {
-      total: charts.length,
-      counters: counters.length,
-      regular: regulars.length,
-      counterIds: counters.map(c => c.id)
-    });
+    if (typeof window !== 'undefined') {
+      console.log('🎯 CLIENT: Chart separation:', {
+        total: charts.length,
+        counters: counters.length,
+        regular: regulars.length,
+        counterIds: counters.map(c => ({ id: c.id, rowIndex: c.rowIndex, prefix: c.prefix }))
+      });
+    }
     
     return {
       counterCharts: counters,
@@ -644,28 +652,25 @@ export default React.memo(function EnhancedDashboardRenderer({
 
       const dataPromises = counterCharts.map(async (chart: any) => {
         try {
-          // First try to load from temp file
-          const response = await fetch(`/temp/chart-data/${pageId}.json`);
+          // Use individual chart data API endpoint (more efficient than loading entire page data)
+          const response = await fetch(`/api/temp-chart-data/${pageId}/${chart.id}`);
           if (response.ok) {
-            const pageData = await response.json();
+            const chartDataEntry = await response.json();
             
-            console.log(`Loaded page data for ${pageId}, looking for chart ${chart.id}`);
-            console.log('Available chart IDs in data:', pageData.charts?.map((c: any) => c.chartId));
-            
-            // Find the chart data by matching chart ID
-            const chartDataEntry = pageData.charts?.find((c: any) => c.chartId === chart.id);
-            if (chartDataEntry?.data) {
-              console.log(`Found data for counter ${chart.id}:`, chartDataEntry.data.length, 'rows');
+            if (chartDataEntry?.data && chartDataEntry.success) {
+              console.log(`✓ Loaded data for counter ${chart.id}:`, chartDataEntry.data.length, 'rows');
               return { chartId: chart.id, data: chartDataEntry.data };
             } else {
-              console.log(`No data found for counter ${chart.id} in page data`);
+              console.log(`No data found for counter ${chart.id}`);
             }
+          } else {
+            console.log(`Failed to load counter ${chart.id}: HTTP ${response.status}`);
           }
           
-          // If no temp file or chart not found, return null (will use apiEndpoint)
+          // If API fails, return null (will use apiEndpoint fallback)
           return { chartId: chart.id, data: null };
         } catch (error) {
-          console.log(`Error loading temp data for counter chart ${chart.id}:`, error);
+          console.log(`Error loading data for counter chart ${chart.id}:`, error);
           return { chartId: chart.id, data: null };
         }
       });

@@ -14,8 +14,6 @@ export default function DexNetworkFeesPage() {
         <EnhancedDashboardRenderer 
           pageId="dex-network-fees" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
         />
       
     </div>

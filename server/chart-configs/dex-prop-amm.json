@@ -24,13 +24,14 @@
       },
       "page": "dex-prop-amm",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": ["D", "W", "M", "Q", "Y"],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-07T08:14:39.053992",
       "updatedAt": "2026-02-09T08:29:17.066282"
