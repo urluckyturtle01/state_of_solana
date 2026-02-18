@@ -14,8 +14,8 @@ export default function SummaryPage() {
         <EnhancedDashboardRenderer 
           pageId="stablecoins-summary" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>

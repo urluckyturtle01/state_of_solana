@@ -14,8 +14,8 @@ export default function DexActivityPage() {
         <EnhancedDashboardRenderer 
           pageId="stablecoins-dex-activity" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>

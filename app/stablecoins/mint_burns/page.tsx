@@ -14,8 +14,8 @@ export default function MintBurnsPage() {
         <EnhancedDashboardRenderer 
           pageId="stablecoins-mint-burns" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>

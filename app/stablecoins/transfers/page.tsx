@@ -14,8 +14,8 @@ export default function TransfersPage() {
         <EnhancedDashboardRenderer 
           pageId="stablecoins-transfers" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>

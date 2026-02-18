@@ -2,13 +2,13 @@
   "pageId": "rev-cost-capacity",
   "pageName": "DEX Cost And Capacity",
   "chartCount": 10,
-  "lastUpdated": "2026-02-17T11:48:41.946959",
+  "lastUpdated": "2026-02-18T09:00:02.821834",
   "charts": [
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000027",
       "title": "Fee Concentration by Percentile",
       "subtitle": "Share of total daily fee from top 1%, 5%, 10% successful non-vote txns",
-      "chartType": "bar",
+      "chartType": "line",
       "order": 1,
       "isStacked": false,
       "dataMapping": {
@@ -33,8 +33,8 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "createdAt": "2026-02-17T11:40:53.804202",
-      "updatedAt": "2026-02-17T11:40:53.804202"
+      "createdAt": "2026-02-18T08:59:38.643337",
+      "updatedAt": "2026-02-18T08:59:38.643337"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000028",
@@ -72,7 +72,19 @@
       },
       "page": "rev-cost-capacity",
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
@@ -87,8 +99,8 @@
           }
         }
       },
-      "createdAt": "2026-02-17T11:40:53.804217",
-      "updatedAt": "2026-02-17T11:40:53.804217"
+      "createdAt": "2026-02-18T08:59:38.643354",
+      "updatedAt": "2026-02-18T08:59:38.643354"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000029",
@@ -119,8 +131,8 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "createdAt": "2026-02-17T11:40:53.804224",
-      "updatedAt": "2026-02-17T11:40:53.804224"
+      "createdAt": "2026-02-18T08:59:38.643361",
+      "updatedAt": "2026-02-18T08:59:38.643361"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000030",
@@ -169,8 +181,8 @@
         "leftAxisType": "bar",
         "rightAxisType": "bar"
       },
-      "createdAt": "2026-02-17T11:40:53.804229",
-      "updatedAt": "2026-02-17T11:40:53.804229"
+      "createdAt": "2026-02-18T08:59:38.643368",
+      "updatedAt": "2026-02-18T08:59:38.643368"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000001",
@@ -213,8 +225,8 @@
         "leftAxisType": "bar",
         "rightAxisType": "line"
       },
-      "createdAt": "2026-02-17T08:58:36.931478",
-      "updatedAt": "2026-02-17T08:58:36.931478"
+      "createdAt": "2026-02-18T09:00:02.821787",
+      "updatedAt": "2026-02-18T09:00:02.821787"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000002",
@@ -253,7 +265,19 @@
       },
       "page": "rev-cost-capacity",
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
@@ -268,8 +292,8 @@
           }
         }
       },
-      "createdAt": "2026-02-17T08:58:36.931485",
-      "updatedAt": "2026-02-17T11:41:29.200090"
+      "createdAt": "2026-02-18T09:00:02.821801",
+      "updatedAt": "2026-02-18T09:00:02.821801"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000019",
@@ -305,8 +329,8 @@
         "groupBy": ""
       },
       "page": "rev-cost-capacity",
-      "createdAt": "2026-02-17T08:58:36.931490",
-      "updatedAt": "2026-02-17T08:58:36.931490"
+      "createdAt": "2026-02-18T09:00:02.821807",
+      "updatedAt": "2026-02-18T09:00:02.821807"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000020",
@@ -365,8 +389,8 @@
           }
         }
       },
-      "createdAt": "2026-02-17T08:58:36.931494",
-      "updatedAt": "2026-02-17T11:41:29.200166"
+      "createdAt": "2026-02-18T09:00:02.821815",
+      "updatedAt": "2026-02-18T09:00:02.821815"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
@@ -410,7 +434,19 @@
       },
       "page": "rev-cost-capacity",
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
@@ -425,8 +461,8 @@
           }
         }
       },
-      "createdAt": "2026-02-17T08:58:36.931497",
-      "updatedAt": "2026-02-17T11:41:29.200173"
+      "createdAt": "2026-02-18T09:00:02.821823",
+      "updatedAt": "2026-02-18T09:00:02.821823"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000026",
@@ -469,8 +505,8 @@
           }
         }
       },
-      "createdAt": "2026-02-17T08:58:36.931500",
-      "updatedAt": "2026-02-17T11:41:29.200178"
+      "createdAt": "2026-02-18T09:00:02.821828",
+      "updatedAt": "2026-02-18T09:00:02.821828"
     }
   ]
 }

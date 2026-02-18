@@ -14,8 +14,8 @@ export default function CexsPage() {
         <EnhancedDashboardRenderer 
           pageId="stablecoins-cexs" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          //overrideCounters={[]}
+          //overrideTables={[]}
         />
       
     </div>

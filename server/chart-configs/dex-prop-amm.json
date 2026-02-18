@@ -2,160 +2,8 @@
   "pageId": "dex-prop-amm",
   "pageName": "DEX Prop Amm",
   "chartCount": 11,
-  "lastUpdated": "2026-02-18T16:03:33.599673",
+  "lastUpdated": "2026-02-18T16:50:16.491921",
   "charts": [
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
-      "title": "Prop AMM Daily Volume by Program",
-      "subtitle": "Daily USD volume stacked by each prop AMM (direct + aggregator-routed)",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-07T08:14:39.056864",
-      "updatedAt": "2026-02-18T13:25:58.843763"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000002",
-      "title": "Prop AMM Daily Txns by Program",
-      "subtitle": "Daily trade count stacked by each prop AMM",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "txn_count",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-07T08:14:39.056868",
-      "updatedAt": "2026-02-18T13:25:58.843779"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000008",
-      "title": "Prop AMM Cumulative Volume by Program",
-      "subtitle": "Running total USD volume per prop AMM over time",
-      "chartType": "bar",
-      "order": 3,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cum_volume_usd",
-            "type": "line",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-18T13:25:58.843785",
-      "updatedAt": "2026-02-18T13:25:58.843785"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000009",
-      "title": "Prop AMM Cumulative Txns by Program",
-      "subtitle": "Running total trade count per prop AMM over time",
-      "chartType": "bar",
-      "order": 4,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cum_txn_count",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "prop_amm_name"
-      },
-      "page": "dex-prop-amm",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-18T13:25:58.843790",
-      "updatedAt": "2026-02-18T13:25:58.843790"
-    },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
       "title": "Prop AMM vs Other DEX Volume",
@@ -335,6 +183,126 @@
       "page": "dex-prop-amm",
       "createdAt": "2026-02-07T08:14:39.051467",
       "updatedAt": "2026-02-18T15:01:31.158729"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000001",
+      "title": "Prop AMM Daily Volume by Program",
+      "subtitle": "Daily USD volume stacked by each prop AMM (direct + aggregator-routed)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T08:14:39.056864",
+      "updatedAt": "2026-02-18T13:25:58.843763"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000008",
+      "title": "Prop AMM Cumulative Volume by Program",
+      "subtitle": "Running total USD volume per prop AMM over time",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cum_volume_usd",
+            "type": "line",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-18T13:25:58.843785",
+      "updatedAt": "2026-02-18T16:47:35.149700"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000002",
+      "title": "Prop AMM Daily Txns by Program",
+      "subtitle": "Daily trade count stacked by each prop AMM",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "txn_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T08:14:39.056868",
+      "updatedAt": "2026-02-18T13:25:58.843779"
+    },
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000009",
+      "title": "Prop AMM Cumulative Txns by Program",
+      "subtitle": "Running total trade count per prop AMM over time",
+      "chartType": "bar",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cum_txn_count",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "prop_amm_name"
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-18T13:25:58.843790",
+      "updatedAt": "2026-02-18T16:47:35.149717"
     },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000007",

@@ -15,8 +15,7 @@ export default function DexVolumePage() {
         <EnhancedDashboardRenderer 
           pageId="dex-volume" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          
         />
       
     </div>

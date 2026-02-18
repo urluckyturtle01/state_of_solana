@@ -14,8 +14,7 @@ export default function DexTokensPage() {
         <EnhancedDashboardRenderer 
           pageId="dex-tokens" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          
         />
       
     </div>

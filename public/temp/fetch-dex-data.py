@@ -401,7 +401,7 @@ class DexDataFetcher:
         
         # Build minimal configs for charts from this SQL (preserve existing if they exist)
         chart_configs = []
-        is_cumulative = query_run_config.get('isCumulative', False)
+        file_level_is_cumulative = query_run_config.get('isCumulative', False)
         
         for i, chart_def in enumerate(chart_configs_list):
             chart_id = f"{page_id}-{chart_def['id']}"
@@ -410,6 +410,10 @@ class DexDataFetcher:
             if chart_id in existing_charts_map:
                 chart_configs.append(existing_charts_map[chart_id])
                 continue
+            
+            # Get chart-specific queryRunConfig if it exists, otherwise use file-level
+            chart_query_config = chart_def.get('queryRunConfig', query_run_config)
+            is_cumulative = chart_query_config.get('isCumulative', file_level_is_cumulative)
             
             # Otherwise create new minimal config (shouldn't happen for skipped queries)
             y_axis = chart_def['dataMapping'].get('yAxis', [])
@@ -435,16 +439,29 @@ class DexDataFetcher:
                 # Add currency filter in additionalOptions.filters
                 additional_options = {}
                 if is_cumulative:
-                    additional_options["timeAggregationOptions"] = ["D", "W", "M", "Q", "Y"]
-                
-                additional_options["filters"] = {
-                    "currencyFilter": {
-                        "paramName": "currency",
-                        "options": ["USD", "SOL"],
-                        "type": "field_switcher",
-                        "columnMappings": currency_mapping
+                    additional_options["enableTimeAggregation"] = True
+                    additional_options["filters"] = {
+                        "timeFilter": {
+                            "paramName": "Date Part",
+                            "options": ["D", "W", "M", "Q", "Y"],
+                            "activeValue": "D"
+                        },
+                        "currencyFilter": {
+                            "paramName": "currency",
+                            "options": ["USD", "SOL"],
+                            "type": "field_switcher",
+                            "columnMappings": currency_mapping
+                        }
                     }
-                }
+                else:
+                    additional_options["filters"] = {
+                        "currencyFilter": {
+                            "paramName": "currency",
+                            "options": ["USD", "SOL"],
+                            "type": "field_switcher",
+                            "columnMappings": currency_mapping
+                        }
+                    }
                 
                 chart_config["additionalOptions"] = additional_options
                 
@@ -492,7 +509,14 @@ class DexDataFetcher:
                 
                 if is_cumulative:
                     chart_config["additionalOptions"] = {
-                        "timeAggregationOptions": ["D", "W", "M", "Q", "Y"]
+                        "enableTimeAggregation": True,
+                        "filters": {
+                            "timeFilter": {
+                                "paramName": "Date Part",
+                                "options": ["D", "W", "M", "Q", "Y"],
+                                "activeValue": "D"
+                            }
+                        }
                     }
             
             now_iso = datetime.now().isoformat()
@@ -668,12 +692,16 @@ class DexDataFetcher:
         charts_updated = 0
         charts_unchanged = 0
         
-        # Get query run config
-        is_cumulative = query_run_config.get('isCumulative', False)
+        # Get query run config (file-level default)
+        file_level_is_cumulative = query_run_config.get('isCumulative', False)
         
         # Process each chart
         for i, chart_def in enumerate(chart_configs_list):
             chart_id = f"{page_id}-{chart_def['id']}"
+            
+            # Get chart-specific queryRunConfig if it exists, otherwise use file-level
+            chart_query_config = chart_def.get('queryRunConfig', query_run_config)
+            is_cumulative = chart_query_config.get('isCumulative', file_level_is_cumulative)
             
             # Parse yAxis to detect currency patterns or dual-axis
             y_axis = chart_def['dataMapping'].get('yAxis', [])
@@ -1134,10 +1162,11 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
+            'dex-trades': ['volume'],
             #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
             #'stablecoins': ['summary', 'mint_burns', 'transfers'],
-            'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
-            #'aggregators': ['summary', 'traders']
+            #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
+            #'aggregators': ['summary']
         }
         
         for category, folders in categories.items():

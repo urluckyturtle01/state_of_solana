@@ -2,7 +2,7 @@
   "pageId": "stablecoins-mint-burns",
   "pageName": "DEX Mint Burns",
   "chartCount": 2,
-  "lastUpdated": "2026-02-16T13:55:43.101566",
+  "lastUpdated": "2026-02-18T09:14:48.797686",
   "charts": [
     {
       "id": "stablecoins-mint-burns-3c4d5e6f-3333-4000-8000-000000000001",
@@ -24,16 +24,23 @@
       },
       "page": "stablecoins-mint-burns",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-11T09:13:46.702243",
-      "updatedAt": "2026-02-11T09:13:46.702243"
+      "updatedAt": "2026-02-18T08:31:07.909627"
     },
     {
       "id": "stablecoins-mint-burns-3c4d5e6f-3333-4000-8000-000000000002",
@@ -55,16 +62,23 @@
       },
       "page": "stablecoins-mint-burns",
       "additionalOptions": {
-        "timeAggregationOptions": [
-          "D",
-          "W",
-          "M",
-          "Q",
-          "Y"
-        ]
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
       },
       "createdAt": "2026-02-11T09:13:46.702248",
-      "updatedAt": "2026-02-11T09:13:46.702248"
+      "updatedAt": "2026-02-18T08:31:07.909640"
     }
   ]
 }

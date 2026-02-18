@@ -326,6 +326,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
           // Detect cumulative fields by name patterns - be more specific to avoid false positives
           const fieldLower = field.toLowerCase();
           const isCumulative = fieldLower.includes('cumulative') || 
+                              fieldLower.startsWith('cum_') ||  // Fields starting with cum_ (e.g., cum_volume_usd)
                               (fieldLower.includes('supply') && !fieldLower.includes('revenue') && !fieldLower.includes('volume') && !fieldLower.includes('fees')) ||
                               fieldLower.includes('marketcap') ||
                               fieldLower.includes('market_cap') ||

@@ -15,8 +15,7 @@ export default function DexTradersPage() {
         <EnhancedDashboardRenderer 
           pageId="dex-traders" 
           enableCaching={true}
-          overrideCounters={[]}
-          overrideTables={[]}
+          
         />
       
     </div>

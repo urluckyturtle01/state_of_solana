@@ -2,7 +2,7 @@
   "pageId": "rev-issuance-burn",
   "pageName": "DEX Issuance And Burn",
   "chartCount": 7,
-  "lastUpdated": "2026-02-17T11:49:12.395530",
+  "lastUpdated": "2026-02-18T09:00:33.555191",
   "charts": [
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000031",
@@ -253,7 +253,19 @@
       },
       "page": "rev-issuance-burn",
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
@@ -269,7 +281,7 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282758",
-      "updatedAt": "2026-02-17T11:42:11.004854"
+      "updatedAt": "2026-02-18T09:00:33.555177"
     },
     {
       "id": "rev-issuance-burn-a0b1c2d3-8888-4000-8000-000000000037",
@@ -297,7 +309,19 @@
       },
       "page": "rev-issuance-burn",
       "additionalOptions": {
+        "enableTimeAggregation": true,
         "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          },
           "currencyFilter": {
             "paramName": "currency",
             "options": [
@@ -313,7 +337,7 @@
         }
       },
       "createdAt": "2026-02-17T08:59:12.282761",
-      "updatedAt": "2026-02-17T11:42:11.004859"
+      "updatedAt": "2026-02-18T09:00:33.555184"
     }
   ]
 }
