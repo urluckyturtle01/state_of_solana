@@ -1048,22 +1048,41 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       return;
     }
     
-    // Calculate bar width based on the actual rendered data
-    const barWidth = innerWidth / chartData.length;
+    // Sort x-values to match chart display order
+    const sortedXValues = chartData
+      .map(d => String(d[xKey]))
+      .sort((a, b) => {
+        // For numeric values (like epochs), sort numerically
+        const numA = Number(a);
+        const numB = Number(b);
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        }
+        
+        // For dates, sort chronologically
+        if (a.match(/^\d{4}-\d{2}-\d{2}/) && b.match(/^\d{4}-\d{2}-\d{2}/)) {
+          return a.localeCompare(b);
+        }
+        
+        // For strings, sort alphabetically
+        return a.localeCompare(b);
+      });
     
-    // Calculate the index of the bar under the mouse pointer
+    // Calculate bar width based on sorted x-values
+    const barWidth = innerWidth / sortedXValues.length;
     const barIndex = Math.floor(adjustedMouseX / barWidth);
     
     // Validate the index
-    if (barIndex < 0 || barIndex >= chartData.length) {
+    if (barIndex < 0 || barIndex >= sortedXValues.length) {
       if (tooltip.visible) {
         setTooltip(prev => ({ ...prev, visible: false }));
       }
       return;
     }
     
-    // Get the data point at this index
-    const dataPoint = chartData[barIndex];
+    // Get the x-value at this position and find corresponding data point
+    const hoveredXValue = sortedXValues[barIndex];
+    const dataPoint = chartData.find(d => String(d[xKey]) === hoveredXValue);
     if (!dataPoint) {
       if (tooltip.visible) {
         setTooltip(prev => ({ ...prev, visible: false }));
