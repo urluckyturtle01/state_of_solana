@@ -41,7 +41,7 @@ export const CHART_TYPES = [
   { id: 'counter', name: 'Counter' },
 ] as const;
 
-export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie' | 'box' | 'counter';
+export type ChartType = 'bar' | 'stacked-bar' | 'line' | 'area' | 'stacked-area' | 'dual-axis' | 'pie' | 'box' | 'counter' | 'table';
 
 // Percentage field configuration for weighted average calculation
 export interface PercentageFieldConfig {
@@ -246,7 +246,7 @@ export interface TableConfig {
   title: string;
   description?: string;
   page: AvailablePage;
-  apiEndpoint: string;
+  apiEndpoint?: string;  // Optional - can load from temp files instead
   apiKey?: string;
   columns: TableColumnConfig[];
   computedColumns?: ComputedColumnConfig[]; // Optional computed columns

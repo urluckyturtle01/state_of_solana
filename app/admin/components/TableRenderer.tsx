@@ -54,9 +54,27 @@ const TableRenderer: React.FC<TableRendererProps> = ({
   }, [tableConfig.additionalOptions?.filters]);
 
   // Calculate visible columns (exclude hidden ones)
-  const visibleColumns = useMemo(() => {
-    return tableConfig.columns.filter(column => !column.hidden);
-  }, [tableConfig.columns]);
+  // If no columns defined, auto-generate from data
+  const visibleColumns: TableColumnConfig[] = useMemo(() => {
+    if (tableConfig.columns && tableConfig.columns.length > 0) {
+      return tableConfig.columns.filter(column => !column.hidden);
+    }
+    
+    // Auto-generate columns from first data row
+    if (data.length > 0) {
+      const firstRow = data[0];
+      const autoColumns: TableColumnConfig[] = Object.keys(firstRow).map(key => ({
+        field: key,
+        header: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        sortable: true,
+        filterable: false,
+        hidden: false
+      }));
+      return autoColumns;
+    }
+    
+    return [];
+  }, [tableConfig.columns, data]);
 
   // Function to format time period headers for horizontal tables
   const formatTimePeriodHeader = (period: string | number): string => {
@@ -645,7 +663,47 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       setLoading(true);
       setError(null);
       
-      // Create a URL object to handle API key properly
+      // First, try to load from temp file (for tables with chartType data)
+      // Extract page and table ID from tableConfig
+      const pageId = tableConfig.page;
+      const tableId = tableConfig.id;
+      
+      console.log('🔍 TableRenderer: Attempting to load data for table:', tableId);
+      console.log('  Page:', pageId);
+      
+      try {
+        // Use efficient per-chart API instead of loading massive page file
+        const apiUrl = `/api/temp-chart-data/${pageId}/${tableId}`;
+        console.log('  Trying API:', apiUrl);
+        const tempDataResponse = await fetch(apiUrl);
+        
+        if (tempDataResponse.ok) {
+          console.log('  ✓ API response OK');
+          const tableDataEntry = await tempDataResponse.json();
+          
+          if (tableDataEntry?.data && Array.isArray(tableDataEntry.data) && tableDataEntry.success) {
+            console.log(`  ✅ Loaded table data from API for ${tableId}:`, tableDataEntry.data.length, 'rows');
+            console.log('  First row sample:', tableDataEntry.data[0]);
+            setData(tableDataEntry.data);
+            setLoading(false);
+            setError(null);
+            return;
+          } else {
+            console.log('  ❌ No data in API response:', tableDataEntry);
+          }
+        } else {
+          console.log('  ❌ API response not OK:', tempDataResponse.status);
+        }
+      } catch (tempError) {
+        console.log(`  ⚠️ Error loading from API:`, tempError);
+      }
+      
+      // If no temp file or apiEndpoint not provided, can't fetch
+      if (!tableConfig.apiEndpoint) {
+        throw new Error('No data source available: Neither temp file nor apiEndpoint provided');
+      }
+      
+      // Fallback to API endpoint
       let url;
       try {
         url = new URL(tableConfig.apiEndpoint);
@@ -792,6 +850,12 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       setLoading(false);
     }
   }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading, activeFilters, autoRetryIntervalId]);
+
+  // Fetch data on component mount and when dependencies change
+  useEffect(() => {
+    console.log('🚀 TableRenderer mounted, calling fetchData for:', tableConfig.id);
+    fetchData(0);
+  }, [fetchData, tableConfig.id]);
 
   // Function to handle manual retry
   const handleRetry = useCallback(() => {

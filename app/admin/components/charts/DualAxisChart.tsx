@@ -101,7 +101,7 @@ function getYAxisUnit(field: string | YAxisConfig, currencyFilter?: string): str
 function formatWithUnit(value: number, unit?: string, defaultUnit?: string): string {
   // Get the unit symbol - explicit unit takes precedence, only use defaultUnit if unit is undefined/null
   const unitSymbol = unit !== undefined ? unit : (defaultUnit || '');
-  const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+  const isUnitPrefix = unitSymbol === '$'; // Only $ goes at the beginning, all other units go at the end
   
   // Handle negative values
   const absValue = Math.abs(value);

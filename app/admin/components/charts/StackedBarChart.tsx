@@ -320,7 +320,7 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     
     // Get the unit symbol (use component prop as fallback)
     const unitSymbol = unit || yAxisUnit || '';
-    const isUnitPrefix = unitSymbol && unitSymbol !== '%' && unitSymbol !== 'SOL'; // Most units are prefixed, but some go after
+    const isUnitPrefix = unitSymbol === '$'; // Only $ goes at the beginning, all other units go at the end
     
     // Format with appropriate scale
     let formattedValue: string;

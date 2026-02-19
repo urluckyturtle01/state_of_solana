@@ -618,23 +618,27 @@ export default React.memo(function EnhancedDashboardRenderer({
     );
   }, [state.tables, state.isLoadingTables, state.isInitialLoadComplete, section]);
 
-  // Separate counter-type charts from regular charts
-  const { counterCharts, regularCharts } = useMemo(() => {
+  // Separate counter-type charts, table-type charts, and regular charts
+  const { counterCharts, tableCharts, regularCharts } = useMemo(() => {
     const charts = state.charts;
     const counters = charts.filter(chart => chart.chartType === 'counter');
-    const regulars = charts.filter(chart => chart.chartType !== 'counter');
+    const tables = charts.filter(chart => chart.chartType === 'table');
+    const regulars = charts.filter(chart => chart.chartType !== 'counter' && chart.chartType !== 'table');
     
     if (typeof window !== 'undefined') {
       console.log('🎯 CLIENT: Chart separation:', {
         total: charts.length,
         counters: counters.length,
+        tables: tables.length,
         regular: regulars.length,
-        counterIds: counters.map(c => ({ id: c.id, rowIndex: c.rowIndex, prefix: c.prefix }))
+        counterIds: counters.map(c => ({ id: c.id, rowIndex: c.rowIndex, prefix: c.prefix })),
+        tableIds: tables.map(t => ({ id: t.id, title: t.title }))
       });
     }
     
     return {
       counterCharts: counters,
+      tableCharts: tables,
       regularCharts: regulars
     };
   }, [state.charts]);
@@ -759,6 +763,69 @@ export default React.memo(function EnhancedDashboardRenderer({
           section={section}
           urlParams={urlParams}
         />
+      )}
+      
+      {/* Render table-type charts as tables */}
+      {tableCharts.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4 mb-4">
+          {tableCharts.map((tableChart: any) => {
+            // Extract column order from dataMapping if available
+            const columns: any[] = [];
+            
+            if (tableChart.dataMapping) {
+              // Add xAxis column first (e.g., "month")
+              if (tableChart.dataMapping.xAxis) {
+                const xField = typeof tableChart.dataMapping.xAxis === 'string' 
+                  ? tableChart.dataMapping.xAxis 
+                  : tableChart.dataMapping.xAxis.field;
+                columns.push({
+                  field: xField,
+                  header: xField.replace(/_/g, ' ').replace(/\b\w/g, (letter: string) => letter.toUpperCase()),
+                  sortable: true,
+                  filterable: false,
+                  hidden: false
+                });
+              }
+              
+              // Add yAxis columns in order
+              if (tableChart.dataMapping.yAxis && Array.isArray(tableChart.dataMapping.yAxis)) {
+                tableChart.dataMapping.yAxis.forEach((yField: any) => {
+                  const fieldName = typeof yField === 'string' ? yField : yField.field;
+                  columns.push({
+                    field: fieldName,
+                    header: fieldName.replace(/_/g, ' '),
+                    sortable: true,
+                    filterable: false,
+                    hidden: false
+                  });
+                });
+              }
+            }
+            
+            // Convert chart config to table config
+            const tableConfig: TableConfig = {
+              id: tableChart.id,
+              title: tableChart.title,
+              description: tableChart.subtitle,
+              page: tableChart.page,
+              variant: 'striped',
+              orientation: 'vertical',
+              enablePagination: true,
+              enableSearch: true,
+              rowsPerPage: 20,
+              columns: columns, // Use columns from dataMapping
+            };
+            
+            return (
+              <div 
+                key={tableChart.id} 
+                className="col-span-1 md:col-span-6"
+              >
+                <TableRenderer tableConfig={tableConfig} />
+              </div>
+            );
+          })}
+        </div>
       )}
       
       {/* Render tables below charts */}

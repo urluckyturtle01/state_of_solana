@@ -18,9 +18,12 @@ function getFieldName(field: string | YAxisConfig): string {
   return typeof field === 'string' ? field : field.field;
 }
 
-// Helper function to get default time filter value - prefer 'M' if available
-const getDefaultTimeFilterValue = (timeFilterOptions: string[]): string => {
-  return timeFilterOptions.includes('M') ? 'M' : timeFilterOptions[0];
+// Helper function to get default time filter value from config
+const getDefaultTimeFilterValue = (timeFilterConfig: any): string => {
+  const options = timeFilterConfig.options || [];
+  const activeValue = timeFilterConfig.activeValue;
+  // Use activeValue if specified and valid, otherwise use first option
+  return (activeValue && options.includes(activeValue)) ? activeValue : (options[0] || 'D');
 };
 
 // Format currency for display
@@ -1202,11 +1205,11 @@ export default function DashboardRenderer({
       
       // Initialize filters from chart config
       if (chart.additionalOptions?.filters) {
-        // Set time filter - default to 'M' if available, otherwise first option
+        // Set time filter - use activeValue from config, or first option as fallback
         if (chart.additionalOptions.filters.timeFilter &&
             Array.isArray(chart.additionalOptions.filters.timeFilter.options) &&
             chart.additionalOptions.filters.timeFilter.options.length > 0) {
-          const defaultValue = getDefaultTimeFilterValue(chart.additionalOptions.filters.timeFilter.options);
+          const defaultValue = getDefaultTimeFilterValue(chart.additionalOptions.filters.timeFilter);
           chartFilters['timeFilter'] = defaultValue;
           hasAnyFilters = true;
           console.log(`Setting default time filter for ${chart.title}: ${defaultValue}`);

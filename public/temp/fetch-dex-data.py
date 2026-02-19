@@ -430,7 +430,7 @@ class DexDataFetcher:
                     "title": chart_def['title'],
                     "subtitle": chart_def.get('subtitle', ''),
                     "chartType": chart_type,
-                    "order": i + 1,
+                    "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
                     "dataMapping": chart_def['dataMapping'],
                     "page": page_id
@@ -444,7 +444,7 @@ class DexDataFetcher:
                         "timeFilter": {
                             "paramName": "Date Part",
                             "options": ["D", "W", "M", "Q", "Y"],
-                            "activeValue": "D"
+                            "activeValue": "W"
                         },
                         "currencyFilter": {
                             "paramName": "currency",
@@ -492,7 +492,7 @@ class DexDataFetcher:
                     "title": chart_def['title'],
                     "subtitle": chart_def.get('subtitle', ''),
                     "chartType": chart_type,
-                    "order": i + 1,
+                    "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
                     "dataMapping": chart_def['dataMapping'],
                     "page": page_id
@@ -719,7 +719,7 @@ class DexDataFetcher:
                     "title": chart_def['title'],
                     "subtitle": chart_def.get('subtitle', ''),
                     "chartType": chart_type,
-                    "order": i + 1,
+                    "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
                     "dataMapping": chart_def['dataMapping'],
                     "page": page_id
@@ -782,7 +782,7 @@ class DexDataFetcher:
                     "title": chart_def['title'],
                     "subtitle": chart_def.get('subtitle', ''),
                     "chartType": chart_type,
-                    "order": i + 1,
+                    "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
                     "dataMapping": chart_def['dataMapping'],
                     "page": page_id
@@ -1162,11 +1162,11 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['volume'],
-            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
-            #'stablecoins': ['summary', 'mint_burns', 'transfers'],
-            #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
-            #'aggregators': ['summary']
+            #'dex-trades': ['volume'],
+            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
+            'stablecoins': ['summary', 'mint_burns', 'transfers'],
+            'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
+            'aggregators': ['summary']
         }
         
         for category, folders in categories.items():
