@@ -2,8 +2,62 @@
   "pageId": "dex-volume",
   "pageName": "DEX Volume",
   "chartCount": 9,
-  "lastUpdated": "2026-02-18T17:40:16.065965",
+  "lastUpdated": "2026-02-19T09:53:32.328726",
   "charts": [
+    {
+      "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000001",
+      "title": "Daily And Cumulative Volume",
+      "subtitle": "Daily DEX trading volume with cumulative total in USD",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "cumulative_volume_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-volume",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "daily_volume_usd"
+        ],
+        "rightAxisFields": [
+          "cumulative_volume_usd"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-18T17:31:11.734497",
+      "updatedAt": "2026-02-18T17:31:11.734497"
+    },
     {
       "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000007",
       "title": "Volume By Trader Frequency",
@@ -107,60 +161,6 @@
       "page": "dex-volume",
       "createdAt": "2026-02-18T17:14:02.152162",
       "updatedAt": "2026-02-18T17:14:02.152162"
-    },
-    {
-      "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000001",
-      "title": "Daily And Cumulative Volume",
-      "subtitle": "Daily DEX trading volume with cumulative total in USD",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_volume_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "cumulative_volume_usd",
-            "type": "line",
-            "unit": "$",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-volume",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "daily_volume_usd"
-        ],
-        "rightAxisFields": [
-          "cumulative_volume_usd"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-18T17:31:11.734497",
-      "updatedAt": "2026-02-18T17:31:11.734497"
     },
     {
       "id": "dex-volume-d4e5f6a7-4444-4000-8000-000000000004",
