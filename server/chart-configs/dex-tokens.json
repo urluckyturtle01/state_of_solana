@@ -1,47 +1,9 @@
 {
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
-  "chartCount": 4,
-  "lastUpdated": "2026-02-16T13:53:03.645804",
+  "chartCount": 5,
+  "lastUpdated": "2026-02-20T12:34:04.391660",
   "charts": [
-    {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
-      "title": "Token Volume By Category",
-      "subtitle": "Volume breakdown by token category - SOL, Stablecoins, Other tokens",
-      "chartType": "pie",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "token_category",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "pie",
-            "unit": "$"
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-tokens",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "W"
-          }
-        }
-      },
-      "createdAt": "2026-02-10T07:41:47.541286",
-      "updatedAt": "2026-02-10T07:41:47.541286"
-    },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000003",
       "title": "Token Category Market Share",
@@ -151,29 +113,62 @@
       "updatedAt": "2026-02-07T06:00:44.855643"
     },
     {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
-      "title": "New Token Velocity",
-      "subtitle": "New token adoption metrics - trades, traders, volume in first 7 days",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
+      "title": "Daily Top 5 Tokens By Volume",
+      "subtitle": "Five highest-volume tokens each day by USD trading volume",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
       "dataMapping": {
-        "xAxis": "first_trade_date",
+        "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "trades_first_week",
+            "field": "volume_usd",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
+          }
+        ],
+        "groupBy": "symbol"
+      },
+      "page": "dex-tokens",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-20T12:29:26.816755",
+      "updatedAt": "2026-02-20T12:29:26.816755"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
+      "title": "New Token Volume vs Total Volume",
+      "subtitle": "Daily volume from newly listed tokens compared to total DEX volume",
+      "chartType": "dual-axis",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "new_token_volume_usd",
+            "type": "bar",
+            "unit": "$"
           },
           {
-            "field": "traders_first_week",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "volume_first_week_usd",
+            "field": "new_token_volume_pct",
             "type": "line",
-            "unit": "$",
+            "unit": "%",
             "rightAxis": true
           }
         ],
@@ -182,17 +177,70 @@
       "page": "dex-tokens",
       "dualAxisConfig": {
         "leftAxisFields": [
-          "trades_first_week",
-          "traders_first_week"
+          "new_token_volume_usd"
         ],
         "rightAxisFields": [
-          "volume_first_week_usd"
+          "new_token_volume_pct"
         ],
         "leftAxisType": "bar",
         "rightAxisType": "line"
       },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
       "createdAt": "2026-02-12T13:23:40.857147",
-      "updatedAt": "2026-02-12T13:23:40.857147"
+      "updatedAt": "2026-02-20T12:34:04.391576"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
+      "title": "Distinct New Tokens Per Day",
+      "subtitle": "Number of unique tokens first traded each day",
+      "chartType": "bar",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "distinct_new_tokens",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-tokens",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-10T07:41:47.541286",
+      "updatedAt": "2026-02-20T12:34:04.391641"
     }
   ]
 }
