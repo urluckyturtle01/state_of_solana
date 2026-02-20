@@ -2,7 +2,7 @@
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
   "chartCount": 5,
-  "lastUpdated": "2026-02-20T12:34:04.391660",
+  "lastUpdated": "2026-02-20T13:11:12.961921",
   "charts": [
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000003",
@@ -113,44 +113,6 @@
       "updatedAt": "2026-02-07T06:00:44.855643"
     },
     {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
-      "title": "Daily Top 5 Tokens By Volume",
-      "subtitle": "Five highest-volume tokens each day by USD trading volume",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "symbol"
-      },
-      "page": "dex-tokens",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-20T12:29:26.816755",
-      "updatedAt": "2026-02-20T12:29:26.816755"
-    },
-    {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
       "title": "New Token Volume vs Total Volume",
       "subtitle": "Daily volume from newly listed tokens compared to total DEX volume",
@@ -206,21 +168,75 @@
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
-      "title": "Distinct New Tokens Per Day",
-      "subtitle": "Number of unique tokens first traded each day",
-      "chartType": "bar",
-      "order": 5,
-      "isStacked": false,
+      "title": "Daily Volume By Token Category",
+      "subtitle": "Daily USD volume split by Stablecoins, SOL, and Other tokens with share %",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "distinct_new_tokens",
+            "field": "volume_usd",
             "type": "bar",
-            "unit": ""
+            "unit": "$"
+          },
+          {
+            "field": "volume_share_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
           }
         ],
-        "groupBy": ""
+        "groupBy": "token_category"
+      },
+      "page": "dex-tokens",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "volume_usd"
+        ],
+        "rightAxisFields": [
+          "volume_share_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-10T07:41:47.541286",
+      "updatedAt": "2026-02-20T13:09:57.875224"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
+      "title": "Daily Top 5 Tokens By Volume",
+      "subtitle": "Five highest-volume tokens each day by USD trading volume",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "symbol"
       },
       "page": "dex-tokens",
       "additionalOptions": {
@@ -239,8 +255,8 @@
           }
         }
       },
-      "createdAt": "2026-02-10T07:41:47.541286",
-      "updatedAt": "2026-02-20T12:34:04.391641"
+      "createdAt": "2026-02-20T12:29:26.816755",
+      "updatedAt": "2026-02-20T12:29:26.816755"
     }
   ]
 }
