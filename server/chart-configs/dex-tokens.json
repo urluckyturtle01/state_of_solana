@@ -1,44 +1,28 @@
 {
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
-  "chartCount": 6,
-  "lastUpdated": "2026-02-21T10:59:44.549971",
+  "chartCount": 5,
+  "lastUpdated": "2026-02-21T12:13:50.391465",
   "charts": [
     {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000003",
-      "title": "Token Category Market Share",
-      "subtitle": "Percentage of total volume by token category",
-      "chartType": "dual-axis",
-      "order": 2,
-      "isStacked": false,
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000006",
+      "title": "Daily Volume By Token Category",
+      "subtitle": "Daily USD volume split by Stablecoins, SOL, and Other tokens with share %",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
       "dataMapping": {
-        "xAxis": "token_category",
+        "xAxis": "block_date",
         "yAxis": [
           {
             "field": "volume_usd",
             "type": "bar",
             "unit": "$"
-          },
-          {
-            "field": "volume_share_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
           }
         ],
-        "groupBy": ""
+        "groupBy": "token_category"
       },
       "page": "dex-tokens",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "volume_share_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
       "additionalOptions": {
         "enableTimeAggregation": true,
         "filters": {
@@ -51,12 +35,50 @@
               "Q",
               "Y"
             ],
-            "activeValue": "W"
+            "activeValue": "D"
           }
         }
       },
-      "createdAt": "2026-02-10T07:41:47.541302",
-      "updatedAt": "2026-02-10T07:41:47.541302"
+      "createdAt": "2026-02-21T10:53:25.091241",
+      "updatedAt": "2026-02-21T10:53:25.091241"
+    },
+    {
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
+      "title": "Daily Top 5 Tokens By Volume",
+      "subtitle": "Five highest-volume tokens each day by USD trading volume",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "symbol"
+      },
+      "page": "dex-tokens",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-20T12:29:26.816755",
+      "updatedAt": "2026-02-20T12:29:26.816755"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
@@ -149,82 +171,6 @@
       },
       "createdAt": "2026-02-10T07:41:47.541286",
       "updatedAt": "2026-02-21T10:29:37.327469"
-    },
-    {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000006",
-      "title": "Daily Volume By Token Category",
-      "subtitle": "Daily USD volume split by Stablecoins, SOL, and Other tokens with share %",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "token_category"
-      },
-      "page": "dex-tokens",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-21T10:53:25.091241",
-      "updatedAt": "2026-02-21T10:53:25.091241"
-    },
-    {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
-      "title": "Daily Top 5 Tokens By Volume",
-      "subtitle": "Five highest-volume tokens each day by USD trading volume",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "symbol"
-      },
-      "page": "dex-tokens",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-20T12:29:26.816755",
-      "updatedAt": "2026-02-20T12:29:26.816755"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
