@@ -2,7 +2,7 @@
   "pageId": "stablecoins-summary",
   "pageName": "DEX Summary",
   "chartCount": 3,
-  "lastUpdated": "2026-02-18T09:14:48.794322",
+  "lastUpdated": "2026-02-21T14:08:06.591915",
   "charts": [
     {
       "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000001",
@@ -24,21 +24,22 @@
       },
       "page": "stablecoins-summary",
       "createdAt": "2026-02-11T09:13:18.460271",
-      "updatedAt": "2026-02-11T09:13:18.460271"
+      "updatedAt": "2026-02-11T09:13:18.460271",
+      "sqlFile": "supply_and_holders"
     },
     {
       "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000002",
       "title": "Stablecoin Holders",
       "subtitle": "Number of unique holders for each stablecoin",
-      "chartType": "line",
+      "chartType": "bar",
       "order": 2,
-      "isStacked": false,
+      "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
             "field": "holders",
-            "type": "line",
+            "type": "bar",
             "unit": ""
           }
         ],
@@ -46,7 +47,8 @@
       },
       "page": "stablecoins-summary",
       "createdAt": "2026-02-11T09:13:18.460277",
-      "updatedAt": "2026-02-11T09:13:18.460277"
+      "updatedAt": "2026-02-21T14:08:06.591898",
+      "sqlFile": "supply_and_holders"
     },
     {
       "id": "stablecoins-summary-1a2b3c4d-1111-4000-8000-000000000003",
@@ -68,7 +70,8 @@
       },
       "page": "stablecoins-summary",
       "createdAt": "2026-02-11T09:13:18.460280",
-      "updatedAt": "2026-02-11T09:13:18.460280"
+      "updatedAt": "2026-02-11T09:13:18.460280",
+      "sqlFile": "supply_and_holders"
     }
   ]
 }

@@ -88,8 +88,21 @@ fi
 echo "   ✅ Python script completed successfully"
 echo ""
 
-# Step 3: Commit changes (NO PUSH)
-echo "💾 Step 3: Committing changes..."
+# Step 3: Compress chart data
+echo "🗜️  Step 3: Compressing chart data..."
+cd "$PROJECT_DIR/public/temp"
+if [ -f "compress-chart-data.js" ]; then
+    node compress-chart-data.js 2>&1 || {
+        echo "⚠️  compress-chart-data.js failed (non-fatal)"
+    }
+    echo "   ✅ Compression completed"
+else
+    echo "   ⚠️  compress-chart-data.js not found, skipping"
+fi
+echo ""
+
+# Step 4: Commit changes (NO PUSH)
+echo "💾 Step 4: Committing changes..."
 cd "$PROJECT_DIR"
 
 # Check if there are any changes
@@ -141,13 +154,19 @@ echo "   📊 Commit details:"
 git log -1 --oneline
 echo ""
 
+# Step 5: Push current branch to remote 'updates' branch
+echo "📤 Step 5: Pushing to origin updates..."
+git push origin HEAD:updates 2>&1 || {
+    echo "⚠️  git push origin HEAD:updates failed"
+    exit 1
+}
+echo "   ✅ Pushed to origin updates"
+echo ""
 
 
 
-
-
-# Step 4: Restart PM2
-echo "🔄 Step 5: Restarting state-of-solana-dev..."
+# Step 6: Restart PM2
+echo "🔄 Step 6: Restarting state-of-solana-dev..."
 pm2 restart state-of-solana-dev
 
 if [ $? -eq 0 ]; then
@@ -164,7 +183,8 @@ echo ""
 echo "📌 Summary:"
 echo "   ✓ SQL changes pulled"
 echo "   ✓ Data updated via Python script"
-
+echo "   ✓ Chart data compressed"
+echo "   ✓ Changes committed and pushed to origin updates"
 echo "   ✓ Application restarted"
 echo ""
 echo "======================================================================="

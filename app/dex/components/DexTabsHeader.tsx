@@ -49,6 +49,12 @@ export default function DexTabsHeader({ activeTab = "summary" }: DexTabsHeaderPr
       path: "/dex/volume",
       key: "volume",
       icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+    },
+    { 
+      name: "Aggregators", 
+      path: "/dex/aggregators",
+      key: "aggregators",
+      icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10-8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V8z"
     }
   ];
   

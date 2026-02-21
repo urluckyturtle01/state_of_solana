@@ -29,6 +29,10 @@ export interface PublicChartConfig {
   variant?: string;
   icon?: string;
   order?: number;
+  trendConfig?: {
+    valueField: string;
+    label?: string;
+  };
 }
 
 /**
@@ -66,6 +70,7 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     variant,
     icon,
     order,
+    trendConfig,
     
     // Ignore any other fields (safety net)
     ...rest
@@ -97,6 +102,7 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     variant,
     icon,
     order,
+    trendConfig,
   };
 }
 

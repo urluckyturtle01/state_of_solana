@@ -1,0 +1,86 @@
+{
+  "pageId": "stablecoins-dex-activity",
+  "pageName": "DEX Dex Activity",
+  "chartCount": 2,
+  "lastUpdated": "2026-02-21T14:13:01.658771",
+  "charts": [
+    {
+      "id": "stablecoins-dex-activity-b2c3d4e5-2222-4000-8000-000000000001",
+      "title": "Stablecoin DEX Volume",
+      "subtitle": "DEX volume by stablecoin",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "symbol"
+      },
+      "page": "stablecoins-dex-activity",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-21T14:00:20.995012",
+      "updatedAt": "2026-02-21T14:00:20.995012",
+      "sqlFile": "stablecoin_dex_volume"
+    },
+    {
+      "id": "stablecoins-dex-activity-b2c3d4e5-2222-4000-8000-000000000003",
+      "title": "Stablecoin DEX Swaps",
+      "subtitle": "Swap count by stablecoin",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "swaps",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "symbol"
+      },
+      "page": "stablecoins-dex-activity",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-21T14:00:20.995026",
+      "updatedAt": "2026-02-21T14:00:20.995026",
+      "sqlFile": "stablecoin_dex_volume"
+    }
+  ]
+}

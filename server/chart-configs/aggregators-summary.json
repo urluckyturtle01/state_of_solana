@@ -2,68 +2,8 @@
   "pageId": "aggregators-summary",
   "pageName": "DEX Summary",
   "chartCount": 5,
-  "lastUpdated": "2026-02-18T09:00:58.933822",
+  "lastUpdated": "2026-02-21T14:14:48.285983",
   "charts": [
-    {
-      "id": "aggregators-summary-a1b2c3d4-5555-4000-8000-000000000001",
-      "title": "Prop AMM vs Other DEX Volume by Aggregator",
-      "subtitle": "Daily aggregator volume split into Prop AMM and Other DEX (stacked)",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "volume_usd",
-            "type": "bar",
-            "unit": "$"
-          }
-        ],
-        "groupBy": "dex_type"
-      },
-      "page": "aggregators-summary",
-      "createdAt": "2026-02-17T11:32:40.396391",
-      "updatedAt": "2026-02-17T11:32:40.396391"
-    },
-    {
-      "id": "aggregators-summary-a1b2c3d4-4444-4000-8000-000000000001",
-      "title": "Total DEX Volume vs Aggregator Share",
-      "subtitle": "Daily total DEX volume (bar) and aggregator volume as % of total (line)",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_dex_volume_usd",
-            "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "aggregator_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "aggregators-summary",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "total_dex_volume_usd"
-        ],
-        "rightAxisFields": [
-          "aggregator_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "createdAt": "2026-02-17T11:33:58.148560",
-      "updatedAt": "2026-02-17T11:33:58.148560"
-    },
     {
       "id": "aggregators-summary-a1b2c3d4-1111-4000-8000-000000000001",
       "title": "Volume By Aggregator",
@@ -147,6 +87,68 @@
       "page": "aggregators-summary",
       "createdAt": "2026-02-17T10:09:26.627540",
       "updatedAt": "2026-02-17T10:09:26.627540"
+    },
+    {
+      "id": "aggregators-summary-a1b2c3d4-5555-4000-8000-000000000001",
+      "title": "Prop AMM vs Other DEX Volume by Aggregator",
+      "subtitle": "Daily aggregator volume split into Prop AMM and Other DEX (stacked)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "dex_type"
+      },
+      "page": "aggregators-summary",
+      "createdAt": "2026-02-17T11:32:40.396391",
+      "updatedAt": "2026-02-17T11:32:40.396391",
+      "sqlFile": "prop_amm_vs_other_by_aggregator"
+    },
+    {
+      "id": "aggregators-summary-a1b2c3d4-4444-4000-8000-000000000001",
+      "title": "Total DEX Volume vs Aggregator Share",
+      "subtitle": "Daily total DEX volume (bar) and aggregator volume as % of total (line)",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_dex_volume_usd",
+            "type": "bar",
+            "unit": "$"
+          },
+          {
+            "field": "aggregator_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "aggregators-summary",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "total_dex_volume_usd"
+        ],
+        "rightAxisFields": [
+          "aggregator_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "createdAt": "2026-02-17T11:33:58.148560",
+      "updatedAt": "2026-02-17T11:33:58.148560",
+      "sqlFile": "aggregator_volume_share"
     }
   ]
 }

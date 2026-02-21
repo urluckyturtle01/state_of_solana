@@ -624,6 +624,24 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     setValue(final);
     setLoadState('success');
     setError(null);
+    
+    // Calculate trend if trendConfig is present
+    if (chartConfig.trendConfig && chartConfig.trendConfig.valueField === 'auto_calculate') {
+      if (chartData.length >= 2 && rowIndex > 0) {
+        // Compare current row (rowIndex) with previous row (rowIndex - 1)
+        const previousRow = chartData[rowIndex - 1];
+        const previousValue = Number(previousRow[fieldName]);
+        
+        if (!isNaN(previousValue) && previousValue !== 0) {
+          const percentChange = ((num - previousValue) / Math.abs(previousValue)) * 100;
+          setTrend({
+            value: parseFloat(percentChange.toFixed(1)),
+            label: chartConfig.trendConfig.label || 'vs. previous period'
+          });
+          console.log('🟢 TREND CALCULATED:', percentChange.toFixed(1) + '%');
+        }
+      }
+    }
 
   }, [chartData, chartConfig]);
 

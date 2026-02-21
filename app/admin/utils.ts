@@ -500,11 +500,12 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
       if (data.charts && Array.isArray(data.charts)) {
         console.log(`✅ Loaded ${data.charts.length} charts from temp file for ${pageId}`);
         return data.charts.sort((a: any, b: any) => {
-          const positionA = a.position ?? 999999;
-          const positionB = b.position ?? 999999;
+          // Try 'order' first (from YAML index), then 'position', then default to high number
+          const orderA = a.order ?? a.position ?? 999999;
+          const orderB = b.order ?? b.position ?? 999999;
           
-          if (positionA !== positionB) {
-            return positionA - positionB;
+          if (orderA !== orderB) {
+            return orderA - orderB;
           }
           
           const dateA = new Date(a.createdAt || '').getTime();

@@ -1,0 +1,86 @@
+{
+  "pageId": "dex-aggregators",
+  "pageName": "DEX Aggregators",
+  "chartCount": 2,
+  "lastUpdated": "2026-02-21T14:08:05.763207",
+  "charts": [
+    {
+      "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000001",
+      "title": "Volume By Aggregator",
+      "subtitle": "DEX trading volume by aggregator (Jupiter, OKX, Titan, etc.)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "dex-aggregators",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-21T14:08:05.763190",
+      "updatedAt": "2026-02-21T14:08:05.763190",
+      "sqlFile": "volume_and_trades_by_aggregator"
+    },
+    {
+      "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000002",
+      "title": "Swaps By Aggregator",
+      "subtitle": "DEX trade count by aggregator",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "swaps",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "dex-aggregators",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-21T14:08:05.763201",
+      "updatedAt": "2026-02-21T14:08:05.763201",
+      "sqlFile": "volume_and_trades_by_aggregator"
+    }
+  ]
+}

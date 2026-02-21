@@ -524,18 +524,27 @@ class DexDataFetcher:
             chart_config["updatedAt"] = now_iso
             chart_configs.append(chart_config)
         
-        # Merge: Keep existing charts NOT from this SQL, add charts from this SQL
+        # Merge: Keep existing charts NOT from this SQL, add charts from this SQL.
+        # Remove charts that belong to this SQL but no longer exist in the YAML.
         merged_config_charts = []
-        
+
         for chart_id, chart in existing_charts_map.items():
-            if chart_id not in chart_ids_this_sql:
-                # Add page property if missing
-                if 'page' not in chart:
-                    chart['page'] = page_id
-                merged_config_charts.append(chart)
-        
+            chart_sql = chart.get('sqlFile')
+            # Drop if this chart belongs to this SQL and is no longer in the YAML
+            if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
+                continue  # removed from YAML - do not keep
+            if chart_id in chart_ids_this_sql:
+                continue  # we're replacing it with chart_configs below
+            # Add page property if missing
+            if 'page' not in chart:
+                chart['page'] = page_id
+            merged_config_charts.append(chart)
+
+        # Add charts from this SQL (current YAML); ensure sqlFile set for future removal detection
+        for c in chart_configs:
+            c['sqlFile'] = sql_name
         merged_config_charts.extend(chart_configs)
-        
+
         # Save merged config
         folder_display = folder.replace('_', ' ').title()
         config_data = {
@@ -648,17 +657,23 @@ class DexDataFetcher:
             except:
                 pass
         
-        # Merge: Keep existing charts not from this SQL, add/update charts from this SQL
+        # Merge: Keep existing charts not from this SQL, add/update charts from this SQL.
+        # Remove charts that belong to this SQL but no longer exist in the YAML.
         chart_ids_this_sql = {c['chartId'] for c in charts_data}
         merged_charts_data = []
-        
-        # Keep existing charts that are NOT from this SQL file
+
+        # Keep existing charts that are either from another SQL file, or from this SQL and still in YAML
         for chart in existing_page_data.get('charts', []):
             chart_id = chart.get('chartId', chart.get('id'))
-            if chart_id not in chart_ids_this_sql:
-                merged_charts_data.append(chart)
-        
-        # Add charts from this SQL file
+            chart_sql = chart.get('sqlFile')
+            # Drop if this chart belongs to this SQL and is no longer in the YAML
+            if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
+                continue  # removed from YAML - do not keep
+            if chart_id in chart_ids_this_sql:
+                continue  # we're replacing it with charts_data below
+            merged_charts_data.append(chart)
+
+        # Add charts from this SQL file (current YAML)
         merged_charts_data.extend(charts_data)
         
         # Save merged data
@@ -835,19 +850,27 @@ class DexDataFetcher:
             
             chart_configs.append(chart_config)
         
-        # Merge all configs (from this SQL + existing from other SQLs)
+        # Merge all configs (from this SQL + existing from other SQLs).
+        # Remove charts that belong to this SQL but no longer exist in the YAML.
         chart_ids_this_sql = {chart['chartId'] for chart in charts_data}
         merged_config_charts = []
-        
-        # Keep existing charts that are NOT from this SQL file
+
+        # Keep existing charts that are either from another SQL file, or from this SQL and still in YAML
         for chart_id, chart in existing_charts_map.items():
-            if chart_id not in chart_ids_this_sql:
-                # Add page property if missing
-                if 'page' not in chart:
-                    chart['page'] = page_id
-                merged_config_charts.append(chart)
-        
-        # Add charts from this SQL file
+            chart_sql = chart.get('sqlFile')
+            # Drop if this chart belongs to this SQL and is no longer in the YAML
+            if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
+                continue  # removed from YAML - do not keep
+            if chart_id in chart_ids_this_sql:
+                continue  # we're replacing it with chart_configs below
+            # Add page property if missing
+            if 'page' not in chart:
+                chart['page'] = page_id
+            merged_config_charts.append(chart)
+
+        # Add charts from this SQL file (current YAML), with sqlFile for future removal detection
+        for c in chart_configs:
+            c['sqlFile'] = sql_name
         merged_config_charts.extend(chart_configs)
         
         # Generate folder display name
@@ -1145,6 +1168,64 @@ class DexDataFetcher:
                     print(f"   ⚠️  Query returned 0 rows", flush=True)
                 else:
                     continue
+        
+        # After processing all SQLs: remove charts that no longer exist in any YAML (orphans)
+        self.prune_orphan_charts(page_id, folder_path)
+    
+    def prune_orphan_charts(self, page_id, folder_path):
+        """Remove from config and data any chart whose id is not in any YAML in this folder."""
+        valid_ids = set()
+        for config_file in folder_path.glob("*.yaml"):
+            try:
+                with open(config_file) as f:
+                    config = yaml.safe_load(f)
+                if not config:
+                    continue
+                chart_list = config.get('charts', [config] if 'id' in config else [])
+                for ch in chart_list:
+                    cid = ch.get('id')
+                    if cid:
+                        valid_ids.add(f"{page_id}-{cid}")
+            except Exception as e:
+                print(f"   ⚠️  Error reading {config_file.name}: {e}", flush=True)
+        if not valid_ids:
+            return
+        # Prune config
+        config_file = self.config_dir / f"{page_id}.json"
+        if config_file.exists():
+            try:
+                with open(config_file) as f:
+                    cfg = json.load(f)
+                charts = cfg.get('charts', [])
+                kept = [c for c in charts if c.get('id') in valid_ids]
+                removed = len(charts) - len(kept)
+                if removed > 0:
+                    cfg['charts'] = kept
+                    cfg['chartCount'] = len(kept)
+                    cfg['lastUpdated'] = datetime.now().isoformat()
+                    with open(config_file, 'w') as f:
+                        json.dump(cfg, f, indent=2)
+                    print(f"   🗑️  Pruned {removed} orphan chart(s) from config", flush=True)
+            except Exception as e:
+                print(f"   ⚠️  Error pruning config: {e}", flush=True)
+        # Prune data
+        data_file = self.data_dir / f"{page_id}.json"
+        if data_file.exists():
+            try:
+                with open(data_file) as f:
+                    data = json.load(f)
+                charts = data.get('charts', [])
+                kept = [c for c in charts if (c.get('chartId') or c.get('id')) in valid_ids]
+                removed = len(charts) - len(kept)
+                if removed > 0:
+                    data['charts'] = kept
+                    data['chartCount'] = len(kept)
+                    data['lastUpdated'] = datetime.now().isoformat()
+                    with open(data_file, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"   🗑️  Pruned {removed} orphan chart(s) from data", flush=True)
+            except Exception as e:
+                print(f"   ⚠️  Error pruning data: {e}", flush=True)
     
     def run(self):
         """Run the fetcher for all folders."""
@@ -1162,11 +1243,11 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['tokens'],
-            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume'],
-            #'stablecoins': ['summary', 'mint_burns', 'transfers'],
+            'dex-trades': ['traders', 'aggregators'],
+            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
+            'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
-            #'aggregators': ['summary']
+            'aggregators': ['summary', 'traders']
         }
         
         for category, folders in categories.items():
