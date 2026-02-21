@@ -2,7 +2,7 @@
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
   "chartCount": 5,
-  "lastUpdated": "2026-02-20T13:11:12.961921",
+  "lastUpdated": "2026-02-21T10:31:19.507938",
   "charts": [
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000003",
@@ -59,40 +59,24 @@
       "updatedAt": "2026-02-10T07:41:47.541302"
     },
     {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
-      "title": "Top Token Pairs",
-      "subtitle": "Top trading pairs by cumulative volume",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
+      "title": "Daily Top 5 Tokens By Volume",
+      "subtitle": "Five highest-volume tokens each day by USD trading volume",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
       "dataMapping": {
-        "xAxis": "pool",
+        "xAxis": "block_date",
         "yAxis": [
           {
             "field": "volume_usd",
             "type": "bar",
             "unit": "$"
-          },
-          {
-            "field": "trade_count",
-            "type": "line",
-            "unit": "",
-            "rightAxis": true
           }
         ],
-        "groupBy": ""
+        "groupBy": "symbol"
       },
       "page": "dex-tokens",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "trade_count"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
       "additionalOptions": {
         "enableTimeAggregation": true,
         "filters": {
@@ -105,12 +89,12 @@
               "Q",
               "Y"
             ],
-            "activeValue": "W"
+            "activeValue": "D"
           }
         }
       },
-      "createdAt": "2026-02-04T10:26:21.729624",
-      "updatedAt": "2026-02-07T06:00:44.855643"
+      "createdAt": "2026-02-20T12:29:26.816755",
+      "updatedAt": "2026-02-20T12:29:26.816755"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
@@ -168,39 +152,23 @@
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
-      "title": "Daily Volume By Token Category",
-      "subtitle": "Daily USD volume split by Stablecoins, SOL, and Other tokens with share %",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": true,
+      "title": "Distinct New Tokens Per Day",
+      "subtitle": "Number of unique tokens first traded each day",
+      "chartType": "bar",
+      "order": 5,
+      "isStacked": false,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "volume_usd",
+            "field": "distinct_new_tokens",
             "type": "bar",
-            "unit": "$"
-          },
-          {
-            "field": "volume_share_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
+            "unit": ""
           }
         ],
-        "groupBy": "token_category"
+        "groupBy": ""
       },
       "page": "dex-tokens",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "volume_usd"
-        ],
-        "rightAxisFields": [
-          "volume_share_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
       "additionalOptions": {
         "enableTimeAggregation": true,
         "filters": {
@@ -218,14 +186,14 @@
         }
       },
       "createdAt": "2026-02-10T07:41:47.541286",
-      "updatedAt": "2026-02-20T13:09:57.875224"
+      "updatedAt": "2026-02-21T10:29:37.327469"
     },
     {
-      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
-      "title": "Daily Top 5 Tokens By Volume",
-      "subtitle": "Five highest-volume tokens each day by USD trading volume",
+      "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
+      "title": "Daily Top 5 Token Pairs",
+      "subtitle": "Highest-volume trading pairs each day ranked by USD volume",
       "chartType": "bar",
-      "order": 2,
+      "order": 3,
       "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
@@ -236,7 +204,7 @@
             "unit": "$"
           }
         ],
-        "groupBy": "symbol"
+        "groupBy": "category"
       },
       "page": "dex-tokens",
       "additionalOptions": {
@@ -255,8 +223,8 @@
           }
         }
       },
-      "createdAt": "2026-02-20T12:29:26.816755",
-      "updatedAt": "2026-02-20T12:29:26.816755"
+      "createdAt": "2026-02-04T10:26:21.729624",
+      "updatedAt": "2026-02-21T10:31:19.507918"
     }
   ]
 }
