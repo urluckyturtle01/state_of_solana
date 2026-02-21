@@ -1,53 +1,9 @@
 {
   "pageId": "dex-traders",
   "pageName": "DEX Traders",
-  "chartCount": 6,
-  "lastUpdated": "2026-02-16T13:54:15.059685",
+  "chartCount": 8,
+  "lastUpdated": "2026-02-21T12:42:33.722566",
   "charts": [
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000002",
-      "title": "Traders By Frequency",
-      "subtitle": "Daily traders segmented by transaction frequency buckets",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "trader_count",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "frequency_bucket"
-      },
-      "page": "dex-traders",
-      "createdAt": "2026-02-07T10:44:12.911322",
-      "updatedAt": "2026-02-07T10:44:12.911322"
-    },
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000003",
-      "title": "Fees By Frequency Bucket",
-      "subtitle": "Total fees paid by traders in each frequency bucket",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_fees_sol",
-            "type": "bar",
-            "unit": "SOL"
-          }
-        ],
-        "groupBy": "frequency_bucket"
-      },
-      "page": "dex-traders",
-      "createdAt": "2026-02-07T10:44:12.911329",
-      "updatedAt": "2026-02-07T10:44:12.911329"
-    },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000006",
       "title": "Traders Jito Usage",
@@ -115,28 +71,6 @@
       "updatedAt": "2026-02-07T09:13:02.135650"
     },
     {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000005",
-      "title": "Traders By Program",
-      "subtitle": "Daily unique traders by DEX program",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "active_traders",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-traders",
-      "createdAt": "2026-02-07T09:13:02.158639",
-      "updatedAt": "2026-02-07T09:13:02.158639"
-    },
-    {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
       "title": "Daily Active Traders",
       "subtitle": "Daily unique traders with growth metrics and cumulative total",
@@ -179,6 +113,148 @@
       },
       "createdAt": "2026-02-07T09:19:48.267112",
       "updatedAt": "2026-02-07T09:19:48.267112"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000005",
+      "title": "Active Traders By Program",
+      "subtitle": "Daily unique traders per DEX program",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-traders",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T09:13:02.158639",
+      "updatedAt": "2026-02-21T12:40:35.712820"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000008",
+      "title": "New Traders By Program",
+      "subtitle": "Daily first-time traders per DEX program",
+      "chartType": "bar",
+      "order": 4,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "new_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-traders",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-21T12:40:35.712838",
+      "updatedAt": "2026-02-21T12:40:35.712838"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000009",
+      "title": "Cumulative New Traders By Program",
+      "subtitle": "Running total of first-time traders per DEX program",
+      "chartType": "bar",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_new_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-21T12:40:35.712844",
+      "updatedAt": "2026-02-21T12:40:35.712844"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000002",
+      "title": "Traders By Frequency",
+      "subtitle": "Daily traders segmented by transaction frequency buckets",
+      "chartType": "bar",
+      "order": 4,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "trader_count",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "frequency_bucket"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T10:44:12.911322",
+      "updatedAt": "2026-02-07T10:44:12.911322"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000003",
+      "title": "Fees By Frequency Bucket",
+      "subtitle": "Total fees paid by traders in each frequency bucket",
+      "chartType": "bar",
+      "order": 5,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "total_fees_sol",
+            "type": "bar",
+            "unit": "SOL"
+          }
+        ],
+        "groupBy": "frequency_bucket"
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-07T10:44:12.911329",
+      "updatedAt": "2026-02-07T10:44:12.911329"
     }
   ]
 }
