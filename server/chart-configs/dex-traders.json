@@ -1,119 +1,9 @@
 {
   "pageId": "dex-traders",
   "pageName": "DEX Traders",
-  "chartCount": 8,
-  "lastUpdated": "2026-02-21T12:42:33.722566",
+  "chartCount": 7,
+  "lastUpdated": "2026-02-21T13:53:23.339948",
   "charts": [
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000006",
-      "title": "Traders Jito Usage",
-      "subtitle": "Daily traders using Jito tips vs non-Jito traders",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "jito_traders",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "non_jito_traders",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "jito_traders_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-traders",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "jito_traders",
-          "non_jito_traders"
-        ],
-        "rightAxisFields": [
-          "jito_traders_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "createdAt": "2026-02-04T09:28:02.875295",
-      "updatedAt": "2026-02-07T06:34:18.217637"
-    },
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000004",
-      "title": "Traders By Category",
-      "subtitle": "Daily unique traders by protocol category",
-      "chartType": "bar",
-      "order": 1,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "active_traders",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-traders",
-      "createdAt": "2026-02-07T09:13:02.135650",
-      "updatedAt": "2026-02-07T09:13:02.135650"
-    },
-    {
-      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
-      "title": "Daily Active Traders",
-      "subtitle": "Daily unique traders with growth metrics and cumulative total",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "active_traders",
-            "type": "bar",
-            "unit": ""
-          },
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          },
-          {
-            "field": "daily_growth_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-traders",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "active_traders",
-          "cumulative_traders"
-        ],
-        "rightAxisFields": [
-          "daily_growth_pct"
-        ],
-        "leftAxisType": "line",
-        "rightAxisType": "line"
-      },
-      "createdAt": "2026-02-07T09:19:48.267112",
-      "updatedAt": "2026-02-07T09:19:48.267112"
-    },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000005",
       "title": "Active Traders By Program",
@@ -150,7 +40,8 @@
         }
       },
       "createdAt": "2026-02-07T09:13:02.158639",
-      "updatedAt": "2026-02-21T12:40:35.712820"
+      "updatedAt": "2026-02-21T12:40:35.712820",
+      "sqlFile": "traders_by_program"
     },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000008",
@@ -188,7 +79,8 @@
         }
       },
       "createdAt": "2026-02-21T12:40:35.712838",
-      "updatedAt": "2026-02-21T12:40:35.712838"
+      "updatedAt": "2026-02-21T12:40:35.712838",
+      "sqlFile": "traders_by_program"
     },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000009",
@@ -210,7 +102,8 @@
       },
       "page": "dex-traders",
       "createdAt": "2026-02-21T12:40:35.712844",
-      "updatedAt": "2026-02-21T12:40:35.712844"
+      "updatedAt": "2026-02-21T12:40:35.712844",
+      "sqlFile": "traders_by_program"
     },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000002",
@@ -232,7 +125,8 @@
       },
       "page": "dex-traders",
       "createdAt": "2026-02-07T10:44:12.911322",
-      "updatedAt": "2026-02-07T10:44:12.911322"
+      "updatedAt": "2026-02-07T10:44:12.911322",
+      "sqlFile": "traders_by_frequency_and_fees"
     },
     {
       "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000003",
@@ -254,7 +148,86 @@
       },
       "page": "dex-traders",
       "createdAt": "2026-02-07T10:44:12.911329",
-      "updatedAt": "2026-02-07T10:44:12.911329"
+      "updatedAt": "2026-02-07T10:44:12.911329",
+      "sqlFile": "traders_by_frequency_and_fees"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000001",
+      "title": "Daily Active Traders",
+      "subtitle": "Daily unique traders with new trader % on right axis",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          },
+          {
+            "field": "new_trader_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-traders",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "active_traders"
+        ],
+        "rightAxisFields": [
+          "new_trader_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-07T09:19:48.267112",
+      "updatedAt": "2026-02-21T12:46:18.091702",
+      "sqlFile": "daily_active_traders"
+    },
+    {
+      "id": "dex-traders-c3d4e5f6-3333-4000-8000-000000000007",
+      "title": "Cumulative New Traders",
+      "subtitle": "Running total of traders making their first-ever DEX trade",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_new_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-traders",
+      "createdAt": "2026-02-21T12:46:18.091721",
+      "updatedAt": "2026-02-21T12:46:18.091721",
+      "sqlFile": "daily_active_traders"
     }
   ]
 }
