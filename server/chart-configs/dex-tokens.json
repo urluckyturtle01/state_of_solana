@@ -2,7 +2,7 @@
   "pageId": "dex-tokens",
   "pageName": "DEX Tokens",
   "chartCount": 5,
-  "lastUpdated": "2026-02-21T12:13:50.391465",
+  "lastUpdated": "2026-02-22T04:28:53.539487",
   "charts": [
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000006",
@@ -40,7 +40,8 @@
         }
       },
       "createdAt": "2026-02-21T10:53:25.091241",
-      "updatedAt": "2026-02-21T10:53:25.091241"
+      "updatedAt": "2026-02-21T10:53:25.091241",
+      "sqlFile": "stablecoin_volume"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000004",
@@ -78,7 +79,8 @@
         }
       },
       "createdAt": "2026-02-20T12:29:26.816755",
-      "updatedAt": "2026-02-20T12:29:26.816755"
+      "updatedAt": "2026-02-20T12:29:26.816755",
+      "sqlFile": "top_tokens_by_volume"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000001",
@@ -132,7 +134,8 @@
         }
       },
       "createdAt": "2026-02-12T13:23:40.857147",
-      "updatedAt": "2026-02-20T12:34:04.391576"
+      "updatedAt": "2026-02-20T12:34:04.391576",
+      "sqlFile": "new_token_velocity"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000002",
@@ -170,11 +173,12 @@
         }
       },
       "createdAt": "2026-02-10T07:41:47.541286",
-      "updatedAt": "2026-02-21T10:29:37.327469"
+      "updatedAt": "2026-02-21T10:29:37.327469",
+      "sqlFile": "new_token_velocity"
     },
     {
       "id": "dex-tokens-e5f6a7b8-5555-4000-8000-000000000005",
-      "title": "Daily Top Token Pairs",
+      "title": "Daily Top 5 Token Pairs",
       "subtitle": "Highest-volume trading pairs each day ranked by USD volume",
       "chartType": "bar",
       "order": 3,
@@ -208,7 +212,8 @@
         }
       },
       "createdAt": "2026-02-04T10:26:21.729624",
-      "updatedAt": "2026-02-21T10:31:19.507918"
+      "updatedAt": "2026-02-22T04:28:53.539477",
+      "sqlFile": "top_token_pairs"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-02-19T08:17:08.544163",
+  "lastUpdated": "2026-02-22T04:25:08.096475",
   "charts": [
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
@@ -35,12 +35,13 @@
               "Q",
               "Y"
             ],
-            "activeValue": "W"
+            "activeValue": "D"
           }
         }
       },
       "createdAt": "2026-02-03T14:34:27.142463",
-      "updatedAt": "2026-02-07T06:25:53.987909"
+      "updatedAt": "2026-02-22T04:25:03.699174",
+      "sqlFile": "cu_by_dex"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
@@ -73,12 +74,13 @@
               "Q",
               "Y"
             ],
-            "activeValue": "W"
+            "activeValue": "D"
           }
         }
       },
       "createdAt": "2026-02-03T14:34:27.142476",
-      "updatedAt": "2026-02-07T06:46:08.094007"
+      "updatedAt": "2026-02-22T04:25:05.251309",
+      "sqlFile": "cu_by_category"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
@@ -133,12 +135,13 @@
               "Q",
               "Y"
             ],
-            "activeValue": "W"
+            "activeValue": "D"
           }
         }
       },
       "createdAt": "2026-02-03T14:34:27.142482",
-      "updatedAt": "2026-02-10T08:53:44.972514"
+      "updatedAt": "2026-02-22T04:25:06.675156",
+      "sqlFile": "dex_cu_share"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
@@ -165,7 +168,8 @@
       },
       "page": "dex-compute",
       "createdAt": "2026-02-07T11:11:09.835869",
-      "updatedAt": "2026-02-07T11:11:09.835869"
+      "updatedAt": "2026-02-07T11:11:09.835869",
+      "sqlFile": "avg_cu_per_trade"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
@@ -192,7 +196,8 @@
       },
       "page": "dex-compute",
       "createdAt": "2026-02-07T11:11:09.835889",
-      "updatedAt": "2026-02-07T11:11:09.835889"
+      "updatedAt": "2026-02-07T11:11:09.835889",
+      "sqlFile": "avg_cu_per_trade"
     }
   ]
 }

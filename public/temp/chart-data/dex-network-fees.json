@@ -1,7 +1,7 @@
 {
   "pageId": "dex-network-fees",
   "chartCount": 8,
-  "lastUpdated": "2026-02-19T08:17:14.116556",
+  "lastUpdated": "2026-02-22T04:25:13.383594",
   "charts": [
     {
       "chartId": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000007",
@@ -2904,6 +2904,27 @@
           "p50_priority_sol": 6e-06,
           "p99_priority_sol": 0.005711,
           "p90_priority_sol": 0.000899
+        },
+        {
+          "priority_trade_count": 12044150,
+          "block_date": "2026-02-19",
+          "p50_priority_sol": 5e-06,
+          "p99_priority_sol": 0.005026,
+          "p90_priority_sol": 0.000675
+        },
+        {
+          "priority_trade_count": 12626926,
+          "block_date": "2026-02-20",
+          "p50_priority_sol": 7e-06,
+          "p99_priority_sol": 0.005411,
+          "p90_priority_sol": 0.000833
+        },
+        {
+          "priority_trade_count": 12911399,
+          "block_date": "2026-02-21",
+          "p50_priority_sol": 4e-06,
+          "p99_priority_sol": 0.004823,
+          "p90_priority_sol": 0.000564
         }
       ],
       "sqlFile": "priority_distribution",
@@ -4310,6 +4331,24 @@
           "daily_network_fee_sol": 14595.469,
           "daily_dex_fee_sol": 9262.459,
           "daily_dex_fee_pct": 63.46
+        },
+        {
+          "block_date": "2026-02-19",
+          "daily_network_fee_sol": 12048.1657,
+          "daily_dex_fee_sol": 7573.8414,
+          "daily_dex_fee_pct": 62.86
+        },
+        {
+          "block_date": "2026-02-20",
+          "daily_network_fee_sol": 13884.3752,
+          "daily_dex_fee_sol": 9016.1079,
+          "daily_dex_fee_pct": 64.94
+        },
+        {
+          "block_date": "2026-02-21",
+          "daily_network_fee_sol": 11633.5202,
+          "daily_dex_fee_sol": 7434.6456,
+          "daily_dex_fee_pct": 63.91
         }
       ],
       "sqlFile": "dex_fee_share",
@@ -5716,6 +5755,24 @@
           "daily_dex_jito_pct": 22.68,
           "daily_network_jito_sol": 2178.3566,
           "daily_dex_jito_sol": 493.9448
+        },
+        {
+          "block_date": "2026-02-19",
+          "daily_dex_jito_pct": 24.49,
+          "daily_network_jito_sol": 1808.5194,
+          "daily_dex_jito_sol": 442.9566
+        },
+        {
+          "block_date": "2026-02-20",
+          "daily_dex_jito_pct": 25.03,
+          "daily_network_jito_sol": 2056.3104,
+          "daily_dex_jito_sol": 514.7734
+        },
+        {
+          "block_date": "2026-02-21",
+          "daily_dex_jito_pct": 28.33,
+          "daily_network_jito_sol": 1815.6754,
+          "daily_dex_jito_sol": 514.4366
         }
       ],
       "sqlFile": "dex_fee_share",
@@ -7122,6 +7179,24 @@
           "cum_dex_fee_pct": 63.46,
           "cum_dex_fee_sol": 9262.459,
           "cum_network_fee_sol": 14595.469
+        },
+        {
+          "block_date": "2026-02-19",
+          "cum_dex_fee_pct": 62.86,
+          "cum_dex_fee_sol": 7573.8414,
+          "cum_network_fee_sol": 12048.1657
+        },
+        {
+          "block_date": "2026-02-20",
+          "cum_dex_fee_pct": 63.97,
+          "cum_dex_fee_sol": 16589.9493,
+          "cum_network_fee_sol": 25932.5409
+        },
+        {
+          "block_date": "2026-02-21",
+          "cum_dex_fee_pct": 63.95,
+          "cum_dex_fee_sol": 24024.5949,
+          "cum_network_fee_sol": 37566.061
         }
       ],
       "sqlFile": "dex_fee_share",
@@ -8528,6 +8603,24 @@
           "cum_dex_jito_pct": 22.68,
           "cum_network_jito_sol": 2178.3566,
           "cum_dex_jito_sol": 493.9448
+        },
+        {
+          "block_date": "2026-02-19",
+          "cum_dex_jito_pct": 24.49,
+          "cum_network_jito_sol": 1808.5194,
+          "cum_dex_jito_sol": 442.9566
+        },
+        {
+          "block_date": "2026-02-20",
+          "cum_dex_jito_pct": 24.78,
+          "cum_network_jito_sol": 3864.8299,
+          "cum_dex_jito_sol": 957.73
+        },
+        {
+          "block_date": "2026-02-21",
+          "cum_dex_jito_pct": 25.92,
+          "cum_network_jito_sol": 5680.5052,
+          "cum_dex_jito_sol": 1472.1666
         }
       ],
       "sqlFile": "dex_fee_share",
@@ -11020,6 +11113,24 @@
           "jito_trades": 1379242,
           "base_only_trades": 9631329,
           "priority_trades": 11436901
+        },
+        {
+          "block_date": "2026-02-19",
+          "jito_trades": 1296385,
+          "base_only_trades": 8855553,
+          "priority_trades": 11402834
+        },
+        {
+          "block_date": "2026-02-20",
+          "jito_trades": 1578521,
+          "base_only_trades": 9346263,
+          "priority_trades": 12007294
+        },
+        {
+          "block_date": "2026-02-21",
+          "jito_trades": 1575691,
+          "base_only_trades": 9903687,
+          "priority_trades": 12189719
         }
       ],
       "sqlFile": "trades_by_fee_type",
@@ -13512,6 +13623,24 @@
           "priority_pct": 50.95,
           "base_only_pct": 42.91,
           "jito_pct": 6.14
+        },
+        {
+          "block_date": "2026-02-19",
+          "priority_pct": 52.9,
+          "base_only_pct": 41.08,
+          "jito_pct": 6.01
+        },
+        {
+          "block_date": "2026-02-20",
+          "priority_pct": 52.36,
+          "base_only_pct": 40.76,
+          "jito_pct": 6.88
+        },
+        {
+          "block_date": "2026-02-21",
+          "priority_pct": 51.5,
+          "base_only_pct": 41.84,
+          "jito_pct": 6.66
         }
       ],
       "sqlFile": "trades_by_fee_type",
@@ -16418,6 +16547,27 @@
           "p90_jito_sol": 0.000254,
           "p50_jito_sol": 9e-06,
           "p99_jito_sol": 0.007511
+        },
+        {
+          "block_date": "2026-02-19",
+          "jito_trade_count": 1296385,
+          "p90_jito_sol": 0.000245,
+          "p50_jito_sol": 1e-05,
+          "p99_jito_sol": 0.006868
+        },
+        {
+          "block_date": "2026-02-20",
+          "jito_trade_count": 1578521,
+          "p90_jito_sol": 0.000225,
+          "p50_jito_sol": 8e-06,
+          "p99_jito_sol": 0.005497
+        },
+        {
+          "block_date": "2026-02-21",
+          "jito_trade_count": 1575691,
+          "p90_jito_sol": 0.000135,
+          "p50_jito_sol": 2e-06,
+          "p99_jito_sol": 0.004058
         }
       ],
       "sqlFile": "jito_distribution",

@@ -206,28 +206,26 @@ class DexDataFetcher:
             with open(data_file) as f:
                 data = json.load(f)
             
-            # Find the latest date across all charts
+            # Find the latest date across all charts (data may be newest-first or oldest-first)
             latest_date = None
             for chart in data.get('charts', []):
                 chart_data = chart.get('data', [])
                 if not chart_data:
                     continue
-                
-                # Get the last date in this chart's data
-                last_row = chart_data[-1]
-                date_str = last_row.get('date') or last_row.get('block_date')
-                if date_str:
-                    date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                    if latest_date is None or date_obj > latest_date:
-                        latest_date = date_obj
-            
+                date_col = 'block_date' if any(r.get('block_date') for r in chart_data) else 'date'
+                for row in chart_data:
+                    date_str = row.get(date_col)
+                    if date_str:
+                        date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                        if latest_date is None or date_obj > latest_date:
+                            latest_date = date_obj
             return latest_date
         except Exception as e:
             print(f"⚠️  Error reading last date: {e}", flush=True)
             return None
     
     def get_chart_last_date(self, page_id, chart_id):
-        """Get the last date for a specific chart."""
+        """Get the latest (most recent) date in this chart's data."""
         data_file = self.data_dir / f"{page_id}.json"
         if not data_file.exists():
             return None
@@ -236,19 +234,21 @@ class DexDataFetcher:
             with open(data_file) as f:
                 data = json.load(f)
             
-            # Find this specific chart
             for chart in data.get('charts', []):
                 if chart.get('chartId', chart.get('id')) == chart_id:
                     chart_data = chart.get('data', [])
                     if not chart_data:
                         return None
-                    
-                    # Get the last date in this chart's data
-                    last_row = chart_data[-1]
-                    date_str = last_row.get('date') or last_row.get('block_date')
-                    if date_str:
-                        return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-            
+                    # Data may be sorted newest-first or oldest-first; use max date
+                    latest = None
+                    date_col = 'block_date' if any(r.get('block_date') for r in chart_data) else 'date'
+                    for row in chart_data:
+                        date_str = row.get(date_col)
+                        if date_str:
+                            dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                            if latest is None or dt > latest:
+                                latest = dt
+                    return latest
             return None
         except Exception as e:
             print(f"⚠️  Error reading chart last date: {e}", flush=True)
@@ -275,24 +275,25 @@ class DexDataFetcher:
         
         date_str = fetch_from_date.strftime('%Y-%m-%d')
         
-        # Check if SQL already has a hardcoded date filter - REPLACE it with incremental date
+        import re
+        
+        # 1) Replace hardcoded date: block_date >= DATE '2024-01-01'
         if 'block_date >=' in sql.lower() or 't.block_date >=' in sql.lower():
-            # Replace the hardcoded date with incremental date
-            import re
-            # Pattern: block_date >= DATE '2024-01-01' or block_date >= '2024-01-01'
-            pattern = r"(block_date\s*>=\s*(?:DATE\s*'|'))\d{4}-\d{2}-\d{2}(')"
-            replacement = rf"\g<1>{date_str}\g<2>"
-            modified_sql = re.sub(pattern, replacement, sql, flags=re.IGNORECASE)
-            
+            literal_pattern = r"(\w*\.?block_date\s*>=\s*(?:DATE\s*'|'))\d{4}-\d{2}-\d{2}(')"
+            modified_sql = re.sub(literal_pattern, rf"\g<1>{date_str}\g<2>", sql, flags=re.IGNORECASE)
             if modified_sql != sql:
                 return modified_sql, True
-            else:
-                # Pattern didn't match, return original (let SQL handle it)
-                return sql, True
         
-        # Otherwise, add WHERE clause for incremental fetch
+        # 2) Replace INTERVAL-based filter so we only fetch from fetch_from_date (all occurrences)
+        # e.g. t.block_date >= CURRENT_DATE - INTERVAL '6' MONTH  ->  t.block_date >= DATE 'date_str'
+        interval_pattern = r"(\w*\.?block_date\s*>=\s*)CURRENT_DATE\s*-\s*INTERVAL\s*'[^']+'\s*(?:DAY|MONTH|WEEK)S?"
+        interval_replacement = rf"\g<1>DATE '{date_str}'"
+        modified_sql = re.sub(interval_pattern, interval_replacement, sql, flags=re.IGNORECASE)
+        if modified_sql != sql:
+            return modified_sql, True
+        
+        # 3) Otherwise add WHERE clause for incremental fetch
         if 'WHERE' in sql.upper():
-            # Add AND condition
             sql = sql.replace('WHERE', f"WHERE block_date >= DATE '{date_str}' AND", 1)
         else:
             # Add WHERE clause before GROUP BY or ORDER BY
@@ -931,22 +932,23 @@ class DexDataFetcher:
             with open(data_file) as f:
                 data = json.load(f)
             
-            # Find this chart's data by ID and get last date
+            # Find this chart's data by ID and get latest date (data may be newest-first or oldest-first)
             for chart in data.get('charts', []):
                 if chart.get('chartId', chart.get('id')) == chart_id:
                     chart_data = chart.get('data', [])
                     if not chart_data:
                         return False
-                    
-                    # Get the last date in the data
-                    last_row = chart_data[-1]
-                    date_str = last_row.get('date') or last_row.get('block_date')
-                    if date_str:
-                        last_date = datetime.fromisoformat(date_str.replace('Z', '+00:00')).date()
+                    date_col = 'block_date' if any(r.get('block_date') for r in chart_data) else 'date'
+                    latest = None
+                    for row in chart_data:
+                        date_str = row.get(date_col)
+                        if date_str:
+                            dt = datetime.fromisoformat(date_str.replace('Z', '+00:00')).date()
+                            if latest is None or dt > latest:
+                                latest = dt
+                    if latest is not None:
                         yesterday = (datetime.now() - timedelta(days=1)).date()
-                        
-                        # Data is fresh if last date is yesterday or today
-                        return last_date >= yesterday
+                        return latest >= yesterday
             return False
         except Exception as e:
             print(f"   ⚠️  Error checking data freshness: {e}", flush=True)
@@ -1035,8 +1037,8 @@ class DexDataFetcher:
             primary_chart_id = chart_ids[0] if chart_ids else None
             data_exists = self.check_if_data_exists(page_id, sql_name, primary_chart_id) if primary_chart_id else False
             
-            # Check for incremental fetch (from queryRunConfig)
-            query_run_config = config.get('queryRunConfig', {})
+            # Check for incremental fetch: file-level queryRunConfig, or first chart's if missing
+            query_run_config = config.get('queryRunConfig') or (chart_configs_list[0].get('queryRunConfig') if chart_configs_list else {}) or {}
             is_incremental = query_run_config.get('isIncremental', False)
             # Check if SQL file has changed
             sql_changed = self.has_sql_changed(page_id, sql_name, sql_hash) if sql_hash else True
@@ -1243,8 +1245,8 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['traders', 'aggregators'],
-            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
+            #'dex-trades': ['traders', 'aggregators'],
+            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
             'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
             'aggregators': ['summary', 'traders']
