@@ -1,9 +1,87 @@
 {
   "pageId": "dex-aggregators",
   "pageName": "DEX Aggregators",
-  "chartCount": 2,
-  "lastUpdated": "2026-02-22T04:30:38.582909",
+  "chartCount": 5,
+  "lastUpdated": "2026-02-23T08:29:59.827524",
   "charts": [
+    {
+      "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000004",
+      "title": "Aggregator vs Non-Aggregator Volume",
+      "subtitle": "Daily DEX volume split by source (aggregator vs direct/non-aggregator)",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "volume_usd",
+            "type": "bar",
+            "unit": "$"
+          }
+        ],
+        "groupBy": "source_type"
+      },
+      "page": "dex-aggregators",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-23T08:29:23.464150",
+      "updatedAt": "2026-02-23T08:29:23.464150",
+      "sqlFile": "aggregator_vs_non_aggregator_volume"
+    },
+    {
+      "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000005",
+      "title": "Aggregator vs Non-Aggregator Swaps",
+      "subtitle": "Daily DEX trade count by source (aggregator vs direct/non-aggregator)",
+      "chartType": "bar",
+      "order": 2,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "swaps",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "source_type"
+      },
+      "page": "dex-aggregators",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-23T08:29:23.464161",
+      "updatedAt": "2026-02-23T08:29:23.464161",
+      "sqlFile": "aggregator_vs_non_aggregator_volume"
+    },
     {
       "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000001",
       "title": "Volume By Aggregator",
@@ -81,6 +159,29 @@
       "createdAt": "2026-02-21T14:08:05.763201",
       "updatedAt": "2026-02-21T14:08:05.763201",
       "sqlFile": "volume_and_trades_by_aggregator"
+    },
+    {
+      "id": "dex-aggregators-d4e5f6a7-6666-4000-8000-000000000003",
+      "title": "Active Traders By Aggregator",
+      "subtitle": "Unique DEX traders per aggregator",
+      "chartType": "bar",
+      "order": 1,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "active_traders",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "aggregator"
+      },
+      "page": "dex-aggregators",
+      "createdAt": "2026-02-23T08:29:59.827515",
+      "updatedAt": "2026-02-23T08:29:59.827515",
+      "sqlFile": "active_traders_by_aggregator"
     }
   ]
 }
