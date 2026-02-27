@@ -1391,8 +1391,8 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['summary'],
-            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
+            #'dex-trades': ['summary'],
+            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
             #'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
             #'aggregators': ['summary', 'traders']
