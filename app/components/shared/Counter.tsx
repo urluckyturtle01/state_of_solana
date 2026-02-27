@@ -169,7 +169,7 @@ export default function Counter({
   isLoading = false,
   className = ""
 }: CounterProps) {
-  const styles = variantStyles[variant];
+  const styles = variantStyles[variant] || variantStyles.indigo;
   const [animatedValue, setAnimatedValue] = useState<string>("0");
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const targetValue = useRef<string>(value);

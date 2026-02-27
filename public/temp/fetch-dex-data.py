@@ -416,8 +416,32 @@ class DexDataFetcher:
             chart_query_config = chart_def.get('queryRunConfig', query_run_config)
             is_cumulative = chart_query_config.get('isCumulative', file_level_is_cumulative)
             
+            # Check if this is a counter chart
+            is_counter = chart_def.get('chartType') == 'counter'
+            
+            # For counter charts, create transformed dataMapping for config output
+            transformed_data_mapping_update = None
+            
+            if is_counter:
+                # Get the field from simple counter format
+                counter_field = chart_def['dataMapping'].get('field', '')
+                
+                # Create transformed format for config output only
+                # Counter charts don't need groupBy - they show aggregated totals
+                transformed_data_mapping_update = {
+                    'xAxis': 'month',
+                    'yAxis': [
+                        {
+                            'field': counter_field,
+                            'type': 'bar',
+                            'unit': ''
+                        }
+                    ]
+                }
+            
             # Otherwise create new minimal config (shouldn't happen for skipped queries)
-            y_axis = chart_def['dataMapping'].get('yAxis', [])
+            working_data_mapping_update = transformed_data_mapping_update if transformed_data_mapping_update else chart_def['dataMapping']
+            y_axis = working_data_mapping_update.get('yAxis', [])
             
             # Check for currency column patterns
             has_currency_pattern, currency_mapping, base_chart_type = self.detect_currency_columns(y_axis)
@@ -433,9 +457,30 @@ class DexDataFetcher:
                     "chartType": chart_type,
                     "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
-                    "dataMapping": chart_def['dataMapping'],
+                    "dataMapping": transformed_data_mapping_update if transformed_data_mapping_update else chart_def['dataMapping'],
                     "page": page_id
                 }
+                
+                # Add counter-specific properties if this is a counter chart
+                if is_counter:
+                    if 'width' in chart_def:
+                        chart_config['width'] = chart_def['width']
+                    if 'rowIndex' in chart_def:
+                        chart_config['rowIndex'] = chart_def['rowIndex']
+                    if 'prefix' in chart_def:
+                        chart_config['prefix'] = chart_def['prefix']
+                    if 'suffix' in chart_def:
+                        chart_config['suffix'] = chart_def['suffix']
+                    if 'variant' in chart_def:
+                        chart_config['variant'] = chart_def['variant']
+                    if 'icon' in chart_def:
+                        chart_config['icon'] = chart_def['icon']
+                    
+                    # Add trendConfig for counters
+                    chart_config['trendConfig'] = {
+                        'valueField': 'auto_calculate',
+                        'label': 'vs. previous month'
+                    }
                 
                 # Add currency filter in additionalOptions.filters
                 additional_options = {}
@@ -495,9 +540,30 @@ class DexDataFetcher:
                     "chartType": chart_type,
                     "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
-                    "dataMapping": chart_def['dataMapping'],
+                    "dataMapping": transformed_data_mapping_update if transformed_data_mapping_update else chart_def['dataMapping'],
                     "page": page_id
                 }
+                
+                # Add counter-specific properties if this is a counter chart
+                if is_counter:
+                    if 'width' in chart_def:
+                        chart_config['width'] = chart_def['width']
+                    if 'rowIndex' in chart_def:
+                        chart_config['rowIndex'] = chart_def['rowIndex']
+                    if 'prefix' in chart_def:
+                        chart_config['prefix'] = chart_def['prefix']
+                    if 'suffix' in chart_def:
+                        chart_config['suffix'] = chart_def['suffix']
+                    if 'variant' in chart_def:
+                        chart_config['variant'] = chart_def['variant']
+                    if 'icon' in chart_def:
+                        chart_config['icon'] = chart_def['icon']
+                    
+                    # Add trendConfig for counters
+                    chart_config['trendConfig'] = {
+                        'valueField': 'auto_calculate',
+                        'label': 'vs. previous month'
+                    }
                 
                 # Add dual-axis config if needed
                 if right_axis_fields:
@@ -534,7 +600,8 @@ class DexDataFetcher:
             # Drop if this chart belongs to this SQL and is no longer in the YAML
             if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
                 continue  # removed from YAML - do not keep
-            if chart_id in chart_ids_this_sql:
+            # Only skip if this chart ID is from THIS SQL file (we're replacing it)
+            if chart_id in chart_ids_this_sql and chart_sql == sql_name:
                 continue  # we're replacing it with chart_configs below
             # Add page property if missing
             if 'page' not in chart:
@@ -593,31 +660,39 @@ class DexDataFetcher:
         for chart_config in chart_configs_list:
             chart_id = f"{page_id}-{chart_config['id']}"
             
-            # Filter data based on dataMapping
+            # Check if this is a counter chart (has simple dataMapping with 'field')
+            is_counter = chart_config.get('chartType') == 'counter'
             data_mapping = chart_config.get('dataMapping', {})
             required_fields = set()
             
-            if 'xAxis' in data_mapping:
-                x_field = data_mapping['xAxis']
-                if isinstance(x_field, dict):
-                    required_fields.add(x_field['field'])
-                else:
-                    required_fields.add(x_field)
-            
-            if 'yAxis' in data_mapping:
-                y_axis = data_mapping['yAxis']
-                if isinstance(y_axis, list):
-                    for field in y_axis:
-                        if isinstance(field, dict):
-                            required_fields.add(field['field'])
-                        else:
-                            required_fields.add(field)
-                else:
-                    required_fields.add(y_axis)
-            
-            # Add groupBy field if present
-            if 'groupBy' in data_mapping and data_mapping['groupBy']:
-                required_fields.add(data_mapping['groupBy'])
+            if is_counter and 'field' in data_mapping:
+                # Counter chart: use simple field mapping
+                # Counter charts need: month + the field they're tracking
+                required_fields.add('month')
+                required_fields.add(data_mapping['field'])
+            else:
+                # Regular chart: use xAxis/yAxis/groupBy mapping
+                if 'xAxis' in data_mapping:
+                    x_field = data_mapping['xAxis']
+                    if isinstance(x_field, dict):
+                        required_fields.add(x_field['field'])
+                    else:
+                        required_fields.add(x_field)
+                
+                if 'yAxis' in data_mapping:
+                    y_axis = data_mapping['yAxis']
+                    if isinstance(y_axis, list):
+                        for field in y_axis:
+                            if isinstance(field, dict):
+                                required_fields.add(field['field'])
+                            else:
+                                required_fields.add(field)
+                    else:
+                        required_fields.add(y_axis)
+                
+                # Add groupBy field if present
+                if 'groupBy' in data_mapping and data_mapping['groupBy']:
+                    required_fields.add(data_mapping['groupBy'])
             
             # Filter columns from new data
             available_fields = [f for f in required_fields if f in data.columns]
@@ -670,7 +745,8 @@ class DexDataFetcher:
             # Drop if this chart belongs to this SQL and is no longer in the YAML
             if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
                 continue  # removed from YAML - do not keep
-            if chart_id in chart_ids_this_sql:
+            # Only skip if this chart ID is from THIS SQL file (we're replacing it)
+            if chart_id in chart_ids_this_sql and chart_sql == sql_name:
                 continue  # we're replacing it with charts_data below
             merged_charts_data.append(chart)
 
@@ -719,8 +795,35 @@ class DexDataFetcher:
             chart_query_config = chart_def.get('queryRunConfig', query_run_config)
             is_cumulative = chart_query_config.get('isCumulative', file_level_is_cumulative)
             
+            # Check if this is a counter chart
+            is_counter = chart_def.get('chartType') == 'counter'
+            
+            # For counter charts, create transformed dataMapping for config output
+            # but keep original for data filtering
+            original_data_mapping = chart_def['dataMapping'].copy()
+            transformed_data_mapping = None
+            
+            if is_counter:
+                # Get the field from simple counter format
+                counter_field = chart_def['dataMapping'].get('field', '')
+                
+                # Create transformed format for config output only
+                # Counter charts don't need groupBy - they show aggregated totals
+                transformed_data_mapping = {
+                    'xAxis': 'month',
+                    'yAxis': [
+                        {
+                            'field': counter_field,
+                            'type': 'bar',
+                            'unit': ''
+                        }
+                    ]
+                }
+            
             # Parse yAxis to detect currency patterns or dual-axis
-            y_axis = chart_def['dataMapping'].get('yAxis', [])
+            # Use transformed mapping if it exists, otherwise use original
+            working_data_mapping = transformed_data_mapping if transformed_data_mapping else chart_def['dataMapping']
+            y_axis = working_data_mapping.get('yAxis', [])
             
             # First, check for currency column patterns
             has_currency_pattern, currency_mapping, base_chart_type = self.detect_currency_columns(y_axis)
@@ -737,9 +840,30 @@ class DexDataFetcher:
                     "chartType": chart_type,
                     "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
-                    "dataMapping": chart_def['dataMapping'],
+                    "dataMapping": transformed_data_mapping if transformed_data_mapping else chart_def['dataMapping'],
                     "page": page_id
                 }
+                
+                # Add counter-specific properties if this is a counter chart
+                if is_counter:
+                    if 'width' in chart_def:
+                        chart_config['width'] = chart_def['width']
+                    if 'rowIndex' in chart_def:
+                        chart_config['rowIndex'] = chart_def['rowIndex']
+                    if 'prefix' in chart_def:
+                        chart_config['prefix'] = chart_def['prefix']
+                    if 'suffix' in chart_def:
+                        chart_config['suffix'] = chart_def['suffix']
+                    if 'variant' in chart_def:
+                        chart_config['variant'] = chart_def['variant']
+                    if 'icon' in chart_def:
+                        chart_config['icon'] = chart_def['icon']
+                    
+                    # Add trendConfig for counters
+                    chart_config['trendConfig'] = {
+                        'valueField': 'auto_calculate',
+                        'label': 'vs. previous month'
+                    }
                 
                 # Add currency filter in additionalOptions.filters
                 additional_options = {}
@@ -800,9 +924,30 @@ class DexDataFetcher:
                     "chartType": chart_type,
                     "order": chart_def.get('index', i + 1),
                     "isStacked": chart_def.get('isStacked', False),
-                    "dataMapping": chart_def['dataMapping'],
+                    "dataMapping": transformed_data_mapping if transformed_data_mapping else chart_def['dataMapping'],
                     "page": page_id
                 }
+                
+                # Add counter-specific properties if this is a counter chart
+                if is_counter:
+                    if 'width' in chart_def:
+                        chart_config['width'] = chart_def['width']
+                    if 'rowIndex' in chart_def:
+                        chart_config['rowIndex'] = chart_def['rowIndex']
+                    if 'prefix' in chart_def:
+                        chart_config['prefix'] = chart_def['prefix']
+                    if 'suffix' in chart_def:
+                        chart_config['suffix'] = chart_def['suffix']
+                    if 'variant' in chart_def:
+                        chart_config['variant'] = chart_def['variant']
+                    if 'icon' in chart_def:
+                        chart_config['icon'] = chart_def['icon']
+                    
+                    # Add trendConfig for counters
+                    chart_config['trendConfig'] = {
+                        'valueField': 'auto_calculate',
+                        'label': 'vs. previous month'
+                    }
                 
                 # Add dual-axis config if needed
                 if right_axis_fields:
@@ -862,7 +1007,8 @@ class DexDataFetcher:
             # Drop if this chart belongs to this SQL and is no longer in the YAML
             if chart_sql == sql_name and chart_id not in chart_ids_this_sql:
                 continue  # removed from YAML - do not keep
-            if chart_id in chart_ids_this_sql:
+            # Only skip if this chart ID is from THIS SQL file (we're replacing it)
+            if chart_id in chart_ids_this_sql and chart_sql == sql_name:
                 continue  # we're replacing it with chart_configs below
             # Add page property if missing
             if 'page' not in chart:
@@ -1245,11 +1391,11 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            #'dex-trades': ['traders', 'aggregators'],
-            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
-            'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
+            'dex-trades': ['summary'],
+            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
+            #'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
-            'aggregators': ['summary', 'traders']
+            #'aggregators': ['summary', 'traders']
         }
         
         for category, folders in categories.items():
