@@ -1,90 +1,54 @@
 {
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
-  "chartCount": 6,
-  "lastUpdated": "2026-02-27T11:34:25.422484",
+  "chartCount": 7,
+  "lastUpdated": "2026-02-27T13:41:46.931544",
   "charts": [
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",
-      "title": "Cumulative Traders By Category",
-      "subtitle": "Cumulative unique traders by protocol category",
-      "chartType": "line",
-      "order": 1,
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000002",
+      "title": "Latest Monthly Traders",
+      "subtitle": "Current month unique traders",
+      "chartType": "counter",
+      "order": 2,
       "isStacked": false,
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": "month",
         "yAxis": [
           {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-10T09:01:40.816036",
-      "updatedAt": "2026-02-27T10:25:02.679651",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000002",
-      "title": "Daily New Traders By Category",
-      "subtitle": "Daily new unique traders added per category",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
+            "field": "total_traders",
             "type": "bar",
             "unit": ""
           }
         ],
-        "groupBy": "category"
+        "groupBy": "program_name"
       },
       "page": "dex-summary",
-      "createdAt": "2026-02-10T09:01:40.816044",
-      "updatedAt": "2026-02-27T10:25:02.679666",
+      "width": 1,
+      "rowIndex": 2,
+      "prefix": "",
+      "suffix": "",
+      "variant": "green",
+      "icon": "users",
+      "trendConfig": {
+        "valueField": "auto_calculate",
+        "label": "vs. previous month"
+      },
+      "createdAt": "2026-02-27T12:50:16.851913",
+      "updatedAt": "2026-02-27T12:56:14.824465",
       "sqlFile": "monthly_summary"
     },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000003",
-      "title": "Cumulative Traders By Program",
-      "subtitle": "Cumulative unique traders for top 10 programs",
-      "chartType": "line",
-      "order": 1,
+      "title": "Latest Monthly Txns",
+      "subtitle": "Current month transaction count",
+      "chartType": "counter",
+      "order": 3,
       "isStacked": false,
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": "month",
         "yAxis": [
           {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-10T09:11:30.626586",
-      "updatedAt": "2026-02-27T10:38:39.272703",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000004",
-      "title": "Daily New Traders By Program",
-      "subtitle": "Daily new unique traders added per program",
-      "chartType": "bar",
-      "order": 2,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
+            "field": "total_txns",
             "type": "bar",
             "unit": ""
           }
@@ -92,8 +56,51 @@
         "groupBy": "program_name"
       },
       "page": "dex-summary",
-      "createdAt": "2026-02-10T09:11:30.626596",
-      "updatedAt": "2026-02-27T10:38:39.272715",
+      "width": 1,
+      "rowIndex": 1,
+      "prefix": "",
+      "suffix": "",
+      "variant": "purple",
+      "icon": "activity",
+      "trendConfig": {
+        "valueField": "auto_calculate",
+        "label": "vs. previous month"
+      },
+      "createdAt": "2026-02-27T12:50:16.868979",
+      "updatedAt": "2026-02-27T12:56:14.824477",
+      "sqlFile": "monthly_summary"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000004",
+      "title": "Latest Monthly Fees",
+      "subtitle": "Current month total fees",
+      "chartType": "counter",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "total_fees_sol",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-summary",
+      "width": 1,
+      "rowIndex": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "variant": "orange",
+      "icon": "zap",
+      "trendConfig": {
+        "valueField": "auto_calculate",
+        "label": "vs. previous month"
+      },
+      "createdAt": "2026-02-27T12:50:16.868985",
+      "updatedAt": "2026-02-27T12:56:14.824484",
       "sqlFile": "monthly_summary"
     },
     {
@@ -102,12 +109,7 @@
       "subtitle": "Current month Jito tips",
       "chartType": "counter",
       "order": 5,
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "SOL",
-      "variant": "teal",
-      "icon": "trending-up",
+      "isStacked": false,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": [
@@ -120,12 +122,18 @@
         "groupBy": "program_name"
       },
       "page": "dex-summary",
+      "width": 1,
+      "rowIndex": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "variant": "teal",
+      "icon": "trending-up",
       "trendConfig": {
         "valueField": "auto_calculate",
         "label": "vs. previous month"
       },
-      "createdAt": "2026-02-27T10:15:14.222126",
-      "updatedAt": "2026-02-27T10:15:14.222126",
+      "createdAt": "2026-02-27T12:56:14.824490",
+      "updatedAt": "2026-02-27T12:56:14.824490",
       "sqlFile": "monthly_summary"
     },
     {
@@ -134,12 +142,7 @@
       "subtitle": "Current month priority fees",
       "chartType": "counter",
       "order": 6,
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "SOL",
-      "variant": "yellow",
-      "icon": "bolt",
+      "isStacked": false,
       "dataMapping": {
         "xAxis": "month",
         "yAxis": [
@@ -149,17 +152,68 @@
             "unit": ""
           }
         ],
-        "groupBy": "",
-        "changeField": ""
+        "groupBy": "program_name"
       },
       "page": "dex-summary",
+      "width": 1,
+      "rowIndex": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "variant": "yellow",
+      "icon": "bolt",
       "trendConfig": {
         "valueField": "auto_calculate",
         "label": "vs. previous month"
       },
-      "createdAt": "2026-02-27T10:15:14.222131",
-      "updatedAt": "2026-02-27T10:15:14.222131",
+      "createdAt": "2026-02-27T12:56:14.824496",
+      "updatedAt": "2026-02-27T12:56:14.824496",
       "sqlFile": "monthly_summary"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000011",
+      "title": "Cumulative Traders By Category",
+      "subtitle": "Cumulative unique traders by protocol category",
+      "chartType": "line",
+      "order": 7,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T13:41:12.845259",
+      "updatedAt": "2026-02-27T13:41:12.845259",
+      "sqlFile": "daily_cumulative_traders_by_category"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000012",
+      "title": "Daily New Traders By Category",
+      "subtitle": "Daily new unique traders added per category",
+      "chartType": "bar",
+      "order": 8,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_change",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T13:41:12.845273",
+      "updatedAt": "2026-02-27T13:41:12.845273",
+      "sqlFile": "daily_cumulative_traders_by_category"
     }
   ]
 }
