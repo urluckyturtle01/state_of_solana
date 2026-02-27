@@ -1,8 +1,8 @@
 {
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
-  "chartCount": 8,
-  "lastUpdated": "2026-02-27T14:30:34.573447",
+  "chartCount": 10,
+  "lastUpdated": "2026-02-27T17:05:33.056455",
   "charts": [
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000011",
@@ -49,6 +49,52 @@
       "createdAt": "2026-02-27T14:12:09.165994",
       "updatedAt": "2026-02-27T14:12:09.165994",
       "sqlFile": "daily_cumulative_traders_by_category"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000013",
+      "title": "Cumulative New Traders By Program",
+      "subtitle": "Cumulative unique new traders for top 10 programs (last 6 months)",
+      "chartType": "line",
+      "order": 9,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T17:02:27.877887",
+      "updatedAt": "2026-02-27T17:02:27.877887",
+      "sqlFile": "daily_cumulative_traders_by_program"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000014",
+      "title": "Daily New Traders By Program",
+      "subtitle": "Daily new unique traders for top 10 programs (last 6 months)",
+      "chartType": "bar",
+      "order": 10,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_change",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T17:02:27.877897",
+      "updatedAt": "2026-02-27T17:02:27.877897",
+      "sqlFile": "daily_cumulative_traders_by_program"
     },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",

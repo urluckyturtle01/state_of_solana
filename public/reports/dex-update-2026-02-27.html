@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEX Data Update Report - 2026-02-27</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .timestamp {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .stat-card.success { border-left: 4px solid #10b981; }
+        .stat-card.skipped { border-left: 4px solid #f59e0b; }
+        .stat-card.failed { border-left: 4px solid #ef4444; }
+        .stat-card.warning { border-left: 4px solid #f59e0b; }
+        .stat-card.total { border-left: 4px solid #3b82f6; }
+        .stat-label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        .queries-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .query-item {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .query-item.success { border-left: 3px solid #10b981; }
+        .query-item.skipped { border-left: 3px solid #f59e0b; }
+        .query-item.failed { border-left: 3px solid #ef4444; }
+        .query-item.warning { border-left: 3px solid #f59e0b; }
+        .query-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .query-details {
+            font-size: 0.85rem;
+            color: #888;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge.success { background: #10b98120; color: #10b981; }
+        .badge.skipped { background: #f59e0b20; color: #f59e0b; }
+        .badge.failed { background: #ef444420; color: #ef4444; }
+        .badge.warning { background: #f59e0b20; color: #f59e0b; }
+        .error-msg {
+            background: #2a1a1a;
+            border: 1px solid #4a2a2a;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #ff6b6b;
+        }
+        pre {
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 DEX Data Update Report</h1>
+        <div class="timestamp">Generated: 2026-02-27 17:14:39 IST</div>
+        
+        <div class="summary">
+            <div class="stat-card total">
+                <div class="stat-label">Total Queries</div>
+                <div class="stat-value">3</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-label">Successful</div>
+                <div class="stat-value">1</div>
+            </div>
+            <div class="stat-card skipped">
+                <div class="stat-label">Skipped</div>
+                <div class="stat-value">0</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="stat-label">Failed</div>
+                <div class="stat-value">2</div>
+            </div>
+        </div>
+
+        <div class="queries-section">
+            <div class="section-title">📋 Query Details</div>
+            
+            <div class="query-item success">
+                <div class="query-name">daily_cumulative_traders_by_category</div>
+                <div class="query-details">
+                    <span class="badge success">SUCCESS</span>
+                    <span>Fetched 736 rows</span>
+                </div>
+        </div>
+
+            <div class="query-item failed">
+                <div class="query-name">daily_cumulative_traders_by_program</div>
+                <div class="query-details">
+                    <span class="badge failed">FAILED</span>
+                    <span></span>
+                </div>
+        
+                <div class="error-msg">❌ Error executing query: Execution failed on sql '-- Description: Daily new traders by top 10 outer programs</div>
+        </div>
+
+            <div class="query-item failed">
+                <div class="query-name">monthly_summary</div>
+                <div class="query-details">
+                    <span class="badge failed">FAILED</span>
+                    <span></span>
+                </div>
+        
+                <div class="error-msg">❌ Error executing query: Execution failed on sql '-- Description: Monthly summary metrics</div>
+        </div>
+        </div>
+
+        <div class="queries-section">
+            <div class="section-title">📝 Full Log</div>
+            <pre>
+======================================================================
+🚀 DATA FETCHER - SMART INCREMENTAL
+======================================================================
+
+📋 Features:
+  ✓ Smart freshness check (skip if data up-to-date)
+  ✓ Auto refresh old data (isIncremental=false)
+  ✓ Incremental updates (isIncremental=true)
+  ✓ Run queries ONE BY ONE (sequential)
+  ✓ Smart config updates (only if changed)
+  ✓ SQL change detection (auto re-fetch if SQL modified)
+======================================================================
+
+
+======================================================================
+📦 Processing category: DEX-TRADES
+======================================================================
+
+======================================================================
+📂 Processing: dex-trades/summary
+======================================================================
+Found 3 SQL files
+
+📊 Processing: daily_cumulative_traders_by_category
+   🔄 SQL file changed, forcing full re-fetch
+   📥 No existing data for this SQL, fetching full dataset
+   ✅ Fetched 736 rows
+💾 dex-summary.json: ✏️  1 updated | ✅ 1 unchanged
+
+📊 Processing: daily_cumulative_traders_by_program
+   📥 No existing data for this SQL, fetching full dataset
+❌ Error executing query: Execution failed on sql '-- Description: Daily new traders by top 10 outer programs
+-- Shows daily new unique traders for the top 10 programs (last 6 months)
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+
+top_programs AS (
+    SELECT outer_program
+    FROM (
+        SELECT outer_program, COUNT(DISTINCT signer) as total_traders
+        FROM solana.dex_trades
+        WHERE block_date &lt; CURRENT_DATE
+        GROUP BY outer_program
+        ORDER BY total_traders DESC
+        LIMIT 10
+    )
+),
+
+date_spine AS (
+    SELECT d.block_date
+    FROM UNNEST(SEQUENCE(
+        CURRENT_DATE - INTERVAL '6' MONTH,
+        CURRENT_DATE - INTERVAL '1' DAY,
+        INTERVAL '1' DAY
+    )) AS d(block_date)
+),
+
+all_programs AS (
+    SELECT DISTINCT tp.outer_program, COALESCE(pn.program_name, 'Other') as program_name
+    FROM top_programs tp
+    LEFT JOIN program_names pn ON tp.outer_program = pn.program
+),
+
+date_program AS (
+    SELECT ds.block_date, ap.outer_program, ap.program_name
+    FROM date_spine ds
+    CROSS JOIN all_programs ap
+),
+
+new_traders_by_program AS (
+    SELECT 
+        first_trade_date,
+        outer_program,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            t.outer_program,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        INNER JOIN top_programs tp ON t.outer_program = tp.outer_program
+        WHERE t.block_date &lt; CURRENT_DATE
+        GROUP BY t.outer_program, t.signer
+    )
+    GROUP BY first_trade_date, outer_program
+),
+
+joined AS (
+    SELECT
+        dp.block_date,
+        dp.program_name,
+        COALESCE(nt.new_traders, 0) as new_traders
+    FROM date_program dp
+    LEFT JOIN new_traders_by_program nt
+        ON dp.block_date = nt.first_trade_date AND dp.outer_program = nt.outer_program
+)
+
+SELECT
+    block_date,
+    program_name,
+    SUM(new_traders) OVER (PARTITION BY program_name ORDER BY block_date) as cumulative_traders,
+    new_traders as daily_change
+FROM joined
+WHERE block_date &gt;= CURRENT_DATE - INTERVAL '6' MONTH
+ORDER BY block_date, cumulative_traders DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=ADMINISTRATIVELY_KILLED, message="Query killed. Message: Killed via web UI", query_id=20260227_135425_00644_rdt68)
+[SQL: -- Description: Daily new traders by top 10 outer programs
+-- Shows daily new unique traders for the top 10 programs (last 6 months)
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+
+top_programs AS (
+    SELECT outer_program
+    FROM (
+        SELECT outer_program, COUNT(DISTINCT signer) as total_traders
+        FROM solana.dex_trades
+        WHERE block_date &lt; CURRENT_DATE
+        GROUP BY outer_program
+        ORDER BY total_traders DESC
+        LIMIT 10
+    )
+),
+
+date_spine AS (
+    SELECT d.block_date
+    FROM UNNEST(SEQUENCE(
+        CURRENT_DATE - INTERVAL '6' MONTH,
+        CURRENT_DATE - INTERVAL '1' DAY,
+        INTERVAL '1' DAY
+    )) AS d(block_date)
+),
+
+all_programs AS (
+    SELECT DISTINCT tp.outer_program, COALESCE(pn.program_name, 'Other') as program_name
+    FROM top_programs tp
+    LEFT JOIN program_names pn ON tp.outer_program = pn.program
+),
+
+date_program AS (
+    SELECT ds.block_date, ap.outer_program, ap.program_name
+    FROM date_spine ds
+    CROSS JOIN all_programs ap
+),
+
+new_traders_by_program AS (
+    SELECT 
+        first_trade_date,
+        outer_program,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            t.outer_program,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        INNER JOIN top_programs tp ON t.outer_program = tp.outer_program
+        WHERE t.block_date &lt; CURRENT_DATE
+        GROUP BY t.outer_program, t.signer
+    )
+    GROUP BY first_trade_date, outer_program
+),
+
+joined AS (
+    SELECT
+        dp.block_date,
+        dp.program_name,
+        COALESCE(nt.new_traders, 0) as new_traders
+    FROM date_program dp
+    LEFT JOIN new_traders_by_program nt
+        ON dp.block_date = nt.first_trade_date AND dp.outer_program = nt.outer_program
+)
+
+SELECT
+    block_date,
+    program_name,
+    SUM(new_traders) OVER (PARTITION BY program_name ORDER BY block_date) as cumulative_traders,
+    new_traders as daily_change
+FROM joined
+WHERE block_date &gt;= CURRENT_DATE - INTERVAL '6' MONTH
+ORDER BY block_date, cumulative_traders DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+📊 Processing: monthly_summary
+   ⚠️  Data is old, re-fetching full dataset
+   📥 Fetching full dataset (refreshing old data)
+❌ Error executing query: Execution failed on sql '-- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        DATE_TRUNC('month', t.block_date) as month,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint &lt;&gt; 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint &lt;&gt; 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date &gt;= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '2' MONTH
+      AND t.block_date &lt; DATE_TRUNC('month', CURRENT_DATE)
+    GROUP BY DATE_TRUNC('month', t.block_date), t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+GROUP BY month
+ORDER BY month
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=ADMINISTRATIVELY_KILLED, message="Query killed. Message: Killed via web UI", query_id=20260227_135546_00647_rdt68)
+[SQL: -- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        DATE_TRUNC('month', t.block_date) as month,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint &lt;&gt; 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint &lt;&gt; 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE t.block_date &gt;= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '2' MONTH
+      AND t.block_date &lt; DATE_TRUNC('month', CURRENT_DATE)
+    GROUP BY DATE_TRUNC('month', t.block_date), t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+GROUP BY month
+ORDER BY month
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+
+======================================================================
+🎉 DATA FETCH COMPLETE!
+======================================================================
+</pre>
+        </div>
+    </div>
+</body>
+</html>
