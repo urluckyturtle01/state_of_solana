@@ -2,100 +2,8 @@
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
   "chartCount": 10,
-  "lastUpdated": "2026-02-27T17:05:33.056455",
+  "lastUpdated": "2026-02-27T18:44:19.451596",
   "charts": [
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000011",
-      "title": "Cumulative New Traders By Category",
-      "subtitle": "Cumulative unique new traders by protocol category",
-      "chartType": "line",
-      "order": 7,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T14:12:09.165982",
-      "updatedAt": "2026-02-27T14:12:09.165982",
-      "sqlFile": "daily_cumulative_traders_by_category"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000012",
-      "title": "Daily New Traders By Category",
-      "subtitle": "Daily new unique traders added per category",
-      "chartType": "bar",
-      "order": 8,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "category"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T14:12:09.165994",
-      "updatedAt": "2026-02-27T14:12:09.165994",
-      "sqlFile": "daily_cumulative_traders_by_category"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000013",
-      "title": "Cumulative New Traders By Program",
-      "subtitle": "Cumulative unique new traders for top 10 programs (last 6 months)",
-      "chartType": "line",
-      "order": 9,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T17:02:27.877887",
-      "updatedAt": "2026-02-27T17:02:27.877887",
-      "sqlFile": "daily_cumulative_traders_by_program"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000014",
-      "title": "Daily New Traders By Program",
-      "subtitle": "Daily new unique traders for top 10 programs (last 6 months)",
-      "chartType": "bar",
-      "order": 10,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T17:02:27.877897",
-      "updatedAt": "2026-02-27T17:02:27.877897",
-      "sqlFile": "daily_cumulative_traders_by_program"
-    },
     {
       "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",
       "title": "Latest Monthly Volume",
@@ -287,6 +195,98 @@
       "createdAt": "2026-02-27T14:15:20.927305",
       "updatedAt": "2026-02-27T14:15:20.927305",
       "sqlFile": "monthly_summary"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000011",
+      "title": "Cumulative New Traders By Category",
+      "subtitle": "Cumulative unique new traders by protocol category",
+      "chartType": "line",
+      "order": 7,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T14:12:09.165982",
+      "updatedAt": "2026-02-27T14:12:09.165982",
+      "sqlFile": "daily_cumulative_traders_by_category"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000012",
+      "title": "Daily New Traders By Category",
+      "subtitle": "Daily new unique traders added per category",
+      "chartType": "bar",
+      "order": 8,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_change",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "category"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T14:12:09.165994",
+      "updatedAt": "2026-02-27T14:12:09.165994",
+      "sqlFile": "daily_cumulative_traders_by_category"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000013",
+      "title": "Cumulative New Traders By Program",
+      "subtitle": "Cumulative unique new traders for top 10 programs (last 6 months)",
+      "chartType": "line",
+      "order": 9,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "cumulative_traders",
+            "type": "line",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T17:02:27.877887",
+      "updatedAt": "2026-02-27T17:02:27.877887",
+      "sqlFile": "daily_cumulative_traders_by_program"
+    },
+    {
+      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000014",
+      "title": "Daily New Traders By Program",
+      "subtitle": "Daily new unique traders for top 10 programs (last 6 months)",
+      "chartType": "bar",
+      "order": 10,
+      "isStacked": true,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "daily_change",
+            "type": "bar",
+            "unit": ""
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "page": "dex-summary",
+      "createdAt": "2026-02-27T17:02:27.877897",
+      "updatedAt": "2026-02-27T17:02:27.877897",
+      "sqlFile": "daily_cumulative_traders_by_program"
     }
   ]
 }

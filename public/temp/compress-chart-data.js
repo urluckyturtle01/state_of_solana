@@ -10,8 +10,19 @@ const MIN_SIZE_TO_COMPRESS = 0; // No minimum size - compress everything
 
 async function compressFile(filePath) {
   return new Promise((resolve, reject) => {
+    const gzPath = `${filePath}.gz`;
+    
+    // Delete old .gz file first to ensure fresh compression
+    if (fs.existsSync(gzPath)) {
+      try {
+        fs.unlinkSync(gzPath);
+      } catch (err) {
+        console.log(`   ⚠️  Could not delete old .gz file: ${err.message}`);
+      }
+    }
+    
     const readStream = fs.createReadStream(filePath);
-    const writeStream = fs.createWriteStream(`${filePath}.gz`);
+    const writeStream = fs.createWriteStream(gzPath);
     const gzip = zlib.createGzip({ level: 9 }); // Maximum compression
 
     readStream
@@ -20,7 +31,7 @@ async function compressFile(filePath) {
       .on('finish', () => {
         // Get file sizes for comparison
         const originalSize = fs.statSync(filePath).size;
-        const compressedSize = fs.statSync(`${filePath}.gz`).size;
+        const compressedSize = fs.statSync(gzPath).size;
         const compressionRatio = ((originalSize - compressedSize) / originalSize * 100).toFixed(1);
         
         resolve({

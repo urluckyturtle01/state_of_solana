@@ -306,8 +306,23 @@ class DexDataFetcher:
         
         return sql, True
     
-    def merge_data(self, existing_data, new_data, is_cumulative):
-        """Merge new data with existing data."""
+    def merge_data(self, existing_data, new_data, is_cumulative, group_by_field=None):
+        """Merge new data with existing data.
+        
+        For cumulative data with incremental updates:
+        - The SQL returns INCREMENTAL values (new data only for new dates)
+        - We need to ADD the last cumulative value to make it truly cumulative
+        
+        Example without groupBy:
+          Existing: {date: "2026-02-24", cumulative_traders: 1000}
+          New SQL:  {date: "2026-02-25", cumulative_traders: 50}  (incremental)
+          Result:   {date: "2026-02-25", cumulative_traders: 1050}  (1000 + 50)
+        
+        Example with groupBy (e.g., program_name):
+          Existing: {date: "2026-02-24", program_name: "Raydium", cumulative_traders: 500}
+          New SQL:  {date: "2026-02-25", program_name: "Raydium", cumulative_traders: 20}
+          Result:   {date: "2026-02-25", program_name: "Raydium", cumulative_traders: 520}
+        """
         if not existing_data:
             return new_data
         
@@ -324,8 +339,17 @@ class DexDataFetcher:
         if new_df.empty:
             return existing_data
         
-        # Determine date column name (block_date or date)
-        date_col = 'block_date' if 'block_date' in new_df.columns else 'date'
+        # Determine date column name (block_date or date or month)
+        date_col = None
+        for col in ['block_date', 'date', 'month']:
+            if col in new_df.columns:
+                date_col = col
+                break
+        
+        if not date_col:
+            # No date column, just append
+            merged_df = pd.concat([existing_df, new_df], ignore_index=True)
+            return merged_df.to_dict('records')
         
         # Normalize date columns to strings for consistent comparison
         if date_col in existing_df.columns:
@@ -334,12 +358,53 @@ class DexDataFetcher:
             new_df[date_col] = pd.to_datetime(new_df[date_col]).dt.strftime('%Y-%m-%d')
         
         if is_cumulative:
-            # For cumulative data, replace overlapping dates with new data
-            # Get dates that exist in new data
+            # For cumulative data with incremental updates
+            # Need to add last cumulative value to new data
+            
+            if group_by_field and group_by_field in existing_df.columns and group_by_field in new_df.columns:
+                # Cumulative with groupBy: Add last value per group
+                # Find cumulative columns (columns that contain 'cum' in name)
+                cumulative_cols = [col for col in new_df.columns 
+                                  if 'cum' in col.lower()]
+                
+                if cumulative_cols:
+                    # Get last value per group from existing data
+                    last_values_per_group = {}
+                    for group in existing_df[group_by_field].unique():
+                        group_data = existing_df[existing_df[group_by_field] == group]
+                        if not group_data.empty:
+                            # Get the last row for this group (most recent date)
+                            last_row = group_data.sort_values(date_col).iloc[-1]
+                            last_values_per_group[group] = {col: last_row[col] for col in cumulative_cols if col in last_row}
+                    
+                    # Add last cumulative values to new data per group
+                    for idx, row in new_df.iterrows():
+                        group = row[group_by_field]
+                        if group in last_values_per_group:
+                            for col, last_value in last_values_per_group[group].items():
+                                if col in row:
+                                    # Add last cumulative value to new incremental value
+                                    new_df.at[idx, col] = last_value + row[col]
+            else:
+                # Cumulative without groupBy: Add last value to all new rows
+                # Find cumulative columns (columns that contain 'cum' in name)
+                cumulative_cols = [col for col in new_df.columns 
+                                  if 'cum' in col.lower()]
+                
+                if cumulative_cols and not existing_df.empty:
+                    # Get last row from existing data
+                    last_row = existing_df.sort_values(date_col).iloc[-1]
+                    
+                    # Add last cumulative values to each new row
+                    for col in cumulative_cols:
+                        if col in last_row and col in new_df.columns:
+                            last_value = last_row[col]
+                            # Add last cumulative value to new incremental values
+                            new_df[col] = new_df[col] + last_value
+            
+            # Now merge: replace overlapping dates with updated new data
             new_dates = set(new_df[date_col].values)
-            # Keep only existing data that's not in new dates
             existing_df = existing_df[~existing_df[date_col].isin(new_dates)]
-            # Combine and sort
             merged_df = pd.concat([existing_df, new_df], ignore_index=True)
             merged_df = merged_df.sort_values(date_col).reset_index(drop=True)
         else:
@@ -701,10 +766,13 @@ class DexDataFetcher:
             # Convert to records
             new_data_records = chart_data.to_dict('records')
             
+            # Get groupBy field for cumulative data merging
+            group_by_field = data_mapping.get('groupBy') if not is_counter else None
+            
             # If incremental update, merge with existing data for THIS chart
             if is_incremental_update and chart_id in existing_charts_by_id:
                 existing_data_records = existing_charts_by_id[chart_id]
-                merged_data_records = self.merge_data(existing_data_records, new_data_records, is_cumulative)
+                merged_data_records = self.merge_data(existing_data_records, new_data_records, is_cumulative, group_by_field)
                 chart_data_safe = convert_to_json_safe(merged_data_records)
             else:
                 # Not incremental or no existing data, use new data as-is
@@ -1391,8 +1459,8 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            #'dex-trades': ['summary'],
-            'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
+            'dex-trades': ['volume'],
+            #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
             #'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
             #'aggregators': ['summary', 'traders']
