@@ -2,14 +2,14 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-02-28T12:42:59.880132",
+  "lastUpdated": "2026-02-28T23:30:02.977526",
   "charts": [
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
-      "title": "Cu By Dex",
-      "subtitle": "Daily compute units consumed by DEX program",
+      "title": "CU By Outer Program",
+      "subtitle": "Daily compute units consumed by outer program",
       "chartType": "bar",
-      "order": 1,
+      "order": 3,
       "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
@@ -39,16 +39,17 @@
           }
         }
       },
-      "createdAt": "2026-02-03T14:34:27.142463",
-      "updatedAt": "2026-02-22T04:25:03.699174",
-      "sqlFile": "cu_by_dex"
+      "createdAt": "2026-02-28T12:55:28.268204",
+      "updatedAt": "2026-02-28T13:06:13.600048",
+      "sqlFile": "cu_by_dex",
+      "yamlHash": "37b8c6f570310c0ee788f7159b9c22d1"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
-      "title": "Cu By Category",
-      "subtitle": "Daily compute units consumed by protocol category",
+      "title": "CU By Category",
+      "subtitle": "Daily compute units consumed by outer program category",
       "chartType": "bar",
-      "order": 1,
+      "order": 2,
       "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
@@ -78,14 +79,15 @@
           }
         }
       },
-      "createdAt": "2026-02-03T14:34:27.142476",
-      "updatedAt": "2026-02-22T04:25:05.251309",
-      "sqlFile": "cu_by_category"
+      "createdAt": "2026-02-28T12:55:28.279934",
+      "updatedAt": "2026-02-28T13:06:13.611699",
+      "sqlFile": "cu_by_category",
+      "yamlHash": "f5b4bc5898b24e44e68b47cc2d0be32e"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
-      "title": "Dex Cu Share",
-      "subtitle": "DEX compute units as percentage of total Solana network compute",
+      "title": "Outer Program CU Share",
+      "subtitle": "Outer program compute units as percentage of total Solana network compute",
       "chartType": "dual-axis",
       "order": 1,
       "isStacked": false,
@@ -139,16 +141,41 @@
           }
         }
       },
-      "createdAt": "2026-02-03T14:34:27.142482",
-      "updatedAt": "2026-02-22T04:25:06.675156",
-      "sqlFile": "dex_cu_share"
+      "createdAt": "2026-02-28T12:55:28.291672",
+      "updatedAt": "2026-02-28T13:06:13.623451",
+      "sqlFile": "dex_cu_share",
+      "yamlHash": "3129d4d509c15c71d6b6db25d75dfe5f"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
-      "title": "Avg Cu Per Trade",
-      "subtitle": "Daily average and median compute units per DEX transaction",
+      "title": "Max CU Per Trade",
+      "subtitle": "Daily maximum compute units per outer program transaction",
       "chartType": "line",
-      "order": 1,
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "max_compute_units",
+            "type": "line",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "createdAt": "2026-02-28T12:55:28.304018",
+      "updatedAt": "2026-02-28T13:06:13.636359",
+      "sqlFile": "avg_cu_per_trade",
+      "yamlHash": "83d1d3a3e73d23982b9c5c178a236bbb"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
+      "title": "CU Distribution Per Trade",
+      "subtitle": "Daily avg, median, p90 and p99 compute units per outer program transaction",
+      "chartType": "line",
+      "order": 5,
       "isStacked": false,
       "dataMapping": {
         "xAxis": "block_date",
@@ -162,25 +189,7 @@
             "field": "median_compute_units",
             "type": "line",
             "unit": "CU"
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-compute",
-      "createdAt": "2026-02-07T11:11:09.835869",
-      "updatedAt": "2026-02-07T11:11:09.835869",
-      "sqlFile": "avg_cu_per_trade"
-    },
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
-      "title": "Cu Percentiles Per Trade",
-      "subtitle": "Daily p90 and p99 compute units showing tail distribution",
-      "chartType": "line",
-      "order": 2,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
+          },
           {
             "field": "p90_compute_units",
             "type": "line",
@@ -195,9 +204,10 @@
         "groupBy": ""
       },
       "page": "dex-compute",
-      "createdAt": "2026-02-07T11:11:09.835889",
-      "updatedAt": "2026-02-07T11:11:09.835889",
-      "sqlFile": "avg_cu_per_trade"
+      "createdAt": "2026-02-28T12:55:28.304024",
+      "updatedAt": "2026-02-28T13:06:13.636368",
+      "sqlFile": "avg_cu_per_trade",
+      "yamlHash": "83d1d3a3e73d23982b9c5c178a236bbb"
     }
   ]
 }
