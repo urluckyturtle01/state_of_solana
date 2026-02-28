@@ -2,8 +2,62 @@
   "pageId": "dex-prop-amm",
   "pageName": "DEX Prop Amm",
   "chartCount": 11,
-  "lastUpdated": "2026-02-27T18:44:19.417769",
+  "lastUpdated": "2026-02-28T12:43:35.205107",
   "charts": [
+    {
+      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000007",
+      "title": "Prop AMM Monthly Top Pool",
+      "subtitle": "Per AMM per month: top_pool | pool_vol (K/M/B) | pool_share%",
+      "chartType": "table",
+      "order": 11,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "field": "ZeroFi",
+            "type": "text"
+          },
+          {
+            "field": "HumidiFi",
+            "type": "text"
+          },
+          {
+            "field": "AlphaQ",
+            "type": "text"
+          },
+          {
+            "field": "SolFi V2",
+            "type": "text"
+          },
+          {
+            "field": "GoonFi",
+            "type": "text"
+          },
+          {
+            "field": "TesseraV",
+            "type": "text"
+          },
+          {
+            "field": "Obric V2",
+            "type": "text"
+          },
+          {
+            "field": "Aquifer",
+            "type": "text"
+          },
+          {
+            "field": "BisonFi",
+            "type": "text"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-prop-amm",
+      "createdAt": "2026-02-07T06:30:11.309295",
+      "updatedAt": "2026-02-18T13:28:09.410736",
+      "sqlFile": "prop_amm_monthly_top_pool"
+    },
     {
       "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000003",
       "title": "Prop AMM vs Other DEX Volume",
@@ -313,60 +367,6 @@
       "createdAt": "2026-02-18T13:25:58.843790",
       "updatedAt": "2026-02-18T16:47:35.149717",
       "sqlFile": "prop_amm_by_program"
-    },
-    {
-      "id": "dex-prop-amm-f6a7b8c9-6666-4000-8000-000000000007",
-      "title": "Prop AMM Monthly Top Pool",
-      "subtitle": "Per AMM per month: top_pool | pool_vol (K/M/B) | pool_share%",
-      "chartType": "table",
-      "order": 11,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": [
-          {
-            "field": "ZeroFi",
-            "type": "text"
-          },
-          {
-            "field": "HumidiFi",
-            "type": "text"
-          },
-          {
-            "field": "AlphaQ",
-            "type": "text"
-          },
-          {
-            "field": "SolFi V2",
-            "type": "text"
-          },
-          {
-            "field": "GoonFi",
-            "type": "text"
-          },
-          {
-            "field": "TesseraV",
-            "type": "text"
-          },
-          {
-            "field": "Obric V2",
-            "type": "text"
-          },
-          {
-            "field": "Aquifer",
-            "type": "text"
-          },
-          {
-            "field": "BisonFi",
-            "type": "text"
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-prop-amm",
-      "createdAt": "2026-02-07T06:30:11.309295",
-      "updatedAt": "2026-02-18T13:28:09.410736",
-      "sqlFile": "prop_amm_monthly_top_pool"
     }
   ]
 }
