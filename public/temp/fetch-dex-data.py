@@ -55,6 +55,7 @@ from datetime import datetime, timedelta, date
 import re
 import numpy as np
 import hashlib
+from percentage_calculator import process_chart_percentages
 
 def convert_to_json_safe(obj):
     """Convert numpy/pandas types to JSON-safe Python types."""
@@ -357,7 +358,11 @@ class DexDataFetcher:
         if date_col in new_df.columns:
             new_df[date_col] = pd.to_datetime(new_df[date_col]).dt.strftime('%Y-%m-%d')
         
-        if is_cumulative:
+        # Check if there are any cumulative fields (fields with 'cum' in name)
+        cumulative_cols = [col for col in new_df.columns if 'cum' in col.lower()]
+        has_cumulative_fields = len(cumulative_cols) > 0
+        
+        if is_cumulative or has_cumulative_fields:
             # For cumulative data with incremental updates
             # Need to add last cumulative value to new data
             
@@ -773,6 +778,17 @@ class DexDataFetcher:
             if is_incremental_update and chart_id in existing_charts_by_id:
                 existing_data_records = existing_charts_by_id[chart_id]
                 merged_data_records = self.merge_data(existing_data_records, new_data_records, is_cumulative, group_by_field)
+                
+                # Recalculate percentages for cumulative data after merging
+                # Check if there are cumulative fields in the data
+                if merged_data_records:
+                    merged_df = pd.DataFrame(merged_data_records)
+                    has_cum_fields = any('cum' in col.lower() for col in merged_df.columns)
+                    
+                    if has_cum_fields or is_cumulative:
+                        merged_df = process_chart_percentages(merged_df, chart_config, True)
+                        merged_data_records = merged_df.to_dict('records')
+                
                 chart_data_safe = convert_to_json_safe(merged_data_records)
             else:
                 # Not incremental or no existing data, use new data as-is
@@ -1459,7 +1475,7 @@ class DexDataFetcher:
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['volume'],
+            'dex-trades': ['network_fees'],
             #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
             #'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],
