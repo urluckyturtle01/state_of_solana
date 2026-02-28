@@ -2,7 +2,7 @@
   "pageId": "dex-network-fees",
   "pageName": "DEX Network Fees",
   "chartCount": 8,
-  "lastUpdated": "2026-02-27T18:06:22.321068",
+  "lastUpdated": "2026-02-28T09:04:56.480531",
   "charts": [
     {
       "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000007",
@@ -171,7 +171,11 @@
             "field": "cum_dex_fee_pct",
             "type": "line",
             "unit": "%",
-            "rightAxis": true
+            "rightAxis": true,
+            "percentageConfig": {
+              "numerator": "cum_dex_fee_sol",
+              "denominator": "cum_network_fee_sol"
+            }
           }
         ],
         "groupBy": ""
@@ -189,7 +193,7 @@
         "rightAxisType": "line"
       },
       "createdAt": "2026-02-03T14:46:02.076121",
-      "updatedAt": "2026-02-10T08:54:17.924994",
+      "updatedAt": "2026-02-28T08:44:01.240022",
       "sqlFile": "dex_fee_share"
     },
     {
@@ -216,7 +220,11 @@
             "field": "cum_dex_jito_pct",
             "type": "line",
             "unit": "%",
-            "rightAxis": true
+            "rightAxis": true,
+            "percentageConfig": {
+              "numerator": "cum_dex_jito_sol",
+              "denominator": "cum_network_jito_sol"
+            }
           }
         ],
         "groupBy": ""
@@ -234,7 +242,7 @@
         "rightAxisType": "line"
       },
       "createdAt": "2026-02-03T14:46:02.076125",
-      "updatedAt": "2026-02-10T08:54:17.925000",
+      "updatedAt": "2026-02-28T08:44:01.240064",
       "sqlFile": "dex_fee_share"
     },
     {
