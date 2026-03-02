@@ -2,12 +2,12 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-03-01T23:30:08.073149",
+  "lastUpdated": "2026-03-02T16:53:56.892917",
   "charts": [
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
-      "title": "CU By Outer Program",
-      "subtitle": "Daily compute units consumed by outer program",
+      "title": "Compute Consumed By CPI Program",
+      "subtitle": "Daily compute consumed by CPI program",
       "chartType": "bar",
       "order": 3,
       "isStacked": true,
@@ -40,13 +40,13 @@
         }
       },
       "createdAt": "2026-02-28T12:55:28.268204",
-      "updatedAt": "2026-02-28T13:06:13.600048",
+      "updatedAt": "2026-03-02T16:53:56.803711",
       "sqlFile": "cu_by_dex"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
-      "title": "CU By Category",
-      "subtitle": "Daily compute units consumed by outer program category",
+      "title": "Compute Consumed By Category",
+      "subtitle": "Daily compute consumed by CPI program category",
       "chartType": "bar",
       "order": 2,
       "isStacked": true,
@@ -79,13 +79,13 @@
         }
       },
       "createdAt": "2026-02-28T12:55:28.279934",
-      "updatedAt": "2026-02-28T13:06:13.611699",
+      "updatedAt": "2026-03-02T16:53:56.832769",
       "sqlFile": "cu_by_category"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
-      "title": "Outer Program CU Share",
-      "subtitle": "Outer program compute units as percentage of total Solana network compute",
+      "title": "CPI Program Compute Consumed Share",
+      "subtitle": "CPI program compute consumed as percentage of total Solana network compute",
       "chartType": "dual-axis",
       "order": 1,
       "isStacked": false,
@@ -140,13 +140,13 @@
         }
       },
       "createdAt": "2026-02-28T12:55:28.291672",
-      "updatedAt": "2026-02-28T13:06:13.623451",
+      "updatedAt": "2026-03-02T16:53:56.860709",
       "sqlFile": "dex_cu_share"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
-      "title": "Max CU Per Trade",
-      "subtitle": "Daily maximum compute units per outer program transaction",
+      "title": "Max Compute Consumed Per Trade",
+      "subtitle": "Daily maximum compute consumed per CPI program transaction",
       "chartType": "line",
       "order": 4,
       "isStacked": false,
@@ -163,13 +163,13 @@
       },
       "page": "dex-compute",
       "createdAt": "2026-02-28T12:55:28.304018",
-      "updatedAt": "2026-02-28T13:06:13.636359",
+      "updatedAt": "2026-03-02T16:53:56.892899",
       "sqlFile": "avg_cu_per_trade"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
-      "title": "CU Distribution Per Trade",
-      "subtitle": "Daily avg, median, p90 and p99 compute units per outer program transaction",
+      "title": "Compute Consumed Distribution Per Trade",
+      "subtitle": "Daily avg, median, p90 and p99 compute consumed per CPI program transaction",
       "chartType": "line",
       "order": 5,
       "isStacked": false,
@@ -201,7 +201,7 @@
       },
       "page": "dex-compute",
       "createdAt": "2026-02-28T12:55:28.304024",
-      "updatedAt": "2026-02-28T13:06:13.636368",
+      "updatedAt": "2026-03-02T16:53:56.892911",
       "sqlFile": "avg_cu_per_trade"
     }
   ]
