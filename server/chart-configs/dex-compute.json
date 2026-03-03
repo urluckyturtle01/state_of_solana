@@ -2,69 +2,8 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-03-03T08:52:38.187956",
+  "lastUpdated": "2026-03-03T08:52:58.869446",
   "charts": [
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
-      "title": "CPI Program Compute Consumed Share",
-      "subtitle": "CPI program compute consumed as percentage of total Solana network compute",
-      "chartType": "dual-axis",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "dex_cu_consumed",
-            "type": "bar",
-            "unit": "CU"
-          },
-          {
-            "field": "non_dex_cu",
-            "type": "bar",
-            "unit": "CU"
-          },
-          {
-            "field": "dex_cu_pct",
-            "type": "line",
-            "unit": "%",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-compute",
-      "dualAxisConfig": {
-        "leftAxisFields": [
-          "dex_cu_consumed",
-          "non_dex_cu"
-        ],
-        "rightAxisFields": [
-          "dex_cu_pct"
-        ],
-        "leftAxisType": "bar",
-        "rightAxisType": "line"
-      },
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-28T12:55:28.291672",
-      "updatedAt": "2026-03-02T16:53:56.860709",
-      "sqlFile": "dex_cu_share"
-    },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
       "title": "Max Compute Consumed Per Trade",
@@ -203,6 +142,67 @@
       "createdAt": "2026-02-28T12:55:28.268204",
       "updatedAt": "2026-03-02T16:53:56.803711",
       "sqlFile": "cu_by_dex"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
+      "title": "CPI Program Compute Consumed Share",
+      "subtitle": "CPI program compute consumed as percentage of total Solana network compute",
+      "chartType": "dual-axis",
+      "order": 1,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "dex_cu_consumed",
+            "type": "bar",
+            "unit": "CU"
+          },
+          {
+            "field": "non_dex_cu",
+            "type": "bar",
+            "unit": "CU"
+          },
+          {
+            "field": "dex_cu_pct",
+            "type": "line",
+            "unit": "%",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "dualAxisConfig": {
+        "leftAxisFields": [
+          "dex_cu_consumed",
+          "non_dex_cu"
+        ],
+        "rightAxisFields": [
+          "dex_cu_pct"
+        ],
+        "leftAxisType": "bar",
+        "rightAxisType": "line"
+      },
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
+          }
+        }
+      },
+      "createdAt": "2026-02-28T12:55:28.291672",
+      "updatedAt": "2026-03-02T16:53:56.860709",
+      "sqlFile": "dex_cu_share"
     }
   ]
 }
