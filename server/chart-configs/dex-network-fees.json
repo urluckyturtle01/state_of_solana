@@ -1,32 +1,9 @@
 {
   "pageId": "dex-network-fees",
   "pageName": "DEX Network Fees",
-  "chartCount": 10,
-  "lastUpdated": "2026-03-07T09:55:06.453984",
+  "chartCount": 8,
+  "lastUpdated": "2026-03-07T09:58:35.727074",
   "charts": [
-    {
-      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000007",
-      "title": "Priority Fee Trade Count",
-      "subtitle": "Daily number of trades with priority fees",
-      "chartType": "bar",
-      "order": 7,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "priority_trade_count",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-network-fees",
-      "createdAt": "2026-02-03T14:46:02.076100",
-      "updatedAt": "2026-03-07T09:55:06.352017",
-      "sqlFile": "priority_distribution"
-    },
     {
       "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000010",
       "title": "Priority Fee Distribution",
@@ -313,29 +290,6 @@
       "createdAt": "2026-02-03T14:46:02.076133",
       "updatedAt": "2026-02-10T08:54:20.251771",
       "sqlFile": "trades_by_fee_type"
-    },
-    {
-      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000008",
-      "title": "Jito Trade Count",
-      "subtitle": "Daily number of trades with Jito tips",
-      "chartType": "bar",
-      "order": 8,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "jito_trade_count",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-network-fees",
-      "createdAt": "2026-02-03T14:46:02.076137",
-      "updatedAt": "2026-03-07T09:55:06.453965",
-      "sqlFile": "jito_distribution"
     },
     {
       "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000009",
