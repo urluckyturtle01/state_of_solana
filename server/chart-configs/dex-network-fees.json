@@ -2,41 +2,8 @@
   "pageId": "dex-network-fees",
   "pageName": "DEX Network Fees",
   "chartCount": 8,
-  "lastUpdated": "2026-03-07T09:58:35.727074",
+  "lastUpdated": "2026-03-07T09:59:58.593865",
   "charts": [
-    {
-      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000010",
-      "title": "Priority Fee Distribution",
-      "subtitle": "Daily priority fee percentiles (p50, p90, p99) in SOL",
-      "chartType": "line",
-      "order": 10,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "p50_priority_sol",
-            "type": "line",
-            "unit": "SOL"
-          },
-          {
-            "field": "p90_priority_sol",
-            "type": "line",
-            "unit": "SOL"
-          },
-          {
-            "field": "p99_priority_sol",
-            "type": "line",
-            "unit": "SOL"
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "dex-network-fees",
-      "createdAt": "2026-03-07T09:55:06.352033",
-      "updatedAt": "2026-03-07T09:55:06.352033",
-      "sqlFile": "priority_distribution"
-    },
     {
       "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000001",
       "title": "Daily Dex Fee Share",
@@ -290,6 +257,39 @@
       "createdAt": "2026-02-03T14:46:02.076133",
       "updatedAt": "2026-02-10T08:54:20.251771",
       "sqlFile": "trades_by_fee_type"
+    },
+    {
+      "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000010",
+      "title": "Priority Fee Distribution",
+      "subtitle": "Daily priority fee percentiles (p50, p90, p99) in SOL",
+      "chartType": "line",
+      "order": 10,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "p50_priority_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "p90_priority_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "p99_priority_sol",
+            "type": "line",
+            "unit": "SOL"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-network-fees",
+      "createdAt": "2026-03-07T09:55:06.352033",
+      "updatedAt": "2026-03-07T09:55:06.352033",
+      "sqlFile": "priority_distribution"
     },
     {
       "id": "dex-network-fees-b2c3d4e5-2222-4000-8000-000000000009",

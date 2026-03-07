@@ -2,68 +2,46 @@
   "pageId": "dex-compute",
   "pageName": "DEX Compute",
   "chartCount": 5,
-  "lastUpdated": "2026-03-03T08:52:58.869446",
+  "lastUpdated": "2026-03-07T09:59:56.774913",
   "charts": [
     {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
-      "title": "Max Compute Consumed Per Trade",
-      "subtitle": "Daily maximum compute consumed per CPI program transaction",
-      "chartType": "line",
-      "order": 4,
-      "isStacked": false,
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
+      "title": "Compute Consumed By CPI Program",
+      "subtitle": "Daily compute consumed by CPI program",
+      "chartType": "bar",
+      "order": 3,
+      "isStacked": true,
       "dataMapping": {
         "xAxis": "block_date",
         "yAxis": [
           {
-            "field": "max_compute_units",
-            "type": "line",
+            "field": "total_compute_units",
+            "type": "bar",
             "unit": "CU"
           }
         ],
-        "groupBy": ""
+        "groupBy": "program_name"
       },
       "page": "dex-compute",
-      "createdAt": "2026-02-28T12:55:28.304018",
-      "updatedAt": "2026-03-02T16:53:56.892899",
-      "sqlFile": "avg_cu_per_trade"
-    },
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
-      "title": "Compute Consumed Distribution Per Trade",
-      "subtitle": "Daily avg, median, p90 and p99 compute consumed per CPI program transaction",
-      "chartType": "line",
-      "order": 5,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "avg_compute_units",
-            "type": "line",
-            "unit": "CU"
-          },
-          {
-            "field": "median_compute_units",
-            "type": "line",
-            "unit": "CU"
-          },
-          {
-            "field": "p90_compute_units",
-            "type": "line",
-            "unit": "CU"
-          },
-          {
-            "field": "p99_compute_units",
-            "type": "line",
-            "unit": "CU"
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "D"
           }
-        ],
-        "groupBy": ""
+        }
       },
-      "page": "dex-compute",
-      "createdAt": "2026-02-28T12:55:28.304024",
-      "updatedAt": "2026-03-02T16:53:56.892911",
-      "sqlFile": "avg_cu_per_trade"
+      "createdAt": "2026-02-28T12:55:28.268204",
+      "updatedAt": "2026-03-02T16:53:56.803711",
+      "sqlFile": "cu_by_dex"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000004",
@@ -103,45 +81,6 @@
       "createdAt": "2026-02-28T12:55:28.279934",
       "updatedAt": "2026-03-02T16:53:56.832769",
       "sqlFile": "cu_by_category"
-    },
-    {
-      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000005",
-      "title": "Compute Consumed By CPI Program",
-      "subtitle": "Daily compute consumed by CPI program",
-      "chartType": "bar",
-      "order": 3,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "total_compute_units",
-            "type": "bar",
-            "unit": "CU"
-          }
-        ],
-        "groupBy": "program_name"
-      },
-      "page": "dex-compute",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "D"
-          }
-        }
-      },
-      "createdAt": "2026-02-28T12:55:28.268204",
-      "updatedAt": "2026-03-02T16:53:56.803711",
-      "sqlFile": "cu_by_dex"
     },
     {
       "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000006",
@@ -203,6 +142,67 @@
       "createdAt": "2026-02-28T12:55:28.291672",
       "updatedAt": "2026-03-02T16:53:56.860709",
       "sqlFile": "dex_cu_share"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000001",
+      "title": "Max Compute Consumed Per Trade",
+      "subtitle": "Daily maximum compute consumed per CPI program transaction",
+      "chartType": "line",
+      "order": 4,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "max_compute_units",
+            "type": "line",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "createdAt": "2026-02-28T12:55:28.304018",
+      "updatedAt": "2026-03-02T16:53:56.892899",
+      "sqlFile": "avg_cu_per_trade"
+    },
+    {
+      "id": "dex-compute-a1b2c3d4-1111-4000-8000-000000000002",
+      "title": "Compute Consumed Distribution Per Trade",
+      "subtitle": "Daily avg, median, p90 and p99 compute consumed per CPI program transaction",
+      "chartType": "line",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_compute_units",
+            "type": "line",
+            "unit": "CU"
+          },
+          {
+            "field": "median_compute_units",
+            "type": "line",
+            "unit": "CU"
+          },
+          {
+            "field": "p90_compute_units",
+            "type": "line",
+            "unit": "CU"
+          },
+          {
+            "field": "p99_compute_units",
+            "type": "line",
+            "unit": "CU"
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "dex-compute",
+      "createdAt": "2026-02-28T12:55:28.304024",
+      "updatedAt": "2026-03-02T16:53:56.892911",
+      "sqlFile": "avg_cu_per_trade"
     }
   ]
 }
