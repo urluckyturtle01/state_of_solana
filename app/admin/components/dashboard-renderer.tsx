@@ -1087,27 +1087,40 @@ export default function DashboardRenderer({
           
           // Initialize this chart's state
           batchUpdateChartStates({ [chart.id]: { loading: true } });
-          setChartData(prev => ({ ...prev, [chart.id]: [] }));
           
-          // Load this chart's data immediately
-          const chartFilters = filterValues[chart.id] || {};
+          // Check if chart has embedded data (from DB)
+          const hasEmbeddedData = (chart as any).data && Array.isArray((chart as any).data) && (chart as any).data.length > 0;
           
-          try {
-            const dataStartTime = performance.now();
-            console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] 🔄 [${i + 1}/${loadedCharts.length}] Fetching data...`);
+          if (hasEmbeddedData) {
+            // Use embedded data directly
+            console.log(`✅ Using embedded data for ${chart.title} (${(chart as any).data.length} rows)`);
+            setChartData(prev => ({ ...prev, [chart.id]: (chart as any).data }));
+            batchUpdateChartStates({ [chart.id]: { loading: false } });
+            console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] ✅ [${i + 1}/${loadedCharts.length}] Complete (embedded data: ${(chart as any).data.length} rows)`);
+          } else {
+            // Fetch data from API
+            setChartData(prev => ({ ...prev, [chart.id]: [] }));
             
-            const data = await wrappedFetchChartData(chart, chartFilters);
+            // Load this chart's data immediately
+            const chartFilters = filterValues[chart.id] || {};
             
-            if (mounted) {
-              setChartData(prev => ({ ...prev, [chart.id]: data }));
-              batchUpdateChartStates({ [chart.id]: { loading: false } });
+            try {
+              const dataStartTime = performance.now();
+              console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] 🔄 [${i + 1}/${loadedCharts.length}] Fetching data...`);
               
-              console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] ✅ [${i + 1}/${loadedCharts.length}] Complete (data fetch: ${(performance.now() - dataStartTime).toFixed(0)}ms, ${data.length} rows)`);
-            }
-          } catch (error) {
-            console.error(`❌ [${i + 1}/${loadedCharts.length}] Failed: ${chart.id}:`, error);
-            if (mounted) {
-              batchUpdateChartStates({ [chart.id]: { loading: false } });
+              const data = await wrappedFetchChartData(chart, chartFilters);
+              
+              if (mounted) {
+                setChartData(prev => ({ ...prev, [chart.id]: data }));
+                batchUpdateChartStates({ [chart.id]: { loading: false } });
+                
+                console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] ✅ [${i + 1}/${loadedCharts.length}] Complete (data fetch: ${(performance.now() - dataStartTime).toFixed(0)}ms, ${data.length} rows)`);
+              }
+            } catch (error) {
+              console.error(`❌ [${i + 1}/${loadedCharts.length}] Failed: ${chart.id}:`, error);
+              if (mounted) {
+                batchUpdateChartStates({ [chart.id]: { loading: false } });
+              }
             }
           }
           

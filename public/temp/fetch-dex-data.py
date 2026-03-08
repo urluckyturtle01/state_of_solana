@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 """
-DEX Data Fetcher with Smart Incremental Updates
+DEX Data Processor - Reads from RAW JSON Files
 ===============================================
 
 Features:
-1. Smart Data Freshness Check 📊
-   - For isIncremental=false: Checks if data is fresh (up-to-date)
-     * If fresh (last date >= yesterday): SKIP
-     * If old (last date < yesterday): RE-FETCH all data
-   - For isIncremental=true: Fetch only new data since last date
-     * Falls back to full fetch if no existing data
+1. Reads RAW SQL data from JSON files (no SQL queries)
+   - Faster processing (no database calls)
+   - YAML changes trigger instant regeneration
    
 2. Smart Config Updates 🎯
    - Only updates config if chart properties actually changed
@@ -21,8 +18,12 @@ Features:
    - Updates only charts from current SQL file
    - Preserves charts from other SQL files untouched
    
-4. Sequential Processing 🔄
-   - Runs queries ONE BY ONE (no parallel)
+4. YAML Change Detection 📝
+   - Detects YAML changes via hash comparison
+   - Regenerates chart data from RAW files when YAML changes
+   
+5. Sequential Processing 🔄
+   - Processes files ONE BY ONE (no parallel)
    - Shows progress in real-time
 """
 
@@ -91,11 +92,13 @@ class DexDataFetcher:
         self.sql_base_path = Path("/root/tl-reserach-tool-sqls")
         self.data_dir = Path("/root/state_of_solana/public/temp/chart-data")
         self.config_dir = Path("/root/state_of_solana/server/chart-configs")
+        self.raw_data_dir = Path("/root/state_of_solana/public/temp/raw-data")
         self.client = None
         
         # Ensure directories exist
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.config_dir.mkdir(parents=True, exist_ok=True)
+        self.raw_data_dir.mkdir(parents=True, exist_ok=True)
     
     def get_sql_hash(self, sql_file):
         """Calculate hash of SQL file content to detect changes."""
@@ -105,6 +108,16 @@ class DexDataFetcher:
                 return hashlib.md5(content).hexdigest()
         except Exception as e:
             print(f"   ⚠️  Error calculating SQL hash: {e}", flush=True)
+            return None
+    
+    def get_yaml_hash(self, yaml_file):
+        """Calculate hash of YAML file content to detect config changes."""
+        try:
+            with open(yaml_file, 'rb') as f:
+                content = f.read()
+                return hashlib.md5(content).hexdigest()
+        except Exception as e:
+            print(f"   ⚠️  Error calculating YAML hash: {e}", flush=True)
             return None
     
     def detect_currency_columns(self, y_axis):
@@ -191,6 +204,25 @@ class DexDataFetcher:
         except Exception as e:
             print(f"   ⚠️  Error checking SQL hash: {e}", flush=True)
             return True  # On error, force re-fetch
+    
+    def has_yaml_changed(self, page_id, sql_name, current_yaml_hash):
+        """Check if YAML config file has changed since last run."""
+        config_file = self.config_dir / f"{page_id}.json"
+        if not config_file.exists():
+            return True  # No config file, treat as changed
+        
+        try:
+            with open(config_file) as f:
+                config = json.load(f)
+                for chart in config.get('charts', []):
+                    if chart.get('sqlFile') == sql_name:
+                        stored_hash = chart.get('yamlHash')
+                        if stored_hash == current_yaml_hash:
+                            return False  # Hash matches
+            return True  # No stored hash found, treat as changed
+        except Exception as e:
+            print(f"   ⚠️  Error checking YAML hash: {e}", flush=True)
+            return True  # On error, force update
     
     def connect(self):
         """Connect to Trino."""
@@ -419,6 +451,39 @@ class DexDataFetcher:
         
         return merged_df.to_dict('records')
     
+    def load_from_raw_file(self, page_id, sql_name):
+        """Load data from RAW JSON file instead of running SQL query."""
+        raw_file = self.raw_data_dir / f"{page_id}-RAW.json"
+        
+        if not raw_file.exists():
+            print(f"   ⚠️  RAW file not found: {raw_file}", flush=True)
+            print(f"   💡 Run fetch-raw-sql-data.py first to generate RAW files", flush=True)
+            return None
+        
+        try:
+            with open(raw_file) as f:
+                raw_data = json.load(f)
+            
+            if sql_name not in raw_data:
+                print(f"   ⚠️  SQL '{sql_name}' not found in RAW file", flush=True)
+                return None
+            
+            sql_data = raw_data[sql_name]
+            data_records = sql_data.get('data', [])
+            
+            if not data_records:
+                print(f"   ⚠️  No data in RAW file for '{sql_name}'", flush=True)
+                return None
+            
+            # Convert to DataFrame
+            df = pd.DataFrame(data_records)
+            print(f"   📂 Loaded {len(df)} rows from RAW file", flush=True)
+            return df
+            
+        except Exception as e:
+            print(f"   ❌ Error loading RAW file: {e}", flush=True)
+            return None
+    
     def fetch_query(self, sql_path, config):
         """Fetch data for a single SQL query."""
         with open(sql_path) as f:
@@ -443,7 +508,7 @@ class DexDataFetcher:
                 return False
         return True
     
-    def update_config_only(self, page_id, folder, config, sql_name):
+    def update_config_only(self, page_id, folder, config, sql_name, yaml_hash=None):
         """Update config file without touching data - for skipped queries."""
         # Check if YAML has multiple charts or single chart
         if 'charts' in config:
@@ -477,10 +542,9 @@ class DexDataFetcher:
         for i, chart_def in enumerate(chart_configs_list):
             chart_id = f"{page_id}-{chart_def['id']}"
             
-            # If chart already exists, keep it as-is
-            if chart_id in existing_charts_map:
-                chart_configs.append(existing_charts_map[chart_id])
-                continue
+            # If chart already exists, check if YAML config has changed
+            # We need to rebuild it to capture any YAML changes (like percentageConfig)
+            # Don't just preserve the old config
             
             # Get chart-specific queryRunConfig if it exists, otherwise use file-level
             chart_query_config = chart_def.get('queryRunConfig', query_run_config)
@@ -657,8 +721,25 @@ class DexDataFetcher:
                     }
             
             now_iso = datetime.now().isoformat()
-            chart_config["createdAt"] = now_iso
-            chart_config["updatedAt"] = now_iso
+            
+            # Check if chart already exists to preserve createdAt
+            existing_chart = existing_charts_map.get(chart_id)
+            if existing_chart:
+                # Preserve createdAt
+                chart_config["createdAt"] = existing_chart.get("createdAt", now_iso)
+                
+                # Check if config changed
+                if self.compare_chart_configs(existing_chart, chart_config):
+                    # No changes - preserve updatedAt
+                    chart_config["updatedAt"] = existing_chart.get("updatedAt", now_iso)
+                else:
+                    # Changes detected - update updatedAt
+                    chart_config["updatedAt"] = now_iso
+            else:
+                # New chart
+                chart_config["createdAt"] = now_iso
+                chart_config["updatedAt"] = now_iso
+            
             chart_configs.append(chart_config)
         
         # Merge: Keep existing charts NOT from this SQL, add charts from this SQL.
@@ -678,9 +759,11 @@ class DexDataFetcher:
                 chart['page'] = page_id
             merged_config_charts.append(chart)
 
-        # Add charts from this SQL (current YAML); ensure sqlFile set for future removal detection
+        # Add charts from this SQL (current YAML); ensure sqlFile and yamlHash set for future detection
         for c in chart_configs:
             c['sqlFile'] = sql_name
+            if yaml_hash:
+                c['yamlHash'] = yaml_hash
         merged_config_charts.extend(chart_configs)
 
         # Save merged config
@@ -696,7 +779,7 @@ class DexDataFetcher:
         with open(config_file, 'w') as f:
             json.dump(config_data, f, indent=2)
     
-    def save_data(self, page_id, folder, config, data, sql_name, is_incremental_update=False, sql_hash=None):
+    def save_data(self, page_id, folder, config, data, sql_name, is_incremental_update=False, sql_hash=None, yaml_hash=None):
         """Save data and config files with smart merging."""
         # Check if YAML has multiple charts or single chart
         if 'charts' in config:
@@ -802,6 +885,8 @@ class DexDataFetcher:
             }
             if sql_hash:
                 chart_entry['sqlHash'] = sql_hash
+            if yaml_hash:
+                chart_entry['yamlHash'] = yaml_hash
             charts_data.append(chart_entry)
         
         # Load existing data file and merge charts
@@ -1234,6 +1319,9 @@ class DexDataFetcher:
             # Calculate SQL hash to detect changes
             sql_hash = self.get_sql_hash(sql_file)
             
+            # Calculate YAML hash to detect config changes
+            yaml_hash = self.get_yaml_hash(config_file)
+            
             # Determine page_id based on category
             if category == 'dex-trades':
                 page_id = f"dex-{folder_name.replace('_', '-')}"
@@ -1270,12 +1358,18 @@ class DexDataFetcher:
             # Check for incremental fetch: file-level queryRunConfig, or first chart's if missing
             query_run_config = config.get('queryRunConfig') or (chart_configs_list[0].get('queryRunConfig') if chart_configs_list else {}) or {}
             is_incremental = query_run_config.get('isIncremental', False)
+            
             # Check if SQL file has changed
             sql_changed = self.has_sql_changed(page_id, sql_name, sql_hash) if sql_hash else True
             if sql_changed and data_exists:
                 print(f"   🔄 SQL file changed, forcing full re-fetch", flush=True)
                 # Force re-fetch by treating data as non-existent
                 data_exists = False
+            
+            # Check if YAML config has changed
+            yaml_changed = self.has_yaml_changed(page_id, sql_name, yaml_hash) if yaml_hash else True
+            if yaml_changed and not sql_changed:
+                print(f"   📝 YAML config changed, will update config", flush=True)
 
             is_cumulative = query_run_config.get('isCumulative', False)
             
@@ -1294,12 +1388,12 @@ class DexDataFetcher:
             if is_incremental:
                 # For incremental queries, check if THIS SQL's charts exist first
                 if not data_exists:
-                    # No data for this SQL's charts, fetch full dataset
-                    print(f"   📥 No existing data for this SQL, fetching full dataset", flush=True)
-                    df = self.fetch_query(sql_file, config)
+                    # No data for this SQL's charts, load from RAW file
+                    print(f"   📥 No existing data for this SQL, loading from RAW file", flush=True)
+                    df = self.load_from_raw_file(page_id, sql_name)
                     if df is not None and not df.empty:
-                        print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
+                        print(f"   ✅ Loaded {len(df)} rows", flush=True)
+                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash, yaml_hash=yaml_hash)
                     elif df is not None:
                         print(f"   ⚠️  Query returned 0 rows", flush=True)
                     else:
@@ -1316,7 +1410,7 @@ class DexDataFetcher:
                     if last_date.date() >= yesterday:
                         print(f"   ⏭️  Data is fresh (up-to-date), skipping", flush=True)
                         # Update config to ensure this query's charts remain in the config
-                        self.update_config_only(page_id, folder_name, config, sql_name)
+                        self.update_config_only(page_id, folder_name, config, sql_name, yaml_hash)
                         continue
                     
                     # Modify SQL for incremental fetch
@@ -1355,7 +1449,7 @@ class DexDataFetcher:
                                             pass
                                     
                                     # Save with incremental merge (save_data will merge per-chart)
-                                    self.save_data(page_id, folder_name, config, new_df, sql_name, is_incremental_update=True, sql_hash=sql_hash)
+                                    self.save_data(page_id, folder_name, config, new_df, sql_name, is_incremental_update=True, sql_hash=sql_hash, yaml_hash=yaml_hash)
                                 else:
                                     print(f"   ℹ️  No new data since {last_date.date()}", flush=True)
                             else:
@@ -1364,23 +1458,23 @@ class DexDataFetcher:
                             print(f"   ❌ Error: {e}", flush=True)
                             continue
                     else:
-                        # Fetch full data
-                        print(f"   📥 Fetching full data", flush=True)
-                        df = self.fetch_query(sql_file, config)
+                        # Load full data from RAW file
+                        print(f"   📥 Loading full data from RAW file", flush=True)
+                        df = self.load_from_raw_file(page_id, sql_name)
                         if df is not None and not df.empty:
-                            print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                            self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
+                            print(f"   ✅ Loaded {len(df)} rows", flush=True)
+                            self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash, yaml_hash=yaml_hash)
                         elif df is not None:
                             print(f"   ⚠️  Query returned 0 rows", flush=True)
                         else:
                             continue
                 else:
-                    # No existing data, fetch full
-                    print(f"   📥 No existing data, fetching full dataset", flush=True)
-                    df = self.fetch_query(sql_file, config)
+                    # No existing data, load from RAW file
+                    print(f"   📥 No existing data, loading from RAW file", flush=True)
+                    df = self.load_from_raw_file(page_id, sql_name)
                     if df is not None and not df.empty:
-                        print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
+                        print(f"   ✅ Loaded {len(df)} rows", flush=True)
+                        self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash, yaml_hash=yaml_hash)
                     elif df is not None:
                         print(f"   ⚠️  Query returned 0 rows", flush=True)
                     else:
@@ -1390,12 +1484,12 @@ class DexDataFetcher:
                 if not data_exists:
                     print(f"   📥 No existing data, fetching full dataset", flush=True)
                 else:
-                    print(f"   📥 Fetching full dataset (refreshing old data)", flush=True)
+                    print(f"   📥 Loading full dataset from RAW file (refreshing old data)", flush=True)
                 
-                df = self.fetch_query(sql_file, config)
+                df = self.load_from_raw_file(page_id, sql_name)
                 if df is not None and not df.empty:
-                    print(f"   ✅ Fetched {len(df)} rows", flush=True)
-                    self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash)
+                    print(f"   ✅ Loaded {len(df)} rows", flush=True)
+                    self.save_data(page_id, folder_name, config, df, sql_name, is_incremental_update=False, sql_hash=sql_hash, yaml_hash=yaml_hash)
                 elif df is not None:
                     print(f"   ⚠️  Query returned 0 rows", flush=True)
                 else:
@@ -1462,20 +1556,19 @@ class DexDataFetcher:
     def run(self):
         """Run the fetcher for all folders."""
         print("\n" + "="*70, flush=True)
-        print("🚀 DATA FETCHER - SMART INCREMENTAL", flush=True)
+        print("🚀 DATA PROCESSOR - READS FROM RAW FILES", flush=True)
         print("="*70, flush=True)
         print("\n📋 Features:", flush=True)
-        print("  ✓ Smart freshness check (skip if data up-to-date)", flush=True)
-        print("  ✓ Auto refresh old data (isIncremental=false)", flush=True)
-        print("  ✓ Incremental updates (isIncremental=true)", flush=True)
-        print("  ✓ Run queries ONE BY ONE (sequential)", flush=True)
+        print("  ✓ Reads from RAW JSON files (no SQL queries)", flush=True)
+        print("  ✓ YAML change detection (instant regeneration)", flush=True)
         print("  ✓ Smart config updates (only if changed)", flush=True)
-        print("  ✓ SQL change detection (auto re-fetch if SQL modified)", flush=True)
+        print("  ✓ Percentage recalculation for cumulative data", flush=True)
+        print("  ✓ Process files ONE BY ONE (sequential)", flush=True)
         print("="*70 + "\n", flush=True)
         
         # Define categories and their folders
         categories = {
-            'dex-trades': ['tokens'],
+            'dex-trades': ['compute','network_fees', 'prop_amm'],
             #'dex-trades': ['compute', 'network_fees', 'prop_amm', 'summary', 'tokens', 'traders', 'volume', 'aggregators'],
             #'stablecoins': ['summary', 'mint_burns', 'transfers', 'dex_activity'],
             #'rev': ['cost_and_capacity', 'issuance_and_burn', 'total_economic_value'],

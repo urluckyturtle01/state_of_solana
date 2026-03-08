@@ -483,7 +483,36 @@ export async function getAllChartConfigs(): Promise<ChartConfig[]> {
 export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig[]> {
   console.log(`Getting charts for page: ${pageId}`);
   
-  // Try to load from temp file first (for DEX pages with local data)
+  // 🆕 For database-backed pages, load from PostgreSQL database
+  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens'];
+  if (dbBackedPages.includes(pageId)) {
+    try {
+      const baseUrl = typeof window !== 'undefined' 
+        ? `${window.location.protocol}//${window.location.host}`
+        : '';
+      
+      console.log(`🔄 Loading ${pageId} from PostgreSQL database...`);
+      const response = await fetch(`${baseUrl}/api/db-configs/${pageId}`, {
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.charts && Array.isArray(data.charts)) {
+          console.log(`✅ Loaded ${data.charts.length} charts from DB for ${pageId}`);
+          return data.charts;
+        }
+      } else {
+        console.warn(`DB API returned ${response.status} for ${pageId}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error loading from DB for ${pageId}:`, error);
+    }
+  }
+  
+  // Try to load from temp file first (for other DEX pages with local data)
   try {
     const baseUrl = typeof window !== 'undefined' 
       ? `${window.location.protocol}//${window.location.host}`

@@ -103,6 +103,8 @@ export function sanitizeChartConfig(chart: ChartConfig): PublicChartConfig {
     icon,
     order,
     trendConfig,
+    // Data field (for charts with embedded data from DB)
+    data: (chart as any).data,
   };
 }
 
