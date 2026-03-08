@@ -512,8 +512,11 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             # Monthly/weekly queries: iterate with checkpointing
             def checkpoint(data):
                 """Save progress to database and fix cumulative fields."""
-                cur = pg.cursor()
-                cur.execute("""
+                # Use a separate connection for checkpoint to ensure data is saved
+                # even if the main job transaction is rolled back later
+                checkpoint_pg = get_pg_conn()
+                checkpoint_cur = checkpoint_pg.cursor()
+                checkpoint_cur.execute("""
                     UPDATE query_results SET
                         json_data = %s::jsonb,
                         last_run_at = NOW(),
@@ -521,9 +524,10 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                         updated_at = NOW()
                     WHERE sql_hash = %s
                 """, (json.dumps(data, default=str), sql_hash))
-                pg.commit()
+                checkpoint_pg.commit()
                 # Fix cumulative fields after each checkpoint
-                fix_cumulative_fields(pg, sql_hash)
+                fix_cumulative_fields(checkpoint_pg, sql_hash)
+                checkpoint_pg.close()
             
             try:
                 all_new_data = run_trino_query(sql_query, date.today(), BACKFILL_START, trino_client, 

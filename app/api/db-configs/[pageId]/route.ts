@@ -27,9 +27,8 @@ export async function GET(
       const result = await client.query(
         `SELECT uuid, chart_config, sql_hash 
          FROM chart_definitions 
-         WHERE chart_config->>'pageId' = $1
-         ORDER BY (chart_config->>'order')::int NULLS LAST, 
-                  (chart_config->>'position')::int NULLS LAST`,
+         WHERE chart_config->>'page' = $1
+         ORDER BY (chart_config->>'index')::int NULLS LAST`,
         [pageId]
       );
       
