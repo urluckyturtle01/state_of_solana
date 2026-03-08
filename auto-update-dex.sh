@@ -3,9 +3,9 @@
 # Auto-update DEX data when SQL repo changes
 # This script:
 # 1. Pulls latest changes from tl-reserach-tool-sqls
-# 2. Runs fetch-dex-data.py to update data
-# 3. Generates HTML report with query results
-# 4. Commits changes to state_of_solana (NO PUSH)
+# 2. Runs sync-charts-to-db.py to sync chart definitions to PostgreSQL
+# 3. trino_worker.py automatically processes the queued jobs
+# 4. Generates HTML report with sync results
 
 set -e  # Exit on error
 
@@ -22,7 +22,7 @@ echo ""
 # Directories
 SQL_REPO_DIR="/root/tl-reserach-tool-sqls"
 PROJECT_DIR="/root/state_of_solana"
-PYTHON_SCRIPT="$PROJECT_DIR/public/temp/fetch-dex-data.py"
+PYTHON_SCRIPT="$PROJECT_DIR/sync-charts-to-db.py"
 DATA_DIR="$PROJECT_DIR/public/temp/chart-data"
 CONFIG_DIR="$PROJECT_DIR/server/chart-configs"
 
@@ -62,8 +62,8 @@ fi
 
 echo ""
 
-# Step 2: Run Python script to update data
-echo "🐍 Step 2: Running fetch-dex-data.py..."
+# Step 2: Run sync-charts-to-db.py to sync chart definitions
+echo "🐍 Step 2: Running sync-charts-to-db.py..."
 cd "$PROJECT_DIR"
 
 # Check if Python script exists
@@ -79,73 +79,65 @@ if [ -f "$PROJECT_DIR/.env" ]; then
 fi
 
 # Run the Python script and capture detailed output
-echo "   Executing Python script..."
-cd "$PROJECT_DIR/public/temp"
-python3 fetch-dex-data.py 2>&1 | tee /tmp/fetch-dex-data.log
+echo "   Executing sync-charts-to-db.py..."
+python3 "$PYTHON_SCRIPT" 2>&1 | tee /tmp/sync-charts-to-db.log
 
 PYTHON_EXIT_CODE=${PIPESTATUS[0]}
 
-# Parse log to extract query results
-SUCCESSFUL_QUERIES=$(grep -c "✅ Fetched" /tmp/fetch-dex-data.log || echo "0")
-SKIPPED_QUERIES=$(grep -c "⏭️  Data is fresh" /tmp/fetch-dex-data.log || echo "0")
-FAILED_QUERIES=$(grep -c "❌ Error" /tmp/fetch-dex-data.log || echo "0")
-TOTAL_QUERIES=$(grep -c "📊 Processing:" /tmp/fetch-dex-data.log || echo "0")
+# Parse log to extract sync results
+INSERTED_CHARTS=$(grep -c "✅ Inserted:" /tmp/sync-charts-to-db.log || echo "0")
+UPDATED_CHARTS=$(grep -c "🔄 Updated:" /tmp/sync-charts-to-db.log || echo "0")
+DELETED_CHARTS=$(grep -c "🗑️  Deleted" /tmp/sync-charts-to-db.log || echo "0")
+TOTAL_CHARTS=$(grep -c "📋" /tmp/sync-charts-to-db.log || echo "0")
 
 if [ $PYTHON_EXIT_CODE -ne 0 ]; then
-    echo "❌ Python script failed with exit code $PYTHON_EXIT_CODE"
-    echo "   Check log: /tmp/fetch-dex-data.log"
+    echo "❌ sync-charts-to-db.py failed with exit code $PYTHON_EXIT_CODE"
+    echo "   Check log: /tmp/sync-charts-to-db.log"
     SCRIPT_STATUS="FAILED"
 else
-    echo "   ✅ Python script completed successfully"
+    echo "   ✅ sync-charts-to-db.py completed successfully"
+    echo "   📊 Inserted: $INSERTED_CHARTS | Updated: $UPDATED_CHARTS | Deleted: $DELETED_CHARTS"
     SCRIPT_STATUS="SUCCESS"
 fi
 echo ""
 
-# Step 3: Compress chart data
-echo "🗜️  Step 3: Compressing chart data..."
-cd "$PROJECT_DIR/public/temp"
-if [ -f "compress-chart-data.js" ]; then
-    node compress-chart-data.js 2>&1 || {
-        echo "⚠️  compress-chart-data.js failed (non-fatal)"
-    }
-    echo "   ✅ Compression completed"
+# Step 3: Check trino_worker.py status
+echo "🔍 Step 3: Checking trino_worker.py status..."
+WORKER_PID=$(pgrep -f "python.*trino_worker.py" || echo "")
+if [ -n "$WORKER_PID" ]; then
+    echo "   ✅ trino_worker.py is running (PID: $WORKER_PID)"
+    echo "   📝 Worker will automatically process queued jobs"
 else
-    echo "   ⚠️  compress-chart-data.js not found, skipping"
+    echo "   ⚠️  trino_worker.py is NOT running"
+    echo "   💡 Start it with: nohup python3 trino_worker.py > trino_worker.log 2>&1 &"
 fi
 echo ""
 
-# Step 4: Commit changes (NO PUSH)
-echo "💾 Step 4: Committing changes..."
-cd "$PROJECT_DIR"
+# Step 4: No git commit needed (data is in PostgreSQL now)
+echo "ℹ️  Step 4: Chart definitions synced to PostgreSQL database"
+echo "   No git commit needed - data is stored in database"
+echo ""
 
-# Check if there are any changes
-if git diff --quiet && git diff --cached --quiet; then
-    echo "   ℹ️  No changes to commit"
-    echo ""
-    echo "======================================================================="
-    echo "✅ AUTO-UPDATE COMPLETE (No changes detected)"
-    echo "======================================================================="
-    exit 0
-fi
+# Final summary
+echo "======================================================================="
+echo "✅ AUTO-UPDATE COMPLETE"
+echo "======================================================================="
+echo ""
+echo "📊 Summary:"
+echo "   • SQL repo commit: ${AFTER_COMMIT:0:7}"
+echo "   • Charts inserted: $INSERTED_CHARTS"
+echo "   • Charts updated: $UPDATED_CHARTS"
+echo "   • Charts deleted: $DELETED_CHARTS"
+echo "   • Status: $SCRIPT_STATUS"
+echo ""
+echo "🔗 View logs:"
+echo "   • Sync log: /tmp/sync-charts-to-db.log"
+echo "   • Worker log: /root/state_of_solana/trino_worker.log"
+echo ""
+exit 0
 
-# Show what changed
-echo "   📝 Changes detected:"
-git status --short
-
-# Add changes
-git add "$DATA_DIR"/*.json "$CONFIG_DIR"/dex-*.json 2>/dev/null || true
-
-# Check if there's anything to commit after adding
-if git diff --cached --quiet; then
-    echo "   ℹ️  No changes to commit after git add"
-    echo ""
-    echo "======================================================================="
-    echo "✅ AUTO-UPDATE COMPLETE (No changes after staging)"
-    echo "======================================================================="
-    exit 0
-fi
-
-# Create commit message with timestamp and SQL repo commit
+# OLD CODE BELOW (keeping for reference but not executed)
+if false; then
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 SQL_COMMIT_SHORT="${AFTER_COMMIT:0:7}"
 COMMIT_MESSAGE="Auto-update DEX data from SQL changes
@@ -411,3 +403,4 @@ echo "   ✓ Application restarted"
 echo "   ✓ Report: /root/state_of_solana/public/reports/dex-update-$(date +%Y-%m-%d).html"
 echo ""
 echo "======================================================================="
+fi  # End of if false block

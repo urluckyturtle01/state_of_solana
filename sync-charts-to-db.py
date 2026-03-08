@@ -226,13 +226,13 @@ def sync_charts_to_db():
     # Define categories and their folders
     categories_to_process = {
         'dex-trades': [
-        
+        'summary',
             'compute',
             'network_fees',
-            
+            'prop_amm',
             'tokens',
-            'traders'
-        
+            'traders',
+            'volume'
         ]
     }
     

@@ -535,6 +535,13 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             except Exception as e:
                 print(f"   ❌ Error: {e}")
                 # Data already saved via checkpoint before error
+                # Get the current row count from database
+                cur = pg.cursor()
+                cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
+                row = cur.fetchone()
+                saved_count = (row[0] or 0) if row else 0
+                print(f"   ℹ️  Partial data saved via checkpoints: {saved_count} rows")
+                return saved_count
         else:
             # Daily queries: iterate day-by-day
             d = date.today()
@@ -566,19 +573,14 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
 
                 d -= timedelta(days=1)
 
+        # Get final count from database (data already saved via checkpoints)
         cur = pg.cursor()
-        cur.execute("""
-            UPDATE query_results SET
-                json_data = %s::jsonb,
-                last_run_at = NOW(),
-                last_run_status = 'success',
-                updated_at = NOW()
-            WHERE sql_hash = %s
-        """, (json.dumps(all_new_data, default=str), sql_hash))
-        pg.commit()
-
-        print(f"   ✅ Backfill (full) complete: {len(all_new_data)} total rows")
-        return len(all_new_data)
+        cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
+        row = cur.fetchone()
+        final_count = (row[0] or 0) if row else 0
+        
+        print(f"   ✅ Backfill (full) complete: {final_count} total rows")
+        return final_count
 
 def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     """
