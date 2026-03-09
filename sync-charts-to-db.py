@@ -122,9 +122,22 @@ def process_folder(pg, cur, category, folder, processed_uuids):
         with open(yaml_file, 'r') as f:
             yaml_config = yaml.safe_load(f)
         
-        if not yaml_config or 'charts' not in yaml_config:
-            print(f"   ⚠️  No charts found in YAML")
+        if not yaml_config:
+            print(f"   ⚠️  Empty YAML file")
             continue
+        
+        # Handle both formats: new format with 'charts' array, and old format with direct config
+        if 'charts' not in yaml_config:
+            # Old format: chart config is at root level
+            # Convert to new format by wrapping in a charts array
+            if 'id' in yaml_config and 'title' in yaml_config:
+                yaml_config = {
+                    'charts': [yaml_config],
+                    'queryRunConfig': yaml_config.get('queryRunConfig', {})
+                }
+            else:
+                print(f"   ⚠️  No charts found in YAML (missing 'charts' array or 'id' field)")
+                continue
         
         # Determine page_id
         if category == 'dex-trades':
@@ -226,13 +239,14 @@ def sync_charts_to_db():
     # Define categories and their folders
     categories_to_process = {
         'dex-trades': [
-        'summary',
+            
+            'summary',
             'compute',
             'network_fees',
-            'prop_amm',
+            
             'tokens',
             'traders',
-            'volume'
+        
         ]
     }
     

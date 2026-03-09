@@ -8,10 +8,697 @@
 ======================================================================
 
 
-🔄 Processing job #190 (backfill) - attempt 1/3
-   SQL hash: f8445cc4245e687ea64be70ab029dd3a
-   📅 Backfill (full): 2026-03-08 → 2025-01-01
-      Fetching month 2026-03-01 (1/15)... ✅ 21 rows
+🔄 Processing job #248 (backfill) - attempt 1/3
+   SQL hash: 111b2876b90a72366580b53d76bee74c
+   📅 Backfill (resume): existing 430 rows, 0 gaps, max_date=2026-03-06
+   📅 Fetching 2026-03-06 → 2026-03-09...
+      Fetching month 2026-03-01 (1/1)... ✅ 8 rows
+   ✅ Backfill (resume) complete: +8 rows, total 437 rows
+✅ Job #248 completed successfully (437 rows)
+
+🔄 Processing job #249 (backfill) - attempt 1/3
+   SQL hash: 27ae47addb8ea562cb153d40ea7bd333
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 184 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 1 months processed
+      Fetching month 2026-02-01 (2/15)... ✅ 649 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 2 months processed
+      Fetching month 2026-01-01 (3/15)... ✅ 744 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 3 months processed
+      Fetching month 2025-12-01 (4/15)... ✅ 736 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 4 months processed
+      Fetching month 2025-11-01 (5/15)... ✅ 709 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 5 months processed
+      Fetching month 2025-10-01 (6/15)... ✅ 737 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 6 months processed
+      Fetching month 2025-09-01 (7/15)... ✅ 720 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 7 months processed
+      Fetching month 2025-08-01 (8/15)... ✅ 709 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 8 months processed
+      Fetching month 2025-07-01 (9/15)... ✅ 676 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 9 months processed
+      Fetching month 2025-06-01 (10/15)... ✅ 526 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 10 months processed
+      Fetching month 2025-05-01 (11/15)... ✅ 496 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 11 months processed
+      Fetching month 2025-04-01 (12/15)... ✅ 433 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 12 months processed
+      Fetching month 2025-03-01 (13/15)... ✅ 282 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 13 months processed
+      Fetching month 2025-02-01 (14/15)... ⚠️ 0 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 14 months processed
+      Fetching month 2025-01-01 (15/15)... ⚠️ 0 rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 15 months processed
+   ✅ Backfill (full) complete: 7601 total rows
+      🔄 Fixing cumulative fields (groupBy: category)...
+      ✅ Cumulative fields recalculated
+✅ Job #249 completed successfully (7601 rows)
+
+🔄 Processing job #250 (backfill) - attempt 1/3
+   SQL hash: 2c8bfd552ce22f7aa0b5d9e5766ac0d8
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 24 rows
+      💾 Checkpoint: 1 months processed
+      Fetching month 2026-02-01 (2/15)... ✅ 84 rows
+      💾 Checkpoint: 2 months processed
+      Fetching month 2026-01-01 (3/15)... ✅ 93 rows
+      💾 Checkpoint: 3 months processed
+      Fetching month 2025-12-01 (4/15)... ✅ 93 rows
+      💾 Checkpoint: 4 months processed
+      Fetching month 2025-11-01 (5/15)... ✅ 90 rows
+      💾 Checkpoint: 5 months processed
+      Fetching month 2025-10-01 (6/15)... ✅ 93 rows
+      💾 Checkpoint: 6 months processed
+      Fetching month 2025-09-01 (7/15)... ✅ 90 rows
+      💾 Checkpoint: 7 months processed
+      Fetching month 2025-08-01 (8/15)... ✅ 93 rows
+      💾 Checkpoint: 8 months processed
+      Fetching month 2025-07-01 (9/15)... ✅ 93 rows
+      💾 Checkpoint: 9 months processed
+      Fetching month 2025-06-01 (10/15)... ✅ 90 rows
+      💾 Checkpoint: 10 months processed
+      Fetching month 2025-05-01 (11/15)... ✅ 93 rows
+      💾 Checkpoint: 11 months processed
+      Fetching month 2025-04-01 (12/15)... ✅ 90 rows
+      💾 Checkpoint: 12 months processed
+      Fetching month 2025-03-01 (13/15)... ✅ 93 rows
+      💾 Checkpoint: 13 months processed
+      Fetching month 2025-02-01 (14/15)... ✅ 84 rows
+      💾 Checkpoint: 14 months processed
+      Fetching month 2025-01-01 (15/15)... ✅ 80 rows
+      💾 Checkpoint: 15 months processed
+   ✅ Backfill (full) complete: 1283 total rows
+✅ Job #250 completed successfully (1283 rows)
+
+🔄 Processing job #251 (backfill) - attempt 1/3
+   SQL hash: 448326732ecd4727414bd9a79d0951e8
+   📅 Backfill (resume): existing 61 rows, 0 gaps, max_date=2025-01-01
+   📅 Fetching 2025-01-01 → 2026-03-09...
+      Fetching week 2024-12-30 (1/63)... ⚠️ 0 rows
+      Fetching week 2025-01-06 (2/63)... ✅ 1 rows
+      Fetching week 2025-01-13 (3/63)... ✅ 1 rows
+      Fetching week 2025-01-20 (4/63)... ✅ 1 rows
+      Fetching week 2025-01-27 (5/63)... ✅ 1 rows
+      Fetching week 2025-02-03 (6/63)... ✅ 1 rows
+      Fetching week 2025-02-10 (7/63)... ✅ 1 rows
+      Fetching week 2025-02-17 (8/63)... ✅ 1 rows
+      Fetching week 2025-02-24 (9/63)... ✅ 1 rows
+      Fetching week 2025-03-03 (10/63)... ✅ 1 rows
+      Fetching week 2025-03-10 (11/63)... ✅ 1 rows
+      Fetching week 2025-03-17 (12/63)... ✅ 1 rows
+      Fetching week 2025-03-24 (13/63)... ✅ 1 rows
+      Fetching week 2025-03-31 (14/63)... ✅ 1 rows
+      Fetching week 2025-04-07 (15/63)... ✅ 1 rows
+      Fetching week 2025-04-14 (16/63)... ✅ 1 rows
+      Fetching week 2025-04-21 (17/63)... ✅ 1 rows
+      Fetching week 2025-04-28 (18/63)... ✅ 1 rows
+      Fetching week 2025-05-05 (19/63)... ✅ 1 rows
+      Fetching week 2025-05-12 (20/63)... ✅ 1 rows
+      Fetching week 2025-05-19 (21/63)... ✅ 1 rows
+      Fetching week 2025-05-26 (22/63)... ✅ 1 rows
+      Fetching week 2025-06-02 (23/63)... ✅ 1 rows
+      Fetching week 2025-06-09 (24/63)... ✅ 1 rows
+      Fetching week 2025-06-16 (25/63)... ✅ 1 rows
+      Fetching week 2025-06-23 (26/63)... ✅ 1 rows
+      Fetching week 2025-06-30 (27/63)... ✅ 1 rows
+      Fetching week 2025-07-07 (28/63)... ✅ 1 rows
+      Fetching week 2025-07-14 (29/63)... ✅ 1 rows
+      Fetching week 2025-07-21 (30/63)... ✅ 1 rows
+      Fetching week 2025-07-28 (31/63)... ✅ 1 rows
+      Fetching week 2025-08-04 (32/63)... ✅ 1 rows
+      Fetching week 2025-08-11 (33/63)... ✅ 1 rows
+      Fetching week 2025-08-18 (34/63)... ✅ 1 rows
+      Fetching week 2025-08-25 (35/63)... ✅ 1 rows
+      Fetching week 2025-09-01 (36/63)... ✅ 1 rows
+      Fetching week 2025-09-08 (37/63)... ✅ 1 rows
+      Fetching week 2025-09-15 (38/63)... ✅ 1 rows
+      Fetching week 2025-09-22 (39/63)... ✅ 1 rows
+      Fetching week 2025-09-29 (40/63)... ✅ 1 rows
+      Fetching week 2025-10-06 (41/63)... ✅ 1 rows
+      Fetching week 2025-10-13 (42/63)... ✅ 1 rows
+      Fetching week 2025-10-20 (43/63)... ✅ 1 rows
+      Fetching week 2025-10-27 (44/63)... ✅ 1 rows
+      Fetching week 2025-11-03 (45/63)... ✅ 1 rows
+      Fetching week 2025-11-10 (46/63)... ✅ 1 rows
+      Fetching week 2025-11-17 (47/63)... ✅ 1 rows
+      Fetching week 2025-11-24 (48/63)... ✅ 1 rows
+      Fetching week 2025-12-01 (49/63)... ✅ 1 rows
+      Fetching week 2025-12-08 (50/63)... ✅ 1 rows
+      Fetching week 2025-12-15 (51/63)... ✅ 1 rows
+      Fetching week 2025-12-22 (52/63)... ✅ 1 rows
+      Fetching week 2025-12-29 (53/63)... ✅ 1 rows
+      Fetching week 2026-01-05 (54/63)... ✅ 1 rows
+      Fetching week 2026-01-12 (55/63)... ✅ 1 rows
+      Fetching week 2026-01-19 (56/63)... ✅ 1 rows
+      Fetching week 2026-01-26 (57/63)... ✅ 1 rows
+      Fetching week 2026-02-02 (58/63)... ✅ 1 rows
+      Fetching week 2026-02-09 (59/63)... ✅ 1 rows
+      Fetching week 2026-02-16 (60/63)... ✅ 1 rows
+      Fetching week 2026-02-23 (61/63)... ✅ 1 rows
+      Fetching week 2026-03-02 (62/63)... ✅ 1 rows
+      Fetching week 2026-03-09 (63/63)... ✅ 1 rows
+   ✅ Backfill (resume) complete: +62 rows, total 123 rows
+✅ Job #251 completed successfully (123 rows)
+
+🔄 Processing job #252 (backfill) - attempt 1/3
+   SQL hash: 4612bc960c009e1904b18fca28321bd7
+   📅 Backfill (resume): existing 732 rows, 0 gaps, max_date=2025-01-01
+   📅 Fetching 2025-01-01 → 2026-03-09...
+      Fetching week 2024-12-30 (1/63)... ⚠️ 0 rows
+      Fetching week 2025-01-06 (2/63)... ✅ 6 rows
+      Fetching week 2025-01-13 (3/63)... ✅ 6 rows
+      Fetching week 2025-01-20 (4/63)... ✅ 6 rows
+      Fetching week 2025-01-27 (5/63)... ✅ 6 rows
+      Fetching week 2025-02-03 (6/63)... ✅ 6 rows
+      Fetching week 2025-02-10 (7/63)... ✅ 6 rows
+      Fetching week 2025-02-17 (8/63)... ✅ 6 rows
+      Fetching week 2025-02-24 (9/63)... ✅ 6 rows
+      Fetching week 2025-03-03 (10/63)... ✅ 6 rows
+      Fetching week 2025-03-10 (11/63)... ✅ 6 rows
+      Fetching week 2025-03-17 (12/63)... ✅ 6 rows
+      Fetching week 2025-03-24 (13/63)... ✅ 6 rows
+      Fetching week 2025-03-31 (14/63)... ✅ 6 rows
+      Fetching week 2025-04-07 (15/63)... ✅ 6 rows
+      Fetching week 2025-04-14 (16/63)... ✅ 6 rows
+      Fetching week 2025-04-21 (17/63)... ✅ 6 rows
+      Fetching week 2025-04-28 (18/63)... ✅ 6 rows
+      Fetching week 2025-05-05 (19/63)... ✅ 6 rows
+      Fetching week 2025-05-12 (20/63)... ✅ 6 rows
+      Fetching week 2025-05-19 (21/63)... ✅ 6 rows
+      Fetching week 2025-05-26 (22/63)... ✅ 6 rows
+      Fetching week 2025-06-02 (23/63)... ✅ 6 rows
+      Fetching week 2025-06-09 (24/63)... ✅ 6 rows
+      Fetching week 2025-06-16 (25/63)... ✅ 6 rows
+      Fetching week 2025-06-23 (26/63)... ✅ 6 rows
+      Fetching week 2025-06-30 (27/63)... ✅ 6 rows
+      Fetching week 2025-07-07 (28/63)... ✅ 6 rows
+      Fetching week 2025-07-14 (29/63)... ✅ 6 rows
+      Fetching week 2025-07-21 (30/63)... ✅ 6 rows
+      Fetching week 2025-07-28 (31/63)... ✅ 6 rows
+      Fetching week 2025-08-04 (32/63)... ✅ 6 rows
+      Fetching week 2025-08-11 (33/63)... ✅ 6 rows
+      Fetching week 2025-08-18 (34/63)... ✅ 6 rows
+      Fetching week 2025-08-25 (35/63)... ✅ 6 rows
+      Fetching week 2025-09-01 (36/63)... ✅ 6 rows
+      Fetching week 2025-09-08 (37/63)... ✅ 6 rows
+      Fetching week 2025-09-15 (38/63)... ✅ 6 rows
+      Fetching week 2025-09-22 (39/63)... ✅ 6 rows
+      Fetching week 2025-09-29 (40/63)... ✅ 6 rows
+      Fetching week 2025-10-06 (41/63)... ✅ 6 rows
+      Fetching week 2025-10-13 (42/63)... ✅ 6 rows
+      Fetching week 2025-10-20 (43/63)... ✅ 6 rows
+      Fetching week 2025-10-27 (44/63)... ✅ 6 rows
+      Fetching week 2025-11-03 (45/63)... ✅ 6 rows
+      Fetching week 2025-11-10 (46/63)... ✅ 6 rows
+      Fetching week 2025-11-17 (47/63)... ✅ 6 rows
+      Fetching week 2025-11-24 (48/63)... ✅ 6 rows
+      Fetching week 2025-12-01 (49/63)... ✅ 6 rows
+      Fetching week 2025-12-08 (50/63)... ✅ 6 rows
+      Fetching week 2025-12-15 (51/63)... ✅ 6 rows
+      Fetching week 2025-12-22 (52/63)... ✅ 6 rows
+      Fetching week 2025-12-29 (53/63)... ✅ 6 rows
+      Fetching week 2026-01-05 (54/63)... ✅ 6 rows
+      Fetching week 2026-01-12 (55/63)... ✅ 6 rows
+      Fetching week 2026-01-19 (56/63)... ✅ 6 rows
+      Fetching week 2026-01-26 (57/63)... ✅ 6 rows
+      Fetching week 2026-02-02 (58/63)... ✅ 6 rows
+      Fetching week 2026-02-09 (59/63)... ✅ 6 rows
+      Fetching week 2026-02-16 (60/63)... ✅ 6 rows
+      Fetching week 2026-02-23 (61/63)... ✅ 6 rows
+      Fetching week 2026-03-02 (62/63)... ✅ 6 rows
+      Fetching week 2026-03-09 (63/63)... ✅ 6 rows
+   ✅ Backfill (resume) complete: +372 rows, total 1104 rows
+✅ Job #252 completed successfully (1104 rows)
+
+🔄 Processing job #253 (backfill) - attempt 1/3
+   SQL hash: 58f7fc806ef53f6af055b075b9a25a0a
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 8 rows
+      💾 Checkpoint: 1 months processed
+      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
+      💾 Checkpoint: 2 months processed
+      Fetching month 2026-01-01 (3/15)... ✅ 31 rows
+      💾 Checkpoint: 3 months processed
+      Fetching month 2025-12-01 (4/15)... ✅ 31 rows
+      💾 Checkpoint: 4 months processed
+      Fetching month 2025-11-01 (5/15)... ✅ 30 rows
+      💾 Checkpoint: 5 months processed
+      Fetching month 2025-10-01 (6/15)... ✅ 31 rows
+      💾 Checkpoint: 6 months processed
+      Fetching month 2025-09-01 (7/15)... ✅ 30 rows
+      💾 Checkpoint: 7 months processed
+      Fetching month 2025-08-01 (8/15)... ✅ 31 rows
+      💾 Checkpoint: 8 months processed
+      Fetching month 2025-07-01 (9/15)... ✅ 31 rows
+      💾 Checkpoint: 9 months processed
+      Fetching month 2025-06-01 (10/15)... ⚠️ 0 rows
+      💾 Checkpoint: 10 months processed
+      Fetching month 2025-05-01 (11/15)... ⚠️ 0 rows
+      💾 Checkpoint: 11 months processed
+      Fetching month 2025-04-01 (12/15)... ⚠️ 0 rows
+      💾 Checkpoint: 12 months processed
+      Fetching month 2025-03-01 (13/15)... ⚠️ 0 rows
+      💾 Checkpoint: 13 months processed
+      Fetching month 2025-02-01 (14/15)... ⚠️ 0 rows
+      💾 Checkpoint: 14 months processed
+      Fetching month 2025-01-01 (15/15)... ⚠️ 0 rows
+      💾 Checkpoint: 15 months processed
+   ✅ Backfill (full) complete: 251 total rows
+✅ Job #253 completed successfully (251 rows)
+
+🔄 Processing job #254 (backfill) - attempt 1/3
+   SQL hash: 72a0c7ef6d2cf8a6ed0395d4ecfe986a
+   📅 Backfill (resume): existing 365 rows, 65 gaps, max_date=2026-03-06
+   🔧 Filling 65 gaps...
+      Gap 2025-01-01...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-02...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-03...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-04...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-05...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-06...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-07...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-08...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-09...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-10...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-11...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-12...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-13...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-14...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-15...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-16...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-17...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-18...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-19...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-20...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-21...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-22...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-23...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-24...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-25...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-26...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-27...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-28...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-29...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-30...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-31...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-01...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-02...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-03...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-04...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-05...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-06...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-07...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-08...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-09...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-10...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-11...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-12...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-13...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-14...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-15...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-16...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-17...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-18...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-19...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-20...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-21...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-22...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-23...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-24...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-25...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-26...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-27...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-28...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-01...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+      Gap 2025-03-02...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+      Gap 2025-03-03...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+      Gap 2025-03-04...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+      Gap 2025-03-05...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+      Gap 2025-03-06...      Fetching month 2025-03-01 (1/1)... ✅ 23 rows
+ 23 rows
+   📅 Fetching 2026-03-06 → 2026-03-09...
+      Fetching month 2026-03-01 (1/1)... ✅ 8 rows
+   ✅ Backfill (resume) complete: +146 rows, total 510 rows
+      🔄 Fixing cumulative fields (groupBy: none)...
+      ✅ Cumulative fields recalculated
+✅ Job #254 completed successfully (510 rows)
+
+🔄 Processing job #255 (backfill) - attempt 1/3
+   SQL hash: 72bdf7d09f522d3da86a9bfdfb7d7601
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching week 2026-03-09 (1/63)... ⚠️ 0 rows
+      💾 Checkpoint: 1 weeks processed
+      Fetching week 2026-03-02 (2/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 2 weeks processed
+      Fetching week 2026-02-23 (3/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 3 weeks processed
+      Fetching week 2026-02-16 (4/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 4 weeks processed
+      Fetching week 2026-02-09 (5/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 5 weeks processed
+      Fetching week 2026-02-02 (6/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 6 weeks processed
+      Fetching week 2026-01-26 (7/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 7 weeks processed
+      Fetching week 2026-01-19 (8/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 8 weeks processed
+      Fetching week 2026-01-12 (9/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 9 weeks processed
+      Fetching week 2026-01-05 (10/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 10 weeks processed
+      Fetching week 2025-12-29 (11/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 11 weeks processed
+      Fetching week 2025-12-22 (12/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 12 weeks processed
+      Fetching week 2025-12-15 (13/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 13 weeks processed
+      Fetching week 2025-12-08 (14/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 14 weeks processed
+      Fetching week 2025-12-01 (15/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 15 weeks processed
+      Fetching week 2025-11-24 (16/63)... ✅ 27 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 16 weeks processed
+      Fetching week 2025-11-17 (17/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 17 weeks processed
+      Fetching week 2025-11-10 (18/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 18 weeks processed
+      Fetching week 2025-11-03 (19/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 19 weeks processed
+      Fetching week 2025-10-27 (20/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 20 weeks processed
+      Fetching week 2025-10-20 (21/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 21 weeks processed
+      Fetching week 2025-10-13 (22/63)... ✅ 29 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 22 weeks processed
+      Fetching week 2025-10-06 (23/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 23 weeks processed
+      Fetching week 2025-09-29 (24/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 24 weeks processed
+      Fetching week 2025-09-22 (25/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 25 weeks processed
+      Fetching week 2025-09-15 (26/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 26 weeks processed
+      Fetching week 2025-09-08 (27/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 27 weeks processed
+      Fetching week 2025-09-01 (28/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 28 weeks processed
+      Fetching week 2025-08-25 (29/63)... ✅ 28 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 29 weeks processed
+      Fetching week 2025-08-18 (30/63)... ✅ 27 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 30 weeks processed
+      Fetching week 2025-08-11 (31/63)... ✅ 26 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 31 weeks processed
+      Fetching week 2025-08-04 (32/63)... ✅ 26 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 32 weeks processed
+      Fetching week 2025-07-28 (33/63)... ✅ 26 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 33 weeks processed
+      Fetching week 2025-07-21 (34/63)... ✅ 26 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 34 weeks processed
+      Fetching week 2025-07-14 (35/63)... ✅ 26 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 35 weeks processed
+      Fetching week 2025-07-07 (36/63)... ✅ 24 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 36 weeks processed
+      Fetching week 2025-06-30 (37/63)... ✅ 25 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 37 weeks processed
+      Fetching week 2025-06-23 (38/63)... ✅ 22 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 38 weeks processed
+      Fetching week 2025-06-16 (39/63)... ✅ 22 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 39 weeks processed
+      Fetching week 2025-06-09 (40/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 40 weeks processed
+      Fetching week 2025-06-02 (41/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 41 weeks processed
+      Fetching week 2025-05-26 (42/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 42 weeks processed
+      Fetching week 2025-05-19 (43/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 43 weeks processed
+      Fetching week 2025-05-12 (44/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 44 weeks processed
+      Fetching week 2025-05-05 (45/63)... ✅ 20 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 45 weeks processed
+      Fetching week 2025-04-28 (46/63)... ✅ 19 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 46 weeks processed
+      Fetching week 2025-04-21 (47/63)... ✅ 19 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 47 weeks processed
+      Fetching week 2025-04-14 (48/63)... ✅ 18 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 48 weeks processed
+      Fetching week 2025-04-07 (49/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 49 weeks processed
+      Fetching week 2025-03-31 (50/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 50 weeks processed
+      Fetching week 2025-03-24 (51/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 51 weeks processed
+      Fetching week 2025-03-17 (52/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 52 weeks processed
+      Fetching week 2025-03-10 (53/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 53 weeks processed
+      Fetching week 2025-03-03 (54/63)... ✅ 15 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 54 weeks processed
+      Fetching week 2025-02-24 (55/63)... ✅ 16 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 55 weeks processed
+      Fetching week 2025-02-17 (56/63)... ✅ 15 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 56 weeks processed
+      Fetching week 2025-02-10 (57/63)... ✅ 15 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 57 weeks processed
+      Fetching week 2025-02-03 (58/63)... ✅ 15 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 58 weeks processed
+      Fetching week 2025-01-27 (59/63)... ✅ 15 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 59 weeks processed
+      Fetching week 2025-01-20 (60/63)... ✅ 14 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 60 weeks processed
+      Fetching week 2025-01-13 (61/63)... ✅ 13 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 61 weeks processed
+      Fetching week 2025-01-06 (62/63)... ✅ 13 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 62 weeks processed
+      Fetching week 2024-12-30 (63/63)... ⚠️ 0 rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+      💾 Checkpoint: 63 weeks processed
+   ✅ Backfill (full) complete: 1433 total rows
+      🔄 Fixing cumulative fields (groupBy: program_name)...
+      ✅ Cumulative fields recalculated
+✅ Job #255 completed successfully (1433 rows)
+
+🔄 Processing job #256 (backfill) - attempt 1/3
+   SQL hash: 7520d3a55e1af5601594178cee15f666
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 24 rows
       💾 Checkpoint: 1 months processed
       Fetching month 2026-02-01 (2/15)... ✅ 84 rows
       💾 Checkpoint: 2 months processed
@@ -41,1559 +728,2217 @@
       💾 Checkpoint: 14 months processed
       Fetching month 2025-01-01 (15/15)... ✅ 93 rows
       💾 Checkpoint: 15 months processed
-   ✅ Backfill (full) complete: 1293 total rows
-✅ Job #190 completed successfully (1293 rows)
+   ✅ Backfill (full) complete: 1296 total rows
+✅ Job #256 completed successfully (1296 rows)
 
-🔄 Processing job #191 (backfill) - attempt 1/3
+🔄 Processing job #257 (backfill) - attempt 1/3
+   SQL hash: 78ac7d0be4cd9321ed5743dd372ab739
+   📅 Backfill (resume): existing 259 rows, 181 gaps, max_date=2026-03-06
+   🔧 Filling 181 gaps...
+      Gap 2025-01-01...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-02...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-03...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-04...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-05...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-06...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-07...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-08...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-09...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-10...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-11...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-12...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-13...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-14...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-15...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-16...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-17...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-18...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-19...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-20...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-21...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-22...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-23...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-24...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-25...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-26...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-27...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-28...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-29...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-30...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-01-31...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-01...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-02...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-03...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-04...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-05...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-06...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-07...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-08...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-09...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-10...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-11...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-12...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-13...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-14...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-15...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-16...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-17...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-18...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-19...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-20...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-21...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-22...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-23...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-24...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-25...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-26...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-27...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-28...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-01...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-02...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-03...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-04...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-05...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-06...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-07...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-08...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-09...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-10...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-11...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-12...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-13...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-14...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-15...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-16...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-17...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-18...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-19...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-20...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-21...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-22...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-23...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-24...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-25...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-26...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-27...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-28...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-29...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-30...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-31...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-01...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-02...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-03...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-04...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-05...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-06...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-07...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-08...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-09...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-10...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-11...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-12...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-13...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-14...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-15...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-16...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-17...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-18...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-19...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-20...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-21...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-22...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-23...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-24...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-25...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-26...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-27...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-28...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-29...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-30...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-01...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-02...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-03...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-04...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-05...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-06...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-07...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-08...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-09...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-10...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-11...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-12...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-13...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-14...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-15...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-16...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-17...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-18...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-19...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-20...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-21...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-22...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-23...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-24...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-25...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-26...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-27...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-28...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-29...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-30...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-31...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-01...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-02...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-03...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-04...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-05...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-06...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-07...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-08...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-09...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-10...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-11...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-12...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-13...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-14...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-15...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-16...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-17...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-18...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-19...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-20...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-21...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-22...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-23...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-24...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-25...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-26...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-27...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-28...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-29...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-30...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+   📅 Fetching 2026-03-06 → 2026-03-09...
+      Fetching month 2026-03-01 (1/1)... ✅ 8 rows
+   ✅ Backfill (resume) complete: +8 rows, total 266 rows
+      🔄 Fixing cumulative fields (groupBy: none)...
+      ✅ Cumulative fields recalculated
+✅ Job #257 completed successfully (266 rows)
+
+🔄 Processing job #258 (backfill) - attempt 1/3
    SQL hash: 967233a430578a21bde1b40fb77198d9
-   📅 Backfill (full): 2026-03-08 → 2025-01-01
-      Fetching week 2026-03-02 (1/62)... ✅ 1 rows
+   📅 Backfill (resume): existing 61 rows, 0 gaps, max_date=2025-01-01
+   📅 Fetching 2025-01-01 → 2026-03-09...
+      Fetching week 2024-12-30 (1/63)... ⚠️ 0 rows
+      Fetching week 2025-01-06 (2/63)... ✅ 1 rows
+      Fetching week 2025-01-13 (3/63)... ✅ 1 rows
+      Fetching week 2025-01-20 (4/63)... ✅ 1 rows
+      Fetching week 2025-01-27 (5/63)... ✅ 1 rows
+      Fetching week 2025-02-03 (6/63)... ✅ 1 rows
+      Fetching week 2025-02-10 (7/63)... ✅ 1 rows
+      Fetching week 2025-02-17 (8/63)... ✅ 1 rows
+      Fetching week 2025-02-24 (9/63)... ✅ 1 rows
+      Fetching week 2025-03-03 (10/63)... ✅ 1 rows
+      Fetching week 2025-03-10 (11/63)... ✅ 1 rows
+      Fetching week 2025-03-17 (12/63)... ✅ 1 rows
+      Fetching week 2025-03-24 (13/63)... ✅ 1 rows
+      Fetching week 2025-03-31 (14/63)... ✅ 1 rows
+      Fetching week 2025-04-07 (15/63)... ✅ 1 rows
+      Fetching week 2025-04-14 (16/63)... ✅ 1 rows
+      Fetching week 2025-04-21 (17/63)... ✅ 1 rows
+      Fetching week 2025-04-28 (18/63)... ✅ 1 rows
+      Fetching week 2025-05-05 (19/63)... ✅ 1 rows
+      Fetching week 2025-05-12 (20/63)... ✅ 1 rows
+      Fetching week 2025-05-19 (21/63)... ✅ 1 rows
+      Fetching week 2025-05-26 (22/63)... ✅ 1 rows
+      Fetching week 2025-06-02 (23/63)... ✅ 1 rows
+      Fetching week 2025-06-09 (24/63)... ✅ 1 rows
+      Fetching week 2025-06-16 (25/63)... ✅ 1 rows
+      Fetching week 2025-06-23 (26/63)... ✅ 1 rows
+      Fetching week 2025-06-30 (27/63)... ✅ 1 rows
+      Fetching week 2025-07-07 (28/63)... ✅ 1 rows
+      Fetching week 2025-07-14 (29/63)... ✅ 1 rows
+      Fetching week 2025-07-21 (30/63)... ✅ 1 rows
+      Fetching week 2025-07-28 (31/63)... ✅ 1 rows
+      Fetching week 2025-08-04 (32/63)... ✅ 1 rows
+      Fetching week 2025-08-11 (33/63)... ✅ 1 rows
+      Fetching week 2025-08-18 (34/63)... ✅ 1 rows
+      Fetching week 2025-08-25 (35/63)... ✅ 1 rows
+      Fetching week 2025-09-01 (36/63)... ✅ 1 rows
+      Fetching week 2025-09-08 (37/63)... ✅ 1 rows
+      Fetching week 2025-09-15 (38/63)... ✅ 1 rows
+      Fetching week 2025-09-22 (39/63)... ✅ 1 rows
+      Fetching week 2025-09-29 (40/63)... ✅ 1 rows
+      Fetching week 2025-10-06 (41/63)... ✅ 1 rows
+      Fetching week 2025-10-13 (42/63)... ✅ 1 rows
+      Fetching week 2025-10-20 (43/63)... ✅ 1 rows
+      Fetching week 2025-10-27 (44/63)... ✅ 1 rows
+      Fetching week 2025-11-03 (45/63)... ✅ 1 rows
+      Fetching week 2025-11-10 (46/63)... ✅ 1 rows
+      Fetching week 2025-11-17 (47/63)... ✅ 1 rows
+      Fetching week 2025-11-24 (48/63)... ✅ 1 rows
+      Fetching week 2025-12-01 (49/63)... ✅ 1 rows
+      Fetching week 2025-12-08 (50/63)... ✅ 1 rows
+      Fetching week 2025-12-15 (51/63)... ✅ 1 rows
+      Fetching week 2025-12-22 (52/63)... ✅ 1 rows
+      Fetching week 2025-12-29 (53/63)... ✅ 1 rows
+      Fetching week 2026-01-05 (54/63)... ✅ 1 rows
+      Fetching week 2026-01-12 (55/63)... ✅ 1 rows
+      Fetching week 2026-01-19 (56/63)... ✅ 1 rows
+      Fetching week 2026-01-26 (57/63)... ✅ 1 rows
+      Fetching week 2026-02-02 (58/63)... ✅ 1 rows
+      Fetching week 2026-02-09 (59/63)... ✅ 1 rows
+      Fetching week 2026-02-16 (60/63)... ✅ 1 rows
+      Fetching week 2026-02-23 (61/63)... ✅ 1 rows
+      Fetching week 2026-03-02 (62/63)... ✅ 1 rows
+      Fetching week 2026-03-09 (63/63)... ✅ 1 rows
+   ✅ Backfill (resume) complete: +62 rows, total 123 rows
+✅ Job #258 completed successfully (123 rows)
+
+🔄 Processing job #259 (backfill) - attempt 1/3
+   SQL hash: 9b7f3544dd968b9b786c48e709297864
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 8 rows
+      💾 Checkpoint: 1 months processed
+      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
+      💾 Checkpoint: 2 months processed
+      Fetching month 2026-01-01 (3/15)... ❌ Error: Execution failed on sql '-- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet (offset=4, length=363557): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet", query_id=20260309_060229_03843_tt3h2)
+[SQL: -- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+      💾 Saved 2 successful months before error
+❌ Trino query error: Execution failed on sql '-- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet (offset=4, length=363557): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet", query_id=20260309_060229_03843_tt3h2)
+[SQL: -- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+   ❌ Error: Execution failed on sql '-- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet (offset=4, length=363557): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-08/20260208_230001_00332_97zny-f892912f-941c-4899-9f78-486574c96060.parquet", query_id=20260309_060229_03843_tt3h2)
+[SQL: -- Description: Daily new token volume vs total volume
+-- New token = token_bought_mint whose first trade is within the period
+-- Excludes stablecoins and SOL from new token detection
+
+with excluded_pools as (
+    select distinct pool_address
+    from orca.whirlpool_config
+    where config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins as (
+    select mint from (values
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG'),
+        ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB')
+    ) as t(mint)
+),
+
+new_tokens as (
+    select
+        token_bought_mint as mint,
+        min(block_date) as first_trade_date
+    from solana.dex_trades
+    where block_date < current_date
+    group by 1
+),
+
+daily_volume as (
+    select
+        t.block_date,
+        case
+            when t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_bought_amount * coalesce(psol.price_in_usd, 0)
+            when t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+            then t.token_sold_amount * coalesce(psol.price_in_usd, 0)
+            when sb.mint is not null
+            then t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+            when ss.mint is not null
+            then t.token_sold_amount * coalesce(ps.price_in_usd, 0)
+            else t.token_bought_amount * coalesce(pb.price_in_usd, 0)
+        end as trade_volume_usd,
+        t.token_bought_mint,
+        case when nt.first_trade_date = t.block_date then 'new_token' else 'existing_token' end as token_type
+    from solana.dex_trades t
+    left join stablecoins ss on t.token_sold_mint = ss.mint
+    left join stablecoins sb on t.token_bought_mint = sb.mint
+    left join solana.token_prices_1m psol on psol.mint = 'So11111111111111111111111111111111111111112'
+        and date_trunc('minute', t.block_time) = psol.minute
+    left join solana.token_prices_1m pb on t.token_bought_mint = pb.mint
+        and date_trunc('minute', t.block_time) = pb.minute
+        and pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join solana.token_prices_1m ps on t.token_sold_mint = ps.mint
+        and date_trunc('minute', t.block_time) = ps.minute
+        and ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    left join new_tokens nt on t.token_bought_mint = nt.mint
+    where t.block_date >= CURRENT_DATE - INTERVAL '1' YEAR
+      and DATE_TRUNC('month', t.block_date) = DATE('2026-01-01')
+      and t.block_date < CURRENT_DATE
+      and t.pool_address not in (select pool_address from excluded_pools)
+)
+
+select
+    block_date,
+    count(distinct case when token_type = 'new_token' then token_bought_mint end) as distinct_new_tokens,
+    round(sum(trade_volume_usd), 2) as total_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end), 2) as new_token_volume_usd,
+    round(sum(case when token_type = 'new_token' then trade_volume_usd else 0 end) * 100.0
+        / nullif(sum(trade_volume_usd), 0), 2) as new_token_volume_pct
+from daily_volume
+group by 1
+order by 1 desc
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+   ℹ️  Partial data saved via checkpoints: 36 rows
+✅ Job #259 completed successfully (36 rows)
+
+🔄 Processing job #260 (backfill) - attempt 1/3
+   SQL hash: be0b3fa51c7d1a6131bb57991121e88e
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching week 2026-03-09 (1/63)... ✅ 1 rows
       💾 Checkpoint: 1 weeks processed
-      Fetching week 2026-02-23 (2/62)... ✅ 1 rows
+      Fetching week 2026-03-02 (2/63)... ✅ 1 rows
       💾 Checkpoint: 2 weeks processed
-      Fetching week 2026-02-16 (3/62)... ✅ 1 rows
+      Fetching week 2026-02-23 (3/63)... ✅ 1 rows
       💾 Checkpoint: 3 weeks processed
-      Fetching week 2026-02-09 (4/62)... ✅ 1 rows
+      Fetching week 2026-02-16 (4/63)... ✅ 1 rows
       💾 Checkpoint: 4 weeks processed
-      Fetching week 2026-02-02 (5/62)... ✅ 1 rows
+      Fetching week 2026-02-09 (5/63)... ✅ 1 rows
       💾 Checkpoint: 5 weeks processed
-      Fetching week 2026-01-26 (6/62)... ✅ 1 rows
+      Fetching week 2026-02-02 (6/63)... ✅ 1 rows
       💾 Checkpoint: 6 weeks processed
-      Fetching week 2026-01-19 (7/62)... ✅ 1 rows
+      Fetching week 2026-01-26 (7/63)... ✅ 1 rows
       💾 Checkpoint: 7 weeks processed
-      Fetching week 2026-01-12 (8/62)... ✅ 1 rows
+      Fetching week 2026-01-19 (8/63)... ✅ 1 rows
       💾 Checkpoint: 8 weeks processed
-      Fetching week 2026-01-05 (9/62)... ✅ 1 rows
+      Fetching week 2026-01-12 (9/63)... ✅ 1 rows
       💾 Checkpoint: 9 weeks processed
-      Fetching week 2025-12-29 (10/62)... ✅ 1 rows
+      Fetching week 2026-01-05 (10/63)... ✅ 1 rows
       💾 Checkpoint: 10 weeks processed
-      Fetching week 2025-12-22 (11/62)... ✅ 1 rows
+      Fetching week 2025-12-29 (11/63)... ✅ 1 rows
       💾 Checkpoint: 11 weeks processed
-      Fetching week 2025-12-15 (12/62)... ✅ 1 rows
+      Fetching week 2025-12-22 (12/63)... ✅ 1 rows
       💾 Checkpoint: 12 weeks processed
-      Fetching week 2025-12-08 (13/62)... ✅ 1 rows
+      Fetching week 2025-12-15 (13/63)... ✅ 1 rows
       💾 Checkpoint: 13 weeks processed
-      Fetching week 2025-12-01 (14/62)... ✅ 1 rows
+      Fetching week 2025-12-08 (14/63)... ✅ 1 rows
       💾 Checkpoint: 14 weeks processed
-      Fetching week 2025-11-24 (15/62)... ✅ 1 rows
+      Fetching week 2025-12-01 (15/63)... ✅ 1 rows
       💾 Checkpoint: 15 weeks processed
-      Fetching week 2025-11-17 (16/62)... ✅ 1 rows
+      Fetching week 2025-11-24 (16/63)... ✅ 1 rows
       💾 Checkpoint: 16 weeks processed
-      Fetching week 2025-11-10 (17/62)... ✅ 1 rows
+      Fetching week 2025-11-17 (17/63)... ✅ 1 rows
       💾 Checkpoint: 17 weeks processed
-      Fetching week 2025-11-03 (18/62)... ✅ 1 rows
+      Fetching week 2025-11-10 (18/63)... ✅ 1 rows
       💾 Checkpoint: 18 weeks processed
-      Fetching week 2025-10-27 (19/62)... ✅ 1 rows
+      Fetching week 2025-11-03 (19/63)... ✅ 1 rows
       💾 Checkpoint: 19 weeks processed
-      Fetching week 2025-10-20 (20/62)... ✅ 1 rows
+      Fetching week 2025-10-27 (20/63)... ✅ 1 rows
       💾 Checkpoint: 20 weeks processed
-      Fetching week 2025-10-13 (21/62)... ✅ 1 rows
+      Fetching week 2025-10-20 (21/63)... ✅ 1 rows
       💾 Checkpoint: 21 weeks processed
-      Fetching week 2025-10-06 (22/62)... ✅ 1 rows
+      Fetching week 2025-10-13 (22/63)... ✅ 1 rows
       💾 Checkpoint: 22 weeks processed
-      Fetching week 2025-09-29 (23/62)... ✅ 1 rows
+      Fetching week 2025-10-06 (23/63)... ✅ 1 rows
       💾 Checkpoint: 23 weeks processed
-      Fetching week 2025-09-22 (24/62)... ✅ 1 rows
+      Fetching week 2025-09-29 (24/63)... ✅ 1 rows
       💾 Checkpoint: 24 weeks processed
-      Fetching week 2025-09-15 (25/62)... ✅ 1 rows
+      Fetching week 2025-09-22 (25/63)... ✅ 1 rows
       💾 Checkpoint: 25 weeks processed
-      Fetching week 2025-09-08 (26/62)... ✅ 1 rows
+      Fetching week 2025-09-15 (26/63)... ✅ 1 rows
       💾 Checkpoint: 26 weeks processed
-      Fetching week 2025-09-01 (27/62)... ✅ 1 rows
+      Fetching week 2025-09-08 (27/63)... ✅ 1 rows
       💾 Checkpoint: 27 weeks processed
-      Fetching week 2025-08-25 (28/62)... ✅ 1 rows
+      Fetching week 2025-09-01 (28/63)... ✅ 1 rows
       💾 Checkpoint: 28 weeks processed
-      Fetching week 2025-08-18 (29/62)... ✅ 1 rows
+      Fetching week 2025-08-25 (29/63)... ✅ 1 rows
       💾 Checkpoint: 29 weeks processed
-      Fetching week 2025-08-11 (30/62)... ✅ 1 rows
+      Fetching week 2025-08-18 (30/63)... ✅ 1 rows
       💾 Checkpoint: 30 weeks processed
-      Fetching week 2025-08-04 (31/62)... ✅ 1 rows
+      Fetching week 2025-08-11 (31/63)... ✅ 1 rows
       💾 Checkpoint: 31 weeks processed
-      Fetching week 2025-07-28 (32/62)... ✅ 1 rows
+      Fetching week 2025-08-04 (32/63)... ✅ 1 rows
       💾 Checkpoint: 32 weeks processed
-      Fetching week 2025-07-21 (33/62)... ✅ 1 rows
+      Fetching week 2025-07-28 (33/63)... ✅ 1 rows
       💾 Checkpoint: 33 weeks processed
-      Fetching week 2025-07-14 (34/62)... ✅ 1 rows
+      Fetching week 2025-07-21 (34/63)... ✅ 1 rows
       💾 Checkpoint: 34 weeks processed
-      Fetching week 2025-07-07 (35/62)... ✅ 1 rows
+      Fetching week 2025-07-14 (35/63)... ✅ 1 rows
       💾 Checkpoint: 35 weeks processed
-      Fetching week 2025-06-30 (36/62)... ✅ 1 rows
+      Fetching week 2025-07-07 (36/63)... ✅ 1 rows
       💾 Checkpoint: 36 weeks processed
-      Fetching week 2025-06-23 (37/62)... ✅ 1 rows
+      Fetching week 2025-06-30 (37/63)... ✅ 1 rows
       💾 Checkpoint: 37 weeks processed
-      Fetching week 2025-06-16 (38/62)... ✅ 1 rows
+      Fetching week 2025-06-23 (38/63)... ✅ 1 rows
       💾 Checkpoint: 38 weeks processed
-      Fetching week 2025-06-09 (39/62)... ✅ 1 rows
+      Fetching week 2025-06-16 (39/63)... ✅ 1 rows
       💾 Checkpoint: 39 weeks processed
-      Fetching week 2025-06-02 (40/62)... ✅ 1 rows
+      Fetching week 2025-06-09 (40/63)... ✅ 1 rows
       💾 Checkpoint: 40 weeks processed
-      Fetching week 2025-05-26 (41/62)... ✅ 1 rows
+      Fetching week 2025-06-02 (41/63)... ✅ 1 rows
       💾 Checkpoint: 41 weeks processed
-      Fetching week 2025-05-19 (42/62)... ✅ 1 rows
+      Fetching week 2025-05-26 (42/63)... ✅ 1 rows
       💾 Checkpoint: 42 weeks processed
-      Fetching week 2025-05-12 (43/62)... ✅ 1 rows
+      Fetching week 2025-05-19 (43/63)... ✅ 1 rows
       💾 Checkpoint: 43 weeks processed
-      Fetching week 2025-05-05 (44/62)... ✅ 1 rows
+      Fetching week 2025-05-12 (44/63)... ✅ 1 rows
       💾 Checkpoint: 44 weeks processed
-      Fetching week 2025-04-28 (45/62)... ✅ 1 rows
+      Fetching week 2025-05-05 (45/63)... ✅ 1 rows
       💾 Checkpoint: 45 weeks processed
-      Fetching week 2025-04-21 (46/62)... ✅ 1 rows
+      Fetching week 2025-04-28 (46/63)... ✅ 1 rows
       💾 Checkpoint: 46 weeks processed
-      Fetching week 2025-04-14 (47/62)... ✅ 1 rows
+      Fetching week 2025-04-21 (47/63)... ✅ 1 rows
       💾 Checkpoint: 47 weeks processed
-      Fetching week 2025-04-07 (48/62)... ✅ 1 rows
+      Fetching week 2025-04-14 (48/63)... ✅ 1 rows
       💾 Checkpoint: 48 weeks processed
-      Fetching week 2025-03-31 (49/62)... ✅ 1 rows
+      Fetching week 2025-04-07 (49/63)... ✅ 1 rows
       💾 Checkpoint: 49 weeks processed
-      Fetching week 2025-03-24 (50/62)... ✅ 1 rows
+      Fetching week 2025-03-31 (50/63)... ✅ 1 rows
       💾 Checkpoint: 50 weeks processed
-      Fetching week 2025-03-17 (51/62)... ✅ 1 rows
+      Fetching week 2025-03-24 (51/63)... ✅ 1 rows
       💾 Checkpoint: 51 weeks processed
-      Fetching week 2025-03-10 (52/62)... ✅ 1 rows
+      Fetching week 2025-03-17 (52/63)... ✅ 1 rows
       💾 Checkpoint: 52 weeks processed
-      Fetching week 2025-03-03 (53/62)... ✅ 1 rows
+      Fetching week 2025-03-10 (53/63)... ✅ 1 rows
       💾 Checkpoint: 53 weeks processed
-      Fetching week 2025-02-24 (54/62)... ✅ 1 rows
+      Fetching week 2025-03-03 (54/63)... ✅ 1 rows
       💾 Checkpoint: 54 weeks processed
-      Fetching week 2025-02-17 (55/62)... ✅ 1 rows
+      Fetching week 2025-02-24 (55/63)... ✅ 1 rows
       💾 Checkpoint: 55 weeks processed
-      Fetching week 2025-02-10 (56/62)... ✅ 1 rows
+      Fetching week 2025-02-17 (56/63)... ✅ 1 rows
       💾 Checkpoint: 56 weeks processed
-      Fetching week 2025-02-03 (57/62)... ✅ 1 rows
+      Fetching week 2025-02-10 (57/63)... ✅ 1 rows
       💾 Checkpoint: 57 weeks processed
-      Fetching week 2025-01-27 (58/62)... ✅ 1 rows
+      Fetching week 2025-02-03 (58/63)... ✅ 1 rows
       💾 Checkpoint: 58 weeks processed
-      Fetching week 2025-01-20 (59/62)... ✅ 1 rows
+      Fetching week 2025-01-27 (59/63)... ✅ 1 rows
       💾 Checkpoint: 59 weeks processed
-      Fetching week 2025-01-13 (60/62)... ✅ 1 rows
+      Fetching week 2025-01-20 (60/63)... ✅ 1 rows
       💾 Checkpoint: 60 weeks processed
-      Fetching week 2025-01-06 (61/62)... ✅ 1 rows
+      Fetching week 2025-01-13 (61/63)... ✅ 1 rows
       💾 Checkpoint: 61 weeks processed
-      Fetching week 2024-12-30 (62/62)... ⚠️ 0 rows
+      Fetching week 2025-01-06 (62/63)... ✅ 1 rows
       💾 Checkpoint: 62 weeks processed
-   ✅ Backfill (full) complete: 61 total rows
-✅ Job #191 completed successfully (61 rows)
-
-🔄 Processing job #192 (backfill) - attempt 1/3
-   SQL hash: 448326732ecd4727414bd9a79d0951e8
-   📅 Backfill (full): 2026-03-08 → 2025-01-01
-      Fetching week 2026-03-02 (1/62)... ✅ 1 rows
-      💾 Checkpoint: 1 weeks processed
-      Fetching week 2026-02-23 (2/62)... ✅ 1 rows
-      💾 Checkpoint: 2 weeks processed
-      Fetching week 2026-02-16 (3/62)... ✅ 1 rows
-      💾 Checkpoint: 3 weeks processed
-      Fetching week 2026-02-09 (4/62)... ✅ 1 rows
-      💾 Checkpoint: 4 weeks processed
-      Fetching week 2026-02-02 (5/62)... ✅ 1 rows
-      💾 Checkpoint: 5 weeks processed
-      Fetching week 2026-01-26 (6/62)... ✅ 1 rows
-      💾 Checkpoint: 6 weeks processed
-      Fetching week 2026-01-19 (7/62)... ✅ 1 rows
-      💾 Checkpoint: 7 weeks processed
-      Fetching week 2026-01-12 (8/62)... ✅ 1 rows
-      💾 Checkpoint: 8 weeks processed
-      Fetching week 2026-01-05 (9/62)... ✅ 1 rows
-      💾 Checkpoint: 9 weeks processed
-      Fetching week 2025-12-29 (10/62)... ✅ 1 rows
-      💾 Checkpoint: 10 weeks processed
-      Fetching week 2025-12-22 (11/62)... ✅ 1 rows
-      💾 Checkpoint: 11 weeks processed
-      Fetching week 2025-12-15 (12/62)... ✅ 1 rows
-      💾 Checkpoint: 12 weeks processed
-      Fetching week 2025-12-08 (13/62)... ✅ 1 rows
-      💾 Checkpoint: 13 weeks processed
-      Fetching week 2025-12-01 (14/62)... ✅ 1 rows
-      💾 Checkpoint: 14 weeks processed
-      Fetching week 2025-11-24 (15/62)... ✅ 1 rows
-      💾 Checkpoint: 15 weeks processed
-      Fetching week 2025-11-17 (16/62)... ✅ 1 rows
-      💾 Checkpoint: 16 weeks processed
-      Fetching week 2025-11-10 (17/62)... ✅ 1 rows
-      💾 Checkpoint: 17 weeks processed
-      Fetching week 2025-11-03 (18/62)... ✅ 1 rows
-      💾 Checkpoint: 18 weeks processed
-      Fetching week 2025-10-27 (19/62)... ✅ 1 rows
-      💾 Checkpoint: 19 weeks processed
-      Fetching week 2025-10-20 (20/62)... ✅ 1 rows
-      💾 Checkpoint: 20 weeks processed
-      Fetching week 2025-10-13 (21/62)... ✅ 1 rows
-      💾 Checkpoint: 21 weeks processed
-      Fetching week 2025-10-06 (22/62)... ✅ 1 rows
-      💾 Checkpoint: 22 weeks processed
-      Fetching week 2025-09-29 (23/62)... ✅ 1 rows
-      💾 Checkpoint: 23 weeks processed
-      Fetching week 2025-09-22 (24/62)... ✅ 1 rows
-      💾 Checkpoint: 24 weeks processed
-      Fetching week 2025-09-15 (25/62)... ✅ 1 rows
-      💾 Checkpoint: 25 weeks processed
-      Fetching week 2025-09-08 (26/62)... ✅ 1 rows
-      💾 Checkpoint: 26 weeks processed
-      Fetching week 2025-09-01 (27/62)... ✅ 1 rows
-      💾 Checkpoint: 27 weeks processed
-      Fetching week 2025-08-25 (28/62)... ✅ 1 rows
-      💾 Checkpoint: 28 weeks processed
-      Fetching week 2025-08-18 (29/62)... ✅ 1 rows
-      💾 Checkpoint: 29 weeks processed
-      Fetching week 2025-08-11 (30/62)... ✅ 1 rows
-      💾 Checkpoint: 30 weeks processed
-      Fetching week 2025-08-04 (31/62)... ✅ 1 rows
-      💾 Checkpoint: 31 weeks processed
-      Fetching week 2025-07-28 (32/62)... ✅ 1 rows
-      💾 Checkpoint: 32 weeks processed
-      Fetching week 2025-07-21 (33/62)... ✅ 1 rows
-      💾 Checkpoint: 33 weeks processed
-      Fetching week 2025-07-14 (34/62)... ✅ 1 rows
-      💾 Checkpoint: 34 weeks processed
-      Fetching week 2025-07-07 (35/62)... ✅ 1 rows
-      💾 Checkpoint: 35 weeks processed
-      Fetching week 2025-06-30 (36/62)... ✅ 1 rows
-      💾 Checkpoint: 36 weeks processed
-      Fetching week 2025-06-23 (37/62)... ✅ 1 rows
-      💾 Checkpoint: 37 weeks processed
-      Fetching week 2025-06-16 (38/62)... ✅ 1 rows
-      💾 Checkpoint: 38 weeks processed
-      Fetching week 2025-06-09 (39/62)... ✅ 1 rows
-      💾 Checkpoint: 39 weeks processed
-      Fetching week 2025-06-02 (40/62)... ✅ 1 rows
-      💾 Checkpoint: 40 weeks processed
-      Fetching week 2025-05-26 (41/62)... ✅ 1 rows
-      💾 Checkpoint: 41 weeks processed
-      Fetching week 2025-05-19 (42/62)... ✅ 1 rows
-      💾 Checkpoint: 42 weeks processed
-      Fetching week 2025-05-12 (43/62)... ✅ 1 rows
-      💾 Checkpoint: 43 weeks processed
-      Fetching week 2025-05-05 (44/62)... ✅ 1 rows
-      💾 Checkpoint: 44 weeks processed
-      Fetching week 2025-04-28 (45/62)... ✅ 1 rows
-      💾 Checkpoint: 45 weeks processed
-      Fetching week 2025-04-21 (46/62)... ✅ 1 rows
-      💾 Checkpoint: 46 weeks processed
-      Fetching week 2025-04-14 (47/62)... ✅ 1 rows
-      💾 Checkpoint: 47 weeks processed
-      Fetching week 2025-04-07 (48/62)... ✅ 1 rows
-      💾 Checkpoint: 48 weeks processed
-      Fetching week 2025-03-31 (49/62)... ✅ 1 rows
-      💾 Checkpoint: 49 weeks processed
-      Fetching week 2025-03-24 (50/62)... ✅ 1 rows
-      💾 Checkpoint: 50 weeks processed
-      Fetching week 2025-03-17 (51/62)... ✅ 1 rows
-      💾 Checkpoint: 51 weeks processed
-      Fetching week 2025-03-10 (52/62)... ✅ 1 rows
-      💾 Checkpoint: 52 weeks processed
-      Fetching week 2025-03-03 (53/62)... ✅ 1 rows
-      💾 Checkpoint: 53 weeks processed
-      Fetching week 2025-02-24 (54/62)... ✅ 1 rows
-      💾 Checkpoint: 54 weeks processed
-      Fetching week 2025-02-17 (55/62)... ✅ 1 rows
-      💾 Checkpoint: 55 weeks processed
-      Fetching week 2025-02-10 (56/62)... ✅ 1 rows
-      💾 Checkpoint: 56 weeks processed
-      Fetching week 2025-02-03 (57/62)... ✅ 1 rows
-      💾 Checkpoint: 57 weeks processed
-      Fetching week 2025-01-27 (58/62)... ✅ 1 rows
-      💾 Checkpoint: 58 weeks processed
-      Fetching week 2025-01-20 (59/62)... ✅ 1 rows
-      💾 Checkpoint: 59 weeks processed
-      Fetching week 2025-01-13 (60/62)... ✅ 1 rows
-      💾 Checkpoint: 60 weeks processed
-      Fetching week 2025-01-06 (61/62)... ✅ 1 rows
-      💾 Checkpoint: 61 weeks processed
-      Fetching week 2024-12-30 (62/62)... ⚠️ 0 rows
-      💾 Checkpoint: 62 weeks processed
-   ✅ Backfill (full) complete: 61 total rows
-✅ Job #192 completed successfully (61 rows)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
-
-⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+      Fetching week 2024-12-30 (63/63)... ✅ 1 rows
+      💾 Checkpoint: 63 weeks processed
+   ✅ Backfill (full) complete: 63 total rows
+✅ Job #260 completed successfully (63 rows)
+
+🔄 Processing job #261 (backfill) - attempt 1/3
+   SQL hash: c2f3b523b019cfff3e39581b02083652
+   📅 Backfill (resume): existing 430 rows, 0 gaps, max_date=2026-03-06
+   📅 Fetching 2026-03-06 → 2026-03-09...
+      Fetching month 2026-03-01 (1/1)... ✅ 8 rows
+   ✅ Backfill (resume) complete: +8 rows, total 437 rows
+✅ Job #261 completed successfully (437 rows)
+
+🔄 Processing job #262 (backfill) - attempt 1/3
+   SQL hash: ce005166abc8abdecb73b746c7c397ac
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ✅ 184 rows
+      💾 Checkpoint: 1 months processed
+      Fetching month 2026-02-01 (2/15)... ✅ 649 rows
+      💾 Checkpoint: 2 months processed
+      Fetching month 2026-01-01 (3/15)... ✅ 744 rows
+      💾 Checkpoint: 3 months processed
+      Fetching month 2025-12-01 (4/15)... ✅ 736 rows
+      💾 Checkpoint: 4 months processed
+      Fetching month 2025-11-01 (5/15)... ✅ 709 rows
+      💾 Checkpoint: 5 months processed
+      Fetching month 2025-10-01 (6/15)... ✅ 737 rows
+      💾 Checkpoint: 6 months processed
+      Fetching month 2025-09-01 (7/15)... ✅ 720 rows
+      💾 Checkpoint: 7 months processed
+      Fetching month 2025-08-01 (8/15)... ✅ 709 rows
+      💾 Checkpoint: 8 months processed
+      Fetching month 2025-07-01 (9/15)... ✅ 676 rows
+      💾 Checkpoint: 9 months processed
+      Fetching month 2025-06-01 (10/15)... ✅ 526 rows
+      💾 Checkpoint: 10 months processed
+      Fetching month 2025-05-01 (11/15)... ✅ 496 rows
+      💾 Checkpoint: 11 months processed
+      Fetching month 2025-04-01 (12/15)... ✅ 433 rows
+      💾 Checkpoint: 12 months processed
+      Fetching month 2025-03-01 (13/15)... ✅ 378 rows
+      💾 Checkpoint: 13 months processed
+      Fetching month 2025-02-01 (14/15)... ✅ 313 rows
+      💾 Checkpoint: 14 months processed
+      Fetching month 2025-01-01 (15/15)... ✅ 307 rows
+      💾 Checkpoint: 15 months processed
+   ✅ Backfill (full) complete: 8317 total rows
+✅ Job #262 completed successfully (8317 rows)
+
+🔄 Processing job #263 (backfill) - attempt 1/3
+   SQL hash: e754a3db18a8732dcf4ddc7b827ea09b
+   📅 Backfill (resume): existing 3 rows, 0 gaps, max_date=2025-01-01
+   📅 Fetching 2025-01-01 → 2026-03-09...
+      Fetching week 2024-12-30 (1/63)... ❌ Error: Execution failed on sql '-- Description: Daily cumulative traders by category
+-- Shows cumulative unique traders for each protocol category
+-- Categories: public_amm, prop_amm, aggregator, launchpad
+-- Backfills days with no new traders using last known cumulative value
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+new_traders_by_category AS (
+    SELECT 
+        first_trade_date,
+        category,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            COALESCE(pn.category, 'other') as category,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        JOIN program_names pn ON t.inner_program = pn.program
+        WHERE t.block_date < CURRENT_DATE
+        GROUP BY COALESCE(pn.category, 'other'), t.signer
+    )
+    GROUP BY first_trade_date, category
+)
+
+SELECT
+    DATE('2024-12-30') as week,
+    category,
+    SUM(new_traders) as weekly_change,
+    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('2024-12-30')) as cumulative_traders
+FROM new_traders_by_category
+WHERE first_trade_date = DATE('2024-12-30')
+GROUP BY category
+ORDER BY category
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/dex_trades_v2/data/block_date=2025-12-17/data-00000-6e263775-1e05-41b8-ab25-c224b4e6f1c3.parquet (offset=4, length=131072723): Failed to open S3 file: s3://iceberg-warehouse/solana/dex_trades_v2/data/block_date=2025-12-17/data-00000-6e263775-1e05-41b8-ab25-c224b4e6f1c3.parquet", query_id=20260309_060638_04024_tt3h2)
+[SQL: -- Description: Daily cumulative traders by category
+-- Shows cumulative unique traders for each protocol category
+-- Categories: public_amm, prop_amm, aggregator, launchpad
+-- Backfills days with no new traders using last known cumulative value
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+new_traders_by_category AS (
+    SELECT 
+        first_trade_date,
+        category,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            COALESCE(pn.category, 'other') as category,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        JOIN program_names pn ON t.inner_program = pn.program
+        WHERE t.block_date < CURRENT_DATE
+        GROUP BY COALESCE(pn.category, 'other'), t.signer
+    )
+    GROUP BY first_trade_date, category
+)
+
+SELECT
+    DATE('2024-12-30') as week,
+    category,
+    SUM(new_traders) as weekly_change,
+    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('2024-12-30')) as cumulative_traders
+FROM new_traders_by_category
+WHERE first_trade_date = DATE('2024-12-30')
+GROUP BY category
+ORDER BY category
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+❌ Trino query error: Execution failed on sql '-- Description: Daily cumulative traders by category
+-- Shows cumulative unique traders for each protocol category
+-- Categories: public_amm, prop_amm, aggregator, launchpad
+-- Backfills days with no new traders using last known cumulative value
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+new_traders_by_category AS (
+    SELECT 
+        first_trade_date,
+        category,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            COALESCE(pn.category, 'other') as category,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        JOIN program_names pn ON t.inner_program = pn.program
+        WHERE t.block_date < CURRENT_DATE
+        GROUP BY COALESCE(pn.category, 'other'), t.signer
+    )
+    GROUP BY first_trade_date, category
+)
+
+SELECT
+    DATE('2024-12-30') as week,
+    category,
+    SUM(new_traders) as weekly_change,
+    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('2024-12-30')) as cumulative_traders
+FROM new_traders_by_category
+WHERE first_trade_date = DATE('2024-12-30')
+GROUP BY category
+ORDER BY category
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/dex_trades_v2/data/block_date=2025-12-17/data-00000-6e263775-1e05-41b8-ab25-c224b4e6f1c3.parquet (offset=4, length=131072723): Failed to open S3 file: s3://iceberg-warehouse/solana/dex_trades_v2/data/block_date=2025-12-17/data-00000-6e263775-1e05-41b8-ab25-c224b4e6f1c3.parquet", query_id=20260309_060638_04024_tt3h2)
+[SQL: -- Description: Daily cumulative traders by category
+-- Shows cumulative unique traders for each protocol category
+-- Categories: public_amm, prop_amm, aggregator, launchpad
+-- Backfills days with no new traders using last known cumulative value
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),
+        
+        -- Prop AMM
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),
+        
+        -- Aggregator
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),
+        
+        -- Launchpad
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')
+    ) AS t(program, program_name, category)
+),
+new_traders_by_category AS (
+    SELECT 
+        first_trade_date,
+        category,
+        COUNT(*) as new_traders
+    FROM (
+        SELECT 
+            COALESCE(pn.category, 'other') as category,
+            t.signer,
+            MIN(t.block_date) as first_trade_date
+        FROM solana.dex_trades t
+        JOIN program_names pn ON t.inner_program = pn.program
+        WHERE t.block_date < CURRENT_DATE
+        GROUP BY COALESCE(pn.category, 'other'), t.signer
+    )
+    GROUP BY first_trade_date, category
+)
+
+SELECT
+    DATE('2024-12-30') as week,
+    category,
+    SUM(new_traders) as weekly_change,
+    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('2024-12-30')) as cumulative_traders
+FROM new_traders_by_category
+WHERE first_trade_date = DATE('2024-12-30')
+GROUP BY category
+ORDER BY category
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+❌ Job #263 failed: Execution failed on sql '-- Description: Daily cumulative traders by category
+-- Shows cumulative unique traders for each protocol category
+-- Categories: public_amm, prop_amm, aggregator, launchpad
+-- Backfills days with no new traders using last known cumulative value
+
+WITH program_names AS (
+    SELECT * FROM (VALUES
+        -- Public AMM
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM
+   🔄 Will retry in 1 minutes
+
+🔄 Processing job #264 (backfill) - attempt 1/3
+   SQL hash: ec2e573245855051a9238924556bd80b
+   📅 Backfill (resume): existing 430 rows, 0 gaps, max_date=2026-03-06
+   📅 Fetching 2026-03-06 → 2026-03-09...
+      Fetching month 2026-03-01 (1/1)... ✅ 8 rows
+   ✅ Backfill (resume) complete: +8 rows, total 437 rows
+✅ Job #264 completed successfully (437 rows)
+
+🔄 Processing job #265 (backfill) - attempt 1/3
+   SQL hash: fc277b7d97a7016150a1f142bff664ad
+   📅 Backfill (full): 2026-03-09 → 2025-01-01
+      Fetching month 2026-03-01 (1/15)... ❌ Error: Execution failed on sql '-- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet (offset=4, length=8266656): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet", query_id=20260309_060656_04031_tt3h2)
+[SQL: -- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+❌ Trino query error: Execution failed on sql '-- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet (offset=4, length=8266656): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet", query_id=20260309_060656_04031_tt3h2)
+[SQL: -- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+   ❌ Error: Execution failed on sql '-- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet (offset=4, length=8266656): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2025-06-19/20260121_151746_00306_8abvd-5ee0e52a-e993-4f7d-b62e-9bee2cca0ecf.parquet", query_id=20260309_060656_04031_tt3h2)
+[SQL: -- Description: Monthly summary metrics
+-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month
+
+/*
+Logic:
+- Groups metrics by month for last 2 months
+- Fees in SOL
+- Volume calculation priority: SOL → stablecoin → token price
+- Deduplicates by block_slot + tx_index for multi-hop transactions
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint FROM (VALUES 
+        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
+        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
+        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
+        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
+        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
+        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
+        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
+        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
+        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
+        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
+        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
+        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
+        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
+        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
+        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
+        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
+        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
+        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
+    ) AS t(mint)
+),
+tx_level_metrics AS (
+    SELECT 
+        t.block_date,
+        t.block_slot,
+        t.tx_index,
+        t.signer,
+        t.txn_fee as fee,
+        t.priority_fee,
+        t.jito_tips,
+        SUM(
+            CASE 
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                WHEN sb.mint IS NOT NULL
+                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+                WHEN ss.mint IS NOT NULL
+                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END
+        ) as volume_usd
+    FROM solana.dex_trades t
+    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
+    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
+    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+        AND DATE_TRUNC('minute', t.block_time) = psol.minute
+    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+        AND DATE_TRUNC('minute', t.block_time) = pb.minute
+        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+        AND DATE_TRUNC('minute', t.block_time) = ps.minute
+        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips
+)
+
+SELECT 
+    DATE('2026-03-01') as month,
+    COUNT(DISTINCT signer) as total_traders,
+    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,
+    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,
+    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,
+    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,
+    ROUND(SUM(volume_usd), 2) as total_volume_usd
+FROM tx_level_metrics
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+   ℹ️  Partial data saved via checkpoints: 0 rows
+✅ Job #265 completed successfully (0 rows)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 18 jobs so far)
+
+🔄 Processing job #263 (backfill) - attempt 2/3
+   SQL hash: e754a3db18a8732dcf4ddc7b827ea09b
+   📅 Backfill (resume): existing 3 rows, 0 gaps, max_date=2025-01-01
+   📅 Fetching 2025-01-01 → 2026-03-09...
+      Fetching week 2024-12-30 (1/63)... ⚠️ 0 rows
+      Fetching week 2025-01-06 (2/63)... ✅ 2 rows
+      Fetching week 2025-01-13 (3/63)... ✅ 2 rows
+      Fetching week 2025-01-20 (4/63)... ✅ 3 rows
+      Fetching week 2025-01-27 (5/63)... ✅ 3 rows
+      Fetching week 2025-02-03 (6/63)... ✅ 3 rows
+      Fetching week 2025-02-10 (7/63)... ✅ 3 rows
+      Fetching week 2025-02-17 (8/63)... ✅ 3 rows
+      Fetching week 2025-02-24 (9/63)... ✅ 3 rows
+      Fetching week 2025-03-03 (10/63)... ✅ 3 rows
+      Fetching week 2025-03-10 (11/63)... ✅ 3 rows
+      Fetching week 2025-03-17 (12/63)... ✅ 3 rows
+      Fetching week 2025-03-24 (13/63)... ✅ 3 rows
+      Fetching week 2025-03-31 (14/63)... ✅ 3 rows
+      Fetching week 2025-04-07 (15/63)... ✅ 3 rows
+      Fetching week 2025-04-14 (16/63)... ✅ 3 rows
+      Fetching week 2025-04-21 (17/63)... ✅ 3 rows
+      Fetching week 2025-04-28 (18/63)... ✅ 3 rows
+      Fetching week 2025-05-05 (19/63)... ✅ 3 rows
+      Fetching week 2025-05-12 (20/63)... ✅ 3 rows
+      Fetching week 2025-05-19 (21/63)... ✅ 3 rows
+      Fetching week 2025-05-26 (22/63)... ✅ 3 rows
+      Fetching week 2025-06-02 (23/63)... ✅ 3 rows
+      Fetching week 2025-06-09 (24/63)... ✅ 3 rows
+      Fetching week 2025-06-16 (25/63)... ✅ 3 rows
+      Fetching week 2025-06-23 (26/63)... ✅ 3 rows
+      Fetching week 2025-06-30 (27/63)... ✅ 3 rows
+      Fetching week 2025-07-07 (28/63)... ✅ 3 rows
+      Fetching week 2025-07-14 (29/63)... ✅ 3 rows
+      Fetching week 2025-07-21 (30/63)... ✅ 3 rows
+      Fetching week 2025-07-28 (31/63)... ✅ 3 rows
+      Fetching week 2025-08-04 (32/63)... ✅ 3 rows
+      Fetching week 2025-08-11 (33/63)... ✅ 3 rows
+      Fetching week 2025-08-18 (34/63)... ✅ 3 rows
+      Fetching week 2025-08-25 (35/63)... ✅ 3 rows
+      Fetching week 2025-09-01 (36/63)... ✅ 3 rows
+      Fetching week 2025-09-08 (37/63)... ✅ 3 rows
+      Fetching week 2025-09-15 (38/63)... ✅ 3 rows
+      Fetching week 2025-09-22 (39/63)... ✅ 3 rows
+      Fetching week 2025-09-29 (40/63)... ✅ 3 rows
+      Fetching week 2025-10-06 (41/63)... ✅ 3 rows
+      Fetching week 2025-10-13 (42/63)... ✅ 3 rows
+      Fetching week 2025-10-20 (43/63)... ✅ 3 rows
+      Fetching week 2025-10-27 (44/63)... ✅ 3 rows
+      Fetching week 2025-11-03 (45/63)... ✅ 3 rows
+      Fetching week 2025-11-10 (46/63)... ✅ 3 rows
+      Fetching week 2025-11-17 (47/63)... ✅ 3 rows
+      Fetching week 2025-11-24 (48/63)... ✅ 3 rows
+      Fetching week 2025-12-01 (49/63)... ✅ 3 rows
+      Fetching week 2025-12-08 (50/63)... ✅ 3 rows
+      Fetching week 2025-12-15 (51/63)... ✅ 3 rows
+      Fetching week 2025-12-22 (52/63)... ✅ 3 rows
+      Fetching week 2025-12-29 (53/63)... ✅ 3 rows
+      Fetching week 2026-01-05 (54/63)... ✅ 3 rows
+      Fetching week 2026-01-12 (55/63)... ✅ 3 rows
+      Fetching week 2026-01-19 (56/63)... ✅ 3 rows
+      Fetching week 2026-01-26 (57/63)... ✅ 3 rows
+      Fetching week 2026-02-02 (58/63)... ✅ 3 rows
+      Fetching week 2026-02-09 (59/63)... ✅ 3 rows
+      Fetching week 2026-02-16 (60/63)... ✅ 3 rows
+      Fetching week 2026-02-23 (61/63)... ✅ 3 rows
+      Fetching week 2026-03-02 (62/63)... ✅ 3 rows
+      Fetching week 2026-03-09 (63/63)...

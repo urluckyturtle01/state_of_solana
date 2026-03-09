@@ -36,6 +36,12 @@ if env_file.exists():
 sys.path.append('/root/tl-reserach-tool-sqls')
 from trino_client import TrinoClient
 
+# Custom exception for partial completion
+class PartialCompletionException(Exception):
+    def __init__(self, message, rows_saved):
+        super().__init__(message)
+        self.rows_saved = rows_saved
+
 # Configuration
 BACKFILL_START = date(2025, 1, 1)
 POLL_INTERVAL = 10  # seconds
@@ -533,7 +539,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 all_new_data = run_trino_query(sql_query, date.today(), BACKFILL_START, trino_client, 
                                               checkpoint_callback=checkpoint, checkpoint_interval=1)
             except Exception as e:
-                print(f"   ❌ Error: {e}")
+                print(f"   ❌ Error during processing: {e}")
                 # Data already saved via checkpoint before error
                 # Get the current row count from database
                 cur = pg.cursor()
@@ -541,7 +547,8 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 row = cur.fetchone()
                 saved_count = (row[0] or 0) if row else 0
                 print(f"   ℹ️  Partial data saved via checkpoints: {saved_count} rows")
-                return saved_count
+                # Raise exception with partial status info
+                raise PartialCompletionException(f"Partial completion: {saved_count} rows saved", saved_count)
         else:
             # Daily queries: iterate day-by-day
             d = date.today()
@@ -698,15 +705,55 @@ def process_job(pg, job, trino_client):
         # After processing, recalculate cumulative fields if needed
         fix_cumulative_fields(pg, sql_hash)
         
-        # Mark job as completed
+        # Check if we got any data
+        if rows_processed == 0:
+            # Complete failure: 0 rows
+            error_msg = "Query returned 0 rows after processing"
+            
+            if attempts >= max_attempts:
+                print(f"⛔ Job #{job_id} COMPLETE FAILURE: 0 rows after {attempts} attempts")
+                cur.execute("""
+                    UPDATE trino_job_queue 
+                    SET status = 'failed_permanent', 
+                        error_message = %s, 
+                        completed_at = NOW()
+                    WHERE id = %s
+                """, (error_msg, job_id))
+            else:
+                backoff_minutes = 2 ** (attempts - 1)
+                print(f"⚠️  Job #{job_id} returned 0 rows, will retry in {backoff_minutes} minutes")
+                cur.execute("""
+                    UPDATE trino_job_queue 
+                    SET status = 'pending', 
+                        error_message = %s, 
+                        retry_after = NOW() + INTERVAL '%s minutes'
+                    WHERE id = %s
+                """, (error_msg, backoff_minutes, job_id))
+            pg.commit()
+        else:
+            # Success: got data
+            print(f"✅ Job #{job_id} SUCCESSFUL: {rows_processed} rows")
+            cur.execute("""
+                UPDATE trino_job_queue 
+                SET status = 'completed', completed_at = NOW(), error_message = NULL
+                WHERE id = %s
+            """, (job_id,))
+            pg.commit()
+        
+    except PartialCompletionException as e:
+        # Partial success: some data saved via checkpoints but not all periods completed
+        pg.rollback()  # Rollback any uncommitted changes
+        error_msg = str(e)
+        print(f"⚠️  Job #{job_id} PARTIALLY SUCCESSFUL: {e.rows_saved} rows saved")
+        cur = pg.cursor()
         cur.execute("""
             UPDATE trino_job_queue 
-            SET status = 'completed', completed_at = NOW(), error_message = NULL
+            SET status = 'partial', 
+                error_message = %s, 
+                completed_at = NOW()
             WHERE id = %s
-        """, (job_id,))
+        """, (error_msg, job_id))
         pg.commit()
-        
-        print(f"✅ Job #{job_id} completed successfully ({rows_processed} rows)")
         
     except Exception as e:
         pg.rollback()
