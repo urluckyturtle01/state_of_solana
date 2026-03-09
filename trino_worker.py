@@ -178,12 +178,12 @@ def fix_cumulative_fields(pg, sql_hash):
             date_field = 'block_date'
         
         # Validate group_by_field to prevent SQL injection
-        allowed_group_fields = ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']
+        allowed_group_fields = ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category']
         if group_by_field not in allowed_group_fields:
             print(f"      ⚠️  Invalid groupBy field: {group_by_field}, skipping cumulative fix")
             return
         
-        # Auto-detect cumulative field and base field from data
+        # Auto-detect ALL cumulative fields and their base fields from data
         cur.execute("""
             SELECT jsonb_object_keys(json_data->0)
             FROM query_results 
@@ -191,25 +191,40 @@ def fix_cumulative_fields(pg, sql_hash):
         """, (sql_hash,))
         
         fields = [row[0] for row in cur.fetchall()]
-        cumulative_field = None
-        base_field = None
+        cumulative_pairs = []
         
-        # Find cumulative field
+        # Find all cumulative fields and their base fields
         for field in fields:
             if 'cumulative' in field.lower():
-                cumulative_field = field
+                base_field = None
                 # Find corresponding base field
-                if 'traders' in field:
-                    base_field = next((f for f in fields if ('monthly_change' in f or 'new_traders' in f) and 'cumulative' not in f), None)
+                if 'traders' in field or 'txn' in field:
+                    base_field = next((f for f in fields if ('monthly_change' in f or 'new_traders' in f or 'txn_count' in f) and 'cumulative' not in f), None)
                 elif 'volume' in field:
-                    base_field = next((f for f in fields if 'volume' in f and 'cumulative' not in f), None)
-                break
+                    base_field = next((f for f in fields if 'volume_usd' in f and 'cumulative' not in f), None)
+                
+                if base_field:
+                    cumulative_pairs.append((field, base_field))
         
-        if not cumulative_field or not base_field:
-            print(f"      ⚠️  Could not detect cumulative/base fields, skipping")
+        if not cumulative_pairs:
+            print(f"      ⚠️  Could not detect cumulative/base field pairs, skipping")
             return
         
-        print(f"      🔄 Recalculating {cumulative_field} from {base_field}...")
+        print(f"      🔄 Recalculating {len(cumulative_pairs)} cumulative field(s)...")
+        
+        # Build SQL to recalculate all cumulative fields
+        # Remove all cumulative fields from base_data
+        cumulative_fields_to_remove = [pair[0] for pair in cumulative_pairs]
+        remove_clause = ' - '.join([f"'{field}'" for field in cumulative_fields_to_remove])
+        
+        # Build SELECT clauses for base values
+        base_value_selects = [f"(row_data->>'{pair[1]}')::numeric as base_{i}" for i, pair in enumerate(cumulative_pairs)]
+        
+        # Build window function clauses for cumulative calculations
+        cumulative_calcs = [f"SUM(base_{i}) OVER (PARTITION BY category ORDER BY date_val) as cumulative_{i}" for i in range(len(cumulative_pairs))]
+        
+        # Build jsonb_build_object pairs
+        jsonb_pairs = ', '.join([f"'{pair[0]}', cumulative_{i}" for i, pair in enumerate(cumulative_pairs)])
         
         sql = f"""
             WITH ordered_data AS (
@@ -221,16 +236,15 @@ def fix_cumulative_fields(pg, sql_hash):
               SELECT 
                 (row_data->>'{date_field}')::date as date_val,
                 row_data->>'{group_by_field}' as category,
-                (row_data->>'{base_field}')::numeric as base_value,
-                row_data - '{cumulative_field}' as base_data
+                {', '.join(base_value_selects)},
+                row_data - {remove_clause} as base_data
               FROM ordered_data
             ),
             cumulative_calc AS (
               SELECT 
                 date_val,
                 category,
-                base_value,
-                SUM(base_value) OVER (PARTITION BY category ORDER BY date_val) as cumulative_value,
+                {', '.join(cumulative_calcs)},
                 base_data
               FROM expanded
               ORDER BY date_val, category
@@ -238,7 +252,7 @@ def fix_cumulative_fields(pg, sql_hash):
             json_rebuild AS (
               SELECT jsonb_agg(
                 base_data || jsonb_build_object(
-                  '{cumulative_field}', cumulative_value
+                  {jsonb_pairs}
                 ) ORDER BY date_val, category
               ) as new_json_data
               FROM cumulative_calc

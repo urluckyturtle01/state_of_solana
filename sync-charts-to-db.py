@@ -280,8 +280,12 @@ def sync_charts_to_db():
     categories_to_process = {
         'dex-trades': [
             'summary',
-            'prop_amm'
-        
+            'prop_amm',
+            'compute',
+            'network_fees',
+            'tokens',
+            'traders',
+            'volume'
             
         
         ]

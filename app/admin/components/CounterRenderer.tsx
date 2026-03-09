@@ -433,9 +433,9 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
             }
           } else {
             // If no date field found, use row index as fallback
-            // Get previous row (be careful of the rowIndex)
-            if (rowIndex > 0 && rowIndex < rows.length) {
-              const previousRow = rows[rowIndex - 1];
+            // Get previous row (data is newest-to-oldest, so previous = rowIndex + 1)
+            if (rowIndex < rows.length - 1) {
+              const previousRow = rows[rowIndex + 1];
               const previousValue = Number(previousRow[counterConfig.valueField]);
               const currentValue = numericValue;
               
@@ -642,9 +642,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     
     // Calculate trend if trendConfig is present
     if (chartConfig.trendConfig && chartConfig.trendConfig.valueField === 'auto_calculate') {
-      if (chartData.length >= 2 && rowIndex > 0) {
-        // Compare current row (rowIndex) with previous row (rowIndex - 1)
-        const previousRow = chartData[rowIndex - 1];
+      if (chartData.length >= 2 && rowIndex < chartData.length - 1) {
+        // Compare current row (rowIndex) with previous month (rowIndex + 1, since data is newest-to-oldest)
+        const previousRow = chartData[rowIndex + 1];
         const previousValue = Number(previousRow[fieldName]);
         
         if (!isNaN(previousValue) && previousValue !== 0) {
