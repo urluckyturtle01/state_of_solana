@@ -167,6 +167,20 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             data_mapping = chart_dict.get('dataMapping', {})
             query_run_config = yaml_config.get('queryRunConfig', {})
             
+            # Transform dataMapping for counter charts
+            if chart_type == 'counter' and 'field' in data_mapping:
+                # Convert from { field: "x", changeField: "y" } to { yAxis: [{ field: "x" }] }
+                transformed_mapping = {
+                    'yAxis': [{
+                        'field': data_mapping['field'],
+                        'type': 'bar',
+                        'unit': ''
+                    }]
+                }
+                if 'changeField' in data_mapping and data_mapping['changeField']:
+                    transformed_mapping['changeField'] = data_mapping['changeField']
+                data_mapping = transformed_mapping
+            
             # Generate JSON config (full chart config for frontend)
             json_config = {
                 'id': chart_id,
@@ -183,9 +197,35 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             }
             
             # Add optional fields
-            for field in ['width', 'rowIndex', 'prefix', 'suffix', 'variant', 'icon', 'trendConfig']:
+            for field in ['width', 'rowIndex', 'prefix', 'suffix', 'variant', 'icon', 'order']:
                 if field in chart_dict:
                     json_config[field] = chart_dict[field]
+            
+            # Add trendConfig for counters
+            if chart_type == 'counter':
+                if 'trendConfig' in chart_dict:
+                    json_config['trendConfig'] = chart_dict['trendConfig']
+                else:
+                    # Default trendConfig for counters
+                    # Calculate comparison month name based on rowIndex
+                    # Logic: rowIndex=1 means show 1 month ago data (Feb if today is March)
+                    #        Compare to 1 month before that (Jan)
+                    from datetime import datetime
+                    from dateutil.relativedelta import relativedelta
+                    
+                    row_index = chart_dict.get('rowIndex', 1)
+                    current_date = datetime.now()
+                    
+                    # Display month = current month - rowIndex months
+                    display_month = current_date - relativedelta(months=row_index)
+                    # Comparison month = 1 month before display month
+                    comparison_month = display_month - relativedelta(months=1)
+                    comparison_month_name = comparison_month.strftime('%b')
+                    
+                    json_config['trendConfig'] = {
+                        'valueField': 'auto_calculate',
+                        'label': f'vs. {comparison_month_name}'
+                    }
             
             # Upsert to database
             cur.execute("""
@@ -240,12 +280,9 @@ def sync_charts_to_db():
     categories_to_process = {
         'dex-trades': [
             
-            'summary',
-            'compute',
-            'network_fees',
+            'summary'
+        
             
-            'tokens',
-            'traders',
         
         ]
     }

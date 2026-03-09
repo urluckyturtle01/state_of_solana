@@ -18,6 +18,7 @@ export async function GET(
   try {
     const { pageId } = params;
     
+    console.log(`\n🔵 ===== DB API ROUTE CALLED =====`);
     console.log(`📊 Fetching charts from DB for page: ${pageId}`);
     
     // Get all charts for this page from chart_definitions
@@ -124,6 +125,9 @@ export async function GET(
           };
         })
       );
+      
+      console.log(`📊 Returning ${charts.length} charts for ${pageId}`);
+      console.log(`   First chart: ${charts[0]?.id}, data rows: ${charts[0]?.data?.length}`);
       
       const pageConfig = {
         charts,

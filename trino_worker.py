@@ -43,7 +43,7 @@ class PartialCompletionException(Exception):
         self.rows_saved = rows_saved
 
 # Configuration
-BACKFILL_START = date(2025, 1, 1)
+BACKFILL_START = date(2026, 1, 1)  # Only fetch last 3 months for counters
 POLL_INTERVAL = 10  # seconds
 MAX_RETRIES = 3
 
@@ -151,11 +151,39 @@ def fix_cumulative_fields(pg, sql_hash):
     
     print(f"      🔄 Fixing cumulative fields (groupBy: {group_by_field or 'none'})...")
     
+    # Detect date field from existing data
+    cur.execute("""
+        SELECT 
+            CASE 
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'block_date' IS NOT NULL LIMIT 1) THEN 'block_date'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'week' IS NOT NULL LIMIT 1) THEN 'week'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'week_start' IS NOT NULL LIMIT 1) THEN 'week_start'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'month' IS NOT NULL LIMIT 1) THEN 'month'
+                ELSE 'block_date'
+            END as date_field
+    """, (sql_hash, sql_hash, sql_hash, sql_hash))
+    
+    row = cur.fetchone()
+    date_field = row[0] if row else 'block_date'
+    
     # Recalculate cumulative fields in the database
     if group_by_field:
         # Group-wise cumulative (e.g., per category/program)
-        # Use the same approach as the manual fix
-        cur.execute("""
+        # Validate date_field to prevent SQL injection
+        if date_field not in ['block_date', 'week', 'week_start', 'month']:
+            date_field = 'block_date'
+        
+        # Validate group_by_field to prevent SQL injection
+        allowed_group_fields = ['category', 'program', 'dex_name', 'token', 'trader_category']
+        if group_by_field not in allowed_group_fields:
+            print(f"      ⚠️  Invalid groupBy field: {group_by_field}, skipping cumulative fix")
+            return
+        
+        sql = f"""
             WITH ordered_data AS (
               SELECT jsonb_array_elements(json_data) as row_data
               FROM query_results 
@@ -163,8 +191,8 @@ def fix_cumulative_fields(pg, sql_hash):
             ),
             expanded AS (
               SELECT 
-                (row_data->>'block_date')::date as block_date,
-                row_data->>%s as category,
+                (row_data->>'{date_field}')::date as date_val,
+                row_data->>'{group_by_field}' as category,
                 (row_data->>'active_traders')::bigint as active_traders,
                 (row_data->>'new_traders')::bigint as new_traders,
                 row_data - 'cumulative_new_traders' as base_data
@@ -172,20 +200,20 @@ def fix_cumulative_fields(pg, sql_hash):
             ),
             cumulative_calc AS (
               SELECT 
-                block_date,
+                date_val,
                 category,
                 active_traders,
                 new_traders,
-                SUM(new_traders) OVER (PARTITION BY category ORDER BY block_date) as cumulative_new_traders,
+                SUM(new_traders) OVER (PARTITION BY category ORDER BY date_val) as cumulative_new_traders,
                 base_data
               FROM expanded
-              ORDER BY block_date, category
+              ORDER BY date_val, category
             ),
             json_rebuild AS (
               SELECT jsonb_agg(
                 base_data || jsonb_build_object(
                   'cumulative_new_traders', cumulative_new_traders
-                ) ORDER BY block_date, active_traders DESC
+                ) ORDER BY date_val, active_traders DESC
               ) as new_json_data
               FROM cumulative_calc
             )
@@ -194,10 +222,15 @@ def fix_cumulative_fields(pg, sql_hash):
               json_data = (SELECT new_json_data FROM json_rebuild),
               updated_at = NOW()
             WHERE sql_hash = %s
-        """, (sql_hash, group_by_field, sql_hash))
+        """
+        cur.execute(sql, (sql_hash, sql_hash))
     else:
         # Overall cumulative (no grouping)
-        cur.execute("""
+        # Validate date_field to prevent SQL injection
+        if date_field not in ['block_date', 'week', 'week_start', 'month']:
+            date_field = 'block_date'
+        
+        sql = f"""
             WITH ordered_data AS (
               SELECT jsonb_array_elements(json_data) as row_data
               FROM query_results 
@@ -205,7 +238,7 @@ def fix_cumulative_fields(pg, sql_hash):
             ),
             expanded AS (
               SELECT 
-                (row_data->>'block_date')::date as block_date,
+                (row_data->>'{date_field}')::date as date_val,
                 (row_data->>'active_traders')::bigint as active_traders,
                 (row_data->>'new_traders')::bigint as new_traders,
                 (row_data->>'new_trader_pct')::numeric as new_trader_pct,
@@ -214,20 +247,20 @@ def fix_cumulative_fields(pg, sql_hash):
             ),
             cumulative_calc AS (
               SELECT 
-                block_date,
+                date_val,
                 active_traders,
                 new_traders,
                 new_trader_pct,
-                SUM(new_traders) OVER (ORDER BY block_date) as cumulative_new_traders,
+                SUM(new_traders) OVER (ORDER BY date_val) as cumulative_new_traders,
                 base_data
               FROM expanded
-              ORDER BY block_date
+              ORDER BY date_val
             ),
             json_rebuild AS (
               SELECT jsonb_agg(
                 base_data || jsonb_build_object(
                   'cumulative_new_traders', cumulative_new_traders
-                ) ORDER BY block_date
+                ) ORDER BY date_val
               ) as new_json_data
               FROM cumulative_calc
             )
@@ -236,7 +269,8 @@ def fix_cumulative_fields(pg, sql_hash):
               json_data = (SELECT new_json_data FROM json_rebuild),
               updated_at = NOW()
             WHERE sql_hash = %s
-        """, (sql_hash, sql_hash))
+        """
+        cur.execute(sql, (sql_hash, sql_hash))
     
     pg.commit()
     print(f"      ✅ Cumulative fields recalculated")
@@ -295,6 +329,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     # Checkpoint every N weeks
                     if checkpoint_callback and week_count % checkpoint_interval == 0:
                         checkpoint_callback(all_results)
+                        all_results = []  # Clear after checkpoint to avoid duplication
                         print(f"      💾 Checkpoint: {week_count} weeks processed")
                 
                 except Exception as e:
@@ -302,6 +337,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     # Save progress before failing
                     if checkpoint_callback and all_results:
                         checkpoint_callback(all_results)
+                        all_results = []  # Clear after save
                         print(f"      💾 Saved {week_count-1} successful weeks before error")
                     raise
 
@@ -310,8 +346,13 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     current -= timedelta(weeks=1)
                 else:
                     current += timedelta(weeks=1)
+            
+            # Final save for any remaining data not checkpointed
+            if checkpoint_callback and all_results:
+                checkpoint_callback(all_results)
+                print(f"      💾 Final checkpoint: {len(all_results)} rows")
 
-            return all_results
+            return []  # Return empty since all data saved via checkpoints
         # Check if query uses {month} (monthly queries)
         elif '{month}' in sql_query:
             # Loop through each month and aggregate results
@@ -353,6 +394,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     # Checkpoint every N months
                     if checkpoint_callback and month_count % checkpoint_interval == 0:
                         checkpoint_callback(all_results)
+                        all_results = []  # Clear after checkpoint to avoid duplication
                         print(f"      💾 Checkpoint: {month_count} months processed")
                 
                 except Exception as e:
@@ -360,12 +402,18 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     # Save progress before failing
                     if checkpoint_callback and all_results:
                         checkpoint_callback(all_results)
+                        all_results = []  # Clear after save
                         print(f"      💾 Saved {month_count-1} successful months before error")
                     raise
 
                 current = month_done()
+            
+            # Final save for any remaining data not checkpointed
+            if checkpoint_callback and all_results:
+                checkpoint_callback(all_results)
+                print(f"      💾 Final checkpoint: {len(all_results)} rows")
 
-            return all_results
+            return []  # Return empty since all data saved via checkpoints
         # Check if query uses {block_date} (single-day queries)
         elif '{block_date}' in sql_query:
             # Loop through each day and aggregate results
@@ -378,18 +426,41 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                 day_count += 1
                 print(f"      Fetching {current_date} ({day_count}/{total_days})...", end='', flush=True)
 
-                sql = sql_query.replace('{block_date}', str(current_date))
+                try:
+                    sql = sql_query.replace('{block_date}', str(current_date))
 
-                df = trino_client.query(sql)
-                if df is not None and not df.empty:
-                    records = df.to_dict('records')
-                    all_results.extend(convert_to_json_safe(records))
-                    print(f" ✅ {len(records)} rows")
-                else:
-                    print(f" ⚠️ 0 rows")
+                    df = trino_client.query(sql)
+                    if df is not None and not df.empty:
+                        records = df.to_dict('records')
+                        all_results.extend(convert_to_json_safe(records))
+                        print(f" ✅ {len(records)} rows")
+                    else:
+                        print(f" ⚠️ 0 rows")
+                    
+                    # Checkpoint every 30 days if callback provided
+                    if checkpoint_callback and day_count % 30 == 0:
+                        checkpoint_callback(all_results)
+                        all_results = []  # Clear after checkpoint
+                        print(f"      💾 Checkpoint: {day_count} days processed")
+                
+                except Exception as e:
+                    print(f" ❌ Error: {e}")
+                    # Save progress before failing
+                    if checkpoint_callback and all_results:
+                        checkpoint_callback(all_results)
+                        all_results = []
+                        print(f"      💾 Saved {day_count-1} successful days before error")
+                    # Continue to next day instead of failing entire query
+                    pass
 
                 current_date += timedelta(days=1)
-
+            
+            # Final save for any remaining data not checkpointed
+            if checkpoint_callback and all_results:
+                checkpoint_callback(all_results)
+                print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                return []  # Return empty since saved via checkpoint
+            
             return all_results
         else:
             # Replace date range placeholders ({from_date}, {to_date})
@@ -413,32 +484,75 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 def get_dates_info(pg, sql_hash):
     """
     Get gap dates (before max_date) and max_date from JSON.
+    Dynamically detects date field (block_date, week, week_start, or month).
     
     Returns:
         tuple: (gap_dates[], max_date)
     """
     cur = pg.cursor()
+    
+    # First, detect which date field is present in the data
     cur.execute("""
-        WITH json_dates AS (
-            SELECT DISTINCT (e->>'block_date')::date as d
-            FROM query_results, jsonb_array_elements(json_data) e
-            WHERE sql_hash = %s AND e->>'block_date' IS NOT NULL
-        ),
-        max_dt AS (
-            SELECT COALESCE(MAX(d), %s) as d FROM json_dates
-        ),
-        expected AS (
-            SELECT d::date FROM generate_series(%s, (SELECT d FROM max_dt) - INTERVAL '1 day', '1 day') d
-        ),
-        gaps AS (
-            SELECT e.d FROM expected e
-            LEFT JOIN json_dates j ON j.d = e.d
-            WHERE j.d IS NULL
-        )
         SELECT 
-            COALESCE((SELECT array_agg(d ORDER BY d) FROM gaps), ARRAY[]::date[]) as gap_dates,
-            (SELECT d FROM max_dt) as max_date
-    """, (sql_hash, BACKFILL_START, BACKFILL_START))
+            CASE 
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'block_date' IS NOT NULL LIMIT 1) THEN 'block_date'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'week' IS NOT NULL LIMIT 1) THEN 'week'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'week_start' IS NOT NULL LIMIT 1) THEN 'week_start'
+                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
+                           WHERE sql_hash = %s AND e->>'month' IS NOT NULL LIMIT 1) THEN 'month'
+                ELSE 'block_date'
+            END as date_field
+    """, (sql_hash, sql_hash, sql_hash, sql_hash))
+    
+    row = cur.fetchone()
+    date_field = row[0] if row else 'block_date'
+    
+    # Now get gaps and max_date using the detected field
+    # For daily queries, check every day for gaps
+    # For weekly/monthly queries, we don't check for gaps (too complex), just return max_date
+    if date_field == 'block_date':
+        cur.execute("""
+            WITH json_dates AS (
+                SELECT DISTINCT (e->>'block_date')::date as d
+                FROM query_results, jsonb_array_elements(json_data) e
+                WHERE sql_hash = %s AND e->>'block_date' IS NOT NULL
+            ),
+            max_dt AS (
+                SELECT COALESCE(MAX(d), %s) as d FROM json_dates
+            ),
+            expected AS (
+                SELECT d::date FROM generate_series(%s, (SELECT d FROM max_dt) - INTERVAL '1 day', '1 day') d
+            ),
+            gaps AS (
+                SELECT e.d FROM expected e
+                LEFT JOIN json_dates j ON j.d = e.d
+                WHERE j.d IS NULL
+            )
+            SELECT 
+                COALESCE((SELECT array_agg(d ORDER BY d) FROM gaps), ARRAY[]::date[]) as gap_dates,
+                (SELECT d FROM max_dt) as max_date
+        """, (sql_hash, BACKFILL_START, BACKFILL_START))
+    else:
+        # For weekly/monthly, just get max_date, no gap detection
+        # Use dynamic SQL safely by validating date_field
+        if date_field not in ['week', 'week_start', 'month']:
+            date_field = 'block_date'  # Fallback to safe default
+        
+        sql = f"""
+            WITH json_dates AS (
+                SELECT DISTINCT (e->>'{date_field}')::date as d
+                FROM query_results, jsonb_array_elements(json_data) e
+                WHERE sql_hash = %s AND e->>'{date_field}' IS NOT NULL
+            )
+            SELECT 
+                ARRAY[]::date[] as gap_dates,
+                COALESCE(MAX(d), %s) as max_date
+            FROM json_dates
+        """
+        cur.execute(sql, (sql_hash, BACKFILL_START))
     
     result = cur.fetchone()
     return result if result else ([], BACKFILL_START)
@@ -467,6 +581,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         dates_to_remove = set()
 
         # 1. Fill gaps
+        gaps_failed = 0
         if gap_dates:
             print(f"   🔧 Filling {len(gap_dates)} gaps...")
             for gap_date in gap_dates:
@@ -474,65 +589,152 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     print(f"      Gap {gap_date}...", end='', flush=True)
                     data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
                     all_new_data.extend(data)
-                    dates_to_remove.add(gap_date)
+                    dates_to_remove.add(str(gap_date))
                     print(f" {len(data)} rows")
                 except Exception as e:
                     print(f" ❌ Error: {e}")
+                    gaps_failed += 1
 
         # 2. Fetch max_date → today
         print(f"   📅 Fetching {max_date} → {today}...")
-        data = run_trino_query(sql_query, max_date, today, trino_client)
-        all_new_data.extend(data)
-        d = max_date
-        while d <= today:
-            dates_to_remove.add(d)
-            d += timedelta(days=1)
+        try:
+            data = run_trino_query(sql_query, max_date, today, trino_client)
+            all_new_data.extend(data)
+            
+            # Mark dates for removal based on what data we actually got
+            # Use the date field values from the fetched data
+            for row in data:
+                for field in ['block_date', 'week', 'week_start', 'month']:
+                    if field in row and row[field]:
+                        dates_to_remove.add(str(row[field]))
+                        break
+        except Exception as e:
+            print(f" ❌ Error fetching max_date → today: {e}")
+            # Continue with gap-filled data only
+            pass
 
-        # 3. Merge: keep rows whose block_date is not in dates_to_remove, then append new
-        cur.execute("""
-            UPDATE query_results SET
-                json_data = COALESCE(
-                    (SELECT jsonb_agg(e ORDER BY (e->>'block_date'))
-                     FROM jsonb_array_elements(json_data) e
-                     WHERE e->>'block_date' IS NULL OR (e->>'block_date')::date != ALL(%s)),
-                    '[]'::jsonb
-                ) || %s::jsonb,
-                last_run_at = NOW(),
-                last_run_status = 'success',
-                updated_at = NOW()
-            WHERE sql_hash = %s
-        """, (list(dates_to_remove), json.dumps(all_new_data, default=str), sql_hash))
+        # 3. Merge: keep rows whose date is not in dates_to_remove, then append new
+        # Skip merge if no new data
+        if not all_new_data:
+            print(f"   ⚠️  No new data to merge")
+            cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
+            total = cur.fetchone()[0] or 0
+            return total
+        
+        # Detect date field and groupBy field from new data
+        date_field = 'block_date'
+        group_by_field = None
+        if all_new_data and len(all_new_data) > 0:
+            first_row = all_new_data[0]
+            for field in ['block_date', 'week', 'week_start', 'month']:
+                if field in first_row:
+                    date_field = field
+                    break
+            for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
+                if field in first_row:
+                    group_by_field = field
+                    break
+        
+        # Convert dates_to_remove to strings for comparison
+        dates_str = [str(d) for d in dates_to_remove]
+        
+        # Deduplicate by date AND groupBy if groupBy exists
+        if group_by_field:
+            sql = f"""
+                UPDATE query_results SET
+                    json_data = (
+                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                        FROM (
+                            SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
+                            FROM (
+                                SELECT e FROM jsonb_array_elements(
+                                    COALESCE(
+                                        (SELECT jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}'))
+                                         FROM jsonb_array_elements(json_data) e
+                                         WHERE e->>'{date_field}' IS NULL OR e->>'{date_field}' != ALL(%s)),
+                                        '[]'::jsonb
+                                    ) || %s::jsonb
+                                ) e
+                            ) sub
+                            ORDER BY e->>'{date_field}', e->>'{group_by_field}', e DESC
+                        ) deduped
+                    ),
+                    last_run_at = NOW(),
+                    last_run_status = 'success',
+                    updated_at = NOW()
+                WHERE sql_hash = %s
+            """
+            cur.execute(sql, (dates_str, json.dumps(all_new_data, default=str), sql_hash))
+        else:
+            # No groupBy, deduplicate by date only
+            cur.execute("""
+                UPDATE query_results SET
+                    json_data = (
+                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                        FROM (
+                            SELECT DISTINCT ON (e->>%s) e
+                            FROM (
+                                SELECT e FROM jsonb_array_elements(
+                                    COALESCE(
+                                        (SELECT jsonb_agg(e ORDER BY (e->>%s))
+                                         FROM jsonb_array_elements(json_data) e
+                                         WHERE e->>%s IS NULL OR e->>%s != ALL(%s)),
+                                        '[]'::jsonb
+                                    ) || %s::jsonb
+                                ) e
+                            ) sub
+                            ORDER BY e->>%s, e DESC
+                        ) deduped
+                    ),
+                    last_run_at = NOW(),
+                    last_run_status = 'success',
+                    updated_at = NOW()
+                WHERE sql_hash = %s
+            """, (date_field, date_field, date_field, date_field, date_field, dates_str, 
+                  json.dumps(all_new_data, default=str), date_field, sql_hash))
         pg.commit()
 
         cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
         total = cur.fetchone()[0] or 0
-        print(f"   ✅ Backfill (resume) complete: +{len(all_new_data)} rows, total {total} rows")
-        return total
+        
+        if gaps_failed > 0:
+            print(f"   ⚠️  Backfill (resume) partial: +{len(all_new_data)} rows, total {total} rows ({gaps_failed} gaps failed)")
+            raise PartialCompletionException(f"Resume partial: {gaps_failed} gaps failed, {total} rows total", total)
+        else:
+            print(f"   ✅ Backfill (resume) complete: +{len(all_new_data)} rows, total {total} rows")
+            return total
     else:
         # Full backfill: no existing data, fetch entire range
         print(f"   📅 Backfill (full): {date.today()} → {BACKFILL_START}")
 
         all_new_data = []
+        days_failed = 0  # Initialize for all paths
 
         if '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query:
             # Monthly/weekly queries: iterate with checkpointing
             def checkpoint(data):
-                """Save progress to database and fix cumulative fields."""
+                """Save progress to database - just append all data from Trino."""
+                # Skip checkpoint if no data
+                if not data or len(data) == 0:
+                    return
+                
                 # Use a separate connection for checkpoint to ensure data is saved
                 # even if the main job transaction is rolled back later
                 checkpoint_pg = get_pg_conn()
                 checkpoint_cur = checkpoint_pg.cursor()
+                
+                # Simply append all data - no deduplication, no cumulative calculation
+                # Just save what Trino returns
                 checkpoint_cur.execute("""
                     UPDATE query_results SET
-                        json_data = %s::jsonb,
+                        json_data = COALESCE(json_data, '[]'::jsonb) || %s::jsonb,
                         last_run_at = NOW(),
                         last_run_status = 'success',
                         updated_at = NOW()
                     WHERE sql_hash = %s
                 """, (json.dumps(data, default=str), sql_hash))
+                
                 checkpoint_pg.commit()
-                # Fix cumulative fields after each checkpoint
-                fix_cumulative_fields(checkpoint_pg, sql_hash)
                 checkpoint_pg.close()
             
             try:
@@ -563,22 +765,135 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     days_processed += 1
 
                     if days_processed % 30 == 0:
+                        # Checkpoint: merge existing + new data with deduplication
                         cur = pg.cursor()
-                        cur.execute("""
-                            UPDATE query_results SET
-                                json_data = %s::jsonb,
-                                last_run_at = NOW(),
-                                last_run_status = 'success',
-                                updated_at = NOW()
-                            WHERE sql_hash = %s
-                        """, (json.dumps(all_new_data, default=str), sql_hash))
+                        
+                        # Detect date field and groupBy field
+                        date_field = 'block_date'
+                        group_by_field = None
+                        if all_new_data and len(all_new_data) > 0:
+                            first_row = all_new_data[0]
+                            for field in ['block_date', 'week', 'week_start', 'month']:
+                                if field in first_row:
+                                    date_field = field
+                                    break
+                            for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
+                                if field in first_row:
+                                    group_by_field = field
+                                    break
+                        
+                        if group_by_field:
+                            # Deduplicate by date + groupBy
+                            sql = f"""
+                                UPDATE query_results SET
+                                    json_data = (
+                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                        FROM (
+                                            SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
+                                            FROM jsonb_array_elements(
+                                                COALESCE(json_data, '[]'::jsonb) || %s::jsonb
+                                            ) e
+                                            ORDER BY e->>'{date_field}', e->>'{group_by_field}', e DESC
+                                        ) deduped
+                                    ),
+                                    last_run_at = NOW(),
+                                    last_run_status = 'success',
+                                    updated_at = NOW()
+                                WHERE sql_hash = %s
+                            """
+                            cur.execute(sql, (json.dumps(all_new_data, default=str), sql_hash))
+                        else:
+                            # Deduplicate by date only
+                            cur.execute("""
+                                UPDATE query_results SET
+                                    json_data = (
+                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                                        FROM (
+                                            SELECT DISTINCT ON (e->>%s) e
+                                            FROM jsonb_array_elements(
+                                                COALESCE(json_data, '[]'::jsonb) || %s::jsonb
+                                            ) e
+                                            ORDER BY e->>%s, e DESC
+                                        ) deduped
+                                    ),
+                                    last_run_at = NOW(),
+                                    last_run_status = 'success',
+                                    updated_at = NOW()
+                                WHERE sql_hash = %s
+                            """, (date_field, date_field, json.dumps(all_new_data, default=str), date_field, sql_hash))
+                        
                         pg.commit()
                         print(f"      💾 Checkpoint: {days_processed} days processed")
+                        
+                        # Clear all_new_data after checkpoint to avoid re-saving same data
+                        all_new_data = []
 
                 except Exception as e:
                     print(f" ❌ Error: {e}")
+                    days_failed += 1
 
                 d -= timedelta(days=1)
+            
+            # Final save: any remaining data not yet checkpointed
+            if all_new_data:
+                cur = pg.cursor()
+                
+                # Detect date field and groupBy field
+                date_field = 'block_date'
+                group_by_field = None
+                if all_new_data and len(all_new_data) > 0:
+                    first_row = all_new_data[0]
+                    for field in ['block_date', 'week', 'week_start', 'month']:
+                        if field in first_row:
+                            date_field = field
+                            break
+                    for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
+                        if field in first_row:
+                            group_by_field = field
+                            break
+                
+                if group_by_field:
+                    # Deduplicate by date + groupBy
+                    sql = f"""
+                        UPDATE query_results SET
+                            json_data = (
+                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                FROM (
+                                    SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
+                                    FROM jsonb_array_elements(
+                                        COALESCE(json_data, '[]'::jsonb) || %s::jsonb
+                                    ) e
+                                    ORDER BY e->>'{date_field}', e->>'{group_by_field}', e DESC
+                                ) deduped
+                            ),
+                            last_run_at = NOW(),
+                            last_run_status = 'success',
+                            updated_at = NOW()
+                        WHERE sql_hash = %s
+                    """
+                    cur.execute(sql, (json.dumps(all_new_data, default=str), sql_hash))
+                else:
+                    # Deduplicate by date only
+                    cur.execute("""
+                        UPDATE query_results SET
+                            json_data = (
+                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                                FROM (
+                                    SELECT DISTINCT ON (e->>%s) e
+                                    FROM jsonb_array_elements(
+                                        COALESCE(json_data, '[]'::jsonb) || %s::jsonb
+                                    ) e
+                                    ORDER BY e->>%s, e DESC
+                                ) deduped
+                            ),
+                            last_run_at = NOW(),
+                            last_run_status = 'success',
+                            updated_at = NOW()
+                        WHERE sql_hash = %s
+                    """, (date_field, date_field, json.dumps(all_new_data, default=str), date_field, sql_hash))
+                
+                pg.commit()
+                print(f"      💾 Final save: {len(all_new_data)} remaining rows")
 
         # Get final count from database (data already saved via checkpoints)
         cur = pg.cursor()
@@ -586,8 +901,13 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         row = cur.fetchone()
         final_count = (row[0] or 0) if row else 0
         
-        print(f"   ✅ Backfill (full) complete: {final_count} total rows")
-        return final_count
+        # Check if any days failed
+        if days_failed > 0:
+            print(f"   ⚠️  Backfill (full) partial: {final_count} total rows ({days_failed} days failed)")
+            raise PartialCompletionException(f"Backfill partial: {days_failed} days failed, {final_count} rows total", final_count)
+        else:
+            print(f"   ✅ Backfill (full) complete: {final_count} total rows")
+            return final_count
 
 def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     """
@@ -595,21 +915,96 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     """
     print(f"   🔄 Full refresh: {BACKFILL_START} → {date.today()}")
     
-    all_new_data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client)
-    
-    cur = pg.cursor()
-    cur.execute("""
-        UPDATE query_results SET 
-            json_data = %s::jsonb,
-            last_run_at = NOW(), 
-            last_run_status = 'success',
-            updated_at = NOW()
-        WHERE sql_hash = %s
-    """, (json.dumps(all_new_data, default=str), sql_hash))
-    pg.commit()
-    
-    print(f"   ✅ Full refresh complete: {len(all_new_data)} rows")
-    return len(all_new_data)
+    # For monthly/weekly queries, use checkpointing
+    if '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query:
+        # Define checkpoint callback for full refresh (replaces all data)
+        def checkpoint(data):
+            """Save progress to database, replacing all data."""
+            if not data or len(data) == 0:
+                return
+            
+            checkpoint_pg = get_pg_conn()
+            checkpoint_cur = checkpoint_pg.cursor()
+            
+            # Detect date field
+            date_field = None
+            if data and len(data) > 0:
+                first_row = data[0]
+                for field in ['block_date', 'week', 'week_start', 'month']:
+                    if field in first_row:
+                        date_field = field
+                        break
+            
+            if not date_field:
+                # No deduplication
+                checkpoint_cur.execute("""
+                    UPDATE query_results SET
+                        json_data = COALESCE(json_data, '[]'::jsonb) || %s::jsonb,
+                        last_run_at = NOW(),
+                        last_run_status = 'success',
+                        updated_at = NOW()
+                    WHERE sql_hash = %s
+                """, (json.dumps(data, default=str), sql_hash))
+            else:
+                # With deduplication
+                checkpoint_cur.execute("""
+                    UPDATE query_results SET
+                        json_data = (
+                            SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                            FROM (
+                                SELECT DISTINCT ON (e->>%s) e
+                                FROM jsonb_array_elements(
+                                    COALESCE(json_data, '[]'::jsonb) || %s::jsonb
+                                ) e
+                                ORDER BY e->>%s, e DESC
+                            ) deduped
+                        ),
+                        last_run_at = NOW(),
+                        last_run_status = 'success',
+                        updated_at = NOW()
+                    WHERE sql_hash = %s
+                """, (date_field, date_field, json.dumps(data, default=str), date_field, sql_hash))
+            
+            checkpoint_pg.commit()
+            checkpoint_pg.close()
+        
+        try:
+            all_new_data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client,
+                                          checkpoint_callback=checkpoint, checkpoint_interval=1)
+        except Exception as e:
+            print(f"   ❌ Error during full refresh: {e}")
+            # Get saved count
+            cur = pg.cursor()
+            cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
+            row = cur.fetchone()
+            saved_count = (row[0] or 0) if row else 0
+            print(f"   ℹ️  Partial data saved via checkpoints: {saved_count} rows")
+            raise PartialCompletionException(f"Full refresh partial: {saved_count} rows saved", saved_count)
+        
+        # Get final count from database
+        cur = pg.cursor()
+        cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
+        row = cur.fetchone()
+        final_count = (row[0] or 0) if row else 0
+        print(f"   ✅ Full refresh complete: {final_count} rows")
+        return final_count
+    else:
+        # For daily queries or simple queries, run directly
+        all_new_data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client)
+        
+        cur = pg.cursor()
+        cur.execute("""
+            UPDATE query_results SET 
+                json_data = %s::jsonb,
+                last_run_at = NOW(), 
+                last_run_status = 'success',
+                updated_at = NOW()
+            WHERE sql_hash = %s
+        """, (json.dumps(all_new_data, default=str), sql_hash))
+        pg.commit()
+        
+        print(f"   ✅ Full refresh complete: {len(all_new_data)} rows")
+        return len(all_new_data)
 
 def process_incremental(pg, sql_hash, sql_query, trino_client):
     """
@@ -624,6 +1019,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
     dates_to_remove = set()
     
     # 1. Fill gaps (dates before max_date with no data)
+    gaps_failed = 0
     if gap_dates:
         print(f"   🔧 Filling {len(gap_dates)} gaps...")
         for gap_date in gap_dates:
@@ -631,41 +1027,125 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
                 print(f"      Gap {gap_date}...", end='', flush=True)
                 data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
                 all_new_data.extend(data)
-                dates_to_remove.add(gap_date)
+                
+                # Mark this gap's dates for removal based on actual data
+                for row in data:
+                    for field in ['block_date', 'week', 'week_start', 'month']:
+                        if field in row and row[field]:
+                            dates_to_remove.add(str(row[field]))
+                            break
+                
                 print(f" {len(data)} rows")
             except Exception as e:
                 print(f" ❌ Error: {e}")
+                gaps_failed += 1
     
     # 2. Fetch max_date → today (replace max_date, add new)
     print(f"   📅 Fetching {max_date} → {today}...")
-    data = run_trino_query(sql_query, max_date, today, trino_client)
-    all_new_data.extend(data)
+    try:
+        data = run_trino_query(sql_query, max_date, today, trino_client)
+        all_new_data.extend(data)
+        
+        # Mark dates for removal based on what data we actually got
+        # Use the date field values from the fetched data
+        for row in data:
+            for field in ['block_date', 'week', 'week_start', 'month']:
+                if field in row and row[field]:
+                    dates_to_remove.add(str(row[field]))
+                    break
+    except Exception as e:
+        print(f" ❌ Error fetching max_date → today: {e}")
+        # Continue with gap-filled data only
+        pass
     
-    # Mark dates for removal
-    d = max_date
-    while d <= today:
-        dates_to_remove.add(d)
-        d += timedelta(days=1)
-    
-    # 3. Merge: remove old dates, append new
+    # 3. Merge: remove old dates, append new, then deduplicate
     cur = pg.cursor()
-    cur.execute("""
-        UPDATE query_results SET
-            json_data = COALESCE(
-                (SELECT jsonb_agg(e ORDER BY (e->>'block_date'))
-                 FROM jsonb_array_elements(json_data) e 
-                 WHERE (e->>'block_date')::date != ALL(%s)),
-                '[]'::jsonb
-            ) || %s::jsonb,
-            last_run_at = NOW(),
-            last_run_status = 'success',
-            updated_at = NOW()
-        WHERE sql_hash = %s
-    """, (list(dates_to_remove), json.dumps(all_new_data, default=str), sql_hash))
+    
+    # Skip merge if no new data
+    if not all_new_data:
+        print(f"   ⚠️  No new data to merge")
+        return 0
+    
+    # Detect date field and groupBy field from new data
+    date_field = 'block_date'
+    group_by_field = None
+    if all_new_data and len(all_new_data) > 0:
+        first_row = all_new_data[0]
+        for field in ['block_date', 'week', 'week_start', 'month']:
+            if field in first_row:
+                date_field = field
+                break
+        for field in ['category', 'program', 'dex_name', 'token', 'trader_category']:
+            if field in first_row:
+                group_by_field = field
+                break
+    
+    # Convert dates_to_remove to strings for comparison
+    dates_str = [str(d) for d in dates_to_remove]
+    
+    if group_by_field:
+        # Deduplicate by date + groupBy
+        sql = f"""
+            UPDATE query_results SET
+                json_data = (
+                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                    FROM (
+                        SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
+                        FROM (
+                            SELECT e FROM jsonb_array_elements(
+                                COALESCE(
+                                    (SELECT jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}'))
+                                     FROM jsonb_array_elements(json_data) e 
+                                     WHERE e->>'{date_field}' IS NULL OR e->>'{date_field}' != ALL(%s)),
+                                    '[]'::jsonb
+                                ) || %s::jsonb
+                            ) e
+                        ) sub
+                        ORDER BY e->>'{date_field}', e->>'{group_by_field}', e DESC
+                    ) deduped
+                ),
+                last_run_at = NOW(),
+                last_run_status = 'success',
+                updated_at = NOW()
+            WHERE sql_hash = %s
+        """
+        cur.execute(sql, (dates_str, json.dumps(all_new_data, default=str), sql_hash))
+    else:
+        # Deduplicate by date only
+        cur.execute("""
+            UPDATE query_results SET
+                json_data = (
+                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                    FROM (
+                        SELECT DISTINCT ON (e->>%s) e
+                        FROM (
+                            SELECT e FROM jsonb_array_elements(
+                                COALESCE(
+                                    (SELECT jsonb_agg(e ORDER BY (e->>%s))
+                                     FROM jsonb_array_elements(json_data) e 
+                                     WHERE e->>%s IS NULL OR e->>%s != ALL(%s)),
+                                    '[]'::jsonb
+                                ) || %s::jsonb
+                            ) e
+                        ) sub
+                        ORDER BY e->>%s, e DESC
+                    ) deduped
+                ),
+                last_run_at = NOW(),
+                last_run_status = 'success',
+                updated_at = NOW()
+            WHERE sql_hash = %s
+        """, (date_field, date_field, date_field, date_field, date_field, dates_str,
+              json.dumps(all_new_data, default=str), date_field, sql_hash))
     pg.commit()
     
-    print(f"   ✅ Incremental complete: {len(all_new_data)} new rows")
-    return len(all_new_data)
+    # Check if any gaps failed
+    if gaps_failed > 0:
+        print(f"   ⚠️  Incremental partial: {len(all_new_data)} new rows ({gaps_failed} gaps failed)")
+        raise PartialCompletionException(f"Incremental partial: {gaps_failed} gaps failed", len(all_new_data))
+    else:
+        print(f"   ✅ Incremental complete: {len(all_new_data)} new rows")
+        return len(all_new_data)
 
 def process_job(pg, job, trino_client):
     """
@@ -805,6 +1285,21 @@ def main():
     
     try:
         while True:
+            # Check PostgreSQL connection health
+            try:
+                cur = pg.cursor()
+                cur.execute("SELECT 1")
+                cur.close()
+            except Exception as e:
+                print(f"⚠️  PostgreSQL connection lost: {e}")
+                print("   🔄 Reconnecting...")
+                try:
+                    pg.close()
+                except:
+                    pass
+                pg = get_pg_conn()
+                print("   ✅ Reconnected to PostgreSQL")
+            
             # Get next job
             job = get_next_job(pg)
             

@@ -724,13 +724,15 @@ export default React.memo(function EnhancedDashboardRenderer({
           ) : (
             // Render actual counters once data is loaded
             counterCharts.map((chart: any) => {
-              const dataForChart = counterChartsData[chart.id];
+              // Use data from chart object (already loaded from DB API) or fallback to counterChartsData
+              const dataForChart = chart.data || counterChartsData[chart.id];
               console.log('Rendering counter:', {
                 id: chart.id,
                 hasData: !!dataForChart,
                 dataLength: dataForChart?.length,
                 firstRow: dataForChart?.[0],
-                lastRow: dataForChart?.[dataForChart.length - 1]
+                lastRow: dataForChart?.[dataForChart.length - 1],
+                usingChartData: !!chart.data
               });
               
               return (
