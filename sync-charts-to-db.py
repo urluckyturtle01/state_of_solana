@@ -279,8 +279,8 @@ def sync_charts_to_db():
     # Define categories and their folders
     categories_to_process = {
         'dex-trades': [
-            
-            'summary'
+            'summary',
+            'prop_amm'
         
             
         

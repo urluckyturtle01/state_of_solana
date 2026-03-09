@@ -43,7 +43,7 @@ class PartialCompletionException(Exception):
         self.rows_saved = rows_saved
 
 # Configuration
-BACKFILL_START = date(2026, 1, 1)  # Only fetch last 3 months for counters
+BACKFILL_START = date(2025, 1, 1)  # Only fetch last 3 months for counters
 POLL_INTERVAL = 10  # seconds
 MAX_RETRIES = 3
 
@@ -178,10 +178,38 @@ def fix_cumulative_fields(pg, sql_hash):
             date_field = 'block_date'
         
         # Validate group_by_field to prevent SQL injection
-        allowed_group_fields = ['category', 'program', 'dex_name', 'token', 'trader_category']
+        allowed_group_fields = ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']
         if group_by_field not in allowed_group_fields:
             print(f"      ⚠️  Invalid groupBy field: {group_by_field}, skipping cumulative fix")
             return
+        
+        # Auto-detect cumulative field and base field from data
+        cur.execute("""
+            SELECT jsonb_object_keys(json_data->0)
+            FROM query_results 
+            WHERE sql_hash = %s
+        """, (sql_hash,))
+        
+        fields = [row[0] for row in cur.fetchall()]
+        cumulative_field = None
+        base_field = None
+        
+        # Find cumulative field
+        for field in fields:
+            if 'cumulative' in field.lower():
+                cumulative_field = field
+                # Find corresponding base field
+                if 'traders' in field:
+                    base_field = next((f for f in fields if ('monthly_change' in f or 'new_traders' in f) and 'cumulative' not in f), None)
+                elif 'volume' in field:
+                    base_field = next((f for f in fields if 'volume' in f and 'cumulative' not in f), None)
+                break
+        
+        if not cumulative_field or not base_field:
+            print(f"      ⚠️  Could not detect cumulative/base fields, skipping")
+            return
+        
+        print(f"      🔄 Recalculating {cumulative_field} from {base_field}...")
         
         sql = f"""
             WITH ordered_data AS (
@@ -193,18 +221,16 @@ def fix_cumulative_fields(pg, sql_hash):
               SELECT 
                 (row_data->>'{date_field}')::date as date_val,
                 row_data->>'{group_by_field}' as category,
-                (row_data->>'active_traders')::bigint as active_traders,
-                (row_data->>'new_traders')::bigint as new_traders,
-                row_data - 'cumulative_new_traders' as base_data
+                (row_data->>'{base_field}')::numeric as base_value,
+                row_data - '{cumulative_field}' as base_data
               FROM ordered_data
             ),
             cumulative_calc AS (
               SELECT 
                 date_val,
                 category,
-                active_traders,
-                new_traders,
-                SUM(new_traders) OVER (PARTITION BY category ORDER BY date_val) as cumulative_new_traders,
+                base_value,
+                SUM(base_value) OVER (PARTITION BY category ORDER BY date_val) as cumulative_value,
                 base_data
               FROM expanded
               ORDER BY date_val, category
@@ -212,8 +238,8 @@ def fix_cumulative_fields(pg, sql_hash):
             json_rebuild AS (
               SELECT jsonb_agg(
                 base_data || jsonb_build_object(
-                  'cumulative_new_traders', cumulative_new_traders
-                ) ORDER BY date_val, active_traders DESC
+                  '{cumulative_field}', cumulative_value
+                ) ORDER BY date_val, category
               ) as new_json_data
               FROM cumulative_calc
             )
@@ -572,46 +598,188 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
     existing_count = (row[0] or 0) if row else 0
 
     if existing_count > 0:
-        # Resume: only fetch missing dates and max_date → today, then merge
-        gap_dates, max_date = get_dates_info(pg, sql_hash)
-        today = date.today()
-        print(f"   📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
-
+        # Resume: identify and fetch missing periods
         all_new_data = []
         dates_to_remove = set()
-
-        # 1. Fill gaps
         gaps_failed = 0
-        if gap_dates:
-            print(f"   🔧 Filling {len(gap_dates)} gaps...")
-            for gap_date in gap_dates:
-                try:
-                    print(f"      Gap {gap_date}...", end='', flush=True)
-                    data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
-                    all_new_data.extend(data)
-                    dates_to_remove.add(str(gap_date))
-                    print(f" {len(data)} rows")
-                except Exception as e:
-                    print(f" ❌ Error: {e}")
-                    gaps_failed += 1
-
-        # 2. Fetch max_date → today
-        print(f"   📅 Fetching {max_date} → {today}...")
-        try:
-            data = run_trino_query(sql_query, max_date, today, trino_client)
-            all_new_data.extend(data)
+        incremental_failed = False
+        today = date.today()
+        
+        # For monthly queries, identify missing months
+        if '{month}' in sql_query:
+            # Get existing months from database
+            cur.execute("""
+                SELECT DISTINCT e->>'month' as month
+                FROM query_results, jsonb_array_elements(json_data) e
+                WHERE sql_hash = %s AND e->>'month' IS NOT NULL
+                ORDER BY month DESC
+            """, (sql_hash,))
+            existing_months = set(row[0] for row in cur.fetchall())
             
-            # Mark dates for removal based on what data we actually got
-            # Use the date field values from the fetched data
-            for row in data:
-                for field in ['block_date', 'week', 'week_start', 'month']:
-                    if field in row and row[field]:
-                        dates_to_remove.add(str(row[field]))
-                        break
-        except Exception as e:
-            print(f" ❌ Error fetching max_date → today: {e}")
-            # Continue with gap-filled data only
-            pass
+            # Generate expected months from today back to BACKFILL_START
+            from dateutil.relativedelta import relativedelta
+            expected_months = []
+            current = today.replace(day=1)
+            while current >= BACKFILL_START:
+                expected_months.append(current)
+                current = current - relativedelta(months=1)
+            
+            # Find missing months
+            missing_months = [m for m in expected_months if m.strftime('%Y-%m-01') not in existing_months]
+            
+            print(f"   📅 Backfill (resume): existing {existing_count} rows ({len(existing_months)} months), {len(missing_months)} missing months")
+            
+            if missing_months:
+                print(f"   🔧 Filling {len(missing_months)} missing months...")
+                for idx, missing_month in enumerate(missing_months, 1):
+                    month_str = missing_month.strftime('%Y-%m-01')
+                    print(f"      Fetching {month_str} ({idx}/{len(missing_months)})...", end='', flush=True)
+                    
+                    try:
+                        # Execute query directly for this month with timeout protection
+                        sql = sql_query.replace('{month}', month_str)
+                        
+                        # Add LIMIT to prevent massive result sets (safety check)
+                        # Monthly aggregated queries should return < 1000 rows
+                        if 'LIMIT' not in sql.upper():
+                            sql = sql + ' LIMIT 10000'
+                        
+                        # Execute with timeout to prevent hanging
+                        import signal
+                        
+                        def timeout_handler(signum, frame):
+                            raise TimeoutError(f"Query for {month_str} exceeded 120 second timeout - likely too much data")
+                        
+                        old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+                        signal.alarm(120)  # 2 minute timeout
+                        
+                        try:
+                            df = trino_client.query(sql)
+                            signal.alarm(0)  # Cancel alarm on success
+                            
+                            if df is not None and not df.empty:
+                                records = df.to_dict('records')
+                                data = convert_to_json_safe(records)
+                                all_new_data.extend(data)
+                                dates_to_remove.add(month_str)
+                                print(f" ✅ {len(data)} rows", end='', flush=True)
+                                
+                                # Checkpoint: Save to DB immediately after each month
+                                if all_new_data:
+                                    # Detect fields
+                                    date_field = 'month'
+                                    group_by_field = None
+                                    first_row = all_new_data[0]
+                                    for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
+                                        if field in first_row:
+                                            group_by_field = field
+                                            break
+                                    
+                                    # Save to DB
+                                    dates_str = [str(d) for d in dates_to_remove]
+                                    if group_by_field:
+                                        cur.execute(f"""
+                                            UPDATE query_results SET
+                                                json_data = (
+                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                                    FROM (
+                                                        SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
+                                                        FROM (
+                                                            SELECT e FROM query_results, jsonb_array_elements(json_data) e
+                                                            WHERE sql_hash = %s AND e->>'{date_field}' NOT IN (SELECT unnest(%s::text[]))
+                                                            UNION ALL
+                                                            SELECT e FROM jsonb_array_elements(%s::jsonb) e
+                                                        ) sub
+                                                        ORDER BY e->>'{date_field}', e->>'{group_by_field}', e DESC
+                                                    ) deduped
+                                                ),
+                                                last_run_at = NOW(),
+                                                last_run_status = 'success',
+                                                updated_at = NOW()
+                                            WHERE sql_hash = %s
+                                        """, (sql_hash, dates_str, json.dumps(all_new_data, default=str), sql_hash))
+                                    else:
+                                        cur.execute(f"""
+                                            UPDATE query_results SET
+                                                json_data = (
+                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}')), '[]'::jsonb)
+                                                    FROM (
+                                                        SELECT DISTINCT ON (e->>'{date_field}') e
+                                                        FROM (
+                                                            SELECT e FROM query_results, jsonb_array_elements(json_data) e
+                                                            WHERE sql_hash = %s AND e->>'{date_field}' NOT IN (SELECT unnest(%s::text[]))
+                                                            UNION ALL
+                                                            SELECT e FROM jsonb_array_elements(%s::jsonb) e
+                                                        ) sub
+                                                        ORDER BY e->>'{date_field}', e DESC
+                                                    ) deduped
+                                                ),
+                                                last_run_at = NOW(),
+                                                last_run_status = 'success',
+                                                updated_at = NOW()
+                                            WHERE sql_hash = %s
+                                        """, (sql_hash, dates_str, json.dumps(all_new_data, default=str), sql_hash))
+                                    pg.commit()
+                                    print(f" 💾")
+                                    all_new_data = []  # Clear after checkpoint
+                                    dates_to_remove = set()  # Clear dates
+                            else:
+                                print(f" ⚠️ 0 rows")
+                        except TimeoutError as te:
+                            signal.alarm(0)  # Cancel alarm
+                            signal.signal(signal.SIGALRM, old_handler)  # Restore handler
+                            raise te  # Re-raise to be caught by outer except
+                        except Exception as e:
+                            signal.alarm(0)  # Cancel alarm
+                            signal.signal(signal.SIGALRM, old_handler)  # Restore handler
+                            raise e  # Re-raise to be caught by outer except
+                        
+                        signal.signal(signal.SIGALRM, old_handler)  # Restore handler
+                        
+                    except (TimeoutError, Exception) as e:
+                        print(f" ❌ Error: {e}")
+                        gaps_failed += 1
+                        # If timeout, this is a critical failure - don't continue
+                        if isinstance(e, TimeoutError):
+                            print(f"   ⛔ CRITICAL: Query timeout for {month_str} - stopping backfill")
+                            break
+            else:
+                print(f"   ✅ All months present, nothing to backfill")
+        else:
+            # For daily/weekly queries, use existing gap detection logic
+            gap_dates, max_date = get_dates_info(pg, sql_hash)
+            print(f"   📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
+            
+            # 1. Fill gaps
+            if gap_dates:
+                print(f"   🔧 Filling {len(gap_dates)} gaps...")
+                for gap_date in gap_dates:
+                    try:
+                        print(f"      Gap {gap_date}...", end='', flush=True)
+                        data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
+                        all_new_data.extend(data)
+                        dates_to_remove.add(str(gap_date))
+                        print(f" {len(data)} rows")
+                    except Exception as e:
+                        print(f" ❌ Error: {e}")
+                        gaps_failed += 1
+
+            # 2. Fetch max_date → today
+            print(f"   📅 Fetching {max_date} → {today}...")
+            try:
+                data = run_trino_query(sql_query, max_date, today, trino_client)
+                all_new_data.extend(data)
+                
+                # Mark dates for removal based on what data we actually got
+                for row in data:
+                    for field in ['block_date', 'week', 'week_start', 'month']:
+                        if field in row and row[field]:
+                            dates_to_remove.add(str(row[field]))
+                            break
+            except Exception as e:
+                print(f" ❌ Error fetching max_date → today: {e}")
+                incremental_failed = True
+                pass
 
         # 3. Merge: keep rows whose date is not in dates_to_remove, then append new
         # Skip merge if no new data
@@ -619,6 +787,17 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             print(f"   ⚠️  No new data to merge")
             cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
             total = cur.fetchone()[0] or 0
+            
+            # Check if any fetches failed
+            if gaps_failed > 0 or incremental_failed:
+                failure_msg = []
+                if gaps_failed > 0:
+                    failure_msg.append(f"{gaps_failed} periods failed")
+                if incremental_failed:
+                    failure_msg.append("incremental fetch failed")
+                print(f"   ⚠️  Backfill (resume) partial: 0 new rows, total {total} rows ({', '.join(failure_msg)})")
+                raise PartialCompletionException(f"Resume partial: {', '.join(failure_msg)}, {total} rows total", total)
+            
             return total
         
         # Detect date field and groupBy field from new data
@@ -697,9 +876,14 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
         total = cur.fetchone()[0] or 0
         
-        if gaps_failed > 0:
-            print(f"   ⚠️  Backfill (resume) partial: +{len(all_new_data)} rows, total {total} rows ({gaps_failed} gaps failed)")
-            raise PartialCompletionException(f"Resume partial: {gaps_failed} gaps failed, {total} rows total", total)
+        if gaps_failed > 0 or incremental_failed:
+            failure_msg = []
+            if gaps_failed > 0:
+                failure_msg.append(f"{gaps_failed} gaps failed")
+            if incremental_failed:
+                failure_msg.append("incremental fetch failed")
+            print(f"   ⚠️  Backfill (resume) partial: +{len(all_new_data)} rows, total {total} rows ({', '.join(failure_msg)})")
+            raise PartialCompletionException(f"Resume partial: {', '.join(failure_msg)}, {total} rows total", total)
         else:
             print(f"   ✅ Backfill (resume) complete: +{len(all_new_data)} rows, total {total} rows")
             return total
