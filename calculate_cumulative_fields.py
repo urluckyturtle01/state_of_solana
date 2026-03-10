@@ -64,13 +64,21 @@ def calculate_cumulative_fields(pg, sql_hash):
     
     print(f"      📊 Found {len(cumulative_fields)} cumulative field(s): {[cf[0] for cf in cumulative_fields]}")
     
-    # Detect group field
-    allowed_group_fields = ['prop_amm_name', 'pool_category', 'category', 'program_name']
-    group_field = None
-    for field in allowed_group_fields:
-        if field in first_row:
-            group_field = field
-            break
+    # Detect group field from chart config (groupBy field)
+    cur.execute("""
+        SELECT chart_config->'dataMapping'->>'groupBy' as group_by
+        FROM chart_definitions 
+        WHERE sql_hash = %s 
+        LIMIT 1
+    """, (sql_hash,))
+    
+    config_row = cur.fetchone()
+    group_field = config_row[0] if config_row and config_row[0] else None
+    
+    # Verify the group field actually exists in the data
+    if group_field and group_field not in first_row:
+        print(f"      ⚠️  groupBy field '{group_field}' from config not found in data")
+        group_field = None
     
     if group_field:
         print(f"      📊 Grouped by: {group_field}")
@@ -157,21 +165,54 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
 
 
 def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
-    """Calculate cumulative for non-grouped data."""
+    """Calculate cumulative for non-grouped data with date backfilling."""
     
     rows_sorted = sorted(data, key=lambda x: x[date_field])
+    if len(rows_sorted) == 0:
+        return data
+    
+    # Find min and max dates
+    min_date = datetime.strptime(rows_sorted[0][date_field], '%Y-%m-%d').date()
+    max_date = datetime.strptime(rows_sorted[-1][date_field], '%Y-%m-%d').date()
+    
+    # Create date lookup
+    date_to_row = {row[date_field]: row for row in rows_sorted}
     
     # Initialize cumulative trackers
     cumulative_values = {cf[0]: 0 for cf in cumulative_fields}
     
     result = []
-    for row in rows_sorted:
-        new_row = row.copy()
-        for cum_field, base_field in cumulative_fields:
-            daily_val = row.get(base_field, 0) or 0
-            cumulative_values[cum_field] += daily_val
-            new_row[cum_field] = cumulative_values[cum_field]
-        result.append(new_row)
+    current = min_date
+    
+    while current <= max_date:
+        date_str = str(current)
+        
+        if date_str in date_to_row:
+            # Existing data - calculate cumulative
+            row = date_to_row[date_str].copy()
+            for cum_field, base_field in cumulative_fields:
+                daily_val = row.get(base_field, 0) or 0
+                cumulative_values[cum_field] += daily_val
+                row[cum_field] = cumulative_values[cum_field]
+            result.append(row)
+        else:
+            # Missing date - create row with zero daily, carried-forward cumulative
+            new_row = {date_field: date_str}
+            
+            # Set all base fields to 0
+            for cum_field, base_field in cumulative_fields:
+                new_row[base_field] = 0
+                new_row[cum_field] = cumulative_values[cum_field]
+            
+            # Copy other non-cumulative fields from first row (for structure)
+            for key in rows_sorted[0].keys():
+                if key not in new_row and key != date_field:
+                    if 'cumulative' not in key.lower() and key not in [cf[1] for cf in cumulative_fields]:
+                        new_row[key] = 0
+            
+            result.append(new_row)
+        
+        current += timedelta(days=1)
     
     return result
 

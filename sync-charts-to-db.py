@@ -165,7 +165,7 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             is_stacked = chart_dict.get('isStacked', False)
             index = chart_dict.get('index', 0)
             data_mapping = chart_dict.get('dataMapping', {})
-            query_run_config = yaml_config.get('queryRunConfig', {})
+            query_run_config = chart_dict.get('queryRunConfig', {})
             
             # Transform dataMapping for counter charts
             if chart_type == 'counter' and 'field' in data_mapping:
@@ -298,8 +298,9 @@ def sync_charts_to_db():
             'network_fees',
             'tokens',
             'traders',
-            'volume'
-            
+            'volume',
+            'aggregators',
+            'tvl'
         
         ]
     }
