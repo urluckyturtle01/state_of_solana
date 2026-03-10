@@ -21,6 +21,7 @@ import psycopg2
 from psycopg2.extras import Json
 import pandas as pd
 import numpy as np
+from calculate_percentage_fields import calculate_percentage_fields
 
 # Load environment variables from .env file
 env_file = Path('/root/state_of_solana/.env')
@@ -270,6 +271,59 @@ def fix_cumulative_fields(pg, sql_hash):
         if date_field not in ['block_date', 'week', 'week_start', 'month']:
             date_field = 'block_date'
         
+        # Auto-detect ALL cumulative fields and their base fields from data
+        cur.execute("""
+            SELECT jsonb_object_keys(json_data->0)
+            FROM query_results 
+            WHERE sql_hash = %s
+        """, (sql_hash,))
+        
+        fields = [row[0] for row in cur.fetchall()]
+        cumulative_pairs = []
+        
+        # Find all cumulative fields and their base fields
+        for field in fields:
+            if 'cumulative' in field.lower():
+                base_field = None
+                # Find corresponding base field by matching the suffix
+                # e.g., cumulative_dex_fee_sol -> daily_dex_fee_sol
+                suffix = field.replace('cumulative_', '')
+                
+                # Try exact match with 'daily_' prefix
+                daily_field = 'daily_' + suffix
+                if daily_field in fields:
+                    base_field = daily_field
+                else:
+                    # Fallback: try to find matching field with similar keywords
+                    if 'traders' in field:
+                        base_field = next((f for f in fields if 'new_traders' in f and 'cumulative' not in f), None)
+                    elif 'volume' in field:
+                        base_field = next((f for f in fields if 'volume_usd' in f and 'cumulative' not in f and 'daily' in f), None)
+                    elif 'txn' in field:
+                        base_field = next((f for f in fields if 'txn_count' in f and 'cumulative' not in f), None)
+                
+                if base_field:
+                    cumulative_pairs.append((field, base_field))
+        
+        if not cumulative_pairs:
+            print(f"      ⚠️  Could not detect cumulative/base field pairs, skipping")
+            return
+        
+        print(f"      🔄 Recalculating {len(cumulative_pairs)} cumulative field(s)...")
+        
+        # Build SQL to recalculate all cumulative fields
+        cumulative_fields_to_remove = [pair[0] for pair in cumulative_pairs]
+        remove_clause = ' - '.join([f"'{field}'" for field in cumulative_fields_to_remove])
+        
+        # Build SELECT clauses for base values
+        base_value_selects = [f"(row_data->>'{pair[1]}')::numeric as base_{i}" for i, pair in enumerate(cumulative_pairs)]
+        
+        # Build window function clauses for cumulative calculations
+        cumulative_calcs = [f"SUM(base_{i}) OVER (ORDER BY date_val) as cumulative_{i}" for i in range(len(cumulative_pairs))]
+        
+        # Build jsonb_build_object pairs
+        jsonb_pairs = ', '.join([f"'{pair[0]}', cumulative_{i}" for i, pair in enumerate(cumulative_pairs)])
+        
         sql = f"""
             WITH ordered_data AS (
               SELECT jsonb_array_elements(json_data) as row_data
@@ -279,19 +333,14 @@ def fix_cumulative_fields(pg, sql_hash):
             expanded AS (
               SELECT 
                 (row_data->>'{date_field}')::date as date_val,
-                (row_data->>'active_traders')::bigint as active_traders,
-                (row_data->>'new_traders')::bigint as new_traders,
-                (row_data->>'new_trader_pct')::numeric as new_trader_pct,
-                row_data - 'cumulative_new_traders' as base_data
+                {', '.join(base_value_selects)},
+                row_data - {remove_clause} as base_data
               FROM ordered_data
             ),
             cumulative_calc AS (
               SELECT 
                 date_val,
-                active_traders,
-                new_traders,
-                new_trader_pct,
-                SUM(new_traders) OVER (ORDER BY date_val) as cumulative_new_traders,
+                {', '.join(cumulative_calcs)},
                 base_data
               FROM expanded
               ORDER BY date_val
@@ -299,7 +348,7 @@ def fix_cumulative_fields(pg, sql_hash):
             json_rebuild AS (
               SELECT jsonb_agg(
                 base_data || jsonb_build_object(
-                  'cumulative_new_traders', cumulative_new_traders
+                  {jsonb_pairs}
                 ) ORDER BY date_val
               ) as new_json_data
               FROM cumulative_calc
@@ -1411,6 +1460,13 @@ def process_job(pg, job, trino_client):
         else:
             # Success: got data
             print(f"✅ Job #{job_id} SUCCESSFUL: {rows_processed} rows")
+            
+            # Calculate percentage fields if configured
+            try:
+                calculate_percentage_fields(pg, sql_hash)
+            except Exception as pct_error:
+                print(f"⚠️  Warning: Could not calculate percentage fields: {pct_error}")
+            
             cur.execute("""
                 UPDATE trino_job_queue 
                 SET status = 'completed', completed_at = NOW(), error_message = NULL
