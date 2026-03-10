@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trino Worker Log</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #00ff00;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            background: #00ff00;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #00cc00;
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .log-container {
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .log-line.error {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .log-line.success {
+            color: #44ff44;
+        }
+
+        .log-line.warning {
+            color: #ffaa00;
+        }
+
+        .log-line.info {
+            color: #00aaff;
+        }
+
+        .log-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 6px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: #00cc00;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .search-box {
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 8px 12px;
+            background: #0a0a0a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+        .highlight {
+            background: #ffff00;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Trino Worker Log</h1>
+            <div class="controls">
+                <div class="status">
+                    <div class="status-item">
+                        <div class="status-dot"></div>
+                        <span id="status-text">Live</span>
+                    </div>
+                    <div class="status-item">
+                        Lines: <span id="line-count">0</span>
+                    </div>
+                    <div class="status-item">
+                        Updated: <span id="last-update">Never</span>
+                    </div>
+                </div>
+                <button id="refresh-btn" onclick="loadLog()">Refresh</button>
+                <button id="auto-refresh-btn" onclick="toggleAutoRefresh()">Auto: ON</button>
+                <button onclick="clearLog()">Clear</button>
+                <button onclick="scrollToBottom()">⬇ Bottom</button>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search logs..." onkeyup="searchLogs()">
+        </div>
+
+        <div class="log-container" id="log-container">
+            <div class="empty-state">Loading log file...</div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefresh = true;
+        let refreshInterval = null;
+        let searchTerm = '';
+
+        function loadLog() {
+            fetch('/api/worker-log')
+                .then(response => response.text())
+                .then(data => {
+                    const lines = data.split('\n');
+                    const container = document.getElementById('log-container');
+                    
+                    if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) {
+                        container.innerHTML = '<div class="empty-state">Log file is empty</div>';
+                        document.getElementById('line-count').textContent = '0';
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    lines.forEach((line, index) => {
+                        if (line.trim() === '') return;
+                        
+                        const div = document.createElement('div');
+                        div.className = 'log-line';
+                        
+                        // Colorize based on content
+                        if (line.includes('❌') || line.includes('ERROR') || line.includes('Error') || line.includes('Failed')) {
+                            div.className += ' error';
+                        } else if (line.includes('✅') || line.includes('SUCCESS') || line.includes('completed')) {
+                            div.className += ' success';
+                        } else if (line.includes('⚠️') || line.includes('WARNING') || line.includes('Warning')) {
+                            div.className += ' warning';
+                        } else if (line.includes('🔄') || line.includes('Processing') || line.includes('Fetching')) {
+                            div.className += ' info';
+                        }
+
+                        // Highlight search term
+                        if (searchTerm && line.toLowerCase().includes(searchTerm.toLowerCase())) {
+                            const regex = new RegExp(`(${searchTerm})`, 'gi');
+                            div.innerHTML = line.replace(regex, '<span class="highlight">$1</span>');
+                        } else {
+                            div.textContent = line;
+                        }
+
+                        container.appendChild(div);
+                    });
+
+                    document.getElementById('line-count').textContent = lines.filter(l => l.trim() !== '').length;
+                    document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+
+                    // Auto-scroll to bottom if near bottom
+                    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+                    if (isNearBottom) {
+                        scrollToBottom();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading log:', error);
+                    document.getElementById('log-container').innerHTML = 
+                        '<div class="empty-state error">Error loading log file</div>';
+                });
+        }
+
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            const btn = document.getElementById('auto-refresh-btn');
+            
+            if (autoRefresh) {
+                btn.textContent = 'Auto: ON';
+                startAutoRefresh();
+            } else {
+                btn.textContent = 'Auto: OFF';
+                stopAutoRefresh();
+            }
+        }
+
+        function startAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(loadLog, 2000); // Refresh every 2 seconds
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        function clearLog() {
+            if (confirm('Clear the log display? (This will not delete the actual log file)')) {
+                document.getElementById('log-container').innerHTML = 
+                    '<div class="empty-state">Log cleared. Click Refresh to reload.</div>';
+                document.getElementById('line-count').textContent = '0';
+            }
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('log-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function searchLogs() {
+            searchTerm = document.getElementById('search-input').value;
+            loadLog();
+        }
+
+        // Initial load
+        loadLog();
+        
+        // Start auto-refresh
+        if (autoRefresh) {
+            startAutoRefresh();
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopAutoRefresh();
+        });
+    </script>
+</body>
+</html>

@@ -22,6 +22,7 @@ from psycopg2.extras import Json
 import pandas as pd
 import numpy as np
 from calculate_percentage_fields import calculate_percentage_fields
+from calculate_cumulative_fields import calculate_cumulative_fields
 
 # Load environment variables from .env file
 env_file = Path('/root/state_of_solana/.env')
@@ -113,256 +114,6 @@ def get_next_job(pg):
         pg.rollback()
         print(f"❌ Error getting next job: {e}")
         return None
-
-def fix_cumulative_fields(pg, sql_hash):
-    """
-    Fix cumulative fields in query_results by recalculating them properly across all data.
-    This ensures cumulative values accumulate correctly across months/weeks instead of resetting.
-    
-    Args:
-        pg: PostgreSQL connection
-        sql_hash: SQL hash to identify the query results
-    """
-    cur = pg.cursor()
-    
-    # Check if this query has cumulative fields
-    cur.execute("""
-        SELECT 
-            EXISTS(
-                SELECT 1 FROM query_results 
-                WHERE sql_hash = %s 
-                AND json_data::text LIKE '%%cumulative%%'
-            ) as has_cumulative
-    """, (sql_hash,))
-    
-    has_cumulative = cur.fetchone()[0]
-    if not has_cumulative:
-        return
-    
-    # Get the groupBy field from chart_definitions
-    cur.execute("""
-        SELECT chart_config->'dataMapping'->>'groupBy' as group_by
-        FROM chart_definitions 
-        WHERE sql_hash = %s 
-        LIMIT 1
-    """, (sql_hash,))
-    
-    row = cur.fetchone()
-    group_by_field = row[0] if row and row[0] else None
-    
-    print(f"      🔄 Fixing cumulative fields (groupBy: {group_by_field or 'none'})...")
-    
-    # Detect date field from existing data
-    cur.execute("""
-        SELECT 
-            CASE 
-                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
-                           WHERE sql_hash = %s AND e->>'block_date' IS NOT NULL LIMIT 1) THEN 'block_date'
-                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
-                           WHERE sql_hash = %s AND e->>'week' IS NOT NULL LIMIT 1) THEN 'week'
-                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
-                           WHERE sql_hash = %s AND e->>'week_start' IS NOT NULL LIMIT 1) THEN 'week_start'
-                WHEN EXISTS(SELECT 1 FROM query_results, jsonb_array_elements(json_data) e 
-                           WHERE sql_hash = %s AND e->>'month' IS NOT NULL LIMIT 1) THEN 'month'
-                ELSE 'block_date'
-            END as date_field
-    """, (sql_hash, sql_hash, sql_hash, sql_hash))
-    
-    row = cur.fetchone()
-    date_field = row[0] if row else 'block_date'
-    
-    # Recalculate cumulative fields in the database
-    if group_by_field:
-        # Group-wise cumulative (e.g., per category/program)
-        # Validate date_field to prevent SQL injection
-        if date_field not in ['block_date', 'week', 'week_start', 'month']:
-            date_field = 'block_date'
-        
-        # Validate group_by_field to prevent SQL injection
-        allowed_group_fields = ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category', 'pool_category']
-        if group_by_field not in allowed_group_fields:
-            print(f"      ⚠️  Invalid groupBy field: {group_by_field}, skipping cumulative fix")
-            return
-        
-        # Auto-detect ALL cumulative fields and their base fields from data
-        cur.execute("""
-            SELECT jsonb_object_keys(json_data->0)
-            FROM query_results 
-            WHERE sql_hash = %s
-        """, (sql_hash,))
-        
-        fields = [row[0] for row in cur.fetchall()]
-        cumulative_pairs = []
-        
-        # Find all cumulative fields and their base fields
-        for field in fields:
-            if 'cumulative' in field.lower():
-                base_field = None
-                # Find corresponding base field
-                if 'traders' in field or 'txn' in field:
-                    base_field = next((f for f in fields if ('monthly_change' in f or 'new_traders' in f or 'txn_count' in f) and 'cumulative' not in f), None)
-                elif 'volume' in field:
-                    base_field = next((f for f in fields if 'volume_usd' in f and 'cumulative' not in f), None)
-                
-                if base_field:
-                    cumulative_pairs.append((field, base_field))
-        
-        if not cumulative_pairs:
-            print(f"      ⚠️  Could not detect cumulative/base field pairs, skipping")
-            return
-        
-        print(f"      🔄 Recalculating {len(cumulative_pairs)} cumulative field(s)...")
-        
-        # Build SQL to recalculate all cumulative fields
-        # Remove all cumulative fields from base_data
-        cumulative_fields_to_remove = [pair[0] for pair in cumulative_pairs]
-        remove_clause = ' - '.join([f"'{field}'" for field in cumulative_fields_to_remove])
-        
-        # Build SELECT clauses for base values
-        base_value_selects = [f"(row_data->>'{pair[1]}')::numeric as base_{i}" for i, pair in enumerate(cumulative_pairs)]
-        
-        # Build window function clauses for cumulative calculations
-        cumulative_calcs = [f"SUM(base_{i}) OVER (PARTITION BY category ORDER BY date_val) as cumulative_{i}" for i in range(len(cumulative_pairs))]
-        
-        # Build jsonb_build_object pairs
-        jsonb_pairs = ', '.join([f"'{pair[0]}', cumulative_{i}" for i, pair in enumerate(cumulative_pairs)])
-        
-        sql = f"""
-            WITH ordered_data AS (
-              SELECT jsonb_array_elements(json_data) as row_data
-              FROM query_results 
-              WHERE sql_hash = %s
-            ),
-            expanded AS (
-              SELECT 
-                (row_data->>'{date_field}')::date as date_val,
-                row_data->>'{group_by_field}' as category,
-                {', '.join(base_value_selects)},
-                row_data - {remove_clause} as base_data
-              FROM ordered_data
-            ),
-            cumulative_calc AS (
-              SELECT 
-                date_val,
-                category,
-                {', '.join(cumulative_calcs)},
-                base_data
-              FROM expanded
-              ORDER BY date_val, category
-            ),
-            json_rebuild AS (
-              SELECT jsonb_agg(
-                base_data || jsonb_build_object(
-                  {jsonb_pairs}
-                ) ORDER BY date_val, category
-              ) as new_json_data
-              FROM cumulative_calc
-            )
-            UPDATE query_results
-            SET 
-              json_data = (SELECT new_json_data FROM json_rebuild),
-              updated_at = NOW()
-            WHERE sql_hash = %s
-        """
-        cur.execute(sql, (sql_hash, sql_hash))
-    else:
-        # Overall cumulative (no grouping)
-        # Validate date_field to prevent SQL injection
-        if date_field not in ['block_date', 'week', 'week_start', 'month']:
-            date_field = 'block_date'
-        
-        # Auto-detect ALL cumulative fields and their base fields from data
-        cur.execute("""
-            SELECT jsonb_object_keys(json_data->0)
-            FROM query_results 
-            WHERE sql_hash = %s
-        """, (sql_hash,))
-        
-        fields = [row[0] for row in cur.fetchall()]
-        cumulative_pairs = []
-        
-        # Find all cumulative fields and their base fields
-        for field in fields:
-            if 'cumulative' in field.lower():
-                base_field = None
-                # Find corresponding base field by matching the suffix
-                # e.g., cumulative_dex_fee_sol -> daily_dex_fee_sol
-                suffix = field.replace('cumulative_', '')
-                
-                # Try exact match with 'daily_' prefix
-                daily_field = 'daily_' + suffix
-                if daily_field in fields:
-                    base_field = daily_field
-                else:
-                    # Fallback: try to find matching field with similar keywords
-                    if 'traders' in field:
-                        base_field = next((f for f in fields if 'new_traders' in f and 'cumulative' not in f), None)
-                    elif 'volume' in field:
-                        base_field = next((f for f in fields if 'volume_usd' in f and 'cumulative' not in f and 'daily' in f), None)
-                    elif 'txn' in field:
-                        base_field = next((f for f in fields if 'txn_count' in f and 'cumulative' not in f), None)
-                
-                if base_field:
-                    cumulative_pairs.append((field, base_field))
-        
-        if not cumulative_pairs:
-            print(f"      ⚠️  Could not detect cumulative/base field pairs, skipping")
-            return
-        
-        print(f"      🔄 Recalculating {len(cumulative_pairs)} cumulative field(s)...")
-        
-        # Build SQL to recalculate all cumulative fields
-        cumulative_fields_to_remove = [pair[0] for pair in cumulative_pairs]
-        remove_clause = ' - '.join([f"'{field}'" for field in cumulative_fields_to_remove])
-        
-        # Build SELECT clauses for base values
-        base_value_selects = [f"(row_data->>'{pair[1]}')::numeric as base_{i}" for i, pair in enumerate(cumulative_pairs)]
-        
-        # Build window function clauses for cumulative calculations
-        cumulative_calcs = [f"SUM(base_{i}) OVER (ORDER BY date_val) as cumulative_{i}" for i in range(len(cumulative_pairs))]
-        
-        # Build jsonb_build_object pairs
-        jsonb_pairs = ', '.join([f"'{pair[0]}', cumulative_{i}" for i, pair in enumerate(cumulative_pairs)])
-        
-        sql = f"""
-            WITH ordered_data AS (
-              SELECT jsonb_array_elements(json_data) as row_data
-              FROM query_results 
-              WHERE sql_hash = %s
-            ),
-            expanded AS (
-              SELECT 
-                (row_data->>'{date_field}')::date as date_val,
-                {', '.join(base_value_selects)},
-                row_data - {remove_clause} as base_data
-              FROM ordered_data
-            ),
-            cumulative_calc AS (
-              SELECT 
-                date_val,
-                {', '.join(cumulative_calcs)},
-                base_data
-              FROM expanded
-              ORDER BY date_val
-            ),
-            json_rebuild AS (
-              SELECT jsonb_agg(
-                base_data || jsonb_build_object(
-                  {jsonb_pairs}
-                ) ORDER BY date_val
-              ) as new_json_data
-              FROM cumulative_calc
-            )
-            UPDATE query_results
-            SET 
-              json_data = (SELECT new_json_data FROM json_rebuild),
-              updated_at = NOW()
-            WHERE sql_hash = %s
-        """
-        cur.execute(sql, (sql_hash, sql_hash))
-    
-    pg.commit()
-    print(f"      ✅ Cumulative fields recalculated")
 
 def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_callback=None, checkpoint_interval=1):
     """
@@ -1439,9 +1190,6 @@ def process_job(pg, job, trino_client):
         else:
             raise Exception(f"Unknown job type: {job_type}")
         
-        # After processing, recalculate cumulative fields if needed
-        fix_cumulative_fields(pg, sql_hash)
-        
         # Check if we got any data
         if rows_processed == 0:
             # Complete failure: 0 rows
@@ -1470,6 +1218,12 @@ def process_job(pg, job, trino_client):
         else:
             # Success: got data
             print(f"✅ Job #{job_id} SUCCESSFUL: {rows_processed} rows")
+            
+            # Calculate cumulative fields (includes date backfilling)
+            try:
+                calculate_cumulative_fields(pg, sql_hash)
+            except Exception as cumulative_error:
+                print(f"⚠️  Warning: Could not calculate cumulative fields: {cumulative_error}")
             
             # Calculate percentage fields if configured
             try:
