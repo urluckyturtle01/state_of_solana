@@ -422,10 +422,16 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         # For monthly queries, identify missing months
         if '{month}' in sql_query:
             # Get existing months from database
+            # Check both 'month' field and 'block_date' field (convert to month)
             cur.execute("""
-                SELECT DISTINCT e->>'month' as month
+                SELECT DISTINCT 
+                    COALESCE(
+                        e->>'month',
+                        TO_CHAR((e->>'block_date')::date, 'YYYY-MM-01')
+                    ) as month
                 FROM query_results, jsonb_array_elements(json_data) e
-                WHERE sql_hash = %s AND e->>'month' IS NOT NULL
+                WHERE sql_hash = %s 
+                AND (e->>'month' IS NOT NULL OR e->>'block_date' IS NOT NULL)
                 ORDER BY month DESC
             """, (sql_hash,))
             existing_months = set(row[0] for row in cur.fetchall())
