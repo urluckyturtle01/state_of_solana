@@ -671,31 +671,60 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       console.log('🔍 TableRenderer: Attempting to load data for table:', tableId);
       console.log('  Page:', pageId);
       
+      // Try database API first (for charts managed by trino_worker)
       try {
-        // Use efficient per-chart API instead of loading massive page file
+        const dbApiUrl = `/api/chart-data-db/${tableId}`;
+        console.log('  Trying DB API:', dbApiUrl);
+        const dbResponse = await fetch(dbApiUrl);
+        
+        if (dbResponse.ok) {
+          console.log('  ✓ DB API response OK');
+          const dbData = await dbResponse.json();
+          
+          if (dbData?.data && Array.isArray(dbData.data)) {
+            console.log(`  ✅ Loaded table data from DATABASE for ${tableId}:`, dbData.data.length, 'rows', `(job: ${dbData.jobStatus})`);
+            if (dbData.data.length > 0) {
+              console.log('  First row sample:', dbData.data[0]);
+            }
+            setData(dbData.data);
+            setLoading(false);
+            setError(null);
+            return;
+          } else {
+            console.log('  ❌ No data in DB API response:', dbData);
+          }
+        } else {
+          console.log('  ❌ DB API response not OK:', dbResponse.status);
+        }
+      } catch (dbError) {
+        console.log(`  ⚠️ Error loading from DB API:`, dbError);
+      }
+      
+      // Fallback to temp file API
+      try {
         const apiUrl = `/api/temp-chart-data/${pageId}/${tableId}`;
-        console.log('  Trying API:', apiUrl);
+        console.log('  Trying temp file API:', apiUrl);
         const tempDataResponse = await fetch(apiUrl);
         
         if (tempDataResponse.ok) {
-          console.log('  ✓ API response OK');
+          console.log('  ✓ Temp file API response OK');
           const tableDataEntry = await tempDataResponse.json();
           
           if (tableDataEntry?.data && Array.isArray(tableDataEntry.data) && tableDataEntry.success) {
-            console.log(`  ✅ Loaded table data from API for ${tableId}:`, tableDataEntry.data.length, 'rows');
+            console.log(`  ✅ Loaded table data from temp file for ${tableId}:`, tableDataEntry.data.length, 'rows');
             console.log('  First row sample:', tableDataEntry.data[0]);
             setData(tableDataEntry.data);
             setLoading(false);
             setError(null);
             return;
           } else {
-            console.log('  ❌ No data in API response:', tableDataEntry);
+            console.log('  ❌ No data in temp file API response:', tableDataEntry);
           }
         } else {
-          console.log('  ❌ API response not OK:', tempDataResponse.status);
+          console.log('  ❌ Temp file API response not OK:', tempDataResponse.status);
         }
       } catch (tempError) {
-        console.log(`  ⚠️ Error loading from API:`, tempError);
+        console.log(`  ⚠️ Error loading from temp file API:`, tempError);
       }
       
       // If no temp file or apiEndpoint not provided, can't fetch
