@@ -54,9 +54,27 @@ def calculate_cumulative_fields(pg, sql_hash):
     for key in first_row.keys():
         if 'cumulative' in key.lower():
             # Find base field by removing 'cumulative_' prefix
-            base_field = key.replace('cumulative_', '').replace('Cumulative_', '').replace('CUMULATIVE_', '')
-            if base_field in first_row:
+            suffix = key.replace('cumulative_', '').replace('Cumulative_', '').replace('CUMULATIVE_', '')
+            
+            # Try multiple patterns for base field
+            possible_base_fields = [
+                suffix,                    # e.g., volume_usd
+                f'daily_{suffix}',         # e.g., daily_volume_usd
+                f'{suffix}_count',         # e.g., txn_count (for cumulative_txn)
+                f'new_{suffix}',           # e.g., new_traders
+                f'monthly_change'          # fallback for traders
+            ]
+            
+            base_field = None
+            for candidate in possible_base_fields:
+                if candidate in first_row:
+                    base_field = candidate
+                    break
+            
+            if base_field:
                 cumulative_fields.append((key, base_field))
+            else:
+                print(f"      ⚠️  Could not find base field for {key}, tried: {possible_base_fields}")
     
     if not cumulative_fields:
         print(f"      ℹ️  No cumulative fields detected")
@@ -97,45 +115,34 @@ def calculate_cumulative_fields(pg, sql_hash):
 
 
 def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields):
-    """Calculate cumulative for grouped data with date backfilling."""
+    """Recalculate cumulative for grouped data with date backfilling."""
     
-    # Group data
     grouped = defaultdict(list)
     for row in data:
         grouped[row[group_field]].append(row)
     
     # Find global max date across ALL groups
-    global_max_date = None
-    for rows in grouped.values():
-        for row in rows:
-            date_val = row.get(date_field)
-            if date_val:
-                row_date = datetime.strptime(date_val, '%Y-%m-%d').date()
-                if global_max_date is None or row_date > global_max_date:
-                    global_max_date = row_date
-    
-    if not global_max_date:
-        return data
+    global_max_date = max(
+        datetime.strptime(row[date_field], '%Y-%m-%d').date()
+        for rows in grouped.values() for row in rows
+    )
     
     all_results = []
     
     for group_val, rows in grouped.items():
         rows_sorted = sorted(rows, key=lambda x: x[date_field])
-        if len(rows_sorted) == 0:
-            continue
-        
         min_date = datetime.strptime(rows_sorted[0][date_field], '%Y-%m-%d').date()
         date_to_row = {row[date_field]: row for row in rows_sorted}
         
-        # Initialize cumulative trackers for each cumulative field
-        cumulative_values = {cf[0]: 0 for cf in cumulative_fields}
+        # Initialize cumulative trackers (start from 0)
+        cumulative_values = {cum_field: 0 for cum_field, _ in cumulative_fields}
         
         current = min_date
         while current <= global_max_date:
             date_str = str(current)
             
             if date_str in date_to_row:
-                # Existing data - calculate cumulative
+                # Existing data - recalculate cumulative from daily
                 row = date_to_row[date_str].copy()
                 for cum_field, base_field in cumulative_fields:
                     daily_val = row.get(base_field, 0) or 0
@@ -143,20 +150,15 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
                     row[cum_field] = cumulative_values[cum_field]
                 all_results.append(row)
             else:
-                # Missing date - create row with zero daily, carried-forward cumulative
+                # Missing date - daily=0, cumulative stays same
                 new_row = {date_field: date_str, group_field: group_val}
-                
-                # Set all base fields to 0
                 for cum_field, base_field in cumulative_fields:
                     new_row[base_field] = 0
                     new_row[cum_field] = cumulative_values[cum_field]
-                
-                # Copy other non-cumulative fields from first row (for structure)
+                # Copy other fields as 0
                 for key in rows_sorted[0].keys():
-                    if key not in new_row and key != date_field and key != group_field:
-                        if 'cumulative' not in key.lower() and key not in [cf[1] for cf in cumulative_fields]:
-                            new_row[key] = 0
-                
+                    if key not in new_row and 'cumulative' not in key.lower():
+                        new_row[key] = 0
                 all_results.append(new_row)
             
             current += timedelta(days=1)
@@ -165,21 +167,15 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
 
 
 def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
-    """Calculate cumulative for non-grouped data with date backfilling."""
+    """Recalculate cumulative for non-grouped data with date backfilling."""
     
     rows_sorted = sorted(data, key=lambda x: x[date_field])
-    if len(rows_sorted) == 0:
-        return data
-    
-    # Find min and max dates
     min_date = datetime.strptime(rows_sorted[0][date_field], '%Y-%m-%d').date()
     max_date = datetime.strptime(rows_sorted[-1][date_field], '%Y-%m-%d').date()
-    
-    # Create date lookup
     date_to_row = {row[date_field]: row for row in rows_sorted}
     
-    # Initialize cumulative trackers
-    cumulative_values = {cf[0]: 0 for cf in cumulative_fields}
+    # Initialize cumulative trackers (start from 0)
+    cumulative_values = {cum_field: 0 for cum_field, _ in cumulative_fields}
     
     result = []
     current = min_date
@@ -188,7 +184,7 @@ def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
         date_str = str(current)
         
         if date_str in date_to_row:
-            # Existing data - calculate cumulative
+            # Existing data - recalculate cumulative from daily
             row = date_to_row[date_str].copy()
             for cum_field, base_field in cumulative_fields:
                 daily_val = row.get(base_field, 0) or 0
@@ -196,20 +192,15 @@ def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
                 row[cum_field] = cumulative_values[cum_field]
             result.append(row)
         else:
-            # Missing date - create row with zero daily, carried-forward cumulative
+            # Missing date - daily=0, cumulative stays same
             new_row = {date_field: date_str}
-            
-            # Set all base fields to 0
             for cum_field, base_field in cumulative_fields:
                 new_row[base_field] = 0
                 new_row[cum_field] = cumulative_values[cum_field]
-            
-            # Copy other non-cumulative fields from first row (for structure)
+            # Copy other fields as 0
             for key in rows_sorted[0].keys():
-                if key not in new_row and key != date_field:
-                    if 'cumulative' not in key.lower() and key not in [cf[1] for cf in cumulative_fields]:
-                        new_row[key] = 0
-            
+                if key not in new_row and 'cumulative' not in key.lower():
+                    new_row[key] = 0
             result.append(new_row)
         
         current += timedelta(days=1)
