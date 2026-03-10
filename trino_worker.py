@@ -730,10 +730,20 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                 # Checkpoint: Save to DB immediately after each month
                                 if all_new_data:
                                     # Detect fields
-                                    date_field = 'month'
-                                    group_by_field = None
                                     first_row = all_new_data[0]
-                                    for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
+                                    
+                                    # Auto-detect date field
+                                    date_field = 'month'  # default
+                                    if 'block_date' in first_row:
+                                        date_field = 'block_date'
+                                    elif 'week' in first_row:
+                                        date_field = 'week'
+                                    elif 'week_start' in first_row:
+                                        date_field = 'week_start'
+                                    
+                                    # Auto-detect group_by field
+                                    group_by_field = None
+                                    for field in ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category', 'pool_category']:
                                         if field in first_row:
                                             group_by_field = field
                                             break

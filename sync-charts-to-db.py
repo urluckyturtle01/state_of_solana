@@ -227,6 +227,19 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                         'label': f'vs. {comparison_month_name}'
                     }
             
+            # Add additionalOptions for cumulative charts
+            if query_run_config.get('isCumulative', False):
+                json_config['additionalOptions'] = {
+                    'enableTimeAggregation': True,
+                    'filters': {
+                        'timeFilter': {
+                            'paramName': 'Date Part',
+                            'options': ['D', 'W', 'M', 'Q', 'Y'],
+                            'activeValue': 'D'
+                        }
+                    }
+                }
+            
             # Upsert to database
             cur.execute("""
                 INSERT INTO chart_definitions (
