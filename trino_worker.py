@@ -179,7 +179,7 @@ def fix_cumulative_fields(pg, sql_hash):
             date_field = 'block_date'
         
         # Validate group_by_field to prevent SQL injection
-        allowed_group_fields = ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category']
+        allowed_group_fields = ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category', 'pool_category']
         if group_by_field not in allowed_group_fields:
             print(f"      ⚠️  Invalid groupBy field: {group_by_field}, skipping cumulative fix")
             return
