@@ -484,7 +484,7 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   console.log(`Getting charts for page: ${pageId}`);
   
   // 🆕 For database-backed pages, load from PostgreSQL database
-  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume'];
+  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume', 'dex-tvl'];
   if (dbBackedPages.includes(pageId)) {
     try {
       const baseUrl = typeof window !== 'undefined' 
