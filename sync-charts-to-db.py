@@ -245,6 +245,29 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                     }
                 }
             
+            # Add currencyFilter when multipleCurrency: true
+            # Groups yAxis fields by unit (SOL vs USD) into columnMappings
+            if query_run_config.get('multipleCurrency', False):
+                y_axis = data_mapping.get('yAxis', [])
+                sol_fields = [f['field'] for f in y_axis if isinstance(f, dict) and f.get('unit', '').upper() == 'SOL']
+                usd_fields = [f['field'] for f in y_axis if isinstance(f, dict) and f.get('unit', '') in ('$', 'USD')]
+                
+                if sol_fields or usd_fields:
+                    currency_filter = {
+                        'paramName': 'currency',
+                        'options': ['USD', 'SOL'],
+                        'type': 'field_switcher',
+                        'columnMappings': {
+                            'USD': ', '.join(usd_fields),
+                            'SOL': ', '.join(sol_fields),
+                        }
+                    }
+                    additional_opts = json_config.get('additionalOptions', {})
+                    filters = additional_opts.get('filters', {})
+                    filters['currencyFilter'] = currency_filter
+                    additional_opts['filters'] = filters
+                    json_config['additionalOptions'] = additional_opts
+            
             # Upsert to database
             cur.execute("""
                 INSERT INTO chart_definitions (
