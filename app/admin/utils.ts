@@ -484,7 +484,19 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   console.log(`Getting charts for page: ${pageId}`);
   
   // 🆕 For database-backed pages, load from PostgreSQL database
-  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume', 'dex-tvl'];
+  const dbBackedPages = [
+    'dex-compute',
+    'dex-traders',
+    'dex-summary',
+    'dex-network-fees',
+    'dex-prop-amm',
+    'dex-tokens',
+    'dex-volume',
+    'dex-tvl',
+    'rev-cost-and-capacity',
+    'rev-issuance-and-burn',
+    'rev-total-economic-value',
+  ];
   if (dbBackedPages.includes(pageId)) {
     try {
       const baseUrl = typeof window !== 'undefined' 
@@ -1522,7 +1534,19 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     console.log(`[DEBUG] Fetching tables for page ${pageId}`);
 
     // For DB-backed pages, load tables from /api/db-configs/[pageId] (includes data)
-    const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume', 'dex-tvl'];
+    const dbBackedPages = [
+      'dex-compute',
+      'dex-traders',
+      'dex-summary',
+      'dex-network-fees',
+      'dex-prop-amm',
+      'dex-tokens',
+      'dex-volume',
+      'dex-tvl',
+      'rev-cost-and-capacity',
+      'rev-issuance-and-burn',
+      'rev-total-economic-value',
+    ];
     if (dbBackedPages.includes(pageId)) {
       try {
         const baseUrl = typeof window !== 'undefined'

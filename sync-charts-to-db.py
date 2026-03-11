@@ -6,7 +6,7 @@ Chart Sync to Database
 Syncs chart definitions from YAML files to PostgreSQL database.
 
 Flow:
-1. Read all YAML + SQL files from tl-reserach-tool-sqls/dex-trades/ folders
+1. Read all YAML + SQL files from tl-reserach-tool-sqls chart folders
 2. For multi-chart YAMLs, split into individual charts (one YAML per chart)
 3. Insert/update chart_definitions table with:
    - Chart metadata (UUID, title, page, etc.)
@@ -140,10 +140,15 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                 continue
         
         # Determine page_id
+        # Convention:
+        # - dex-trades/*      -> dex-<folder>
+        # - other categories  -> <category_slug>-<folder>
+        #   where category_slug is the lowercased category name with underscores replaced by hyphens
         if category == 'dex-trades':
             page_id = f"dex-{folder.replace('_', '-')}"
         else:
-            page_id = f"{category}-{folder.replace('_', '-')}"
+            category_slug = category.lower().replace('_', '-')
+            page_id = f"{category_slug}-{folder.replace('_', '-')}"
         
         # Split multi-chart YAML into individual charts
         chart_configs = split_multi_chart_yaml(yaml_config, sql_name)
@@ -289,7 +294,8 @@ def sync_charts_to_db():
     
     base_path = Path('/root/tl-reserach-tool-sqls')
     
-    # Define categories and their folders
+    # Define categories to process with explicit folder lists.
+    # We don't auto-discover top-level categories; everything is declared here.
     categories_to_process = {
         'dex-trades': [
             'summary',
@@ -300,8 +306,12 @@ def sync_charts_to_db():
             'traders',
             'volume',
             'aggregators',
-            'tvl'
-        
+            'tvl',
+        ],
+        'rev': [
+            'cost_and_capacity',
+            'issuance_and_burn',
+            'total_economic_value',
         ]
     }
     

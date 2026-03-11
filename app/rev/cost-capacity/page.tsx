@@ -19,7 +19,7 @@ export default function RevCostCapacityPage() {
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="rev-cost-capacity" 
+          pageId="rev-cost-and-capacity" 
           enableCaching={true}
         />
       </Suspense>

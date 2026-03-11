@@ -19,7 +19,7 @@ export default function RevIssuanceBurnPage() {
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer 
-          pageId="rev-issuance-burn" 
+          pageId="rev-issuance-and-burn" 
           enableCaching={true}
         />
       </Suspense>
