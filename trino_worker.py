@@ -498,12 +498,22 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                     elif 'week_start' in first_row:
                                         date_field = 'week_start'
                                     
-                                    # Auto-detect group_by field
+                                    # Get group_by field from chart config
                                     group_by_field = None
-                                    for field in ['category', 'program', 'program_name', 'prop_amm_name', 'dex_name', 'token', 'trader_category', 'pool_category']:
-                                        if field in first_row:
-                                            group_by_field = field
-                                            break
+                                    cur_temp = pg.cursor()
+                                    cur_temp.execute("""
+                                        SELECT chart_config->'dataMapping'->>'groupBy' 
+                                        FROM chart_definitions 
+                                        WHERE sql_hash = %s 
+                                        LIMIT 1
+                                    """, (sql_hash,))
+                                    row = cur_temp.fetchone()
+                                    if row and row[0]:
+                                        group_by_field = row[0]
+                                        # Verify field exists in data
+                                        if group_by_field not in first_row:
+                                            group_by_field = None
+                                    cur_temp.close()
                                     
                                     # Save to DB
                                     dates_str = [str(d) for d in dates_to_remove]
@@ -639,10 +649,21 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 if field in first_row:
                     date_field = field
                     break
-            for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
-                if field in first_row:
-                    group_by_field = field
-                    break
+            # Get group_by field from chart config
+            cur_temp = pg.cursor()
+            cur_temp.execute("""
+                SELECT chart_config->'dataMapping'->>'groupBy' 
+                FROM chart_definitions 
+                WHERE sql_hash = %s 
+                LIMIT 1
+            """, (sql_hash,))
+            row = cur_temp.fetchone()
+            if row and row[0]:
+                group_by_field = row[0]
+                # Verify field exists in data
+                if group_by_field not in first_row:
+                    group_by_field = None
+            cur_temp.close()
         
         # Convert dates_to_remove to strings for comparison
         dates_str = [str(d) for d in dates_to_remove]
@@ -791,10 +812,21 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                 if field in first_row:
                                     date_field = field
                                     break
-                            for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
-                                if field in first_row:
-                                    group_by_field = field
-                                    break
+                            # Get group_by field from chart config
+                            cur_temp = pg.cursor()
+                            cur_temp.execute("""
+                                SELECT chart_config->'dataMapping'->>'groupBy' 
+                                FROM chart_definitions 
+                                WHERE sql_hash = %s 
+                                LIMIT 1
+                            """, (sql_hash,))
+                            row = cur_temp.fetchone()
+                            if row and row[0]:
+                                group_by_field = row[0]
+                                # Verify field exists in data
+                                if group_by_field not in first_row:
+                                    group_by_field = None
+                            cur_temp.close()
                         
                         if group_by_field:
                             # Deduplicate by date + groupBy
@@ -861,10 +893,21 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                         if field in first_row:
                             date_field = field
                             break
-                    for field in ['category', 'program', 'program_name', 'dex_name', 'token', 'trader_category']:
-                        if field in first_row:
-                            group_by_field = field
-                            break
+                    # Get group_by field from chart config
+                    cur_temp = pg.cursor()
+                    cur_temp.execute("""
+                        SELECT chart_config->'dataMapping'->>'groupBy' 
+                        FROM chart_definitions 
+                        WHERE sql_hash = %s 
+                        LIMIT 1
+                    """, (sql_hash,))
+                    row = cur_temp.fetchone()
+                    if row and row[0]:
+                        group_by_field = row[0]
+                        # Verify field exists in data
+                        if group_by_field not in first_row:
+                            group_by_field = None
+                    cur_temp.close()
                 
                 if group_by_field:
                     # Deduplicate by date + groupBy
@@ -1089,10 +1132,21 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
             if field in first_row:
                 date_field = field
                 break
-        for field in ['category', 'program', 'dex_name', 'token', 'trader_category']:
-            if field in first_row:
-                group_by_field = field
-                break
+        # Get group_by field from chart config
+        cur_temp = pg.cursor()
+        cur_temp.execute("""
+            SELECT chart_config->'dataMapping'->>'groupBy' 
+            FROM chart_definitions 
+            WHERE sql_hash = %s 
+            LIMIT 1
+        """, (sql_hash,))
+        row = cur_temp.fetchone()
+        if row and row[0]:
+            group_by_field = row[0]
+            # Verify field exists in data
+            if group_by_field not in first_row:
+                group_by_field = None
+        cur_temp.close()
     
     # Convert dates_to_remove to strings for comparison
     dates_str = [str(d) for d in dates_to_remove]
