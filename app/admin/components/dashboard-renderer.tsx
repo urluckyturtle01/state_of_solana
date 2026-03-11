@@ -1107,10 +1107,31 @@ export default function DashboardRenderer({
         for (let i = 0; i < loadedCharts.length; i++) {
           if (!mounted) break;
           
-          const chart = loadedCharts[i];
+          let chart = loadedCharts[i];
           const chartStartTime = performance.now();
           console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] 📊 [${i + 1}/${loadedCharts.length}] Showing chart box: ${chart.id.substring(0, 40)}...`);
           
+          // Auto-detect dual-axis BEFORE adding to displayed charts (avoids second render)
+          const yAxis = chart.dataMapping?.yAxis;
+          if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
+            const yAxisConfigs = yAxis as YAxisConfig[];
+            const hasRightAxis = yAxisConfigs.some((config: YAxisConfig) => config.rightAxis === true);
+            if (hasRightAxis && !chart.dualAxisConfig) {
+              const leftFields = yAxisConfigs.filter((c: YAxisConfig) => !c.rightAxis).map((c: YAxisConfig) => c.field);
+              const rightFields = yAxisConfigs.filter((c: YAxisConfig) => c.rightAxis).map((c: YAxisConfig) => c.field);
+              chart = {
+                ...chart,
+                chartType: 'dual-axis',
+                dualAxisConfig: {
+                  leftAxisFields: leftFields,
+                  rightAxisFields: rightFields,
+                  leftAxisType: (yAxisConfigs.find((c: YAxisConfig) => !c.rightAxis)?.type || 'bar') as 'bar' | 'line',
+                  rightAxisType: (yAxisConfigs.find((c: YAxisConfig) => c.rightAxis)?.type || 'line') as 'bar' | 'line',
+                }
+              };
+            }
+          }
+
           // Add this chart to displayed list
           displayedCharts.push(chart);
           setCharts([...displayedCharts]);
@@ -2316,41 +2337,8 @@ export default function DashboardRenderer({
     if (charts.length > 0) {
       // Create a new array with the onFilterChange callback added to each chart
       const updatedCharts = charts.map(chart => {
-        // Auto-detect dual-axis charts based on rightAxis field in yAxis
-        let processedChart = { ...chart };
-        
-        // Check if yAxis has fields with rightAxis: true
-        const yAxis = chart.dataMapping?.yAxis;
-        if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
-          const yAxisConfigs = yAxis as YAxisConfig[];
-          const hasRightAxis = yAxisConfigs.some(config => config.rightAxis === true);
-          
-          if (hasRightAxis && !chart.dualAxisConfig) {
-            // Build dualAxisConfig from yAxis fields
-            const leftFields = yAxisConfigs.filter(config => !config.rightAxis).map(config => config.field);
-            const rightFields = yAxisConfigs.filter(config => config.rightAxis).map(config => config.field);
-            
-            // Determine axis types from the first field of each axis
-            const leftAxisType = yAxisConfigs.find(config => !config.rightAxis)?.type || 'bar';
-            const rightAxisType = yAxisConfigs.find(config => config.rightAxis)?.type || 'line';
-            
-            processedChart = {
-              ...processedChart,
-              chartType: 'dual-axis',
-              dualAxisConfig: {
-                leftAxisFields: leftFields,
-                rightAxisFields: rightFields,
-                leftAxisType: leftAxisType as 'bar' | 'line',
-                rightAxisType: rightAxisType as 'bar' | 'line'
-              }
-            };
-            
-            console.log(`Auto-detected dual-axis chart: ${chart.id}`, processedChart.dualAxisConfig);
-          }
-        }
-        
         return {
-          ...processedChart,
+          ...chart,
           // Add the onFilterChange callback that will be called when filters change in the modal
           onFilterChange: (updatedFilters: Record<string, string>) => {
             console.log(`Filter changed from modal for chart ${chart.id}:`, updatedFilters);
