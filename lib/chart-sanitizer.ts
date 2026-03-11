@@ -33,6 +33,7 @@ export interface PublicChartConfig {
     valueField: string;
     label?: string;
   };
+  data?: any[];
 }
 
 /**
