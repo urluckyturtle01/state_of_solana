@@ -334,43 +334,13 @@ const fetchFromApi = async (
     }
   }
   
-  // Try database API first (for charts managed by trino_worker)
-  try {
-    const chartId = chart.id;
-    const dbApiUrl = `/api/chart-data-db/${chartId}`;
-    
-    console.log(`🚀 Fetching chart from database: ${chartId}`);
-    const dbResponse = await fetch(dbApiUrl);
-    
-    if (dbResponse.ok) {
-      const dbResult = await dbResponse.json();
-      const fetchTime = performance.now() - startTime;
-      console.log(`✅ Loaded chart ${chartId} from DATABASE in ${fetchTime.toFixed(2)}ms (${dbResult.data?.length || 0} rows, job: ${dbResult.jobStatus})`);
-      
-      // Cache it
-      if (cacheEnabled) {
-        CHART_DATA_CACHE[cacheKey] = {
-          data: dbResult.data || [],
-          timestamp: Date.now(),
-          expiresIn: CACHE_DURATION
-        };
-      }
-      
-      return dbResult.data || [];
-    } else {
-      console.log(`⚠️  Database API failed (${dbResponse.status}), trying temp file...`);
-    }
-  } catch (dbError) {
-    console.log(`⚠️  Error fetching from database, trying temp file:`, dbError);
-  }
-  
-  // Fallback to temp file charts
+  // For temp file charts, try individual chart endpoint first (faster!)
   if (chart.apiEndpoint && chart.apiEndpoint.includes('/temp/chart-data/')) {
     try {
       const pageId = chart.page;
       const chartId = chart.id;
       
-      console.log(`🚀 Fetching individual chart from temp file: ${chartId} from page: ${pageId}`);
+      console.log(`🚀 Fetching individual chart: ${chartId} from page: ${pageId}`);
       const singleChartUrl = `/api/temp-chart-data/${pageId}/${chartId}`;
       
       const response = await fetch(singleChartUrl);
@@ -378,7 +348,7 @@ const fetchFromApi = async (
       if (response.ok) {
         const result = await response.json();
         const fetchTime = performance.now() - startTime;
-        console.log(`✅ Loaded chart ${chartId} from temp file in ${fetchTime.toFixed(2)}ms`);
+        console.log(`✅ Loaded chart ${chartId} in ${fetchTime.toFixed(2)}ms`);
         
         // Cache it
         if (cacheEnabled) {
@@ -1107,10 +1077,31 @@ export default function DashboardRenderer({
         for (let i = 0; i < loadedCharts.length; i++) {
           if (!mounted) break;
           
-          const chart = loadedCharts[i];
+          let chart = loadedCharts[i];
           const chartStartTime = performance.now();
           console.log(`⏱️ [${(performance.now() - startTime).toFixed(0)}ms] 📊 [${i + 1}/${loadedCharts.length}] Showing chart box: ${chart.id.substring(0, 40)}...`);
           
+          // Auto-detect dual-axis BEFORE first render to avoid a second re-render
+          const yAxis = chart.dataMapping?.yAxis;
+          if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
+            const yAxisConfigs = yAxis as YAxisConfig[];
+            const hasRightAxis = yAxisConfigs.some((c: YAxisConfig) => c.rightAxis === true);
+            if (hasRightAxis && !chart.dualAxisConfig) {
+              const leftFields = yAxisConfigs.filter((c: YAxisConfig) => !c.rightAxis).map((c: YAxisConfig) => c.field);
+              const rightFields = yAxisConfigs.filter((c: YAxisConfig) => c.rightAxis).map((c: YAxisConfig) => c.field);
+              chart = {
+                ...chart,
+                chartType: 'dual-axis',
+                dualAxisConfig: {
+                  leftAxisFields: leftFields,
+                  rightAxisFields: rightFields,
+                  leftAxisType: (yAxisConfigs.find((c: YAxisConfig) => !c.rightAxis)?.type || 'bar') as 'bar' | 'line',
+                  rightAxisType: (yAxisConfigs.find((c: YAxisConfig) => c.rightAxis)?.type || 'line') as 'bar' | 'line',
+                }
+              };
+            }
+          }
+
           // Add this chart to displayed list
           displayedCharts.push(chart);
           setCharts([...displayedCharts]);
@@ -2315,45 +2306,11 @@ export default function DashboardRenderer({
   useEffect(() => {
     if (charts.length > 0) {
       // Create a new array with the onFilterChange callback added to each chart
-      const updatedCharts = charts.map(chart => {
-        // Auto-detect dual-axis charts based on rightAxis field in yAxis
-        let processedChart = { ...chart };
-        
-        // Check if yAxis has fields with rightAxis: true
-        const yAxis = chart.dataMapping?.yAxis;
-        if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
-          const yAxisConfigs = yAxis as YAxisConfig[];
-          const hasRightAxis = yAxisConfigs.some(config => config.rightAxis === true);
-          
-          if (hasRightAxis && !chart.dualAxisConfig) {
-            // Build dualAxisConfig from yAxis fields
-            const leftFields = yAxisConfigs.filter(config => !config.rightAxis).map(config => config.field);
-            const rightFields = yAxisConfigs.filter(config => config.rightAxis).map(config => config.field);
-            
-            // Determine axis types from the first field of each axis
-            const leftAxisType = yAxisConfigs.find(config => !config.rightAxis)?.type || 'bar';
-            const rightAxisType = yAxisConfigs.find(config => config.rightAxis)?.type || 'line';
-            
-            processedChart = {
-              ...processedChart,
-              chartType: 'dual-axis',
-              dualAxisConfig: {
-                leftAxisFields: leftFields,
-                rightAxisFields: rightFields,
-                leftAxisType: leftAxisType as 'bar' | 'line',
-                rightAxisType: rightAxisType as 'bar' | 'line'
-              }
-            };
-            
-            console.log(`Auto-detected dual-axis chart: ${chart.id}`, processedChart.dualAxisConfig);
-          }
-        }
-        
-        return {
-          ...processedChart,
-          // Add the onFilterChange callback that will be called when filters change in the modal
-          onFilterChange: (updatedFilters: Record<string, string>) => {
-            console.log(`Filter changed from modal for chart ${chart.id}:`, updatedFilters);
+      const updatedCharts = charts.map(chart => ({
+        ...chart,
+        // Add the onFilterChange callback that will be called when filters change in the modal
+        onFilterChange: (updatedFilters: Record<string, string>) => {
+          console.log(`Filter changed from modal for chart ${chart.id}:`, updatedFilters);
           
           // Update our filter state with the new values from the modal
           setFilterValues(prev => ({
@@ -2388,8 +2345,7 @@ export default function DashboardRenderer({
             }
           });
         }
-      };
-      });
+      }));
       
       // Update the charts state with the new callback-enabled charts
       setCharts(updatedCharts);
