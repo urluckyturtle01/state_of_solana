@@ -484,7 +484,7 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   console.log(`Getting charts for page: ${pageId}`);
   
   // 🆕 For database-backed pages, load from PostgreSQL database
-  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens'];
+  const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume', 'dex-tvl'];
   if (dbBackedPages.includes(pageId)) {
     try {
       const baseUrl = typeof window !== 'undefined' 
@@ -1520,29 +1520,29 @@ export const getAllTableConfigs = async (): Promise<TableConfig[]> => {
 export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig[]> => {
   try {
     console.log(`[DEBUG] Fetching tables for page ${pageId}`);
-    
-    // First try to get from localStorage
-    if (typeof window !== 'undefined') {
-      const key = `tables_page_${pageId}`;
-      const storedTables = localStorage.getItem(key);
-      if (storedTables) {
-        try {
-          console.log(`[DEBUG] Found tables in localStorage for page ${pageId}`);
-          const parsedTables = JSON.parse(storedTables);
-          if (Array.isArray(parsedTables) && parsedTables.length > 0) {
-            // Normalize tables to ensure they have valid page properties
-            return parsedTables.map(normalizeTableConfig);
-          } else {
-            console.log(`[DEBUG] No valid tables found in localStorage for page ${pageId}, fetching from API`);
+
+    // For DB-backed pages, load tables from /api/db-configs/[pageId] (includes data)
+    const dbBackedPages = ['dex-compute', 'dex-traders', 'dex-summary', 'dex-network-fees', 'dex-prop-amm', 'dex-tokens', 'dex-volume', 'dex-tvl'];
+    if (dbBackedPages.includes(pageId)) {
+      try {
+        const baseUrl = typeof window !== 'undefined'
+          ? `${window.location.protocol}//${window.location.host}`
+          : '';
+        const response = await fetch(`${baseUrl}/api/db-configs/${pageId}`, {
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.tables && Array.isArray(data.tables) && data.tables.length > 0) {
+            console.log(`✅ Loaded ${data.tables.length} tables from DB for ${pageId}`);
+            return data.tables;
           }
-        } catch (e) {
-          console.error('Error parsing stored tables:', e);
         }
-      } else {
-        console.log(`[DEBUG] No tables found in localStorage for page ${pageId}`);
+      } catch (e) {
+        console.warn(`Failed to load tables from DB for ${pageId}:`, e);
       }
     }
-    
+
     // If not in localStorage, fetch from API
     console.log(`[DEBUG] Fetching tables from API for page ${pageId}`);
     const response = await fetch(`/api/tables?page=${pageId}`);

@@ -59,8 +59,10 @@ const extractSuffix = (value: string): string => {
 
 // Helper function to extract SOL-related suffix (jitoSOL, mSOL, SOL, etc.)
 const extractSOLSuffix = (value: string): string => {
-  // Match any suffix that contains "SOL" (case insensitive)
-  const match = value.match(/[\d,.\s]*([a-zA-Z]*SOL[a-zA-Z]*)/i);
+  // Match SOL suffix that appears after a space or at the end
+  // Matches: " SOL", " jitoSOL", " mSOL" but NOT "KSOL" from "285.5K"
+  // The key is to match SOL that comes after whitespace, not after a letter like K
+  const match = value.match(/\s([a-zA-Z]*SOL)\s*$/i);
   return match ? match[1] : '';
 };
 

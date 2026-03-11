@@ -363,7 +363,13 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
     }
     
     // Get the row at the specified index (default to first row if out of bounds)
-    const rowIndex = Math.min(counterConfig.rowIndex || 0, rows.length - 1);
+    // Support negative indices like Python: -1 = last, -2 = second-to-last
+    let rowIndex = counterConfig.rowIndex || 0;
+    if (rowIndex < 0) {
+      rowIndex = rows.length + rowIndex;
+    }
+    rowIndex = Math.max(0, Math.min(rowIndex, rows.length - 1));
+    
     const row = rows[rowIndex];
     
     if (!row) {
@@ -427,9 +433,9 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
             }
           } else {
             // If no date field found, use row index as fallback
-            // Get previous row (be careful of the rowIndex)
-            if (rowIndex > 0 && rowIndex < rows.length) {
-              const previousRow = rows[rowIndex - 1];
+            // Get previous row (data is newest-to-oldest, so previous = rowIndex + 1)
+            if (rowIndex < rows.length - 1) {
+              const previousRow = rows[rowIndex + 1];
               const previousValue = Number(previousRow[counterConfig.valueField]);
               const currentValue = numericValue;
               
@@ -568,14 +574,20 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     console.log('Data rows:', chartData.length);
     console.log('Full data:', JSON.stringify(chartData));
 
-    const rowIndex = chartConfig.rowIndex || 0;
+    // Support negative indices like Python: -1 = last, -2 = second-to-last
+    let rowIndex = chartConfig.rowIndex || 0;
+    if (rowIndex < 0) {
+      rowIndex = chartData.length + rowIndex;
+    }
+    rowIndex = Math.max(0, Math.min(rowIndex, chartData.length - 1));
+    
     const row = chartData[rowIndex];
     
-    console.log('Row index:', rowIndex, 'Row:', JSON.stringify(row));
+    console.log('Row index:', chartConfig.rowIndex, 'Actual index:', rowIndex, 'Row:', JSON.stringify(row));
 
     if (!row) {
       setValue('NO ROW');
-      setError('No row at index ' + rowIndex);
+      setError('No row at index ' + chartConfig.rowIndex);
       return;
     }
 
@@ -605,6 +617,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     console.log('Converted to number:', num);
 
     // Format
+    const prefix = chartConfig.prefix || '';
+    const suffix = chartConfig.suffix || '';
+    
     let formatted = '';
     if (num >= 1000000000000) {
       formatted = `${(num / 1000000000000).toFixed(1)}T`;
@@ -612,13 +627,13 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
       formatted = `${(num / 1000000000).toFixed(1)}B`;
     } else if (num >= 1000000) {
       formatted = `${(num / 1000000).toFixed(1)}M`;
+    } else if (num >= 1000) {
+      formatted = `${(num / 1000).toFixed(1)}K`;
     } else {
       formatted = num.toFixed(0);
     }
 
-    const prefix = chartConfig.prefix || '';
-    const suffix = chartConfig.suffix || '';
-    const final = `${prefix}${formatted}${suffix}`;
+    const final = `${prefix}${formatted}${suffix ? ' ' + suffix : ''}`;
     
     console.log('🟢 FINAL VALUE:', final);
     setValue(final);
@@ -627,9 +642,9 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     
     // Calculate trend if trendConfig is present
     if (chartConfig.trendConfig && chartConfig.trendConfig.valueField === 'auto_calculate') {
-      if (chartData.length >= 2 && rowIndex > 0) {
-        // Compare current row (rowIndex) with previous row (rowIndex - 1)
-        const previousRow = chartData[rowIndex - 1];
+      if (chartData.length >= 2 && rowIndex < chartData.length - 1) {
+        // Compare current row (rowIndex) with previous month (rowIndex + 1, since data is newest-to-oldest)
+        const previousRow = chartData[rowIndex + 1];
         const previousValue = Number(previousRow[fieldName]);
         
         if (!isNaN(previousValue) && previousValue !== 0) {
@@ -709,10 +724,14 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
           console.log('chartData:', JSON.stringify(chartData, null, 2));
           
           // Extract value from chart data
-          const rowIndex = chartConfig!.rowIndex || 0;
+          // Support negative indices like Python: -1 = last, -2 = second-to-last
+          let rowIndex = chartConfig!.rowIndex || 0;
           console.log('Using rowIndex:', rowIndex);
           
-          const actualIndex = Math.min(rowIndex, chartData!.length - 1);
+          if (rowIndex < 0) {
+            rowIndex = chartData!.length + rowIndex;
+          }
+          const actualIndex = Math.max(0, Math.min(rowIndex, chartData!.length - 1));
           console.log('Actual array index:', actualIndex);
           
           const row = chartData![actualIndex];
@@ -771,7 +790,7 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
             formattedValue = numericValue.toFixed(0);
           }
           
-          const finalValue = `${prefix}${formattedValue}${suffix}`;
+          const finalValue = `${prefix}${formattedValue}${suffix ? ' ' + suffix : ''}`;
           console.log('Setting counter value:', finalValue);
           setValue(finalValue);
           setLoadState('success');

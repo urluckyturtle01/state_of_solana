@@ -1,292 +1,433 @@
 {
   "pageId": "dex-summary",
   "pageName": "DEX Summary",
-  "chartCount": 10,
-  "lastUpdated": "2026-02-28T12:46:09.025328",
+  "chartCount": 14,
   "charts": [
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000001",
-      "title": "Latest Monthly Volume",
-      "subtitle": "Current month trading volume",
-      "chartType": "counter",
-      "order": 1,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": [
-          {
-            "field": "total_volume_usd",
-            "type": "bar",
-            "unit": ""
-          }
-        ]
-      },
+      "id": "a7b8c9d0-7777-4000-8000-000000000001",
+      "icon": "chart",
       "page": "dex-summary",
+      "index": 1,
+      "order": 1,
+      "title": "Monthly Volume",
       "width": 1,
-      "rowIndex": 1,
       "prefix": "$",
       "suffix": "",
+      "sqlFile": "monthly_summary",
       "variant": "blue",
-      "icon": "chart",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
-      },
-      "createdAt": "2026-02-27T14:15:20.927269",
-      "updatedAt": "2026-02-27T14:30:34.573400",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000002",
-      "title": "Latest Monthly Traders",
-      "subtitle": "Current month unique traders",
+      "rowIndex": -2,
+      "subtitle": "Total trading volume for the month",
       "chartType": "counter",
-      "order": 2,
       "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
       "dataMapping": {
-        "xAxis": "month",
         "yAxis": [
           {
-            "field": "total_traders",
             "type": "bar",
-            "unit": ""
+            "unit": "",
+            "field": "total_volume_usd"
           }
         ]
       },
-      "page": "dex-summary",
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "",
-      "variant": "green",
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000002",
       "icon": "users",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
-      },
-      "createdAt": "2026-02-27T14:15:20.927279",
-      "updatedAt": "2026-02-27T14:30:34.573414",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000003",
-      "title": "Latest Monthly Txns",
-      "subtitle": "Current month transaction count",
-      "chartType": "counter",
-      "order": 3,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "month",
-        "yAxis": [
-          {
-            "field": "total_txns",
-            "type": "bar",
-            "unit": ""
-          }
-        ]
-      },
       "page": "dex-summary",
+      "index": 2,
+      "order": 2,
+      "title": "Monthly Traders",
       "width": 1,
-      "rowIndex": 1,
       "prefix": "",
       "suffix": "",
-      "variant": "purple",
+      "sqlFile": "monthly_summary",
+      "variant": "green",
+      "rowIndex": -2,
+      "subtitle": "Total unique traders for the month",
+      "chartType": "counter",
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
+      "dataMapping": {
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "total_traders"
+          }
+        ]
+      },
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000003",
       "icon": "activity",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
-      },
-      "createdAt": "2026-02-27T14:15:20.927284",
-      "updatedAt": "2026-02-27T14:30:34.573420",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000004",
-      "title": "Latest Monthly Fees",
-      "subtitle": "Current month total fees",
+      "page": "dex-summary",
+      "index": 3,
+      "order": 3,
+      "title": "Monthly Txns",
+      "width": 1,
+      "prefix": "",
+      "suffix": "",
+      "sqlFile": "monthly_summary",
+      "variant": "purple",
+      "rowIndex": -2,
+      "subtitle": "Total transactions for the month",
       "chartType": "counter",
-      "order": 4,
       "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
       "dataMapping": {
-        "xAxis": "month",
         "yAxis": [
           {
-            "field": "total_fees_sol",
             "type": "bar",
-            "unit": ""
+            "unit": "",
+            "field": "total_txns"
           }
         ]
       },
-      "page": "dex-summary",
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "SOL",
-      "variant": "orange",
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000004",
       "icon": "zap",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
-      },
-      "createdAt": "2026-02-27T14:15:20.927289",
-      "updatedAt": "2026-02-27T14:15:20.927289",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000009",
-      "title": "Latest Monthly Jito Tips",
-      "subtitle": "Current month Jito tips",
+      "page": "dex-summary",
+      "index": 4,
+      "order": 4,
+      "title": "Monthly Fees",
+      "width": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "sqlFile": "monthly_summary",
+      "variant": "orange",
+      "rowIndex": -2,
+      "subtitle": "Total fees for the month",
       "chartType": "counter",
-      "order": 5,
       "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
       "dataMapping": {
-        "xAxis": "month",
         "yAxis": [
           {
-            "field": "total_jito_tips_sol",
             "type": "bar",
-            "unit": ""
+            "unit": "",
+            "field": "total_fees_sol"
           }
         ]
       },
-      "page": "dex-summary",
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "SOL",
-      "variant": "teal",
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000009",
       "icon": "trending-up",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
+      "page": "dex-summary",
+      "index": 5,
+      "order": 5,
+      "title": "Monthly Jito Tips",
+      "width": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "sqlFile": "monthly_summary",
+      "variant": "teal",
+      "rowIndex": -2,
+      "subtitle": "Total Jito tips for the month",
+      "chartType": "counter",
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
+      "dataMapping": {
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "total_jito_tips_sol"
+          }
+        ]
       },
-      "createdAt": "2026-02-27T14:15:20.927300",
-      "updatedAt": "2026-02-27T14:30:34.573433",
-      "sqlFile": "monthly_summary"
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
     },
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000010",
-      "title": "Latest Monthly Priority Fees",
-      "subtitle": "Current month priority fees",
-      "chartType": "counter",
+      "id": "a7b8c9d0-7777-4000-8000-000000000010",
+      "icon": "bolt",
+      "page": "dex-summary",
+      "index": 6,
       "order": 6,
+      "title": "Monthly Priority Fees",
+      "width": 1,
+      "prefix": "",
+      "suffix": "SOL",
+      "sqlFile": "monthly_summary",
+      "variant": "yellow",
+      "rowIndex": -2,
+      "subtitle": "Total priority fees for the month",
+      "chartType": "counter",
       "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
+      "dataMapping": {
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "total_priority_fee_sol"
+          }
+        ]
+      },
+      "trendConfig": {
+        "label": "vs. Apr",
+        "valueField": "auto_calculate"
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000007",
+      "page": "dex-summary",
+      "index": 9,
+      "title": "Monthly Txns Trend",
+      "sqlFile": "monthly_summary",
+      "subtitle": "Total transactions by month",
+      "chartType": "bar",
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
       "dataMapping": {
         "xAxis": "month",
         "yAxis": [
           {
-            "field": "total_priority_fee_sol",
             "type": "bar",
-            "unit": ""
-          }
-        ]
-      },
-      "page": "dex-summary",
-      "width": 1,
-      "rowIndex": 1,
-      "prefix": "",
-      "suffix": "SOL",
-      "variant": "yellow",
-      "icon": "bolt",
-      "trendConfig": {
-        "valueField": "auto_calculate",
-        "label": "vs. previous month"
-      },
-      "createdAt": "2026-02-27T14:15:20.927305",
-      "updatedAt": "2026-02-27T14:15:20.927305",
-      "sqlFile": "monthly_summary"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000013",
-      "title": "Cumulative New Traders By Program",
-      "subtitle": "Cumulative unique new traders for top 10 programs (last 6 months)",
-      "chartType": "line",
-      "order": 9,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "cumulative_traders",
-            "type": "line",
-            "unit": ""
+            "unit": "",
+            "field": "total_txns"
           }
         ],
-        "groupBy": "program_name"
+        "groupBy": ""
       },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T17:02:27.877887",
-      "updatedAt": "2026-02-27T17:02:27.877887",
-      "sqlFile": "daily_cumulative_traders_by_program"
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
     },
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000014",
-      "title": "Daily New Traders By Program",
-      "subtitle": "Daily new unique traders for top 10 programs (last 6 months)",
-      "chartType": "bar",
-      "order": 10,
-      "isStacked": true,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "daily_change",
-            "type": "bar",
-            "unit": ""
-          }
-        ],
-        "groupBy": "program_name"
-      },
+      "id": "a7b8c9d0-7777-4000-8000-000000000011",
       "page": "dex-summary",
-      "createdAt": "2026-02-27T17:02:27.877897",
-      "updatedAt": "2026-02-27T17:02:27.877897",
-      "sqlFile": "daily_cumulative_traders_by_program"
-    },
-    {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000011",
+      "index": 7,
       "title": "Cumulative New Traders By Category",
-      "subtitle": "Cumulative unique new traders by protocol category",
+      "sqlFile": "daily_cumulative_traders_by_category",
+      "subtitle": "Cumulative unique new traders by CPI program category",
       "chartType": "line",
-      "order": 7,
       "isStacked": false,
+      "sql_query": "-- Description: Daily cumulative traders by category\n-- Shows cumulative unique traders for each protocol category\n-- Categories: public_amm, prop_amm, aggregator, launchpad\n-- Backfills days with no new traders using last known cumulative value\n\nWITH program_names AS (\n    SELECT * FROM (VALUES\n        -- Public AMM\n        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),\n        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),\n        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),\n        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),\n        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),\n        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),\n        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),\n        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),\n        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),\n        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),\n        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),\n        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),\n        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),\n        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),\n        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),\n        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),\n        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),\n        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),\n        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),\n        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),\n        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),\n        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),\n        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),\n        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),\n        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),\n        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),\n        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),\n        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),\n        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),\n        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),\n        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),\n        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),\n        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),\n        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),\n        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),\n        \n        -- Prop AMM\n        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),\n        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),\n        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),\n        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),\n        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),\n        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),\n        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),\n        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),\n        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),\n        \n        -- Aggregator\n        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),\n        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),\n        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),\n        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),\n        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),\n        \n        -- Launchpad\n        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),\n        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),\n        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')\n    ) AS t(program, program_name, category)\n),\nnew_traders_by_category AS (\n    SELECT \n        first_trade_date,\n        category,\n        COUNT(*) as new_traders\n    FROM (\n        SELECT \n            COALESCE(pn.category, 'other') as category,\n            t.signer,\n            MIN(t.block_date) as first_trade_date\n        FROM solana.dex_trades t\n        JOIN program_names pn ON t.inner_program = pn.program\n        WHERE t.block_date < CURRENT_DATE\n        GROUP BY COALESCE(pn.category, 'other'), t.signer\n    )\n    GROUP BY first_trade_date, category\n)\n\nSELECT\n    DATE('{month}') as month,\n    category,\n    SUM(new_traders) as monthly_change,\n    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('{month}')) as cumulative_traders\nFROM new_traders_by_category\nWHERE DATE_TRUNC('month', first_trade_date) = DATE('{month}')\nand DATE_TRUNC('month', first_trade_date)>=CURRENT_DATE - INTERVAL '1' YEAR\n  AND first_trade_date < CURRENT_DATE\nGROUP BY category\nORDER BY category\n",
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": "month",
         "yAxis": [
           {
-            "field": "cumulative_traders",
             "type": "line",
-            "unit": ""
+            "unit": "",
+            "field": "cumulative_traders"
           }
         ],
         "groupBy": "category"
       },
-      "page": "dex-summary",
-      "createdAt": "2026-02-27T14:12:09.165982",
-      "updatedAt": "2026-02-27T14:12:09.165982",
-      "sqlFile": "daily_cumulative_traders_by_category"
+      "queryRunConfig": {}
     },
     {
-      "id": "dex-summary-a7b8c9d0-7777-4000-8000-000000000012",
-      "title": "Daily New Traders By Category",
-      "subtitle": "Daily new unique traders added per category",
+      "id": "a7b8c9d0-7777-4000-8000-000000000008",
+      "page": "dex-summary",
+      "index": 10,
+      "title": "Monthly Fees Trend",
+      "sqlFile": "monthly_summary",
+      "subtitle": "Total fees, Jito tips, and priority fees by month (SOL)",
       "chartType": "bar",
-      "order": 8,
-      "isStacked": true,
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
       "dataMapping": {
-        "xAxis": "block_date",
+        "xAxis": "month",
         "yAxis": [
           {
-            "field": "daily_change",
             "type": "bar",
-            "unit": ""
+            "unit": "SOL",
+            "field": "total_fees_sol"
+          },
+          {
+            "type": "line",
+            "unit": "SOL",
+            "field": "total_jito_tips_sol"
+          },
+          {
+            "type": "line",
+            "unit": "SOL",
+            "field": "total_priority_fee_sol"
+          }
+        ],
+        "groupBy": ""
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000012",
+      "page": "dex-summary",
+      "index": 8,
+      "title": "Monthly New Traders By Category",
+      "sqlFile": "daily_cumulative_traders_by_category",
+      "subtitle": "Monthly new unique traders added per category",
+      "chartType": "bar",
+      "isStacked": true,
+      "sql_query": "-- Description: Daily cumulative traders by category\n-- Shows cumulative unique traders for each protocol category\n-- Categories: public_amm, prop_amm, aggregator, launchpad\n-- Backfills days with no new traders using last known cumulative value\n\nWITH program_names AS (\n    SELECT * FROM (VALUES\n        -- Public AMM\n        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),\n        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),\n        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),\n        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),\n        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),\n        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),\n        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),\n        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),\n        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),\n        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),\n        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),\n        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),\n        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),\n        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),\n        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),\n        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),\n        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),\n        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),\n        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),\n        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),\n        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),\n        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),\n        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),\n        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),\n        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),\n        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),\n        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),\n        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),\n        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),\n        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),\n        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),\n        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),\n        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),\n        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),\n        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),\n        \n        -- Prop AMM\n        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),\n        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),\n        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),\n        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),\n        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),\n        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),\n        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),\n        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),\n        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),\n        \n        -- Aggregator\n        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),\n        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),\n        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),\n        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),\n        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),\n        \n        -- Launchpad\n        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),\n        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad'),\n        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad')\n    ) AS t(program, program_name, category)\n),\nnew_traders_by_category AS (\n    SELECT \n        first_trade_date,\n        category,\n        COUNT(*) as new_traders\n    FROM (\n        SELECT \n            COALESCE(pn.category, 'other') as category,\n            t.signer,\n            MIN(t.block_date) as first_trade_date\n        FROM solana.dex_trades t\n        JOIN program_names pn ON t.inner_program = pn.program\n        WHERE t.block_date < CURRENT_DATE\n        GROUP BY COALESCE(pn.category, 'other'), t.signer\n    )\n    GROUP BY first_trade_date, category\n)\n\nSELECT\n    DATE('{month}') as month,\n    category,\n    SUM(new_traders) as monthly_change,\n    SUM(SUM(new_traders)) OVER (PARTITION BY category ORDER BY DATE('{month}')) as cumulative_traders\nFROM new_traders_by_category\nWHERE DATE_TRUNC('month', first_trade_date) = DATE('{month}')\nand DATE_TRUNC('month', first_trade_date)>=CURRENT_DATE - INTERVAL '1' YEAR\n  AND first_trade_date < CURRENT_DATE\nGROUP BY category\nORDER BY category\n",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "monthly_change"
           }
         ],
         "groupBy": "category"
       },
+      "queryRunConfig": {}
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000013",
       "page": "dex-summary",
-      "createdAt": "2026-02-27T14:12:09.165994",
-      "updatedAt": "2026-02-27T14:12:09.165994",
-      "sqlFile": "daily_cumulative_traders_by_category"
+      "index": 9,
+      "title": "Cumulative New Traders By Program",
+      "sqlFile": "daily_cumulative_traders_by_program",
+      "subtitle": "Cumulative unique new traders for top 10 CPI programs",
+      "chartType": "line",
+      "isStacked": false,
+      "sql_query": "-- Description: Daily new traders by top 10 DEX programs (CPI)\n-- Shows daily new unique traders for the top 10 programs (last 6 months)\n\nWITH program_names AS (\n    SELECT * FROM (VALUES\n        -- Public AMM\n        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),\n        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),\n        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),\n        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),\n        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),\n        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),\n        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),\n        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),\n        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),\n        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),\n        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),\n        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),\n        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),\n        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),\n        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),\n        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),\n        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),\n        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),\n        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),\n        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),\n        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),\n        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),\n        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),\n        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),\n        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),\n        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),\n        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),\n        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),\n        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),\n        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),\n        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),\n        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),\n        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),\n        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),\n        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),\n        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),\n        \n        -- Prop AMM\n        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),\n        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),\n        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),\n        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),\n        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),\n        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),\n        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),\n        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),\n        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),\n        \n        -- Aggregator\n        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),\n        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),\n        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),\n        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),\n        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),\n        \n        -- Launchpad\n        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),\n        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')\n    ) AS t(program, program_name, category)\n),\n\nnew_traders_by_program AS (\n    SELECT \n        first_trade_date,\n        t.inner_program,\n        COALESCE(pn.program_name, t.inner_program) as program_name,\n        COUNT(*) as new_traders\n    FROM (\n        SELECT \n            t.inner_program,\n            t.signer,\n            MIN(t.block_date) as first_trade_date\n        FROM solana.dex_trades t\n        WHERE t.block_date < CURRENT_DATE\n        GROUP BY t.inner_program, t.signer\n    ) t\n    LEFT JOIN program_names pn ON t.inner_program = pn.program\n    GROUP BY first_trade_date, t.inner_program, COALESCE(pn.program_name, t.inner_program)\n)\n\nSELECT\n    DATE('{month}') as month,\n    program_name,\n    SUM(new_traders) as monthly_change,\n    SUM(SUM(new_traders)) OVER (PARTITION BY program_name ORDER BY DATE('{month}')) as cumulative_traders\nFROM new_traders_by_program\nWHERE DATE_TRUNC('month', first_trade_date) = DATE('{month}')\n  AND first_trade_date < CURRENT_DATE\nGROUP BY program_name\nORDER BY monthly_change DESC\n",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "type": "line",
+            "unit": "",
+            "field": "cumulative_traders"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "queryRunConfig": {}
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000014",
+      "page": "dex-summary",
+      "index": 10,
+      "title": "Monthly New Traders By Program",
+      "sqlFile": "daily_cumulative_traders_by_program",
+      "subtitle": "Monthly new unique traders for top 10 CPI programs",
+      "chartType": "bar",
+      "isStacked": true,
+      "sql_query": "-- Description: Daily new traders by top 10 DEX programs (CPI)\n-- Shows daily new unique traders for the top 10 programs (last 6 months)\n\nWITH program_names AS (\n    SELECT * FROM (VALUES\n        -- Public AMM\n        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4', 'public_amm'),\n        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM', 'public_amm'),\n        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM', 'public_amm'),\n        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable', 'public_amm'),\n        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab', 'public_amm'),\n        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM', 'public_amm'),\n        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2', 'public_amm'),\n        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC', 'launchpad'),\n        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora', 'public_amm'),\n        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool', 'public_amm'),\n        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix', 'public_amm'),\n        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2', 'public_amm'),\n        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber', 'public_amm'),\n        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals', 'public_amm'),\n        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros', 'public_amm'),\n        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM', 'public_amm'),\n        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity', 'public_amm'),\n        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum', 'public_amm'),\n        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2', 'public_amm'),\n        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap', 'public_amm'),\n        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest', 'public_amm'),\n        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi', 'public_amm'),\n        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable', 'public_amm'),\n        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin', 'public_amm'),\n        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2', 'public_amm'),\n        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam', 'public_amm'),\n        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel', 'public_amm'),\n        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet', 'public_amm'),\n        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal', 'public_amm'),\n        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN', 'public_amm'),\n        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven', 'public_amm'),\n        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit', 'public_amm'),\n        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo', 'public_amm'),\n        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals', 'public_amm'),\n        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind', 'public_amm'),\n        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun', 'public_amm'),\n        \n        -- Prop AMM\n        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi', 'prop_amm'),\n        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi', 'prop_amm'),\n        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ', 'prop_amm'),\n        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2', 'prop_amm'),\n        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi', 'prop_amm'),\n        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV', 'prop_amm'),\n        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2', 'prop_amm'),\n        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer', 'prop_amm'),\n        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi', 'prop_amm'),\n        \n        -- Aggregator\n        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter', 'aggregator'),\n        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1', 'aggregator'),\n        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2', 'aggregator'),\n        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan', 'aggregator'),\n        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow', 'aggregator'),\n        \n        -- Launchpad\n        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM', 'public_amm'),\n        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun', 'launchpad')\n    ) AS t(program, program_name, category)\n),\n\nnew_traders_by_program AS (\n    SELECT \n        first_trade_date,\n        t.inner_program,\n        COALESCE(pn.program_name, t.inner_program) as program_name,\n        COUNT(*) as new_traders\n    FROM (\n        SELECT \n            t.inner_program,\n            t.signer,\n            MIN(t.block_date) as first_trade_date\n        FROM solana.dex_trades t\n        WHERE t.block_date < CURRENT_DATE\n        GROUP BY t.inner_program, t.signer\n    ) t\n    LEFT JOIN program_names pn ON t.inner_program = pn.program\n    GROUP BY first_trade_date, t.inner_program, COALESCE(pn.program_name, t.inner_program)\n)\n\nSELECT\n    DATE('{month}') as month,\n    program_name,\n    SUM(new_traders) as monthly_change,\n    SUM(SUM(new_traders)) OVER (PARTITION BY program_name ORDER BY DATE('{month}')) as cumulative_traders\nFROM new_traders_by_program\nWHERE DATE_TRUNC('month', first_trade_date) = DATE('{month}')\n  AND first_trade_date < CURRENT_DATE\nGROUP BY program_name\nORDER BY monthly_change DESC\n",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "monthly_change"
+          }
+        ],
+        "groupBy": "program_name"
+      },
+      "queryRunConfig": {}
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000005",
+      "page": "dex-summary",
+      "index": 7,
+      "title": "Monthly Volume Trend",
+      "sqlFile": "monthly_summary",
+      "subtitle": "Total DEX trading volume by month",
+      "chartType": "bar",
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "$",
+            "field": "total_volume_usd"
+          }
+        ],
+        "groupBy": ""
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
+    },
+    {
+      "id": "a7b8c9d0-7777-4000-8000-000000000006",
+      "page": "dex-summary",
+      "index": 8,
+      "title": "Monthly Traders Trend",
+      "sqlFile": "monthly_summary",
+      "subtitle": "Total unique traders by month",
+      "chartType": "bar",
+      "isStacked": false,
+      "sql_query": "-- Description: Monthly summary metrics\n-- Shows total fees, traders, txns, volume, Jito tips, and priority fees by month\n\n/*\nLogic:\n- Groups metrics by month for last 2 months\n- Fees in SOL\n- Volume calculation priority: SOL \u2192 stablecoin \u2192 token price\n- Deduplicates by block_slot + tx_index for multi-hop transactions\n*/\n\nWITH excluded_pools AS (\n    SELECT DISTINCT pool_address\n    FROM orca.whirlpool_config\n    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'\n),\n\nstablecoins AS (\n    SELECT mint FROM (VALUES \n        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),\n        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),\n        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),\n        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),\n        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),\n        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),\n        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),\n        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),\n        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),\n        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),\n        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),\n        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),\n        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),\n        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),\n        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),\n        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),\n        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),\n        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),\n        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),\n        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')\n    ) AS t(mint)\n),\ntx_level_metrics AS (\n    SELECT \n        t.block_date,\n        t.block_slot,\n        t.tx_index,\n        t.signer,\n        t.txn_fee as fee,\n        t.priority_fee,\n        t.jito_tips,\n        SUM(\n            CASE \n                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'\n                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)\n                WHEN sb.mint IS NOT NULL\n                THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n                WHEN ss.mint IS NOT NULL\n                THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)\n                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)\n            END\n        ) as volume_usd\n    FROM solana.dex_trades t\n    LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint\n    LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint\n    LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'\n        AND DATE_TRUNC('minute', t.block_time) = psol.minute\n    LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint\n        AND DATE_TRUNC('minute', t.block_time) = pb.minute\n        AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint\n        AND DATE_TRUNC('minute', t.block_time) = ps.minute\n        AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'\n    WHERE DATE_TRUNC('month', t.block_date) = DATE('{month}')\n      AND t.block_date < CURRENT_DATE\n      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)\n    GROUP BY t.block_date, t.block_slot, t.tx_index, t.signer, t.txn_fee, t.priority_fee, t.jito_tips\n)\n\nSELECT \n    DATE('{month}') as month,\n    COUNT(DISTINCT signer) as total_traders,\n    COUNT(DISTINCT (block_slot, tx_index)) as total_txns,\n    ROUND(SUM(fee + priority_fee + jito_tips), 4) as total_fees_sol,\n    ROUND(SUM(jito_tips), 4) as total_jito_tips_sol,\n    ROUND(SUM(priority_fee), 4) as total_priority_fee_sol,\n    ROUND(SUM(volume_usd), 2) as total_volume_usd\nFROM tx_level_metrics\n",
+      "dataMapping": {
+        "xAxis": "month",
+        "yAxis": [
+          {
+            "type": "bar",
+            "unit": "",
+            "field": "total_traders"
+          }
+        ],
+        "groupBy": ""
+      },
+      "queryRunConfig": {
+        "isCumulative": false,
+        "isIncremental": false,
+        "incrementalPeriod": "month"
+      }
     }
   ]
 }
