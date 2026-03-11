@@ -1,4 +1,3 @@
-nohup: ignoring input
 ======================================================================
 🚀 TRINO WORKER STARTED
 ======================================================================
@@ -9,586 +8,189 @@ nohup: ignoring input
 ======================================================================
 
 
-🔄 Processing job #418 (backfill) - attempt 1/3
-   SQL hash: f54ee269097234f32a7eb2acd04e70f9
-   📅 Backfill (resume): existing 8223 rows, 0 gaps, max_date=2026-03-08
-   📅 Fetching 2026-03-08 → 2026-03-11...
-   ✅ Backfill (resume) complete: +8223 rows, total 8223 rows
-✅ Job #418 SUCCESSFUL: 8223 rows
-      ℹ️  No cumulative fields detected
-
-🔄 Processing job #419 (backfill) - attempt 1/3
-   SQL hash: 19cf66aad24dfcee79c0bba442912735
-   📅 Backfill (full): 2026-03-11 → 2025-01-01
-      Fetching month 2026-03-01 (1/15)... ✅ 10 rows
-      💾 Checkpoint: 1 months processed
-      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
-      💾 Checkpoint: 2 months processed
-      Fetching month 2026-01-01 (3/15)... ✅ 31 rows
-      💾 Checkpoint: 3 months processed
-      Fetching month 2025-12-01 (4/15)... ✅ 31 rows
-      💾 Checkpoint: 4 months processed
-      Fetching month 2025-11-01 (5/15)... ✅ 30 rows
-      💾 Checkpoint: 5 months processed
-      Fetching month 2025-10-01 (6/15)... ✅ 31 rows
-      💾 Checkpoint: 6 months processed
-      Fetching month 2025-09-01 (7/15)... ✅ 30 rows
-      💾 Checkpoint: 7 months processed
-      Fetching month 2025-08-01 (8/15)... ✅ 31 rows
-      💾 Checkpoint: 8 months processed
-      Fetching month 2025-07-01 (9/15)... ✅ 31 rows
-      💾 Checkpoint: 9 months processed
-      Fetching month 2025-06-01 (10/15)... ⚠️ 0 rows
-      💾 Checkpoint: 10 months processed
-      Fetching month 2025-05-01 (11/15)... ⚠️ 0 rows
-      💾 Checkpoint: 11 months processed
-      Fetching month 2025-04-01 (12/15)... ⚠️ 0 rows
-      💾 Checkpoint: 12 months processed
-      Fetching month 2025-03-01 (13/15)... ⚠️ 0 rows
-      💾 Checkpoint: 13 months processed
-      Fetching month 2025-02-01 (14/15)... ⚠️ 0 rows
-      💾 Checkpoint: 14 months processed
-      Fetching month 2025-01-01 (15/15)... ⚠️ 0 rows
-      💾 Checkpoint: 15 months processed
-   ✅ Backfill (full) complete: 253 total rows
-✅ Job #419 SUCCESSFUL: 253 rows
-      ℹ️  No cumulative fields detected
-
-🔄 Processing job #420 (backfill) - attempt 1/3
+🔄 Processing job #420 (backfill) - attempt 2/3
    SQL hash: 36b6da8e6a70243b6662cd1941273715
-   📅 Backfill (full): 2026-03-11 → 2025-01-01
-      Fetching month 2026-03-01 (1/15)... ✅ 10 rows
-      💾 Checkpoint: 1 months processed
-      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
-      💾 Checkpoint: 2 months processed
-      Fetching month 2026-01-01 (3/15)... ✅ 31 rows
-      💾 Checkpoint: 3 months processed
-      Fetching month 2025-12-01 (4/15)... ✅ 31 rows
-      💾 Checkpoint: 4 months processed
-      Fetching month 2025-11-01 (5/15)... ❌ Error: Execution failed on sql '-- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+   📅 Backfill (resume): existing 100 rows (4 months), 11 missing months
+   🔧 Filling 11 missing months...
+      Fetching 2025-11-01 (1/11)... ✅ 30 rows 💾
+      Fetching 2025-10-01 (2/11)... ✅ 31 rows 💾
+      Fetching 2025-09-01 (3/11)... ✅ 30 rows 💾
+      Fetching 2025-08-01 (4/11)... ✅ 31 rows 💾
+      Fetching 2025-07-01 (5/11)... ✅ 31 rows 💾
+      Fetching 2025-06-01 (6/11)... ⚠️ 0 rows
+      Fetching 2025-05-01 (7/11)... ⚠️ 0 rows
+      Fetching 2025-04-01 (8/11)... ⚠️ 0 rows
+      Fetching 2025-03-01 (9/11)... ⚠️ 0 rows
+      Fetching 2025-02-01 (10/11)... ⚠️ 0 rows
+      Fetching 2025-01-01 (11/11)... ⚠️ 0 rows
+   ⚠️  No new data to merge
+✅ Job #420 SUCCESSFUL: 253 rows
+      ℹ️  No cumulative fields detected
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet (offset=4, length=107980379): Failed to open S3 file: s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet", query_id=20260311_122727_03078_tvaaa)
-[SQL: -- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-]
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-❌ Trino query error: Execution failed on sql '-- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet (offset=4, length=107980379): Failed to open S3 file: s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet", query_id=20260311_122727_03078_tvaaa)
-[SQL: -- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-]
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-   ❌ Error during processing: Execution failed on sql '-- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet (offset=4, length=107980379): Failed to open S3 file: s3://iceberg-warehouse/solana/tx_metadata/data/block_date=2025-11-23/data-00000-32ad3ae3-ee2e-4ed7-ae2e-9fd91f30f906.parquet", query_id=20260311_122727_03078_tvaaa)
-[SQL: -- Description: Top 1%, 5%, 10% fee contribution analysis
--- Based on successful non-vote transactions only (solana.tx_metadata)
--- Shows fee concentration by top fee payers with txn counts
--- Uses approx_percentile for thresholds (avoids expensive window sort)
--- USD conversion via solana.token_prices_1m
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-with daily_thresholds as (
-    select
-        block_date,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.99) as p99_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.95) as p95_fee,
-        approx_percentile(fee + priority_fee + coalesce(jito_tips, 0), 0.90) as p90_fee
-    from solana.tx_metadata
-    where DATE_TRUNC('month', block_date) = DATE('2025-11-01')
-      and block_date < current_date
-      and success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-bucket_metrics as (
-    select
-        t.block_date,
-        -- totals
-        count(1) as total_txn_count,
-        count(distinct t.signer) as total_fee_payers,
-        sum(t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) / 1e9 as total_fee_sol,
-        -- top 1% (fee >= 99th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top1_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then 1 else 0 end) as top1_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p99_fee then t.signer end) as top1_fee_payers,
-        -- top 5% (fee >= 95th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top5_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then 1 else 0 end) as top5_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p95_fee then t.signer end) as top5_fee_payers,
-        -- top 10% (fee >= 90th percentile)
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) else 0 end) / 1e9 as top10_fee_sol,
-        sum(case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then 1 else 0 end) as top10_txn_count,
-        count(distinct case when (t.fee + t.priority_fee + coalesce(t.jito_tips, 0)) >= d.p90_fee then t.signer end) as top10_fee_payers
-    from solana.tx_metadata t
-    join daily_thresholds d on t.block_date = d.block_date
-    where DATE_TRUNC('month', t.block_date) = DATE('2025-11-01')
-      and t.block_date < current_date
-      and t.success = true
-    group by 1
-),
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-sol_price as (
-    select
-        date_trunc('day', minute) as price_date,
-        avg(price_in_usd) as avg_sol_price
-    from solana.token_prices_1m
-    where mint = 'So11111111111111111111111111111111111111112'
-      and DATE_TRUNC('month', minute) = DATE('2025-11-01')
-      and minute < current_date
-    group by 1
-)
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
-select
-    b.block_date,
-    -- totals
-    b.total_txn_count,
-    b.total_fee_payers,
-    round(b.total_fee_sol, 4) as total_fee_sol,
-    round(b.total_fee_sol * coalesce(p.avg_sol_price, 0), 2) as total_fee_usd,
-    -- top 1%
-    b.top1_txn_count,
-    b.top1_fee_payers,
-    round(b.top1_fee_sol, 4) as top1_fee_sol,
-    round(b.top1_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top1_fee_usd,
-    round(b.top1_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top1_fee_share_pct,
-    -- top 5%
-    b.top5_txn_count,
-    b.top5_fee_payers,
-    round(b.top5_fee_sol, 4) as top5_fee_sol,
-    round(b.top5_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top5_fee_usd,
-    round(b.top5_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top5_fee_share_pct,
-    -- top 10%
-    b.top10_txn_count,
-    b.top10_fee_payers,
-    round(b.top10_fee_sol, 4) as top10_fee_sol,
-    round(b.top10_fee_sol * coalesce(p.avg_sol_price, 0), 2) as top10_fee_usd,
-    round(b.top10_fee_sol * 100.0 / nullif(b.total_fee_sol, 0), 2) as top10_fee_share_pct
-from bucket_metrics b
-left join sol_price p on b.block_date = p.price_date
-order by 1 desc
-]
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-   ℹ️  Partial data saved via checkpoints: 100 rows
-⚠️  Job #420 PARTIALLY SUCCESSFUL: 100 rows saved
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
 
 🔄 Processing job #421 (backfill) - attempt 1/3
    SQL hash: 03832e0c59f62cc54477392408776542
-   📅 Backfill (full): 2026-03-11 → 2025-01-01
-      Fetching 2026-03-11... 219 rows
-      Fetching 2026-03-10...
+      Running static query (no date placeholders)... 219 rows
+   ✅ Static query complete: 219 rows saved
+✅ Job #421 SUCCESSFUL: 219 rows
+      ⚠️  No date field found
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 2 jobs so far)
+
+🔄 Processing job #422 (backfill) - attempt 1/3
+   SQL hash: f4acf7bdbac1a9bb6cd6033a1365cfe0
+      Running static query (no date placeholders)... 219 rows
+   ✅ Static query complete: 219 rows saved
+✅ Job #422 SUCCESSFUL: 219 rows
+      ⚠️  No date field found
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 3 jobs so far)

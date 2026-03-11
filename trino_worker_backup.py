@@ -23,7 +23,6 @@ import pandas as pd
 import numpy as np
 from calculate_percentage_fields import calculate_percentage_fields
 from calculate_cumulative_fields import calculate_cumulative_fields
-from static_query_runner import is_static_query, run_static_query
 
 # Load environment variables from .env file
 env_file = Path('/root/state_of_solana/.env')
@@ -788,23 +787,41 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 # Raise exception with partial status info
                 raise PartialCompletionException(f"Partial completion: {saved_count} rows saved", saved_count)
         else:
-            # Daily queries: iterate day-by-day
-            d = date.today()
-            days_processed = 0
-
-            while d >= BACKFILL_START:
+            # Check if query has NO date placeholders at all (static/epoch-based queries)
+            has_date_placeholder = '{date}' in sql_query or '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query
+            
+            if not has_date_placeholder:
+                # Static query: run once without date substitution
+                print(f"      Running static query (no date placeholders)...", end='', flush=True)
                 try:
-                    print(f"      Fetching {d}...", end='', flush=True)
-                    data = run_trino_query(sql_query, d, d, trino_client)
-                    all_new_data.extend(data)
-                    print(f" {len(data)} rows")
+                    df = trino_client.query(sql_query)
+                    if df is not None and not df.empty:
+                        records = df.to_dict('records')
+                        all_new_data = convert_to_json_safe(records)
+                        print(f" {len(all_new_data)} rows")
+                    else:
+                        print(" 0 rows")
                 except Exception as e:
                     print(f" ❌ {e}")
                     days_failed += 1
+            else:
+                # Daily queries: iterate day-by-day
+                d = date.today()
+                days_processed = 0
 
-                days_processed += 1
+                while d >= BACKFILL_START:
+                    try:
+                        print(f"      Fetching {d}...", end='', flush=True)
+                        data = run_trino_query(sql_query, d, d, trino_client)
+                        all_new_data.extend(data)
+                        print(f" {len(data)} rows")
+                    except Exception as e:
+                        print(f" ❌ {e}")
+                        days_failed += 1
+                    
+                    days_processed += 1
 
-                if days_processed % 30 == 0:
+                    if days_processed % 30 == 0:
                         # Checkpoint: merge existing + new data with deduplication
                         cur = pg.cursor()
                         
@@ -879,7 +896,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                         # Clear all_new_data after checkpoint to avoid re-saving same data
                         all_new_data = []
 
-                d -= timedelta(days=1)
+                    d -= timedelta(days=1)
             
             # Final save: any remaining data not yet checkpointed
             if all_new_data:
@@ -1242,10 +1259,7 @@ def process_job(pg, job, trino_client):
         sql_query = row[0]
         
         # Process based on job type
-        # Static queries (no date placeholders) are handled separately regardless of job type
-        if is_static_query(sql_query) and job_type in ('backfill', 'full_refresh'):
-            rows_processed = run_static_query(pg, sql_hash, sql_query, trino_client)
-        elif job_type == 'backfill':
+        if job_type == 'backfill':
             rows_processed = process_backfill(pg, sql_hash, sql_query, trino_client)
         elif job_type == 'full_refresh':
             rows_processed = process_full_refresh(pg, sql_hash, sql_query, trino_client)
