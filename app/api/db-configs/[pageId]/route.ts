@@ -4,11 +4,11 @@ import { sanitizeChartConfigs, isAdminRequest } from '@/lib/chart-sanitizer';
 
 // PostgreSQL connection pool
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'trino_charts',
-  user: 'root',
-  password: 'root',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  database: process.env.DB_NAME || 'trino_charts',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root',
 });
 
 export async function GET(
@@ -130,9 +130,9 @@ export async function GET(
       console.log(`   First chart: ${charts[0]?.id}, data rows: ${charts[0]?.data?.length}`);
       
       const pageConfig = {
-        charts,
-        counters: [], // TODO: Add counter support later
-        tables: []    // TODO: Add table support later
+        charts: charts.filter((c: any) => c.chartType !== 'table'),
+        counters: [],
+        tables: charts.filter((c: any) => c.chartType === 'table')
       };
       
       // Sanitize chart data for public consumption (unless admin request)

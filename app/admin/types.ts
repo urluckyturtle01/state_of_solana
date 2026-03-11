@@ -260,6 +260,7 @@ export interface TableConfig {
   orientation?: TableOrientation; // Table layout orientation (defaults to vertical)
   width?: number; // 1, 2, or 3 columns (defaults to 3 for full width)
   refreshInterval?: number; // Auto-refresh interval in seconds
+  data?: any[]; // Pre-loaded data passed from /api/db-configs/[pageId]
   additionalOptions?: {
     filters?: {
       timeFilter?: FilterOption;

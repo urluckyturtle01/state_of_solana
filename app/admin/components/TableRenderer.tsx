@@ -617,7 +617,7 @@ const TableRenderer: React.FC<TableRendererProps> = ({
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!tableConfig.enableSearch || !searchTerm.trim()) {
+    if (tableConfig.enableSearch === false || !searchTerm.trim()) {
       return processedData;
     }
     
@@ -880,11 +880,18 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     }
   }, [tableConfig.apiEndpoint, tableConfig.apiKey, isLoading, activeFilters, autoRetryIntervalId]);
 
-  // Fetch data on component mount and when dependencies change
+  // Use data from tableConfig.data (passed from /api/db-configs/[pageId]) or fetch from API
   useEffect(() => {
-    console.log('🚀 TableRenderer mounted, calling fetchData for:', tableConfig.id);
-    fetchData(0);
-  }, [fetchData, tableConfig.id]);
+    if (tableConfig.data && Array.isArray(tableConfig.data) && tableConfig.data.length > 0) {
+      console.log(`✅ TableRenderer: Using data from tableConfig for: ${tableConfig.id} (${tableConfig.data.length} rows)`);
+      setData(tableConfig.data);
+      setLoading(false);
+      setError(null);
+    } else {
+      console.log('🚀 TableRenderer mounted, calling fetchData for:', tableConfig.id);
+      fetchData(0);
+    }
+  }, [fetchData, tableConfig.id, tableConfig.data]);
 
   // Function to handle manual retry
   const handleRetry = useCallback(() => {
@@ -940,20 +947,8 @@ const TableRenderer: React.FC<TableRendererProps> = ({
     }
   }, [processedData, processedColumns, isDownloading, tableConfig.title]);
 
-  // Fetch data from API when component mounts or when retryCount changes
-  useEffect(() => {
-    fetchData(0);
-    
-    // Set up refresh interval if specified
-    let intervalId: NodeJS.Timeout | null = null;
-    if (tableConfig.refreshInterval && tableConfig.refreshInterval > 0) {
-      intervalId = setInterval(() => fetchData(0), tableConfig.refreshInterval * 1000);
-    }
-    
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [tableConfig.refreshInterval, fetchData, retryCount]);
+  // Note: data is now provided via tableConfig.data from /api/db-configs/[pageId]
+  // fetchData is only called if tableConfig.data is not available (fallback)
 
   // Convert TableConfig columns to DataTable Column format
   const dataTableColumns: Column<any>[] = useMemo(() => {
@@ -1149,11 +1144,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       <div className="h-px bg-gray-900 w-full"></div>
       
       {/* Search Bar and Filters - Combined in one row */}
-      {(tableConfig.enableSearch || tableConfig.additionalOptions?.filters) && (
+      {(tableConfig.enableSearch !== false || tableConfig.additionalOptions?.filters) && (
         <>
           <div className="flex items-center pl-0 py-2 overflow-visible relative gap-3">
-            {/* Search Bar */}
-            {tableConfig.enableSearch && (
+            {/* Search Bar - shown by default unless explicitly disabled */}
+            {tableConfig.enableSearch !== false && (
               <div className="relative">
                 <input
                   type="text"
