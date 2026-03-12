@@ -211,22 +211,12 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                 if 'trendConfig' in chart_dict:
                     json_config['trendConfig'] = chart_dict['trendConfig']
                 else:
-                    # Default trendConfig for counters
-                    # Calculate comparison month name based on rowIndex
-                    # Logic: rowIndex=1 means show 1 month ago data (Feb if today is March)
-                    #        Compare to 1 month before that (Jan)
+                    # today - 2 months = comparison month (always dynamic)
                     from datetime import datetime
                     from dateutil.relativedelta import relativedelta
-                    
-                    row_index = chart_dict.get('rowIndex', 1)
-                    current_date = datetime.now()
-                    
-                    # Display month = current month - rowIndex months
-                    display_month = current_date - relativedelta(months=row_index)
-                    # Comparison month = 1 month before display month
-                    comparison_month = display_month - relativedelta(months=1)
-                    comparison_month_name = comparison_month.strftime('%b')
-                    
+
+                    comparison_month_name = (datetime.now() - relativedelta(months=2)).strftime('%b')
+
                     json_config['trendConfig'] = {
                         'valueField': 'auto_calculate',
                         'label': f'vs. {comparison_month_name}'
