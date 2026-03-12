@@ -11,11 +11,8 @@ interface DexLayoutProps {
 
 export default function DexLayout({ children }: DexLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  // /dex/summary -> summary, /dex/tvl -> tvl, etc.
-  const activeTab = pathname.split('/')[2] || 'summary';
-  
+  const activeTab = pathname.split('/')[2] || "summary";
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -24,4 +21,4 @@ export default function DexLayout({ children }: DexLayoutProps) {
       </div>
     </Layout>
   );
-} 
+}

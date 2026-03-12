@@ -11,12 +11,8 @@ interface AggregatorsLayoutProps {
 
 export default function AggregatorsLayout({ children }: AggregatorsLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  // /aggregators -> summary, /aggregators/traders -> traders, etc.
-  const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "summary";
-  
+  const activeTab = pathname.split('/')[2] || "summary";
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -25,4 +21,4 @@ export default function AggregatorsLayout({ children }: AggregatorsLayoutProps) 
       </div>
     </Layout>
   );
-} 
+}

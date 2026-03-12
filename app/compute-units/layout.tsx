@@ -11,11 +11,8 @@ interface ComputeUnitsLayoutProps {
 
 export default function ComputeUnitsLayout({ children }: ComputeUnitsLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'transaction-bytes';
-  
+  const activeTab = pathname.split('/')[2] || "capacity";
+
   return (
     <Layout>
       <div className="space-y-6">

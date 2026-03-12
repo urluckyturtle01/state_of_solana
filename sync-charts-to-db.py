@@ -317,26 +317,9 @@ def sync_charts_to_db():
     
     base_path = Path('/root/tl-reserach-tool-sqls')
     
-    # Define categories to process with explicit folder lists.
-    # We don't auto-discover top-level categories; everything is declared here.
-    categories_to_process = {
-        'dex-trades': [
-            'summary',
-            'prop_amm',
-            'compute',
-            'network_fees',
-            'tokens',
-            'traders',
-            'volume',
-            'aggregators',
-            'tvl',
-        ],
-        'rev': [
-            'cost_and_capacity',
-            'issuance_and_burn',
-            'total_economic_value',
-        ]
-    }
+    # Load categories from chart_categories.py
+    from chart_categories import CHART_CATEGORIES
+    categories_to_process = CHART_CATEGORIES
     
     # Process each category
     for category, folders in categories_to_process.items():

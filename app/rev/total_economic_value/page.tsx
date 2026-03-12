@@ -9,14 +9,14 @@ const ChartLoading = () => (
   </div>
 );
 
-const structuredData = generateStructuredData('/aggregators/traders');
+const structuredData = generateStructuredData('/rev/total_economic_value');
 
-export default function AggregatorsTradersPage() {
+export default function RevTotalEconomicValuePage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer
-          pageId="aggregators-traders"
+          pageId="rev-total-economic-value"
           enableCaching={true}
         />
       </Suspense>
@@ -24,4 +24,4 @@ export default function AggregatorsTradersPage() {
   );
 }
 
-export const metadata = generateNextMetadata('/aggregators/traders');
+export const metadata = generateNextMetadata('/rev/total_economic_value');

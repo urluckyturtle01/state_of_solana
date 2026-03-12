@@ -1,21 +1,27 @@
 import { generateNextMetadata, generateStructuredData } from '../../seo-metadata';
 import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
+import PrettyLoader from "@/app/components/shared/PrettyLoader";
 
-// SEO Structured Data
+const ChartLoading = () => (
+  <div className="w-full h-[500px] flex items-center justify-center">
+    <PrettyLoader size="sm" />
+  </div>
+);
+
 const structuredData = generateStructuredData('/dex/tvl');
 
-export default function TvlPage() {
+export default function DexTvlPage() {
   return (
-    <div className="space-y-6">
-      
-        <EnhancedDashboardRenderer 
-          pageId="dex-tvl" 
+    <div className="space-y-4">
+      <Suspense fallback={<ChartLoading />}>
+        <EnhancedDashboardRenderer
+          pageId="dex-tvl"
           enableCaching={true}
         />
-      
+      </Suspense>
     </div>
   );
-} 
+}
 
 export const metadata = generateNextMetadata('/dex/tvl');

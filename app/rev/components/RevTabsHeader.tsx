@@ -6,36 +6,35 @@ interface RevTabsHeaderProps {
   activeTab?: string;
 }
 
-export default function RevTabsHeader({ activeTab = "overview" }: RevTabsHeaderProps) {
+export default function RevTabsHeader({ activeTab = "cost_and_capacity" }: RevTabsHeaderProps) {
   const tabs: Tab[] = [
-    
-    { 
-      name: "Cost & Capacity", 
-      path: "/rev/cost-capacity",
-      key: "cost-capacity",
-      icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+    {
+      name: "Cost And Capacity",
+      path: "/rev/cost_and_capacity",
+      key: "cost_and_capacity",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     },
-    { 
-      name: "Issuance & Burn", 
-      path: "/rev/issuance-burn",
-      key: "issuance-burn",
-      icon: "M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
+    {
+      name: "Issuance And Burn",
+      path: "/rev/issuance_and_burn",
+      key: "issuance_and_burn",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     },
-    { 
-      name: "Total Economic Value", 
-      path: "/rev/total-economic-value",
-      key: "total-economic-value",
-      icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+    {
+      name: "Total Economic Value",
+      path: "/rev/total_economic_value",
+      key: "total_economic_value",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     }
   ];
-  
+
   return (
-    <TabsNavigation 
-      tabs={tabs} 
+    <TabsNavigation
+      tabs={tabs}
       activeTab={activeTab}
       title="REV"
       description="Tracking Solana Network Revenue and Economic Activity"
       showDivider={true}
     />
   );
-} 
+}

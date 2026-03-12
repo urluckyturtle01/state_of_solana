@@ -11,12 +11,8 @@ interface RevLayoutProps {
 
 export default function RevLayout({ children }: RevLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  // /rev -> overview, /rev/by-protocol -> by-protocol, etc.
-  const pathSegments = pathname.split('/');
-  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "cost-capacity";
-  
+  const activeTab = pathname.split('/')[2] || "cost_and_capacity";
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -25,4 +21,4 @@ export default function RevLayout({ children }: RevLayoutProps) {
       </div>
     </Layout>
   );
-} 
+}

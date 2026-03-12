@@ -11,13 +11,8 @@ interface StablecoinsLayoutProps {
 
 export default function StablecoinsLayout({ children }: StablecoinsLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  // /stablecoins -> overview, /stablecoins/supply -> supply, etc.
-  const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'summary';
-  //const activeTab = pathSegments.length > 2 ? pathSegments[2] : "overview";
-  
+  const activeTab = pathname.split('/')[2] || "dex_activity";
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -26,4 +21,4 @@ export default function StablecoinsLayout({ children }: StablecoinsLayoutProps) 
       </div>
     </Layout>
   );
-} 
+}
