@@ -485,17 +485,27 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   
   // 🆕 For database-backed pages, load from PostgreSQL database
   const dbBackedPages = [
+    'aggregators-summary',
+    'aggregators-traders',
+    'dex-aggregators',
     'dex-compute',
-    'dex-traders',
-    'dex-summary',
     'dex-network-fees',
     'dex-prop-amm',
+    'dex-summary',
     'dex-tokens',
-    'dex-volume',
+    'dex-traders',
     'dex-tvl',
+    'dex-volume',
     'rev-cost-and-capacity',
     'rev-issuance-and-burn',
     'rev-total-economic-value',
+    'stablecoins-dex-activity',
+    'stablecoins-mint-burns',
+    'stablecoins-summary',
+    'stablecoins-transfers',
+    'wrapped-btc-dex-activity',
+    'wrapped-btc-summary',
+    'wrapped-btc-transfers',
   ];
   if (dbBackedPages.includes(pageId)) {
     try {
@@ -1535,18 +1545,28 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
 
     // For DB-backed pages, load tables from /api/db-configs/[pageId] (includes data)
     const dbBackedPages = [
-      'dex-compute',
-      'dex-traders',
-      'dex-summary',
-      'dex-network-fees',
-      'dex-prop-amm',
-      'dex-tokens',
-      'dex-volume',
-      'dex-tvl',
-      'rev-cost-and-capacity',
-      'rev-issuance-and-burn',
-      'rev-total-economic-value',
-    ];
+    'aggregators-summary',
+    'aggregators-traders',
+    'dex-aggregators',
+    'dex-compute',
+    'dex-network-fees',
+    'dex-prop-amm',
+    'dex-summary',
+    'dex-tokens',
+    'dex-traders',
+    'dex-tvl',
+    'dex-volume',
+    'rev-cost-and-capacity',
+    'rev-issuance-and-burn',
+    'rev-total-economic-value',
+    'stablecoins-dex-activity',
+    'stablecoins-mint-burns',
+    'stablecoins-summary',
+    'stablecoins-transfers',
+    'wrapped-btc-dex-activity',
+    'wrapped-btc-summary',
+    'wrapped-btc-transfers',
+  ];
     if (dbBackedPages.includes(pageId)) {
       try {
         const baseUrl = typeof window !== 'undefined'

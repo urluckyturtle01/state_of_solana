@@ -7,7 +7,7 @@ export default function DexIndexPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/dex/summary");
+    router.replace("/dex/aggregators");
   }, [router]);
 
   return (

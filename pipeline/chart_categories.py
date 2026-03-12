@@ -5,21 +5,36 @@
 
 CHART_CATEGORIES = {
     'dex-trades': [
-        'summary',
-        'prop_amm',
+        'aggregators',
         'compute',
         'network_fees',
+        'prop_amm',
+        'summary',
         'tokens',
         'traders',
-        'volume',
-        'aggregators',
         'tvl',
+        'volume',
     ],
     'rev': [
         'cost_and_capacity',
         'issuance_and_burn',
         'total_economic_value',
-    ]
+    ],
+    'Aggregators': [
+        'summary',
+        'traders',
+    ],
+    'stablecoins': [
+        'dex_activity',
+        'mint_burns',
+        'summary',
+        'transfers',
+    ],
+    'wrapped_btc': [
+        'dex_activity',
+        'summary',
+        'transfers',
+    ],
 }
 
 # Maps SQL repo category name → app folder name

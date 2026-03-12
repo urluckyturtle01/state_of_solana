@@ -317,7 +317,8 @@ def sync_charts_to_db():
     
     base_path = Path('/root/tl-reserach-tool-sqls')
     
-    # Load categories from chart_categories.py
+    # Load categories from chart_categories.py (same pipeline/ folder)
+    sys.path.insert(0, str(Path(__file__).parent))
     from chart_categories import CHART_CATEGORIES
     categories_to_process = CHART_CATEGORIES
     

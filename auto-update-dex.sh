@@ -22,7 +22,7 @@ echo ""
 # Directories
 SQL_REPO_DIR="/root/tl-reserach-tool-sqls"
 PROJECT_DIR="/root/state_of_solana"
-PYTHON_SCRIPT="$PROJECT_DIR/sync-charts-to-db.py"
+PYTHON_SCRIPT="$PROJECT_DIR/pipeline/sync-charts-to-db.py"
 DATA_DIR="$PROJECT_DIR/public/temp/chart-data"
 CONFIG_DIR="$PROJECT_DIR/server/chart-configs"
 

@@ -33,6 +33,7 @@ from pathlib import Path
 
 SQL_REPO  = Path('/root/tl-reserach-tool-sqls')
 APP_ROOT  = Path('/root/state_of_solana/app')
+UTILS_TS  = Path('/root/state_of_solana/app/admin/utils.ts')
 DEFAULT_ICON = "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -84,6 +85,26 @@ def read_metrics_md(category: str) -> tuple[str, str]:
             description = stripped
             break
     return title, description
+
+
+def update_db_backed_pages(all_page_ids: list[str]):
+    """Replace both dbBackedPages arrays in app/admin/utils.ts with the full list."""
+    import re
+    content = UTILS_TS.read_text()
+    ids_str = '\n'.join(f"    '{pid}'," for pid in sorted(all_page_ids))
+    new_block = f"const dbBackedPages = [\n{ids_str}\n  ];"
+
+    # Replace every occurrence of  const dbBackedPages = [ ... ];
+    updated = re.sub(
+        r'const dbBackedPages = \[[\s\S]*?\];',
+        new_block,
+        content
+    )
+    if updated == content:
+        print(f"   ✔  unchanged: app/admin/utils.ts (dbBackedPages)")
+        return
+    UTILS_TS.write_text(updated)
+    print(f"   ✏️  wrote:     app/admin/utils.ts (dbBackedPages — {len(all_page_ids)} pages)")
 
 
 def write_if_changed(path: Path, content: str):
@@ -254,6 +275,8 @@ def main():
     print("🏗️  SCAFFOLD SECTIONS")
     print("=" * 70 + "\n")
 
+    all_page_ids = []
+
     for category, folders in CHART_CATEGORIES.items():
         section = app_folder(category, CATEGORY_APP_FOLDER)
 
@@ -287,8 +310,13 @@ def main():
             pid = page_id(category, folder, section)
             sub_page_path = section_dir / folder / 'page.tsx'
             write_if_changed(sub_page_path, sub_page_tsx(section, folder, pid))
+            all_page_ids.append(pid)
 
         print()
+
+    # ── Update dbBackedPages in app/admin/utils.ts ────────────────────────
+    update_db_backed_pages(all_page_ids)
+    print()
 
     print("=" * 70)
     print("✅ SCAFFOLD COMPLETE")
