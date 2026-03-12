@@ -11,7 +11,7 @@ interface DexLayoutProps {
 
 export default function DexLayout({ children }: DexLayoutProps) {
   const pathname = usePathname();
-  const activeTab = pathname.split('/')[2] || "aggregators";
+  const activeTab = pathname.split('/')[2] || "summary";
 
   return (
     <Layout>

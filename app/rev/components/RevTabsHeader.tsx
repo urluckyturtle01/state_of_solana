@@ -33,7 +33,7 @@ export default function RevTabsHeader({ activeTab = "cost_and_capacity" }: RevTa
       tabs={tabs}
       activeTab={activeTab}
       title="REV"
-      description="Tracking Solana Network Revenue and Economic Activity"
+      description="Decentralized exchange metrics and analytics on Solana"
       showDivider={true}
     />
   );

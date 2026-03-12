@@ -485,8 +485,6 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   
   // 🆕 For database-backed pages, load from PostgreSQL database
   const dbBackedPages = [
-    'aggregators-summary',
-    'aggregators-traders',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',
@@ -499,13 +497,6 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
     'rev-cost-and-capacity',
     'rev-issuance-and-burn',
     'rev-total-economic-value',
-    'stablecoins-dex-activity',
-    'stablecoins-mint-burns',
-    'stablecoins-summary',
-    'stablecoins-transfers',
-    'wrapped-btc-dex-activity',
-    'wrapped-btc-summary',
-    'wrapped-btc-transfers',
   ];
   if (dbBackedPages.includes(pageId)) {
     try {
@@ -1545,8 +1536,6 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
 
     // For DB-backed pages, load tables from /api/db-configs/[pageId] (includes data)
     const dbBackedPages = [
-    'aggregators-summary',
-    'aggregators-traders',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',
@@ -1559,13 +1548,6 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     'rev-cost-and-capacity',
     'rev-issuance-and-burn',
     'rev-total-economic-value',
-    'stablecoins-dex-activity',
-    'stablecoins-mint-burns',
-    'stablecoins-summary',
-    'stablecoins-transfers',
-    'wrapped-btc-dex-activity',
-    'wrapped-btc-summary',
-    'wrapped-btc-transfers',
   ];
     if (dbBackedPages.includes(pageId)) {
       try {

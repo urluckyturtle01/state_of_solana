@@ -67,16 +67,30 @@ def page_id(category: str, folder: str, section: str) -> str:
         return f"{section}-{folder_slug}"
 
 
-def read_metrics_md(category: str) -> tuple[str, str]:
-    """Read title and description from METRICS.md.
-    Line 1: '# DEX'  → 'DEX'
-    Line 3: '> Decentralized exchange...' → 'Decentralized exchange...'
+def read_metrics_md(category: str) -> tuple[str, str, list[str]]:
+    """Read title, description, and ordered tab list from METRICS.md.
+
+    Returns (title, description, ordered_folders)
+    ordered_folders is parsed from the numbered list at the top, e.g.:
+        1. summary
+        2. volume
+        3. TVL
+    Returns empty list if no ordered list found.
     """
+    import re
     md_path = SQL_REPO / category / 'METRICS.md'
     if not md_path.exists():
-        return None, None
+        return None, None, []
     lines = md_path.read_text().splitlines()
     title = lines[0].lstrip('#').strip() if lines else None
+
+    # Parse ordered list items: lines matching "N. folder_name"
+    ordered_folders = []
+    for line in lines:
+        m = re.match(r'^\s*\d+\.\s+(\S+)\s*$', line)
+        if m:
+            ordered_folders.append(m.group(1))
+
     # Find first line starting with '>'
     description = None
     for line in lines[1:]:
@@ -84,7 +98,7 @@ def read_metrics_md(category: str) -> tuple[str, str]:
         if stripped and not stripped.startswith('['):
             description = stripped
             break
-    return title, description
+    return title, description, ordered_folders
 
 
 def update_db_backed_pages(all_page_ids: list[str]):
@@ -281,13 +295,25 @@ def main():
         section = app_folder(category, CATEGORY_APP_FOLDER)
 
         # ── Title / Description ──────────────────────────────────────────
-        title, description = read_metrics_md(category)
+        title, description, md_ordered = read_metrics_md(category)
         if not title:
             title, description = CATEGORY_FALLBACKS.get(
                 category, (smart_title(section), f"{smart_title(section)} metrics on Solana")
             )
         if not description:
             description = f"{smart_title(section)} metrics on Solana"
+
+        # ── Folder order: METRICS.md ordered list → filtered to existing folders
+        # Any folders in CHART_CATEGORIES but NOT in the ordered list are appended at end
+        if md_ordered:
+            # Keep only entries that exist in our known folders (case-insensitive match)
+            folder_lower = {f.lower(): f for f in folders}
+            ordered = [folder_lower[f.lower()] for f in md_ordered if f.lower() in folder_lower]
+            # Append any known folders not mentioned in METRICS.md
+            ordered += [f for f in folders if f not in ordered]
+            if ordered != folders:
+                print(f"   📋 Reordered tabs from METRICS.md: {ordered}")
+            folders = ordered
 
         section_dir = APP_ROOT / section
 
@@ -311,6 +337,17 @@ def main():
             sub_page_path = section_dir / folder / 'page.tsx'
             write_if_changed(sub_page_path, sub_page_tsx(section, folder, pid))
             all_page_ids.append(pid)
+
+        # ── Delete stale subfolders not in current folders list ───────────
+        if section_dir.exists():
+            import shutil
+            known = set(folders) | {'components'}  # keep components/ always
+            for sub in sorted(section_dir.iterdir()):
+                if not sub.is_dir() or sub.name.startswith('.'):
+                    continue
+                if sub.name not in known:
+                    print(f"   🗑️  Deleted stale subfolder: app/{section}/{sub.name}/")
+                    shutil.rmtree(sub)
 
         print()
 
