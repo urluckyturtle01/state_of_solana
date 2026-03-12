@@ -192,8 +192,9 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
             if checkpoint_callback and all_results:
                 checkpoint_callback(all_results)
                 print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                return []  # Data already persisted via checkpoints
 
-            return []  # Return empty since all data saved via checkpoints
+            return all_results  # No checkpoint callback — return to caller
         # Check if query uses {month} (monthly queries)
         elif '{month}' in sql_query:
             # Loop through each month and aggregate results
@@ -253,8 +254,9 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
             if checkpoint_callback and all_results:
                 checkpoint_callback(all_results)
                 print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                return []  # Data already persisted via checkpoints
 
-            return []  # Return empty since all data saved via checkpoints
+            return all_results  # No checkpoint callback — return to caller
         # Check if query uses {block_date} (single-day queries)
         elif '{block_date}' in sql_query:
             # Loop through each day and aggregate results
@@ -1064,35 +1066,61 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
         print(f"   ✅ Full refresh complete: {len(all_new_data)} rows")
         return len(all_new_data)
 
+def _period_start(d: date, sql_query: str) -> date:
+    """Return the period-aligned start date for grouping gaps."""
+    if '{month}' in sql_query:
+        return date(d.year, d.month, 1)
+    if '{week}' in sql_query or '{week_start}' in sql_query:
+        return d - timedelta(days=d.weekday())  # Monday
+    return d
+
+
 def process_incremental(pg, sql_hash, sql_query, trino_client):
     """
     Process incremental job: Fill gaps + fetch max_date → today, append.
+
+    For {month}/{week} queries that store daily rows, gaps are grouped by
+    period so we run one query per missing month/week instead of one per day.
     """
     gap_dates, max_date = get_dates_info(pg, sql_hash)
     today = date.today()
-    
-    print(f"   📊 Incremental: {len(gap_dates)} gaps, max_date={max_date}")
-    
+
+    # For {month}/{week} queries: group daily gaps into period buckets so we
+    # don't fire the same monthly/weekly query once per missing day.
+    is_period_query = '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query
+    if is_period_query and gap_dates:
+        seen_periods = set()
+        deduped = []
+        for gd in gap_dates:
+            p = _period_start(gd, sql_query)
+            if p not in seen_periods:
+                seen_periods.add(p)
+                deduped.append(p)
+        print(f"   📊 Incremental: {len(gap_dates)} gap days → {len(deduped)} period(s) to fill, max_date={max_date}")
+        gap_dates = deduped
+    else:
+        print(f"   📊 Incremental: {len(gap_dates)} gaps, max_date={max_date}")
+
     all_new_data = []
     dates_to_remove = set()
-    
+
     # 1. Fill gaps (dates before max_date with no data)
     gaps_failed = 0
     if gap_dates:
-        print(f"   🔧 Filling {len(gap_dates)} gaps...")
+        print(f"   🔧 Filling {len(gap_dates)} gap period(s)...")
         for gap_date in gap_dates:
             try:
                 print(f"      Gap {gap_date}...", end='', flush=True)
                 data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
                 all_new_data.extend(data)
-                
+
                 # Mark this gap's dates for removal based on actual data
                 for row in data:
                     for field in ['block_date', 'week', 'week_start', 'month']:
                         if field in row and row[field]:
                             dates_to_remove.add(str(row[field]))
                             break
-                
+
                 print(f" {len(data)} rows")
             except Exception as e:
                 print(f" ❌ Error: {e}")

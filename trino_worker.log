@@ -8,605 +8,355 @@
 ======================================================================
 
 
-🔄 Processing job #442 (backfill) - attempt 1/3
-   SQL hash: d7cae72cb7ab15308626c1ac8beab60f
-      Running static query (no date placeholders)... ❌ Trino error: Execution failed on sql '-- Description: Prop AMM vs Other DEX volume share within aggregator-sourced trades
--- Filter: trades where outer_program is aggregator (Jupiter, OKX, etc.)
--- Split: inner_program = prop_amm vs other DEX | Daily stacked bar chart
-
-/*
-Logic:
-- Aggregator programs: Jupiter, OKX, Titan, Dflow, Byreal Route
-- Prop AMM: inner_program in (ZeroFi, HumidiFi, AlphaQ, SolFi V2, GoonFi, TesseraV, Obric V2, Aquifer, BisonFi)
-- Other: inner_program not in prop_amm list
-- Volume: SOL → stablecoin → token price
-- Output: block_date, aggregator, dex_type, volume_usd
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-),
-
-prop_amm_programs AS (
-    SELECT program_id FROM (VALUES
-        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY'),
-        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp'),
-        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA'),
-        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF'),
-        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j'),
-        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH'),
-        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y'),
-        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45'),
-        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi')
-    ) AS t(program_id)
-),
-
-stablecoins AS (
-    SELECT mint FROM (VALUES
-        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
-        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
-        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
-        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
-        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
-        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
-        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
-        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
-        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
-        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
-        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
-        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
-        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
-        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
-        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
-        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
-        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
-        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
-    ) AS t(mint)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    CASE WHEN pa.program_id IS NOT NULL THEN 'prop_amm' ELSE 'other' END AS dex_type,
-    ROUND(SUM(
-        CASE
-            WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN sb.mint IS NOT NULL
-            THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-            WHEN ss.mint IS NOT NULL
-            THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
-            ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-        END
-    ), 0) AS volume_usd
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-LEFT JOIN prop_amm_programs pa ON t.inner_program = pa.program_id
-LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
-LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
-LEFT JOIN solana.token_prices_1m psol
-    ON psol.mint = 'So11111111111111111111111111111111111111112'
-    AND DATE_TRUNC('minute', t.block_time) = psol.minute
-LEFT JOIN solana.token_prices_1m pb
-    ON t.token_bought_mint = pb.mint
-    AND DATE_TRUNC('minute', t.block_time) = pb.minute
-    AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-LEFT JOIN solana.token_prices_1m ps
-    ON t.token_sold_mint = ps.mint
-    AND DATE_TRUNC('minute', t.block_time) = ps.minute
-    AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2, 3
-ORDER BY 1, 2, 4 DESC
-': (trino.exceptions.TrinoQueryError) TrinoQueryError(type=INTERNAL_ERROR, name=PAGE_TRANSPORT_ERROR, message="Error fetching http://10.42.0.100:8080/v1/task/20260312_111932_00533_tvaaa.2.7.0/results/19/0: Expected response code to be 200, but was 503:
-Trino server is still initializing
-", query_id=20260312_111932_00533_tvaaa)
-[SQL: -- Description: Prop AMM vs Other DEX volume share within aggregator-sourced trades
--- Filter: trades where outer_program is aggregator (Jupiter, OKX, etc.)
--- Split: inner_program = prop_amm vs other DEX | Daily stacked bar chart
-
-/*
-Logic:
-- Aggregator programs: Jupiter, OKX, Titan, Dflow, Byreal Route
-- Prop AMM: inner_program in (ZeroFi, HumidiFi, AlphaQ, SolFi V2, GoonFi, TesseraV, Obric V2, Aquifer, BisonFi)
-- Other: inner_program not in prop_amm list
-- Volume: SOL → stablecoin → token price
-- Output: block_date, aggregator, dex_type, volume_usd
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-),
-
-prop_amm_programs AS (
-    SELECT program_id FROM (VALUES
-        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY'),
-        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp'),
-        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA'),
-        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF'),
-        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j'),
-        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH'),
-        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y'),
-        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45'),
-        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi')
-    ) AS t(program_id)
-),
-
-stablecoins AS (
-    SELECT mint FROM (VALUES
-        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
-        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
-        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
-        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
-        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
-        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
-        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
-        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
-        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
-        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
-        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
-        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
-        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
-        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
-        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
-        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
-        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
-        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
-    ) AS t(mint)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    CASE WHEN pa.program_id IS NOT NULL THEN 'prop_amm' ELSE 'other' END AS dex_type,
-    ROUND(SUM(
-        CASE
-            WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN sb.mint IS NOT NULL
-            THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-            WHEN ss.mint IS NOT NULL
-            THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
-            ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-        END
-    ), 0) AS volume_usd
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-LEFT JOIN prop_amm_programs pa ON t.inner_program = pa.program_id
-LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
-LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
-LEFT JOIN solana.token_prices_1m psol
-    ON psol.mint = 'So11111111111111111111111111111111111111112'
-    AND DATE_TRUNC('minute', t.block_time) = psol.minute
-LEFT JOIN solana.token_prices_1m pb
-    ON t.token_bought_mint = pb.mint
-    AND DATE_TRUNC('minute', t.block_time) = pb.minute
-    AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-LEFT JOIN solana.token_prices_1m ps
-    ON t.token_sold_mint = ps.mint
-    AND DATE_TRUNC('minute', t.block_time) = ps.minute
-    AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2, 3
-ORDER BY 1, 2, 4 DESC
-]
-(Background on this error at: https://sqlalche.me/e/20/dbapi)
-⚠️  Job #442 returned 0 rows, will retry in 1 minutes
-
-🔄 Processing job #443 (backfill) - attempt 1/3
-   SQL hash: f4539ce0104c1e579e90e14e6174cf89
-      Running static query (no date placeholders)... ❌ Trino error: Execution failed on sql '-- Description: Volume and trade count per aggregator
--- Filters dex_trades by outer_program (aggregator as entry point)
--- Volume calculation matches dex-trades: SOL → stablecoin → token price
-
-/*
-Logic:
-- Aggregator programs: Jupiter (7 programs), OKX (2), Titan, Dflow, Byreal Route
-- Filters to trades where outer_program is a known aggregator
-- Volume: SOL → stablecoin → token price
-- Outputs: block_date, aggregator, swaps, volume_usd
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-),
-
-stablecoins AS (
-    SELECT mint FROM (VALUES
-        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
-        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
-        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
-        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
-        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
-        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
-        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
-        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
-        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
-        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
-        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
-        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
-        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
-        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
-        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
-        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
-        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
-        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
-    ) AS t(mint)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    COUNT(1) AS swaps,
-    ROUND(SUM(
-        CASE
-            WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN sb.mint IS NOT NULL
-            THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-            WHEN ss.mint IS NOT NULL
-            THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
-            ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-        END
-    ), 0) AS volume_usd
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
-LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
-LEFT JOIN solana.token_prices_1m psol
-    ON psol.mint = 'So11111111111111111111111111111111111111112'
-    AND DATE_TRUNC('minute', t.block_time) = psol.minute
-LEFT JOIN solana.token_prices_1m pb
-    ON t.token_bought_mint = pb.mint
-    AND DATE_TRUNC('minute', t.block_time) = pb.minute
-    AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-LEFT JOIN solana.token_prices_1m ps
-    ON t.token_sold_mint = ps.mint
-    AND DATE_TRUNC('minute', t.block_time) = ps.minute
-    AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC
-': (trino.exceptions.TrinoQueryError) TrinoQueryError(type=INTERNAL_ERROR, name=PAGE_TRANSPORT_ERROR, message="Error fetching http://10.42.2.221:8080/v1/task/20260312_112041_00536_tvaaa.10.9.0/results/14/0: Expected response code to be 200, but was 503:
-Trino server is still initializing
-", query_id=20260312_112041_00536_tvaaa)
-[SQL: -- Description: Volume and trade count per aggregator
--- Filters dex_trades by outer_program (aggregator as entry point)
--- Volume calculation matches dex-trades: SOL → stablecoin → token price
-
-/*
-Logic:
-- Aggregator programs: Jupiter (7 programs), OKX (2), Titan, Dflow, Byreal Route
-- Filters to trades where outer_program is a known aggregator
-- Volume: SOL → stablecoin → token price
-- Outputs: block_date, aggregator, swaps, volume_usd
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-),
-
-stablecoins AS (
-    SELECT mint FROM (VALUES
-        ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'),
-        ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT'),
-        ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA'),
-        ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u'),
-        ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr'),
-        ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X'),
-        ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9'),
-        ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg'),
-        ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6'),
-        ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH'),
-        ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1'),
-        ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519'),
-        ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch'),
-        ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R'),
-        ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g'),
-        ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4'),
-        ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj'),
-        ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG')
-    ) AS t(mint)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    COUNT(1) AS swaps,
-    ROUND(SUM(
-        CASE
-            WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
-            THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
-            WHEN sb.mint IS NOT NULL
-            THEN t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-            WHEN ss.mint IS NOT NULL
-            THEN t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
-            ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
-        END
-    ), 0) AS volume_usd
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-LEFT JOIN stablecoins ss ON t.token_sold_mint = ss.mint
-LEFT JOIN stablecoins sb ON t.token_bought_mint = sb.mint
-LEFT JOIN solana.token_prices_1m psol
-    ON psol.mint = 'So11111111111111111111111111111111111111112'
-    AND DATE_TRUNC('minute', t.block_time) = psol.minute
-LEFT JOIN solana.token_prices_1m pb
-    ON t.token_bought_mint = pb.mint
-    AND DATE_TRUNC('minute', t.block_time) = pb.minute
-    AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-LEFT JOIN solana.token_prices_1m ps
-    ON t.token_sold_mint = ps.mint
-    AND DATE_TRUNC('minute', t.block_time) = ps.minute
-    AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC
-]
-(Background on this error at: https://sqlalche.me/e/20/dbapi)
-⚠️  Job #443 returned 0 rows, will retry in 1 minutes
-
-🔄 Processing job #444 (backfill) - attempt 1/3
-   SQL hash: 51b1b02c6ebc5e0d61253a5a3223faa4
-      Running static query (no date placeholders)... ❌ Trino error: Execution failed on sql '-- Description: Active traders (unique signers) per aggregator
--- Filters dex_trades by outer_program (aggregator as entry point)
--- No pricing joins needed
-
-/*
-Logic:
-- Aggregator programs: Jupiter (7 programs), OKX (2), Titan, Dflow, Byreal Route
-- Filters to trades where outer_program is a known aggregator
-- Outputs: block_date, aggregator, swaps, active_traders
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    COUNT(1) AS swaps,
-    COUNT(DISTINCT t.signer) AS active_traders
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC
-': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=ADMINISTRATIVELY_KILLED, message="Query killed. Message: Killed via web UI", query_id=20260312_112106_00538_tvaaa)
-[SQL: -- Description: Active traders (unique signers) per aggregator
--- Filters dex_trades by outer_program (aggregator as entry point)
--- No pricing joins needed
-
-/*
-Logic:
-- Aggregator programs: Jupiter (7 programs), OKX (2), Titan, Dflow, Byreal Route
-- Filters to trades where outer_program is a known aggregator
-- Outputs: block_date, aggregator, swaps, active_traders
-*/
-
-WITH aggregator_programs AS (
-    SELECT * FROM (VALUES
-        ('JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo', 'Jupiter'),
-        ('JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB', 'Jupiter'),
-        ('JUP3c2Uh3WA4Ng34tw6kPd2G4C5BB21Xo36Je1s32Ph', 'Jupiter'),
-        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
-        ('JUP6i4ozu5ydDCnLiMogSckDPpbtr7BJ4FtzYWkb5Rk', 'Jupiter'),
-        ('JUP5cHjnnCx2DppVsufsLrXs8EBZeEZzGtEK9Gdz6ow', 'Jupiter'),
-        ('JUP5pEAZeHdHrLxh5UCwAbpjGwYKKoquCpda2hfP4u8', 'Jupiter'),
-        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX'),
-        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX'),
-        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
-        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBH', 'Dflow'),
-        ('REALp6iMBDTctQqpmhBo4PumwJGcybbnDpxtax3ara3', 'Byreal Route')
-    ) AS t(program_id, aggregator)
-)
-
-SELECT
-    t.block_date,
-    ap.aggregator,
-    COUNT(1) AS swaps,
-    COUNT(DISTINCT t.signer) AS active_traders
-FROM solana.dex_trades t
-INNER JOIN aggregator_programs ap ON t.outer_program = ap.program_id
-WHERE t.block_date >= DATE '2025-06-01'
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC
-]
-(Background on this error at: https://sqlalche.me/e/20/f405)
-⚠️  Job #444 returned 0 rows, will retry in 1 minutes
-
-🔄 Processing job #445 (backfill) - attempt 1/3
-   SQL hash: 9905cd4dd9d9345056f30015d3eb2266
-      Running static query (no date placeholders)... 4861 rows
-   ✅ Static query complete: 4861 rows saved
-✅ Job #445 SUCCESSFUL: 4861 rows
+🔄 Processing job #457 (incremental) - attempt 1/3
+   SQL hash: 58f7fc806ef53f6af055b075b9a25a0a
+   📊 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-08
+   🔧 Filling 6 gap period(s)...
+      Gap 2025-01-01...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-01...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-01...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-01...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-01...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-01...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+   📅 Fetching 2026-03-08 → 2026-03-12...
+      Fetching month 2026-03-01 (1/1)... ✅ 11 rows
+   ✅ Incremental complete: 11 new rows
+✅ Job #457 SUCCESSFUL: 11 rows
       ℹ️  No cumulative fields detected
-      ⚠️  No chart config found for SQL hash 9905cd4dd9d9345056f30015d3eb2266
 
-🔄 Processing job #453 (backfill) - attempt 1/3
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 1 jobs so far)
+
+🔄 Processing job #458 (incremental) - attempt 1/3
+   SQL hash: 2c8bfd552ce22f7aa0b5d9e5766ac0d8
+   📊 Incremental: 0 gaps, max_date=2026-03-08
+   📅 Fetching 2026-03-08 → 2026-03-12...
+      Fetching month 2026-03-01 (1/1)... ✅ 27 rows
+   ✅ Incremental complete: 27 new rows
+✅ Job #458 SUCCESSFUL: 27 rows
+      ℹ️  No cumulative fields detected
+
+🔄 Processing job #459 (incremental) - attempt 1/3
    SQL hash: 4af588c2353a133c1479f2f5839ca729
-   📅 Backfill (full): 2026-03-12 → 2025-01-01
-      Fetching month 2026-03-01 (1/15)... ✅ 9 rows
-      💾 Checkpoint: 1 months processed
-      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
-      💾 Checkpoint: 2 months processed
-      Fetching month 2026-01-01 (3/15)... ✅ 31 rows
-      💾 Checkpoint: 3 months processed
-      Fetching month 2025-12-01 (4/15)... ✅ 31 rows
-      💾 Checkpoint: 4 months processed
-      Fetching month 2025-11-01 (5/15)... ✅ 30 rows
-      💾 Checkpoint: 5 months processed
-      Fetching month 2025-10-01 (6/15)... ✅ 31 rows
-      💾 Checkpoint: 6 months processed
-      Fetching month 2025-09-01 (7/15)... ✅ 30 rows
-      💾 Checkpoint: 7 months processed
-      Fetching month 2025-08-01 (8/15)... ✅ 31 rows
-      💾 Checkpoint: 8 months processed
-      Fetching month 2025-07-01 (9/15)... ✅ 31 rows
-      💾 Checkpoint: 9 months processed
-      Fetching month 2025-06-01 (10/15)... ✅ 30 rows
-      💾 Checkpoint: 10 months processed
-      Fetching month 2025-05-01 (11/15)... ✅ 31 rows
-      💾 Checkpoint: 11 months processed
-      Fetching month 2025-04-01 (12/15)... ✅ 30 rows
-      💾 Checkpoint: 12 months processed
-      Fetching month 2025-03-01 (13/15)... ✅ 31 rows
-      💾 Checkpoint: 13 months processed
-      Fetching month 2025-02-01 (14/15)... ✅ 28 rows
-      💾 Checkpoint: 14 months processed
-      Fetching month 2025-01-01 (15/15)... ✅ 31 rows
-      💾 Checkpoint: 15 months processed
-   ✅ Backfill (full) complete: 433 total rows
-✅ Job #453 SUCCESSFUL: 433 rows
+   📊 Incremental: 0 gaps, max_date=2026-03-09
+   📅 Fetching 2026-03-09 → 2026-03-12...
+      Fetching month 2026-03-01 (1/1)... ✅ 9 rows
+   ✅ Incremental complete: 9 new rows
+✅ Job #459 SUCCESSFUL: 9 rows
       ℹ️  No cumulative fields detected
 
-🔄 Processing job #454 (backfill) - attempt 1/3
-   SQL hash: 78ac7d0be4cd9321ed5743dd372ab739
-   📅 Backfill (full): 2026-03-12 → 2025-01-01
-      Fetching month 2026-03-01 (1/15)... ✅ 11 rows
-      💾 Checkpoint: 1 months processed
-      Fetching month 2026-02-01 (2/15)... ✅ 28 rows
-      💾 Checkpoint: 2 months processed
-      Fetching month 2026-01-01 (3/15)... ✅ 31 rows
-      💾 Checkpoint: 3 months processed
-      Fetching month 2025-12-01 (4/15)... ✅ 31 rows
-      💾 Checkpoint: 4 months processed
-      Fetching month 2025-11-01 (5/15)... ✅ 30 rows
-      💾 Checkpoint: 5 months processed
-      Fetching month 2025-10-01 (6/15)... ✅ 31 rows
-      💾 Checkpoint: 6 months processed
-      Fetching month 2025-09-01 (7/15)... ✅ 30 rows
-      💾 Checkpoint: 7 months processed
-      Fetching month 2025-08-01 (8/15)... ✅ 31 rows
-      💾 Checkpoint: 8 months processed
-      Fetching month 2025-07-01 (9/15)... ✅ 31 rows
-      💾 Checkpoint: 9 months processed
-      Fetching month 2025-06-01 (10/15)... ⚠️ 0 rows
-      💾 Checkpoint: 10 months processed
-      Fetching month 2025-05-01 (11/15)... ⚠️ 0 rows
-      💾 Checkpoint: 11 months processed
-      Fetching month 2025-04-01 (12/15)... ⚠️ 0 rows
-      💾 Checkpoint: 12 months processed
-      Fetching month 2025-03-01 (13/15)... ⚠️ 0 rows
-      💾 Checkpoint: 13 months processed
-      Fetching month 2025-02-01 (14/15)... ⚠️ 0 rows
-      💾 Checkpoint: 14 months processed
-      Fetching month 2025-01-01 (15/15)... ⚠️ 0 rows
-      💾 Checkpoint: 15 months processed
-   ✅ Backfill (full) complete: 254 total rows
-✅ Job #454 SUCCESSFUL: 254 rows
-      📊 Found 4 cumulative field(s): ['cumulative_dex_fee_sol', 'cumulative_dex_jito_sol', 'cumulative_network_fee_sol', 'cumulative_network_jito_sol']
-      📊 Non-grouped data
-      ✅ Cumulative calculation complete (254 rows)
-      🔢 Calculating 2 percentage field(s)...
-      ✅ Percentage fields calculated and saved
+🔄 Processing job #460 (incremental) - attempt 1/3
+   SQL hash: 58f7fc806ef53f6af055b075b9a25a0a
+   📊 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-11
+   🔧 Filling 6 gap period(s)...
+      Gap 2025-01-01...      Fetching month 2025-01-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-02-01...      Fetching month 2025-02-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-03-01...      Fetching month 2025-03-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-04-01...      Fetching month 2025-04-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-05-01...      Fetching month 2025-05-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+      Gap 2025-06-01...      Fetching month 2025-06-01 (1/1)... ⚠️ 0 rows
+ 0 rows
+   📅 Fetching 2026-03-11 → 2026-03-12...
+      Fetching month 2026-03-01 (1/1)... ✅ 11 rows
+   ✅ Incremental complete: 11 new rows
+✅ Job #460 SUCCESSFUL: 11 rows
+      ℹ️  No cumulative fields detected
 
-🔄 Processing job #455 (backfill) - attempt 1/3
-   SQL hash: df3c374896d4d0e17ce4cedafeec4549
-      Running static query (no date placeholders)... 129 rows
-   ✅ Static query complete: 129 rows saved
-✅ Job #455 SUCCESSFUL: 129 rows
-      ⚠️  No date field found
+🔄 Processing job #461 (incremental) - attempt 1/3
+   SQL hash: ce005166abc8abdecb73b746c7c397ac
+   📊 Incremental: 0 gaps, max_date=2026-03-08
+   📅 Fetching 2026-03-08 → 2026-03-12...
+      Fetching month 2026-03-01 (1/1)... ✅ 207 rows
+   ✅ Incremental complete: 207 new rows
+✅ Job #461 SUCCESSFUL: 207 rows
+      ℹ️  No cumulative fields detected
 
-⏳ No pending jobs. Waiting 10s... (processed 7 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 7 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 7 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 7 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-🔄 Processing job #456 (backfill) - attempt 1/3
-   SQL hash: d28117e2922df5a3b9bd3ea2b6d7baaf
-      Running static query (no date placeholders)... 129 rows
-   ✅ Static query complete: 129 rows saved
-✅ Job #456 SUCCESSFUL: 129 rows
-      ⚠️  No date field found
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 8 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 8 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
 
-⏳ No pending jobs. Waiting 10s... (processed 8 jobs so far)
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 5 jobs so far)
