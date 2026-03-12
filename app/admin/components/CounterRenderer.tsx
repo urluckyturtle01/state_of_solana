@@ -642,18 +642,22 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     
     // Calculate trend if trendConfig is present
     if (chartConfig.trendConfig && chartConfig.trendConfig.valueField === 'auto_calculate') {
-      if (chartData.length >= 2 && rowIndex < chartData.length - 1) {
-        // Compare current row (rowIndex) with previous month (rowIndex + 1, since data is newest-to-oldest)
-        const previousRow = chartData[rowIndex + 1];
+      // Resolve actual index (support negative rowIndex: -1 = last, -2 = second-to-last, etc.)
+      const actualIndex = rowIndex >= 0
+        ? rowIndex
+        : chartData.length + rowIndex;
+      const comparisonIndex = actualIndex - 1; // one row before = older month
+
+      if (actualIndex > 0 && comparisonIndex >= 0 && comparisonIndex < chartData.length) {
+        const previousRow = chartData[comparisonIndex];
         const previousValue = Number(previousRow[fieldName]);
-        
+
         if (!isNaN(previousValue) && previousValue !== 0) {
           const percentChange = ((num - previousValue) / Math.abs(previousValue)) * 100;
           setTrend({
             value: parseFloat(percentChange.toFixed(1)),
             label: chartConfig.trendConfig.label || 'vs. previous period'
           });
-          console.log('🟢 TREND CALCULATED:', percentChange.toFixed(1) + '%');
         }
       }
     }
