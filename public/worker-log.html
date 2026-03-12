@@ -5,324 +5,520 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trino Worker Log</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             background: #0a0a0a;
             color: #00ff00;
-            padding: 20px;
+            padding: 16px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1800px; margin: 0 auto; }
 
+        /* ── Header ──────────────────────────────────────────────── */
         .header {
             background: #1a1a1a;
-            padding: 20px;
+            padding: 16px 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        h1 {
-            font-size: 24px;
-            color: #00ff00;
-        }
+        h1 { font-size: 22px; color: #00ff00; }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
         button {
             background: #00ff00;
             color: #0a0a0a;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background: #00cc00;
-        }
-
-        button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .status {
-            display: flex;
-            gap: 15px;
-            font-size: 14px;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #00ff00;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .log-container {
-            background: #1a1a1a;
-            border: 2px solid #00ff00;
-            border-radius: 8px;
-            padding: 20px;
-            height: calc(100vh - 200px);
-            overflow-y: auto;
             font-size: 13px;
-            line-height: 1.6;
+            font-family: inherit;
+        }
+        button:hover { background: #00cc00; }
+        button:disabled { background: #555; cursor: not-allowed; }
+        button.secondary {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        button.secondary:hover { background: #002200; }
+
+        .status { display: flex; gap: 14px; font-size: 13px; align-items: center; }
+        .status-dot {
+            width: 9px; height: 9px; border-radius: 50%;
+            background: #00ff00; animation: pulse 2s infinite;
+            display: inline-block; margin-right: 5px;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+        /* ── Body: two columns ───────────────────────────────────── */
+        .body {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 16px;
+            align-items: start;
         }
 
-        .log-line {
-            margin-bottom: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+        /* ── Log panel ───────────────────────────────────────────── */
+        .log-panel {}
 
-        .log-line.error {
-            color: #ff4444;
-            font-weight: bold;
-        }
-
-        .log-line.success {
-            color: #44ff44;
-        }
-
-        .log-line.warning {
-            color: #ffaa00;
-        }
-
-        .log-line.info {
-            color: #00aaff;
-        }
-
-        .log-container::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        .log-container::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-
-        .log-container::-webkit-scrollbar-thumb {
-            background: #00ff00;
-            border-radius: 6px;
-        }
-
-        .log-container::-webkit-scrollbar-thumb:hover {
-            background: #00cc00;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .search-box {
-            margin-bottom: 10px;
-        }
-
+        .search-box { margin-bottom: 8px; }
         .search-box input {
-            width: 300px;
+            width: 100%;
             padding: 8px 12px;
             background: #0a0a0a;
-            border: 1px solid #00ff00;
+            border: 1px solid #333;
             color: #00ff00;
             border-radius: 4px;
             font-family: inherit;
+            font-size: 13px;
+        }
+        .search-box input::placeholder { color: #555; }
+        .search-box input:focus { outline: none; border-color: #00ff00; }
+
+        .log-container {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 16px;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.7;
         }
 
-        .search-box input::placeholder {
-            color: #666;
+        .log-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 1px; }
+        .log-line.error   { color: #ff5555; }
+        .log-line.success { color: #55ff55; }
+        .log-line.warning { color: #ffaa00; }
+        .log-line.info    { color: #55aaff; }
+        .highlight { background: #ffff00; color: #000; padding: 0 3px; border-radius: 2px; }
+
+        .log-container::-webkit-scrollbar { width: 8px; }
+        .log-container::-webkit-scrollbar-track { background: #0a0a0a; }
+        .log-container::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        .log-container::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* ── Jobs panel ──────────────────────────────────────────── */
+        .jobs-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
-        .highlight {
-            background: #ffff00;
-            color: #000;
-            padding: 2px 4px;
-            border-radius: 2px;
+        .jobs-header {
+            background: #1a1a1a;
+            border: 1px solid #222;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .jobs-header h2 { font-size: 14px; color: #aaa; }
+
+        .jobs-filter {
+            display: flex;
+            gap: 4px;
+            padding: 8px 10px;
+            background: #151515;
+            border-left: 1px solid #222;
+            border-right: 1px solid #222;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #1a1a1a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .filter-btn.active { background: #002200; color: #00ff00; border-color: #00ff00; }
+        .filter-btn:hover { border-color: #555; color: #ccc; }
+
+        .jobs-list {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 0 0 8px 8px;
+            height: calc(100vh - 245px);
+            overflow-y: auto;
+        }
+        .jobs-list::-webkit-scrollbar { width: 6px; }
+        .jobs-list::-webkit-scrollbar-track { background: #0a0a0a; }
+        .jobs-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        /* ── Accordion item ──────────────────────────────────────── */
+        .job-item { border-bottom: 1px solid #1a1a1a; }
+        .job-item:last-child { border-bottom: none; }
+
+        .job-header {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: background .15s;
+        }
+        .job-header:hover { background: #161616; }
+        .job-header.open  { background: #141414; }
+
+        .job-status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0; margin-top: 5px;
+        }
+        .dot-completed  { background: #22c55e; }
+        .dot-running    { background: #3b82f6; animation: pulse 1.5s infinite; }
+        .dot-pending    { background: #f59e0b; }
+        .dot-partial    { background: #f97316; }
+        .dot-failed_permanent { background: #ef4444; }
+        .dot-failed     { background: #ef4444; }
+
+        .job-meta { flex: 1; min-width: 0; }
+        .job-title {
+            font-size: 12px;
+            color: #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 3px;
+        }
+        .job-sub {
+            font-size: 11px;
+            color: #555;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .job-sub .tag {
+            background: #1e1e1e;
+            color: #888;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+        .tag.type-backfill      { color: #818cf8; border: 1px solid #312e81; }
+        .tag.type-incremental   { color: #34d399; border: 1px solid #064e3b; }
+        .tag.type-full_refresh  { color: #60a5fa; border: 1px solid #1e3a5f; }
+
+        .job-chevron {
+            color: #444; font-size: 12px; flex-shrink: 0;
+            transition: transform .2s;
+        }
+        .job-header.open .job-chevron { transform: rotate(90deg); }
+
+        /* ── Accordion body ──────────────────────────────────────── */
+        .job-body {
+            display: none;
+            padding: 10px 14px 14px 32px;
+            background: #0d0d0d;
+            font-size: 11px;
+            color: #888;
+        }
+        .job-body.open { display: block; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            gap: 10px;
+        }
+        .detail-label { color: #555; flex-shrink: 0; }
+        .detail-value { color: #ccc; text-align: right; word-break: break-all; }
+
+        .error-box {
+            background: #1a0000;
+            border: 1px solid #440000;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            color: #ff5555;
+            font-size: 10px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .badge-completed  { background: #052e16; color: #22c55e; }
+        .badge-running    { background: #0c1a3a; color: #60a5fa; }
+        .badge-pending    { background: #2a1a00; color: #f59e0b; }
+        .badge-partial    { background: #2a0e00; color: #f97316; }
+        .badge-failed_permanent, .badge-failed { background: #1c0000; color: #ef4444; }
+
+        .empty-state { text-align: center; padding: 40px; color: #444; font-size: 13px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔧 Trino Worker Log</h1>
-            <div class="controls">
-                <div class="status">
-                    <div class="status-item">
-                        <div class="status-dot"></div>
-                        <span id="status-text">Live</span>
-                    </div>
-                    <div class="status-item">
-                        Lines: <span id="line-count">0</span>
-                    </div>
-                    <div class="status-item">
-                        Updated: <span id="last-update">Never</span>
-                    </div>
-                </div>
-                <button id="refresh-btn" onclick="loadLog()">Refresh</button>
-                <button id="auto-refresh-btn" onclick="toggleAutoRefresh()">Auto: ON</button>
-                <button onclick="clearLog()">Clear</button>
-                <button onclick="scrollToBottom()">⬇ Bottom</button>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🔧 Trino Worker Log</h1>
+        <div class="controls">
+            <div class="status">
+                <span><span class="status-dot"></span><span id="status-text">Live</span></span>
+                <span>Lines: <span id="line-count">0</span></span>
+                <span>Updated: <span id="last-update">—</span></span>
             </div>
-        </div>
-
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search logs..." onkeyup="searchLogs()">
-        </div>
-
-        <div class="log-container" id="log-container">
-            <div class="empty-state">Loading log file...</div>
+            <button onclick="loadLog()">Refresh</button>
+            <button id="auto-refresh-btn" onclick="toggleAutoRefresh()">Auto: ON</button>
+            <button class="secondary" onclick="clearLog()">Clear</button>
+            <button class="secondary" onclick="scrollToBottom()">⬇ Bottom</button>
         </div>
     </div>
 
-    <script>
-        let autoRefresh = true;
-        let refreshInterval = null;
-        let searchTerm = '';
+    <!-- Body -->
+    <div class="body">
 
-        function loadLog() {
-            fetch('/api/worker-log')
-                .then(response => response.text())
-                .then(data => {
-                    const lines = data.split('\n');
-                    const container = document.getElementById('log-container');
-                    
-                    if (lines.length === 0 || (lines.length === 1 && lines[0] === '')) {
-                        container.innerHTML = '<div class="empty-state">Log file is empty</div>';
-                        document.getElementById('line-count').textContent = '0';
-                        return;
+        <!-- Left: Log -->
+        <div class="log-panel">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search logs…" oninput="searchLogs()">
+            </div>
+            <div class="log-container" id="log-container">
+                <div class="empty-state">Loading log…</div>
+            </div>
+        </div>
+
+        <!-- Right: Jobs accordion -->
+        <div class="jobs-panel">
+            <div class="jobs-header">
+                <h2>📋 Job Runs</h2>
+                <span id="jobs-count" style="font-size:12px;color:#555">—</span>
+            </div>
+            <div class="jobs-filter">
+                <button class="filter-btn active" data-filter="all"    onclick="setFilter('all')">All</button>
+                <button class="filter-btn"         data-filter="running"   onclick="setFilter('running')">Running</button>
+                <button class="filter-btn"         data-filter="pending"   onclick="setFilter('pending')">Pending</button>
+                <button class="filter-btn"         data-filter="completed" onclick="setFilter('completed')">Done</button>
+                <button class="filter-btn"         data-filter="partial"   onclick="setFilter('partial')">Partial</button>
+                <button class="filter-btn"         data-filter="failed_permanent" onclick="setFilter('failed_permanent')">Failed</button>
+            </div>
+            <div class="jobs-list" id="jobs-list">
+                <div class="empty-state">Loading jobs…</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ── State ─────────────────────────────────────────────────────
+    let autoRefresh = true;
+    let refreshInterval = null;
+    let searchTerm = '';
+    let jobFilter = 'all';
+    let allJobs = [];
+    let openJobIds = new Set();
+
+    // ── Log ───────────────────────────────────────────────────────
+    function loadLog() {
+        fetch('/api/worker-log')
+            .then(r => r.text())
+            .then(data => {
+                const lines = data.split('\n');
+                const container = document.getElementById('log-container');
+
+                if (!lines.length || (lines.length === 1 && !lines[0])) {
+                    container.innerHTML = '<div class="empty-state">Log file is empty</div>';
+                    document.getElementById('line-count').textContent = '0';
+                    return;
+                }
+
+                const wasAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120;
+                container.innerHTML = '';
+
+                lines.forEach(line => {
+                    if (!line.trim()) return;
+                    const div = document.createElement('div');
+                    div.className = 'log-line';
+                    if (/❌|ERROR|Error|Failed/.test(line))         div.classList.add('error');
+                    else if (/✅|SUCCESS|completed/.test(line))     div.classList.add('success');
+                    else if (/⚠️|WARNING|Warning/.test(line))       div.classList.add('warning');
+                    else if (/🔄|Processing|Fetching/.test(line))   div.classList.add('info');
+
+                    if (searchTerm && line.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        const rx = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+                        div.innerHTML = line.replace(rx, '<span class="highlight">$1</span>');
+                    } else {
+                        div.textContent = line;
                     }
-
-                    container.innerHTML = '';
-                    lines.forEach((line, index) => {
-                        if (line.trim() === '') return;
-                        
-                        const div = document.createElement('div');
-                        div.className = 'log-line';
-                        
-                        // Colorize based on content
-                        if (line.includes('❌') || line.includes('ERROR') || line.includes('Error') || line.includes('Failed')) {
-                            div.className += ' error';
-                        } else if (line.includes('✅') || line.includes('SUCCESS') || line.includes('completed')) {
-                            div.className += ' success';
-                        } else if (line.includes('⚠️') || line.includes('WARNING') || line.includes('Warning')) {
-                            div.className += ' warning';
-                        } else if (line.includes('🔄') || line.includes('Processing') || line.includes('Fetching')) {
-                            div.className += ' info';
-                        }
-
-                        // Highlight search term
-                        if (searchTerm && line.toLowerCase().includes(searchTerm.toLowerCase())) {
-                            const regex = new RegExp(`(${searchTerm})`, 'gi');
-                            div.innerHTML = line.replace(regex, '<span class="highlight">$1</span>');
-                        } else {
-                            div.textContent = line;
-                        }
-
-                        container.appendChild(div);
-                    });
-
-                    document.getElementById('line-count').textContent = lines.filter(l => l.trim() !== '').length;
-                    document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
-
-                    // Auto-scroll to bottom if near bottom
-                    const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
-                    if (isNearBottom) {
-                        scrollToBottom();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading log:', error);
-                    document.getElementById('log-container').innerHTML = 
-                        '<div class="empty-state error">Error loading log file</div>';
+                    container.appendChild(div);
                 });
-        }
 
-        function toggleAutoRefresh() {
-            autoRefresh = !autoRefresh;
-            const btn = document.getElementById('auto-refresh-btn');
-            
-            if (autoRefresh) {
-                btn.textContent = 'Auto: ON';
-                startAutoRefresh();
-            } else {
-                btn.textContent = 'Auto: OFF';
-                stopAutoRefresh();
-            }
-        }
+                const nonEmpty = lines.filter(l => l.trim()).length;
+                document.getElementById('line-count').textContent = nonEmpty;
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+                if (wasAtBottom) container.scrollTop = container.scrollHeight;
+            })
+            .catch(() => {
+                document.getElementById('log-container').innerHTML =
+                    '<div class="empty-state error">Error loading log</div>';
+            });
+    }
 
-        function startAutoRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(loadLog, 2000); // Refresh every 2 seconds
+    function toggleAutoRefresh() {
+        autoRefresh = !autoRefresh;
+        document.getElementById('auto-refresh-btn').textContent = autoRefresh ? 'Auto: ON' : 'Auto: OFF';
+        autoRefresh ? startAutoRefresh() : stopAutoRefresh();
+    }
+    function startAutoRefresh() {
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(() => { loadLog(); loadJobs(); }, 3000);
+    }
+    function stopAutoRefresh() {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+    }
+    function clearLog() {
+        if (confirm('Clear display? (log file untouched)')) {
+            document.getElementById('log-container').innerHTML =
+                '<div class="empty-state">Cleared. Click Refresh to reload.</div>';
         }
-
-        function stopAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-                refreshInterval = null;
-            }
-        }
-
-        function clearLog() {
-            if (confirm('Clear the log display? (This will not delete the actual log file)')) {
-                document.getElementById('log-container').innerHTML = 
-                    '<div class="empty-state">Log cleared. Click Refresh to reload.</div>';
-                document.getElementById('line-count').textContent = '0';
-            }
-        }
-
-        function scrollToBottom() {
-            const container = document.getElementById('log-container');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function searchLogs() {
-            searchTerm = document.getElementById('search-input').value;
-            loadLog();
-        }
-
-        // Initial load
+    }
+    function scrollToBottom() {
+        const c = document.getElementById('log-container');
+        c.scrollTop = c.scrollHeight;
+    }
+    function searchLogs() {
+        searchTerm = document.getElementById('search-input').value;
         loadLog();
-        
-        // Start auto-refresh
-        if (autoRefresh) {
-            startAutoRefresh();
+    }
+
+    // ── Jobs ──────────────────────────────────────────────────────
+    function loadJobs() {
+        fetch('/api/worker-jobs')
+            .then(r => r.json())
+            .then(data => {
+                allJobs = data.jobs || [];
+                renderJobs();
+            })
+            .catch(() => {
+                document.getElementById('jobs-list').innerHTML =
+                    '<div class="empty-state">Error loading jobs</div>';
+            });
+    }
+
+    function setFilter(f) {
+        jobFilter = f;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.filter === f);
+        });
+        renderJobs();
+    }
+
+    function renderJobs() {
+        const list = document.getElementById('jobs-list');
+        const filtered = jobFilter === 'all'
+            ? allJobs
+            : allJobs.filter(j => j.status === jobFilter);
+
+        document.getElementById('jobs-count').textContent =
+            `${filtered.length} job${filtered.length !== 1 ? 's' : ''}`;
+
+        if (!filtered.length) {
+            list.innerHTML = '<div class="empty-state">No jobs found</div>';
+            return;
         }
 
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            stopAutoRefresh();
-        });
-    </script>
+        list.innerHTML = filtered.map(job => {
+            const isOpen = openJobIds.has(job.id);
+            const dotClass = `dot-${job.status}`;
+            const badgeClass = `badge-${job.status}`;
+            const typeClass = `type-${job.jobType}`;
+
+            const pageLabel = job.page ? `dex-${job.page}` : '—';
+            const lastRun = (job.completedAt || job.startedAt)
+                ? new Date(job.completedAt || job.startedAt).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+                : '—';
+            const created = new Date(job.createdAt).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+
+            return `
+            <div class="job-item" id="job-${job.id}">
+                <div class="job-header ${isOpen ? 'open' : ''}" onclick="toggleJob(${job.id})">
+                    <div class="job-status-dot ${dotClass}"></div>
+                    <div class="job-meta">
+                        <div class="job-title" title="${job.chartTitle}">${job.chartTitle}</div>
+                        <div class="job-sub">
+                            <span class="tag">#${job.id}</span>
+                            <span class="tag ${typeClass}">${job.jobType}</span>
+                            <span class="tag">${pageLabel}</span>
+                        </div>
+                    </div>
+                    <span class="job-chevron">▶</span>
+                </div>
+                <div class="job-body ${isOpen ? 'open' : ''}">
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">
+                            <span class="status-badge ${badgeClass}">${job.status}</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Rows in DB</span>
+                        <span class="detail-value">${job.rowCount.toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Attempts</span>
+                        <span class="detail-value">${job.attempts} / ${job.maxAttempts}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Queued</span>
+                        <span class="detail-value">${created}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Last run</span>
+                        <span class="detail-value">${lastRun}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">SQL hash</span>
+                        <span class="detail-value" style="font-size:10px;color:#444">${job.sqlHash}</span>
+                    </div>
+                    ${job.errorMessage ? `<div class="error-box">${escHtml(job.errorMessage)}</div>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function toggleJob(id) {
+        if (openJobIds.has(id)) {
+            openJobIds.delete(id);
+        } else {
+            openJobIds.add(id);
+        }
+        const item = document.getElementById(`job-${id}`);
+        if (!item) return;
+        item.querySelector('.job-header').classList.toggle('open', openJobIds.has(id));
+        item.querySelector('.job-body').classList.toggle('open', openJobIds.has(id));
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ── Init ──────────────────────────────────────────────────────
+    loadLog();
+    loadJobs();
+    if (autoRefresh) startAutoRefresh();
+    window.addEventListener('beforeunload', stopAutoRefresh);
+</script>
 </body>
 </html>
