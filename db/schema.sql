@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict xM3t6XEvBOklPnuuOjse3E3R3qc342pgTZJjLPli6kOuI6IbhGTFNlqORUi0YY7
+\restrict s5d52idRCn4RZYkqE7TMo9AW9q3EpvBebLE8yGz1CLXrE2H4rOk711W1K6Urlf1
 
 -- Dumped from database version 16.11 (Ubuntu 16.11-0ubuntu0.24.04.1)
 -- Dumped by pg_dump version 16.11 (Ubuntu 16.11-0ubuntu0.24.04.1)
@@ -441,6 +441,7 @@ ALTER TABLE ONLY public.trino_job_queue
 --
 
 GRANT USAGE ON SCHEMA public TO root;
+GRANT USAGE ON SCHEMA public TO redash_reader;
 
 
 --
@@ -448,6 +449,7 @@ GRANT USAGE ON SCHEMA public TO root;
 --
 
 GRANT ALL ON TABLE public.chart_definitions TO root;
+GRANT SELECT ON TABLE public.chart_definitions TO redash_reader;
 
 
 --
@@ -455,6 +457,7 @@ GRANT ALL ON TABLE public.chart_definitions TO root;
 --
 
 GRANT ALL ON TABLE public.query_results TO root;
+GRANT SELECT ON TABLE public.query_results TO redash_reader;
 
 
 --
@@ -462,6 +465,7 @@ GRANT ALL ON TABLE public.query_results TO root;
 --
 
 GRANT ALL ON TABLE public.trino_job_queue TO root;
+GRANT SELECT ON TABLE public.trino_job_queue TO redash_reader;
 
 
 --
@@ -469,6 +473,7 @@ GRANT ALL ON TABLE public.trino_job_queue TO root;
 --
 
 GRANT ALL ON TABLE public.chart_status TO root;
+GRANT SELECT ON TABLE public.chart_status TO redash_reader;
 
 
 --
@@ -476,6 +481,7 @@ GRANT ALL ON TABLE public.chart_status TO root;
 --
 
 GRANT ALL ON TABLE public.job_queue_summary TO root;
+GRANT SELECT ON TABLE public.job_queue_summary TO redash_reader;
 
 
 --
@@ -486,8 +492,15 @@ GRANT ALL ON SEQUENCE public.trino_job_queue_id_seq TO root;
 
 
 --
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public GRANT SELECT ON TABLES TO redash_reader;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict xM3t6XEvBOklPnuuOjse3E3R3qc342pgTZJjLPli6kOuI6IbhGTFNlqORUi0YY7
+\unrestrict s5d52idRCn4RZYkqE7TMo9AW9q3EpvBebLE8yGz1CLXrE2H4rOk711W1K6Urlf1
 
