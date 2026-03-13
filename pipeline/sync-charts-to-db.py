@@ -202,7 +202,8 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             }
             
             # Add optional fields
-            for field in ['width', 'rowIndex', 'prefix', 'suffix', 'variant', 'icon', 'order']:
+            for field in ['width', 'rowIndex', 'prefix', 'suffix', 'variant', 'icon', 'order',
+                          'defaultSortColumn', 'defaultSortDirection']:
                 if field in chart_dict:
                     json_config[field] = chart_dict[field]
             
