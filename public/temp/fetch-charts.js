@@ -3,11 +3,11 @@ const path = require('path');
 
 // Extract all page IDs from the menu configuration
 const MENU_PAGES = {
-  overview: [
+/*  overview: [
     { id: 'dashboard', name: 'User Activity', path: '/dashboard' },
     { id: 'network-usage', name: 'Network Usage', path: '/network-usage' },
     { id: 'market-dynamics', name: 'Market Dynamics', path: '/market-dynamics' }
-  ],
+  ],*/
   // DEX pages excluded - handled by fetch-dex-data.py
   // dex: [
   //   { id: 'dex-summary', name: 'Summary', path: '/dex/summary' },
@@ -15,11 +15,11 @@ const MENU_PAGES = {
   //   ...
   // ],
   
-  mev: [
+  /*mev: [
     { id: 'mev-summary', name: 'Summary', path: '/mev/summary' },
     { id: 'dex-token-hotspots', name: 'DEX & Token Hotspots', path: '/mev/dex-token-hotspots' },
     { id: 'extracted-value-pnl', name: 'Extracted Value & PNL', path: '/mev/extracted-value-pnl' }
-  ],
+  ],*/
   // Stablecoins pages excluded - handled by fetch-dex-data.py
   // stablecoins: [
   //   { id: 'stablecoins-summary', name: 'Summary', path: '/stablecoins/summary' },
@@ -28,38 +28,29 @@ const MENU_PAGES = {
   //   { id: 'stablecoins-tvl', name: 'TVL', path: '/stablecoins/tvl' },
   //   { id: 'stablecoins-platform-exchange', name: 'Platform Exchange', path: '/stablecoins/platform-exchange' }
   // ],
-  "protocol-revenue": [
+  /*"protocol-revenue": [
     { id: 'protocol-revenue-summary', name: 'Summary', path: '/protocol-revenue/summary' },
     { id: 'total', name: 'Total', path: '/protocol-revenue/total' },
-    { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },
-    { id: 'nft-ecosystem', name: 'NFT Ecosystem', path: '/protocol-revenue/nft-ecosystem' },
-    { id: 'depin', name: 'Depin', path: '/protocol-revenue/depin' }
-  ],
-  "compute-units": [
-    { id: "transaction-bytes", name: "Transaction Bytes", path: "/compute-units/transaction-bytes" },
-    { id: "compute-units", name: "Compute Units", path: "/compute-units/compute-units" },
+    { id: 'dex-ecosystem', name: 'DEX Ecosystem', path: '/protocol-revenue/dex-ecosystem' },*/
+  /* "compute-units": [
+    { id: "transaction-bytes", name: "Transaction Bytes", path: "/compute-units/transaction-bytes" },*/   /**/
+    /*{ id: "compute-units", name: "Compute Units", path: "/compute-units/compute-units" },
     { id: "cu-overspending", name: "CU Overspending", path: "/compute-units/cu-overspending" }
-  ],
-  "wrapped-btc": [
-    { id: "holders-supply", name: "Holders & Supply", path: "/wrapped-btc/holders-supply" },
-    { id: "btc-tvl", name: "TVL", path: "/wrapped-btc/btc-tvl" },
-    { id: "transfers", name: "Transfers", path: "/wrapped-btc/transfers" },
-    { id: "dex-activity", name: "DEX Activity", path: "/wrapped-btc/dex-activity" }
-  ],
-  "launchpads": [
+  ],*/
+  /*"launchpads": [   
     { id: "launchpads-financials", name: "Financials", path: "/launchpads/financials" },
     { id: "launchpads-traction", name: "Traction", path: "/launchpads/traction" },
     { id: "launchpads-tokenized-equities", name: "Tokenized Equities", path: "/launchpads/tokenized-equities" },
     { id: "launchpads-fee-revenue", name: "Fee Revenue", path: "/launchpads/fee-revenue" }
-  ],
-  "xstocks": [
+  ],*/
+  /*"xstocks": [
     { id: "xstocks-fee-revenue", name: "Fee Revenue", path: "/xstocks/fee-revenue" },
     { id: "xstocks-traction", name: "Traction", path: "/xstocks/traction" },
     { id: "xstocks-tvl", name: "TVL", path: "/xstocks/tvl" }
-  ],
-  "valuation-insights": [
+  ],*/
+  /*"valuation-insights": [
     { id: "valuation-insights-overview", name: "Overview", path: "/valuation-insights/overview" }
-  ],
+  ],*/
   "sf-dashboards": [
     { id: "sf-overview", name: "Overview", path: "/sf-dashboards/overview" },
     { id: "sf-stablecoins", name: "Stablecoins", path: "/sf-dashboards/stablecoins" },
@@ -73,9 +64,7 @@ const MENU_PAGES = {
     { id: "sf-treasury", name: "Treasury", path: "/sf-dashboards/treasury" },
     { id: "sf-vc-funding", name: "VC Funding", path: "/sf-dashboards/vc-funding" }
   ],
-  "test": [
-    { id: "test", name: "Test", path: "/test" }
-  ],
+ 
   "raydium": [
     { id: "raydium-financials", name: "Financials", path: "/projects/raydium/financials" },
     { id: "raydium-traction", name: "Traction", path: "/projects/raydium/traction" },
@@ -135,7 +124,7 @@ async function fetchAllCharts() {
     console.log('Fetching all charts from admin API...');
     
     // Use environment variable or fallback to local development URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
     const apiUrl = `${baseUrl}/api/admin/charts`;
     
     console.log(`Using admin API URL: ${apiUrl}`);
