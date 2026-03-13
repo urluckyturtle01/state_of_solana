@@ -40,7 +40,7 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
 const formatFieldName = (fieldName: string): string => {
   if (!fieldName) return '';
   return fieldName
-    .replace(/[_-]/g, ' ')
+    .replace(/_/g, ' ')
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
@@ -1730,6 +1730,7 @@ export default function DashboardRenderer({
         .map((group) => {
           const groupStr = String(group);
           return {
+            id: groupStr,
             label: formatFieldName(groupStr),
             color: colorMap[groupStr] || getColorByIndex(Object.keys(colorMap).length),
             value: groupTotals[groupStr] || 0,

@@ -1626,9 +1626,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
 
-    // Convert snake_case or kebab-case to Title Case
+    // Convert snake_case to Title Case (preserve hyphens in range labels like "21-50")
     return fieldName
-      .replace(/[_-]/g, ' ')
+      .replace(/_/g, ' ')
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
