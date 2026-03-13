@@ -216,7 +216,7 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                     from datetime import datetime
                     from dateutil.relativedelta import relativedelta
 
-                    comparison_month_name = (datetime.now() - relativedelta(months=2)).strftime('%b')
+                    comparison_month_name = (datetime.now() - relativedelta(months=2)).strftime("%b'%y")
 
                     json_config['trendConfig'] = {
                         'valueField': 'auto_calculate',
