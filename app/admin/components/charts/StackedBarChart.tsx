@@ -1625,9 +1625,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   // Helper function to show field names as-is from API
   const formatFieldName = (fieldName: string): string => {
     if (!fieldName) return '';
-    
-    // Return API field name as-is without any formatting
-    return fieldName;
+
+    // Convert snake_case or kebab-case to Title Case
+    return fieldName
+      .replace(/[_-]/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   // Update legend items when data changes
