@@ -43,4 +43,511 @@
    SQL hash: 7520d3a55e1af5601594178cee15f666
    📅 Backfill (resume): existing 1299 rows (15 months), 1 months to fetch
    🔧 Filling 1 missing months...
-      Fetching 2026-03-01 (1/1)...
+      Fetching 2026-03-01 (1/1)... ❌ Error: Execution failed on sql '-- Description: Daily volume breakdown by category (Stablecoins, SOL, Other tokens)
+-- Shows daily volume and share across token categories by unpivoting bought and sold tokens
+
+/*
+Logic:
+- UNNEST bought and sold tokens in a single table scan
+- Categorize tokens into: Stablecoins, SOL, Other
+- Calculate daily volume in USD for each category
+- Show daily market share percentage
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint, name FROM (
+        VALUES 
+            ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'USDC'),
+            ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 'USDT'),
+            ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo', 'PYUSD'),
+            ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT', 'USDe'),
+            ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', 'USDS'),
+            ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u', 'FDUSD'),
+            ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', 'EURC'),
+            ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X', 'sUSD'),
+            ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9', 'AUSD'),
+            ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg', 'EUROe'),
+            ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6', 'USDY'),
+            ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH', 'USDG'),
+            ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1', 'VGBP'),
+            ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519', 'VEUR'),
+            ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch', 'VCHF'),
+            ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R', 'VNXAU'),
+            ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g', 'GYEN'),
+            ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4', 'ZUSD'),
+            ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj', 'syrupUSDC'),
+            ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG', 'USX'),
+            ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB', 'USD1')
+    ) AS t(mint, name)
+),
+all_tokens AS (
+    SELECT 
+        t.block_date,
+        t.block_time,
+        x.mint,
+        x.amount,
+        t.signer
+    FROM solana.dex_trades t
+    CROSS JOIN UNNEST(
+        ARRAY[t.token_bought_mint, t.token_sold_mint],
+        ARRAY[t.token_bought_amount, t.token_sold_amount]
+    ) AS x(mint, amount)
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+),
+daily_volume AS (
+    SELECT 
+        at.block_date,
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END as token_category,
+        SUM(at.amount * COALESCE(p.price_in_usd, 0)) as volume_usd
+    FROM all_tokens at
+    LEFT JOIN stablecoins s ON at.mint = s.mint
+    LEFT JOIN solana.token_prices_1m p ON at.mint = p.mint
+        AND DATE_TRUNC('minute', at.block_time) = p.minute
+        AND p.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    GROUP BY 
+        at.block_date,
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END
+),
+daily_total AS (
+    SELECT block_date, SUM(volume_usd) as total_volume_usd
+    FROM daily_volume
+    GROUP BY block_date
+)
+
+SELECT 
+    dv.block_date,
+    dv.token_category,
+    ROUND(dv.volume_usd, 2) as volume_usd,
+    ROUND(dv.volume_usd * 100.0 / dt.total_volume_usd, 2) as volume_share_pct
+FROM daily_volume dv
+JOIN daily_total dt ON dv.block_date = dt.block_date
+ORDER BY dv.block_date, dv.volume_usd DESC
+
+ LIMIT 10000': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-14/20260215_010005_00007_97zny-1ef9dfc2-8a5a-47d4-a21a-d6968970ea92.parquet (offset=4, length=160398): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-14/20260215_010005_00007_97zny-1ef9dfc2-8a5a-47d4-a21a-d6968970ea92.parquet", query_id=20260314_082346_00704_tvaaa)
+[SQL: -- Description: Daily volume breakdown by category (Stablecoins, SOL, Other tokens)
+-- Shows daily volume and share across token categories by unpivoting bought and sold tokens
+
+/*
+Logic:
+- UNNEST bought and sold tokens in a single table scan
+- Categorize tokens into: Stablecoins, SOL, Other
+- Calculate daily volume in USD for each category
+- Show daily market share percentage
+*/
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+stablecoins AS (
+    SELECT mint, name FROM (
+        VALUES 
+            ('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 'USDC'),
+            ('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 'USDT'),
+            ('2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo', 'PYUSD'),
+            ('DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT', 'USDe'),
+            ('USDSwr9ApdHk5bvJKMjzff41FfuX8bSxdKcR81vTwcA', 'USDS'),
+            ('9zNQRsGLjNKwCUU5Gq5LR8beUCPzQMVMqKAi3SSZh54u', 'FDUSD'),
+            ('HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', 'EURC'),
+            ('susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X', 'sUSD'),
+            ('AUSD1jCcCyPLybk1YnvPWsHQSrZ46dxwoMniN4N2UEB9', 'AUSD'),
+            ('2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg', 'EUROe'),
+            ('A1KLoBrKBde8Ty9qtNQUtq3C2ortoC3u7twggz7sEto6', 'USDY'),
+            ('2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH', 'USDG'),
+            ('5H4voZhzySsVvwVYDAKku8MZGuYBC7cXaBKDPW4YHWW1', 'VGBP'),
+            ('C4Kkr9NZU3VbyedcgutU6LKmi6MKz81sx6gRmk5pX519', 'VEUR'),
+            ('AhhdRu5YZdjVkKR3wbnUDaymVQL2ucjMQ63sZ3LFHsch', 'VCHF'),
+            ('9TPL8droGJ7jThsq4momaoz6uhTcvX2SeMqipoPmNa8R', 'VNXAU'),
+            ('Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g', 'GYEN'),
+            ('FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4', 'ZUSD'),
+            ('AvZZF1YaZDziPY2RCK4oJrRVrbN3mTD9NL24hPeaZeUj', 'syrupUSDC'),
+            ('6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG', 'USX'),
+            ('USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB', 'USD1')
+    ) AS t(mint, name)
+),
+all_tokens AS (
+    SELECT 
+        t.block_date,
+        t.block_time,
+        x.mint,
+        x.amount,
+        t.signer
+    FROM solana.dex_trades t
+    CROSS JOIN UNNEST(
+        ARRAY[t.token_bought_mint, t.token_sold_mint],
+        ARRAY[t.token_bought_amount, t.token_sold_amount]
+    ) AS x(mint, amount)
+    WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+      AND t.block_date < CURRENT_DATE
+      AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+),
+daily_volume AS (
+    SELECT 
+        at.block_date,
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END as token_category,
+        SUM(at.amount * COALESCE(p.price_in_usd, 0)) as volume_usd
+    FROM all_tokens at
+    LEFT JOIN stablecoins s ON at.mint = s.mint
+    LEFT JOIN solana.token_prices_1m p ON at.mint = p.mint
+        AND DATE_TRUNC('minute', at.block_time) = p.minute
+        AND p.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+    GROUP BY 
+        at.block_date,
+        CASE 
+            WHEN at.mint = 'So11111111111111111111111111111111111111112' THEN 'SOL'
+            WHEN s.mint IS NOT NULL THEN 'Stablecoins'
+            ELSE 'Other Tokens'
+        END
+),
+daily_total AS (
+    SELECT block_date, SUM(volume_usd) as total_volume_usd
+    FROM daily_volume
+    GROUP BY block_date
+)
+
+SELECT 
+    dv.block_date,
+    dv.token_category,
+    ROUND(dv.volume_usd, 2) as volume_usd,
+    ROUND(dv.volume_usd * 100.0 / dt.total_volume_usd, 2) as volume_share_pct
+FROM daily_volume dv
+JOIN daily_total dt ON dv.block_date = dt.block_date
+ORDER BY dv.block_date, dv.volume_usd DESC
+
+ LIMIT 10000]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+   ⚠️  No new data to merge
+   ⚠️  Backfill (resume) partial: 0 new rows, total 1299 rows (1 periods failed)
+⚠️  Job #364 PARTIALLY SUCCESSFUL: 1299 rows saved
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)
+
+⏳ No pending jobs. Waiting 10s... (processed 4 jobs so far)

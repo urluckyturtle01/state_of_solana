@@ -8,106 +8,182 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background: #0a0a0a;
-            color: #00ff00;
-            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #111214;
+            color: #ffffff;
+            padding: 24px;
+            line-height: 1.5;
         }
 
         .container { max-width: 1800px; margin: 0 auto; }
 
-        /* ── Header ──────────────────────────────────────────────── */
+        /* ── Header ─────────────────────────────────────────────────── */
         .header {
-            background: #1a1a1a;
-            padding: 16px 20px;
+            background: #18191b;
+            padding: 10px 20px;
             border-radius: 8px;
             margin-bottom: 16px;
+            border: 1px solid #2a2b2d;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
         }
 
-        h1 { font-size: 22px; color: #00ff00; }
+        .header-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .header-title .meta { color: #8b8d90; font-weight: 500; }
 
-        .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         button {
-            background: #00ff00;
-            color: #0a0a0a;
+            background: #0070f3;
+            color: #ffffff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 500;
             font-size: 13px;
             font-family: inherit;
+            transition: background .15s;
         }
-        button:hover { background: #00cc00; }
-        button:disabled { background: #555; cursor: not-allowed; }
+        button:hover { background: transparent; }
+        button:disabled { background: #2a2b2d; color: #8b8d90; cursor: not-allowed; }
         button.secondary {
             background: transparent;
-            border: 1px solid #00ff00;
-            color: #00ff00;
+            border: 1px solid #2a2b2d;
+            color: #8b8d90;
         }
-        button.secondary:hover { background: #002200; }
+        button.secondary:hover { background: #222426; color: #ffffff; border-color: #3a3b3d; }
 
-        .status { display: flex; gap: 14px; font-size: 13px; align-items: center; }
+        .status { display: flex; gap: 18px; font-size: 13px; align-items: center; color: #8b8d90; }
         .status-dot {
-            width: 9px; height: 9px; border-radius: 50%;
-            background: #00ff00; animation: pulse 2s infinite;
-            display: inline-block; margin-right: 5px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #0070f3; animation: pulse 2s infinite;
+            display: inline-block; margin-right: 6px;
         }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+        .toolbar-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 6px;
+            height: 28px;
+            padding: 0 10px;
+            background: #222426;
+            border: 1px solid #2a2b2d;
+            border-radius: 4px;
+            color: #e4e4e7;
+            font-size: 11px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .toolbar-btn:hover { background: #2a2b2d; border-color: #3a3b3d; }
+        .toolbar-btn svg { flex-shrink: 0; }
+        .toolbar-btn.icon-only { padding: 0 8px; }
+        .auto-switch {
+            width: 36px; height: 20px;
+            border-radius: 10px;
+            border: 1px solid #3a3b3d;
+            background: #222426;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .auto-switch::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            top: 3px;
+            transition: left .2s ease;
+        }
+        .auto-switch.on::after  { background: #22c55e; left: 21px; }
+        .auto-switch.off::after { background: #ef4444; left: 3px; }
 
         /* ── Body: two columns ───────────────────────────────────── */
         .body {
             display: grid;
             grid-template-columns: 1fr 400px;
-            gap: 16px;
+            gap: 20px;
             align-items: start;
         }
 
         /* ── Log panel ───────────────────────────────────────────── */
-        .log-panel {}
-
-        .search-box { margin-bottom: 8px; }
-        .search-box input {
-            width: 100%;
+        .log-toolbar {
+            display: flex;
+            align-items: center;
             padding: 8px 12px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            color: #00ff00;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 13px;
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-bottom: 1px solid #2a2b2d;
+            border-radius: 8px 8px 0 0;
+            gap: 8px;
         }
-        .search-box input::placeholder { color: #555; }
-        .search-box input:focus { outline: none; border-color: #00ff00; }
+        .log-toolbar .spacer { flex: 1; min-width: 12px; }
+        .log-search-wrap {
+            display: flex;
+            align-items: center;
+            background: #222426;
+            border: 1px solid #2a2b2d;
+            border-radius: 6px;
+            padding: 0 0 0 10px;
+            width: 220px;
+            height: 28px;
+            transition: border-color .15s;
+        }
+        .log-search-wrap:focus-within { border-color: #0070f3; }
+        .log-search-wrap input {
+            flex: 1;
+            min-width: 0;
+            padding: 0 8px;
+            background: transparent;
+            border: none;
+            color: #e4e4e7;
+            font-size: 11px;
+            font-family: inherit;
+        }
+        .log-search-wrap input::placeholder { color: #8b8d90; }
+        .log-search-wrap input:focus { outline: none; }
+        .log-search-wrap .search-icon { color: #8b8d90; flex-shrink: 0; display: flex; }
+        .log-search-wrap .search-shortcut {
+            padding: 4px 8px;
+            background: #2a2b2d;
+            border: 1px solid #3a3b3d;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #8b8d90;
+            font-family: inherit;
+            flex-shrink: 0;
+        }
 
         .log-container {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 8px;
-            padding: 16px;
-            height: calc(100vh - 180px);
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 20px;
+            height: calc(100vh - 190px);
             overflow-y: auto;
             font-size: 12px;
-            line-height: 1.7;
+            line-height: 1.8;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
         }
 
-        .log-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 1px; }
-        .log-line.error   { color: #ff5555; }
-        .log-line.success { color: #55ff55; }
-        .log-line.warning { color: #ffaa00; }
-        .log-line.info    { color: #55aaff; }
-        .highlight { background: #ffff00; color: #000; padding: 0 3px; border-radius: 2px; }
+        .log-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 2px; color: #e4e4e7; }
+        .log-line.error   { color: #f87171; }
+        .log-line.success { color: #4ade80; }
+        .log-line.warning { color: #fbbf24; }
+        .log-line.info    { color: #60a5fa; }
+        .highlight { background: #0070f3; color: #ffffff; padding: 1px 4px; border-radius: 3px; }
 
         .log-container::-webkit-scrollbar { width: 8px; }
-        .log-container::-webkit-scrollbar-track { background: #0a0a0a; }
-        .log-container::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        .log-container::-webkit-scrollbar-thumb:hover { background: #555; }
+        .log-container::-webkit-scrollbar-track { background: #111214; }
+        .log-container::-webkit-scrollbar-thumb { background: #2a2b2d; border-radius: 4px; }
+        .log-container::-webkit-scrollbar-thumb:hover { background: #3a3b3d; }
 
         /* ── Jobs panel ──────────────────────────────────────────── */
         .jobs-panel {
@@ -117,84 +193,73 @@
         }
 
         .jobs-header {
-            background: #1a1a1a;
-            border: 1px solid #222;
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-bottom: none;
             border-radius: 8px 8px 0 0;
             padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .jobs-header h2 { font-size: 14px; color: #aaa; }
+        .jobs-header h2 { font-size: 13px; font-weight: 600; color: #ffffff; }
 
         .jobs-filter {
             display: flex;
-            gap: 12px;
-            padding: 10px 12px;
-            background: #151515;
-            border-left: 1px solid #222;
-            border-right: 1px solid #222;
-            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 16px;
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-top: none;
             align-items: center;
         }
         .jobs-filter select {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #00ff00;
+            background: #222426;
+            border: 1px solid #2a2b2d;
+            color: #ffffff;
             padding: 6px 10px;
             border-radius: 4px;
-            font-size: 12px;
-            font-family: inherit;
-            cursor: pointer;
-            min-width: 140px;
-        }
-        .jobs-filter select:focus { outline: none; border-color: #00ff00; }
-        .jobs-filter select option { background: #1a1a1a; color: #00ff00; }
-        .filter-btn {
-            background: #1a1a1a;
-            color: #888;
-            border: 1px solid #333;
-            padding: 4px 10px;
-            border-radius: 20px;
             font-size: 11px;
-            cursor: pointer;
             font-family: inherit;
+            cursor: pointer;
+            min-width: 120px;
         }
-        .filter-btn.active { background: #002200; color: #00ff00; border-color: #00ff00; }
-        .filter-btn:hover { border-color: #555; color: #ccc; }
+        .jobs-filter select:focus { outline: none; border-color: #0070f3; }
+        .jobs-filter select option { background: #18191b; color: #ffffff; }
 
         .jobs-list {
-            background: #111;
-            border: 1px solid #222;
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-top: none;
             border-radius: 0 0 8px 8px;
-            height: calc(100vh - 245px);
+            height: calc(100vh - 240px);
             overflow-y: auto;
         }
         .jobs-list::-webkit-scrollbar { width: 6px; }
-        .jobs-list::-webkit-scrollbar-track { background: #0a0a0a; }
-        .jobs-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .jobs-list::-webkit-scrollbar-track { background: #111214; }
+        .jobs-list::-webkit-scrollbar-thumb { background: #2a2b2d; border-radius: 3px; }
 
         /* ── Accordion item ──────────────────────────────────────── */
-        .job-item { border-bottom: 1px solid #1a1a1a; }
+        .job-item { border-bottom: 1px solid #2a2b2d; }
         .job-item:last-child { border-bottom: none; }
 
         .job-header {
-            padding: 10px 14px;
+            padding: 14px 20px;
             cursor: pointer;
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 12px;
             transition: background .15s;
         }
-        .job-header:hover { background: #161616; }
-        .job-header.open  { background: #141414; }
+        .job-header:hover { background: #222426; }
+        .job-header.open  { background: #222426; border-left: 3px solid #0070f3; padding-left: 17px; }
 
         .job-status-dot {
             width: 8px; height: 8px; border-radius: 50%;
-            flex-shrink: 0; margin-top: 5px;
+            flex-shrink: 0; margin-top: 6px;
         }
         .dot-completed  { background: #22c55e; }
-        .dot-running    { background: #3b82f6; animation: pulse 1.5s infinite; }
+        .dot-running    { background: #0070f3; animation: pulse 1.5s infinite; }
         .dot-pending    { background: #f59e0b; }
         .dot-partial    { background: #f97316; }
         .dot-failed_permanent { background: #ef4444; }
@@ -202,97 +267,102 @@
 
         .job-meta { flex: 1; min-width: 0; }
         .job-title {
-            font-size: 12px;
-            color: #ddd;
+            font-size: 13px;
+            color: #ffffff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .job-sub {
             font-size: 11px;
-            color: #555;
+            color: #8b8d90;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
         .job-sub .tag {
-            background: #1e1e1e;
-            color: #888;
-            padding: 1px 6px;
-            border-radius: 3px;
+            background: #222426;
+            color: #8b8d90;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-size: 10px;
         }
-        .tag.type-backfill      { color: #818cf8; border: 1px solid #312e81; }
-        .tag.type-incremental   { color: #34d399; border: 1px solid #064e3b; }
-        .tag.type-full_refresh  { color: #60a5fa; border: 1px solid #1e3a5f; }
+        .tag.type-backfill      { color: #818cf8; }
+        .tag.type-incremental   { color: #34d399; }
+        .tag.type-full_refresh  { color: #60a5fa; }
 
         .job-chevron {
-            color: #444; font-size: 12px; flex-shrink: 0;
+            color: #8b8d90; font-size: 10px; flex-shrink: 0;
             transition: transform .2s;
         }
-        .job-header.open .job-chevron { transform: rotate(90deg); }
+        .job-header.open .job-chevron { transform: rotate(90deg); color: #0070f3; }
 
         /* ── Accordion body ──────────────────────────────────────── */
         .job-body {
             display: none;
-            padding: 10px 14px 14px 32px;
-            background: #0d0d0d;
+            padding: 12px 16px 16px 20px;
+            background: #18191b;
+            border-left: 3px solid #0070f3;
+            margin-left: 20px;
+            margin-bottom: 1px;
             font-size: 11px;
-            color: #888;
+            color: #8b8d90;
         }
         .job-body.open { display: block; }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
-            gap: 10px;
+            margin-bottom: 6px;
+            gap: 12px;
+            align-items: flex-start;
         }
-        .detail-label { color: #555; flex-shrink: 0; }
-        .detail-value { color: #ccc; text-align: right; word-break: break-all; }
+        .detail-label { color: #8b8d90; flex-shrink: 0; font-size: 11px; }
+        .detail-value { color: #e4e4e7; text-align: right; word-break: break-all; font-size: 11px; }
 
         .error-box {
-            background: #1a0000;
-            border: 1px solid #440000;
+            background: #222426;
+            border: 1px solid #2a2b2d;
             border-radius: 4px;
-            padding: 8px;
-            margin-top: 8px;
-            color: #ff5555;
-            font-size: 10px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            color: #f87171;
+            font-size: 11px;
             white-space: pre-wrap;
             word-break: break-all;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 1px 8px;
-            border-radius: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-size: 10px;
-            font-weight: bold;
+            font-weight: 500;
         }
-        .badge-completed  { background: #052e16; color: #22c55e; }
-        .badge-running    { background: #0c1a3a; color: #60a5fa; }
-        .badge-pending    { background: #2a1a00; color: #f59e0b; }
-        .badge-partial    { background: #2a0e00; color: #f97316; }
-        .badge-failed_permanent, .badge-failed { background: #1c0000; color: #ef4444; }
+        .badge-completed  { background: #14532d; color: #4ade80; }
+        .badge-running    { background: #1e3a5f; color: #60a5fa; }
+        .badge-pending    { background: #422006; color: #fbbf24; }
+        .badge-partial    { background: #431407; color: #fb923c; }
+        .badge-failed_permanent, .badge-failed { background: #450a0a; color: #f87171; }
 
-        .empty-state { text-align: center; padding: 40px; color: #444; font-size: 13px; }
+        .empty-state { text-align: center; padding: 48px 24px; color: #8b8d90; font-size: 13px; }
 
         .requeue-btn {
             margin-top: 10px;
-            background: transparent;
-            border: 1px solid #f97316;
-            color: #f97316;
-            padding: 4px 12px;
+            background: #222426;
+            border: 1px solid #2a2b2d;
+            color: #e4e4e7;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 11px;
             cursor: pointer;
             font-family: inherit;
-            font-weight: bold;
+            font-weight: 500;
             width: 100%;
+            transition: all .15s;
         }
-        .requeue-btn:hover { background: #2a0e00; }
+        .requeue-btn:hover { background: #2a2b2d; border-color: #0070f3; color: #0070f3; }
         .requeue-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
@@ -301,17 +371,10 @@
 
     <!-- Header -->
     <div class="header">
-        <h1>🔧 Trino Worker Log</h1>
-        <div class="controls">
-            <div class="status">
-                <span><span class="status-dot"></span><span id="status-text">Live</span></span>
-                <span>Lines: <span id="line-count">0</span></span>
-                <span>Updated: <span id="last-update">—</span></span>
-            </div>
-            <button onclick="loadLog()">Refresh</button>
-            <button id="auto-refresh-btn" onclick="toggleAutoRefresh()">Auto: ON</button>
-            <button class="secondary" onclick="clearLog()">Clear</button>
-            <button class="secondary" onclick="scrollToBottom()">⬇ Bottom</button>
+        <span class="header-title">stateofsolana <span class="meta">/ Trino Worker</span></span>
+        <div class="status">
+            <span><span class="status-dot"></span><span id="status-text">Live</span></span>
+            <span title="Last updated"><span id="last-update">—</span></span>
         </div>
     </div>
 
@@ -320,8 +383,21 @@
 
         <!-- Left: Log -->
         <div class="log-panel">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search logs…" oninput="searchLogs()">
+            <div class="log-toolbar">
+                <button type="button" class="toolbar-btn" id="copy-logs-btn" onclick="copyLogs()" title="Copy logs">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span><span class="line-count" id="line-count">0</span> lines</span>
+                </button>
+                <div class="spacer"></div>
+                <div class="log-search-wrap">
+                    <span class="search-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+                    <input type="text" id="search-input" placeholder="Find in logs" oninput="searchLogs()">
+                    <span class="search-shortcut" id="shortcut-hint">⌘F</span>
+                </div>
+                <button type="button" class="toolbar-btn icon-only" onclick="loadLog()" title="Refresh"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M21 21v-5h-5"/></svg></button>
+                <button type="button" class="toolbar-btn icon-only" onclick="clearLog()" title="Clear"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+                <button type="button" class="toolbar-btn icon-only" onclick="scrollToBottom()" title="Scroll to bottom"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+                <button type="button" class="auto-switch on" id="auto-switch" onclick="toggleAutoRefresh()" title="Auto refresh" aria-label="Auto refresh"></button>
             </div>
             <div class="log-container" id="log-container">
                 <div class="empty-state">Loading log…</div>
@@ -332,7 +408,7 @@
         <div class="jobs-panel">
             <div class="jobs-header">
                 <h2>📋 Job Runs</h2>
-                <span id="jobs-count" style="font-size:12px;color:#555">—</span>
+                <span id="jobs-count" style="font-size:12px;color:#8b8d90">—</span>
             </div>
             <div class="jobs-filter">
                 <select id="category-select" onchange="onCategoryChange()">
@@ -341,12 +417,14 @@
                 <select id="subcategory-select" onchange="onSubcategoryChange()">
                     <option value="all">Page: All</option>
                 </select>
-                <button class="filter-btn active" data-filter="all"    onclick="setFilter('all')">All</button>
-                <button class="filter-btn"         data-filter="running"   onclick="setFilter('running')">Running</button>
-                <button class="filter-btn"         data-filter="pending"   onclick="setFilter('pending')">Pending</button>
-                <button class="filter-btn"         data-filter="completed" onclick="setFilter('completed')">Done</button>
-                <button class="filter-btn"         data-filter="partial"   onclick="setFilter('partial')">Partial</button>
-                <button class="filter-btn"         data-filter="failed_permanent" onclick="setFilter('failed_permanent')">Failed</button>
+                <select id="status-select" onchange="onStatusChange()">
+                    <option value="all">Status: All</option>
+                    <option value="running">Running</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Done</option>
+                    <option value="partial">Partial</option>
+                    <option value="failed_permanent">Failed</option>
+                </select>
             </div>
             <div class="jobs-list" id="jobs-list">
                 <div class="empty-state">Loading jobs…</div>
@@ -361,6 +439,7 @@
     let autoRefresh = true;
     let refreshInterval = null;
     let searchTerm = '';
+    let rawLogContent = '';
     let jobFilter = 'all';
     let categoryFilter = 'all';
     let subcategoryFilter = 'all';
@@ -372,6 +451,7 @@
         fetch('/api/worker-log')
             .then(r => r.text())
             .then(data => {
+                rawLogContent = data;
                 const lines = data.split('\n');
                 const container = document.getElementById('log-container');
 
@@ -415,7 +495,10 @@
 
     function toggleAutoRefresh() {
         autoRefresh = !autoRefresh;
-        document.getElementById('auto-refresh-btn').textContent = autoRefresh ? 'Auto: ON' : 'Auto: OFF';
+        const sw = document.getElementById('auto-switch');
+        sw.classList.toggle('on', autoRefresh);
+        sw.classList.toggle('off', !autoRefresh);
+        sw.title = autoRefresh ? 'Auto refresh: ON' : 'Auto refresh: OFF';
         autoRefresh ? startAutoRefresh() : stopAutoRefresh();
     }
     function startAutoRefresh() {
@@ -441,6 +524,23 @@
         loadLog();
     }
 
+    function copyLogs() {
+        const text = rawLogContent || document.getElementById('log-container').innerText;
+        if (!text.trim()) return;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById('copy-logs-btn');
+            const countEl = document.getElementById('line-count');
+            const n = (countEl && countEl.textContent) || '0';
+            const wrap = countEl && countEl.parentNode;
+            if (wrap) wrap.textContent = 'Copied';
+            btn.style.color = '#4ade80';
+            setTimeout(() => {
+                if (wrap) wrap.innerHTML = '<span class="line-count" id="line-count">' + n + '</span> lines';
+                btn.style.color = '';
+            }, 1200);
+        });
+    }
+
     // ── Jobs ──────────────────────────────────────────────────────
     function loadJobs() {
         fetch('/api/worker-jobs')
@@ -449,6 +549,7 @@
                 allJobs = data.jobs || [];
                 buildCategoryOptions();
                 buildSubcategoryOptions();
+                document.getElementById('status-select').value = jobFilter;
                 renderJobs();
             })
             .catch(() => {
@@ -457,11 +558,8 @@
             });
     }
 
-    function setFilter(f) {
-        jobFilter = f;
-        document.querySelectorAll('.jobs-filter .filter-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.filter === f);
-        });
+    function onStatusChange() {
+        jobFilter = document.getElementById('status-select').value;
         renderJobs();
     }
 
@@ -632,6 +730,14 @@
     loadJobs();
     if (autoRefresh) startAutoRefresh();
     window.addEventListener('beforeunload', stopAutoRefresh);
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            document.getElementById('search-input').focus();
+        }
+    });
+    document.getElementById('shortcut-hint').textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘F' : 'Ctrl+F';
 </script>
 </body>
 </html>
