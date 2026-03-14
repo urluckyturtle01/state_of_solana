@@ -8,7 +8,7 @@ Runs every day at 5:00 AM IST (23:30 UTC):
   3. Queues jobs for ALL charts without pending/running:
      - isIncremental=true + date-templated → incremental
      - isIncremental=true + static → full_refresh
-     - isIncremental=false + date-templated → backfill (resume: gaps + new months)
+     - isIncremental=false + date-templated → no queue (skipped)
      - isIncremental=false + static → full_refresh
   4. Prunes old job history (keeps latest 1 per hash)
 """
@@ -96,7 +96,7 @@ def queue_daily_jobs(pg) -> tuple[int, int, int]:
     """Queue jobs for all charts without pending/running.
     - isIncremental true + date-templated → incremental
     - isIncremental true + static → full_refresh
-    - isIncremental false + date-templated → backfill (resume: gaps + new months)
+    - isIncremental false + date-templated → no queue (skipped)
     - isIncremental false + static → full_refresh
     """
     cur = pg.cursor()
@@ -124,7 +124,9 @@ def queue_daily_jobs(pg) -> tuple[int, int, int]:
         if is_incremental:
             job_type = 'incremental' if has_dates else 'full_refresh'
         else:
-            job_type = 'backfill' if has_dates else 'full_refresh'
+            if has_dates:
+                continue  # isIncremental=false + date-templated: no queue
+            job_type = 'full_refresh'
 
         cur.execute("""
             INSERT INTO trino_job_queue (sql_hash, job_type, status)
