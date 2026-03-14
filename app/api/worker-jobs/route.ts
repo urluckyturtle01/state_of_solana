@@ -88,3 +88,29 @@ export async function GET() {
     client.release();
   }
 }
+
+export async function PATCH(request: Request) {
+  const { id } = await request.json();
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `UPDATE trino_job_queue
+       SET status = 'pending', attempts = 0, error_message = NULL,
+           started_at = NULL, completed_at = NULL, retry_after = NULL
+       WHERE id = $1
+         AND status IN ('partial', 'completed', 'failed', 'failed_permanent')
+       RETURNING id, status`,
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'Job not found or not re-queueable' }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true, id });
+  } finally {
+    client.release();
+  }
+}

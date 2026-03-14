@@ -264,6 +264,22 @@
         .badge-failed_permanent, .badge-failed { background: #1c0000; color: #ef4444; }
 
         .empty-state { text-align: center; padding: 40px; color: #444; font-size: 13px; }
+
+        .requeue-btn {
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid #f97316;
+            color: #f97316;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            width: 100%;
+        }
+        .requeue-btn:hover { background: #2a0e00; }
+        .requeue-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -493,6 +509,10 @@
                         <span class="detail-value" style="font-size:10px;color:#444">${job.sqlHash}</span>
                     </div>
                     ${job.errorMessage ? `<div class="error-box">${escHtml(job.errorMessage)}</div>` : ''}
+                    ${['partial','completed','failed','failed_permanent'].includes(job.status) ? `
+                    <button class="requeue-btn" id="requeue-${job.id}" onclick="requeueJob(${job.id}, this)">
+                        ↺ Re-queue as Pending
+                    </button>` : ''}
                 </div>
             </div>`;
         }).join('');
@@ -508,6 +528,36 @@
         if (!item) return;
         item.querySelector('.job-header').classList.toggle('open', openJobIds.has(id));
         item.querySelector('.job-body').classList.toggle('open', openJobIds.has(id));
+    }
+
+    function requeueJob(id, btn) {
+        btn.disabled = true;
+        btn.textContent = 'Queuing…';
+        fetch('/api/worker-jobs', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                btn.textContent = '✓ Queued';
+                btn.style.borderColor = '#22c55e';
+                btn.style.color = '#22c55e';
+                setTimeout(() => loadJobs(), 800);
+            } else {
+                btn.textContent = '✗ ' + (data.error || 'Failed');
+                btn.style.borderColor = '#ef4444';
+                btn.style.color = '#ef4444';
+                btn.disabled = false;
+            }
+        })
+        .catch(() => {
+            btn.textContent = '✗ Error';
+            btn.style.borderColor = '#ef4444';
+            btn.style.color = '#ef4444';
+            btn.disabled = false;
+        });
     }
 
     function escHtml(str) {
