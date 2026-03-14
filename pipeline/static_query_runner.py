@@ -36,13 +36,13 @@ def run_static_query(pg, sql_hash: str, sql_query: str, trino_client) -> int:
         return 0
 
     if df is None or df.empty:
-        print(" 0 rows")
+        print(" 0 rows", flush=True)
         return 0
 
     # Convert to JSON-safe records
     records = _convert_to_json_safe(df.to_dict('records'))
     row_count = len(records)
-    print(f" {row_count} rows")
+    print(f" {row_count} rows", flush=True)
 
     # Persist to query_results (full replace)
     cur = pg.cursor()
@@ -57,7 +57,7 @@ def run_static_query(pg, sql_hash: str, sql_query: str, trino_client) -> int:
     pg.commit()
     cur.close()
 
-    print(f"   ✅ Static query complete: {row_count} rows saved")
+    print(f"   ✅ Static query complete: {row_count} rows saved", flush=True)
     return row_count
 
 

@@ -109,7 +109,7 @@ if [ -n "$WORKER_PID" ]; then
     echo "   📝 Worker will automatically process queued jobs"
 else
     echo "   ⚠️  trino_worker.py is NOT running"
-    echo "   💡 Start it with: nohup python3 trino_worker.py > trino_worker.log 2>&1 &"
+    echo "   💡 Start it with: nohup python3 -u trino_worker.py > trino_worker.log 2>&1 &"
 fi
 echo ""
 

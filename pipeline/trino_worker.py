@@ -449,8 +449,13 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             
             # Find missing months
             missing_months = [m for m in expected_months if m.strftime('%Y-%m-01') not in existing_months]
-            
-            print(f"   📅 Backfill (resume): existing {existing_count} rows ({len(existing_months)} months), {len(missing_months)} missing months")
+
+            # Always re-fetch current month (works for both: aggregated monthly data, and daily data within month)
+            current_month = today.replace(day=1)
+            if current_month not in missing_months and current_month >= BACKFILL_START:
+                missing_months.insert(0, current_month)
+
+            print(f"   📅 Backfill (resume): existing {existing_count} rows ({len(existing_months)} months), {len(missing_months)} months to fetch")
             
             if missing_months:
                 print(f"   🔧 Filling {len(missing_months)} missing months...")
@@ -1255,8 +1260,8 @@ def process_job(pg, job, trino_client):
     """
     job_id, sql_hash, job_type, attempts, max_attempts = job
     
-    print(f"\n🔄 Processing job #{job_id} ({job_type}) - attempt {attempts}/{max_attempts}")
-    print(f"   SQL hash: {sql_hash}")
+    print(f"\n🔄 Processing job #{job_id} ({job_type}) - attempt {attempts}/{max_attempts}", flush=True)
+    print(f"   SQL hash: {sql_hash}", flush=True)
     
     cur = pg.cursor()
     
@@ -1309,7 +1314,7 @@ def process_job(pg, job, trino_client):
             pg.commit()
         else:
             # Success: got data
-            print(f"✅ Job #{job_id} SUCCESSFUL: {rows_processed} rows")
+            print(f"✅ Job #{job_id} SUCCESSFUL: {rows_processed} rows", flush=True)
             
             # Calculate cumulative fields (includes date backfilling)
             try:
@@ -1419,7 +1424,7 @@ def main():
             else:
                 # No jobs available, wait
                 if jobs_processed > 0:
-                    print(f"\n⏳ No pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)")
+                    print(f"\n⏳ No pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)", flush=True)
                 time.sleep(POLL_INTERVAL)
     
     except KeyboardInterrupt:

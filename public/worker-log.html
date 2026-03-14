@@ -129,13 +129,27 @@
 
         .jobs-filter {
             display: flex;
-            gap: 4px;
-            padding: 8px 10px;
+            gap: 12px;
+            padding: 10px 12px;
             background: #151515;
             border-left: 1px solid #222;
             border-right: 1px solid #222;
             flex-wrap: wrap;
+            align-items: center;
         }
+        .jobs-filter select {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #00ff00;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            min-width: 140px;
+        }
+        .jobs-filter select:focus { outline: none; border-color: #00ff00; }
+        .jobs-filter select option { background: #1a1a1a; color: #00ff00; }
         .filter-btn {
             background: #1a1a1a;
             color: #888;
@@ -321,6 +335,12 @@
                 <span id="jobs-count" style="font-size:12px;color:#555">—</span>
             </div>
             <div class="jobs-filter">
+                <select id="category-select" onchange="onCategoryChange()">
+                    <option value="all">Category: All</option>
+                </select>
+                <select id="subcategory-select" onchange="onSubcategoryChange()">
+                    <option value="all">Page: All</option>
+                </select>
                 <button class="filter-btn active" data-filter="all"    onclick="setFilter('all')">All</button>
                 <button class="filter-btn"         data-filter="running"   onclick="setFilter('running')">Running</button>
                 <button class="filter-btn"         data-filter="pending"   onclick="setFilter('pending')">Pending</button>
@@ -342,6 +362,8 @@
     let refreshInterval = null;
     let searchTerm = '';
     let jobFilter = 'all';
+    let categoryFilter = 'all';
+    let subcategoryFilter = 'all';
     let allJobs = [];
     let openJobIds = new Set();
 
@@ -425,6 +447,8 @@
             .then(r => r.json())
             .then(data => {
                 allJobs = data.jobs || [];
+                buildCategoryOptions();
+                buildSubcategoryOptions();
                 renderJobs();
             })
             .catch(() => {
@@ -435,17 +459,56 @@
 
     function setFilter(f) {
         jobFilter = f;
-        document.querySelectorAll('.filter-btn').forEach(b => {
+        document.querySelectorAll('.jobs-filter .filter-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.filter === f);
         });
         renderJobs();
     }
 
+    function getCategory(page) {
+        if (!page) return null;
+        return page.split('-')[0] || null;
+    }
+
+    function onCategoryChange() {
+        const sel = document.getElementById('category-select');
+        categoryFilter = sel.value;
+        subcategoryFilter = 'all';
+        document.getElementById('subcategory-select').value = 'all';
+        buildSubcategoryOptions();
+        renderJobs();
+    }
+
+    function onSubcategoryChange() {
+        subcategoryFilter = document.getElementById('subcategory-select').value;
+        renderJobs();
+    }
+
+    function buildCategoryOptions() {
+        const categories = [...new Set(allJobs.map(j => getCategory(j.page)).filter(Boolean))].sort();
+        const sel = document.getElementById('category-select');
+        sel.innerHTML = '<option value="all">Category: All</option>' +
+            categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        if (categories.includes(categoryFilter)) sel.value = categoryFilter;
+    }
+
+    function buildSubcategoryOptions() {
+        let pages = [...new Set(allJobs.map(j => j.page).filter(Boolean))].sort();
+        if (categoryFilter !== 'all') {
+            pages = pages.filter(p => getCategory(p) === categoryFilter);
+        }
+        const sel = document.getElementById('subcategory-select');
+        sel.innerHTML = '<option value="all">Page: All</option>' +
+            pages.map(p => `<option value="${p}">${p}</option>`).join('');
+        sel.value = subcategoryFilter;
+    }
+
     function renderJobs() {
         const list = document.getElementById('jobs-list');
-        const filtered = jobFilter === 'all'
-            ? allJobs
-            : allJobs.filter(j => j.status === jobFilter);
+        let filtered = allJobs;
+        if (jobFilter !== 'all') filtered = filtered.filter(j => j.status === jobFilter);
+        if (categoryFilter !== 'all') filtered = filtered.filter(j => getCategory(j.page) === categoryFilter);
+        if (subcategoryFilter !== 'all') filtered = filtered.filter(j => j.page === subcategoryFilter);
 
         document.getElementById('jobs-count').textContent =
             `${filtered.length} job${filtered.length !== 1 ? 's' : ''}`;

@@ -25,9 +25,9 @@ export async function GET() {
         j.completed_at,
         j.error_message,
 
-        -- Chart info (first matching chart definition)
+        -- Chart info (first matching chart definition) — use SQL file name as job label
         (
-          SELECT cd.chart_config->>'title'
+          SELECT cd.chart_config->>'sqlFile'
           FROM chart_definitions cd
           WHERE cd.sql_hash = j.sql_hash
           LIMIT 1
