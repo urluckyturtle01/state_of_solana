@@ -21,6 +21,16 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
+# Load .env.local from project root
+_project_root = Path(__file__).resolve().parent.parent
+_env_local = _project_root / '.env.local'
+if _env_local.exists():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(_env_local)
+    except ImportError:
+        pass
+
 # Configuration
 DB_NAME = 'trino_charts'
 DB_USER = 'root'
