@@ -135,7 +135,7 @@
             height: 28px;
             transition: border-color .15s;
         }
-        .log-search-wrap:focus-within { border-color: #0070f3; }
+        .log-search-wrap:focus-within { border-color: #363b42; }
         .log-search-wrap input {
             flex: 1;
             min-width: 0;
@@ -173,11 +173,19 @@
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
         }
 
-        .log-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 2px; color: #e4e4e7; }
+        .log-line {
+            white-space: pre-wrap; word-break: break-word;
+            margin-bottom: 2px; color: #e4e4e7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background .1s;
+        }
+        .log-line:hover { background: #2a2b2d; }
         .log-line.error   { color: #f87171; }
         .log-line.success { color: #4ade80; }
         .log-line.warning { color: #fbbf24; }
         .log-line.info    { color: #60a5fa; }
+        .log-line .log-timestamp { color: #8b8d90; }
         .highlight { background: #0070f3; color: #ffffff; padding: 1px 4px; border-radius: 3px; }
 
         .log-container::-webkit-scrollbar { width: 8px; }
@@ -252,7 +260,7 @@
             transition: background .15s;
         }
         .job-header:hover { background: #222426; }
-        .job-header.open  { background: #222426; border-left: 3px solid #0070f3; padding-left: 17px; }
+        .job-header.open  { background: #222426; }
 
         .job-status-dot {
             width: 8px; height: 8px; border-radius: 50%;
@@ -296,15 +304,15 @@
             color: #8b8d90; font-size: 10px; flex-shrink: 0;
             transition: transform .2s;
         }
-        .job-header.open .job-chevron { transform: rotate(90deg); color: #0070f3; }
+        .job-header.open .job-chevron { transform: rotate(90deg); }
 
         /* ── Accordion body ──────────────────────────────────────── */
         .job-body {
             display: none;
             padding: 12px 16px 16px 20px;
             background: #18191b;
-            border-left: 3px solid #0070f3;
-            margin-left: 20px;
+            /* border-left: 3px solid #0070f3; */
+            /* margin-left: 20px; */
             margin-bottom: 1px;
             font-size: 11px;
             color: #8b8d90;
@@ -320,6 +328,23 @@
         }
         .detail-label { color: #8b8d90; flex-shrink: 0; font-size: 11px; }
         .detail-value { color: #e4e4e7; text-align: right; word-break: break-all; font-size: 11px; }
+        .sql-hash-row { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        .sql-hash-row > span:first-child { min-width: 0; word-break: break-all; }
+        .sql-hash-copy {
+            width: 18px; height: 18px;
+            padding: 0;
+            background: transparent;
+            /* border: 1px solid #3a3b3d; */
+            border-radius: 3px;
+            color: #8b8d90;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .sql-hash-copy:hover { border-color: #5a5b5d; color: #e4e4e7; }
+        .sql-hash-copy svg { width: 10px; height: 10px; }
 
         .error-box {
             background: #222426;
@@ -350,9 +375,9 @@
 
         .requeue-btn {
             margin-top: 10px;
-            background: #222426;
+            background: transparent;
             border: 1px solid #2a2b2d;
-            color: #e4e4e7;
+            color: #909090;
             padding: 6px 12px;
             border-radius: 4px;
             font-size: 11px;
@@ -362,7 +387,7 @@
             width: 100%;
             transition: all .15s;
         }
-        .requeue-btn:hover { background: #2a2b2d; border-color: #0070f3; color: #0070f3; }
+        .requeue-btn:hover { border-color: #333333; color: #e4e4e7; }
         .requeue-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
@@ -386,8 +411,9 @@
             <div class="log-toolbar">
                 <button type="button" class="toolbar-btn" id="copy-logs-btn" onclick="copyLogs()" title="Copy logs">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    <span><span class="line-count" id="line-count">0</span> lines</span>
+                    
                 </button>
+                <span style="font-size:12px;color:#8b8d90"><span class="line-count" id="line-count">0</span> lines</span>
                 <div class="spacer"></div>
                 <div class="log-search-wrap">
                     <span class="search-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
@@ -407,7 +433,7 @@
         <!-- Right: Jobs accordion -->
         <div class="jobs-panel">
             <div class="jobs-header">
-                <h2>📋 Job Runs</h2>
+                <span>Job Runs</span>
                 <span id="jobs-count" style="font-size:12px;color:#8b8d90">—</span>
             </div>
             <div class="jobs-filter">
@@ -473,12 +499,18 @@
                     else if (/⚠️|WARNING|Warning/.test(line))       div.classList.add('warning');
                     else if (/🔄|Processing|Fetching/.test(line))   div.classList.add('info');
 
+                    let html;
+                    const tsMatch = line.match(/^(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d{3})?(?:Z)?|\d{2}:\d{2}:\d{2}(?:\.\d{3})?)(\s+)/);
+                    if (tsMatch) {
+                        html = '<span class="log-timestamp">' + escHtml(tsMatch[1]) + '</span>' + tsMatch[2] + escHtml(line.slice(tsMatch[0].length));
+                    } else {
+                        html = escHtml(line);
+                    }
                     if (searchTerm && line.toLowerCase().includes(searchTerm.toLowerCase())) {
                         const rx = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-                        div.innerHTML = line.replace(rx, '<span class="highlight">$1</span>');
-                    } else {
-                        div.textContent = line;
+                        html = html.replace(rx, '<span class="highlight">$1</span>');
                     }
+                    div.innerHTML = html;
                     container.appendChild(div);
                 });
 
@@ -527,18 +559,27 @@
     function copyLogs() {
         const text = rawLogContent || document.getElementById('log-container').innerText;
         if (!text.trim()) return;
-        navigator.clipboard.writeText(text).then(() => {
+        const copySvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        const tickSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        const showTick = () => {
             const btn = document.getElementById('copy-logs-btn');
             const countEl = document.getElementById('line-count');
             const n = (countEl && countEl.textContent) || '0';
             const wrap = countEl && countEl.parentNode;
-            if (wrap) wrap.textContent = 'Copied';
+            btn.innerHTML = tickSvg;
+            //if (wrap) wrap.textContent = 'Copied';
             btn.style.color = '#4ade80';
             setTimeout(() => {
-                if (wrap) wrap.innerHTML = '<span class="line-count" id="line-count">' + n + '</span> lines';
+                btn.innerHTML = copySvg;
                 btn.style.color = '';
-            }, 1200);
-        });
+                if (wrap) wrap.innerHTML = '<span class="line-count" id="line-count">' + n + '</span> lines';
+            }, 1500);
+        };
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(text).then(showTick).catch(showTick);
+        } else {
+            const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showTick();
+        }
     }
 
     // ── Jobs ──────────────────────────────────────────────────────
@@ -657,22 +698,25 @@
                         <span class="detail-label">Attempts</span>
                         <span class="detail-value">${job.attempts} / ${job.maxAttempts}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Queued</span>
-                        <span class="detail-value">${created}</span>
-                    </div>
+                    
                     <div class="detail-row">
                         <span class="detail-label">Last run</span>
                         <span class="detail-value">${lastRun}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">SQL hash</span>
-                        <span class="detail-value" style="font-size:10px;color:#444">${job.sqlHash}</span>
+                        <span class="detail-value sql-hash-row">
+                            <span style="font-size:10px;color:#8b8d90">${job.sqlHash}</span>
+                            <button type="button" class="sql-hash-copy" data-hash="${job.sqlHash}" onclick="copySqlHash(event, this)" title="Copy hash">
+                                <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <svg class="tick-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                        </span>
                     </div>
                     ${job.errorMessage ? `<div class="error-box">${escHtml(job.errorMessage)}</div>` : ''}
                     ${['partial','completed','failed','failed_permanent'].includes(job.status) ? `
                     <button class="requeue-btn" id="requeue-${job.id}" onclick="requeueJob(${job.id}, this)">
-                        ↺ Re-queue as Pending
+                        Re-queue as Pending
                     </button>` : ''}
                 </div>
             </div>`;
@@ -723,6 +767,20 @@
 
     function escHtml(str) {
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function copySqlHash(e, btn) {
+        e?.stopPropagation();
+        const hash = btn?.dataset?.hash;
+        if (!hash) return;
+        const copySvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        const tickSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        const showTick = () => { btn.innerHTML = tickSvg; setTimeout(() => { btn.innerHTML = copySvg; }, 1500); };
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(hash).then(showTick).catch(showTick);
+        } else {
+            const ta = document.createElement('textarea'); ta.value = hash; ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showTick();
+        }
     }
 
     // ── Init ──────────────────────────────────────────────────────

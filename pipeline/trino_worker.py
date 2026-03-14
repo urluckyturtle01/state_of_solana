@@ -48,6 +48,16 @@ class PartialCompletionException(Exception):
 # Configuration
 BACKFILL_START = date(2025, 1, 1)  # Only fetch last 3 months for counters
 POLL_INTERVAL = 10  # seconds
+
+# Timestamped print for log viewer
+import builtins
+_orig_print = builtins.print
+def print(*args, **kwargs):
+    if args:
+        ts = datetime.now().strftime('%H:%M:%S.%f')[:-3]
+        _orig_print(ts, *args, **kwargs)
+    else:
+        _orig_print(**kwargs)
 MAX_RETRIES = 3
 
 # PostgreSQL connection
