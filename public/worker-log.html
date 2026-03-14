@@ -408,6 +408,87 @@
         }
         .requeue-btn:hover { border-color: #333333; color: #e4e4e7; }
         .requeue-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── Mobile tabs (hidden on desktop) ───────────────────────── */
+        .mobile-tabs {
+            display: none;
+            background: #18191b;
+            border: 1px solid #2a2b2d;
+            border-radius: 8px 8px 0 0;
+            padding: 0;
+            margin-bottom: 0;
+        }
+        .mobile-tabs-inner {
+            display: flex;
+        }
+        .mobile-tab {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid transparent;
+            color: #8b8d90;
+            font-size: 14px;
+            font-weight: 200;
+            border-radius: 0;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .mobile-tab:hover { color: #e4e4e7; }
+        .mobile-tab.active {
+            color: #f3f3f4;
+            background: #232426;
+        }
+
+        /* ── Mobile responsive ──────────────────────────────────────── */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .header { padding: 10px 14px; }
+            .header-title .meta { display: none; }
+            .status { font-size: 12px; gap: 12px; }
+            .mobile-tabs { display: block; }
+            .body {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .log-panel {
+                display: none;
+                border-radius: 0;
+            }
+            .log-panel.mobile-active {
+               
+                display: block;
+            }
+            .log-panel.mobile-active .log-toolbar {
+                border-top: none;
+                border-radius: 0;
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+            .jobs-panel {
+                display: none;
+            }
+            .jobs-panel.mobile-active {
+                display: flex;
+                flex-direction: column;
+                
+            }
+            .jobs-panel.mobile-active .jobs-header {
+                border-top: none;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                border-radius: 0;
+            }
+            .log-toolbar { flex-wrap: wrap; padding: 8px 10px; }
+            .log-search-wrap { width: 140px; }
+            .log-container { height: calc(100vh - 280px); padding: 12px; }
+            .jobs-header, .jobs-filter { padding-left: 14px; padding-right: 14px; }
+            .jobs-list { height: calc(100vh - 280px); }
+            .job-header { padding: 12px 14px; }
+            .job-body { padding: 12px 14px 16px 24px; margin-left: 14px; }
+            .jobs-filter { flex-wrap: wrap; padding-bottom: 12px; padding-top: 0px; }
+        }
     </style>
 </head>
 <body>
@@ -422,11 +503,19 @@
         </div>
     </div>
 
+    <!-- Mobile tabs (visible only on mobile) -->
+    <div class="mobile-tabs">
+        <div class="mobile-tabs-inner">
+            <button type="button" class="mobile-tab active" data-tab="logs" onclick="switchMobileTab('logs')">Logs</button>
+            <button type="button" class="mobile-tab" data-tab="jobs" onclick="switchMobileTab('jobs')">Job Runs</button>
+        </div>
+    </div>
+
     <!-- Body -->
     <div class="body">
 
         <!-- Left: Log -->
-        <div class="log-panel">
+        <div class="log-panel mobile-active" id="log-panel">
             <div class="log-toolbar">
                 <button type="button" class="toolbar-btn" id="copy-logs-btn" onclick="copyLogs()" title="Copy logs">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -450,7 +539,7 @@
         </div>
 
         <!-- Right: Jobs accordion -->
-        <div class="jobs-panel">
+        <div class="jobs-panel" id="jobs-panel">
             <div class="jobs-header">
                 <span style="font-size:14px;font-weight:500;color:#8b8d90">Job Runs</span>
                 <span id="jobs-count" style="font-size:12px;color:#8b8d90">—</span>
@@ -800,6 +889,13 @@
         } else {
             const ta = document.createElement('textarea'); ta.value = hash; ta.style.cssText = 'position:fixed;opacity:0;'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showTick();
         }
+    }
+
+    function switchMobileTab(tab) {
+        document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.mobile-tab[data-tab="${tab}"]`).classList.add('active');
+        document.getElementById('log-panel').classList.toggle('mobile-active', tab === 'logs');
+        document.getElementById('jobs-panel').classList.toggle('mobile-active', tab === 'jobs');
     }
 
     // ── Init ──────────────────────────────────────────────────────
