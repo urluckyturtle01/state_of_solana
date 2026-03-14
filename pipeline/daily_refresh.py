@@ -3,15 +3,18 @@
 daily_refresh.py
 
 Runs every day at 5:00 AM IST (23:30 UTC):
-  1. Deletes orphaned rows from query_results (no matching chart_definitions)
-  2. Queues incremental jobs for date-templated charts (isIncremental=true)
-  3. Queues full_refresh jobs for static charts (isIncremental=true, no date placeholder)
+  1. Deletes stale jobs from trino_job_queue whose sql_hash has no matching chart_definitions
+  2. Deletes orphaned rows from query_results (no matching chart_definitions)
+  3. Queues incremental jobs for date-templated charts (isIncremental=true)
+  4. Queues full_refresh jobs for static charts (isIncremental=true, no date placeholder)
 """
 
 import sys
 import os
 import psycopg2
 from datetime import datetime
+
+DELETABLE_STATUSES = ('pending', 'running', 'completed', 'partial', 'failed', 'failed_permanent')
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -42,6 +45,43 @@ def cleanup_orphans(pg) -> int:
             SELECT 1 FROM chart_definitions cd WHERE cd.sql_hash = qr.sql_hash
         )
     """)
+    deleted = cur.rowcount
+    pg.commit()
+    cur.close()
+    return deleted
+
+
+def cleanup_stale_jobs(pg) -> int:
+    """Delete jobs whose sql_hash has no matching chart in chart_definitions."""
+    cur = pg.cursor()
+    cur.execute("""
+        DELETE FROM trino_job_queue
+        WHERE status = ANY(%s)
+          AND sql_hash NOT IN (
+              SELECT DISTINCT sql_hash FROM chart_definitions
+          )
+    """, (list(DELETABLE_STATUSES),))
+    deleted = cur.rowcount
+    pg.commit()
+    cur.close()
+    return deleted
+
+
+def cleanup_old_completed_jobs(pg, keep_per_hash: int = 3) -> int:
+    """For each sql_hash, keep only the latest N jobs. Delete the rest."""
+    cur = pg.cursor()
+    cur.execute("""
+        DELETE FROM trino_job_queue
+        WHERE id NOT IN (
+            SELECT id FROM (
+                SELECT id,
+                       ROW_NUMBER() OVER (PARTITION BY sql_hash ORDER BY created_at DESC) AS rn
+                FROM trino_job_queue
+            ) ranked
+            WHERE rn <= %s
+        )
+        AND status NOT IN ('pending', 'running')
+    """, (keep_per_hash,))
     deleted = cur.rowcount
     pg.commit()
     cur.close()
@@ -94,20 +134,30 @@ def main():
 
     pg = connect()
 
-    # Step 1: Clean orphans
-    print("🗑️  Step 1: Cleaning orphaned query_results...")
+    # Step 1: Clean stale jobs for charts that no longer exist
+    print("🧹 Step 1: Cleaning stale jobs for deleted charts...")
+    stale = cleanup_stale_jobs(pg)
+    print(f"   Deleted {stale} stale job(s)\n")
+
+    # Step 2: Clean orphaned query_results rows
+    print("🗑️  Step 2: Cleaning orphaned query_results...")
     deleted = cleanup_orphans(pg)
     print(f"   Deleted {deleted} orphaned row(s)\n")
 
-    # Step 2: Queue jobs
-    print("📋 Step 2: Queuing incremental/full_refresh jobs...")
+    # Step 3: Queue incremental / full_refresh jobs
+    print("📋 Step 3: Queuing incremental/full_refresh jobs...")
     inc, fr = queue_incremental_jobs(pg)
     print(f"   Queued {inc} incremental job(s)")
     print(f"   Queued {fr} full_refresh job(s)\n")
 
+    # Step 4: Prune old history — runs after queuing so new pending row is kept
+    print("✂️  Step 4: Pruning old job history (keeping latest 1 per hash)...")
+    pruned = cleanup_old_completed_jobs(pg, keep_per_hash=1)
+    print(f"   Pruned {pruned} old job(s)\n")
+
     pg.close()
 
-    print(f"✅ Daily refresh complete — {inc + fr} jobs queued")
+    print(f"✅ Daily refresh complete — {stale} stale + {pruned} old jobs removed, {inc + fr} new jobs queued")
     print(f"{'='*60}\n")
 
 
