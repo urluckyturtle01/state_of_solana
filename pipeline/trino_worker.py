@@ -1392,14 +1392,14 @@ def process_job(pg, job, trino_client):
 
 def main():
     """Main worker loop."""
-    print("="*70)
-    print("🚀 TRINO WORKER STARTED")
-    print("="*70)
+    print("-"*10)
+    print("Trino Worker Started")
+    print("-"*10)
     print(f"📍 PostgreSQL: {PG_CONFIG['host']}:{PG_CONFIG['port']}/{PG_CONFIG['database']}")
     print(f"📅 Backfill start date: {BACKFILL_START}")
-    print(f"⏱️  Poll interval: {POLL_INTERVAL}s")
+    print(f"⏱️ Poll interval: {POLL_INTERVAL}s")
     print(f"🔄 Max retries: {MAX_RETRIES}")
-    print("="*70)
+    print("-"*10)
     print()
     
     # Initialize connections
@@ -1416,14 +1416,14 @@ def main():
                 cur.execute("SELECT 1")
                 cur.close()
             except Exception as e:
-                print(f"⚠️  PostgreSQL connection lost: {e}")
-                print("   🔄 Reconnecting...")
+                print(f"⚠️ PostgreSQL connection lost: {e}")
+                print("Reconnecting to PostgreSQL...")
                 try:
                     pg.close()
                 except:
                     pass
                 pg = get_pg_conn()
-                print("   ✅ Reconnected to PostgreSQL")
+                print("✅ Reconnected to PostgreSQL")
             
             # Get next job
             job = get_next_job(pg)
@@ -1434,7 +1434,7 @@ def main():
             else:
                 # No jobs available, wait
                 if jobs_processed > 0:
-                    print(f"\n⏳ No pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)", flush=True)
+                    print(f"\nNo pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)", flush=True)
                 time.sleep(POLL_INTERVAL)
     
     except KeyboardInterrupt:
