@@ -170,7 +170,8 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             is_stacked = chart_dict.get('isStacked', False)
             index = chart_dict.get('index', 0)
             data_mapping = chart_dict.get('dataMapping', {})
-            query_run_config = chart_dict.get('queryRunConfig', {})
+            # queryRunConfig can be at chart level or root level (for multi-chart YAMLs)
+            query_run_config = chart_dict.get('queryRunConfig') or yaml_config.get('queryRunConfig', {})
             
             # Transform dataMapping for counter charts
             if chart_type == 'counter' and 'field' in data_mapping:

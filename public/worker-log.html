@@ -461,7 +461,7 @@
             const badgeClass = `badge-${job.status}`;
             const typeClass = `type-${job.jobType}`;
 
-            const pageLabel = job.page ? `dex-${job.page}` : '—';
+            const pageLabel = job.page || '—';
             const lastRun = (job.completedAt || job.startedAt)
                 ? new Date(job.completedAt || job.startedAt).toLocaleString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
                 : '—';

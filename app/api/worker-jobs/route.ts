@@ -34,11 +34,11 @@ export async function GET() {
         ) AS chart_title,
 
         (
-          SELECT cd.yaml_config
+          SELECT cd.chart_config->>'page'
           FROM chart_definitions cd
           WHERE cd.sql_hash = j.sql_hash
           LIMIT 1
-        ) AS yaml_config,
+        ) AS page,
 
         -- Row count in query_results
         COALESCE(qr.row_count, 0) AS row_count,
@@ -60,10 +60,6 @@ export async function GET() {
     `);
 
     const jobs = result.rows.map(row => {
-      // Extract page from yaml_config  (page: <value>)
-      const pageMatch = row.yaml_config?.match(/^\s*page:\s*(\S+)/m);
-      const page = pageMatch ? pageMatch[1] : null;
-
       return {
         id: row.id,
         sqlHash: row.sql_hash,
@@ -76,7 +72,7 @@ export async function GET() {
         completedAt: row.completed_at,
         errorMessage: row.error_message,
         chartTitle: row.chart_title || row.sql_hash.slice(0, 12) + '…',
-        page,
+        page: row.page || null,
         rowCount: row.row_count,
         lastRunAt: row.last_run_at,
         lastRunStatus: row.last_run_status,
