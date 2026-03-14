@@ -1,10 +1,68 @@
 nohup: ignoring input
-16:15:14.599 ----------
-16:15:14.599 Trino Worker Started
-16:15:14.599 ----------
-16:15:14.599 📍 PostgreSQL: localhost:5432/trino_charts
-16:15:14.599 📅 Backfill start date: 2025-01-01
-16:15:14.599 ⏱️ Poll interval: 10s
-16:15:14.599 🔄 Max retries: 3
-16:15:14.599 ----------
+17:38:28.712 ----------
+17:38:28.712 Trino Worker Started
+17:38:28.712 ----------
+17:38:28.712 📍 PostgreSQL: localhost:5432/trino_charts
+17:38:28.712 📅 Backfill start date: 2025-01-01
+17:38:28.712 ⏱️ Poll interval: 10s
+17:38:28.712 🔄 Max retries: 3
+17:38:28.712 ----------
 
+17:38:38.726 🔄 Processing job #606 (incremental) - attempt 1/3
+17:38:38.726 SQL hash: 19cf66aad24dfcee79c0bba442912735
+17:38:38.730 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-13
+17:38:38.730 Filling 6 gap period(s)...
+17:38:38.730 Gap 2025-01-01...17:38:38.730 Fetching month 2025-01-01 (1/1)...17:40:13.013  ⚠️ 0 rows
+17:40:13.013  0 rows
+17:40:13.013 Gap 2025-02-01...17:40:13.013 Fetching month 2025-02-01 (1/1)...17:41:46.318  ⚠️ 0 rows
+17:41:46.318  0 rows
+17:41:46.318 Gap 2025-03-01...17:41:46.319 Fetching month 2025-03-01 (1/1)...17:41:46.881  ⚠️ 0 rows
+17:41:46.882  0 rows
+17:41:46.882 Gap 2025-04-01...17:41:46.882 Fetching month 2025-04-01 (1/1)...17:43:19.693  ⚠️ 0 rows
+17:43:19.693  0 rows
+17:43:19.693 Gap 2025-05-01...17:43:19.694 Fetching month 2025-05-01 (1/1)...17:47:58.128  ⚠️ 0 rows
+17:47:58.129  0 rows
+17:47:58.129 Gap 2025-06-01...17:47:58.129 Fetching month 2025-06-01 (1/1)...17:47:58.917  ⚠️ 0 rows
+17:47:58.917  0 rows
+17:47:58.917 Fetching 2026-03-13 → 2026-03-14...
+17:47:58.918 Fetching month 2026-03-01 (1/1)...17:48:02.781  ✅ 13 rows
+17:48:02.792 ✅ Incremental complete: 13 new rows
+17:48:02.792 ✅ Job #606 SUCCESSFUL: 13 rows
+ℹ️  No cumulative fields detected
+17:48:02.800 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:48:12.802 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:48:22.803 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:48:32.805 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:48:42.807 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:48:52.808 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:02.810 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:12.811 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:22.813 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:32.814 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:42.815 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:49:52.816 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:02.818 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:12.819 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:22.821 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:32.822 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:42.824 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:50:52.825 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:02.827 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:12.828 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:22.829 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:32.831 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:42.832 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:51:52.834 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:02.835 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:12.836 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:22.838 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:32.840 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:42.841 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:52:52.843 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:02.843 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:12.845 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:22.846 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:32.847 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:42.849 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:53:52.850 No pending jobs. Waiting 10s... (processed 1 jobs so far)
+17:54:02.851 No pending jobs. Waiting 10s... (processed 1 jobs so far)

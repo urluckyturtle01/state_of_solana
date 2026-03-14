@@ -784,8 +784,8 @@
                     <div class="job-meta">
                         <div class="job-title" title="${job.chartTitle}">${job.chartTitle}</div>
                         <div class="job-sub">
-                            <span class="tag">#${job.id}</span>
-                            <span class="tag ${typeClass}">${job.jobType}</span>
+                           <!-- <span class="tag">#${job.id}</span>
+                            <span class="tag ${typeClass}">${job.jobType}</span>  -->
                             <span class="tag">${pageLabel}</span>
                         </div>
                     </div>
@@ -910,7 +910,7 @@
             document.getElementById('search-input').focus();
         }
     });
-    document.getElementById('shortcut-hint').textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘F' : 'Ctrl+F';
+    document.getElementById('shortcut-hint').textContent = navigator.platform.toLowerCase().includes('mac') ? '⌘F' : '⌘F';
 </script>
 </body>
 </html>

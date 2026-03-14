@@ -28,7 +28,7 @@ def calculate_percentage_fields(pg: psycopg2.extensions.connection, sql_hash: st
         
         results = cur.fetchall()
         if not results:
-            print(f"      ⚠️  No chart config found for SQL hash {sql_hash}")
+            print(f"⚠️  No chart config found for SQL hash {sql_hash}")
             return
         
         # Extract percentage field configs from ALL charts with this SQL hash
@@ -57,7 +57,7 @@ def calculate_percentage_fields(pg: psycopg2.extensions.connection, sql_hash: st
             # No percentage fields to calculate
             return
         
-        print(f"      🔢 Calculating {len(percentage_configs)} percentage field(s)...")
+        print(f"🔢 Calculating {len(percentage_configs)} percentage field(s)...")
         
         # Get the data
         cur.execute("""
@@ -68,7 +68,7 @@ def calculate_percentage_fields(pg: psycopg2.extensions.connection, sql_hash: st
         
         result = cur.fetchone()
         if not result or not result[0]:
-            print(f"      ⚠️  No data found for SQL hash {sql_hash}")
+            print(f"⚠️  No data found for SQL hash {sql_hash}")
             return
         
         data = result[0]
@@ -107,10 +107,10 @@ def calculate_percentage_fields(pg: psycopg2.extensions.connection, sql_hash: st
         """, (json.dumps(updated_data), sql_hash))
         
         pg.commit()
-        print(f"      ✅ Percentage fields calculated and saved")
+        print(f"✅ Percentage fields calculated and saved")
         
     except Exception as e:
-        print(f"      ❌ Error calculating percentage fields: {e}")
+        print(f"❌ Error calculating percentage fields: {e}")
         pg.rollback()
     finally:
         cur.close()
@@ -136,10 +136,10 @@ def calculate_all_percentage_fields(pg: psycopg2.extensions.connection) -> None:
         
         sql_hashes = [row[0] for row in cur.fetchall()]
         
-        print(f"\n🔢 Found {len(sql_hashes)} chart(s) with percentage configurations")
+        print(f"Found {len(sql_hashes)} chart(s) with percentage configurations")
         
         for sql_hash in sql_hashes:
-            print(f"\n   Processing {sql_hash[:16]}...")
+            print(f"Processing {sql_hash[:16]}...")
             calculate_percentage_fields(pg, sql_hash)
         
         print(f"\n✅ Batch percentage calculation completed")

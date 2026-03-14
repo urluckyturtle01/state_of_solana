@@ -24,12 +24,12 @@ def calculate_cumulative_fields(pg, sql_hash):
     cur.execute("SELECT json_data FROM query_results WHERE sql_hash = %s", (sql_hash,))
     row = cur.fetchone()
     if not row or not row[0]:
-        print(f"      ⚠️  No data found for sql_hash {sql_hash}")
+        print(f"⚠️  No data found for sql_hash {sql_hash}")
         return
     
     data = row[0]
     if not data or len(data) == 0:
-        print(f"      ⚠️  Empty data for sql_hash {sql_hash}")
+        print(f"⚠️  Empty data for sql_hash {sql_hash}")
         return
     
     # Detect date field
@@ -41,12 +41,12 @@ def calculate_cumulative_fields(pg, sql_hash):
             break
     
     if not date_field:
-        print(f"      ⚠️  No date field found")
+        print(f"⚠️  No date field found")
         return
     
     # Only process daily data (block_date)
     if date_field != 'block_date':
-        print(f"      ℹ️  Skipping cumulative calculation for {date_field} (not daily data)")
+        print(f"ℹ️  Skipping cumulative calculation for {date_field} (not daily data)")
         return
     
     # Detect cumulative fields and their base fields
@@ -74,13 +74,13 @@ def calculate_cumulative_fields(pg, sql_hash):
             if base_field:
                 cumulative_fields.append((key, base_field))
             else:
-                print(f"      ⚠️  Could not find base field for {key}, tried: {possible_base_fields}")
+                print(f"⚠️  Could not find base field for {key}, tried: {possible_base_fields}")
     
     if not cumulative_fields:
-        print(f"      ℹ️  No cumulative fields detected")
+        print(f"ℹ️  No cumulative fields detected")
         return
     
-    print(f"      📊 Found {len(cumulative_fields)} cumulative field(s): {[cf[0] for cf in cumulative_fields]}")
+    print(f"📊 Found {len(cumulative_fields)} cumulative field(s): {[cf[0] for cf in cumulative_fields]}")
     
     # Detect group field from chart config (groupBy field)
     cur.execute("""
@@ -95,14 +95,14 @@ def calculate_cumulative_fields(pg, sql_hash):
     
     # Verify the group field actually exists in the data
     if group_field and group_field not in first_row:
-        print(f"      ⚠️  groupBy field '{group_field}' from config not found in data")
+        print(f"⚠️  groupBy field '{group_field}' from config not found in data")
         group_field = None
     
     if group_field:
-        print(f"      📊 Grouped by: {group_field}")
+        print(f"📊 Grouped by: {group_field}")
         result = _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields)
     else:
-        print(f"      📊 Non-grouped data")
+        print(f"📊 Non-grouped data")
         result = _calculate_ungrouped_cumulative(data, date_field, cumulative_fields)
     
     # Update database
@@ -111,7 +111,7 @@ def calculate_cumulative_fields(pg, sql_hash):
         (json.dumps(result), sql_hash)
     )
     pg.commit()
-    print(f"      ✅ Cumulative calculation complete ({len(result)} rows)")
+    print(f"✅ Cumulative calculation complete ({len(result)} rows)")
 
 
 def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields):
@@ -231,7 +231,7 @@ def calculate_all_cumulative_fields(pg):
         except Exception as e:
             print(f"    ❌ Error: {e}")
     
-    print(f"\n✅ Batch cumulative calculation complete")
+    print(f"✅ Batch cumulative calculation complete")
 
 
 if __name__ == "__main__":

@@ -163,7 +163,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 
             while (current >= end_week if backward else current <= end_week):
                 week_count += 1
-                print(f"      Fetching week {current} ({week_count}/{total_weeks})...", end='', flush=True)
+                print(f"Fetching week {current} ({week_count}/{total_weeks})...", end='', flush=True)
 
                 try:
                     sql = sql_query.replace('{week}', str(current))
@@ -230,7 +230,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 
             while (current >= end_month if backward else current <= end_month):
                 month_count += 1
-                print(f"      Fetching month {current} ({month_count}/{total_months})...", end='', flush=True)
+                print(f"Fetching month {current} ({month_count}/{total_months})...", end='', flush=True)
 
                 try:
                     sql = sql_query.replace('{month}', str(current))
@@ -277,7 +277,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 
             while current_date <= to_date:
                 day_count += 1
-                print(f"      Fetching {current_date} ({day_count}/{total_days})...", end='', flush=True)
+                print(f"Fetching {current_date} ({day_count}/{total_days})...", end='', flush=True)
 
                 try:
                     sql = sql_query.replace('{block_date}', str(current_date))
@@ -465,13 +465,13 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             if current_month not in missing_months and current_month >= BACKFILL_START:
                 missing_months.insert(0, current_month)
 
-            print(f"   📅 Backfill (resume): existing {existing_count} rows ({len(existing_months)} months), {len(missing_months)} months to fetch")
+            print(f"Backfill (resume): existing {existing_count} rows ({len(existing_months)} months), {len(missing_months)} months to fetch")
             
             if missing_months:
-                print(f"   🔧 Filling {len(missing_months)} missing months...")
+                print(f"Filling {len(missing_months)} missing months...")
                 for idx, missing_month in enumerate(missing_months, 1):
                     month_str = missing_month.strftime('%Y-%m-01')
-                    print(f"      Fetching {month_str} ({idx}/{len(missing_months)})...", end='', flush=True)
+                    print(f"Fetching {month_str} ({idx}/{len(missing_months)})...", end='', flush=True)
                     
                     try:
                         # Execute query directly for this month with timeout protection
@@ -623,7 +623,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                         gaps_failed += 1
 
             # 2. Fetch max_date → today
-            print(f"   📅 Fetching {max_date} → {today}...")
+            print(f"Fetching {max_date} → {today}...")
             try:
                 data = run_trino_query(sql_query, max_date, today, trino_client)
                 all_new_data.extend(data)
@@ -642,7 +642,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         # 3. Merge: keep rows whose date is not in dates_to_remove, then append new
         # Skip merge if no new data
         if not all_new_data:
-            print(f"   ⚠️  No new data to merge")
+            print(f"⚠️  No new data to merge")
             cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
             total = cur.fetchone()[0] or 0
             
@@ -653,7 +653,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     failure_msg.append(f"{gaps_failed} periods failed")
                 if incremental_failed:
                     failure_msg.append("incremental fetch failed")
-                print(f"   ⚠️  Backfill (resume) partial: 0 new rows, total {total} rows ({', '.join(failure_msg)})")
+                print(f"Backfill (resume) partial: 0 new rows, total {total} rows ({', '.join(failure_msg)})")
                 raise PartialCompletionException(f"Resume partial: {', '.join(failure_msg)}, {total} rows total", total)
             
             return total
@@ -751,14 +751,14 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 failure_msg.append(f"{gaps_failed} gaps failed")
             if incremental_failed:
                 failure_msg.append("incremental fetch failed")
-            print(f"   ⚠️  Backfill (resume) partial: +{len(all_new_data)} rows, total {total} rows ({', '.join(failure_msg)})")
+            print(f"Backfill (resume) partial: +{len(all_new_data)} rows, total {total} rows ({', '.join(failure_msg)})")
             raise PartialCompletionException(f"Resume partial: {', '.join(failure_msg)}, {total} rows total", total)
         else:
-            print(f"   ✅ Backfill (resume) complete: +{len(all_new_data)} rows, total {total} rows")
+            print(f"✅ Backfill (resume) complete: +{len(all_new_data)} rows, total {total} rows")
             return total
     else:
         # Full backfill: no existing data, fetch entire range
-        print(f"   📅 Backfill (full): {date.today()} → {BACKFILL_START}")
+        print(f"Backfill (full): {date.today()} → {BACKFILL_START}")
 
         all_new_data = []
         days_failed = 0  # Initialize for all paths
@@ -794,14 +794,14 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 all_new_data = run_trino_query(sql_query, date.today(), BACKFILL_START, trino_client, 
                                               checkpoint_callback=checkpoint, checkpoint_interval=1)
             except Exception as e:
-                print(f"   ❌ Error during processing: {e}")
+                print(f"❌ Error during processing: {e}")
                 # Data already saved via checkpoint before error
                 # Get the current row count from database
                 cur = pg.cursor()
                 cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
                 row = cur.fetchone()
                 saved_count = (row[0] or 0) if row else 0
-                print(f"   ℹ️  Partial data saved via checkpoints: {saved_count} rows")
+                print(f"ℹ️  Partial data saved via checkpoints: {saved_count} rows")
                 # Raise exception with partial status info
                 raise PartialCompletionException(f"Partial completion: {saved_count} rows saved", saved_count)
         else:
@@ -811,7 +811,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
 
             while d >= BACKFILL_START:
                 try:
-                    print(f"      Fetching {d}...", end='', flush=True)
+                    print(f"Fetching {d}...", end='', flush=True)
                     data = run_trino_query(sql_query, d, d, trino_client)
                     all_new_data.extend(data)
                     print(f" {len(data)} rows")
@@ -891,7 +891,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                             """, (date_field, date_field, json.dumps(all_new_data, default=str), date_field, sql_hash))
                         
                         pg.commit()
-                        print(f"      💾 Checkpoint: {days_processed} days processed")
+                        print(f"💾 Checkpoint: {days_processed} days processed")
                         
                         # Clear all_new_data after checkpoint to avoid re-saving same data
                         all_new_data = []
@@ -968,7 +968,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     """, (date_field, date_field, json.dumps(all_new_data, default=str), date_field, sql_hash))
                 
                 pg.commit()
-                print(f"      💾 Final save: {len(all_new_data)} remaining rows")
+                print(f"💾 Final save: {len(all_new_data)} remaining rows")
 
         # Get final count from database (data already saved via checkpoints)
         cur = pg.cursor()
@@ -978,17 +978,17 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         
         # Check if any days failed
         if days_failed > 0:
-            print(f"   ⚠️  Backfill (full) partial: {final_count} total rows ({days_failed} days failed)")
+            print(f"⚠️  Backfill (full) partial: {final_count} total rows ({days_failed} days failed)")
             raise PartialCompletionException(f"Backfill partial: {days_failed} days failed, {final_count} rows total", final_count)
         else:
-            print(f"   ✅ Backfill (full) complete: {final_count} total rows")
+            print(f"✅ Backfill (full) complete: {final_count} total rows")
             return final_count
 
 def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     """
     Process full_refresh job: Run entire date range, replace all JSON.
     """
-    print(f"   🔄 Full refresh: {BACKFILL_START} → {date.today()}")
+    print(f"🔄 Full refresh: {BACKFILL_START} → {date.today()}")
     
     # For monthly/weekly queries, use checkpointing
     if '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query:
@@ -1047,13 +1047,13 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
             all_new_data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client,
                                           checkpoint_callback=checkpoint, checkpoint_interval=1)
         except Exception as e:
-            print(f"   ❌ Error during full refresh: {e}")
+            print(f"❌ Error during full refresh: {e}")
             # Get saved count
             cur = pg.cursor()
             cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
             row = cur.fetchone()
             saved_count = (row[0] or 0) if row else 0
-            print(f"   ℹ️  Partial data saved via checkpoints: {saved_count} rows")
+            print(f"ℹ️  Partial data saved via checkpoints: {saved_count} rows")
             raise PartialCompletionException(f"Full refresh partial: {saved_count} rows saved", saved_count)
         
         # Get final count from database
@@ -1061,7 +1061,7 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
         cur.execute("SELECT jsonb_array_length(json_data) FROM query_results WHERE sql_hash = %s", (sql_hash,))
         row = cur.fetchone()
         final_count = (row[0] or 0) if row else 0
-        print(f"   ✅ Full refresh complete: {final_count} rows")
+        print(f"✅ Full refresh complete: {final_count} rows")
         return final_count
     else:
         # For daily queries or simple queries, run directly
@@ -1078,7 +1078,7 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
         """, (json.dumps(all_new_data, default=str), sql_hash))
         pg.commit()
         
-        print(f"   ✅ Full refresh complete: {len(all_new_data)} rows")
+        print(f"✅ Full refresh complete: {len(all_new_data)} rows")
         return len(all_new_data)
 
 def _period_start(d: date, sql_query: str) -> date:
@@ -1111,10 +1111,10 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
             if p not in seen_periods:
                 seen_periods.add(p)
                 deduped.append(p)
-        print(f"   📊 Incremental: {len(gap_dates)} gap days → {len(deduped)} period(s) to fill, max_date={max_date}")
+        print(f"Incremental: {len(gap_dates)} gap days → {len(deduped)} period(s) to fill, max_date={max_date}")
         gap_dates = deduped
     else:
-        print(f"   📊 Incremental: {len(gap_dates)} gaps, max_date={max_date}")
+        print(f"Incremental: {len(gap_dates)} gaps, max_date={max_date}")
 
     all_new_data = []
     dates_to_remove = set()
@@ -1122,10 +1122,10 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
     # 1. Fill gaps (dates before max_date with no data)
     gaps_failed = 0
     if gap_dates:
-        print(f"   🔧 Filling {len(gap_dates)} gap period(s)...")
+        print(f"Filling {len(gap_dates)} gap period(s)...")
         for gap_date in gap_dates:
             try:
-                print(f"      Gap {gap_date}...", end='', flush=True)
+                print(f"Gap {gap_date}...", end='', flush=True)
                 data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
                 all_new_data.extend(data)
 
@@ -1142,7 +1142,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
                 gaps_failed += 1
     
     # 2. Fetch max_date → today (replace max_date, add new)
-    print(f"   📅 Fetching {max_date} → {today}...")
+    print(f"Fetching {max_date} → {today}...")
     try:
         data = run_trino_query(sql_query, max_date, today, trino_client)
         all_new_data.extend(data)
@@ -1164,7 +1164,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
     
     # Skip merge if no new data
     if not all_new_data:
-        print(f"   ⚠️  No new data to merge")
+        print(f"⚠️  No new data to merge")
         return 0
     
     # Detect date field and groupBy field from new data
@@ -1253,10 +1253,10 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
     
     # Check if any gaps failed
     if gaps_failed > 0:
-        print(f"   ⚠️  Incremental partial: {len(all_new_data)} new rows ({gaps_failed} gaps failed)")
+        print(f"⚠️  Incremental partial: {len(all_new_data)} new rows ({gaps_failed} gaps failed)")
         raise PartialCompletionException(f"Incremental partial: {gaps_failed} gaps failed", len(all_new_data))
     else:
-        print(f"   ✅ Incremental complete: {len(all_new_data)} new rows")
+        print(f"✅ Incremental complete: {len(all_new_data)} new rows")
         return len(all_new_data)
 
 def process_job(pg, job, trino_client):
@@ -1270,8 +1270,8 @@ def process_job(pg, job, trino_client):
     """
     job_id, sql_hash, job_type, attempts, max_attempts = job
     
-    print(f"\n🔄 Processing job #{job_id} ({job_type}) - attempt {attempts}/{max_attempts}", flush=True)
-    print(f"   SQL hash: {sql_hash}", flush=True)
+    print(f"🔄 Processing job #{job_id} ({job_type}) - attempt {attempts}/{max_attempts}", flush=True)
+    print(f"SQL hash: {sql_hash}", flush=True)
     
     cur = pg.cursor()
     
@@ -1434,7 +1434,7 @@ def main():
             else:
                 # No jobs available, wait
                 if jobs_processed > 0:
-                    print(f"\nNo pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)", flush=True)
+                    print(f"No pending jobs. Waiting {POLL_INTERVAL}s... (processed {jobs_processed} jobs so far)", flush=True)
                 time.sleep(POLL_INTERVAL)
     
     except KeyboardInterrupt:
