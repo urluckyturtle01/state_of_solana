@@ -41,9 +41,10 @@ fi
 BEFORE_COMMIT=$(git rev-parse HEAD)
 echo "   Current commit: ${BEFORE_COMMIT:0:7}"
 
-# Pull latest changes
+# Pull latest changes (try current branch's upstream, then master, then main)
 git fetch origin
-git pull origin main 2>&1 || git pull origin master 2>&1 || {
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+git pull origin "$CURRENT_BRANCH" 2>&1 || git pull origin master 2>&1 || git pull origin main 2>&1 || {
     echo "⚠️  Warning: Could not pull from origin (might be up to date)"
 }
 
@@ -72,10 +73,13 @@ if [ ! -f "$PYTHON_SCRIPT" ]; then
     exit 1
 fi
 
-# Source environment variables
+# Source environment variables (avoid xargs - it breaks on values with = or spaces)
 if [ -f "$PROJECT_DIR/.env" ]; then
     echo "   Loading environment variables..."
-    export $(cat "$PROJECT_DIR/.env" | grep -v '^#' | xargs)
+    set -a
+    # shellcheck disable=SC1090
+    . "$PROJECT_DIR/.env" 2>/dev/null || true
+    set +a
 fi
 
 # Run the Python script and capture detailed output
