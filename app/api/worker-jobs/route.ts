@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
+import { verifySignedToken, COOKIE_NAME } from '@/lib/worker-log-auth';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
@@ -9,7 +10,11 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || 'root',
 });
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!verifySignedToken(token)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const client = await pool.connect();
   try {
     const result = await client.query(`
@@ -85,7 +90,11 @@ export async function GET() {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!verifySignedToken(token)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 

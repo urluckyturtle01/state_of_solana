@@ -1,8 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { verifySignedToken, COOKIE_NAME } from '@/lib/worker-log-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!verifySignedToken(token)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const logPath = path.join(process.cwd(), 'trino_worker.log');
     
