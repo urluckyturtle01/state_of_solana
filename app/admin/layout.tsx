@@ -299,6 +299,13 @@ export default function AdminLayout({
                       Settings
                     </AdminNavLink>
                   </li>
+                  {!process.env.NEXT_PUBLIC_VERCEL && (
+                    <li>
+                      <AdminNavLink href="/worker-log-login">
+                        Worker Log
+                      </AdminNavLink>
+                    </li>
+                  )}
             </ul>
           </nav>
         </div>

@@ -1,7 +1,11 @@
-# Exclude internal/admin pages from deployment
+# Exclude worker-log entirely from Vercel (self-hosted only at 84.32.71)
 public/worker-log.html
-public/worker-log-login
-app/worker-log-login/page.tsx
+app/worker-log/
+app/worker-log-login/
+app/api/worker-log/
+app/api/worker-log-auth/
+app/api/worker-jobs/
+lib/worker-log-auth.ts
 
 # Exclude only development and testing files - ALLOW chart data and configs for fast loading
 public/temp/*.js
