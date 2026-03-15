@@ -1,3 +1,6 @@
+# Exclude internal/admin pages from deployment
+public/worker-log.html
+
 # Exclude only development and testing files - ALLOW chart data and configs for fast loading
 public/temp/*.js
 public/temp/*.md

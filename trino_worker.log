@@ -5142,4 +5142,1285 @@ order by 1 desc
 08:03:29.397 SQL hash: c480a9c9571f5d9d6c057ad9b2998498
 08:03:29.400 Incremental: 0 gaps, max_date=2026-03-13
 08:03:29.400 Fetching 2026-03-13 → 2026-03-15...
-08:03:29.400 Fetching month 2026-03-01 (1/1)...
+08:03:29.400 Fetching month 2026-03-01 (1/1)...08:06:45.491  ✅ 112 rows
+08:06:45.517 ✅ Incremental complete: 112 new rows
+08:06:45.518 ✅ Job #665 SUCCESSFUL: 112 rows
+📊 Found 2 cumulative field(s): ['cumulative_txn_count', 'cumulative_volume_usd']
+📊 Grouped by: prop_amm_name
+✅ Cumulative calculation complete (2572 rows)
+08:06:45.559 🔄 Processing job #666 (incremental) - attempt 1/3
+08:06:45.559 SQL hash: d6de50c852cfa65fe7ea9d72c8782360
+08:06:45.562 Incremental: 0 gaps, max_date=2026-03-13
+08:06:45.562 Fetching 2026-03-13 → 2026-03-15...
+08:06:45.562 Fetching month 2026-03-01 (1/1)...08:08:30.638  ✅ 70 rows
+08:08:30.652 ✅ Incremental complete: 70 new rows
+08:08:30.652 ✅ Job #666 SUCCESSFUL: 70 rows
+ℹ️  No cumulative fields detected
+08:08:30.658 🔄 Processing job #667 (incremental) - attempt 1/3
+08:08:30.658 SQL hash: d5a55e5a2f530751a688eff04de78ad9
+08:08:30.660 Incremental: 0 gaps, max_date=2026-03-13
+08:08:30.660 Fetching 2026-03-13 → 2026-03-15...
+08:08:30.661 Fetching month 2026-03-01 (1/1)...08:10:32.676  ✅ 28 rows
+08:10:32.684 ✅ Incremental complete: 28 new rows
+08:10:32.684 ✅ Job #667 SUCCESSFUL: 28 rows
+ℹ️  No cumulative fields detected
+08:10:32.689 🔄 Processing job #668 (incremental) - attempt 1/3
+08:10:32.689 SQL hash: 0399d5698528405398b7661eb1643515
+08:10:32.690 Incremental: 0 gaps, max_date=2026-03-01
+08:10:32.690 Fetching 2026-03-01 → 2026-03-15...
+08:10:32.690 Fetching month 2026-03-01 (1/1)...08:11:23.895  ✅ 1 rows
+08:11:23.898 ✅ Incremental complete: 1 new rows
+08:11:23.898 ✅ Job #668 SUCCESSFUL: 1 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:11:23.900 🔄 Processing job #669 (incremental) - attempt 1/3
+08:11:23.901 SQL hash: d792d72029ba69ff1282980b38728fb2
+08:11:23.906 Incremental: 68 gap days → 3 period(s) to fill, max_date=2026-03-13
+08:11:23.906 Filling 3 gap period(s)...
+08:11:23.907 Gap 2025-01-01...08:11:23.907 Fetching month 2025-01-01 (1/1)...08:11:30.172  ⚠️ 0 rows
+08:11:30.172  0 rows
+08:11:30.173 Gap 2025-02-01...08:11:30.173 Fetching month 2025-02-01 (1/1)...08:11:36.468  ⚠️ 0 rows
+08:11:36.468  0 rows
+08:11:36.468 Gap 2025-03-01...08:11:36.468 Fetching month 2025-03-01 (1/1)...08:12:56.416  ✅ 231 rows
+08:12:56.416  231 rows
+08:12:56.416 Fetching 2026-03-13 → 2026-03-15...
+08:12:56.416 Fetching month 2026-03-01 (1/1)...08:14:20.730  ✅ 281 rows
+08:14:20.820 ✅ Incremental complete: 512 new rows
+08:14:20.821 ✅ Job #669 SUCCESSFUL: 512 rows
+📊 Found 1 cumulative field(s): ['cumulative_new_traders']
+📊 Grouped by: category
+✅ Cumulative calculation complete (9092 rows)
+08:14:20.918 🔄 Processing job #670 (incremental) - attempt 1/3
+08:14:20.918 SQL hash: ec2e573245855051a9238924556bd80b
+08:14:20.921 Incremental: 0 gaps, max_date=2026-03-14
+08:14:20.921 Fetching 2026-03-14 → 2026-03-15...
+08:14:20.921 Fetching month 2026-03-01 (1/1)...08:14:23.064  ✅ 14 rows
+08:14:23.070 ✅ Incremental complete: 14 new rows
+08:14:23.070 ✅ Job #670 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+08:14:23.073 🔄 Processing job #671 (full_refresh) - attempt 1/3
+08:14:23.073 SQL hash: e8553155c8837bce8495343f696043f0
+      Running static query (no date placeholders)... 437 rows
+   ✅ Static query complete: 437 rows saved
+08:14:23.884 ✅ Job #671 SUCCESSFUL: 437 rows
+ℹ️  No cumulative fields detected
+08:14:23.885 🔄 Processing job #672 (incremental) - attempt 1/3
+08:14:23.886 SQL hash: 0c2cc70d122d4b529f24de5543fbf9df
+08:14:23.886 Incremental: 0 gaps, max_date=2026-03-01
+08:14:23.887 Fetching 2026-03-01 → 2026-03-15...
+08:14:23.887 Fetching month 2026-03-01 (1/1)...08:19:32.089  ✅ 1 rows
+08:19:32.103 ✅ Incremental complete: 1 new rows
+08:19:32.103 ✅ Job #672 SUCCESSFUL: 1 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:19:32.105 🔄 Processing job #673 (incremental) - attempt 1/3
+08:19:32.105 SQL hash: 2c8bfd552ce22f7aa0b5d9e5766ac0d8
+08:19:32.108 Incremental: 0 gaps, max_date=2026-03-13
+08:19:32.108 Fetching 2026-03-13 → 2026-03-15...
+08:19:32.108 Fetching month 2026-03-01 (1/1)...08:19:35.714  ✅ 42 rows
+08:19:35.723 ✅ Incremental complete: 42 new rows
+08:19:35.723 ✅ Job #673 SUCCESSFUL: 42 rows
+ℹ️  No cumulative fields detected
+08:19:35.729 🔄 Processing job #674 (full_refresh) - attempt 1/3
+08:19:35.729 SQL hash: 321002caa795034a3d2516a37075231b
+      Running static query (no date placeholders)... 437 rows
+   ✅ Static query complete: 437 rows saved
+08:21:15.242 ✅ Job #674 SUCCESSFUL: 437 rows
+ℹ️  No cumulative fields detected
+08:21:15.245 🔄 Processing job #675 (incremental) - attempt 1/3
+08:21:15.245 SQL hash: 0fd6c6c2e3665b6d124b92b97982193e
+08:21:15.246 Incremental: 0 gaps, max_date=2026-03-01
+08:21:15.246 Fetching 2026-03-01 → 2026-03-15...
+08:21:15.246 Fetching month 2026-03-01 (1/1)...08:21:19.077  ✅ 4 rows
+08:21:19.079 ✅ Incremental complete: 4 new rows
+08:21:19.079 ✅ Job #675 SUCCESSFUL: 4 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:21:19.081 🔄 Processing job #676 (incremental) - attempt 1/3
+08:21:19.081 SQL hash: 72a0c7ef6d2cf8a6ed0395d4ecfe986a
+08:21:19.083 Incremental: 67 gap days → 3 period(s) to fill, max_date=2026-03-14
+08:21:19.083 Filling 3 gap period(s)...
+08:21:19.083 Gap 2025-01-01...08:21:19.083 Fetching month 2025-01-01 (1/1)...08:21:25.382  ⚠️ 0 rows
+08:21:25.382  0 rows
+08:21:25.383 Gap 2025-02-01...08:21:25.383 Fetching month 2025-02-01 (1/1)...08:21:31.606  ⚠️ 0 rows
+08:21:31.606  0 rows
+08:21:31.606 Gap 2025-03-01...08:21:31.606 Fetching month 2025-03-01 (1/1)...08:22:36.010  ✅ 17 rows
+08:22:36.010  17 rows
+08:22:36.010 Fetching 2026-03-14 → 2026-03-15...
+08:22:36.010 Fetching month 2026-03-01 (1/1)...08:23:46.890  ✅ 14 rows
+08:23:46.896 ✅ Incremental complete: 31 new rows
+08:23:46.896 ✅ Job #676 SUCCESSFUL: 31 rows
+📊 Found 1 cumulative field(s): ['cumulative_new_traders']
+📊 Non-grouped data
+✅ Cumulative calculation complete (371 rows)
+08:23:46.902 🔄 Processing job #677 (incremental) - attempt 1/3
+08:23:46.902 SQL hash: 4af588c2353a133c1479f2f5839ca729
+08:23:46.903 Incremental: 0 gaps, max_date=2026-03-14
+08:23:46.904 Fetching 2026-03-14 → 2026-03-15...
+08:23:46.904 Fetching month 2026-03-01 (1/1)...08:23:50.916  ✅ 14 rows
+08:23:50.922 ✅ Incremental complete: 14 new rows
+08:23:50.922 ✅ Job #677 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+08:23:50.924 🔄 Processing job #678 (incremental) - attempt 1/3
+08:23:50.924 SQL hash: cfe6aa646a1aa33e0cc9d0ec8111580d
+08:23:50.926 Incremental: 0 gaps, max_date=2026-03-01
+08:23:50.926 Fetching 2026-03-01 → 2026-03-15...
+08:23:50.926 Fetching month 2026-03-01 (1/1)...08:25:31.977  ✅ 6 rows
+08:25:31.980 ✅ Incremental complete: 6 new rows
+08:25:31.980 ✅ Job #678 SUCCESSFUL: 6 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:25:31.983 🔄 Processing job #679 (incremental) - attempt 1/3
+08:25:31.983 SQL hash: 4fa6679a94a6601a629e777206f441dd
+08:25:31.984 Incremental: 69 gap days → 3 period(s) to fill, max_date=2026-03-14
+08:25:31.984 Filling 3 gap period(s)...
+08:25:31.984 Gap 2025-01-01...08:25:31.984 Fetching month 2025-01-01 (1/1)...08:25:38.456  ⚠️ 0 rows
+08:25:38.456  0 rows
+08:25:38.456 Gap 2025-02-01...08:25:38.456 Fetching month 2025-02-01 (1/1)...08:27:17.642  ⚠️ 0 rows
+08:27:17.642  0 rows
+08:27:17.642 Gap 2025-03-01...08:27:17.642 Fetching month 2025-03-01 (1/1)...08:31:17.328  ✅ 17 rows
+08:31:17.328  17 rows
+08:31:17.328 Fetching 2026-03-14 → 2026-03-15...
+08:31:17.328 Fetching month 2026-03-01 (1/1)...08:33:53.793  ✅ 14 rows
+08:33:53.801 ✅ Incremental complete: 31 new rows
+08:33:53.801 ✅ Job #679 SUCCESSFUL: 31 rows
+ℹ️  No cumulative fields detected
+08:33:53.804 🔄 Processing job #680 (incremental) - attempt 1/3
+08:33:53.804 SQL hash: 0c19d1d420c9d8019ddc93c8ff609b85
+08:33:53.805 Incremental: 0 gaps, max_date=2026-03-01
+08:33:53.805 Fetching 2026-03-01 → 2026-03-15...
+08:33:53.805 Fetching month 2026-03-01 (1/1)...08:34:00.506  ✅ 5 rows
+08:34:00.509 ✅ Incremental complete: 5 new rows
+08:34:00.509 ✅ Job #680 SUCCESSFUL: 5 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:34:00.510 🔄 Processing job #681 (incremental) - attempt 1/3
+08:34:00.511 SQL hash: 70575f6bc6aa22f66e41edb5d28c39ae
+08:34:00.513 Incremental: 0 gaps, max_date=2026-03-14
+08:34:00.513 Fetching 2026-03-14 → 2026-03-15...
+08:34:00.513 Fetching month 2026-03-01 (1/1)...08:36:38.626  ✅ 28 rows
+08:36:38.634 ✅ Incremental complete: 28 new rows
+08:36:38.634 ✅ Job #681 SUCCESSFUL: 28 rows
+ℹ️  No cumulative fields detected
+08:36:38.638 🔄 Processing job #682 (incremental) - attempt 1/3
+08:36:38.638 SQL hash: 19cf66aad24dfcee79c0bba442912735
+08:36:38.640 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-14
+08:36:38.640 Filling 6 gap period(s)...
+08:36:38.640 Gap 2025-01-01...08:36:38.640 Fetching month 2025-01-01 (1/1)...08:36:45.854  ⚠️ 0 rows
+08:36:45.854  0 rows
+08:36:45.854 Gap 2025-02-01...08:36:45.854 Fetching month 2025-02-01 (1/1)...08:36:51.401  ⚠️ 0 rows
+08:36:51.401  0 rows
+08:36:51.401 Gap 2025-03-01...08:36:51.402 Fetching month 2025-03-01 (1/1)...08:36:57.176  ⚠️ 0 rows
+08:36:57.176  0 rows
+08:36:57.177 Gap 2025-04-01...08:36:57.177 Fetching month 2025-04-01 (1/1)...08:37:03.160  ⚠️ 0 rows
+08:37:03.160  0 rows
+08:37:03.160 Gap 2025-05-01...08:37:03.160 Fetching month 2025-05-01 (1/1)...08:41:46.635  ⚠️ 0 rows
+08:41:46.635  0 rows
+08:41:46.635 Gap 2025-06-01...08:41:46.635 Fetching month 2025-06-01 (1/1)...08:41:47.541  ⚠️ 0 rows
+08:41:47.541  0 rows
+08:41:47.541 Fetching 2026-03-14 → 2026-03-15...
+08:41:47.541 Fetching month 2026-03-01 (1/1)...08:41:51.310  ✅ 14 rows
+08:41:51.320 ✅ Incremental complete: 14 new rows
+08:41:51.320 ✅ Job #682 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+08:41:51.326 🔄 Processing job #683 (incremental) - attempt 1/3
+08:41:51.326 SQL hash: ce005166abc8abdecb73b746c7c397ac
+08:41:51.332 Incremental: 0 gaps, max_date=2026-03-14
+08:41:51.332 Fetching 2026-03-14 → 2026-03-15...
+08:41:51.332 Fetching month 2026-03-01 (1/1)...08:41:54.789  ✅ 322 rows
+08:41:54.849 ✅ Incremental complete: 322 new rows
+08:41:54.849 ✅ Job #683 SUCCESSFUL: 322 rows
+ℹ️  No cumulative fields detected
+08:41:54.867 🔄 Processing job #684 (full_refresh) - attempt 1/3
+08:41:54.867 SQL hash: d28117e2922df5a3b9bd3ea2b6d7baaf
+      Running static query (no date placeholders)... 131 rows
+   ✅ Static query complete: 131 rows saved
+08:45:59.264 ✅ Job #684 SUCCESSFUL: 131 rows
+⚠️  No date field found
+08:45:59.269 🔄 Processing job #685 (incremental) - attempt 1/3
+08:45:59.269 SQL hash: 111b2876b90a72366580b53d76bee74c
+08:45:59.270 Incremental: 0 gaps, max_date=2026-03-14
+08:45:59.270 Fetching 2026-03-14 → 2026-03-15...
+08:45:59.270 Fetching month 2026-03-01 (1/1)...08:46:02.401  ✅ 14 rows
+08:46:02.410 ✅ Incremental complete: 14 new rows
+08:46:02.410 ✅ Job #685 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+08:46:02.415 🔄 Processing job #686 (incremental) - attempt 1/3
+08:46:02.415 SQL hash: 65bb81835c9e89f464d4794a64090404
+08:46:02.419 Incremental: 0 gaps, max_date=2026-03-14
+08:46:02.419 Fetching 2026-03-14 → 2026-03-15...
+08:46:02.419 Fetching month 2026-03-01 (1/1)...08:48:24.370  ✅ 84 rows
+08:48:24.397 ✅ Incremental complete: 84 new rows
+08:48:24.397 ✅ Job #686 SUCCESSFUL: 84 rows
+ℹ️  No cumulative fields detected
+08:48:24.407 🔄 Processing job #687 (incremental) - attempt 1/3
+08:48:24.407 SQL hash: 78ac7d0be4cd9321ed5743dd372ab739
+08:48:24.408 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-14
+08:48:24.408 Filling 6 gap period(s)...
+08:48:24.408 Gap 2025-01-01...08:48:24.408 Fetching month 2025-01-01 (1/1)...08:48:25.285  ⚠️ 0 rows
+08:48:25.286  0 rows
+08:48:25.286 Gap 2025-02-01...08:48:25.286 Fetching month 2025-02-01 (1/1)...08:51:36.270  ⚠️ 0 rows
+08:51:36.271  0 rows
+08:51:36.271 Gap 2025-03-01...08:51:36.271 Fetching month 2025-03-01 (1/1)...08:51:43.714  ⚠️ 0 rows
+08:51:43.714  0 rows
+08:51:43.714 Gap 2025-04-01...08:51:43.714 Fetching month 2025-04-01 (1/1)...08:51:50.388  ⚠️ 0 rows
+08:51:50.388  0 rows
+08:51:50.388 Gap 2025-05-01...08:51:50.388 Fetching month 2025-05-01 (1/1)...08:53:26.426  ⚠️ 0 rows
+08:53:26.427  0 rows
+08:53:26.427 Gap 2025-06-01...08:53:26.427 Fetching month 2025-06-01 (1/1)...08:53:29.869  ⚠️ 0 rows
+08:53:29.869  0 rows
+08:53:29.869 Fetching 2026-03-14 → 2026-03-15...
+08:53:29.869 Fetching month 2026-03-01 (1/1)...08:53:44.075  ✅ 14 rows
+08:53:44.083 ✅ Incremental complete: 14 new rows
+08:53:44.083 ✅ Job #687 SUCCESSFUL: 14 rows
+📊 Found 6 cumulative field(s): ['cumulative_dex_fee_pct', 'cumulative_dex_fee_sol', 'cumulative_dex_jito_pct', 'cumulative_dex_jito_sol', 'cumulative_network_fee_sol', 'cumulative_network_jito_sol']
+📊 Non-grouped data
+✅ Cumulative calculation complete (257 rows)
+🔢 Calculating 2 percentage field(s)...
+✅ Percentage fields calculated and saved
+08:53:44.104 🔄 Processing job #688 (incremental) - attempt 1/3
+08:53:44.104 SQL hash: 7134add612fbbbf2a97e41e3cd55acf6
+08:53:44.113 Incremental: 0 gaps, max_date=2026-03-14
+08:53:44.113 Fetching 2026-03-14 → 2026-03-15...
+08:53:44.113 Fetching month 2026-03-01 (1/1)...08:55:27.098  ❌ Error: Execution failed on sql '-- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet (offset=4, length=308096): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet", query_id=20260315_085344_00601_tvaaa)
+[SQL: -- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+08:55:27.098 ❌ Trino query error: Execution failed on sql '-- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet (offset=4, length=308096): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet", query_id=20260315_085344_00601_tvaaa)
+[SQL: -- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+08:55:27.099  ❌ Error fetching max_date → today: Execution failed on sql '-- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+': (trino.exceptions.TrinoExternalError) TrinoExternalError(type=EXTERNAL, name=ICEBERG_CANNOT_OPEN_SPLIT, message="Error opening Iceberg split s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet (offset=4, length=308096): Failed to open S3 file: s3://iceberg-warehouse/solana/token_prices_1m/data/block_date=2026-02-28/20260228_030001_00102_rdt68-75b0d4e6-f904-4885-b8e6-0da0cf3466dc.parquet", query_id=20260315_085344_00601_tvaaa)
+[SQL: -- Description: Daily and cumulative volume by DEX program
+-- Volume = MIN(sold_side_usd, bought_side_usd)
+-- Program = inner_program, fallback outer_program; only mapped DEXes
+
+WITH excluded_pools AS (
+    SELECT DISTINCT pool_address
+    FROM orca.whirlpool_config
+    WHERE config <> '2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ'
+),
+
+program_names AS (
+    SELECT * FROM (VALUES
+        ('675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', 'Raydium V4'),
+        ('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK', 'Raydium CLMM'),
+        ('CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C', 'Raydium CPMM'),
+        ('5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h', 'Raydium Stable'),
+        ('LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj', 'Raydium Launchlab'),
+        ('LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo', 'Meteora DLMM'),
+        ('cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG', 'Meteora DAMM v2'),
+        ('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN', 'Meteora DBC'),
+        ('Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB', 'Meteora'),
+        ('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', 'Whirlpool'),
+        ('PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY', 'Phoenix'),
+        ('2wT8Yq49kHgDzXuPxZSaeLaH1qbmGXtEyPy64bL7aD3c', 'Lifinity Swap V2'),
+        ('SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ', 'Saber'),
+        ('DecZY86MU5Gj7kppfUCEmd4LbXXuyZH1yHaP2NTqdiZB', 'Saber Decimals'),
+        ('SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr', 'Saros'),
+        ('1qbkdrr3z4ryLA7pZykqvxWPoeifcVKo6ZG9CfkvVE', 'Saros DLMM'),
+        ('5ocnV1qiCgaQR8Jb8xWnVbApfaygJ8tNoZfgPwsgx9kx', 'Sanctum Infinity'),
+        ('stkitrT1Uoy18Dk1fTrgPw8W6MVzoCfYoAFT4MLsmhq', 'Sanctum'),
+        ('opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb', 'OpenBook V2'),
+        ('HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq', 'PancakeSwap'),
+        ('MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms', 'Manifest'),
+        ('WooFif76YGRNjk1pA8wCsN67aQsD9f9iLsz4NcJ1AVb', 'Woofi'),
+        ('swapNyd8XiQwJ6ianp9snpu4brUqFxadzvHebnAXjJZ', 'Stabble Stable'),
+        ('AMM55ShdkoGRB5jVYPjWziwk8m5MpwyDgsMWHaMSQWH6', 'Aldrin'),
+        ('CURVGoZn8zycx6FXwwevgBTB2gVvdbGTEpvMJDbgs2t4', 'Aldrin V2'),
+        ('FLUXubRmkEi2q6K3Y9kBPg9248ggaZVsoSFhtJHSrm1X', 'FluxBeam'),
+        ('srAMMzfVHVAtgSJc8iH6CfKzuWuUTzLHVCE81QU1rgi', 'Gavel'),
+        ('FW6zUqn4iKRaeopwwhwsquTY6ABWLLgjxtrC3VPnaWBf', 'WhaleStreet'),
+        ('REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2', 'Byreal'),
+        ('Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j', 'StepN'),
+        ('HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o', 'Heaven'),
+        ('MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG', 'Moonit'),
+        ('vrTGoBuy5rYSxAfV3jaRJWHH6nN9WK4NRExGxsk1bCJ', 'Vertigo'),
+        ('5U3EU2ubXtK84QcRjWVmYt9RaDyA8gKxdUrPFXmZyaki', 'Virtuals'),
+        ('deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS', 'Mastermind'),
+        ('boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4', 'Boop.fun'),
+        ('ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY', 'ZeroFi'),
+        ('9H6tua7jkLhdm3w8BvgpTn5LZNU7g4ZynDmCiNN3q6Rp', 'HumidiFi'),
+        ('ALPHAQmeA7bjrVuccPsYPiCvsi428SNwte66Srvs4pHA', 'AlphaQ'),
+        ('SV2EYYJyRz2YhfXwXnhNAevDEui5Q6yrfyo13WtupPF', 'SolFi V2'),
+        ('goonERTdGsjnkZqWuVjs73BZ3Pb9qoCUdBUL17BnS5j', 'GoonFi'),
+        ('TessVdML9pBGgG9yGks7o4HewRaXVAMuoVj4x83GLQH', 'TesseraV'),
+        ('obriQD1zbpyLz95G5n7nJe6a4DPjpFwa5XYPoNm113y', 'Obric V2'),
+        ('AQU1FRd7papthgdrwPTTq5JacJh8YtwEXaBfKU3bTz45', 'Aquifer'),
+        ('BiSoNHVpsVZW2F7rx2eQ59yQwKxzU5NvBcmKshCSUypi', 'BisonFi'),
+        ('JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', 'Jupiter'),
+        ('6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma', 'OKX V1'),
+        ('proVF4pMXVaYqmy4NjniPh4pqKNfMmsihgd4wdkCX3u', 'OKX V2'),
+        ('T1TANpTeScyeqVzzgNViGDNrkQ6qHz9KrSBS4aNXvGT', 'Titan'),
+        ('DF1ow4tspfHX9JwWJsAb9epbkA8hmpSEAtxXy1V27QBF', 'DFlow'),
+        ('FLASHX8DrLbgeR8FcfNV1F5krxYcYMUdBkrP1EPBtxB9', 'Flashtrade'),
+        ('PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu', 'Jupiter Perp'),
+        ('dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH', 'Drift'),
+        ('pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA', 'Pump.fun AMM'),
+        ('6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P', 'Pump.fun')
+    ) AS t(program, program_name)
+),
+
+program_volume AS (
+    SELECT
+        sub.block_date,
+        pn.program,
+        pn.program_name,
+        SUM(
+            CASE
+                WHEN sub.sold_usd > 0 AND sub.bought_usd > 0 THEN LEAST(sub.sold_usd, sub.bought_usd)
+                ELSE GREATEST(sub.sold_usd, sub.bought_usd)
+            END
+        ) as volume_usd
+    FROM (
+        SELECT
+            t.block_date,
+            (CASE WHEN t.inner_program = '' THEN t.outer_program ELSE t.inner_program END) as program,
+            CASE
+                WHEN t.token_sold_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_sold_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_sold_amount * COALESCE(ps.price_in_usd, 0)
+            END as sold_usd,
+            CASE
+                WHEN t.token_bought_mint = 'So11111111111111111111111111111111111111112'
+                THEN t.token_bought_amount * COALESCE(psol.price_in_usd, 0)
+                ELSE t.token_bought_amount * COALESCE(pb.price_in_usd, 0)
+            END as bought_usd
+        FROM solana.dex_trades t
+        LEFT JOIN solana.token_prices_1m psol ON psol.mint = 'So11111111111111111111111111111111111111112'
+            AND DATE_TRUNC('minute', t.block_time) = psol.minute
+        LEFT JOIN solana.token_prices_1m pb ON t.token_bought_mint = pb.mint
+            AND DATE_TRUNC('minute', t.block_time) = pb.minute
+            AND pb.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        LEFT JOIN solana.token_prices_1m ps ON t.token_sold_mint = ps.mint
+            AND DATE_TRUNC('minute', t.block_time) = ps.minute
+            AND ps.mint <> 'FATYxjEcXNYinyoR8SzHBKtzLz8qYRdUaHpxPS7dvirt'
+        WHERE DATE_TRUNC('month', t.block_date) = DATE('2026-03-01')
+          AND t.block_date < CURRENT_DATE
+          AND t.pool_address NOT IN (SELECT pool_address FROM excluded_pools)
+    ) sub
+    JOIN program_names pn ON sub.program = pn.program
+    GROUP BY 1, 2, 3
+)
+
+SELECT
+    block_date,
+    program,
+    program_name,
+    ROUND(volume_usd, 2) as daily_volume_usd,
+    ROUND(SUM(volume_usd) OVER (PARTITION BY program ORDER BY block_date), 2) as cumulative_volume_usd
+FROM program_volume
+ORDER BY 1 DESC, 4 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+08:55:27.100 ⚠️  No new data to merge
+08:55:27.100 ⚠️  Job #688 returned 0 rows, will retry in 1 minutes
+08:55:27.107 🔄 Processing job #689 (incremental) - attempt 1/3
+08:55:27.107 SQL hash: 1c8a1094b64dd521c257573de18c49bf
+08:55:27.108 Incremental: 0 gaps, max_date=2026-03-01
+08:55:27.108 Fetching 2026-03-01 → 2026-03-15...
+08:55:27.108 Fetching month 2026-03-01 (1/1)...08:57:55.263  ✅ 1 rows
+08:57:55.265 ✅ Incremental complete: 1 new rows
+08:57:55.265 ✅ Job #689 SUCCESSFUL: 1 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:57:55.267 🔄 Processing job #690 (incremental) - attempt 1/3
+08:57:55.267 SQL hash: 48ca9352386b286421718eb8aef74df1
+08:57:55.268 Incremental: 0 gaps, max_date=2026-03-01
+08:57:55.268 Fetching 2026-03-01 → 2026-03-15...
+08:57:55.268 Fetching month 2026-03-01 (1/1)...08:58:11.885  ✅ 1 rows
+08:58:11.888 ✅ Incremental complete: 1 new rows
+08:58:11.888 ✅ Job #690 SUCCESSFUL: 1 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+08:58:11.890 🔄 Processing job #691 (incremental) - attempt 1/3
+08:58:11.890 SQL hash: 58f7fc806ef53f6af055b075b9a25a0a
+08:58:11.891 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-14
+08:58:11.891 Filling 6 gap period(s)...
+08:58:11.891 Gap 2025-01-01...08:58:11.891 Fetching month 2025-01-01 (1/1)...09:01:26.077  ⚠️ 0 rows
+09:01:26.078  0 rows
+09:01:26.078 Gap 2025-02-01...09:01:26.078 Fetching month 2025-02-01 (1/1)...09:01:28.439  ⚠️ 0 rows
+09:01:28.440  0 rows
+09:01:28.440 Gap 2025-03-01...09:01:28.440 Fetching month 2025-03-01 (1/1)...09:01:31.293  ⚠️ 0 rows
+09:01:31.293  0 rows
+09:01:31.293 Gap 2025-04-01...09:01:31.294 Fetching month 2025-04-01 (1/1)...09:01:32.303  ⚠️ 0 rows
+09:01:32.303  0 rows
+09:01:32.303 Gap 2025-05-01...09:01:32.304 Fetching month 2025-05-01 (1/1)...09:03:11.550  ⚠️ 0 rows
+09:03:11.550  0 rows
+09:03:11.550 Gap 2025-06-01...09:03:11.550 Fetching month 2025-06-01 (1/1)...09:04:49.809  ⚠️ 0 rows
+09:04:49.809  0 rows
+09:04:49.809 Fetching 2026-03-14 → 2026-03-15...
+09:04:49.809 Fetching month 2026-03-01 (1/1)...09:05:11.493  ✅ 14 rows
+09:05:11.498 ✅ Incremental complete: 14 new rows
+09:05:11.498 ✅ Job #691 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+09:05:11.501 🔄 Processing job #692 (incremental) - attempt 1/3
+09:05:11.501 SQL hash: 1ac73290ec62481effa18a64798004da
+09:05:11.504 Incremental: 0 gaps, max_date=2026-03-01
+09:05:11.504 Fetching 2026-03-01 → 2026-03-15...
+09:05:11.504 Fetching month 2026-03-01 (1/1)...09:06:51.197  ✅ 24 rows
+09:06:51.202 ✅ Incremental complete: 24 new rows
+09:06:51.202 ✅ Job #692 SUCCESSFUL: 24 rows
+ℹ️  Skipping cumulative calculation for month (not daily data)
+09:06:51.205 🔄 Processing job #693 (incremental) - attempt 1/3
+09:06:51.205 SQL hash: 36b6da8e6a70243b6662cd1941273715
+09:06:51.206 Incremental: 181 gap days → 6 period(s) to fill, max_date=2026-03-14
+09:06:51.206 Filling 6 gap period(s)...
+09:06:51.206 Gap 2025-01-01...09:06:51.207 Fetching month 2025-01-01 (1/1)...09:08:24.316  ⚠️ 0 rows
+09:08:24.316  0 rows
+09:08:24.316 Gap 2025-02-01...09:08:24.316 Fetching month 2025-02-01 (1/1)...09:08:25.145  ⚠️ 0 rows
+09:08:25.145  0 rows
+09:08:25.146 Gap 2025-03-01...09:08:25.146 Fetching month 2025-03-01 (1/1)...09:08:25.798  ⚠️ 0 rows
+09:08:25.798  0 rows
+09:08:25.798 Gap 2025-04-01...09:08:25.798 Fetching month 2025-04-01 (1/1)...09:09:58.565  ⚠️ 0 rows
+09:09:58.565  0 rows
+09:09:58.566 Gap 2025-05-01...09:09:58.566 Fetching month 2025-05-01 (1/1)...09:11:31.970  ⚠️ 0 rows
+09:11:31.970  0 rows
+09:11:31.971 Gap 2025-06-01...09:11:31.971 Fetching month 2025-06-01 (1/1)...09:13:05.741  ⚠️ 0 rows
+09:13:05.741  0 rows
+09:13:05.741 Fetching 2026-03-14 → 2026-03-15...
+09:13:05.742 Fetching month 2026-03-01 (1/1)...09:15:04.959  ✅ 14 rows
+09:15:04.968 ✅ Incremental complete: 14 new rows
+09:15:04.968 ✅ Job #693 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+09:15:04.973 🔄 Processing job #694 (incremental) - attempt 1/3
+09:15:04.973 SQL hash: caf7028c23cc9956518faaf7b512e6cd
+09:15:04.976 Incremental: 0 gaps, max_date=2026-03-14
+09:15:04.976 Fetching 2026-03-14 → 2026-03-15...
+09:15:04.976 Fetching month 2026-03-01 (1/1)...09:17:07.499  ✅ 42 rows
+09:17:07.511 ✅ Incremental complete: 42 new rows
+09:17:07.511 ✅ Job #694 SUCCESSFUL: 42 rows
+ℹ️  No cumulative fields detected
+09:17:07.518 🔄 Processing job #695 (incremental) - attempt 1/3
+09:17:07.518 SQL hash: 7520d3a55e1af5601594178cee15f666
+09:17:07.521 Incremental: 0 gaps, max_date=2026-03-14
+09:17:07.521 Fetching 2026-03-14 → 2026-03-15...
+09:17:07.521 Fetching month 2026-03-01 (1/1)...09:17:31.276  ✅ 42 rows
+09:17:31.285 ✅ Incremental complete: 42 new rows
+09:17:31.285 ✅ Job #695 SUCCESSFUL: 42 rows
+ℹ️  No cumulative fields detected
+09:17:31.291 🔄 Processing job #696 (incremental) - attempt 1/3
+09:17:31.291 SQL hash: e4db90fd110ed470e51cad0e9205abad
+09:17:31.293 Incremental: 0 gaps, max_date=2026-03-14
+09:17:31.294 Fetching 2026-03-14 → 2026-03-15...
+09:17:31.294 Fetching month 2026-03-01 (1/1)...09:21:17.893  ✅ 42 rows
+09:21:17.904 ✅ Incremental complete: 42 new rows
+09:21:17.904 ✅ Job #696 SUCCESSFUL: 42 rows
+📊 Found 1 cumulative field(s): ['cumulative_volume_usd']
+📊 Grouped by: pool_category
+✅ Cumulative calculation complete (1314 rows)
+09:21:17.922 🔄 Processing job #697 (incremental) - attempt 1/3
+09:21:17.923 SQL hash: c2f3b523b019cfff3e39581b02083652
+09:21:17.924 Incremental: 0 gaps, max_date=2026-03-14
+09:21:17.924 Fetching 2026-03-14 → 2026-03-15...
+09:21:17.924 Fetching month 2026-03-01 (1/1)...09:21:25.492  ✅ 14 rows
+09:21:25.501 ✅ Incremental complete: 14 new rows
+09:21:25.501 ✅ Job #697 SUCCESSFUL: 14 rows
+ℹ️  No cumulative fields detected
+09:21:25.504 🔄 Processing job #698 (full_refresh) - attempt 1/3
+09:21:25.504 SQL hash: 5af668b664fdede17e2c9db253378cc6
+      Running static query (no date placeholders)... 131 rows
+   ✅ Static query complete: 131 rows saved
+09:29:48.838 ✅ Job #698 SUCCESSFUL: 131 rows
+⚠️  No date field found
+09:29:48.841 🔄 Processing job #699 (incremental) - attempt 1/3
+09:29:48.841 SQL hash: 3f11f192f7d9a560f5f87d27ac57cd71
+09:29:48.843 Incremental: 0 gaps, max_date=2026-03-14
+09:29:48.843 Fetching 2026-03-14 → 2026-03-15...
+09:29:48.844 Fetching month 2026-03-01 (1/1)...09:33:22.810  ✅ 14 rows
+09:33:22.817 ✅ Incremental complete: 14 new rows
+09:33:22.817 ✅ Job #699 SUCCESSFUL: 14 rows
+📊 Found 1 cumulative field(s): ['cumulative_volume_usd']
+📊 Non-grouped data
+✅ Cumulative calculation complete (438 rows)
+09:33:22.824 🔄 Processing job #700 (incremental) - attempt 1/3
+09:33:22.824 SQL hash: 27eb97fdf6eceab58e8790fba7732651
+09:33:22.826 Incremental: 0 gaps, max_date=2026-03-13
+09:33:22.826 Fetching 2026-03-13 → 2026-03-15...
+09:33:22.826 Fetching month 2026-03-01 (1/1)...09:33:50.719  ✅ 13 rows
+09:33:50.724 ✅ Incremental complete: 13 new rows
+09:33:50.724 ✅ Job #700 SUCCESSFUL: 13 rows
+ℹ️  No cumulative fields detected
+09:33:50.729 🔄 Processing job #701 (full_refresh) - attempt 1/3
+09:33:50.729 SQL hash: f54ee269097234f32a7eb2acd04e70f9
+      Running static query (no date placeholders)... 8333 rows
+   ✅ Static query complete: 8333 rows saved
+09:34:14.139 ✅ Job #701 SUCCESSFUL: 8333 rows
+ℹ️  No cumulative fields detected
+09:34:14.152 🔄 Processing job #688 (incremental) - attempt 2/3
+09:34:14.152 SQL hash: 7134add612fbbbf2a97e41e3cd55acf6
+09:34:14.157 Incremental: 0 gaps, max_date=2026-03-14
+09:34:14.158 Fetching 2026-03-14 → 2026-03-15...
+09:34:14.158 Fetching month 2026-03-01 (1/1)...09:36:21.360  ✅ 322 rows
+09:36:21.450 ✅ Incremental complete: 322 new rows
+09:36:21.451 ✅ Job #688 SUCCESSFUL: 322 rows
+📊 Found 1 cumulative field(s): ['cumulative_volume_usd']
+📊 Grouped by: program_name
+✅ Cumulative calculation complete (8788 rows)
+09:36:21.560 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:36:31.562 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:36:41.563 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:36:51.565 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:01.566 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:11.568 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:21.569 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:31.571 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:41.572 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:37:51.574 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:01.575 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:11.577 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:21.578 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:31.580 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:41.581 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:38:51.583 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:01.584 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:11.586 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:21.587 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:31.589 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:41.590 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:39:51.592 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:01.593 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:11.595 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:21.596 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:31.597 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:41.599 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:40:51.600 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:01.602 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:11.603 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:21.604 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:31.606 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:41.607 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:41:51.609 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:01.610 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:11.612 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:21.613 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:31.615 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:41.616 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:42:51.617 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:01.619 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:11.620 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:21.622 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:31.623 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:41.625 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:43:51.627 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:01.628 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:11.630 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:21.631 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:31.632 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:41.634 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:44:51.635 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:01.637 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:11.638 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:21.640 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:31.641 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:41.642 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:45:51.644 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:01.645 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:11.646 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:21.648 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:31.649 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:41.651 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:46:51.652 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:01.654 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:11.655 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:21.657 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:31.658 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:41.660 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:47:51.661 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:01.663 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:11.665 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:21.666 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:31.668 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:41.669 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:48:51.671 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:01.672 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:11.673 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:21.675 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:31.676 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:41.678 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:49:51.679 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:01.681 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:11.682 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:21.684 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:31.686 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:41.687 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:50:51.689 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:01.690 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:11.692 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:21.693 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:31.695 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:41.696 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:51:51.698 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:01.699 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:11.701 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:21.702 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:31.704 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:41.705 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:52:51.707 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:01.708 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:11.710 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:21.711 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:31.712 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:41.714 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:53:51.715 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:01.716 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:11.718 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:21.719 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:31.720 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:41.722 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:54:51.723 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:01.724 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:11.726 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:21.727 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:31.728 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:41.730 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:55:51.732 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:01.733 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:11.734 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:21.736 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:31.737 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:41.739 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:56:51.740 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:01.742 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:11.744 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:21.745 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:31.746 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:41.748 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:57:51.749 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:01.751 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:11.752 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:21.754 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:31.756 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:41.757 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:58:51.758 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:01.760 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:11.761 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:21.763 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:31.764 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:41.766 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+09:59:51.767 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:01.769 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:11.770 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:21.771 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:31.772 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:41.774 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:00:51.775 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:01.777 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:11.778 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:21.780 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:31.781 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:41.783 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:01:51.784 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:01.785 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:11.786 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:21.788 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:31.789 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:41.791 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:02:51.792 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:01.794 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:11.796 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:21.797 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:31.799 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:41.800 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:03:51.802 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:01.803 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:11.804 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:21.806 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:31.807 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:41.809 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:04:51.811 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:05:01.812 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:05:11.814 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:05:21.815 No pending jobs. Waiting 10s... (processed 77 jobs so far)
+10:05:31.817 No pending jobs. Waiting 10s... (processed 77 jobs so far)
