@@ -1,5 +1,7 @@
 # Exclude internal/admin pages from deployment
 public/worker-log.html
+public/worker-log-login
+app/worker-log-login/page.tsx
 
 # Exclude only development and testing files - ALLOW chart data and configs for fast loading
 public/temp/*.js
