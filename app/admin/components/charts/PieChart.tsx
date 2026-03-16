@@ -205,14 +205,18 @@ const PieChart: React.FC<PieChartProps> = ({
     
     // Format with appropriate scale
     let formattedValue: string;
-    if (value >= 1000000000) {
-      formattedValue = `${(value / 1000000000).toFixed(2)}B`;
-    } else if (value >= 1000000) {
-      formattedValue = `${(value / 1000000).toFixed(2)}M`;
-    } else if (value >= 1000) {
-      formattedValue = `${(value / 1000).toFixed(2)}K`;
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    if (absValue >= 1000000000000) {
+      formattedValue = `${sign}${(absValue / 1000000000000).toFixed(2)}T`;
+    } else if (absValue >= 1000000000) {
+      formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+    } else if (absValue >= 1000000) {
+      formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
+    } else if (absValue >= 1000) {
+      formattedValue = `${sign}${(absValue / 1000).toFixed(2)}K`;
     } else {
-      formattedValue = value.toFixed(2);
+      formattedValue = `${sign}${absValue.toFixed(2)}`;
     }
     
     // Return with correct unit placement (or no unit if not specified)

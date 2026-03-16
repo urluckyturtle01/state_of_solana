@@ -172,6 +172,18 @@ export default function BoxChart({
     setTooltipData(null);
   }, []);
 
+  // Format value for tooltip with appropriate scale (T, B, M, K)
+  const formatValue = useCallback((value: number) => {
+    if (value === undefined || value === null) return '0.00';
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    if (absValue >= 1000000000000) return `${sign}${(absValue / 1000000000000).toFixed(2)}T`;
+    if (absValue >= 1000000000) return `${sign}${(absValue / 1000000000).toFixed(2)}B`;
+    if (absValue >= 1000000) return `${sign}${(absValue / 1000000).toFixed(2)}M`;
+    if (absValue >= 1000) return `${sign}${(absValue / 1000).toFixed(2)}K`;
+    return `${sign}${absValue.toFixed(2)}`;
+  }, []);
+
   // Format y-axis tick value with appropriate units (matching SimpleBarChart style)
   const formatTickValue = useCallback((value: number) => {
     if (value === 0) return '0';
@@ -179,7 +191,12 @@ export default function BoxChart({
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
     
-    if (absValue >= 1000000000) {
+    if (absValue >= 1000000000000) {
+      const formattedValue = (absValue / 1000000000000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${sign}${formattedValue.slice(0, -2)}T` 
+        : `${sign}${formattedValue}T`;
+    } else if (absValue >= 1000000000) {
       const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
         ? `${sign}${formattedValue.slice(0, -2)}B` 
@@ -438,11 +455,11 @@ export default function BoxChart({
                   <ChartTooltip
                     title={`${chartConfig.dataMapping.xAxis}: ${tooltipData.category}`}
                     items={[
-                      { label: 'P95 (Upper Whisker)', value: `${tooltipData.p95.toFixed(2)} ${yAxisUnit || ''}`.trim(), color: blue },
-                      { label: 'P75 (Q3, Box Top)', value: `${tooltipData.p75.toFixed(2)} ${yAxisUnit || ''}`.trim(), color: blue },
-                      { label: 'P50 (Median)', value: `${tooltipData.p50.toFixed(2)} ${yAxisUnit || ''}`.trim(), color: '#ffffff' },
-                      { label: 'P25 (Q1, Box Bottom)', value: `${tooltipData.p25.toFixed(2)} ${yAxisUnit || ''}`.trim(), color: blue },
-                      { label: 'P5 (Lower Whisker)', value: `${tooltipData.p5.toFixed(2)} ${yAxisUnit || ''}`.trim(), color: blue },
+                      { label: 'P95 (Upper Whisker)', value: `${formatValue(tooltipData.p95)} ${yAxisUnit || ''}`.trim(), color: blue },
+                      { label: 'P75 (Q3, Box Top)', value: `${formatValue(tooltipData.p75)} ${yAxisUnit || ''}`.trim(), color: blue },
+                      { label: 'P50 (Median)', value: `${formatValue(tooltipData.p50)} ${yAxisUnit || ''}`.trim(), color: '#ffffff' },
+                      { label: 'P25 (Q1, Box Bottom)', value: `${formatValue(tooltipData.p25)} ${yAxisUnit || ''}`.trim(), color: blue },
+                      { label: 'P5 (Lower Whisker)', value: `${formatValue(tooltipData.p5)} ${yAxisUnit || ''}`.trim(), color: blue },
                     ]}
                     top={tooltipPosition.y}
                     left={tooltipPosition.x}

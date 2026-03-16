@@ -237,7 +237,9 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
     
-    if (absValue >= 1000000000) {
+    if (absValue >= 1000000000000) {
+      formattedValue = `${sign}${(absValue / 1000000000000).toFixed(2)}T`;
+    } else if (absValue >= 1000000000) {
       formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
     } else if (absValue >= 1000000) {
       formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
@@ -263,7 +265,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
     
-    if (absValue >= 1000000000) {
+    if (absValue >= 1000000000000) {
+      const formattedValue = (absValue / 1000000000000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${sign}${formattedValue.slice(0, -2)}T` 
+        : `${sign}${formattedValue}T`;
+    } else if (absValue >= 1000000000) {
       const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
         ? `${sign}${formattedValue.slice(0, -2)}B` 

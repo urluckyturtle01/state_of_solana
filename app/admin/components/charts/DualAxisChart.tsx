@@ -107,9 +107,11 @@ function formatWithUnit(value: number, unit?: string, defaultUnit?: string): str
   const absValue = Math.abs(value);
   const sign = value < 0 ? '-' : '';
   
-  // Format with appropriate scale
+  // Format with appropriate scale (T, B, M, K)
   let formattedValue: string;
-  if (absValue >= 1000000000) {
+  if (absValue >= 1000000000000) {
+    formattedValue = `${sign}${(absValue / 1000000000000).toFixed(2)}T`;
+  } else if (absValue >= 1000000000) {
     formattedValue = `${sign}${(absValue / 1000000000).toFixed(2)}B`;
   } else if (absValue >= 1000000) {
     formattedValue = `${sign}${(absValue / 1000000).toFixed(2)}M`;
@@ -464,17 +466,14 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     return `${value.substring(0, 3)}...`;
   }, [filterValues]);
 
-  // Format value for tooltip
+  // Format value for tooltip (currency)
   const formatValue = useCallback((value: number) => {
-    // Add null/undefined check
-    if (value === undefined || value === null) {
-      return '$0.00';
-    }
-    
+    if (value === undefined || value === null) return '$0.00';
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
-    
-    if (absValue >= 1000000000) {
+    if (absValue >= 1000000000000) {
+      return `${sign}$${(absValue / 1000000000000).toFixed(2)}T`;
+    } else if (absValue >= 1000000000) {
       return `${sign}$${(absValue / 1000000000).toFixed(2)}B`;
     } else if (absValue >= 1000000) {
       return `${sign}$${(absValue / 1000000).toFixed(2)}M`;
@@ -492,7 +491,12 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
     const absValue = Math.abs(value);
     const sign = value < 0 ? '-' : '';
     
-    if (absValue >= 1000000000) {
+    if (absValue >= 1000000000000) {
+      const formattedValue = (absValue / 1000000000000).toFixed(1);
+      return formattedValue.endsWith('.0') 
+        ? `${sign}${formattedValue.slice(0, -2)}T` 
+        : `${sign}${formattedValue}T`;
+    } else if (absValue >= 1000000000) {
       const formattedValue = (absValue / 1000000000).toFixed(1);
       return formattedValue.endsWith('.0') 
         ? `${sign}${formattedValue.slice(0, -2)}B` 
