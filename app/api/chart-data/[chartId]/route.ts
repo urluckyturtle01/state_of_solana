@@ -142,20 +142,14 @@ export async function GET(
           if (Array.isArray(x)) x.forEach((item: any) => requiredFields.add(typeof item === 'string' ? item : item?.field));
           else requiredFields.add(x as string);
         }
-        if (dataMapping.x) requiredFields.add(dataMapping.x);
         if (dataMapping.yAxis) {
           const y = dataMapping.yAxis;
           if (Array.isArray(y)) y.forEach((item: any) => requiredFields.add(typeof item === 'string' ? item : item?.field));
           else requiredFields.add(y as string);
         }
-        if (dataMapping.y) {
-          const y = dataMapping.y;
-          if (Array.isArray(y)) y.forEach((f: string) => requiredFields.add(f));
-          else requiredFields.add(y);
-        }
         if (dataMapping.groupBy) requiredFields.add(dataMapping.groupBy);
-        chart.dualAxisConfig?.leftYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
-        chart.dualAxisConfig?.rightYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
+        chart.dualAxisConfig?.leftAxisFields?.forEach((f: string) => requiredFields.add(f));
+        chart.dualAxisConfig?.rightAxisFields?.forEach((f: string) => requiredFields.add(f));
         const filteredData = allData.map((row: any) => {
           const filtered: any = {};
           requiredFields.forEach(f => { if (f in row) filtered[f] = row[f]; });
