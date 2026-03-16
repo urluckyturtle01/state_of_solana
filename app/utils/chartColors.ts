@@ -61,23 +61,70 @@ export const getColorByIndex = (index: number): string => {
   return colors[index % colors.length];
 };
 
+const CURRENCY_SUFFIXES = ['_usd', '_sol', '_btc', '_eth', '_usdc', '_usdt'];
+const SEMANTIC_ORDER: Record<string, number> = { avg: 0, median: 1, stddev: 2, max: 3 };
+
+function getBaseFieldName(fieldName: string): string {
+  let base = fieldName.toLowerCase();
+  for (const suffix of CURRENCY_SUFFIXES) {
+    if (base.endsWith(suffix)) {
+      return base.slice(0, -suffix.length);
+    }
+  }
+  return base;
+}
+
+function getSemanticOrderIndex(fieldName: string): number | null {
+  const lower = fieldName.toLowerCase();
+  for (const [key, order] of Object.entries(SEMANTIC_ORDER)) {
+    if (lower.startsWith(`${key}_`) || lower === key) return order;
+  }
+  return null;
+}
+
+/** Sort key for semantic ordering (avg=0, median=1, stddev=2, max=3). */
+export function getSemanticSortKey(fieldName: string): number {
+  return getSemanticOrderIndex(fieldName) ?? 999;
+}
+
 /**
- * Create a color map with colors tied to value order (highest value = first color).
- * Use this for consistent colors across dashboard and share page.
- * @param fields - field/group names
- * @param getTotal - function to get total value for a field
- * @param preferredMap - existing color map to preserve when available
+ * Create a color map. When fields have currency suffixes (_usd, _sol, etc.),
+ * assigns colors by BASE field so avg_sol and avg_usd share the same color
+ * (only 3 colors for 3 concepts, not 6 for 6 series).
  */
 export function getValueOrderedColorMap(
   fields: string[],
   getTotal: (field: string) => number,
   preferredMap: Record<string, string> = {}
 ): Record<string, string> {
+  const hasCurrencySuffixes = fields.some(f => getBaseFieldName(f) !== f.toLowerCase());
+
+  if (hasCurrencySuffixes) {
+    const baseToColorIndex: Record<string, number> = {};
+    const uniqueBases = [...new Set(fields.map(getBaseFieldName))].sort((a, b) => {
+      const orderA = getSemanticOrderIndex(a);
+      const orderB = getSemanticOrderIndex(b);
+      if (orderA !== null && orderB !== null) return orderA - orderB;
+      if (orderA !== null) return -1;
+      if (orderB !== null) return 1;
+      return a.localeCompare(b);
+    });
+    uniqueBases.forEach((base, i) => { baseToColorIndex[base] = i; });
+
+    const result: Record<string, string> = {};
+    fields.forEach(field => {
+      const base = getBaseFieldName(field);
+      const colorIndex = baseToColorIndex[base] ?? 0;
+      result[field] = preferredMap[field] ?? getColorByIndex(colorIndex);
+    });
+    return result;
+  }
+
   const sorted = [...fields].sort((a, b) => {
     const va = getTotal(a);
     const vb = getTotal(b);
-    if (vb !== va) return vb - va; // descending by value
-    return a.localeCompare(b); // stable tiebreaker: alphabetical
+    if (vb !== va) return vb - va;
+    return a.localeCompare(b);
   });
   const result: Record<string, string> = {};
   sorted.forEach((field, index) => {

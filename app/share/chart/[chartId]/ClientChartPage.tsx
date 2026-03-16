@@ -29,6 +29,32 @@ const truncateLabel = (label: string, maxLength: number = 15): string => {
   return label.substring(0, maxLength) + '...';
 };
 
+// Filter y-axis fields by selected currency when chart has field_switcher currency filter
+function applyCurrencyFilterToFields(
+  yAxisFields: string[],
+  chart: ChartConfig,
+  filterValues: Record<string, string>
+): string[] {
+  const currencyFilter = chart.additionalOptions?.filters?.currencyFilter;
+  const selectedCurrency = filterValues.currencyFilter;
+  if (currencyFilter?.type !== 'field_switcher' || !currencyFilter.columnMappings || !selectedCurrency) {
+    return yAxisFields;
+  }
+  const targetFields = currencyFilter.columnMappings[selectedCurrency];
+  if (!targetFields) return yAxisFields;
+  const targetFieldList = targetFields.split(',').map((f: string) => f.trim());
+  const allCurrencyFields = new Set(
+    Object.values(currencyFilter.columnMappings).flatMap((m: string) =>
+      m.split(',').map((f: string) => f.trim())
+    )
+  );
+  return yAxisFields.filter(field => {
+    if (targetFieldList.includes(field)) return true;
+    if (!allCurrencyFields.has(field)) return true; // Non-currency field, keep it
+    return false;
+  });
+}
+
 // Format currency for display
 const formatCurrency = (value: number): string => {
   return formatNumber(value);
@@ -52,6 +78,7 @@ export default function ClientChartPage() {
   const [legends, setLegends] = useState<Legend[]>([]);
   const [hiddenSeries, setHiddenSeries] = useState<string[]>([]);
   const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>({});
+  const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchChart = async () => {
@@ -180,6 +207,7 @@ export default function ClientChartPage() {
   const handleDataLoaded = useCallback((data: any[]) => {
     if (!chart || !data || data.length === 0) return;
 
+    setChartData(data);
     console.log('Handling data loaded for chart:', chart.title);
     console.log('Chart type:', chart.chartType);
     console.log('Is stacked?', isStackedBarChart(chart));
@@ -205,7 +233,7 @@ export default function ClientChartPage() {
 
       if (isStackedBarChart(chart)) {
         console.log('Processing as stacked chart');
-        // Handle stacked charts
+        // Handle stacked charts - two cases: groupBy (e.g. by DEX) or multi y-fields (e.g. success vs failed)
         const groupField = chart.dataMapping.groupBy;
         
         if (groupField) {
@@ -240,11 +268,48 @@ export default function ClientChartPage() {
               };
             })
             .sort((a, b) => (b.value || 0) - (a.value || 0));
+        } else {
+          // Stacked chart with multiple y-axis fields (e.g. success vs failed, USD vs SOL)
+          let yAxisFields: string[] = [];
+          if (Array.isArray(chart.dataMapping.yAxis)) {
+            yAxisFields = chart.dataMapping.yAxis.map((f: string | YAxisConfig) => getFieldName(f));
+          } else {
+            yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
+          }
+          yAxisFields = applyCurrencyFilterToFields(yAxisFields, chart, filterValues);
+
+          const fieldTotals: Record<string, number> = {};
+          yAxisFields.forEach(field => {
+            fieldTotals[field] = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+          });
+          const valueOrderedColors = getValueOrderedColorMap(
+            yAxisFields.filter(f => (fieldTotals[f] ?? 0) > 0.001),
+            (f) => fieldTotals[f] ?? 0,
+            legendColorMap
+          );
+          chartLegends = yAxisFields
+            .filter(field => (fieldTotals[field] ?? 0) > 0.001)
+            .map((field, index) => {
+              const label = field.replace(/_/g, ' ')
+                .split(' ')
+                .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+              return {
+                id: field,
+                label,
+                color: valueOrderedColors[field] || getColorByIndex(index),
+                value: fieldTotals[field] || 0,
+                shape: 'square' as const
+              };
+            })
+            .sort((a, b) => (b.value || 0) - (a.value || 0));
         }
       } else if (chart.chartType === 'dual-axis' && chart.dualAxisConfig) {
         console.log('Processing as dual-axis chart');
-        const leftFields = chart.dualAxisConfig.leftAxisFields || [];
-        const rightFields = chart.dualAxisConfig.rightAxisFields || [];
+        let leftFields = chart.dualAxisConfig.leftAxisFields || [];
+        let rightFields = chart.dualAxisConfig.rightAxisFields || [];
+        leftFields = applyCurrencyFilterToFields(leftFields, chart, filterValues);
+        rightFields = applyCurrencyFilterToFields(rightFields, chart, filterValues);
         const allFields = [...leftFields, ...rightFields];
         const fieldTotals: Record<string, number> = {};
         allFields.forEach(field => {
@@ -309,6 +374,7 @@ export default function ClientChartPage() {
         } else {
           yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
         }
+        yAxisFields = applyCurrencyFilterToFields(yAxisFields, chart, filterValues);
 
         // Handle groupBy (multi-series by group, e.g. Cumulative Volume By Dex)
         const groupField = chart.dataMapping.groupBy;
@@ -401,6 +467,7 @@ export default function ClientChartPage() {
         } else {
           yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
         }
+        yAxisFields = applyCurrencyFilterToFields(yAxisFields, chart, filterValues);
 
         const getFieldTotal = (f: string) => data.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
         const valueOrderedColors = getValueOrderedColorMap(yAxisFields, getFieldTotal, legendColorMap);
@@ -439,7 +506,15 @@ export default function ClientChartPage() {
 
     console.log('Generated legends:', chartLegends);
     setLegends(chartLegends);
-  }, [chart, legendColorMap]);
+  }, [chart, legendColorMap, filterValues]);
+
+  // Regenerate legends when currency filter changes (so legend shows only USD or only SOL items)
+  useEffect(() => {
+    if (chart && chartData.length > 0) {
+      handleDataLoaded(chartData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only regenerate when currency filter changes
+  }, [filterValues.currencyFilter]);
 
   // Also generate legends when color map changes
   useEffect(() => {
