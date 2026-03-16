@@ -1,7 +1,7 @@
 {
   "pageId": "dflow-stats-trades",
   "pageName": "Trades",
-  "fetchedAt": "2026-03-13T14:15:39.473Z",
+  "fetchedAt": "2026-03-16T10:13:47.796Z",
   "charts": [
     {
       "success": true,
@@ -9,10 +9,16 @@
         {
           "data": [
             {
+              "block_date": "2026-03-14",
+              "volume": 12218103.848711774,
+              "cumulative_volume": 59870535058.42426,
+              "cumulative_Trades": 80358444
+            },
+            {
               "block_date": "2026-03-13",
-              "volume": null,
-              "cumulative_volume": 49594840103.331696,
-              "cumulative_Trades": 79760421
+              "volume": 10263476851.243856,
+              "cumulative_volume": 59858316954.575554,
+              "cumulative_Trades": 80179368
             },
             {
               "block_date": "2026-03-12",
@@ -2091,15 +2097,21 @@
               "cumulative_Trades": 21
             }
           ],
-          "timestamp": 1773411339273
+          "timestamp": 1773656027596
         }
       ],
       "data": [
         {
+          "block_date": "2026-03-14",
+          "volume": 12218103.848711774,
+          "cumulative_volume": 59870535058.42426,
+          "cumulative_Trades": 80358444
+        },
+        {
           "block_date": "2026-03-13",
-          "volume": null,
-          "cumulative_volume": 49594840103.331696,
-          "cumulative_Trades": 79760421
+          "volume": 10263476851.243856,
+          "cumulative_volume": 59858316954.575554,
+          "cumulative_Trades": 80179368
         },
         {
           "block_date": "2026-03-12",
@@ -4178,7 +4190,7 @@
           "cumulative_Trades": 21
         }
       ],
-      "timestamp": 1773411339473,
+      "timestamp": 1773656027796,
       "chartId": "chart_1767033743154_kz03rpg",
       "title": "Cumulative Trades",
       "totalCombinations": 1,
@@ -4193,8 +4205,8 @@
       "data": [
         {
           "month": "2026-03-01 00:00:00",
-          "volume": 2644547599.734779,
-          "Trades": 4846869
+          "volume": 12920242554.827347,
+          "Trades": 5444892
         },
         {
           "month": "2026-02-01 00:00:00",
@@ -4252,7 +4264,7 @@
           "Trades": 758546
         }
       ],
-      "timestamp": 1773411339281,
+      "timestamp": 1773656027571,
       "chartId": "chart_1767033825631_ca3bwet",
       "title": "Monthly Trades",
       "apiType": "JSON"
@@ -5359,7 +5371,7 @@
           "Trades": 18985
         }
       ],
-      "timestamp": 1773411339308,
+      "timestamp": 1773656027663,
       "chartId": "chart_1767033909873_5qsqgs3",
       "title": "Monthly Trades Share",
       "apiType": "JSON"
