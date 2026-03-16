@@ -1,4 +1,7 @@
+'use client';
+
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ChartConfig } from '@/app/admin/types';
 
 interface ShareButtonProps {
@@ -11,6 +14,7 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -25,13 +29,18 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
   }, []);
 
   const generateShareUrl = () => {
-    // Get the base URL from window location
-    const baseUrl = typeof window !== 'undefined' 
-      ? `${window.location.protocol}//${window.location.host}`
-      : '';
+    // Use actual chart ID: prefer chart.id, fallback to pathname when on share page
+    let chartId = chart?.id;
+    if (!chartId || chartId === 'uuid') {
+      const match = pathname?.match(/^\/share\/chart\/([^/?#]+)/);
+      chartId = match?.[1] || chartId || '';
+    }
 
-    // Start with the base share URL
-    let shareUrl = `${baseUrl}/share/chart/${chart.id}`;
+    // Use current origin so link works on whatever URL the user is on
+    const baseUrl = typeof window !== 'undefined' 
+      ? `${window.location.protocol}//${window.location.host}` 
+      : '';
+    let shareUrl = `${baseUrl}/share/chart/${chartId}`;
 
     // Add filter values as query parameters if they exist
     if (filterValues) {
@@ -51,16 +60,45 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
     return shareUrl;
   };
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const url = generateShareUrl();
     try {
-      await navigator.clipboard.writeText(url);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Fallback for non-secure contexts or older browsers
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.cssText = 'position:fixed;opacity:0;left:-9999px;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
       setCopied(true);
-      setIsOpen(false);
-      // Reset copied state after 1 second
-      setTimeout(() => setCopied(false), 1000);
+      setTimeout(() => {
+        setIsOpen(false);
+        setCopied(false);
+      }, 800);
     } catch (err) {
       console.error('Error copying to clipboard:', err);
+      // Fallback when clipboard API fails (e.g. HTTP, no permissions)
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.cssText = 'position:fixed;opacity:0;left:-9999px;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        setCopied(true);
+        setTimeout(() => { setIsOpen(false); setCopied(false); }, 800);
+      } catch (fallbackErr) {
+        console.error('Fallback copy failed:', fallbackErr);
+        alert(`Copy this link:\n${url}`);
+      }
     }
   };
 
@@ -75,6 +113,7 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
   return (
     <div className="relative" ref={dropdownRef}>
       <button 
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`p-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-md transition-colors ${className}`}
         title="Share Chart"
@@ -125,6 +164,7 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
           <div className="space-y-0">
             {/* X (Twitter) Share */}
             <button
+              type="button"
               className="flex items-center w-full px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-800/50 rounded transition-colors"
               onClick={handleTwitterShare}
               role="menuitem"
@@ -144,6 +184,7 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
             </div>
             {/* Copy Link */}
             <button
+              type="button"
               className="flex items-center w-full px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-800/50 rounded transition-colors"
               onClick={handleCopyLink}
               role="menuitem"
@@ -161,7 +202,7 @@ export default function ShareButton({ chart, filterValues, className = '' }: Sha
                   d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
                 />
               </svg>
-              Copy Link
+              {copied ? '✓ Copied!' : 'Copy Link'}
             </button>
           </div>
         </div>

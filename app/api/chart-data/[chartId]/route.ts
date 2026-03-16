@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ChartConfig } from '@/app/admin/types';
 import { getFromS3 } from '@/lib/s3';
+import { Pool } from 'pg';
+
+const dbPool = new Pool({
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  database: process.env.DB_NAME || 'trino_charts',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root',
+});
 
 /*
  * Secure server-side proxy for fetching chart data
@@ -83,8 +92,24 @@ export async function GET(
   try {
     console.log(`Chart Data API: Fetching data for chart ${chartId}`);
     
-    // Get chart configuration from S3 (with full API info)
-    const chart = await getFromS3<ChartConfig>(`charts/${chartId}.json`);
+    // Get chart configuration: S3 first, then DB (for trino_worker charts)
+    let chart = await getFromS3<ChartConfig>(`charts/${chartId}.json`);
+    if (!chart) {
+      const client = await dbPool.connect();
+      try {
+        const result = await client.query(
+          `SELECT uuid, chart_config, sql_hash FROM chart_definitions WHERE uuid::text = $1`,
+          [chartId]
+        );
+        if (result.rows.length > 0) {
+          const row = result.rows[0];
+          const uuidStr = typeof row.uuid === 'string' ? row.uuid : String(row.uuid);
+          chart = { ...(row.chart_config as ChartConfig), id: uuidStr };
+        }
+      } finally {
+        client.release();
+      }
+    }
     
     if (!chart) {
       return NextResponse.json(
@@ -93,11 +118,56 @@ export async function GET(
       );
     }
 
+    // DB-backed chart: fetch data from query_results
     if (!chart.apiEndpoint) {
-      return NextResponse.json(
-        { error: 'Chart has no API endpoint configured' },
-        { status: 400 }
-      );
+      const client = await dbPool.connect();
+      try {
+        const result = await client.query(
+          `SELECT qr.json_data FROM chart_definitions cd
+           JOIN query_results qr ON qr.sql_hash = cd.sql_hash
+           WHERE cd.uuid::text = $1`,
+          [chartId]
+        );
+        if (result.rows.length === 0 || !result.rows[0].json_data) {
+          return NextResponse.json({
+            query_result: { data: { rows: [] } },
+            fromCache: false
+          });
+        }
+        const allData = result.rows[0].json_data as any[];
+        const dataMapping = chart.dataMapping || {};
+        const requiredFields = new Set<string>();
+        if (dataMapping.xAxis) {
+          const x = dataMapping.xAxis;
+          if (Array.isArray(x)) x.forEach((item: any) => requiredFields.add(typeof item === 'string' ? item : item?.field));
+          else requiredFields.add(x as string);
+        }
+        if (dataMapping.x) requiredFields.add(dataMapping.x);
+        if (dataMapping.yAxis) {
+          const y = dataMapping.yAxis;
+          if (Array.isArray(y)) y.forEach((item: any) => requiredFields.add(typeof item === 'string' ? item : item?.field));
+          else requiredFields.add(y as string);
+        }
+        if (dataMapping.y) {
+          const y = dataMapping.y;
+          if (Array.isArray(y)) y.forEach((f: string) => requiredFields.add(f));
+          else requiredFields.add(y);
+        }
+        if (dataMapping.groupBy) requiredFields.add(dataMapping.groupBy);
+        chart.dualAxisConfig?.leftYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
+        chart.dualAxisConfig?.rightYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
+        const filteredData = allData.map((row: any) => {
+          const filtered: any = {};
+          requiredFields.forEach(f => { if (f in row) filtered[f] = row[f]; });
+          return filtered;
+        });
+        return NextResponse.json({
+          query_result: { data: { rows: filteredData } },
+          fromCache: false
+        });
+      } finally {
+        client.release();
+      }
     }
 
     // Parse URL parameters for filters and POST API parameters

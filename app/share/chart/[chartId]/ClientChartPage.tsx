@@ -2,13 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { ChartConfig, FilterOption } from '@/app/admin/types';
+import { ChartConfig, FilterOption, YAxisConfig } from '@/app/admin/types';
 import ChartRenderer from '@/app/admin/components/ChartRenderer';
 import TimeFilterSelector from '@/app/components/shared/filters/TimeFilter';
 import CurrencyFilter from '@/app/components/shared/filters/CurrencyFilter';
 import DisplayModeFilter, { DisplayMode } from '@/app/components/shared/filters/DisplayModeFilter';
 import LegendItem from '@/app/components/shared/LegendItem';
-import { getColorByIndex } from '@/app/utils/chartColors';
+import { getColorByIndex, getValueOrderedColorMap } from '@/app/utils/chartColors';
 import { formatNumber } from '@/app/utils/formatters';
 import Image from 'next/image';
 
@@ -45,7 +45,7 @@ interface Legend {
 export default function ClientChartPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const [chart, setChart] = useState<ChartConfig | null>(null);
+  const [chart, setChart] = useState<(ChartConfig & { data?: any[] }) | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
@@ -69,19 +69,52 @@ export default function ClientChartPage() {
         // Fetch chart config (sanitized for security)
         const response = await fetch(`/api/charts/${chartId}`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch chart: ${response.statusText}`);
+          let message = response.statusText;
+          try {
+            const errBody = await response.json();
+            if (errBody?.error) message = errBody.error;
+          } catch {
+            // ignore JSON parse
+          }
+          if (response.status === 404) {
+            throw new Error(`Chart not found. The chart ID "${chartId}" may not exist or may have been removed.`);
+          }
+          throw new Error(`Failed to fetch chart: ${message}`);
         }
 
-        const chartData = await response.json();
+        let chartData = await response.json();
         console.log('Chart config loaded (sanitized):', chartData.title);
         
-        // For share charts, redirect API calls to secure proxy
+        // Auto-detect dual-axis (same as dashboard) when yAxis has rightAxis: true
+        const yAxis = chartData.dataMapping?.yAxis;
+        if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
+          const yAxisConfigs = yAxis as YAxisConfig[];
+          const hasRightAxis = yAxisConfigs.some((c: YAxisConfig) => c.rightAxis === true);
+          if (hasRightAxis && !chartData.dualAxisConfig) {
+            const leftFields = yAxisConfigs.filter((c: YAxisConfig) => !c.rightAxis).map((c: YAxisConfig) => c.field);
+            const rightFields = yAxisConfigs.filter((c: YAxisConfig) => c.rightAxis).map((c: YAxisConfig) => c.field);
+            chartData = {
+              ...chartData,
+              chartType: 'dual-axis',
+              dualAxisConfig: {
+                leftAxisFields: leftFields,
+                rightAxisFields: rightFields,
+                leftAxisType: (yAxisConfigs.find((c: YAxisConfig) => !c.rightAxis)?.type || 'bar') as 'bar' | 'line',
+                rightAxisType: (yAxisConfigs.find((c: YAxisConfig) => c.rightAxis)?.type || 'line') as 'bar' | 'line',
+              },
+            };
+          }
+        }
+        
+        // For share charts: DB charts may have data embedded; others use proxy
         if (!chartData.apiEndpoint) {
-          chartData.apiEndpoint = `${window.location.origin}/api/chart-data/${chartId}`;
-          chartData.apiKey = ''; // No key needed for proxy
-          console.log('Using secure proxy for chart data:', chartData.apiEndpoint);
-          
-          // Check if this is a POST API chart
+          if (chartData.data && chartData.data.length > 0) {
+            console.log('Using preloaded data from DB for chart:', chartId);
+          } else {
+            chartData.apiEndpoint = `${window.location.origin}/api/chart-data/${chartId}`;
+            chartData.apiKey = ''; // No key needed for proxy
+            console.log('Using secure proxy for chart data:', chartData.apiEndpoint);
+          }
           if (chartData.postApiConfig?.enabled && chartData.postApiConfig.parameterMappings) {
             console.log('POST API chart detected - URL parameters will be passed via ChartRenderer');
           }
@@ -155,13 +188,17 @@ export default function ClientChartPage() {
     let chartLegends: Legend[] = [];
 
     // Only generate legends for charts that benefit from them
+    const chartType = chart.chartType;
     const shouldGenerateLegends = 
       isStackedBarChart(chart) || 
-      chart.chartType === 'pie' || 
-      chart.chartType === 'dual-axis' ||
-      chart.chartType === 'area' ||
-      chart.chartType === 'stacked-area' ||
-      (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1);
+      chartType === 'pie' || 
+      chartType === 'dual-axis' ||
+      chartType === 'area' ||
+      chartType === 'stacked-area' ||
+      chartType === 'bar' ||
+      chartType === 'line' ||
+      (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) ||
+      !!chart.dataMapping.groupBy;
 
     if (shouldGenerateLegends) {
       console.log('Generating legends for chart type:', chart.chartType);
@@ -204,6 +241,37 @@ export default function ClientChartPage() {
             })
             .sort((a, b) => (b.value || 0) - (a.value || 0));
         }
+      } else if (chart.chartType === 'dual-axis' && chart.dualAxisConfig) {
+        console.log('Processing as dual-axis chart');
+        const leftFields = chart.dualAxisConfig.leftAxisFields || [];
+        const rightFields = chart.dualAxisConfig.rightAxisFields || [];
+        const allFields = [...leftFields, ...rightFields];
+        const fieldTotals: Record<string, number> = {};
+        allFields.forEach(field => {
+          fieldTotals[field] = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+        });
+        const valueOrderedColors = getValueOrderedColorMap(
+          allFields.filter(f => (fieldTotals[f] ?? 0) > 0.001),
+          (f) => fieldTotals[f] ?? 0,
+          legendColorMap
+        );
+        chartLegends = allFields
+          .filter(field => (fieldTotals[field] ?? 0) > 0.001)
+          .map(field => {
+            const isRightAxis = rightFields.includes(field);
+            const label = field.replace(/_/g, ' ')
+              .split(' ')
+              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            return {
+              id: field,
+              label,
+              color: valueOrderedColors[field] || getColorByIndex(0),
+              value: fieldTotals[field] || 0,
+              shape: (isRightAxis ? 'circle' : 'square') as 'circle' | 'square'
+            };
+          })
+          .sort((a, b) => (b.value || 0) - (a.value || 0));
       } else if (chart.chartType === 'pie') {
         console.log('Processing as pie chart');
         // Handle pie charts
@@ -231,7 +299,6 @@ export default function ClientChartPage() {
           .sort((a, b) => (b.value || 0) - (a.value || 0));
       } else if (chart.chartType === 'bar' || chart.chartType === 'line') {
         console.log('Processing as regular bar/line chart');
-        // For regular charts without groupBy, check if it's a multi-series chart
         const xField = typeof chart.dataMapping.xAxis === 'string' ? 
           chart.dataMapping.xAxis : chart.dataMapping.xAxis[0];
         
@@ -243,6 +310,31 @@ export default function ClientChartPage() {
           yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
         }
 
+        // Handle groupBy (multi-series by group, e.g. Cumulative Volume By Dex)
+        const groupField = chart.dataMapping.groupBy;
+        if (groupField) {
+          const uniqueGroups = [...new Set(data.map(item => item[groupField]))].filter(g => g != null);
+          const yField = yAxisFields[0];
+          const groupTotals: Record<string, number> = {};
+          uniqueGroups.forEach(group => {
+            const groupStr = String(group);
+            groupTotals[groupStr] = data
+              .filter(item => (item[groupField]?.toString() || 'Unknown') === groupStr)
+              .reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
+          });
+          const validGroups = uniqueGroups.filter(g => (groupTotals[String(g)] ?? 0) > 0.001).map(g => String(g));
+          const valueOrderedColors = getValueOrderedColorMap(validGroups, (g) => groupTotals[g] ?? 0, legendColorMap);
+          chartLegends = validGroups
+            .map((groupStr) => ({
+              id: groupStr,
+              label: groupStr,
+              color: valueOrderedColors[groupStr] || getColorByIndex(0),
+              value: groupTotals[groupStr] || 0,
+              shape: 'circle' as const
+            }))
+            .sort((a, b) => (b.value || 0) - (a.value || 0));
+        } else {
+        // For regular charts without groupBy, check if it's a multi-series chart
         // Check if this is a date-based chart
         const isDateBased = data.length > 0 && 
           (xField.toLowerCase().includes('date') || 
@@ -300,9 +392,9 @@ export default function ClientChartPage() {
             shape: 'square' as const
           }];
         }
+        }
       } else if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
         console.log('Processing as area chart');
-        // Handle area charts similar to bar/line charts
         let yAxisFields: string[] = [];
         if (Array.isArray(chart.dataMapping.yAxis)) {
           yAxisFields = chart.dataMapping.yAxis.map(field => getFieldName(field));
@@ -310,23 +402,37 @@ export default function ClientChartPage() {
           yAxisFields = [getFieldName(chart.dataMapping.yAxis)];
         }
 
+        const getFieldTotal = (f: string) => data.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+        const valueOrderedColors = getValueOrderedColorMap(yAxisFields, getFieldTotal, legendColorMap);
+        const formatLabel = (field: string) =>
+          field.replace(/_/g, ' ')
+            .split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
         if (yAxisFields.length > 1) {
-          // Multi-series area chart
-          chartLegends = yAxisFields.map((field, index) => {
-            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-            const label = field.replace(/_/g, ' ')
-              .split(' ')
-              .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(' ');
-            
-            return {
+          chartLegends = yAxisFields
+            .filter(f => (getFieldTotal(f) ?? 0) > 0.001)
+            .map((field) => ({
               id: field,
-              label,
-              color: legendColorMap[field] || getColorByIndex(index),
+              label: formatLabel(field),
+              color: valueOrderedColors[field] || getColorByIndex(0),
+              value: getFieldTotal(field),
+              shape: 'square' as const
+            }))
+            .sort((a, b) => (b.value || 0) - (a.value || 0));
+        } else if (yAxisFields.length === 1) {
+          const field = yAxisFields[0];
+          const total = getFieldTotal(field);
+          if (total > 0.001) {
+            chartLegends = [{
+              id: field,
+              label: formatLabel(field),
+              color: valueOrderedColors[field] || getColorByIndex(0),
               value: total,
               shape: 'square' as const
-            };
-          });
+            }];
+          }
         }
       }
     }
@@ -377,8 +483,14 @@ export default function ClientChartPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-red-500">{error}</div>
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
+        <div className="text-red-500 text-center max-w-md mb-6">{error}</div>
+        <a
+          href="https://research.topledger.xyz"
+          className="text-blue-400 hover:text-blue-300 text-sm"
+        >
+          ← Back to Research
+        </a>
       </div>
     );
   }
@@ -492,17 +604,16 @@ export default function ClientChartPage() {
                 onColorsGenerated={syncLegendColors}
                 hiddenSeries={hiddenSeries}
                 onDataLoaded={handleDataLoaded}
-                preloadedData={[]}
+                preloadedData={(chart?.data as any[]) || []}
                 urlParams={searchParams}
               />
             </div>
 
-            {/* Legend Area */}
+            {/* Legend Area - fixed height, scrollable when many items */}
             <div className="lg:w-1/6 mt-0 lg:mt-0 lg:pl-4 flex flex-col">
               <div className="h-px bg-gray-900 w-full lg:hidden mb-2"></div>
-              <div className="flex-1 min-h-0">
-                
-                <div className="h-full overflow-y-auto
+              <div className="max-h-[280px] lg:max-h-[480px] min-h-0 flex flex-col">
+                <div className="flex-1 min-h-0 overflow-y-auto
                   [&::-webkit-scrollbar]:w-1.5 
                   [&::-webkit-scrollbar-track]:bg-transparent 
                   [&::-webkit-scrollbar-thumb]:bg-gray-700/40

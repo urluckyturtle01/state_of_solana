@@ -6,7 +6,7 @@ import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Bar, BarStack } from '@visx/shape';
 import { ChartConfig, YAxisConfig } from '../../types';
-import { blue, getColorByIndex, allColorsArray } from '@/app/utils/chartColors';
+import { blue, getColorByIndex, allColorsArray, getValueOrderedColorMap } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -950,11 +950,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
     const stackKeys = Array.from(allGroups).filter(group => !hiddenSeriesState.includes(group));
     console.log(`Found ${stackKeys.length} visible groups for stacking out of ${allGroups.size} total:`, stackKeys);
     
-    // Create color map for ALL groups (including hidden ones for legend consistency)
-    const colorsByGroup: Record<string, string> = {};
-    Array.from(allGroups).forEach((group, i) => {
-      colorsByGroup[group] = preferredColorMap[group] || getColorByIndex(i % allColorsArray.length);
+    // Create color map by value order (same logic as dashboard) for consistency
+    const groupTotals: Record<string, number> = {};
+    Array.from(allGroups).forEach(group => {
+      groupTotals[group] = uniqueProcessedData.reduce((sum, row) => sum + (Number(row[group]) || 0), 0);
     });
+    const colorsByGroup = getValueOrderedColorMap(Array.from(allGroups), (g) => groupTotals[g] ?? 0, preferredColorMap);
     
     return { 
       chartData: uniqueProcessedData,

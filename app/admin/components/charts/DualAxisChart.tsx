@@ -7,7 +7,7 @@ import { AxisBottom, AxisLeft, AxisRight } from '@visx/axis';
 import { Bar } from '@visx/shape';
 import { LinePath } from '@visx/shape';
 import { ChartConfig, YAxisConfig } from '../../types';
-import { blue, getColorByIndex } from '@/app/utils/chartColors';
+import { blue, getColorByIndex, getValueOrderedColorMap } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -684,52 +684,9 @@ const DualAxisChart: React.FC<DualAxisChartProps> = ({
       allFields = [getYAxisField(filteredYField)];
     }
     
-    // Separate fields by axis for sequential color assignment using first two colors
-    const leftAxisFields = allFields.filter(field => !chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
-    const rightAxisFields = allFields.filter(field => chartConfig.dualAxisConfig?.rightAxisFields.includes(field));
-    
-    // Get all original field names to determine consistent base field mapping
-    const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
-    
-    // Create base field mapping for consistent colors across currency switches
-    const baseFieldToColorIndex: Record<string, number> = {};
-    const seenBaseFields = new Set<string>();
-    let colorIndex = 0;
-    
-    // First pass: establish base field color indices from ALL original fields
-    allOriginalFields.forEach(field => {
-      const baseFieldName = getBaseFieldName(field);
-      if (!seenBaseFields.has(baseFieldName)) {
-        baseFieldToColorIndex[baseFieldName] = colorIndex; // Use colors[0], colors[1], colors[2], colors[3]...
-        seenBaseFields.add(baseFieldName);
-      colorIndex++;
-      }
-    });
-    
-    console.log('=== DUAL AXIS COLOR ASSIGNMENT DEBUG ===');
-    console.log('All original fields:', allOriginalFields);
-    console.log('Current visible fields:', allFields);
-    console.log('Base field to color index mapping:', baseFieldToColorIndex);
-    console.log('Left axis fields:', leftAxisFields);
-    console.log('Right axis fields:', rightAxisFields);
-    console.log('Preferred color map:', preferredColorMap);
-    console.log('getColorByIndex(0):', getColorByIndex(0));
-    console.log('getColorByIndex(1):', getColorByIndex(1));
-    
-    // Prepare color mapping using base field names for consistency
-    const colorMapping: Record<string, string> = {};
-    
-    // Assign colors based on base field name (consistent across currencies)
-    // Ignore preferredColorMap to ensure consistent base field coloring
-    allFields.forEach((field) => {
-      const baseFieldName = getBaseFieldName(field);
-      const colorIdx = baseFieldToColorIndex[baseFieldName] ?? 0;
-      colorMapping[field] = getColorByIndex(colorIdx);
-      console.log(`Field "${field}" -> base:"${baseFieldName}" -> color[${colorIdx}] = ${colorMapping[field]} (ignoring preferred: ${preferredColorMap[field] || 'none'})`);
-    });
-    
-    console.log('Final color mapping:', colorMapping);
-    console.log('==========================================');
+    // Use value-ordered color map (same logic as dashboard) for consistency
+    const getFieldTotal = (f: string) => processedData.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+    const colorMapping = getValueOrderedColorMap(allFields, getFieldTotal, preferredColorMap);
     
     return { 
       chartData: processedData,

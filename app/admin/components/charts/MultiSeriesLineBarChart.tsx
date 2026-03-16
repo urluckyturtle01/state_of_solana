@@ -7,7 +7,7 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Bar } from '@visx/shape';
 import { LinePath } from '@visx/shape';
 import { ChartConfig, YAxisConfig } from '../../types';
-import { blue, getColorByIndex } from '@/app/utils/chartColors';
+import { blue, getColorByIndex, getValueOrderedColorMap } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -608,15 +608,30 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           }
         });
         
-        // Transform to array format
+        // Transform to array format and sort by total value (descending) to match dashboard color assignment
         const uniqueGroupsArray = Array.from(uniqueGroups);
+        const singleYField = typeof filteredYField === 'string' ? filteredYField : (Array.isArray(filteredYField) && filteredYField.length === 1 ? (typeof filteredYField[0] === 'string' ? filteredYField[0] : filteredYField[0].field) : null);
+        const groupTotals: Record<string, number> = {};
+        if (singleYField) {
+          uniqueGroupsArray.forEach(group => {
+            groupTotals[group] = processedData
+              .filter(item => (item[groupByField]?.toString() || 'Unknown') === group)
+              .reduce((sum, item) => sum + (Number(item[singleYField]) || 0), 0);
+          });
+        }
+        const sortedGroupsArray = [...uniqueGroupsArray].sort((a, b) => {
+          const va = groupTotals[a] ?? 0;
+          const vb = groupTotals[b] ?? 0;
+          if (vb !== va) return vb - va;
+          return a.localeCompare(b);
+        });
         
         if (typeof filteredYField === 'string' || (Array.isArray(filteredYField) && filteredYField.length === 1)) {
-          // For single y-field with groupBy, each group becomes a field
-          const resultFields = uniqueGroupsArray;
+          // For single y-field with groupBy, each group becomes a field (use sorted order for consistent colors)
+          const resultFields = sortedGroupsArray;
           const resultData = Object.entries(groupedByX).map(([xVal, groups]) => {
             const entry: any = { [xKey]: xVal };
-            uniqueGroupsArray.forEach(group => {
+            sortedGroupsArray.forEach(group => {
               entry[group] = (groups as any)[group] || 0;
             });
             return entry;
@@ -652,27 +667,28 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           
           // Apply the same type to all group-based series
           const resultFieldTypes: Record<string, 'bar' | 'line'> = {};  
-          uniqueGroupsArray.forEach(group => {
+          sortedGroupsArray.forEach(group => {
             resultFieldTypes[group] = originalFieldType;
           });
           
           // Create unit mapping for all group-based fields
           const resultFieldUnits: Record<string, string | undefined> = {};
-          uniqueGroupsArray.forEach(group => {
+          sortedGroupsArray.forEach(group => {
             resultFieldUnits[group] = originalFieldUnit;
           });
           
           // Create decimals mapping for all group-based fields
           const resultFieldDecimals: Record<string, number | undefined> = {};
-          uniqueGroupsArray.forEach(group => {
+          sortedGroupsArray.forEach(group => {
             resultFieldDecimals[group] = originalFieldDecimals;
           });
           
-          // Get all original field names for consistent color mapping
-          const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
-          
-          // Assign colors to each field using smart color mapping
-          const resultColors = createSmartColorMapping(resultFields, allOriginalFields, preferredColorMap);
+          // Use value-ordered color map (same logic as dashboard) for consistency
+          const resultColors = getValueOrderedColorMap(
+            resultFields,
+            (f) => groupTotals[f] ?? 0,
+            preferredColorMap
+          );
           
           return { 
             chartData: resultData,
@@ -719,11 +735,10 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
             return entry;
           });
           
-          // Get all original field names for consistent color mapping
-          const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
-          
-          // Assign colors to each field using smart color mapping
-          const resultColors = createSmartColorMapping(combinedFields, allOriginalFields, preferredColorMap);
+          // Use value-ordered color map for combined fields (total per field_group)
+          const getCombinedTotal = (cf: string) =>
+            resultData.reduce((sum, row) => sum + (Number(row[cf]) || 0), 0);
+          const resultColors = getValueOrderedColorMap(combinedFields, getCombinedTotal, preferredColorMap);
           
           return { 
             chartData: resultData,
@@ -758,11 +773,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           resultFieldDecimals[getYAxisField(filteredYField)] = typeof filteredYField === 'string' ? undefined : (filteredYField as YAxisConfig).decimals;
         }
         
-        // Get all original field names for consistent color mapping
-        const allOriginalFields = Array.isArray(yField) ? yField.map(f => typeof f === 'string' ? f : f.field) : [typeof yField === 'string' ? yField : yField.field];
-        
-        // Prepare color mapping for fields using smart color mapping
-        const resultColors = createSmartColorMapping(resultFields, allOriginalFields, preferredColorMap);
+        // Use value-ordered color map (same logic as dashboard) for consistency
+        const getFieldTotal = (f: string) => processedData.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+        const resultColors = getValueOrderedColorMap(resultFields, getFieldTotal, preferredColorMap);
         
         return { 
           chartData: processedData,

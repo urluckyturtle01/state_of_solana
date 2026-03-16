@@ -6,7 +6,7 @@ import ChartCard from '../../components/shared/ChartCard';
 import LegendItem from '../../components/shared/LegendItem';
 import { ChartConfig, YAxisConfig } from '../types';
 import dynamic from 'next/dynamic';
-import { getColorByIndex } from '../../utils/chartColors';
+import { getColorByIndex, getValueOrderedColorMap } from '../../utils/chartColors';
 import { formatNumber } from '../../utils/formatters';
 import TimeFilterSelector from '../../components/shared/filters/TimeFilter';
 import CurrencyFilter from '../../components/shared/filters/CurrencyFilter';
@@ -1613,28 +1613,23 @@ export default function DashboardRenderer({
       // Process all filtered fields from both axes
       const allFields = [...filteredLeftAxisFields, ...filteredRightAxisFields];
       
-      // Calculate totals for each field for tooltips
+      // Calculate totals for each field for tooltips and value-ordered colors
       const fieldTotals: Record<string, number> = {};
-      
       allFields.forEach(field => {
         fieldTotals[field] = data.reduce((sum, item) => 
           sum + (Number(item[field]) || 0), 0);
-        
         newLabels.push(field);
-        
-        // Assign colors if creating a new color map
-        if (isNewColorMap && !colorMap[field]) {
-          // Left axis fields get blue-ish colors, right axis fields get purple-ish colors
-          const isRightAxis = filteredRightAxisFields.includes(field);
-          const index = isRightAxis 
-            ? filteredRightAxisFields.indexOf(field)
-            : filteredLeftAxisFields.indexOf(field);
-          
-          colorMap[field] = isRightAxis 
-            ? getColorByIndex(index + filteredLeftAxisFields.length) // Offset to avoid color conflicts
-            : getColorByIndex(index);
-        }
       });
+      
+      // Assign colors by value order (same logic as chart components)
+      if (isNewColorMap) {
+        const valueOrderedMap = getValueOrderedColorMap(
+          allFields,
+          (f) => fieldTotals[f] ?? 0,
+          {}
+        );
+        Object.assign(colorMap, valueOrderedMap);
+      }
       
       // Create legend items for all fields - show API field names as-is
       // Filter out fields with zero or near-zero total values
@@ -1696,19 +1691,15 @@ export default function DashboardRenderer({
       console.log("Group totals:", groupTotals);
       
       // Create legend items, maintaining consistent color assignment
-      // Sort by totals first (highest to lowest) if assigning colors for the first time
+      // Use value-ordered color map (same logic as chart components) for consistency
       if (isNewColorMap) {
-        // Get sorted groups by their total value (highest first)
-        const sortedGroups = Object.entries(groupTotals)
-          .sort((a, b) => b[1] - a[1])
-          .map(([group]) => group);
-        
-        // Assign colors to groups in order of their totals
-        sortedGroups.forEach((group, index) => {
-          if (!colorMap[group]) {
-            colorMap[group] = getColorByIndex(index);
-          }
-        });
+        const groups = Object.keys(groupTotals);
+        const valueOrderedMap = getValueOrderedColorMap(
+          groups,
+          (g) => groupTotals[g] ?? 0,
+          {}
+        );
+        Object.assign(colorMap, valueOrderedMap);
       }
       
       // Check if we should show line shape for some groups (for MultiSeriesLineBarChart with groupBy)
@@ -1872,34 +1863,26 @@ export default function DashboardRenderer({
         
         // Check if we have multiple y-axis fields (multi-series)
         if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
-          // For multi-series area charts, use the y-axis field names as legends - show API names as-is
-          // Filter out fields with zero or near-zero total values
-          chartLegends = yAxisFields
-            .filter(field => {
-              // Calculate the total for this field across all data points
-              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-              // Filter out fields with zero or very small values (to handle floating point precision)
-              return Math.abs(total) > 0.001;
-            })
-            .map((field, index) => {
-              // Calculate the total for this field across all data points
-              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-              
-              newLabels.push(field); // Use raw field name
-              
-              // Use consistent color from our map, or generate a new one if needed
-              if (!colorMap[field] && isNewColorMap) {
-                colorMap[field] = getColorByIndex(index);
-              }
-              
-              return {
-                id: field,
-                label: formatFieldName(field),
-                color: colorMap[field] || getColorByIndex(index),
-                value: total,
-                shape: 'square' as const
-              };
-            });
+          // For multi-series area charts, use value-ordered colors
+          const validFields = yAxisFields.filter(field => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            return Math.abs(total) > 0.001;
+          });
+          if (isNewColorMap) {
+            const getTotal = (f: string) => data.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+            Object.assign(colorMap, getValueOrderedColorMap(validFields, getTotal, {}));
+          }
+          chartLegends = validFields.map((field) => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            newLabels.push(field);
+            return {
+              id: field,
+              label: formatFieldName(field),
+              color: colorMap[field] || getColorByIndex(0),
+              value: total,
+              shape: 'square' as const
+            };
+          }).sort((a, b) => b.value - a.value);
         } else {
           const yFieldName = getFieldName(yAxisFields[0]);
           const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);
@@ -1923,32 +1906,25 @@ export default function DashboardRenderer({
           }
         }
               } else {
-          // For non-date based area charts, use data points as legend entries
-          // Filter out items with zero or near-zero values
-          chartLegends = data
-            .filter(item => {
-              const value = Number(item[yAxisFields[0]]) || 0;
-              // Filter out items with zero or very small values (to handle floating point precision)
-              return Math.abs(value) > 0.001;
-            })
-            .map((item, index) => {
-              const label = String(item[xField]);
-              const id = label; // For non-date based, id and label are the same
-              newLabels.push(id);
-              
-              // Use consistent color from our map, or generate a new one if needed
-              if (!colorMap[id] && isNewColorMap) {
-                colorMap[id] = getColorByIndex(index);
-              }
-              
-              return {
-                id,
-                label,
-                color: colorMap[id] || getColorByIndex(index),
-                value: Number(item[yAxisFields[0]]) || 0,
-                shape: 'square' as const // Area charts use square shapes
-              };
-            });
+          // For non-date based area charts, use data points as legend entries (value-ordered)
+          const validItems = data
+            .filter(item => Math.abs(Number(item[yAxisFields[0]]) || 0) > 0.001)
+            .map(item => ({ label: String(item[xField]), value: Number(item[yAxisFields[0]]) || 0 }));
+          if (isNewColorMap && validItems.length > 0) {
+            const labels = validItems.map(i => i.label);
+            const getTotal = (l: string) => validItems.find(i => i.label === l)?.value ?? 0;
+            Object.assign(colorMap, getValueOrderedColorMap(labels, getTotal, {}));
+          }
+          chartLegends = validItems.map(({ label, value }) => {
+            newLabels.push(label);
+            return {
+              id: label,
+              label,
+              color: colorMap[label] || getColorByIndex(0),
+              value,
+              shape: 'square' as const
+            };
+          }).sort((a, b) => b.value - a.value);
         }
       
       console.log(`Generated ${chartLegends.length} legend items for area chart`);
@@ -2065,26 +2041,27 @@ export default function DashboardRenderer({
         const hasGroupBy = !!chart.dataMapping.groupBy;
         
         if (isMultiSeries) {
-          chartLegends = yAxisFields
-            .filter(field => {
-              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-              return Math.abs(total) > 0.001;
-            })
-            .map((field, index) => {
-              const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
-              newLabels.push(field);
-              if (!colorMap[field] && isNewColorMap) {
-                colorMap[field] = getColorByIndex(index);
-              }
-              const isLine = isLineType(chart, field);
-              return {
-                id: field,
-                label: formatFieldName(field),
-                color: colorMap[field] || getColorByIndex(index),
-                value: total,
-                shape: isLine ? 'circle' as const : 'square' as const
-              };
-            });
+          const validFields = yAxisFields.filter(field => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            return Math.abs(total) > 0.001;
+          });
+          if (isNewColorMap) {
+            const getTotal = (f: string) => data.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+            const valueOrderedMap = getValueOrderedColorMap(validFields, getTotal, {});
+            Object.assign(colorMap, valueOrderedMap);
+          }
+          chartLegends = validFields.map((field) => {
+            const total = data.reduce((sum, item) => sum + (Number(item[field]) || 0), 0);
+            newLabels.push(field);
+            const isLine = isLineType(chart, field);
+            return {
+              id: field,
+              label: formatFieldName(field),
+              color: colorMap[field] || getColorByIndex(0),
+              value: total,
+              shape: isLine ? 'circle' as const : 'square' as const
+            };
+          }).sort((a, b) => b.value - a.value);
         } else if (!hasGroupBy) {
           const yFieldName = getFieldName(yAxisFields[0]);
           const total = data.reduce((sum, item) => sum + (Number(item[yFieldName]) || 0), 0);

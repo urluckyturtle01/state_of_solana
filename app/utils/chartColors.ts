@@ -61,6 +61,31 @@ export const getColorByIndex = (index: number): string => {
   return colors[index % colors.length];
 };
 
+/**
+ * Create a color map with colors tied to value order (highest value = first color).
+ * Use this for consistent colors across dashboard and share page.
+ * @param fields - field/group names
+ * @param getTotal - function to get total value for a field
+ * @param preferredMap - existing color map to preserve when available
+ */
+export function getValueOrderedColorMap(
+  fields: string[],
+  getTotal: (field: string) => number,
+  preferredMap: Record<string, string> = {}
+): Record<string, string> {
+  const sorted = [...fields].sort((a, b) => {
+    const va = getTotal(a);
+    const vb = getTotal(b);
+    if (vb !== va) return vb - va; // descending by value
+    return a.localeCompare(b); // stable tiebreaker: alphabetical
+  });
+  const result: Record<string, string> = {};
+  sorted.forEach((field, index) => {
+    result[field] = preferredMap[field] ?? getColorByIndex(index);
+  });
+  return result;
+}
+
 // Utility function to get the first N colors from the palette
 export const getFirstNColors = (n: number): string[] => {
   return colors.slice(0, Math.min(n, colors.length));

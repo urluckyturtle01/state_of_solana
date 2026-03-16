@@ -8,7 +8,7 @@ import { AreaClosed, LinePath } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
 import { LinearGradient } from '@visx/gradient';
 import { ChartConfig, YAxisConfig } from '../../types';
-import { blue, getColorByIndex, allColorsArray } from '@/app/utils/chartColors';
+import { blue, getColorByIndex, allColorsArray, getValueOrderedColorMap } from '@/app/utils/chartColors';
 import ChartTooltip from '@/app/components/shared/ChartTooltip';
 import ButtonSecondary from "@/app/components/shared/buttons/ButtonSecondary";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
@@ -389,14 +389,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     
     // If multi-series, handle differently than single y-field
     if (isMultiSeries) {
-      // Create color map for each y-field
-      const colorMap: Record<string, string> = {};
+      // Use value-ordered color map (same logic as dashboard) for consistency
+      const getFieldTotal = (f: string) => processedData.reduce((sum, item) => sum + (Number(item[f]) || 0), 0);
+      const colorMap = getValueOrderedColorMap(yFields, getFieldTotal, preferredColorMap);
       const gradientMap: Record<string, { main: string, light: string, lighter: string }> = {};
-      
       yFields.forEach((field, i) => {
-        const baseColor = preferredColorMap[field] || getColorByIndex(i);
-        colorMap[field] = baseColor;
-        gradientMap[field] = createGradientColor(baseColor, i);
+        gradientMap[field] = createGradientColor(colorMap[field], i);
       });
       
       // Group by x-axis values to prevent duplicate x values
@@ -498,15 +496,16 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
           gradientColors: { [yKey]: gradientColor }
         };
       } else {
-        // Create color map for each area if distinct colors requested
-        const colorMap: Record<string, string> = {};
+        // Create color map by value order (same logic as dashboard) for consistency
+        const xValues = uniqueProcessedData.map((d: any) => String(d[xKey]));
+        const getXTotal = (x: string) => {
+          const row = uniqueProcessedData.find((d: any) => String(d[xKey]) === x);
+          return row ? (Number(row[yKey]) || 0) : 0;
+        };
+        const colorMap = getValueOrderedColorMap(xValues, getXTotal, preferredColorMap);
         const gradientMap: Record<string, { main: string, light: string, lighter: string }> = {};
-        
-        uniqueProcessedData.forEach((d: any, i: number) => {
-          const xValue = String(d[xKey]);
-          const baseColor = preferredColorMap[xValue] || getColorByIndex(i % allColorsArray.length);
-          colorMap[xValue] = baseColor;
-          gradientMap[xValue] = createGradientColor(baseColor, i);
+        xValues.forEach((x, i) => {
+          gradientMap[x] = createGradientColor(colorMap[x], i);
         });
         
         return { 

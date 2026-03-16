@@ -1327,7 +1327,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     if (chartConfig.apiEndpoint && (!preloadedData || preloadedData.length === 0)) {
       console.log(`🌐 API CALL: Fetching data for ${chartConfig.title} - no preloaded data available`);
       fetchData();
-    } else if (!chartConfig.apiEndpoint) {
+    } else if (!chartConfig.apiEndpoint && (!preloadedData || preloadedData.length === 0)) {
       setError("No API endpoint provided");
     } else {
       console.log(`✅ NO API CALL: Skipping API fetch for ${chartConfig.title} - using preloaded data (${preloadedData?.length || 0} rows)`);

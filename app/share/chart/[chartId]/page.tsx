@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getChartMetadata, defaultChartMetadata } from '../seo-meta';
+import { getChartMetadataFromDb } from '@/lib/chart-metadata-db';
 import ClientChartPage from './ClientChartPage';
 
 // Server component to handle metadata generation
@@ -8,8 +9,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { chartId } = await params;
   
-  // Get SEO metadata for this chart
-  const chartMeta = getChartMetadata(chartId) || defaultChartMetadata;
+  // Get SEO metadata: static first, then DB (for trino_worker charts), then default
+  const chartMeta = getChartMetadata(chartId) || 
+    (await getChartMetadataFromDb(chartId)) || 
+    defaultChartMetadata;
         
         return {
     title: chartMeta.title,
@@ -71,7 +74,9 @@ export default async function SharedChartPage({
   params: Promise<{ chartId: string }> 
 }) {
   const { chartId } = await params;
-  const chartMeta = getChartMetadata(chartId) || defaultChartMetadata;
+  const chartMeta = getChartMetadata(chartId) || 
+    (await getChartMetadataFromDb(chartId)) || 
+    defaultChartMetadata;
   
   // Generate JSON-LD structured data for better Google understanding
   const structuredData = {

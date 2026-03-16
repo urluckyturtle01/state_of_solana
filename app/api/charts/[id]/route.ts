@@ -12,6 +12,15 @@ import {
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../../lib/auth";
 import { sanitizeChartConfig, isAdminRequest } from '@/lib/chart-sanitizer';
+import { Pool } from 'pg';
+
+const dbPool = new Pool({
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  database: process.env.DB_NAME || 'trino_charts',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'root',
+});
 
 /*
  * This API endpoint manages individual chart configurations.
@@ -44,25 +53,112 @@ const endTimer = (start: [number, number], label: string) => {
   return time;
 };
 
-// Get chart with caching strategy
+// Filter data columns based on chart dataMapping (same logic as db-configs)
+function filterDataByMapping(allData: any[], chartConfig: ChartConfig): any[] {
+  const dataMapping = (chartConfig.dataMapping || {}) as Record<string, any>;
+  const requiredFields = new Set<string>();
+  const addField = (f: any) => {
+    if (typeof f === 'string') requiredFields.add(f);
+    else if (f?.field) requiredFields.add(f.field);
+  };
+  if (dataMapping.xAxis) {
+    const x = dataMapping.xAxis;
+    if (Array.isArray(x)) x.forEach(addField);
+    else addField(x);
+  }
+  if (dataMapping.x) requiredFields.add(dataMapping.x);
+  if (dataMapping.yAxis) {
+    const y = dataMapping.yAxis;
+    if (Array.isArray(y)) y.forEach(addField);
+    else addField(y);
+  }
+  if (dataMapping.y) {
+    const y = dataMapping.y;
+    if (Array.isArray(y)) y.forEach((f: string) => requiredFields.add(f));
+    else requiredFields.add(y);
+  }
+  if (dataMapping.groupBy) requiredFields.add(dataMapping.groupBy);
+  const dual = chartConfig.dualAxisConfig as Record<string, any> | undefined;
+  dual?.leftYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
+  dual?.rightYAxis?.fields?.forEach((f: string) => requiredFields.add(f));
+  return allData.map((row: any) => {
+    const filtered: any = {};
+    requiredFields.forEach(f => { if (f in row) filtered[f] = row[f]; });
+    return filtered;
+  });
+}
+
+// Get chart from PostgreSQL (config + data from chart_definitions + query_results)
+async function getChartFromDb(chartId: string): Promise<(ChartConfig & { data?: any[] }) | null> {
+  try {
+    const client = await dbPool.connect();
+    try {
+      // uuid::text allows matching both UUID and text-style ids
+      const result = await client.query(
+        `SELECT cd.uuid, cd.chart_config, cd.sql_hash, qr.json_data
+         FROM chart_definitions cd
+         LEFT JOIN query_results qr ON qr.sql_hash = cd.sql_hash
+         WHERE cd.uuid::text = $1`,
+        [chartId]
+      );
+      if (result.rows.length === 0) return null;
+      const row = result.rows[0];
+      let chartConfig = row.chart_config as ChartConfig;
+      const uuidStr = typeof row.uuid === 'string' ? row.uuid : String(row.uuid);
+      // Auto-detect dual-axis when yAxis has rightAxis: true (same as dashboard)
+      const yAxis = chartConfig.dataMapping?.yAxis;
+      if (Array.isArray(yAxis) && yAxis.length > 0 && typeof yAxis[0] === 'object') {
+        const yAxisConfigs = yAxis as { field: string; type?: string; rightAxis?: boolean }[];
+        const hasRightAxis = yAxisConfigs.some((c) => c.rightAxis === true);
+        if (hasRightAxis && !chartConfig.dualAxisConfig) {
+          chartConfig = {
+            ...chartConfig,
+            chartType: 'dual-axis',
+            dualAxisConfig: {
+              leftAxisFields: yAxisConfigs.filter((c) => !c.rightAxis).map((c) => c.field),
+              rightAxisFields: yAxisConfigs.filter((c) => c.rightAxis).map((c) => c.field),
+              leftAxisType: (yAxisConfigs.find((c) => !c.rightAxis)?.type || 'bar') as 'bar' | 'line',
+              rightAxisType: (yAxisConfigs.find((c) => c.rightAxis)?.type || 'line') as 'bar' | 'line',
+            },
+          };
+        }
+      }
+      const chart: ChartConfig & { data?: any[] } = { ...chartConfig, id: uuidStr };
+      const rawData = row.json_data;
+      if (rawData) {
+        const arr = Array.isArray(rawData) ? rawData : (rawData as any)?.rows || [];
+        if (arr.length > 0) {
+          chart.data = filterDataByMapping(arr, chartConfig);
+        }
+      }
+      return chart;
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error(`Error fetching chart ${chartId} from DB:`, err);
+    return null;
+  }
+}
+
+// Get chart from chart_definitions + query_results first, then S3. No temp files.
 async function getChartWithCache(chartId: string): Promise<ChartConfig | null> {
-  // Check memory cache first (fastest)
   if (CHART_CACHE[chartId] && 
       (Date.now() - CHART_CACHE[chartId].timestamp) < CACHE_TTL) {
-    console.log(`Cache hit for chart ${chartId}`);
     return CHART_CACHE[chartId].data;
   }
   
-  // Cache miss, get from S3
-  console.log(`Cache miss for chart ${chartId}, fetching from S3`);
-  const chart = await getFromS3<ChartConfig>(`charts/${chartId}.json`);
-  
-  // Update cache if chart was found
+  // 1. DB first: chart_definitions + query_results
+  let chart = await getChartFromDb(chartId);
   if (chart) {
-    CHART_CACHE[chartId] = {
-      data: chart,
-      timestamp: Date.now()
-    };
+    CHART_CACHE[chartId] = { data: chart, timestamp: Date.now() };
+    return chart;
+  }
+  
+  // 2. S3 fallback (for non-DB charts)
+  chart = await getFromS3<ChartConfig>(`charts/${chartId}.json`);
+  if (chart) {
+    CHART_CACHE[chartId] = { data: chart, timestamp: Date.now() };
   }
   
   return chart;
