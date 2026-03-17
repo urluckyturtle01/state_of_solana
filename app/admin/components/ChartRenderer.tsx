@@ -178,6 +178,15 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
     }
   }, [legendColorMap, onColorsGenerated, externalColorMap]);
 
+  // Stable callback for child charts to report their computed colors
+  const handleChildColorsGenerated = useCallback((colorMap: Record<string, string>) => {
+    setLegendColorMap(prev => {
+      const prevStr = JSON.stringify(prev);
+      const newStr = JSON.stringify(colorMap);
+      return prevStr === newStr ? prev : colorMap;
+    });
+  }, []);
+
   // Determine whether to use internal or external filter values
   const filterValues = externalFilterValues || internalFilterValues;
 
@@ -1395,11 +1404,7 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       filterValues,
       hiddenSeries,
       yAxisUnit,
-      maxXAxisTicks: shouldLimitTicks ? 7 : undefined,
-      onColorsGenerated: (colorMap: Record<string, string>) => {
-        setLegendColorMap(colorMap);
-        onColorsGenerated?.(colorMap);
-      }
+      maxXAxisTicks: shouldLimitTicks ? 7 : undefined
     };
     
     switch (chartConfig.chartType) {
@@ -1412,12 +1417,12 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
             {...commonProps}
             displayMode={filterValues['displayMode'] as DisplayMode || 'absolute'}
             onFilterChange={(newFilters: Record<string, string>) => {
-              // Apply the filter changes
               Object.entries(newFilters).forEach(([key, value]) => {
                 handleFilterChange(key, value);
               });
             }}
             onModalFilterUpdate={onModalFilterUpdate}
+            onColorsGenerated={handleChildColorsGenerated}
           />;
         }
         

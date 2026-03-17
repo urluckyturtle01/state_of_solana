@@ -232,7 +232,11 @@ export default function ClientChartPage() {
 
   // Sync legend colors when chart renderer provides them
   const syncLegendColors = useCallback((colorMap: Record<string, string>) => {
-    setLegendColorMap(colorMap);
+    setLegendColorMap(prev => {
+      const prevStr = JSON.stringify(prev);
+      const newStr = JSON.stringify(colorMap);
+      return prevStr === newStr ? prev : colorMap;
+    });
   }, []);
 
   // Generate legends based on chart data

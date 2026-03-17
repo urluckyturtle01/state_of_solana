@@ -975,9 +975,14 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
 
   // Report color map to parent so legend uses same colors as chart/tooltip
+  const prevReportedColorsRef = useRef<string>('');
   useEffect(() => {
     if (onColorsGenerated && groupColors && Object.keys(groupColors).length > 0) {
-      onColorsGenerated(groupColors);
+      const serialized = JSON.stringify(groupColors);
+      if (serialized !== prevReportedColorsRef.current) {
+        prevReportedColorsRef.current = serialized;
+        onColorsGenerated(groupColors);
+      }
     }
   }, [groupColors, onColorsGenerated]);
 

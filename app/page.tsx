@@ -8,7 +8,7 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/protocol-revenue');
+    router.push('/dex');
   }, [router]);
 
   return (
