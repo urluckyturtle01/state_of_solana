@@ -232,7 +232,7 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                         'timeFilter': {
                             'paramName': 'Date Part',
                             'options': ['D', 'W', 'M', 'Q', 'Y'],
-                            'activeValue': 'D'
+                            'activeValue': 'W'
                         }
                     }
                 }
