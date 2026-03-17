@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { ChartConfig, FilterOption, YAxisConfig } from '@/app/admin/types';
 import ChartRenderer from '@/app/admin/components/ChartRenderer';
@@ -77,6 +77,8 @@ export default function ClientChartPage() {
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
   const [legends, setLegends] = useState<Legend[]>([]);
   const [hiddenSeries, setHiddenSeries] = useState<string[]>([]);
+  const [soloSeriesId, setSoloSeriesId] = useState<string | null>(null);
+  const legendClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>({});
   const [chartData, setChartData] = useState<any[]>([]);
 
@@ -187,15 +189,45 @@ export default function ClientChartPage() {
     window.history.replaceState({}, '', `${window.location.pathname}?${newSearchParams}`);
   }, [searchParams]);
 
-  // Handle legend click
-  const handleLegendClick = useCallback((seriesId: string) => {
-    setHiddenSeries(prev => {
-      if (prev.includes(seriesId)) {
-        return prev.filter(id => id !== seriesId);
-      } else {
-        return [...prev, seriesId];
+  // Handle legend click (single = toggle, double = solo/unsolo)
+  const handleLegendDoubleClick = useCallback((seriesId: string) => {
+    setSoloSeriesId(prev => {
+      if (prev === seriesId) {
+        setHiddenSeries([]);
+        return null;
       }
+      const allIds = legends.map(l => l.id || l.label);
+      setHiddenSeries(allIds.filter(id => id !== seriesId));
+      return seriesId;
     });
+  }, [legends]);
+
+  const handleLegendClick = useCallback((seriesId: string) => {
+    if (legendClickTimeoutRef.current) {
+      clearTimeout(legendClickTimeoutRef.current);
+      legendClickTimeoutRef.current = null;
+      handleLegendDoubleClick(seriesId);
+      return;
+    }
+    legendClickTimeoutRef.current = setTimeout(() => {
+      legendClickTimeoutRef.current = null;
+      setSoloSeriesId(null);
+      setHiddenSeries(prev => {
+        if (prev.includes(seriesId)) {
+          return prev.filter(id => id !== seriesId);
+        }
+        return [...prev, seriesId];
+      });
+    }, 250);
+  }, [handleLegendDoubleClick]);
+
+  // Cleanup legend click timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (legendClickTimeoutRef.current) {
+        clearTimeout(legendClickTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Sync legend colors when chart renderer provides them
@@ -508,13 +540,13 @@ export default function ClientChartPage() {
     setLegends(chartLegends);
   }, [chart, legendColorMap, filterValues]);
 
-  // Regenerate legends when currency filter changes (so legend shows only USD or only SOL items)
+  // Regenerate legends when currency filter or legendColorMap changes (color map comes from chart for tooltip/legend consistency)
   useEffect(() => {
     if (chart && chartData.length > 0) {
       handleDataLoaded(chartData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only regenerate when currency filter changes
-  }, [filterValues.currencyFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- regenerate when currency filter or color map changes
+  }, [filterValues.currencyFilter, legendColorMap]);
 
   // Also generate legends when color map changes
   useEffect(() => {
@@ -703,7 +735,7 @@ export default function ClientChartPage() {
                           label={truncateLabel(legend.label)} 
                           color={legend.color} 
                           shape={legend.shape || 'square'}
-                          tooltipText={legend.value ? formatCurrency(legend.value) : undefined}
+                          tooltipText={legend.value ? `${formatCurrency(legend.value)} • Double-click: show only` : 'Double-click: show only'}
                           onClick={() => handleLegendClick(legend.id || legend.label)}
                           inactive={hiddenSeries.includes(legend.id || legend.label)}
                         />

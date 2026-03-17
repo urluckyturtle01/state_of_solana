@@ -181,7 +181,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     if checkpoint_callback and week_count % checkpoint_interval == 0:
                         checkpoint_callback(all_results)
                         all_results = []  # Clear after checkpoint to avoid duplication
-                        print(f"      💾 Checkpoint: {week_count} weeks processed")
+                        print(f"💾 Checkpoint: {week_count} weeks processed")
                 
                 except Exception as e:
                     print(f" ❌ Error: {e}")
@@ -189,7 +189,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     if checkpoint_callback and all_results:
                         checkpoint_callback(all_results)
                         all_results = []  # Clear after save
-                        print(f"      💾 Saved {week_count-1} successful weeks before error")
+                        print(f"💾 Saved {week_count-1} successful weeks before error")
                     raise
 
                 # Advance to next/previous week
@@ -201,7 +201,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
             # Final save for any remaining data not checkpointed
             if checkpoint_callback and all_results:
                 checkpoint_callback(all_results)
-                print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                print(f"💾 Final checkpoint: {len(all_results)} rows")
                 return []  # Data already persisted via checkpoints
 
             return all_results  # No checkpoint callback — return to caller
@@ -255,7 +255,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     if checkpoint_callback and all_results:
                         checkpoint_callback(all_results)
                         all_results = []  # Clear after save
-                        print(f"      💾 Saved {month_count-1} successful months before error")
+                        print(f"💾 Saved {month_count-1} successful months before error")
                     raise
 
                 current = month_done()
@@ -263,7 +263,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
             # Final save for any remaining data not checkpointed
             if checkpoint_callback and all_results:
                 checkpoint_callback(all_results)
-                print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                print(f"💾 Final checkpoint: {len(all_results)} rows")
                 return []  # Data already persisted via checkpoints
 
             return all_results  # No checkpoint callback — return to caller
@@ -302,7 +302,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
                     if checkpoint_callback and all_results:
                         checkpoint_callback(all_results)
                         all_results = []
-                        print(f"      💾 Saved {day_count-1} successful days before error")
+                        print(f"💾 Saved {day_count-1} successful days before error")
                     # Continue to next day instead of failing entire query
                     pass
 
@@ -311,7 +311,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
             # Final save for any remaining data not checkpointed
             if checkpoint_callback and all_results:
                 checkpoint_callback(all_results)
-                print(f"      💾 Final checkpoint: {len(all_results)} rows")
+                print(f"💾 Final checkpoint: {len(all_results)} rows")
                 return []  # Return empty since saved via checkpoint
             
             return all_results
@@ -500,7 +500,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                 data = convert_to_json_safe(records)
                                 all_new_data.extend(data)
                                 dates_to_remove.add(month_str)
-                                print(f" ✅ {len(data)} rows", end='', flush=True)
+                                print(f"✅ {len(data)} rows", end='', flush=True)
                                 
                                 # Checkpoint: Save to DB immediately after each month
                                 if all_new_data:
@@ -578,11 +578,11 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                             WHERE sql_hash = %s
                                         """, (sql_hash, dates_str, json.dumps(all_new_data, default=str), sql_hash))
                                     pg.commit()
-                                    print(f" 💾")
+                                    print(f"💾")
                                     all_new_data = []  # Clear after checkpoint
                                     dates_to_remove = set()  # Clear dates
                             else:
-                                print(f" ⚠️ 0 rows")
+                                print(f"⚠️ 0 rows")
                         except TimeoutError as te:
                             signal.alarm(0)  # Cancel alarm
                             signal.signal(signal.SIGALRM, old_handler)  # Restore handler
@@ -599,21 +599,21 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                         gaps_failed += 1
                         # If timeout, this is a critical failure - don't continue
                         if isinstance(e, TimeoutError):
-                            print(f"   ⛔ CRITICAL: Query timeout for {month_str} - stopping backfill")
+                            print(f"⛔ CRITICAL: Query timeout for {month_str} - stopping backfill")
                             break
             else:
-                print(f"   ✅ All months present, nothing to backfill")
+                print(f"✅ All months present, nothing to backfill")
         else:
             # For daily/weekly queries, use existing gap detection logic
             gap_dates, max_date = get_dates_info(pg, sql_hash)
-            print(f"   📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
+            print(f"📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
             
             # 1. Fill gaps
             if gap_dates:
                 print(f"   🔧 Filling {len(gap_dates)} gaps...")
                 for gap_date in gap_dates:
                     try:
-                        print(f"      Gap {gap_date}...", end='', flush=True)
+                        print(f"Gap {gap_date}...", end='', flush=True)
                         data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
                         all_new_data.extend(data)
                         dates_to_remove.add(str(gap_date))

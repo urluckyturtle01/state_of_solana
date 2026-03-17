@@ -52,6 +52,7 @@ export interface StackedBarChartProps {
   displayMode?: DisplayMode;
   onModalFilterUpdate?: (filters: Record<string, string>) => void;
   maxXAxisTicks?: number;
+  onColorsGenerated?: (colorMap: Record<string, string>) => void;
 }
 
 interface DateBrushPoint {
@@ -208,7 +209,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   onFilterChange,
   displayMode: propDisplayMode,
   onModalFilterUpdate,
-  maxXAxisTicks
+  maxXAxisTicks,
+  onColorsGenerated
 }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
@@ -971,6 +973,13 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       fieldUnits: { [yKey]: typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit }
     };
   }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
+
+  // Report color map to parent so legend uses same colors as chart/tooltip
+  useEffect(() => {
+    if (onColorsGenerated && groupColors && Object.keys(groupColors).length > 0) {
+      onColorsGenerated(groupColors);
+    }
+  }, [groupColors, onColorsGenerated]);
 
   // Determine if we have any negative values in the data - this needs to be outside the chart renderer
   const hasNegativeValues = useMemo(() => {

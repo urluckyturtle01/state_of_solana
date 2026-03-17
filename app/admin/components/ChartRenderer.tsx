@@ -1395,7 +1395,11 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
       filterValues,
       hiddenSeries,
       yAxisUnit,
-      maxXAxisTicks: shouldLimitTicks ? 7 : undefined
+      maxXAxisTicks: shouldLimitTicks ? 7 : undefined,
+      onColorsGenerated: (colorMap: Record<string, string>) => {
+        setLegendColorMap(colorMap);
+        onColorsGenerated?.(colorMap);
+      }
     };
     
     switch (chartConfig.chartType) {
