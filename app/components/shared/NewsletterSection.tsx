@@ -76,6 +76,9 @@ const NewsletterSection: React.FC = () => {
     // Never show during any loading state
     if (isLoading || !hasCheckedAuth) return false;
     
+    // Hide on worker-log pages (self-hosted admin, no newsletter)
+    if (pathname?.startsWith('/worker-log')) return false;
+    
     // Check if current route is protected
     const isProtectedRoute = checkAuthForRoute(pathname);
     const isInternalAuthRoute = pathname?.startsWith('/sf-dashboards') || pathname?.startsWith('/dflow');
