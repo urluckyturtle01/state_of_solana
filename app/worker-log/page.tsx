@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import WorkerLogHeader from './components/WorkerLogHeader';
 import WorkerLogsArea from './components/WorkerLogsArea';
 import WorkerJobsArea from './components/WorkerJobsArea';
+import TweetGeneratorModal from './components/TweetGeneratorModal';
 
 export default function WorkerLogPage() {
   const [lastUpdate, setLastUpdate] = useState('—');
   const [mobileTab, setMobileTab] = useState('logs');
+  const [tweetModalOpen, setTweetModalOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -23,14 +25,13 @@ export default function WorkerLogPage() {
   return (
     <div className="worker-log-body">
       <div className="worker-log-container">
-        <WorkerLogHeader lastUpdate={lastUpdate} />
+        <WorkerLogHeader lastUpdate={lastUpdate} onOpenTweetModal={() => setTweetModalOpen(true)} />
 
         <div className="worker-log-mobile-tabs">
           <div className="worker-log-mobile-tabs-inner">
             <button
               type="button"
               className={`worker-log-mobile-tab ${mobileTab === 'logs' ? 'active' : ''}`}
-              data-tab="logs"
               onClick={() => setMobileTab('logs')}
             >
               Logs
@@ -38,7 +39,6 @@ export default function WorkerLogPage() {
             <button
               type="button"
               className={`worker-log-mobile-tab ${mobileTab === 'jobs' ? 'active' : ''}`}
-              data-tab="jobs"
               onClick={() => setMobileTab('jobs')}
             >
               Job Runs
@@ -51,6 +51,8 @@ export default function WorkerLogPage() {
           <WorkerJobsArea mobileTab={mobileTab} />
         </div>
       </div>
+
+      <TweetGeneratorModal open={tweetModalOpen} onClose={() => setTweetModalOpen(false)} />
     </div>
   );
 }
