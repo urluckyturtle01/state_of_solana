@@ -132,7 +132,10 @@ export async function GET(
       const pageConfig = {
         charts: charts.filter((c: any) => c.chartType !== 'table'),
         counters: [],
-        tables: charts.filter((c: any) => c.chartType === 'table')
+        tables: charts.filter((c: any) => c.chartType === 'table').map((t: any) => ({
+          ...t,
+          description: t.description ?? t.subtitle
+        }))
       };
       
       // Sanitize chart data for public consumption (unless admin request)

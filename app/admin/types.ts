@@ -245,6 +245,7 @@ export interface TableConfig {
   id: string;
   title: string;
   description?: string;
+  subtitle?: string; // Alias for description (chart configs use subtitle)
   page: AvailablePage;
   apiEndpoint?: string;  // Optional - can load from temp files instead
   apiKey?: string;

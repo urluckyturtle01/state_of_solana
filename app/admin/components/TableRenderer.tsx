@@ -1094,7 +1094,11 @@ const TableRenderer: React.FC<TableRendererProps> = ({
       <div className="flex justify-between items-center mb-3">
         <div className="-mt-1">
           <h2 className="text-[12px] font-normal text-gray-300 leading-tight mb-0.5">{tableConfig.title}</h2>
-          {tableConfig.description && <p className="text-gray-500 text-[10px] tracking-wide">{tableConfig.description}</p>}
+          {(tableConfig.description ?? tableConfig.subtitle) && (
+            <p className="text-gray-500 text-[10px] tracking-wide">
+              {tableConfig.description ?? tableConfig.subtitle}
+            </p>
+          )}
         </div>
         
         <div className="flex space-x-2">
