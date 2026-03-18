@@ -83,6 +83,12 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
+
+  // Stabilize externalColorMap via ref to prevent useMemo recomputation on reference-only changes
+  const externalColorMapRef = useRef<Record<string, string>>(externalColorMap || {});
+  if (externalColorMap && Object.keys(externalColorMap).length > 0) {
+    externalColorMapRef.current = externalColorMap;
+  }
   
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
@@ -117,12 +123,16 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
 
   // Sync modalFilterValues with filterValues when filterValues prop changes
+  const prevFilterValuesRef = useRef<string>('');
   useEffect(() => {
     if (filterValues) {
-      console.log(`SimpleBarChart: Syncing filter values for ${chartConfig.title}`, filterValues);
-      setModalFilterValues(filterValues);
+      const serialized = JSON.stringify(filterValues);
+      if (serialized !== prevFilterValuesRef.current) {
+        prevFilterValuesRef.current = serialized;
+        setModalFilterValues(filterValues);
+      }
     }
-  }, [filterValues, chartConfig.title]);
+  }, [filterValues]);
 
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
@@ -131,9 +141,13 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
 
   // Update hidden series when prop changes
+  const prevHiddenSeriesRef = useRef<string>('');
   useEffect(() => {
-    console.log('SimpleBarChart: hiddenSeries prop changed:', hiddenSeries);
-    setHiddenSeriesState(hiddenSeries || []);
+    const serialized = JSON.stringify(hiddenSeries);
+    if (serialized !== prevHiddenSeriesRef.current) {
+      prevHiddenSeriesRef.current = serialized;
+      setHiddenSeriesState(hiddenSeries || []);
+    }
   }, [hiddenSeries]);
 
   // Extract mapping fields with safety checks
@@ -245,12 +259,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
     }
   }, []);
 
-  // Update modal filters when component receives new filter values
-  useEffect(() => {
-    if (filterValues) {
-      setModalFilterValues(filterValues);
-    }
-  }, [filterValues]);
+  // Update modal filters when component receives new filter values (duplicate removed - handled above)
 
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -289,8 +298,8 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
       };
     }
 
-    // Use external color map if available
-    const preferredColorMap = externalColorMap || {};
+    // Use external color map if available (via ref to avoid recomputation cycles)
+    const preferredColorMap = externalColorMapRef.current || {};
     
     // For simple bar chart, use consistent color unless explicitly configured
     const shouldUseConsistentColor = !chartConfig.useDistinctColors;
@@ -402,7 +411,7 @@ const SimpleBarChart: React.FC<SimpleBarChartProps> = ({
         };
       }
     }
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, externalColorMap, isExpanded]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, isExpanded]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {

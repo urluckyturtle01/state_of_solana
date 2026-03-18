@@ -109,6 +109,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Stabilize externalColorMap via ref to prevent useMemo recomputation on reference-only changes
+  const externalColorMapRef = useRef<Record<string, string>>(externalColorMap || {});
+  if (externalColorMap && Object.keys(externalColorMap).length > 0) {
+    externalColorMapRef.current = externalColorMap;
+  }
   const [legendItems, setLegendItems] = useState<Array<{
     id: string;
     label: string;
@@ -155,12 +161,16 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
 
   // Sync modalFilterValues with filterValues when filterValues prop changes
+  const prevFilterValuesRef = useRef<string>('');
   useEffect(() => {
     if (filterValues) {
-      console.log(`SimpleAreaChart: Syncing filter values for ${chartConfig.title}`, filterValues);
-      setModalFilterValues(filterValues);
+      const serialized = JSON.stringify(filterValues);
+      if (serialized !== prevFilterValuesRef.current) {
+        prevFilterValuesRef.current = serialized;
+        setModalFilterValues(filterValues);
+      }
     }
-  }, [filterValues, chartConfig.title]);
+  }, [filterValues]);
 
   // Add state to track client-side rendering
   const [isClient, setIsClient] = useState(false);
@@ -293,17 +303,12 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
     }
   }, [currentDisplayMode]);
 
-  // Update modal filters when component receives new filter values
+  // Update internal display mode when filter values change
   useEffect(() => {
-    if (filterValues) {
-      setModalFilterValues(filterValues);
-      
-      // Update internal display mode if provided in filter values
-      if (filterValues.displayMode) {
-        setInternalDisplayMode(filterValues.displayMode as DisplayMode);
-      }
+    if (filterValues?.displayMode) {
+      setInternalDisplayMode(filterValues.displayMode as DisplayMode);
     }
-  }, [filterValues]);
+  }, [filterValues?.displayMode]);
 
   // Set isClient to true when component mounts in browser
   useEffect(() => {
@@ -367,8 +372,8 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
       };
     }
 
-    // Use external color map if available
-    const preferredColorMap = externalColorMap || {};
+    // Use external color map if available (via ref to avoid recomputation cycles)
+    const preferredColorMap = externalColorMapRef.current || {};
     
     // For simple area chart, use consistent color unless explicitly configured
     const shouldUseConsistentColor = !chartConfig.useDistinctColors;
@@ -522,7 +527,7 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
         };
       }
     }
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, externalColorMap, isExpanded, currentDisplayMode]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, chartConfig, isMultiSeries, yFields, isExpanded, currentDisplayMode]);
 
   // Handle mouse leave for tooltip
   const handleMouseLeave = useCallback(() => {
@@ -1069,12 +1074,14 @@ const SimpleAreaChart: React.FC<SimpleAreaChartProps> = ({
   };
 
   // Update hidden series when prop changes
+  const prevHiddenSeriesRef = useRef<string>('');
   useEffect(() => {
-    console.log('SimpleAreaChart: hiddenSeries prop changed:', hiddenSeries);
-    console.log('SimpleAreaChart: yFields are:', yFields);
-    console.log('SimpleAreaChart: isMultiSeries:', isMultiSeries);
-    setHiddenSeriesState(hiddenSeries || []);
-  }, [hiddenSeries, yFields, isMultiSeries]);
+    const serialized = JSON.stringify(hiddenSeries);
+    if (serialized !== prevHiddenSeriesRef.current) {
+      prevHiddenSeriesRef.current = serialized;
+      setHiddenSeriesState(hiddenSeries || []);
+    }
+  }, [hiddenSeries]);
 
   // Reset colors generated flag when data changes
   useEffect(() => {

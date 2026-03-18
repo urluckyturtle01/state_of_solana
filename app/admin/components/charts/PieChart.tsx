@@ -74,6 +74,13 @@ const PieChart: React.FC<PieChartProps> = ({
   const chartRef = useRef<HTMLDivElement | null>(null);
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Stabilize externalColorMap via ref to prevent useMemo recomputation on reference-only changes
+  const externalColorMapRef = useRef<Record<string, string>>(externalColorMap || {});
+  if (externalColorMap && Object.keys(externalColorMap).length > 0) {
+    externalColorMapRef.current = externalColorMap;
+  }
+
   const [legendItems, setLegendItems] = useState<Array<{
     id: string;
     label: string;
@@ -89,12 +96,16 @@ const PieChart: React.FC<PieChartProps> = ({
   const [modalFilterValues, setModalFilterValues] = useState<Record<string, string>>(filterValues || {});
 
   // Sync modalFilterValues with filterValues when filterValues prop changes
+  const prevFilterValuesRef = useRef<string>('');
   useEffect(() => {
     if (filterValues) {
-      console.log(`PieChart: Syncing filter values for ${chartConfig.title}`, filterValues);
-      setModalFilterValues(filterValues);
+      const serialized = JSON.stringify(filterValues);
+      if (serialized !== prevFilterValuesRef.current) {
+        prevFilterValuesRef.current = serialized;
+        setModalFilterValues(filterValues);
+      }
     }
-  }, [filterValues, chartConfig.title]);
+  }, [filterValues]);
 
   // Update tooltip state definition
   const [tooltip, setTooltip] = useState<{
@@ -288,14 +299,14 @@ const PieChart: React.FC<PieChartProps> = ({
     
     // Use external color map if available, otherwise generate from color palette
     const colorValues = dataLabels.map((label, index) => 
-      externalColorMap?.[label] || getColorByIndex(index)
+      externalColorMapRef.current?.[label] || getColorByIndex(index)
     );
     
     return scaleOrdinal({
       domain: dataLabels,
       range: colorValues
     });
-  }, [data, actualXKey, externalColorMap]);
+  }, [data, actualXKey]);
 
   // Refresh data placeholder
   const refreshData = useCallback(() => {
@@ -427,16 +438,14 @@ const PieChart: React.FC<PieChartProps> = ({
     setIsClient(true);
   }, []);
 
-  // Update modal filters when component receives new filter values
-  useEffect(() => {
-    if (filterValues) {
-      setModalFilterValues(filterValues);
-    }
-  }, [filterValues]);
-
   // Update hidden series when prop changes
+  const prevHiddenSeriesRef = useRef<string>('');
   useEffect(() => {
-    setHiddenSeriesState(hiddenSeries);
+    const serialized = JSON.stringify(hiddenSeries);
+    if (serialized !== prevHiddenSeriesRef.current) {
+      prevHiddenSeriesRef.current = serialized;
+      setHiddenSeriesState(hiddenSeries || []);
+    }
   }, [hiddenSeries]);
 
   // Helper function to format field names for display
@@ -466,7 +475,7 @@ const PieChart: React.FC<PieChartProps> = ({
     
     // Create a local color function to avoid dependency on colorScale
     const getItemColor = (label: string, index: number) => {
-      return externalColorMap?.[label] || getColorByIndex(index);
+      return externalColorMapRef.current?.[label] || getColorByIndex(index);
     };
     
     // Calculate total value for percentage (all data)
@@ -487,7 +496,7 @@ const PieChart: React.FC<PieChartProps> = ({
       })
       .sort((a, b) => b.value - a.value);
     setLegendItems(allLegendItems);
-  }, [data, xKey, yKey, formatFieldName, externalColorMap]);
+  }, [data, xKey, yKey, formatFieldName]);
 
   // Enhanced function to handle modal filter changes
   const handleModalFilterChange = useCallback((key: string, value: string) => {

@@ -399,6 +399,12 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const modalChartRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
+
+  // Stabilize externalColorMap via ref to prevent useMemo recomputation on reference-only changes
+  const externalColorMapRef = useRef<Record<string, string>>(externalColorMap || {});
+  if (externalColorMap && Object.keys(externalColorMap).length > 0) {
+    externalColorMapRef.current = externalColorMap;
+  }
   
   // Brush state
   const [isBrushActive, setIsBrushActive] = useState(false);
@@ -425,8 +431,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   const [hiddenSeriesState, setHiddenSeriesState] = useState<string[]>(hiddenSeries || []);
 
   // Update hidden series when prop changes
+  const prevHiddenSeriesRef = useRef<string>('');
   useEffect(() => {
-    setHiddenSeriesState(hiddenSeries || []);
+    const serialized = JSON.stringify(hiddenSeries);
+    if (serialized !== prevHiddenSeriesRef.current) {
+      prevHiddenSeriesRef.current = serialized;
+      setHiddenSeriesState(hiddenSeries || []);
+    }
   }, [hiddenSeries]);
 
   // Update tooltip state definition
@@ -468,9 +479,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       return { chartData: [], fields: [], fieldColors: {}, fieldTypes: {}, fieldUnits: {}, fieldDecimals: {} };
     }
 
-    // Use external color map if available
-    const preferredColorMap = externalColorMap || {};
-    console.log('External color map received:', externalColorMap);
+    // Use external color map if available (via ref to avoid recomputation cycles)
+    const preferredColorMap = externalColorMapRef.current || {};
     
     // Filter data first to remove any undefined x values
     const processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
@@ -788,7 +798,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           fieldDecimals: resultFieldDecimals
         };
       }
-  }, [data, filteredData, isBrushActive, xKey, yField, externalColorMap, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
+  }, [data, filteredData, isBrushActive, xKey, yField, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
 
   // Helper function to force reset the brush visual state
   const forceBrushVisualReset = useCallback((inModal = false) => {

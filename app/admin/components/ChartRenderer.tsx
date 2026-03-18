@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { ChartConfig, YAxisConfig } from '../types';
 import { ReadonlyURLSearchParams } from 'next/navigation';
 
@@ -127,63 +127,45 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
   // Use internal or external filter values based on what's provided
   const [internalFilterValues, setInternalFilterValues] = useState<Record<string, string>>({});
   const [isFilterChanged, setIsFilterChanged] = useState(false);
-  // Add state to track legend colors, use external if provided
-  const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>(externalColorMap || {});
+  // Child-reported colors: flows ONE WAY only (child → parent). Never echoed back.
+  const [legendColorMap, setLegendColorMap] = useState<Record<string, string>>({});
   
   // Update data when preloadedData changes
   useEffect(() => {
     if (preloadedData && preloadedData.length > 0) {
-      console.log('ChartRenderer: Setting preloaded data for chart:', chartConfig.title);
-      console.log('Time aggregation enabled:', chartConfig.additionalOptions?.enableTimeAggregation);
-      console.log('Preloaded data length:', preloadedData.length);
-      
       const isTimeAggregationEnabled = chartConfig.additionalOptions?.enableTimeAggregation;
       
       if (isTimeAggregationEnabled) {
-        // For time aggregation charts, store preloadedData as rawData
-        // and let the aggregation logic process it into data
         setRawData(preloadedData);
-        console.log('ChartRenderer: Set rawData for time aggregation, length:', preloadedData.length);
-        
-        // Don't set data directly - let the time aggregation effect handle it
-        // The time aggregation effect will process rawData into data based on current filter values
       } else {
-        // For regular charts, set preloadedData as final data
         setData(preloadedData);
-        console.log('ChartRenderer: Set data directly for non-time-aggregation chart');
       }
       
       setError(null);
     }
   }, [preloadedData, chartConfig.additionalOptions?.enableTimeAggregation, chartConfig.title]);
 
-  // Update legendColorMap when externalColorMap changes
+  // Forward child-reported colors to parent — one-way, no feedback from externalColorMap
+  const onColorsGeneratedRef = useRef(onColorsGenerated);
+  onColorsGeneratedRef.current = onColorsGenerated;
+  const prevForwardedColorsRef = useRef<string>('');
   useEffect(() => {
-    if (externalColorMap) {
-      setLegendColorMap(externalColorMap);
-    }
-  }, [externalColorMap]);
-
-  // Add effect to forward legend colors to parent component
-  useEffect(() => {
-    if (onColorsGenerated && Object.keys(legendColorMap).length > 0) {
-      // Check if this is actually a new color map from what we got externally
-      const externalMapStr = JSON.stringify(externalColorMap || {});
-      const currentMapStr = JSON.stringify(legendColorMap);
-      
-      // Only trigger the callback if the maps are different
-      if (externalMapStr !== currentMapStr) {
-        onColorsGenerated(legendColorMap);
-      }
-    }
-  }, [legendColorMap, onColorsGenerated, externalColorMap]);
+    if (!onColorsGeneratedRef.current || Object.keys(legendColorMap).length === 0) return;
+    const sortedKeys = Object.keys(legendColorMap).sort();
+    const serialized = JSON.stringify(legendColorMap, sortedKeys);
+    if (serialized === prevForwardedColorsRef.current) return;
+    prevForwardedColorsRef.current = serialized;
+    onColorsGeneratedRef.current(legendColorMap);
+  }, [legendColorMap]);
 
   // Stable callback for child charts to report their computed colors
   const handleChildColorsGenerated = useCallback((colorMap: Record<string, string>) => {
     setLegendColorMap(prev => {
-      const prevStr = JSON.stringify(prev);
-      const newStr = JSON.stringify(colorMap);
-      return prevStr === newStr ? prev : colorMap;
+      const prevKeys = Object.keys(prev).sort();
+      const newKeys = Object.keys(colorMap).sort();
+      if (prevKeys.length !== newKeys.length) return colorMap;
+      const isSame = prevKeys.every((k, i) => k === newKeys[i] && prev[k] === colorMap[k]);
+      return isSame ? prev : colorMap;
     });
   }, []);
 
@@ -1374,18 +1356,6 @@ const ChartRenderer = React.memo<ChartRendererProps>(({
 
   // Memoize the chart rendering to prevent unnecessary re-renders
   const renderChart = React.useCallback(() => {
-    console.log("=== CHART RENDER DEBUG ===");
-    console.log("Rendering chart with config:", {
-      chartType: chartConfig.chartType,
-      isStacked: chartConfig.isStacked,
-      title: chartConfig.title,
-      xAxis: chartConfig.dataMapping.xAxis,
-      yAxis: chartConfig.dataMapping.yAxis,
-      groupBy: chartConfig.dataMapping.groupBy
-    });
-    console.log("Data length:", data.length);
-    console.log("First data item:", data[0]);
-    
     // Get the unit from the chart config for use with all chart types
     const yAxisUnit = getYAxisUnit(chartConfig.dataMapping.yAxis);
     

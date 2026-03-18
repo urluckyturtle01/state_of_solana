@@ -172,68 +172,70 @@ export default function Counter({
   className = ""
 }: CounterProps) {
   const styles = variantStyles[variant] || variantStyles.indigo;
-  const [animatedValue, setAnimatedValue] = useState<string>("0");
+  const [displayValue, setDisplayValue] = useState<string>("0");
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const targetValue = useRef<string>(value);
   const frameRef = useRef<number>(0);
+  const currentDisplayRef = useRef<string>("0");
+  const prevValueRef = useRef<string>(value);
   
   useEffect(() => {
-    // Don't animate on first render or if value is "Loading..."
-    if (value === "Loading..." || value === animatedValue) {
+    if (value === "Loading..." || value === prevValueRef.current) {
+      if (value !== "Loading..." && value !== currentDisplayRef.current) {
+        setDisplayValue(value);
+        currentDisplayRef.current = value;
+      }
+      prevValueRef.current = value;
       return;
     }
     
-    targetValue.current = value;
-    const startValue = parseNumericValue(animatedValue);
+    prevValueRef.current = value;
+    const startValue = parseNumericValue(currentDisplayRef.current);
     const endValue = parseNumericValue(value);
     
     if (startValue === endValue) {
+      setDisplayValue(value);
+      currentDisplayRef.current = value;
       return;
     }
     
-    // Cancel any existing animation
     if (frameRef.current) {
       cancelAnimationFrame(frameRef.current);
     }
     
     setIsAnimating(true);
     
-    // Define animation parameters
-    const duration = 300; // animation duration in ms (reduced from 1500)
+    const duration = 300;
     const startTime = performance.now();
     
-    // Animation function
     const animate = (currentTime: number) => {
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
       
-      // Easing function for smooth animation
       const easeOutQuad = (t: number) => t * (2 - t);
       const easedProgress = easeOutQuad(progress);
       
-      // Calculate current value
       const currentValue = startValue + (endValue - startValue) * easedProgress;
-      setAnimatedValue(formatAnimatedValue(currentValue, value));
+      const formatted = formatAnimatedValue(currentValue, value);
+      currentDisplayRef.current = formatted;
+      setDisplayValue(formatted);
       
-      // Continue animation if not complete
       if (progress < 1) {
         frameRef.current = requestAnimationFrame(animate);
       } else {
-        setAnimatedValue(value);
+        currentDisplayRef.current = value;
+        setDisplayValue(value);
         setIsAnimating(false);
       }
     };
     
-    // Start animation
     frameRef.current = requestAnimationFrame(animate);
     
-    // Clean up on unmount
     return () => {
       if (frameRef.current) {
         cancelAnimationFrame(frameRef.current);
       }
     };
-  }, [value, animatedValue]);
+  }, [value]);
   
   return (
     <div className={`bg-black/80 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-gray-900 shadow-lg ${styles.shadow} transition-all duration-300 min-h-[90px] ${className}`}>
@@ -247,7 +249,7 @@ export default function Counter({
       </div>
       <div className="mt-1">
         <div className="text-xl md:text-2xl font-medium text-gray-300 leading-relaxed truncate">
-          {value === "Loading..." ? animatedValue : isAnimating ? animatedValue : value}
+          {value === "Loading..." ? displayValue : isAnimating ? displayValue : value}
         </div>
         {trend && (
           <div className="flex items-center mt-1 text-xs md:text-sm">

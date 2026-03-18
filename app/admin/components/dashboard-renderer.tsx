@@ -2148,84 +2148,23 @@ export default function DashboardRenderer({
     }));
   }, [charts, legendColorMaps, filterValues]);
 
-  // Add a function to directly pass chart colors to ChartRenderer
+  // Sync chart-reported colors into legendColorMaps (single source of truth for colors)
   const syncLegendColors = useCallback((chartId: string, chartColorMap: Record<string, string>) => {
     if (!chartColorMap || Object.keys(chartColorMap).length === 0) return;
     
-    // Find the chart
-    const chart = charts.find(c => c.id === chartId);
-    
-    console.log(`Received colors for chart ${chartId}:`, {
-      chartType: chart?.chartType,
-      colorMapSize: Object.keys(chartColorMap).length,
-      colorMap: chartColorMap
-    });
-    
-    // Compare with existing color map to prevent unnecessary updates
+    // Sort keys for consistent comparison regardless of insertion order
     const existingColorMap = legendColorMaps[chartId] || {};
-    if (JSON.stringify(existingColorMap) === JSON.stringify(chartColorMap)) {
-      return;
-    }
+    const allKeys = [...new Set([...Object.keys(existingColorMap), ...Object.keys(chartColorMap)])].sort();
+    const isSame = allKeys.length === Object.keys(existingColorMap).length &&
+      allKeys.length === Object.keys(chartColorMap).length &&
+      allKeys.every(k => existingColorMap[k] === chartColorMap[k]);
+    if (isSame) return;
     
     setLegendColorMaps(prev => ({
       ...prev,
       [chartId]: chartColorMap
     }));
-    
-    // Also generate legends using the received color map and current chart data
-    const currentData = chartData[chartId];
-    if (chart && currentData && currentData.length > 0) {
-      console.log(`Generating legends for ${chart.chartType} chart ${chartId} with received colors`);
-      
-      // Create legends based on the color map received from the chart
-      const chartLegends: (Legend & { shape?: 'circle' | 'square' })[] = Object.entries(chartColorMap).map(([label, color]) => {
-        // Calculate total value for this legend item
-        let value = 0;
-        
-        // For area charts, try to calculate the total value
-        if (chart.chartType === 'area' || chart.chartType === 'stacked-area') {
-          // Get the y-axis field name
-          const yField = typeof chart.dataMapping.yAxis === 'string' ? 
-            chart.dataMapping.yAxis : 
-            Array.isArray(chart.dataMapping.yAxis) ? 
-              getFieldName(chart.dataMapping.yAxis[0]) : 
-              getFieldName(chart.dataMapping.yAxis);
-          
-          // If this is a multi-series chart, the label might be a field name
-          if (Array.isArray(chart.dataMapping.yAxis) && chart.dataMapping.yAxis.length > 1) {
-            // Convert label back to field name (reverse the formatting)
-            const fieldName = label.toLowerCase().replace(/\s+/g, '_');
-            value = currentData.reduce((sum, item) => sum + (Number(item[fieldName]) || 0), 0);
-          } else {
-            // Single series - use the y-axis field
-            value = currentData.reduce((sum, item) => sum + (Number(item[yField]) || 0), 0);
-          }
-        }
-        
-        return {
-          label,
-          color,
-          value: value || 0,
-          shape: 'square' as const // Area charts use square shapes
-        };
-      });
-      
-      // Sort by value (highest first)
-      chartLegends.sort((a, b) => {
-        const aValue = a.value ?? 0;
-        const bValue = b.value ?? 0;
-        return bValue - aValue;
-      });
-      
-      console.log(`Generated ${chartLegends.length} legend items from color map:`, chartLegends);
-      
-      // Update legends state
-      setLegends(prev => ({
-        ...prev,
-        [chartId]: chartLegends
-      }));
-    }
-  }, [legendColorMaps, charts, chartData]);
+  }, [legendColorMaps]);
 
   // Handle modal filter value updates from expanded charts
   const handleModalFilterUpdate = useCallback((chartId: string, newModalFilters: Record<string, string>) => {
@@ -2287,19 +2226,27 @@ export default function DashboardRenderer({
     }
   }, [charts.length]); // Only run when charts array length changes (initial load)
 
-  // When chart data changes, ensure legends are updated for all charts
+  // When chart data or filter values change, ensure legends are updated
+  const prevChartDataKeysRef = useRef<string>('');
+  const prevFilterValuesRef = useRef<string>('');
   useEffect(() => {
+    const chartDataKeys = JSON.stringify(Object.keys(chartData).sort());
+    const filterValuesStr = JSON.stringify(filterValues);
+    const isNewData = chartDataKeys !== prevChartDataKeysRef.current;
+    const isNewFilters = filterValuesStr !== prevFilterValuesRef.current;
+    if (!isNewData && !isNewFilters) return;
+    prevChartDataKeysRef.current = chartDataKeys;
+    prevFilterValuesRef.current = filterValuesStr;
+
     Object.entries(chartData).forEach(([chartId, data]) => {
       if (data && data.length > 0) {
-        // Find the chart
         const chart = charts.find(c => c.id === chartId);
         if (chart) {
-          console.log(`Updating legends for ${chart.chartType} chart ${chartId} with ${data.length} data points`);
-          updateLegends(chartId, data);
+          updateLegendsRef.current(chartId, data);
         }
       }
     });
-  }, [chartData, charts, filterValues, updateLegends]);
+  }, [chartData, charts, filterValues]);
 
   // Add session storage hydration (immediately after setting isClient)
   useEffect(() => {
@@ -2401,32 +2348,156 @@ export default function DashboardRenderer({
   }, [filteredCharts, filterValues, chartData, transformChartConfigForCurrency]);
 
   // Memoize onDataLoaded callbacks for all charts to prevent recreating them
+  const updateLegendsRef = useRef(updateLegends);
+  updateLegendsRef.current = updateLegends;
+  const chartDataRef = useRef(chartData);
+  chartDataRef.current = chartData;
+  const updateChartStateRef = useRef(updateChartState);
+  updateChartStateRef.current = updateChartState;
+
   const onDataLoadedCallbacks = useMemo(() => {
     const callbacks: Record<string, (data: any[]) => void> = {};
     
     filteredCharts.forEach(chart => {
-      callbacks[chart.id] = (data: any[]) => {
-        // Store initial data and update legends
-        if (!chartData[chart.id] || chartData[chart.id].length === 0) {
+      const chartId = chart.id;
+      callbacks[chartId] = (data: any[]) => {
+        if (!chartDataRef.current[chartId] || chartDataRef.current[chartId].length === 0) {
           setChartData(prev => ({
             ...prev,
-            [chart.id]: data
+            [chartId]: data
           }));
-          updateLegends(chart.id, data);
+          updateLegendsRef.current(chartId, data);
         }
-        
-        // Set loading to false when data is loaded
-        updateChartState(chart.id, { loading: false });
+        updateChartStateRef.current(chartId, { loading: false });
       };
     });
     
     return callbacks;
-  }, [filteredCharts, chartData, updateLegends, updateChartState]);
+  }, [filteredCharts]);
 
-  // Batch functions for chart state updates
+  // Stable empty references to avoid creating new objects/arrays on every render
+  const EMPTY_ARRAY: string[] = useMemo(() => [], []);
+  const EMPTY_OBJECT: Record<string, string> = useMemo(() => ({}), []);
+  const EMPTY_DATA: any[] = useMemo(() => [], []);
 
-  // REMOVED isClient gate - show loading state immediately instead of null
-  // This eliminates the "big spinner" delay from Suspense fallback
+  // Stable per-chart prop references to prevent child re-render cascades
+  const stableHiddenSeries = useMemo(() => {
+    const result: Record<string, string[]> = {};
+    for (const chart of filteredCharts) {
+      result[chart.id] = hiddenSeries[chart.id] || EMPTY_ARRAY;
+    }
+    return result;
+  }, [filteredCharts, hiddenSeries, EMPTY_ARRAY]);
+
+  const stableFilterValuesPerChart = useMemo(() => {
+    const result: Record<string, Record<string, string>> = {};
+    for (const chart of filteredCharts) {
+      const isModal = expandedCharts[chart.id];
+      if (isModal && modalFilterValues[chart.id]) {
+        result[chart.id] = modalFilterValues[chart.id];
+      } else {
+        result[chart.id] = filterValues[chart.id] || EMPTY_OBJECT;
+      }
+    }
+    return result;
+  }, [filteredCharts, expandedCharts, modalFilterValues, filterValues, EMPTY_OBJECT]);
+
+  const stablePreloadedData = useMemo(() => {
+    const result: Record<string, any[]> = {};
+    for (const chart of filteredCharts) {
+      result[chart.id] = chartData[chart.id] || EMPTY_DATA;
+    }
+    return result;
+  }, [filteredCharts, chartData, EMPTY_DATA]);
+
+  // Refs for callbacks to avoid inline functions in render
+  const syncLegendColorsRef = useRef(syncLegendColors);
+  syncLegendColorsRef.current = syncLegendColors;
+  const handleFilterChangeRef = useRef(handleFilterChange);
+  handleFilterChangeRef.current = handleFilterChange;
+  const handleModalFilterUpdateRef = useRef(handleModalFilterUpdate);
+  handleModalFilterUpdateRef.current = handleModalFilterUpdate;
+  const expandedChartsRef = useRef(expandedCharts);
+  expandedChartsRef.current = expandedCharts;
+  const filterValuesRef = useRef(filterValues);
+  filterValuesRef.current = filterValues;
+  const modalFilterValuesRef = useRef(modalFilterValues);
+  modalFilterValuesRef.current = modalFilterValues;
+
+  // Stable per-chart callbacks
+  const stableOnColorsGenerated = useMemo(() => {
+    const result: Record<string, (colorMap: Record<string, string>) => void> = {};
+    for (const chart of filteredCharts) {
+      const chartId = chart.id;
+      result[chartId] = (colorMap: Record<string, string>) => syncLegendColorsRef.current(chartId, colorMap);
+    }
+    return result;
+  }, [filteredCharts]);
+
+  const stableOnFilterChange = useMemo(() => {
+    const result: Record<string, (filterType: string | Record<string, string>, value?: string) => void> = {};
+    for (const chart of filteredCharts) {
+      const chartId = chart.id;
+      const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
+      result[chartId] = (filterType: string | Record<string, string>, value?: string) => {
+        const isModal = expandedChartsRef.current[chartId];
+        if (typeof filterType === 'string' && typeof value === 'string') {
+          if (isModal) {
+            handleModalFilterUpdateRef.current(chartId, { [filterType]: value });
+          } else {
+            handleFilterChangeRef.current(chartId, filterType, value);
+          }
+        } else if (typeof filterType === 'object' && filterType !== null && !value) {
+          const newFilters = filterType as Record<string, string>;
+          const currentFilters = isModal
+            ? (modalFilterValuesRef.current[chartId] || filterValuesRef.current[chartId] || {})
+            : (filterValuesRef.current[chartId] || {});
+          const filterKeys = Object.keys(newFilters);
+          const isSingleTimeFilter = filterKeys.length === 1 && filterKeys[0] === 'timeFilter' && isTimeAggregationEnabled;
+          if (isSingleTimeFilter) {
+            const [key, newValue] = Object.entries(newFilters)[0];
+            if (currentFilters[key] !== newValue) {
+              if (isModal) {
+                requestAnimationFrame(() => handleModalFilterUpdateRef.current(chartId, { [key]: newValue }));
+              } else {
+                requestAnimationFrame(() => {
+                  setFilterValues(prev => ({ ...prev, [chartId]: { ...prev[chartId], [key]: newValue } }));
+                });
+              }
+            }
+          } else {
+            Object.entries(newFilters).forEach(([key, newValue]) => {
+              if (currentFilters[key] !== newValue) {
+                if (isModal) {
+                  handleModalFilterUpdateRef.current(chartId, { [key]: newValue });
+                } else {
+                  handleFilterChangeRef.current(chartId, key, newValue);
+                }
+              }
+            });
+          }
+        }
+      };
+    }
+    return result;
+  }, [filteredCharts]);
+
+  const stableOnCloseExpanded = useMemo(() => {
+    const result: Record<string, () => void> = {};
+    for (const chart of filteredCharts) {
+      result[chart.id] = () => toggleChartExpanded(chart.id);
+    }
+    return result;
+  }, [filteredCharts, toggleChartExpanded]);
+
+  const stableOnModalFilterUpdate = useMemo(() => {
+    const result: Record<string, ((filters: Record<string, string>) => void) | undefined> = {};
+    for (const chart of filteredCharts) {
+      const chartId = chart.id;
+      result[chartId] = (filters: Record<string, string>) => handleModalFilterUpdateRef.current(chartId, filters);
+    }
+    return result;
+  }, [filteredCharts]);
 
   // Don't show page loading if we already have data from session storage
   if (isPageLoading && Object.keys(chartData).length === 0) {
@@ -2559,86 +2630,16 @@ export default function DashboardRenderer({
             <ChartRenderer 
               key={chart.id}
               chartConfig={chart}
-              preloadedData={chartData[chart.id] || []}
+              preloadedData={stablePreloadedData[chart.id]}
               onDataLoaded={onDataLoadedCallbacks[chart.id]}
               isExpanded={expandedCharts[chart.id]}
-              onCloseExpanded={() => toggleChartExpanded(chart.id)}
-              filterValues={expandedCharts[chart.id] && modalFilterValues[chart.id] ? modalFilterValues[chart.id] : (filterValues[chart.id] || {})}
-              onFilterChange={(filterType, value) => {
-                // Check if this chart is in modal mode
-                const isModal = expandedCharts[chart.id];
-                
-                // Handle individual filter changes from ChartRenderer's internal calls
-                if (typeof filterType === 'string' && typeof value === 'string') {
-                  if (isModal) {
-                    // For modal charts, update modal filter values instead
-                    handleModalFilterUpdate(chart.id, { [filterType]: value });
-                  } else {
-                    handleFilterChange(chart.id, filterType, value);
-                  }
-                } else if (typeof filterType === 'object' && filterType !== null && !value) {
-                  // Handle filter changes from chart components
-                  const newFilters = filterType as Record<string, string>;
-                  const currentFilters = isModal ? 
-                    (modalFilterValues[chart.id] || filterValues[chart.id] || {}) : 
-                    (filterValues[chart.id] || {});
-                  const filterKeys = Object.keys(newFilters);
-                  
-                  // Check if this is a single time filter change for time aggregation charts
-                  const isTimeAggregationEnabled = chart.additionalOptions?.enableTimeAggregation;
-                  const isSingleTimeFilter = filterKeys.length === 1 && filterKeys[0] === 'timeFilter' && isTimeAggregationEnabled;
-                  
-                  if (isSingleTimeFilter) {
-                    // Handle single time filter change - this should be client-side only
-                    if (process.env.NODE_ENV === 'development') {
-                    console.log(`Dashboard: Single time filter change for time aggregation chart - client-side only (modal: ${isModal})`);
-                    }
-                    const [key, newValue] = Object.entries(newFilters)[0];
-                    if (currentFilters[key] !== newValue) {
-                      if (isModal) {
-                        // Update modal filter values for expanded charts using requestAnimationFrame
-                        requestAnimationFrame(() => {
-                        handleModalFilterUpdate(chart.id, { [key]: newValue });
-                        });
-                      } else {
-                        // Update regular filter values without triggering API call
-                        requestAnimationFrame(() => {
-                        setFilterValues(prev => ({
-                          ...prev,
-                          [chart.id]: {
-                            ...prev[chart.id],
-                            [key]: newValue
-                          }
-                        }));
-                        });
-                      }
-                    }
-                  } else {
-                    // Handle other filter changes or bulk updates
-                    if (process.env.NODE_ENV === 'development') {
-                    console.log(`Dashboard: Bulk filter change or non-time filter (modal: ${isModal})`);
-                    }
-                    Object.entries(newFilters).forEach(([key, newValue]) => {
-                      if (currentFilters[key] !== newValue) {
-                        if (isModal) {
-                          // For modal charts, always use modal filter update
-                          handleModalFilterUpdate(chart.id, { [key]: newValue });
-                        } else {
-                          // For regular charts, may trigger API calls
-                          handleFilterChange(chart.id, key, newValue);
-                        }
-                      }
-                    });
-                  }
-                } else {
-                  console.warn('Unexpected onFilterChange call:', { filterType, value });
-                }
-              }}
-              colorMap={legendColorMaps[chart.id]}
-              onColorsGenerated={(colorMap) => syncLegendColors(chart.id, colorMap)}
-              hiddenSeries={hiddenSeries[chart.id] || []}
+              onCloseExpanded={stableOnCloseExpanded[chart.id]}
+              filterValues={stableFilterValuesPerChart[chart.id]}
+              onFilterChange={stableOnFilterChange[chart.id]}
+              onColorsGenerated={stableOnColorsGenerated[chart.id]}
+              hiddenSeries={stableHiddenSeries[chart.id]}
               isLoading={loadingCharts[chart.id] || false}
-              onModalFilterUpdate={expandedCharts[chart.id] ? (filters) => handleModalFilterUpdate(chart.id, filters) : undefined}
+              onModalFilterUpdate={stableOnModalFilterUpdate[chart.id]}
             />
           </div>
         </MemoizedChartCard>

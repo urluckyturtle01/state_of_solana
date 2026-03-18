@@ -217,6 +217,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [legendItems, setLegendItems] = useState<Array<{id: string, label: string, color: string, value?: number}>>([]);
   
+  // Stabilize externalColorMap via ref to prevent useMemo recomputation on reference-only changes
+  const externalColorMapRef = useRef<Record<string, string>>(externalColorMap || {});
+  if (externalColorMap && Object.keys(externalColorMap).length > 0) {
+    externalColorMapRef.current = externalColorMap;
+  }
+
   // Internal display mode state that updates with filter changes
   const [internalDisplayMode, setInternalDisplayMode] = useState<DisplayMode>(propDisplayMode || 'absolute');
   
@@ -665,8 +671,8 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       };
     }
 
-    // Use external color map if available
-    const preferredColorMap = externalColorMap || {};
+    // Use external color map if available (via ref to avoid recomputation cycles)
+    const preferredColorMap = externalColorMapRef.current || {};
     
     // Filter data first
     const processedData: ChartDataItem[] = currentData.filter((d: any) => d[xKey] !== undefined && d[xKey] !== null);
@@ -972,13 +978,14 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       groupColors: colorsByGroup,
       fieldUnits: { [yKey]: typeof yField === 'string' ? undefined : (yField as YAxisConfig).unit }
     };
-  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, externalColorMap, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
+  }, [data, filteredData, modalFilteredData, isBrushActive, isModalBrushActive, xKey, yKey, yField, groupByField, isExpanded, chartConfig, displayMode, hiddenSeriesState, filterValues, modalFilterValues]);
 
   // Report color map to parent so legend uses same colors as chart/tooltip
   const prevReportedColorsRef = useRef<string>('');
   useEffect(() => {
     if (onColorsGenerated && groupColors && Object.keys(groupColors).length > 0) {
-      const serialized = JSON.stringify(groupColors);
+      const sortedKeys = Object.keys(groupColors).sort();
+      const serialized = JSON.stringify(groupColors, sortedKeys);
       if (serialized !== prevReportedColorsRef.current) {
         prevReportedColorsRef.current = serialized;
         onColorsGenerated(groupColors);
