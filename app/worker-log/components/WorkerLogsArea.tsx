@@ -51,7 +51,7 @@ export default function WorkerLogsArea({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [displayCleared, setDisplayCleared] = useState(false);
-  const [clearedAtLength, setClearedAtLength] = useState(0);
+  const clearedMarkerRef = useRef<string>('');
   const [rawLogContent, setRawLogContent] = useState('');
   const [allLines, setAllLines] = useState<string[]>([]);
   const [displayedStartIndex, setDisplayedStartIndex] = useState(0);
@@ -103,7 +103,11 @@ export default function WorkerLogsArea({
         .then((r) => r.text())
         .then((data) => {
           setRawLogContent(data);
-          const contentToShow = displayCleared ? data.slice(clearedAtLength) : data;
+          let contentToShow = data;
+          if (displayCleared && clearedMarkerRef.current) {
+            const idx = data.indexOf(clearedMarkerRef.current);
+            contentToShow = idx >= 0 ? data.slice(idx + clearedMarkerRef.current.length) : data;
+          }
           const lines = contentToShow.split('\n');
           const nonEmpty = lines.filter((l) => l.trim());
 
@@ -159,7 +163,7 @@ export default function WorkerLogsArea({
           onLastUpdate(new Date().toLocaleTimeString());
         });
     },
-    [displayCleared, clearedAtLength, onLastUpdate]
+    [displayCleared, onLastUpdate]
   );
 
   // Re-render when lines or indices change
@@ -263,7 +267,7 @@ export default function WorkerLogsArea({
   const clearLog = () => {
     if (confirm('Clear display? Only new logs will appear. (log file untouched)')) {
       setDisplayCleared(true);
-      setClearedAtLength(rawLogContent.length);
+      clearedMarkerRef.current = rawLogContent.slice(-600) || '';
       setAllLines([]);
       setDisplayedStartIndex(0);
       setDisplayedEndIndex(0);
@@ -299,10 +303,14 @@ export default function WorkerLogsArea({
     }
   };
 
-  const shortcutHint =
-    typeof navigator !== 'undefined' && navigator.platform?.toLowerCase().includes('mac')
-      ? '⌘F'
-      : 'Ctrl+F';
+  const [shortcutHint, setShortcutHint] = useState('Ctrl+F');
+  useEffect(() => {
+    setShortcutHint(
+      typeof navigator !== 'undefined' && navigator.platform?.toLowerCase().includes('mac')
+        ? '⌘F'
+        : 'Ctrl+F'
+    );
+  }, []);
 
   const isVisible = mobileTab === 'logs';
 
@@ -362,7 +370,7 @@ export default function WorkerLogsArea({
           className="worker-log-toolbar-btn icon-only"
           onClick={() => {
             setDisplayCleared(false);
-            setClearedAtLength(0);
+            clearedMarkerRef.current = '';
             loadLog(true);
           }}
           title="Refresh"

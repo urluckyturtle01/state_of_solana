@@ -1,13 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function WorkerLogLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -18,17 +16,18 @@ export default function WorkerLogLoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
+        credentials: 'include',
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Invalid password');
+        setLoading(false);
         return;
       }
-      router.push('/worker-log');
-      router.refresh();
+      // Full page redirect ensures cookie is sent and avoids cached prefetched layout
+      window.location.href = '/worker-log';
     } catch {
       setError('Connection failed');
-    } finally {
       setLoading(false);
     }
   }
