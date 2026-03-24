@@ -21,11 +21,11 @@ CHART_CATEGORIES = {
         'total_economic_value',
     ],
     'RWAs': [
-        'Stablecoins',
-        'Tokenized Commodities',
-        'Tokenized Funds',
-        'Yield Bearing Tokens',
+        'stablecoins',
+        'tokenized_commodities',
+        'tokenized_funds',
         'xstocks',
+        'yield_bearing_tokens',
     ]
 }
 

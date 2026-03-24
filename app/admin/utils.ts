@@ -497,11 +497,11 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
     'rev-cost-and-capacity',
     'rev-issuance-and-burn',
     'rev-total-economic-value',
-    'rwas-Stablecoins',
-    'rwas-Tokenized Commodities',
-    'rwas-Tokenized Funds',
-    'rwas-Yield Bearing Tokens',
+    'rwas-stablecoins',
+    'rwas-tokenized-commodities',
+    'rwas-tokenized-funds',
     'rwas-xstocks',
+    'rwas-yield-bearing-tokens',
   ];
   if (dbBackedPages.includes(pageId)) {
     try {
@@ -1553,11 +1553,11 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     'rev-cost-and-capacity',
     'rev-issuance-and-burn',
     'rev-total-economic-value',
-    'rwas-Stablecoins',
-    'rwas-Tokenized Commodities',
-    'rwas-Tokenized Funds',
-    'rwas-Yield Bearing Tokens',
+    'rwas-stablecoins',
+    'rwas-tokenized-commodities',
+    'rwas-tokenized-funds',
     'rwas-xstocks',
+    'rwas-yield-bearing-tokens',
   ];
     if (dbBackedPages.includes(pageId)) {
       try {

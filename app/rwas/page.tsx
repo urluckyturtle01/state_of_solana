@@ -7,7 +7,7 @@ export default function RwasIndexPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/rwas/Stablecoins");
+    router.replace("/rwas/stablecoins");
   }, [router]);
 
   return (

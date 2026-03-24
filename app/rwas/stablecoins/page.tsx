@@ -9,14 +9,14 @@ const ChartLoading = () => (
   </div>
 );
 
-const structuredData = generateStructuredData('/rwas/Yield Bearing Tokens');
+const structuredData = generateStructuredData('/rwas/stablecoins');
 
-export default function RwasYield bearing tokensPage() {
+export default function RwasStablecoinsPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer
-          pageId="rwas-Yield Bearing Tokens"
+          pageId="rwas-stablecoins"
           enableCaching={true}
         />
       </Suspense>
@@ -24,4 +24,4 @@ export default function RwasYield bearing tokensPage() {
   );
 }
 
-export const metadata = generateNextMetadata('/rwas/Yield Bearing Tokens');
+export const metadata = generateNextMetadata('/rwas/stablecoins');

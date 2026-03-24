@@ -154538,4 +154538,1319 @@ ORDER BY dv.block_date, dv.volume_usd DESC
 06:31:17.838 Backfill (full): 2026-03-24 → 2025-01-01
 06:31:17.838 Fetching month 2026-03-01 (1/15)...06:31:35.215  ✅ 270 rows
 06:31:35.232       💾 Checkpoint: 1 months processed
-06:31:35.232 Fetching month 2026-02-01 (2/15)...
+06:31:35.232 Fetching month 2026-02-01 (2/15)...06:31:54.022  ✅ 342 rows
+06:31:54.041       💾 Checkpoint: 2 months processed
+06:31:54.041 Fetching month 2026-01-01 (3/15)...06:32:16.472  ✅ 378 rows
+06:32:16.492       💾 Checkpoint: 3 months processed
+06:32:16.492 Fetching month 2025-12-01 (4/15)...06:32:17.765  ⚠️ 0 rows
+06:32:17.765       💾 Checkpoint: 4 months processed
+06:32:17.765 Fetching month 2025-11-01 (5/15)...06:32:19.159  ⚠️ 0 rows
+06:32:19.160       💾 Checkpoint: 5 months processed
+06:32:19.160 Fetching month 2025-10-01 (6/15)...06:32:20.559  ⚠️ 0 rows
+06:32:20.559       💾 Checkpoint: 6 months processed
+06:32:20.559 Fetching month 2025-09-01 (7/15)...06:32:21.922  ⚠️ 0 rows
+06:32:21.923       💾 Checkpoint: 7 months processed
+06:32:21.923 Fetching month 2025-08-01 (8/15)...06:32:23.170  ⚠️ 0 rows
+06:32:23.170       💾 Checkpoint: 8 months processed
+06:32:23.170 Fetching month 2025-07-01 (9/15)...06:32:24.562  ⚠️ 0 rows
+06:32:24.562       💾 Checkpoint: 9 months processed
+06:32:24.562 Fetching month 2025-06-01 (10/15)...06:32:25.826  ⚠️ 0 rows
+06:32:25.827       💾 Checkpoint: 10 months processed
+06:32:25.827 Fetching month 2025-05-01 (11/15)...06:32:27.144  ⚠️ 0 rows
+06:32:27.144       💾 Checkpoint: 11 months processed
+06:32:27.144 Fetching month 2025-04-01 (12/15)...06:32:28.377  ⚠️ 0 rows
+06:32:28.377       💾 Checkpoint: 12 months processed
+06:32:28.377 Fetching month 2025-03-01 (13/15)...06:32:29.749  ⚠️ 0 rows
+06:32:29.749       💾 Checkpoint: 13 months processed
+06:32:29.749 Fetching month 2025-02-01 (14/15)...06:32:31.079  ⚠️ 0 rows
+06:32:31.080       💾 Checkpoint: 14 months processed
+06:32:31.080 Fetching month 2025-01-01 (15/15)...06:32:32.498  ⚠️ 0 rows
+06:32:32.498       💾 Checkpoint: 15 months processed
+06:32:32.499 ✅ Backfill (full) complete: 990 total rows
+06:32:32.500 ✅ Job #1094 SUCCESSFUL: 990 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 35284bb21c28b55039129abefe46b33d
+06:32:32.505 🔄 Processing job #1095 (backfill) - attempt 1/3
+06:32:32.505 SQL hash: a85befa221bc006410300a53d5f15920
+06:32:32.506 Backfill (full): 2026-03-24 → 2025-01-01
+06:32:32.506 Fetching month 2026-03-01 (1/15)...06:32:41.519  ✅ 356 rows
+06:32:41.535       💾 Checkpoint: 1 months processed
+06:32:41.535 Fetching month 2026-02-01 (2/15)...06:32:52.178  ✅ 439 rows
+06:32:52.195       💾 Checkpoint: 2 months processed
+06:32:52.195 Fetching month 2026-01-01 (3/15)...06:33:03.330  ✅ 514 rows
+06:33:03.353       💾 Checkpoint: 3 months processed
+06:33:03.353 Fetching month 2025-12-01 (4/15)...06:33:03.653  ⚠️ 0 rows
+06:33:03.653       💾 Checkpoint: 4 months processed
+06:33:03.653 Fetching month 2025-11-01 (5/15)...06:33:03.930  ⚠️ 0 rows
+06:33:03.930       💾 Checkpoint: 5 months processed
+06:33:03.930 Fetching month 2025-10-01 (6/15)...06:33:04.213  ⚠️ 0 rows
+06:33:04.213       💾 Checkpoint: 6 months processed
+06:33:04.213 Fetching month 2025-09-01 (7/15)...06:33:04.466  ⚠️ 0 rows
+06:33:04.466       💾 Checkpoint: 7 months processed
+06:33:04.466 Fetching month 2025-08-01 (8/15)...06:33:04.721  ⚠️ 0 rows
+06:33:04.722       💾 Checkpoint: 8 months processed
+06:33:04.722 Fetching month 2025-07-01 (9/15)...06:33:04.993  ⚠️ 0 rows
+06:33:04.993       💾 Checkpoint: 9 months processed
+06:33:04.994 Fetching month 2025-06-01 (10/15)...06:33:05.268  ⚠️ 0 rows
+06:33:05.268       💾 Checkpoint: 10 months processed
+06:33:05.268 Fetching month 2025-05-01 (11/15)...06:33:05.585  ⚠️ 0 rows
+06:33:05.585       💾 Checkpoint: 11 months processed
+06:33:05.585 Fetching month 2025-04-01 (12/15)...06:33:05.899  ⚠️ 0 rows
+06:33:05.899       💾 Checkpoint: 12 months processed
+06:33:05.899 Fetching month 2025-03-01 (13/15)...06:33:06.159  ⚠️ 0 rows
+06:33:06.159       💾 Checkpoint: 13 months processed
+06:33:06.159 Fetching month 2025-02-01 (14/15)...06:33:06.407  ⚠️ 0 rows
+06:33:06.407       💾 Checkpoint: 14 months processed
+06:33:06.407 Fetching month 2025-01-01 (15/15)...06:33:06.666  ⚠️ 0 rows
+06:33:06.666       💾 Checkpoint: 15 months processed
+06:33:06.666 ✅ Backfill (full) complete: 1309 total rows
+06:33:06.666 ✅ Job #1095 SUCCESSFUL: 1309 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash a85befa221bc006410300a53d5f15920
+06:33:06.672 🔄 Processing job #1096 (backfill) - attempt 1/3
+06:33:06.672 SQL hash: b25cdc20ee8af217009689e8414ef11f
+06:33:06.672 Backfill (full): 2026-03-24 → 2025-01-01
+06:33:06.672 Fetching month 2026-03-01 (1/15)...06:33:06.881  ✅ 483 rows
+06:33:06.903       💾 Checkpoint: 1 months processed
+06:33:06.903 Fetching month 2026-02-01 (2/15)...06:33:07.130  ✅ 588 rows
+06:33:07.153       💾 Checkpoint: 2 months processed
+06:33:07.153 Fetching month 2026-01-01 (3/15)...06:33:07.341  ✅ 651 rows
+06:33:07.369       💾 Checkpoint: 3 months processed
+06:33:07.369 Fetching month 2025-12-01 (4/15)...06:33:07.434  ⚠️ 0 rows
+06:33:07.435       💾 Checkpoint: 4 months processed
+06:33:07.435 Fetching month 2025-11-01 (5/15)...06:33:07.497  ⚠️ 0 rows
+06:33:07.497       💾 Checkpoint: 5 months processed
+06:33:07.497 Fetching month 2025-10-01 (6/15)...06:33:07.559  ⚠️ 0 rows
+06:33:07.559       💾 Checkpoint: 6 months processed
+06:33:07.559 Fetching month 2025-09-01 (7/15)...06:33:07.619  ⚠️ 0 rows
+06:33:07.619       💾 Checkpoint: 7 months processed
+06:33:07.619 Fetching month 2025-08-01 (8/15)...06:33:07.677  ⚠️ 0 rows
+06:33:07.677       💾 Checkpoint: 8 months processed
+06:33:07.677 Fetching month 2025-07-01 (9/15)...06:33:07.745  ⚠️ 0 rows
+06:33:07.745       💾 Checkpoint: 9 months processed
+06:33:07.745 Fetching month 2025-06-01 (10/15)...06:33:07.812  ⚠️ 0 rows
+06:33:07.812       💾 Checkpoint: 10 months processed
+06:33:07.812 Fetching month 2025-05-01 (11/15)...06:33:07.877  ⚠️ 0 rows
+06:33:07.877       💾 Checkpoint: 11 months processed
+06:33:07.877 Fetching month 2025-04-01 (12/15)...06:33:07.941  ⚠️ 0 rows
+06:33:07.941       💾 Checkpoint: 12 months processed
+06:33:07.941 Fetching month 2025-03-01 (13/15)...06:33:08.004  ⚠️ 0 rows
+06:33:08.004       💾 Checkpoint: 13 months processed
+06:33:08.004 Fetching month 2025-02-01 (14/15)...06:33:08.071  ⚠️ 0 rows
+06:33:08.071       💾 Checkpoint: 14 months processed
+06:33:08.071 Fetching month 2025-01-01 (15/15)...06:33:08.134  ⚠️ 0 rows
+06:33:08.134       💾 Checkpoint: 15 months processed
+06:33:08.135 ✅ Backfill (full) complete: 1722 total rows
+06:33:08.135 ✅ Job #1096 SUCCESSFUL: 1722 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash b25cdc20ee8af217009689e8414ef11f
+06:33:08.146 🔄 Processing job #1097 (backfill) - attempt 1/3
+06:33:08.146 SQL hash: 288d2bc28eaa0f6e736de0751d787927
+06:33:08.146 Backfill (full): 2026-03-24 → 2025-01-01
+06:33:08.146 Fetching month 2026-03-01 (1/15)...06:33:25.381  ✅ 392 rows
+06:33:25.401       💾 Checkpoint: 1 months processed
+06:33:25.401 Fetching month 2026-02-01 (2/15)...06:33:44.807  ✅ 475 rows
+06:33:44.834       💾 Checkpoint: 2 months processed
+06:33:44.834 Fetching month 2026-01-01 (3/15)...06:34:06.847  ✅ 535 rows
+06:34:06.881       💾 Checkpoint: 3 months processed
+06:34:06.881 Fetching month 2025-12-01 (4/15)...06:34:08.319  ⚠️ 0 rows
+06:34:08.319       💾 Checkpoint: 4 months processed
+06:34:08.319 Fetching month 2025-11-01 (5/15)...06:34:09.821  ⚠️ 0 rows
+06:34:09.821       💾 Checkpoint: 5 months processed
+06:34:09.821 Fetching month 2025-10-01 (6/15)...06:34:10.986  ⚠️ 0 rows
+06:34:10.986       💾 Checkpoint: 6 months processed
+06:34:10.986 Fetching month 2025-09-01 (7/15)...06:34:12.329  ⚠️ 0 rows
+06:34:12.329       💾 Checkpoint: 7 months processed
+06:34:12.329 Fetching month 2025-08-01 (8/15)...06:34:13.637  ⚠️ 0 rows
+06:34:13.637       💾 Checkpoint: 8 months processed
+06:34:13.638 Fetching month 2025-07-01 (9/15)...06:34:14.889  ⚠️ 0 rows
+06:34:14.889       💾 Checkpoint: 9 months processed
+06:34:14.889 Fetching month 2025-06-01 (10/15)...06:34:16.213  ⚠️ 0 rows
+06:34:16.213       💾 Checkpoint: 10 months processed
+06:34:16.213 Fetching month 2025-05-01 (11/15)...06:34:17.631  ⚠️ 0 rows
+06:34:17.631       💾 Checkpoint: 11 months processed
+06:34:17.631 Fetching month 2025-04-01 (12/15)...06:34:18.804  ⚠️ 0 rows
+06:34:18.804       💾 Checkpoint: 12 months processed
+06:34:18.804 Fetching month 2025-03-01 (13/15)...06:34:20.135  ⚠️ 0 rows
+06:34:20.135       💾 Checkpoint: 13 months processed
+06:34:20.135 Fetching month 2025-02-01 (14/15)...06:34:21.431  ⚠️ 0 rows
+06:34:21.431       💾 Checkpoint: 14 months processed
+06:34:21.431 Fetching month 2025-01-01 (15/15)...06:34:22.678  ⚠️ 0 rows
+06:34:22.678       💾 Checkpoint: 15 months processed
+06:34:22.680 ✅ Backfill (full) complete: 1402 total rows
+06:34:22.680 ✅ Job #1097 SUCCESSFUL: 1402 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 288d2bc28eaa0f6e736de0751d787927
+06:34:22.688 🔄 Processing job #1098 (backfill) - attempt 1/3
+06:34:22.689 SQL hash: c24e6920ead525d4761f1a4d46fbc0bb
+06:34:22.689 Backfill (full): 2026-03-24 → 2025-01-01
+06:34:22.689 Fetching month 2026-03-01 (1/15)...06:34:35.338  ✅ 75 rows
+06:34:35.354       💾 Checkpoint: 1 months processed
+06:34:35.354 Fetching month 2026-02-01 (2/15)...06:34:49.599  ✅ 134 rows
+06:34:49.614       💾 Checkpoint: 2 months processed
+06:34:49.614 Fetching month 2026-01-01 (3/15)...06:35:05.743  ✅ 100 rows
+06:35:05.757       💾 Checkpoint: 3 months processed
+06:35:05.757 Fetching month 2025-12-01 (4/15)...06:35:07.089  ⚠️ 0 rows
+06:35:07.089       💾 Checkpoint: 4 months processed
+06:35:07.090 Fetching month 2025-11-01 (5/15)...06:35:08.383  ⚠️ 0 rows
+06:35:08.383       💾 Checkpoint: 5 months processed
+06:35:08.383 Fetching month 2025-10-01 (6/15)...06:35:09.782  ⚠️ 0 rows
+06:35:09.782       💾 Checkpoint: 6 months processed
+06:35:09.782 Fetching month 2025-09-01 (7/15)...06:35:11.089  ⚠️ 0 rows
+06:35:11.089       💾 Checkpoint: 7 months processed
+06:35:11.089 Fetching month 2025-08-01 (8/15)...06:35:12.449  ⚠️ 0 rows
+06:35:12.449       💾 Checkpoint: 8 months processed
+06:35:12.449 Fetching month 2025-07-01 (9/15)...06:35:13.843  ⚠️ 0 rows
+06:35:13.843       💾 Checkpoint: 9 months processed
+06:35:13.843 Fetching month 2025-06-01 (10/15)...06:35:15.141  ⚠️ 0 rows
+06:35:15.141       💾 Checkpoint: 10 months processed
+06:35:15.141 Fetching month 2025-05-01 (11/15)...06:35:16.463  ⚠️ 0 rows
+06:35:16.463       💾 Checkpoint: 11 months processed
+06:35:16.463 Fetching month 2025-04-01 (12/15)...06:35:17.787  ⚠️ 0 rows
+06:35:17.787       💾 Checkpoint: 12 months processed
+06:35:17.787 Fetching month 2025-03-01 (13/15)...06:35:19.119  ⚠️ 0 rows
+06:35:19.119       💾 Checkpoint: 13 months processed
+06:35:19.119 Fetching month 2025-02-01 (14/15)...06:35:20.491  ⚠️ 0 rows
+06:35:20.491       💾 Checkpoint: 14 months processed
+06:35:20.491 Fetching month 2025-01-01 (15/15)...06:35:21.784  ⚠️ 0 rows
+06:35:21.784       💾 Checkpoint: 15 months processed
+06:35:21.784 ✅ Backfill (full) complete: 309 total rows
+06:35:21.784 ✅ Job #1098 SUCCESSFUL: 309 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash c24e6920ead525d4761f1a4d46fbc0bb
+06:35:21.788 🔄 Processing job #1099 (backfill) - attempt 1/3
+06:35:21.788 SQL hash: bba12c9d2a7bbcb75b7a9b6525e8a005
+06:35:21.788 Backfill (full): 2026-03-24 → 2025-01-01
+06:35:21.789 Fetching month 2026-03-01 (1/15)...06:35:30.764  ✅ 100 rows
+06:35:30.778       💾 Checkpoint: 1 months processed
+06:35:30.778 Fetching month 2026-02-01 (2/15)...06:35:41.132  ✅ 160 rows
+06:35:41.151       💾 Checkpoint: 2 months processed
+06:35:41.151 Fetching month 2026-01-01 (3/15)...06:35:51.476  ✅ 113 rows
+06:35:51.492       💾 Checkpoint: 3 months processed
+06:35:51.492 Fetching month 2025-12-01 (4/15)...06:35:51.836  ⚠️ 0 rows
+06:35:51.836       💾 Checkpoint: 4 months processed
+06:35:51.836 Fetching month 2025-11-01 (5/15)...06:35:52.103  ⚠️ 0 rows
+06:35:52.103       💾 Checkpoint: 5 months processed
+06:35:52.103 Fetching month 2025-10-01 (6/15)...06:35:52.422  ⚠️ 0 rows
+06:35:52.422       💾 Checkpoint: 6 months processed
+06:35:52.422 Fetching month 2025-09-01 (7/15)...06:35:52.672  ⚠️ 0 rows
+06:35:52.672       💾 Checkpoint: 7 months processed
+06:35:52.672 Fetching month 2025-08-01 (8/15)...06:35:52.951  ⚠️ 0 rows
+06:35:52.951       💾 Checkpoint: 8 months processed
+06:35:52.951 Fetching month 2025-07-01 (9/15)...06:35:53.241  ⚠️ 0 rows
+06:35:53.241       💾 Checkpoint: 9 months processed
+06:35:53.241 Fetching month 2025-06-01 (10/15)...06:35:53.539  ⚠️ 0 rows
+06:35:53.539       💾 Checkpoint: 10 months processed
+06:35:53.539 Fetching month 2025-05-01 (11/15)...06:35:53.792  ⚠️ 0 rows
+06:35:53.792       💾 Checkpoint: 11 months processed
+06:35:53.792 Fetching month 2025-04-01 (12/15)...06:35:54.106  ⚠️ 0 rows
+06:35:54.106       💾 Checkpoint: 12 months processed
+06:35:54.106 Fetching month 2025-03-01 (13/15)...06:35:54.374  ⚠️ 0 rows
+06:35:54.374       💾 Checkpoint: 13 months processed
+06:35:54.374 Fetching month 2025-02-01 (14/15)...06:35:54.634  ⚠️ 0 rows
+06:35:54.634       💾 Checkpoint: 14 months processed
+06:35:54.634 Fetching month 2025-01-01 (15/15)...06:35:54.882  ⚠️ 0 rows
+06:35:54.882       💾 Checkpoint: 15 months processed
+06:35:54.882 ✅ Backfill (full) complete: 373 total rows
+06:35:54.882 ✅ Job #1099 SUCCESSFUL: 373 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash bba12c9d2a7bbcb75b7a9b6525e8a005
+06:35:54.884 🔄 Processing job #1100 (backfill) - attempt 1/3
+06:35:54.884 SQL hash: 3af6e6bec20f2e5a412ad8f4cf169cff
+06:35:54.884 Backfill (full): 2026-03-24 → 2025-01-01
+06:35:54.885 Fetching month 2026-03-01 (1/15)...06:36:35.256  ✅ 161 rows
+06:36:35.272       💾 Checkpoint: 1 months processed
+06:36:35.272 Fetching month 2026-02-01 (2/15)...06:37:27.969  ✅ 196 rows
+06:37:27.989       💾 Checkpoint: 2 months processed
+06:37:27.989 Fetching month 2026-01-01 (3/15)...06:38:34.631  ✅ 142 rows
+06:38:34.647       💾 Checkpoint: 3 months processed
+06:38:34.647 Fetching month 2025-12-01 (4/15)...06:38:34.731  ⚠️ 0 rows
+06:38:34.731       💾 Checkpoint: 4 months processed
+06:38:34.731 Fetching month 2025-11-01 (5/15)...06:38:34.806  ⚠️ 0 rows
+06:38:34.806       💾 Checkpoint: 5 months processed
+06:38:34.806 Fetching month 2025-10-01 (6/15)...06:38:34.870  ⚠️ 0 rows
+06:38:34.870       💾 Checkpoint: 6 months processed
+06:38:34.870 Fetching month 2025-09-01 (7/15)...06:38:34.938  ⚠️ 0 rows
+06:38:34.938       💾 Checkpoint: 7 months processed
+06:38:34.938 Fetching month 2025-08-01 (8/15)...06:38:35.003  ⚠️ 0 rows
+06:38:35.004       💾 Checkpoint: 8 months processed
+06:38:35.004 Fetching month 2025-07-01 (9/15)...06:38:35.068  ⚠️ 0 rows
+06:38:35.068       💾 Checkpoint: 9 months processed
+06:38:35.068 Fetching month 2025-06-01 (10/15)...06:38:35.132  ⚠️ 0 rows
+06:38:35.132       💾 Checkpoint: 10 months processed
+06:38:35.132 Fetching month 2025-05-01 (11/15)...06:38:35.201  ⚠️ 0 rows
+06:38:35.201       💾 Checkpoint: 11 months processed
+06:38:35.201 Fetching month 2025-04-01 (12/15)...06:38:35.266  ⚠️ 0 rows
+06:38:35.266       💾 Checkpoint: 12 months processed
+06:38:35.266 Fetching month 2025-03-01 (13/15)...06:38:35.332  ⚠️ 0 rows
+06:38:35.333       💾 Checkpoint: 13 months processed
+06:38:35.333 Fetching month 2025-02-01 (14/15)...06:38:35.394  ⚠️ 0 rows
+06:38:35.395       💾 Checkpoint: 14 months processed
+06:38:35.395 Fetching month 2025-01-01 (15/15)...06:38:35.460  ⚠️ 0 rows
+06:38:35.460       💾 Checkpoint: 15 months processed
+06:38:35.461 ✅ Backfill (full) complete: 499 total rows
+06:38:35.461 ✅ Job #1100 SUCCESSFUL: 499 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 3af6e6bec20f2e5a412ad8f4cf169cff
+06:38:35.464 🔄 Processing job #1101 (backfill) - attempt 1/3
+06:38:35.465 SQL hash: 447226b37a66b9259e1c1497ef1246b4
+06:38:35.465 Backfill (full): 2026-03-24 → 2025-01-01
+06:38:35.465 Fetching month 2026-03-01 (1/15)...06:39:42.277  ✅ 147 rows
+06:39:42.294       💾 Checkpoint: 1 months processed
+06:39:42.294 Fetching month 2026-02-01 (2/15)...06:40:57.512  ✅ 196 rows
+06:40:57.533       💾 Checkpoint: 2 months processed
+06:40:57.533 Fetching month 2026-01-01 (3/15)...06:42:11.269  ✅ 142 rows
+06:42:11.289       💾 Checkpoint: 3 months processed
+06:42:11.289 Fetching month 2025-12-01 (4/15)...06:42:12.623  ⚠️ 0 rows
+06:42:12.623       💾 Checkpoint: 4 months processed
+06:42:12.623 Fetching month 2025-11-01 (5/15)...06:42:13.990  ⚠️ 0 rows
+06:42:13.990       💾 Checkpoint: 5 months processed
+06:42:13.990 Fetching month 2025-10-01 (6/15)...06:42:15.152  ⚠️ 0 rows
+06:42:15.153       💾 Checkpoint: 6 months processed
+06:42:15.153 Fetching month 2025-09-01 (7/15)...06:42:16.551  ⚠️ 0 rows
+06:42:16.551       💾 Checkpoint: 7 months processed
+06:42:16.551 Fetching month 2025-08-01 (8/15)...06:42:18.017  ⚠️ 0 rows
+06:42:18.017       💾 Checkpoint: 8 months processed
+06:42:18.017 Fetching month 2025-07-01 (9/15)...06:42:19.351  ⚠️ 0 rows
+06:42:19.351       💾 Checkpoint: 9 months processed
+06:42:19.352 Fetching month 2025-06-01 (10/15)...06:42:20.685  ⚠️ 0 rows
+06:42:20.685       💾 Checkpoint: 10 months processed
+06:42:20.685 Fetching month 2025-05-01 (11/15)...06:42:22.131  ⚠️ 0 rows
+06:42:22.131       💾 Checkpoint: 11 months processed
+06:42:22.131 Fetching month 2025-04-01 (12/15)...06:42:23.514  ⚠️ 0 rows
+06:42:23.514       💾 Checkpoint: 12 months processed
+06:42:23.514 Fetching month 2025-03-01 (13/15)...06:42:24.831  ⚠️ 0 rows
+06:42:24.831       💾 Checkpoint: 13 months processed
+06:42:24.831 Fetching month 2025-02-01 (14/15)...06:42:26.112  ⚠️ 0 rows
+06:42:26.112       💾 Checkpoint: 14 months processed
+06:42:26.112 Fetching month 2025-01-01 (15/15)...06:42:27.382  ⚠️ 0 rows
+06:42:27.382       💾 Checkpoint: 15 months processed
+06:42:27.383 ✅ Backfill (full) complete: 485 total rows
+06:42:27.383 ✅ Job #1101 SUCCESSFUL: 485 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 447226b37a66b9259e1c1497ef1246b4
+06:42:27.390 🔄 Processing job #1102 (backfill) - attempt 1/3
+06:42:27.390 SQL hash: b6f5cefe4ba3d5a4426d2776feb17e37
+06:42:27.391 Backfill (full): 2026-03-24 → 2025-01-01
+06:42:27.391 Fetching month 2026-03-01 (1/15)...06:42:41.260  ✅ 80 rows
+06:42:41.275       💾 Checkpoint: 1 months processed
+06:42:41.275 Fetching month 2026-02-01 (2/15)...06:42:56.806  ✅ 105 rows
+06:42:56.818       💾 Checkpoint: 2 months processed
+06:42:56.819 Fetching month 2026-01-01 (3/15)...06:43:15.035  ✅ 114 rows
+06:43:15.051       💾 Checkpoint: 3 months processed
+06:43:15.051 Fetching month 2025-12-01 (4/15)...06:43:16.236  ⚠️ 0 rows
+06:43:16.236       💾 Checkpoint: 4 months processed
+06:43:16.237 Fetching month 2025-11-01 (5/15)...06:43:17.584  ⚠️ 0 rows
+06:43:17.584       💾 Checkpoint: 5 months processed
+06:43:17.584 Fetching month 2025-10-01 (6/15)...06:43:18.836  ⚠️ 0 rows
+06:43:18.836       💾 Checkpoint: 6 months processed
+06:43:18.836 Fetching month 2025-09-01 (7/15)...06:43:20.053  ⚠️ 0 rows
+06:43:20.053       💾 Checkpoint: 7 months processed
+06:43:20.053 Fetching month 2025-08-01 (8/15)...06:43:21.460  ⚠️ 0 rows
+06:43:21.460       💾 Checkpoint: 8 months processed
+06:43:21.460 Fetching month 2025-07-01 (9/15)...06:43:22.703  ⚠️ 0 rows
+06:43:22.703       💾 Checkpoint: 9 months processed
+06:43:22.703 Fetching month 2025-06-01 (10/15)...06:43:23.965  ⚠️ 0 rows
+06:43:23.965       💾 Checkpoint: 10 months processed
+06:43:23.966 Fetching month 2025-05-01 (11/15)...06:43:25.293  ⚠️ 0 rows
+06:43:25.293       💾 Checkpoint: 11 months processed
+06:43:25.293 Fetching month 2025-04-01 (12/15)...06:43:26.518  ⚠️ 0 rows
+06:43:26.518       💾 Checkpoint: 12 months processed
+06:43:26.518 Fetching month 2025-03-01 (13/15)...06:43:27.664  ⚠️ 0 rows
+06:43:27.664       💾 Checkpoint: 13 months processed
+06:43:27.664 Fetching month 2025-02-01 (14/15)...06:43:28.877  ⚠️ 0 rows
+06:43:28.877       💾 Checkpoint: 14 months processed
+06:43:28.877 Fetching month 2025-01-01 (15/15)...06:43:30.298  ⚠️ 0 rows
+06:43:30.298       💾 Checkpoint: 15 months processed
+06:43:30.299 ✅ Backfill (full) complete: 299 total rows
+06:43:30.299 ✅ Job #1102 SUCCESSFUL: 299 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash b6f5cefe4ba3d5a4426d2776feb17e37
+06:43:30.302 🔄 Processing job #1103 (backfill) - attempt 1/3
+06:43:30.302 SQL hash: 8b00933837789e91c36851c2a528e05f
+06:43:30.302 Backfill (full): 2026-03-24 → 2025-01-01
+06:43:30.302 Fetching month 2026-03-01 (1/15)...06:43:39.757  ✅ 46 rows
+06:43:39.772       💾 Checkpoint: 1 months processed
+06:43:39.772 Fetching month 2026-02-01 (2/15)...06:43:50.688  ✅ 56 rows
+06:43:50.703       💾 Checkpoint: 2 months processed
+06:43:50.703 Fetching month 2026-01-01 (3/15)...06:44:01.674  ✅ 61 rows
+06:44:01.689       💾 Checkpoint: 3 months processed
+06:44:01.690 Fetching month 2025-12-01 (4/15)...06:44:01.950  ⚠️ 0 rows
+06:44:01.950       💾 Checkpoint: 4 months processed
+06:44:01.950 Fetching month 2025-11-01 (5/15)...06:44:02.227  ⚠️ 0 rows
+06:44:02.227       💾 Checkpoint: 5 months processed
+06:44:02.227 Fetching month 2025-10-01 (6/15)...06:44:02.489  ⚠️ 0 rows
+06:44:02.489       💾 Checkpoint: 6 months processed
+06:44:02.489 Fetching month 2025-09-01 (7/15)...06:44:02.746  ⚠️ 0 rows
+06:44:02.746       💾 Checkpoint: 7 months processed
+06:44:02.746 Fetching month 2025-08-01 (8/15)...06:44:03.000  ⚠️ 0 rows
+06:44:03.000       💾 Checkpoint: 8 months processed
+06:44:03.000 Fetching month 2025-07-01 (9/15)...06:44:03.274  ⚠️ 0 rows
+06:44:03.274       💾 Checkpoint: 9 months processed
+06:44:03.274 Fetching month 2025-06-01 (10/15)...06:44:03.579  ⚠️ 0 rows
+06:44:03.579       💾 Checkpoint: 10 months processed
+06:44:03.579 Fetching month 2025-05-01 (11/15)...06:44:03.824  ⚠️ 0 rows
+06:44:03.824       💾 Checkpoint: 11 months processed
+06:44:03.824 Fetching month 2025-04-01 (12/15)...06:44:04.158  ⚠️ 0 rows
+06:44:04.158       💾 Checkpoint: 12 months processed
+06:44:04.158 Fetching month 2025-03-01 (13/15)...06:44:04.410  ⚠️ 0 rows
+06:44:04.410       💾 Checkpoint: 13 months processed
+06:44:04.410 Fetching month 2025-02-01 (14/15)...06:44:04.669  ⚠️ 0 rows
+06:44:04.669       💾 Checkpoint: 14 months processed
+06:44:04.669 Fetching month 2025-01-01 (15/15)...06:44:05.111  ⚠️ 0 rows
+06:44:05.111       💾 Checkpoint: 15 months processed
+06:44:05.111 ✅ Backfill (full) complete: 163 total rows
+06:44:05.112 ✅ Job #1103 SUCCESSFUL: 163 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 8b00933837789e91c36851c2a528e05f
+06:44:05.114 🔄 Processing job #1104 (backfill) - attempt 1/3
+06:44:05.114 SQL hash: 3081b58b6544349c24591d56e72cd260
+06:44:05.114 Backfill (full): 2026-03-24 → 2025-01-01
+06:44:05.114 Fetching month 2026-03-01 (1/15)...06:44:50.490  ✅ 161 rows
+06:44:50.505       💾 Checkpoint: 1 months processed
+06:44:50.505 Fetching month 2026-02-01 (2/15)...06:45:46.625  ✅ 196 rows
+06:45:46.641       💾 Checkpoint: 2 months processed
+06:45:46.641 Fetching month 2026-01-01 (3/15)...06:46:57.924  ✅ 217 rows
+06:46:57.941       💾 Checkpoint: 3 months processed
+06:46:57.941 Fetching month 2025-12-01 (4/15)...06:46:58.021  ⚠️ 0 rows
+06:46:58.021       💾 Checkpoint: 4 months processed
+06:46:58.021 Fetching month 2025-11-01 (5/15)...06:46:58.095  ⚠️ 0 rows
+06:46:58.095       💾 Checkpoint: 5 months processed
+06:46:58.095 Fetching month 2025-10-01 (6/15)...06:46:58.162  ⚠️ 0 rows
+06:46:58.162       💾 Checkpoint: 6 months processed
+06:46:58.162 Fetching month 2025-09-01 (7/15)...06:46:58.227  ⚠️ 0 rows
+06:46:58.227       💾 Checkpoint: 7 months processed
+06:46:58.227 Fetching month 2025-08-01 (8/15)...06:46:58.293  ⚠️ 0 rows
+06:46:58.293       💾 Checkpoint: 8 months processed
+06:46:58.294 Fetching month 2025-07-01 (9/15)...06:46:58.362  ⚠️ 0 rows
+06:46:58.362       💾 Checkpoint: 9 months processed
+06:46:58.362 Fetching month 2025-06-01 (10/15)...06:46:58.428  ⚠️ 0 rows
+06:46:58.428       💾 Checkpoint: 10 months processed
+06:46:58.428 Fetching month 2025-05-01 (11/15)...06:46:58.494  ⚠️ 0 rows
+06:46:58.494       💾 Checkpoint: 11 months processed
+06:46:58.494 Fetching month 2025-04-01 (12/15)...06:46:58.559  ⚠️ 0 rows
+06:46:58.559       💾 Checkpoint: 12 months processed
+06:46:58.560 Fetching month 2025-03-01 (13/15)...06:46:58.622  ⚠️ 0 rows
+06:46:58.622       💾 Checkpoint: 13 months processed
+06:46:58.622 Fetching month 2025-02-01 (14/15)...06:46:58.685  ⚠️ 0 rows
+06:46:58.685       💾 Checkpoint: 14 months processed
+06:46:58.686 Fetching month 2025-01-01 (15/15)...06:46:58.755  ⚠️ 0 rows
+06:46:58.755       💾 Checkpoint: 15 months processed
+06:46:58.756 ✅ Backfill (full) complete: 574 total rows
+06:46:58.756 ✅ Job #1104 SUCCESSFUL: 574 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 3081b58b6544349c24591d56e72cd260
+06:46:58.760 🔄 Processing job #1105 (backfill) - attempt 1/3
+06:46:58.760 SQL hash: c1dab39ad9c537e36aed9a908ad62f6b
+06:46:58.760 Backfill (full): 2026-03-24 → 2025-01-01
+06:46:58.760 Fetching month 2026-03-01 (1/15)...06:48:07.787  ✅ 67 rows
+06:48:07.802       💾 Checkpoint: 1 months processed
+06:48:07.802 Fetching month 2026-02-01 (2/15)...06:49:26.811  ✅ 98 rows
+06:49:26.826       💾 Checkpoint: 2 months processed
+06:49:26.826 Fetching month 2026-01-01 (3/15)...06:50:41.034  ✅ 82 rows
+06:50:41.052       💾 Checkpoint: 3 months processed
+06:50:41.052 Fetching month 2025-12-01 (4/15)...06:50:42.345  ⚠️ 0 rows
+06:50:42.345       💾 Checkpoint: 4 months processed
+06:50:42.345 Fetching month 2025-11-01 (5/15)...06:50:43.803  ⚠️ 0 rows
+06:50:43.803       💾 Checkpoint: 5 months processed
+06:50:43.803 Fetching month 2025-10-01 (6/15)...06:50:45.284  ⚠️ 0 rows
+06:50:45.285       💾 Checkpoint: 6 months processed
+06:50:45.285 Fetching month 2025-09-01 (7/15)...06:50:46.592  ⚠️ 0 rows
+06:50:46.592       💾 Checkpoint: 7 months processed
+06:50:46.592 Fetching month 2025-08-01 (8/15)...06:50:47.846  ⚠️ 0 rows
+06:50:47.846       💾 Checkpoint: 8 months processed
+06:50:47.846 Fetching month 2025-07-01 (9/15)...06:50:49.243  ⚠️ 0 rows
+06:50:49.243       💾 Checkpoint: 9 months processed
+06:50:49.243 Fetching month 2025-06-01 (10/15)...06:50:50.523  ⚠️ 0 rows
+06:50:50.523       💾 Checkpoint: 10 months processed
+06:50:50.523 Fetching month 2025-05-01 (11/15)...06:50:51.827  ⚠️ 0 rows
+06:50:51.827       💾 Checkpoint: 11 months processed
+06:50:51.827 Fetching month 2025-04-01 (12/15)...06:50:53.136  ⚠️ 0 rows
+06:50:53.136       💾 Checkpoint: 12 months processed
+06:50:53.137 Fetching month 2025-03-01 (13/15)...06:50:54.647  ⚠️ 0 rows
+06:50:54.647       💾 Checkpoint: 13 months processed
+06:50:54.648 Fetching month 2025-02-01 (14/15)...06:50:55.977  ⚠️ 0 rows
+06:50:55.977       💾 Checkpoint: 14 months processed
+06:50:55.977 Fetching month 2025-01-01 (15/15)...06:50:57.257  ⚠️ 0 rows
+06:50:57.257       💾 Checkpoint: 15 months processed
+06:50:57.258 ✅ Backfill (full) complete: 247 total rows
+06:50:57.258 ✅ Job #1105 SUCCESSFUL: 247 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash c1dab39ad9c537e36aed9a908ad62f6b
+06:50:57.262 🔄 Processing job #1106 (backfill) - attempt 1/3
+06:50:57.262 SQL hash: bdd518a36cc0ab08a92e1ffeedc4ce4c
+06:50:57.263 Backfill (full): 2026-03-24 → 2025-01-01
+06:50:57.263 Fetching month 2026-03-01 (1/15)...06:51:11.054  ✅ 88 rows
+06:51:11.068       💾 Checkpoint: 1 months processed
+06:51:11.068 Fetching month 2026-02-01 (2/15)...06:51:25.809  ✅ 104 rows
+06:51:25.823       💾 Checkpoint: 2 months processed
+06:51:25.823 Fetching month 2026-01-01 (3/15)...06:51:43.504  ✅ 130 rows
+06:51:43.522       💾 Checkpoint: 3 months processed
+06:51:43.522 Fetching month 2025-12-01 (4/15)...06:51:44.916  ⚠️ 0 rows
+06:51:44.916       💾 Checkpoint: 4 months processed
+06:51:44.916 Fetching month 2025-11-01 (5/15)...06:51:46.295  ⚠️ 0 rows
+06:51:46.295       💾 Checkpoint: 5 months processed
+06:51:46.295 Fetching month 2025-10-01 (6/15)...06:51:47.588  ⚠️ 0 rows
+06:51:47.588       💾 Checkpoint: 6 months processed
+06:51:47.588 Fetching month 2025-09-01 (7/15)...06:51:48.933  ⚠️ 0 rows
+06:51:48.933       💾 Checkpoint: 7 months processed
+06:51:48.933 Fetching month 2025-08-01 (8/15)...06:51:50.158  ⚠️ 0 rows
+06:51:50.158       💾 Checkpoint: 8 months processed
+06:51:50.159 Fetching month 2025-07-01 (9/15)...06:51:51.460  ⚠️ 0 rows
+06:51:51.460       💾 Checkpoint: 9 months processed
+06:51:51.461 Fetching month 2025-06-01 (10/15)...06:51:52.923  ⚠️ 0 rows
+06:51:52.923       💾 Checkpoint: 10 months processed
+06:51:52.923 Fetching month 2025-05-01 (11/15)...06:51:54.247  ⚠️ 0 rows
+06:51:54.247       💾 Checkpoint: 11 months processed
+06:51:54.247 Fetching month 2025-04-01 (12/15)...06:51:55.572  ⚠️ 0 rows
+06:51:55.573       💾 Checkpoint: 12 months processed
+06:51:55.573 Fetching month 2025-03-01 (13/15)...06:51:57.129  ⚠️ 0 rows
+06:51:57.129       💾 Checkpoint: 13 months processed
+06:51:57.129 Fetching month 2025-02-01 (14/15)...06:51:58.501  ⚠️ 0 rows
+06:51:58.501       💾 Checkpoint: 14 months processed
+06:51:58.501 Fetching month 2025-01-01 (15/15)...06:51:59.750  ⚠️ 0 rows
+06:51:59.750       💾 Checkpoint: 15 months processed
+06:51:59.750 ✅ Backfill (full) complete: 322 total rows
+06:51:59.750 ✅ Job #1106 SUCCESSFUL: 322 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash bdd518a36cc0ab08a92e1ffeedc4ce4c
+06:51:59.753 🔄 Processing job #1107 (backfill) - attempt 1/3
+06:51:59.753 SQL hash: 3d270c4beb1c7d417c4e605aa8b74192
+06:51:59.753 Backfill (full): 2026-03-24 → 2025-01-01
+06:51:59.754 Fetching month 2026-03-01 (1/15)...06:52:09.421  ✅ 98 rows
+06:52:09.435       💾 Checkpoint: 1 months processed
+06:52:09.435 Fetching month 2026-02-01 (2/15)...06:52:20.320  ✅ 115 rows
+06:52:20.338       💾 Checkpoint: 2 months processed
+06:52:20.338 Fetching month 2026-01-01 (3/15)...06:52:31.442  ✅ 136 rows
+06:52:31.460       💾 Checkpoint: 3 months processed
+06:52:31.460 Fetching month 2025-12-01 (4/15)...06:52:31.726  ⚠️ 0 rows
+06:52:31.726       💾 Checkpoint: 4 months processed
+06:52:31.726 Fetching month 2025-11-01 (5/15)...06:52:32.008  ⚠️ 0 rows
+06:52:32.008       💾 Checkpoint: 5 months processed
+06:52:32.009 Fetching month 2025-10-01 (6/15)...06:52:32.294  ⚠️ 0 rows
+06:52:32.295       💾 Checkpoint: 6 months processed
+06:52:32.295 Fetching month 2025-09-01 (7/15)...06:52:32.561  ⚠️ 0 rows
+06:52:32.562       💾 Checkpoint: 7 months processed
+06:52:32.562 Fetching month 2025-08-01 (8/15)...06:52:32.807  ⚠️ 0 rows
+06:52:32.807       💾 Checkpoint: 8 months processed
+06:52:32.807 Fetching month 2025-07-01 (9/15)...06:52:33.134  ⚠️ 0 rows
+06:52:33.134       💾 Checkpoint: 9 months processed
+06:52:33.134 Fetching month 2025-06-01 (10/15)...06:52:33.401  ⚠️ 0 rows
+06:52:33.401       💾 Checkpoint: 10 months processed
+06:52:33.401 Fetching month 2025-05-01 (11/15)...06:52:33.729  ⚠️ 0 rows
+06:52:33.729       💾 Checkpoint: 11 months processed
+06:52:33.729 Fetching month 2025-04-01 (12/15)...06:52:33.978  ⚠️ 0 rows
+06:52:33.978       💾 Checkpoint: 12 months processed
+06:52:33.978 Fetching month 2025-03-01 (13/15)...06:52:34.257  ⚠️ 0 rows
+06:52:34.257       💾 Checkpoint: 13 months processed
+06:52:34.257 Fetching month 2025-02-01 (14/15)...06:52:34.518  ⚠️ 0 rows
+06:52:34.518       💾 Checkpoint: 14 months processed
+06:52:34.518 Fetching month 2025-01-01 (15/15)...06:52:34.768  ⚠️ 0 rows
+06:52:34.768       💾 Checkpoint: 15 months processed
+06:52:34.769 ✅ Backfill (full) complete: 349 total rows
+06:52:34.769 ✅ Job #1107 SUCCESSFUL: 349 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 3d270c4beb1c7d417c4e605aa8b74192
+06:52:34.771 🔄 Processing job #1108 (backfill) - attempt 1/3
+06:52:34.772 SQL hash: 9ad57ce69d809c9294564515ac4ecf85
+06:52:34.772 Backfill (full): 2026-03-24 → 2025-01-01
+06:52:34.772 Fetching month 2026-03-01 (1/15)...06:52:34.970  ✅ 92 rows
+06:52:34.984       💾 Checkpoint: 1 months processed
+06:52:34.984 Fetching month 2026-02-01 (2/15)...06:52:35.200  ✅ 112 rows
+06:52:35.215       💾 Checkpoint: 2 months processed
+06:52:35.215 Fetching month 2026-01-01 (3/15)...06:52:35.417  ✅ 124 rows
+06:52:35.433       💾 Checkpoint: 3 months processed
+06:52:35.433 Fetching month 2025-12-01 (4/15)...06:52:35.495  ⚠️ 0 rows
+06:52:35.495       💾 Checkpoint: 4 months processed
+06:52:35.496 Fetching month 2025-11-01 (5/15)...06:52:35.558  ⚠️ 0 rows
+06:52:35.558       💾 Checkpoint: 5 months processed
+06:52:35.558 Fetching month 2025-10-01 (6/15)...06:52:35.620  ⚠️ 0 rows
+06:52:35.620       💾 Checkpoint: 6 months processed
+06:52:35.620 Fetching month 2025-09-01 (7/15)...06:52:35.681  ⚠️ 0 rows
+06:52:35.681       💾 Checkpoint: 7 months processed
+06:52:35.681 Fetching month 2025-08-01 (8/15)...06:52:35.746  ⚠️ 0 rows
+06:52:35.746       💾 Checkpoint: 8 months processed
+06:52:35.746 Fetching month 2025-07-01 (9/15)...06:52:35.810  ⚠️ 0 rows
+06:52:35.810       💾 Checkpoint: 9 months processed
+06:52:35.810 Fetching month 2025-06-01 (10/15)...06:52:35.869  ⚠️ 0 rows
+06:52:35.869       💾 Checkpoint: 10 months processed
+06:52:35.870 Fetching month 2025-05-01 (11/15)...06:52:35.930  ⚠️ 0 rows
+06:52:35.930       💾 Checkpoint: 11 months processed
+06:52:35.930 Fetching month 2025-04-01 (12/15)...06:52:35.990  ⚠️ 0 rows
+06:52:35.990       💾 Checkpoint: 12 months processed
+06:52:35.990 Fetching month 2025-03-01 (13/15)...06:52:36.051  ⚠️ 0 rows
+06:52:36.051       💾 Checkpoint: 13 months processed
+06:52:36.051 Fetching month 2025-02-01 (14/15)...06:52:36.110  ⚠️ 0 rows
+06:52:36.110       💾 Checkpoint: 14 months processed
+06:52:36.110 Fetching month 2025-01-01 (15/15)...06:52:36.173  ⚠️ 0 rows
+06:52:36.173       💾 Checkpoint: 15 months processed
+06:52:36.173 ✅ Backfill (full) complete: 328 total rows
+06:52:36.174 ✅ Job #1108 SUCCESSFUL: 328 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 9ad57ce69d809c9294564515ac4ecf85
+06:52:36.176 🔄 Processing job #1109 (backfill) - attempt 1/3
+06:52:36.176 SQL hash: 0c5cb05368af600ededecc20f135b02b
+06:52:36.177 Backfill (full): 2026-03-24 → 2025-01-01
+06:52:36.177 Fetching month 2026-03-01 (1/15)...06:52:53.036  ✅ 92 rows
+06:52:53.051       💾 Checkpoint: 1 months processed
+06:52:53.051 Fetching month 2026-02-01 (2/15)...06:53:11.930  ✅ 112 rows
+06:53:11.949       💾 Checkpoint: 2 months processed
+06:53:11.949 Fetching month 2026-01-01 (3/15)...06:53:33.833  ✅ 124 rows
+06:53:33.850       💾 Checkpoint: 3 months processed
+06:53:33.850 Fetching month 2025-12-01 (4/15)...06:53:35.182  ⚠️ 0 rows
+06:53:35.183       💾 Checkpoint: 4 months processed
+06:53:35.183 Fetching month 2025-11-01 (5/15)...06:53:36.556  ⚠️ 0 rows
+06:53:36.556       💾 Checkpoint: 5 months processed
+06:53:36.556 Fetching month 2025-10-01 (6/15)...06:53:37.896  ⚠️ 0 rows
+06:53:37.897       💾 Checkpoint: 6 months processed
+06:53:37.897 Fetching month 2025-09-01 (7/15)...06:53:39.210  ⚠️ 0 rows
+06:53:39.210       💾 Checkpoint: 7 months processed
+06:53:39.210 Fetching month 2025-08-01 (8/15)...06:53:40.528  ⚠️ 0 rows
+06:53:40.528       💾 Checkpoint: 8 months processed
+06:53:40.528 Fetching month 2025-07-01 (9/15)...06:53:41.858  ⚠️ 0 rows
+06:53:41.858       💾 Checkpoint: 9 months processed
+06:53:41.858 Fetching month 2025-06-01 (10/15)...06:53:43.203  ⚠️ 0 rows
+06:53:43.203       💾 Checkpoint: 10 months processed
+06:53:43.203 Fetching month 2025-05-01 (11/15)...06:53:44.615  ⚠️ 0 rows
+06:53:44.615       💾 Checkpoint: 11 months processed
+06:53:44.615 Fetching month 2025-04-01 (12/15)...06:53:45.989  ⚠️ 0 rows
+06:53:45.989       💾 Checkpoint: 12 months processed
+06:53:45.989 Fetching month 2025-03-01 (13/15)...06:53:47.428  ⚠️ 0 rows
+06:53:47.428       💾 Checkpoint: 13 months processed
+06:53:47.429 Fetching month 2025-02-01 (14/15)...06:53:48.730  ⚠️ 0 rows
+06:53:48.730       💾 Checkpoint: 14 months processed
+06:53:48.730 Fetching month 2025-01-01 (15/15)...06:53:50.062  ⚠️ 0 rows
+06:53:50.062       💾 Checkpoint: 15 months processed
+06:53:50.063 ✅ Backfill (full) complete: 328 total rows
+06:53:50.063 ✅ Job #1109 SUCCESSFUL: 328 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 0c5cb05368af600ededecc20f135b02b
+06:53:50.066 🔄 Processing job #1110 (backfill) - attempt 1/3
+06:53:50.066 SQL hash: b86a48756c470f684187c3560d06f804
+06:53:50.066 Backfill (full): 2026-03-24 → 2025-01-01
+06:53:50.066 Fetching month 2026-03-01 (1/15)...06:53:56.275  ✅ 442 rows
+06:53:56.292       💾 Checkpoint: 1 months processed
+06:53:56.292 Fetching month 2026-02-01 (2/15)...06:54:03.694  ✅ 465 rows
+06:54:03.713       💾 Checkpoint: 2 months processed
+06:54:03.713 Fetching month 2026-01-01 (3/15)...06:54:14.095  ✅ 533 rows
+06:54:14.117       💾 Checkpoint: 3 months processed
+06:54:14.117 Fetching month 2025-12-01 (4/15)...06:54:15.466  ⚠️ 0 rows
+06:54:15.466       💾 Checkpoint: 4 months processed
+06:54:15.466 Fetching month 2025-11-01 (5/15)...06:54:16.896  ⚠️ 0 rows
+06:54:16.896       💾 Checkpoint: 5 months processed
+06:54:16.896 Fetching month 2025-10-01 (6/15)...06:54:18.196  ⚠️ 0 rows
+06:54:18.196       💾 Checkpoint: 6 months processed
+06:54:18.196 Fetching month 2025-09-01 (7/15)...06:54:19.544  ⚠️ 0 rows
+06:54:19.544       💾 Checkpoint: 7 months processed
+06:54:19.544 Fetching month 2025-08-01 (8/15)...06:54:20.872  ⚠️ 0 rows
+06:54:20.872       💾 Checkpoint: 8 months processed
+06:54:20.872 Fetching month 2025-07-01 (9/15)...06:54:22.214  ⚠️ 0 rows
+06:54:22.215       💾 Checkpoint: 9 months processed
+06:54:22.215 Fetching month 2025-06-01 (10/15)...06:54:23.429  ⚠️ 0 rows
+06:54:23.429       💾 Checkpoint: 10 months processed
+06:54:23.429 Fetching month 2025-05-01 (11/15)...06:54:24.715  ⚠️ 0 rows
+06:54:24.715       💾 Checkpoint: 11 months processed
+06:54:24.715 Fetching month 2025-04-01 (12/15)...06:54:26.011  ⚠️ 0 rows
+06:54:26.011       💾 Checkpoint: 12 months processed
+06:54:26.011 Fetching month 2025-03-01 (13/15)...06:54:27.260  ⚠️ 0 rows
+06:54:27.261       💾 Checkpoint: 13 months processed
+06:54:27.261 Fetching month 2025-02-01 (14/15)...06:54:28.712  ⚠️ 0 rows
+06:54:28.712       💾 Checkpoint: 14 months processed
+06:54:28.712 Fetching month 2025-01-01 (15/15)...06:54:30.030  ⚠️ 0 rows
+06:54:30.031       💾 Checkpoint: 15 months processed
+06:54:30.032 ✅ Backfill (full) complete: 1440 total rows
+06:54:30.032 ✅ Job #1110 SUCCESSFUL: 1440 rows
+ℹ️  No cumulative fields detected
+06:54:30.040 🔄 Processing job #1111 (backfill) - attempt 1/3
+06:54:30.040 SQL hash: 71e159cf74eb63bbf814b8e19203deab
+06:54:30.040 Backfill (full): 2026-03-24 → 2025-01-01
+06:54:30.040 Fetching month 2026-03-01 (1/15)...06:54:42.907  ✅ 714 rows
+06:54:42.925       💾 Checkpoint: 1 months processed
+06:54:42.925 Fetching month 2026-02-01 (2/15)...06:54:56.675  ✅ 787 rows
+06:54:56.694       💾 Checkpoint: 2 months processed
+06:54:56.694 Fetching month 2026-01-01 (3/15)...06:55:08.146  ✅ 769 rows
+06:55:08.169       💾 Checkpoint: 3 months processed
+06:55:08.169 Fetching month 2025-12-01 (4/15)...06:55:08.477  ⚠️ 0 rows
+06:55:08.477       💾 Checkpoint: 4 months processed
+06:55:08.477 Fetching month 2025-11-01 (5/15)...06:55:08.751  ⚠️ 0 rows
+06:55:08.751       💾 Checkpoint: 5 months processed
+06:55:08.751 Fetching month 2025-10-01 (6/15)...06:55:09.116  ⚠️ 0 rows
+06:55:09.116       💾 Checkpoint: 6 months processed
+06:55:09.116 Fetching month 2025-09-01 (7/15)...06:55:09.385  ⚠️ 0 rows
+06:55:09.385       💾 Checkpoint: 7 months processed
+06:55:09.385 Fetching month 2025-08-01 (8/15)...06:55:09.633  ⚠️ 0 rows
+06:55:09.634       💾 Checkpoint: 8 months processed
+06:55:09.634 Fetching month 2025-07-01 (9/15)...06:55:09.881  ⚠️ 0 rows
+06:55:09.881       💾 Checkpoint: 9 months processed
+06:55:09.881 Fetching month 2025-06-01 (10/15)...06:55:10.146  ⚠️ 0 rows
+06:55:10.146       💾 Checkpoint: 10 months processed
+06:55:10.146 Fetching month 2025-05-01 (11/15)...06:55:10.414  ⚠️ 0 rows
+06:55:10.414       💾 Checkpoint: 11 months processed
+06:55:10.414 Fetching month 2025-04-01 (12/15)...06:55:10.663  ⚠️ 0 rows
+06:55:10.663       💾 Checkpoint: 12 months processed
+06:55:10.663 Fetching month 2025-03-01 (13/15)...06:55:10.914  ⚠️ 0 rows
+06:55:10.914       💾 Checkpoint: 13 months processed
+06:55:10.914 Fetching month 2025-02-01 (14/15)...06:55:11.165  ⚠️ 0 rows
+06:55:11.165       💾 Checkpoint: 14 months processed
+06:55:11.165 Fetching month 2025-01-01 (15/15)...06:55:11.424  ⚠️ 0 rows
+06:55:11.424       💾 Checkpoint: 15 months processed
+06:55:11.424 ✅ Backfill (full) complete: 2270 total rows
+06:55:11.424 ✅ Job #1111 SUCCESSFUL: 2270 rows
+ℹ️  No cumulative fields detected
+06:55:11.430 🔄 Processing job #1112 (backfill) - attempt 1/3
+06:55:11.430 SQL hash: 6eb0a95492f108d7ae097374bd721610
+06:55:11.431 Backfill (full): 2026-03-24 → 2025-01-01
+06:55:11.431 Fetching month 2026-03-01 (1/15)...06:55:54.787  ✅ 2346 rows
+06:55:54.824       💾 Checkpoint: 1 months processed
+06:55:54.824 Fetching month 2026-02-01 (2/15)...06:56:49.211  ✅ 2849 rows
+06:56:49.269       💾 Checkpoint: 2 months processed
+06:56:49.269 Fetching month 2026-01-01 (3/15)...06:57:53.305  ✅ 2945 rows
+06:57:53.367       💾 Checkpoint: 3 months processed
+06:57:53.367 Fetching month 2025-12-01 (4/15)...06:57:53.448  ⚠️ 0 rows
+06:57:53.448       💾 Checkpoint: 4 months processed
+06:57:53.448 Fetching month 2025-11-01 (5/15)...06:57:53.518  ⚠️ 0 rows
+06:57:53.518       💾 Checkpoint: 5 months processed
+06:57:53.518 Fetching month 2025-10-01 (6/15)...06:57:53.592  ⚠️ 0 rows
+06:57:53.592       💾 Checkpoint: 6 months processed
+06:57:53.592 Fetching month 2025-09-01 (7/15)...06:57:53.656  ⚠️ 0 rows
+06:57:53.656       💾 Checkpoint: 7 months processed
+06:57:53.656 Fetching month 2025-08-01 (8/15)...06:57:53.719  ⚠️ 0 rows
+06:57:53.719       💾 Checkpoint: 8 months processed
+06:57:53.719 Fetching month 2025-07-01 (9/15)...06:57:53.786  ⚠️ 0 rows
+06:57:53.787       💾 Checkpoint: 9 months processed
+06:57:53.787 Fetching month 2025-06-01 (10/15)...06:57:53.895  ⚠️ 0 rows
+06:57:53.895       💾 Checkpoint: 10 months processed
+06:57:53.895 Fetching month 2025-05-01 (11/15)...06:57:53.957  ⚠️ 0 rows
+06:57:53.957       💾 Checkpoint: 11 months processed
+06:57:53.957 Fetching month 2025-04-01 (12/15)...06:57:54.023  ⚠️ 0 rows
+06:57:54.023       💾 Checkpoint: 12 months processed
+06:57:54.023 Fetching month 2025-03-01 (13/15)...06:57:54.084  ⚠️ 0 rows
+06:57:54.084       💾 Checkpoint: 13 months processed
+06:57:54.084 Fetching month 2025-02-01 (14/15)...06:57:54.145  ⚠️ 0 rows
+06:57:54.145       💾 Checkpoint: 14 months processed
+06:57:54.145 Fetching month 2025-01-01 (15/15)...06:57:54.207  ⚠️ 0 rows
+06:57:54.207       💾 Checkpoint: 15 months processed
+06:57:54.212 ✅ Backfill (full) complete: 8140 total rows
+06:57:54.212 ✅ Job #1112 SUCCESSFUL: 8140 rows
+ℹ️  No cumulative fields detected
+06:57:54.236 🔄 Processing job #1113 (backfill) - attempt 1/3
+06:57:54.236 SQL hash: 0223e6b207f9f0612cdf4eefc1be899f
+06:57:54.237 Backfill (full): 2026-03-24 → 2025-01-01
+06:57:54.237 Fetching month 2026-03-01 (1/15)...06:58:46.633  ✅ 1510 rows
+06:58:46.670       💾 Checkpoint: 1 months processed
+06:58:46.670 Fetching month 2026-02-01 (2/15)...06:59:48.561  ✅ 1621 rows
+06:59:48.611       💾 Checkpoint: 2 months processed
+06:59:48.611 Fetching month 2026-01-01 (3/15)...07:00:59.246  ✅ 1630 rows
+07:00:59.305       💾 Checkpoint: 3 months processed
+07:00:59.305 Fetching month 2025-12-01 (4/15)...07:01:00.692  ⚠️ 0 rows
+07:01:00.692       💾 Checkpoint: 4 months processed
+07:01:00.692 Fetching month 2025-11-01 (5/15)...07:01:02.094  ⚠️ 0 rows
+07:01:02.094       💾 Checkpoint: 5 months processed
+07:01:02.094 Fetching month 2025-10-01 (6/15)...07:01:03.446  ⚠️ 0 rows
+07:01:03.446       💾 Checkpoint: 6 months processed
+07:01:03.446 Fetching month 2025-09-01 (7/15)...07:01:04.836  ⚠️ 0 rows
+07:01:04.836       💾 Checkpoint: 7 months processed
+07:01:04.836 Fetching month 2025-08-01 (8/15)...07:01:06.237  ⚠️ 0 rows
+07:01:06.237       💾 Checkpoint: 8 months processed
+07:01:06.237 Fetching month 2025-07-01 (9/15)...07:01:07.539  ⚠️ 0 rows
+07:01:07.539       💾 Checkpoint: 9 months processed
+07:01:07.539 Fetching month 2025-06-01 (10/15)...07:01:08.873  ⚠️ 0 rows
+07:01:08.873       💾 Checkpoint: 10 months processed
+07:01:08.873 Fetching month 2025-05-01 (11/15)...07:01:10.212  ⚠️ 0 rows
+07:01:10.212       💾 Checkpoint: 11 months processed
+07:01:10.212 Fetching month 2025-04-01 (12/15)...07:01:11.582  ⚠️ 0 rows
+07:01:11.582       💾 Checkpoint: 12 months processed
+07:01:11.582 Fetching month 2025-03-01 (13/15)...07:01:12.901  ⚠️ 0 rows
+07:01:12.902       💾 Checkpoint: 13 months processed
+07:01:12.902 Fetching month 2025-02-01 (14/15)...07:01:14.225  ⚠️ 0 rows
+07:01:14.225       💾 Checkpoint: 14 months processed
+07:01:14.225 Fetching month 2025-01-01 (15/15)...07:01:15.512  ⚠️ 0 rows
+07:01:15.512       💾 Checkpoint: 15 months processed
+07:01:15.516 ✅ Backfill (full) complete: 4761 total rows
+07:01:15.516 ✅ Job #1113 SUCCESSFUL: 4761 rows
+ℹ️  No cumulative fields detected
+07:01:15.538 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:01:25.539 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:01:35.540 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:01:45.541 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:01:55.543 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:05.544 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:15.545 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:25.546 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:35.547 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:45.549 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:02:55.550 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:05.551 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:15.552 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:25.553 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:35.555 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:45.556 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:03:55.557 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:05.559 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:15.560 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:25.562 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:35.563 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:45.565 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:04:55.566 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:05.567 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:15.569 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:25.570 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:35.572 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:45.573 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:05:55.575 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:05.576 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:15.577 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:25.579 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:35.580 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:45.581 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:06:55.582 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:05.584 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:15.585 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:25.587 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:35.588 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:45.590 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:07:55.591 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:05.593 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:15.594 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:25.596 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:35.598 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:45.599 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:08:55.600 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:05.601 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:15.603 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:25.604 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:35.606 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:45.607 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:09:55.609 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:05.611 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:15.612 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:25.614 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:35.615 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:45.617 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:10:55.618 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:05.619 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:15.621 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:25.622 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:35.624 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:45.625 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:11:55.627 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:05.628 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:15.630 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:25.631 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:35.632 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:45.634 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:12:55.635 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:05.637 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:15.638 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:25.639 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:35.640 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:45.641 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:13:55.643 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:05.644 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:15.646 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:25.647 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:35.648 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:45.650 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:14:55.651 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:05.653 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:15.654 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:25.654 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:35.655 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:45.656 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:15:55.658 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:05.659 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:15.661 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:25.662 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:35.663 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:45.665 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:16:55.666 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:05.668 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:15.669 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:25.671 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:35.672 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:45.674 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:17:55.675 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:05.677 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:15.679 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:25.680 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:35.682 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:45.683 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:18:55.685 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:05.686 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:15.687 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:25.689 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:35.690 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:45.692 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:19:55.693 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:05.695 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:15.696 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:25.698 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:35.699 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:45.701 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:20:55.702 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:05.703 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:15.705 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:25.707 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:35.708 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:45.710 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:21:55.711 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:05.713 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:15.714 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:25.716 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:35.718 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:45.719 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:22:55.721 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:05.722 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:15.723 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:25.725 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:35.726 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:45.728 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:23:55.729 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:05.730 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:15.732 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:25.733 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:35.735 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:45.737 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:24:55.738 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:05.739 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:15.740 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:25.742 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:35.744 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:45.745 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:25:55.746 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:05.748 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:15.749 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:25.751 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:35.752 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:45.754 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:26:55.755 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:05.757 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:15.758 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:25.759 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:35.760 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:45.762 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:27:55.763 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:05.764 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:15.766 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:25.768 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:35.769 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:45.771 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:28:55.772 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:05.774 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:15.775 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:25.777 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:35.778 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:45.779 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:29:55.780 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:05.782 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:15.783 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:25.784 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:35.785 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:45.787 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:30:55.789 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:05.790 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:15.792 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:25.793 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:35.795 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:45.796 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:31:55.798 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:05.799 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:15.801 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:25.802 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:35.803 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:45.805 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:32:55.806 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:05.807 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:15.809 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:25.810 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:35.812 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:45.813 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:33:55.815 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:05.816 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:15.818 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:25.819 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:35.821 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:45.822 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:34:55.824 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:05.825 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:15.827 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:25.828 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:35.830 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:45.832 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:35:55.833 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:05.834 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:15.836 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:25.838 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:35.839 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:45.841 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:36:55.842 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:05.843 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:15.845 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:25.846 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:35.848 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:45.849 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:37:55.851 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:05.853 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:15.854 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:25.856 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:35.857 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:45.859 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:38:55.860 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:05.861 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:15.863 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:25.864 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:35.866 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:45.867 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:39:55.869 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:05.870 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:15.871 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:25.873 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:35.875 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:45.876 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:40:55.878 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:05.879 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:15.881 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:25.882 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:35.884 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:45.885 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:41:55.887 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:05.888 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:15.890 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:25.891 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:35.893 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:45.894 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:42:55.896 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:05.897 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:15.899 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:25.900 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:35.902 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:45.903 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:43:55.904 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:05.906 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:15.907 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:25.908 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:35.910 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:45.911 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:44:55.913 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:05.914 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:15.915 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:25.917 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:35.919 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:45.920 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:45:55.922 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:05.923 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:15.925 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:25.926 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:35.928 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:45.929 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:46:55.931 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:05.933 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:15.934 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:25.936 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:35.937 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:45.939 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:47:55.940 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:05.942 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:15.943 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:25.945 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:35.946 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:45.948 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:48:55.949 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:05.951 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:15.952 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:25.954 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:35.955 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:45.957 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:49:55.958 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:05.960 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:15.961 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:25.963 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:35.964 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:45.965 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:50:55.967 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:05.968 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:15.969 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:25.971 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:35.972 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:45.974 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:51:55.975 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:05.976 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:15.977 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:25.979 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:35.981 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:45.982 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:52:55.984 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:05.985 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:15.986 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:25.987 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:35.989 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:45.990 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:53:55.992 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:54:05.993 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:54:15.995 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:54:25.996 No pending jobs. Waiting 10s... (processed 617 jobs so far)
+07:54:35.998 🔄 Processing job #1114 (backfill) - attempt 1/3
+07:54:35.998 SQL hash: 78ac7d0be4cd9321ed5743dd372ab739
+07:54:35.998 Backfill (full): 2026-03-24 → 2025-01-01
+07:54:35.998 Fetching month 2026-03-01 (1/15)...07:54:46.225  ✅ 23 rows
+07:54:46.239       💾 Checkpoint: 1 months processed
+07:54:46.239 Fetching month 2026-02-01 (2/15)...07:54:56.857  ✅ 28 rows
+07:54:56.874       💾 Checkpoint: 2 months processed
+07:54:56.874 Fetching month 2026-01-01 (3/15)...07:55:08.237  ✅ 31 rows
+07:55:08.253       💾 Checkpoint: 3 months processed
+07:55:08.253 Fetching month 2025-12-01 (4/15)...07:55:14.623  ✅ 31 rows
+07:55:14.639       💾 Checkpoint: 4 months processed
+07:55:14.639 Fetching month 2025-11-01 (5/15)...07:56:17.548  ✅ 30 rows
+07:56:17.564       💾 Checkpoint: 5 months processed
+07:56:17.564 Fetching month 2025-10-01 (6/15)...07:57:24.199  ✅ 31 rows
+07:57:24.214       💾 Checkpoint: 6 months processed
+07:57:24.215 Fetching month 2025-09-01 (7/15)...07:58:06.032  ✅ 30 rows
+07:58:06.048       💾 Checkpoint: 7 months processed
+07:58:06.048 Fetching month 2025-08-01 (8/15)...07:58:43.350  ✅ 31 rows
+07:58:43.366       💾 Checkpoint: 8 months processed
+07:58:43.366 Fetching month 2025-07-01 (9/15)...07:59:20.413  ✅ 31 rows
+07:59:20.427       💾 Checkpoint: 9 months processed
+07:59:20.427 Fetching month 2025-06-01 (10/15)...07:59:21.228  ⚠️ 0 rows
+07:59:21.228       💾 Checkpoint: 10 months processed
+07:59:21.228 Fetching month 2025-05-01 (11/15)...07:59:22.019  ⚠️ 0 rows
+07:59:22.020       💾 Checkpoint: 11 months processed
+07:59:22.020 Fetching month 2025-04-01 (12/15)...07:59:22.857  ⚠️ 0 rows
+07:59:22.857       💾 Checkpoint: 12 months processed
+07:59:22.857 Fetching month 2025-03-01 (13/15)...07:59:23.705  ⚠️ 0 rows
+07:59:23.705       💾 Checkpoint: 13 months processed
+07:59:23.705 Fetching month 2025-02-01 (14/15)...07:59:24.516  ⚠️ 0 rows
+07:59:24.516       💾 Checkpoint: 14 months processed
+07:59:24.516 Fetching month 2025-01-01 (15/15)...07:59:25.590  ⚠️ 0 rows
+07:59:25.590       💾 Checkpoint: 15 months processed
+07:59:25.591 ✅ Backfill (full) complete: 123 total rows
+07:59:25.591 ✅ Job #1114 SUCCESSFUL: 123 rows
+📊 Found 4 cumulative field(s): ['cumulative_dex_fee_sol', 'cumulative_dex_jito_sol', 'cumulative_network_fee_sol', 'cumulative_network_jito_sol']
+📊 Non-grouped data
+✅ Cumulative calculation complete (123 rows)
+🔢 Calculating 1 percentage field(s)...
+✅ Percentage fields calculated and saved
+07:59:25.604 🔄 Processing job #1115 (backfill) - attempt 1/3
+07:59:25.604 SQL hash: 71e159cf74eb63bbf814b8e19203deab
+07:59:25.604 Backfill (full): 2026-03-24 → 2025-01-01
+07:59:25.604 Fetching month 2026-03-01 (1/15)...08:00:00.381  ✅ 714 rows
+08:00:00.398       💾 Checkpoint: 1 months processed
+08:00:00.398 Fetching month 2026-02-01 (2/15)...08:00:39.398  ✅ 787 rows
+08:00:39.422       💾 Checkpoint: 2 months processed
+08:00:39.422 Fetching month 2026-01-01 (3/15)...08:01:17.686  ✅ 769 rows
+08:01:17.705       💾 Checkpoint: 3 months processed
+08:01:17.705 Fetching month 2025-12-01 (4/15)...08:01:17.966  ⚠️ 0 rows
+08:01:17.966       💾 Checkpoint: 4 months processed
+08:01:17.966 Fetching month 2025-11-01 (5/15)...08:01:18.231  ⚠️ 0 rows
+08:01:18.231       💾 Checkpoint: 5 months processed
+08:01:18.231 Fetching month 2025-10-01 (6/15)...08:01:18.494  ⚠️ 0 rows
+08:01:18.494       💾 Checkpoint: 6 months processed
+08:01:18.494 Fetching month 2025-09-01 (7/15)...08:01:18.799  ⚠️ 0 rows
+08:01:18.799       💾 Checkpoint: 7 months processed
+08:01:18.799 Fetching month 2025-08-01 (8/15)...08:01:19.095  ⚠️ 0 rows
+08:01:19.095       💾 Checkpoint: 8 months processed
+08:01:19.095 Fetching month 2025-07-01 (9/15)...08:01:19.383  ⚠️ 0 rows
+08:01:19.383       💾 Checkpoint: 9 months processed
+08:01:19.383 Fetching month 2025-06-01 (10/15)...08:01:19.679  ⚠️ 0 rows
+08:01:19.680       💾 Checkpoint: 10 months processed
+08:01:19.680 Fetching month 2025-05-01 (11/15)...08:01:19.933  ⚠️ 0 rows
+08:01:19.933       💾 Checkpoint: 11 months processed
+08:01:19.933 Fetching month 2025-04-01 (12/15)...08:01:20.187  ⚠️ 0 rows
+08:01:20.187       💾 Checkpoint: 12 months processed
+08:01:20.187 Fetching month 2025-03-01 (13/15)...08:01:20.436  ⚠️ 0 rows
+08:01:20.436       💾 Checkpoint: 13 months processed
+08:01:20.436 Fetching month 2025-02-01 (14/15)...08:01:20.684  ⚠️ 0 rows
+08:01:20.684       💾 Checkpoint: 14 months processed
+08:01:20.684 Fetching month 2025-01-01 (15/15)...08:01:20.940  ⚠️ 0 rows
+08:01:20.940       💾 Checkpoint: 15 months processed
+08:01:20.942 ✅ Backfill (full) complete: 2270 total rows
+08:01:20.942 ✅ Job #1115 SUCCESSFUL: 2270 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 71e159cf74eb63bbf814b8e19203deab
+08:01:20.951 🔄 Processing job #1116 (backfill) - attempt 1/3
+08:01:20.951 SQL hash: 35284bb21c28b55039129abefe46b33d
+08:01:20.952 Backfill (full): 2026-03-24 → 2025-01-01
+08:01:20.952 Fetching month 2026-03-01 (1/15)...08:01:56.018  ✅ 270 rows
+08:01:56.035       💾 Checkpoint: 1 months processed
+08:01:56.035 Fetching month 2026-02-01 (2/15)...08:03:33.332  ✅ 342 rows
+08:03:33.349       💾 Checkpoint: 2 months processed
+08:03:33.349 Fetching month 2026-01-01 (3/15)...08:04:13.622  ✅ 378 rows
+08:04:13.644       💾 Checkpoint: 3 months processed
+08:04:13.644 Fetching month 2025-12-01 (4/15)...08:04:15.083  ⚠️ 0 rows
+08:04:15.083       💾 Checkpoint: 4 months processed
+08:04:15.083 Fetching month 2025-11-01 (5/15)...08:04:46.386  ⚠️ 0 rows
+08:04:46.386       💾 Checkpoint: 5 months processed
+08:04:46.386 Fetching month 2025-10-01 (6/15)...08:04:47.758  ⚠️ 0 rows
+08:04:47.758       💾 Checkpoint: 6 months processed
+08:04:47.758 Fetching month 2025-09-01 (7/15)...08:04:48.978  ⚠️ 0 rows
+08:04:48.979       💾 Checkpoint: 7 months processed
+08:04:48.979 Fetching month 2025-08-01 (8/15)...08:04:50.341  ⚠️ 0 rows
+08:04:50.341       💾 Checkpoint: 8 months processed
+08:04:50.341 Fetching month 2025-07-01 (9/15)...08:04:51.720  ⚠️ 0 rows
+08:04:51.720       💾 Checkpoint: 9 months processed
+08:04:51.720 Fetching month 2025-06-01 (10/15)...08:04:52.857  ⚠️ 0 rows
+08:04:52.858       💾 Checkpoint: 10 months processed
+08:04:52.858 Fetching month 2025-05-01 (11/15)...08:04:54.162  ⚠️ 0 rows
+08:04:54.162       💾 Checkpoint: 11 months processed
+08:04:54.162 Fetching month 2025-04-01 (12/15)...08:04:55.665  ⚠️ 0 rows
+08:04:55.665       💾 Checkpoint: 12 months processed
+08:04:55.665 Fetching month 2025-03-01 (13/15)...08:04:56.774  ⚠️ 0 rows
+08:04:56.774       💾 Checkpoint: 13 months processed
+08:04:56.774 Fetching month 2025-02-01 (14/15)...08:04:57.935  ⚠️ 0 rows
+08:04:57.935       💾 Checkpoint: 14 months processed
+08:04:57.935 Fetching month 2025-01-01 (15/15)...08:04:59.264  ⚠️ 0 rows
+08:04:59.264       💾 Checkpoint: 15 months processed
+08:04:59.266 ✅ Backfill (full) complete: 990 total rows
+08:04:59.266 ✅ Job #1116 SUCCESSFUL: 990 rows
+ℹ️  No cumulative fields detected
+⚠️  No chart config found for SQL hash 35284bb21c28b55039129abefe46b33d
+08:04:59.272 🔄 Processing job #1117 (backfill) - attempt 1/3
+08:04:59.272 SQL hash: a85befa221bc006410300a53d5f15920
+08:04:59.272 Backfill (full): 2026-03-24 → 2025-01-01
+08:04:59.272 Fetching month 2026-03-01 (1/15)...08:05:17.911  ✅ 356 rows
+08:05:17.929       💾 Checkpoint: 1 months processed
+08:05:17.929 Fetching month 2026-02-01 (2/15)...08:05:28.261  ✅ 439 rows
+08:05:28.278       💾 Checkpoint: 2 months processed
+08:05:28.278 Fetching month 2026-01-01 (3/15)...08:05:38.671  ✅ 514 rows
+08:05:38.688       💾 Checkpoint: 3 months processed
+08:05:38.688 Fetching month 2025-12-01 (4/15)...08:05:39.105  ⚠️ 0 rows
+08:05:39.105       💾 Checkpoint: 4 months processed
+08:05:39.105 Fetching month 2025-11-01 (5/15)...08:05:39.383  ⚠️ 0 rows
+08:05:39.384       💾 Checkpoint: 5 months processed
+08:05:39.384 Fetching month 2025-10-01 (6/15)...08:05:39.658  ⚠️ 0 rows
+08:05:39.658       💾 Checkpoint: 6 months processed
+08:05:39.658 Fetching month 2025-09-01 (7/15)...08:05:39.929  ⚠️ 0 rows
+08:05:39.929       💾 Checkpoint: 7 months processed
+08:05:39.929 Fetching month 2025-08-01 (8/15)...08:05:40.187  ⚠️ 0 rows
+08:05:40.187       💾 Checkpoint: 8 months processed
+08:05:40.187 Fetching month 2025-07-01 (9/15)...08:05:40.441  ⚠️ 0 rows
+08:05:40.441       💾 Checkpoint: 9 months processed
+08:05:40.441 Fetching month 2025-06-01 (10/15)...08:05:40.757  ⚠️ 0 rows
+08:05:40.757       💾 Checkpoint: 10 months processed
+08:05:40.758 Fetching month 2025-05-01 (11/15)...08:05:41.005  ⚠️ 0 rows
+08:05:41.005       💾 Checkpoint: 11 months processed
+08:05:41.006 Fetching month 2025-04-01 (12/15)...08:05:41.261  ⚠️ 0 rows
+08:05:41.261       💾 Checkpoint: 12 months processed
+08:05:41.261 Fetching month 2025-03-01 (13/15)...08:05:41.518  ⚠️ 0 rows
+08:05:41.518       💾 Checkpoint: 13 months processed
+08:05:41.518 Fetching month 2025-02-01 (14/15)...08:05:41.764  ⚠️ 0 rows
+08:05:41.764       💾 Checkpoint: 14 months processed
+08:05:41.764 Fetching month 2025-01-01 (15/15)...08:05:42.019  ⚠️ 0 rows
+08:05:42.019       💾 Checkpoint: 15 months processed
+08:05:42.020 ✅ Backfill (full) complete: 0 total rows
+08:05:42.020 ⚠️  Job #1117 returned 0 rows, will retry in 1 minutes
+08:05:42.021 🔄 Processing job #1131 (backfill) - attempt 1/3
+08:05:42.021 SQL hash: bdd518a36cc0ab08a92e1ffeedc4ce4c
+08:05:42.021 Backfill (full): 2026-03-24 → 2025-01-01
+08:05:42.021 Fetching month 2026-03-01 (1/15)...08:05:55.000  ✅ 88 rows
+08:05:55.017       💾 Checkpoint: 1 months processed
+08:05:55.017 Fetching month 2026-02-01 (2/15)...08:06:09.724  ✅ 104 rows
+08:06:09.741       💾 Checkpoint: 2 months processed
+08:06:09.741 Fetching month 2026-01-01 (3/15)...08:06:26.674  ✅ 130 rows
+08:06:26.691       💾 Checkpoint: 3 months processed
+08:06:26.691 Fetching month 2025-12-01 (4/15)...08:06:27.890  ⚠️ 0 rows
+08:06:27.890       💾 Checkpoint: 4 months processed
+08:06:27.890 Fetching month 2025-11-01 (5/15)...08:06:29.168  ⚠️ 0 rows
+08:06:29.168       💾 Checkpoint: 5 months processed
+08:06:29.168 Fetching month 2025-10-01 (6/15)...08:06:30.611  ⚠️ 0 rows
+08:06:30.611       💾 Checkpoint: 6 months processed
+08:06:30.611 Fetching month 2025-09-01 (7/15)...08:06:31.855  ⚠️ 0 rows
+08:06:31.855       💾 Checkpoint: 7 months processed
+08:06:31.855 Fetching month 2025-08-01 (8/15)...08:06:33.112  ⚠️ 0 rows
+08:06:33.112       💾 Checkpoint: 8 months processed
+08:06:33.112 Fetching month 2025-07-01 (9/15)...08:06:34.593  ⚠️ 0 rows
+08:06:34.593       💾 Checkpoint: 9 months processed
+08:06:34.593 Fetching month 2025-06-01 (10/15)...08:06:35.809  ⚠️ 0 rows
+08:06:35.809       💾 Checkpoint: 10 months processed
+08:06:35.809 Fetching month 2025-05-01 (11/15)...08:06:37.076  ⚠️ 0 rows
+08:06:37.076       💾 Checkpoint: 11 months processed
+08:06:37.076 Fetching month 2025-04-01 (12/15)...08:06:38.423  ⚠️ 0 rows
+08:06:38.423       💾 Checkpoint: 12 months processed
+08:06:38.424 Fetching month 2025-03-01 (13/15)...08:06:39.806  ⚠️ 0 rows
+08:06:39.806       💾 Checkpoint: 13 months processed
+08:06:39.806 Fetching month 2025-02-01 (14/15)...08:06:41.169  ⚠️ 0 rows
+08:06:41.169       💾 Checkpoint: 14 months processed
+08:06:41.169 Fetching month 2025-01-01 (15/15)...08:06:42.574  ⚠️ 0 rows
+08:06:42.575       💾 Checkpoint: 15 months processed
+08:06:42.575 ✅ Backfill (full) complete: 322 total rows
+08:06:42.575 ✅ Job #1131 SUCCESSFUL: 322 rows
+ℹ️  No cumulative fields detected
+08:06:42.578 🔄 Processing job #1132 (backfill) - attempt 1/3
+08:06:42.578 SQL hash: 3d270c4beb1c7d417c4e605aa8b74192
+08:06:42.579 Backfill (full): 2026-03-24 → 2025-01-01
+08:06:42.579 Fetching month 2026-03-01 (1/15)...08:06:51.176  ✅ 98 rows
+08:06:51.192       💾 Checkpoint: 1 months processed
+08:06:51.192 Fetching month 2026-02-01 (2/15)...08:07:01.528  ✅ 115 rows
+08:07:01.545       💾 Checkpoint: 2 months processed
+08:07:01.545 Fetching month 2026-01-01 (3/15)...08:07:12.188  ✅ 136 rows
+08:07:12.203       💾 Checkpoint: 3 months processed
+08:07:12.203 Fetching month 2025-12-01 (4/15)...08:07:12.464  ⚠️ 0 rows
+08:07:12.464       💾 Checkpoint: 4 months processed
+08:07:12.464 Fetching month 2025-11-01 (5/15)...08:07:12.719  ⚠️ 0 rows
+08:07:12.719       💾 Checkpoint: 5 months processed
+08:07:12.719 Fetching month 2025-10-01 (6/15)...08:07:12.977  ⚠️ 0 rows
+08:07:12.977       💾 Checkpoint: 6 months processed
+08:07:12.978 Fetching month 2025-09-01 (7/15)...08:07:13.304  ⚠️ 0 rows
+08:07:13.304       💾 Checkpoint: 7 months processed
+08:07:13.304 Fetching month 2025-08-01 (8/15)...08:07:13.565  ⚠️ 0 rows
+08:07:13.565       💾 Checkpoint: 8 months processed
+08:07:13.565 Fetching month 2025-07-01 (9/15)...08:07:13.848  ⚠️ 0 rows
+08:07:13.848       💾 Checkpoint: 9 months processed
+08:07:13.848 Fetching month 2025-06-01 (10/15)...08:07:14.238  ⚠️ 0 rows
+08:07:14.238       💾 Checkpoint: 10 months processed
+08:07:14.238 Fetching month 2025-05-01 (11/15)...08:07:14.494  ⚠️ 0 rows
+08:07:14.494       💾 Checkpoint: 11 months processed
+08:07:14.494 Fetching month 2025-04-01 (12/15)...08:07:14.748  ⚠️ 0 rows
+08:07:14.748       💾 Checkpoint: 12 months processed
+08:07:14.748 Fetching month 2025-03-01 (13/15)...08:07:15.009  ⚠️ 0 rows
+08:07:15.009       💾 Checkpoint: 13 months processed
+08:07:15.009 Fetching month 2025-02-01 (14/15)...08:07:15.250  ⚠️ 0 rows
+08:07:15.250       💾 Checkpoint: 14 months processed
+08:07:15.250 Fetching month 2025-01-01 (15/15)...08:07:15.557  ⚠️ 0 rows
+08:07:15.558       💾 Checkpoint: 15 months processed
+08:07:15.558 ✅ Backfill (full) complete: 349 total rows
+08:07:15.558 ✅ Job #1132 SUCCESSFUL: 349 rows
+ℹ️  No cumulative fields detected
+08:07:15.561 🔄 Processing job #1133 (backfill) - attempt 1/3
+08:07:15.561 SQL hash: 9ad57ce69d809c9294564515ac4ecf85
+08:07:15.561 Backfill (full): 2026-03-24 → 2025-01-01
+08:07:15.561 Fetching month 2026-03-01 (1/15)...08:07:15.775  ✅ 92 rows
+08:07:15.791       💾 Checkpoint: 1 months processed
+08:07:15.791 Fetching month 2026-02-01 (2/15)...08:07:15.993  ✅ 112 rows
+08:07:16.012       💾 Checkpoint: 2 months processed
+08:07:16.012 Fetching month 2026-01-01 (3/15)...08:07:16.189  ✅ 124 rows
+08:07:16.205       💾 Checkpoint: 3 months processed
+08:07:16.205 Fetching month 2025-12-01 (4/15)...08:07:16.271  ⚠️ 0 rows
+08:07:16.271       💾 Checkpoint: 4 months processed
+08:07:16.271 Fetching month 2025-11-01 (5/15)...08:07:16.332  ⚠️ 0 rows
+08:07:16.332       💾 Checkpoint: 5 months processed
+08:07:16.332 Fetching month 2025-10-01 (6/15)...08:07:16.392  ⚠️ 0 rows
+08:07:16.392       💾 Checkpoint: 6 months processed
+08:07:16.392 Fetching month 2025-09-01 (7/15)...08:07:16.454  ⚠️ 0 rows
+08:07:16.454       💾 Checkpoint: 7 months processed
+08:07:16.454 Fetching month 2025-08-01 (8/15)...08:07:16.514  ⚠️ 0 rows
+08:07:16.514       💾 Checkpoint: 8 months processed
+08:07:16.514 Fetching month 2025-07-01 (9/15)...08:07:16.575  ⚠️ 0 rows
+08:07:16.575       💾 Checkpoint: 9 months processed
+08:07:16.575 Fetching month 2025-06-01 (10/15)...08:07:16.634  ⚠️ 0 rows
+08:07:16.634       💾 Checkpoint: 10 months processed
+08:07:16.634 Fetching month 2025-05-01 (11/15)...08:07:16.694  ⚠️ 0 rows
+08:07:16.694       💾 Checkpoint: 11 months processed
+08:07:16.694 Fetching month 2025-04-01 (12/15)...08:07:16.756  ⚠️ 0 rows
+08:07:16.756       💾 Checkpoint: 12 months processed
+08:07:16.756 Fetching month 2025-03-01 (13/15)...08:07:16.816  ⚠️ 0 rows
+08:07:16.816       💾 Checkpoint: 13 months processed
+08:07:16.816 Fetching month 2025-02-01 (14/15)...08:07:16.877  ⚠️ 0 rows
+08:07:16.877       💾 Checkpoint: 14 months processed
+08:07:16.877 Fetching month 2025-01-01 (15/15)...08:07:16.940  ⚠️ 0 rows
+08:07:16.940       💾 Checkpoint: 15 months processed
+08:07:16.941 ✅ Backfill (full) complete: 328 total rows
+08:07:16.941 ✅ Job #1133 SUCCESSFUL: 328 rows
+ℹ️  No cumulative fields detected
+08:07:16.944 🔄 Processing job #1134 (backfill) - attempt 1/3
+08:07:16.945 SQL hash: 0c5cb05368af600ededecc20f135b02b
+08:07:16.945 Backfill (full): 2026-03-24 → 2025-01-01
+08:07:16.945 Fetching month 2026-03-01 (1/15)...08:07:33.049  ✅ 92 rows
+08:07:33.065       💾 Checkpoint: 1 months processed
+08:07:33.065 Fetching month 2026-02-01 (2/15)...08:07:52.001  ✅ 112 rows
+08:07:52.021       💾 Checkpoint: 2 months processed
+08:07:52.021 Fetching month 2026-01-01 (3/15)...

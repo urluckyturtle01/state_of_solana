@@ -9,14 +9,14 @@ const ChartLoading = () => (
   </div>
 );
 
-const structuredData = generateStructuredData('/rwas/Tokenized Commodities');
+const structuredData = generateStructuredData('/rwas/yield_bearing_tokens');
 
-export default function RwasTokenized commoditiesPage() {
+export default function RwasYieldBearingTokensPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer
-          pageId="rwas-Tokenized Commodities"
+          pageId="rwas-yield-bearing-tokens"
           enableCaching={true}
         />
       </Suspense>
@@ -24,4 +24,4 @@ export default function RwasTokenized commoditiesPage() {
   );
 }
 
-export const metadata = generateNextMetadata('/rwas/Tokenized Commodities');
+export const metadata = generateNextMetadata('/rwas/yield_bearing_tokens');
