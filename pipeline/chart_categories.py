@@ -19,6 +19,13 @@ CHART_CATEGORIES = {
         'cost_and_capacity',
         'issuance_and_burn',
         'total_economic_value',
+    ],
+    'RWAs': [
+        'Stablecoins',
+        'Tokenized Commodities',
+        'Tokenized Funds',
+        'Yield Bearing Tokens',
+        'xstocks',
     ]
 }
 
