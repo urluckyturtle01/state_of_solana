@@ -302,6 +302,12 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                     filters['currencyFilter'] = currency_filter
                     additional_opts['filters'] = filters
                     json_config['additionalOptions'] = additional_opts
+
+            # Tooltip total: YAML showTooltipTotal: true -> additionalOptions.showTooltipTotal in JSON
+            if chart_dict.get('showTooltipTotal') is True:
+                additional_opts = json_config.get('additionalOptions', {})
+                additional_opts['showTooltipTotal'] = True
+                json_config['additionalOptions'] = additional_opts
             
             # Upsert to database
             cur.execute("""

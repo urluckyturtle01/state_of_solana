@@ -211404,4 +211404,3035 @@ ORDER BY base.block_date DESC, base.category;
 11:54:06.279 🔄 Processing job #1369 (backfill) - attempt 1/3
 11:54:06.279 SQL hash: d6c4cc105cf73a1e5118cb761bceecf2
 11:54:06.280 Backfill (full): 2026-03-26 → 2025-01-01
-11:54:06.280 Fetching month 2026-03-01 (1/15)...
+11:54:06.280 Fetching month 2026-03-01 (1/15)...11:57:24.760  ✅ 125 rows
+11:57:24.777       💾 Checkpoint: 1 months processed
+11:57:24.777 Fetching month 2026-02-01 (2/15)...11:57:32.200  ❌ Error: Execution failed on sql '-- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+': (trino.exceptions.TrinoConnectionError) failed to fetch: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')", ConnectionResetError(104, 'Connection reset by peer'))
+[SQL: -- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+11:57:32.200 ❌ Trino query error: Execution failed on sql '-- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+': (trino.exceptions.TrinoConnectionError) failed to fetch: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')", ConnectionResetError(104, 'Connection reset by peer'))
+[SQL: -- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+11:57:32.200 ❌ Error during processing: Execution failed on sql '-- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+': (trino.exceptions.TrinoConnectionError) failed to fetch: ("Connection broken: ConnectionResetError(104, 'Connection reset by peer')", ConnectionResetError(104, 'Connection reset by peer'))
+[SQL: -- Description: Daily category-level overview metrics for all RWA categories
+-- Outputs at `block_date` + `category` level (daily time series per category)
+WITH mint_mapping AS (
+    -- Map each RWA mint to a normalized "category" label used by the dashboard
+    SELECT
+        address AS mint,
+        decimals,
+        program,
+        CASE category
+            WHEN 'Stablecoin' THEN 'stablecoins'
+            WHEN 'YBT' THEN 'yield_bearing_tokens'
+            WHEN 'xStocks' THEN 'xstocks'
+            WHEN 'Tokenized Funds' THEN 'tokenized_funds'
+            WHEN 'Tokenized Commodities' THEN 'tokenized_commodities'
+        END AS category
+    FROM solana.rwa_tokens_mapping
+    WHERE category IN ('Stablecoin', 'YBT', 'xStocks', 'Tokenized Funds', 'Tokenized Commodities')
+      AND address not in (
+        'A94X2fRy3wydNShU4dRaDyap2UuoeWJGWyATtyp61WZf',
+        'dngKhBQM3BGvsDHKhrLnjvRKfY5Q7gEnYGToj9Lk8rk',
+        'Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g',
+        'FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4',
+        'FtgGSFADXBtroxq8VCausXRr2of47QBf5AS1NtZCu4GD'
+      )
+),
+
+cte_price AS (
+    SELECT
+        block_date,
+        mint,
+        avg(price_in_usd) AS price_in_usd
+    FROM solana.token_prices_1m
+    WHERE block_date < CURRENT_DATE
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND mint IN (SELECT mint FROM mint_mapping)
+      and price_in_usd<5000
+    GROUP BY 1, 2
+),
+
+cte_supply AS (
+    -- Market cap + holders from account_spl_balances_agg for consistent category-level aggregation
+    SELECT
+        m.category AS category,
+        s.block_date AS block_date,
+        SUM(s.post_balance * COALESCE(p.price_in_usd, 0)) AS marketcap,
+        COUNT(DISTINCT s.owner) AS unique_holders
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    LEFT JOIN cte_price p
+        ON s.mint = p.mint
+        AND s.block_date = p.block_date
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+    GROUP BY 1, 2
+),
+
+cte_dex_trades AS (
+    -- Same structure as section daily summaries:
+    -- group by (block_date, bought_mint, sold_mint) and use COUNT(1) for trades
+    SELECT
+        block_date,
+        token_bought_mint,
+        token_sold_mint,
+        sum(token_bought_amount) as token_bought_amount,
+        sum(token_sold_amount) as token_sold_amount,
+        COUNT(1) AS trades
+    FROM solana.dex_trades
+    WHERE 1=1
+      AND (token_bought_mint IN (SELECT mint FROM mint_mapping)
+        OR token_sold_mint IN (SELECT mint FROM mint_mapping))
+      AND DATE_TRUNC('month', block_date) = DATE('2026-02-01')
+      AND block_date >= DATE('2026-01-01')
+      AND block_date < CURRENT_DATE
+    GROUP BY 1,2,3
+),
+
+cte_volume AS (
+    -- Compute USD volume + trades count by category
+    -- (trades are summed over both legs, same as the daily_summary pattern)
+    SELECT
+        A.block_date,
+        A.category,
+        SUM(A.amount * B.price_in_usd) AS dex_volume,
+        SUM(A.trades) AS dex_trades
+    FROM (
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_bought_mint AS mint,
+            dt.token_bought_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_bought_mint = mm.mint
+
+        UNION ALL
+
+        SELECT
+            dt.block_date,
+            mm.category AS category,
+            dt.token_sold_mint AS mint,
+            dt.token_sold_amount AS amount,
+            dt.trades AS trades
+        FROM cte_dex_trades dt
+        JOIN mint_mapping mm ON dt.token_sold_mint = mm.mint
+    ) A
+    JOIN cte_price B
+        ON A.block_date = B.block_date
+        AND A.mint = B.mint
+    GROUP BY 1, 2
+),
+
+transfer_raw AS (
+    -- Transfer + P2P transfer volume in token units (normalized by decimals)
+    SELECT
+        a.block_date,
+        a.mint,
+        a.volume_raw,
+        a.p2p_volume_raw
+    FROM (
+        SELECT
+            sp.block_date,
+            sp.mint,
+            SUM(sp.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp.outer_program = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' THEN sp.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token sp
+        WHERE DATE_TRUNC('month', sp.block_date) = DATE('2026-02-01')
+          AND sp.block_date >= DATE('2026-01-01')
+          AND sp.block_date < CURRENT_DATE
+          AND sp.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token')
+        GROUP BY 1, 2
+
+        UNION ALL
+
+        SELECT
+            sp22.block_date,
+            sp22.mint,
+            SUM(sp22.args.amount) AS volume_raw,
+            SUM(CASE WHEN sp22.outer_program IS NULL THEN sp22.args.amount END) AS p2p_volume_raw
+        FROM solana.spl_token_22 sp22
+        WHERE DATE_TRUNC('month', sp22.block_date) = DATE('2026-02-01')
+          AND sp22.block_date >= DATE('2026-01-01')
+          AND sp22.block_date < CURRENT_DATE
+          AND sp22.instruction_type IN ('Transfer', 'TransferChecked')
+          AND sp22.mint IN (SELECT mint FROM mint_mapping WHERE program = 'spl_token_22')
+        GROUP BY 1, 2
+    ) a
+),
+
+cte_transfer AS (
+    SELECT
+        m.category AS category,
+        tr.block_date AS block_date,
+        SUM(tr.volume_raw / pow(10, m.decimals)) AS transfer_volume,
+        SUM(tr.p2p_volume_raw / pow(10, m.decimals)) AS p2p_transfer_volume
+    FROM transfer_raw tr
+    JOIN mint_mapping m
+        ON tr.mint = m.mint
+    GROUP BY 1, 2
+)
+
+,
+cte_base AS (
+    -- Daily scaffold for (block_date, category)
+    SELECT DISTINCT
+        m.category AS category,
+        s.block_date AS block_date
+    FROM solana.account_spl_balances_agg s
+    JOIN mint_mapping m
+        ON s.mint = m.mint
+    WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-02-01')
+      AND s.block_date >= DATE('2026-01-01')
+      AND s.block_date < CURRENT_DATE
+)
+
+SELECT
+    base.block_date AS block_date,
+    base.category AS category,
+    s.marketcap,
+    s.unique_holders,
+    v.dex_volume,
+    v.dex_trades,
+    tr.transfer_volume,
+    tr.p2p_transfer_volume
+FROM cte_base base
+LEFT JOIN cte_supply s
+    ON s.category = base.category
+    AND s.block_date = base.block_date
+LEFT JOIN cte_volume v
+    ON v.category = base.category
+    AND v.block_date = base.block_date
+LEFT JOIN cte_transfer tr
+    ON tr.category = base.category
+    AND tr.block_date = base.block_date
+ORDER BY base.block_date DESC, base.category
+
+]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+11:57:32.201 ℹ️  Partial data saved via checkpoints: 125 rows
+11:57:32.201 ⚠️  Job #1369 PARTIALLY SUCCESSFUL: 125 rows saved
+11:57:32.204 🔄 Processing job #1370 (backfill) - attempt 1/3
+11:57:32.204 SQL hash: 480d92da1e9ed0e27aedb0daaf454e19
+11:57:32.205 Backfill (full): 2026-03-26 → 2025-01-01
+11:57:32.205 Fetching month 2026-03-01 (1/15)...11:57:33.240  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_115732_00946_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+11:57:33.240 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_115732_00946_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+11:57:33.240 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_115732_00946_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+11:57:33.241 ℹ️  Partial data saved via checkpoints: 0 rows
+11:57:33.241 ⚠️  Job #1370 PARTIALLY SUCCESSFUL: 0 rows saved
+11:57:33.243 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:57:43.244 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:57:53.245 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:03.247 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:13.248 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:23.250 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:33.251 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:43.253 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:58:53.254 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:03.256 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:13.257 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:23.259 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:33.260 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:43.262 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+11:59:53.263 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:03.264 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:13.265 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:23.267 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:33.268 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:43.270 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:00:53.271 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:03.273 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:13.274 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:23.276 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:33.277 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:43.278 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:01:53.280 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:03.281 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:13.283 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:23.284 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:33.286 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:43.288 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:02:53.289 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:03.290 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:13.292 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:23.293 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:33.295 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:43.296 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:03:53.298 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:03.299 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:13.301 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:23.302 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:33.304 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:43.305 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:04:53.307 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:03.308 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:13.310 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:23.311 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:33.313 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:43.314 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:05:53.316 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:03.317 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:13.319 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:23.320 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:33.322 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:43.323 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:06:53.325 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:03.326 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:13.328 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:23.329 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:33.331 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:43.333 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:07:53.334 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:03.336 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:13.337 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:23.339 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:33.340 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:43.342 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:08:53.343 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:03.345 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:13.346 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:23.348 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:33.349 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:43.351 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:09:53.352 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:03.354 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:13.355 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:23.357 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:33.358 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:43.360 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:10:53.361 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:03.363 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:13.364 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:23.366 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:33.368 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:43.369 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:11:53.371 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:03.372 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:13.374 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:23.375 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:33.376 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:43.378 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:12:53.380 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:03.381 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:13.382 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:23.384 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:33.385 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:43.387 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:13:53.388 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:03.390 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:13.391 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:23.393 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:33.394 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:43.395 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:14:53.397 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:03.398 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:13.400 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:23.401 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:33.403 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:43.404 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:15:53.406 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:03.407 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:13.408 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:23.410 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:33.411 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:43.413 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:16:53.414 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:03.416 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:13.417 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:23.419 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:33.420 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:43.422 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:17:53.423 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:03.425 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:13.426 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:23.427 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:33.429 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:43.430 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:18:53.432 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:03.433 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:13.435 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:23.436 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:33.438 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:43.439 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:19:53.441 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:03.442 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:13.444 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:23.445 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:33.447 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:43.449 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:20:53.450 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:03.451 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:13.452 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:23.454 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:33.455 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:43.457 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:21:53.459 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:03.460 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:13.462 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:23.463 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:33.465 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:43.466 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:22:53.468 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:03.469 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:13.471 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:23.472 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:33.474 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:43.475 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:23:53.477 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:03.478 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:13.480 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:23.481 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:33.483 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:43.485 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:24:53.486 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:03.487 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:13.488 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:23.490 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:33.492 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:43.493 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:25:53.495 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:03.496 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:13.498 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:23.499 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:33.501 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:43.502 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:26:53.503 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:27:03.504 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:27:13.506 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:27:23.507 No pending jobs. Waiting 10s... (processed 901 jobs so far)
+12:27:33.509 🔄 Processing job #1361 (backfill) - attempt 1/3
+12:27:33.509 SQL hash: 7d8e0cdbc81652d2cf1c97f334d7d0ef
+12:27:33.510 Backfill (full): 2026-03-26 → 2025-01-01
+12:27:33.510 Fetching month 2026-03-01 (1/15)...12:27:39.017  ✅ 400 rows
+12:27:39.036       💾 Checkpoint: 1 months processed
+12:27:39.036 Fetching month 2026-02-01 (2/15)...12:27:39.835  ✅ 448 rows
+12:27:39.855       💾 Checkpoint: 2 months processed
+12:27:39.855 Fetching month 2026-01-01 (3/15)...12:27:40.699  ✅ 496 rows
+12:27:40.722       💾 Checkpoint: 3 months processed
+12:27:40.722 Fetching month 2025-12-01 (4/15)...12:27:40.838  ⚠️ 0 rows
+12:27:40.838       💾 Checkpoint: 4 months processed
+12:27:40.838 Fetching month 2025-11-01 (5/15)...12:27:40.951  ⚠️ 0 rows
+12:27:40.951       💾 Checkpoint: 5 months processed
+12:27:40.952 Fetching month 2025-10-01 (6/15)...12:27:41.057  ⚠️ 0 rows
+12:27:41.058       💾 Checkpoint: 6 months processed
+12:27:41.058 Fetching month 2025-09-01 (7/15)...12:27:41.164  ⚠️ 0 rows
+12:27:41.164       💾 Checkpoint: 7 months processed
+12:27:41.164 Fetching month 2025-08-01 (8/15)...12:27:41.275  ⚠️ 0 rows
+12:27:41.275       💾 Checkpoint: 8 months processed
+12:27:41.275 Fetching month 2025-07-01 (9/15)...12:27:41.380  ⚠️ 0 rows
+12:27:41.380       💾 Checkpoint: 9 months processed
+12:27:41.380 Fetching month 2025-06-01 (10/15)...12:27:41.486  ⚠️ 0 rows
+12:27:41.487       💾 Checkpoint: 10 months processed
+12:27:41.487 Fetching month 2025-05-01 (11/15)...12:27:41.594  ⚠️ 0 rows
+12:27:41.594       💾 Checkpoint: 11 months processed
+12:27:41.594 Fetching month 2025-04-01 (12/15)...12:27:41.706  ⚠️ 0 rows
+12:27:41.707       💾 Checkpoint: 12 months processed
+12:27:41.707 Fetching month 2025-03-01 (13/15)...12:27:42.018  ⚠️ 0 rows
+12:27:42.018       💾 Checkpoint: 13 months processed
+12:27:42.018 Fetching month 2025-02-01 (14/15)...12:27:42.121  ⚠️ 0 rows
+12:27:42.121       💾 Checkpoint: 14 months processed
+12:27:42.121 Fetching month 2025-01-01 (15/15)...12:27:42.231  ⚠️ 0 rows
+12:27:42.231       💾 Checkpoint: 15 months processed
+12:27:42.232 ✅ Backfill (full) complete: 1344 total rows
+12:27:42.232 ✅ Job #1361 SUCCESSFUL: 1344 rows
+ℹ️  No cumulative fields detected
+12:27:42.240 No pending jobs. Waiting 10s... (processed 902 jobs so far)
+12:27:52.242 🔄 Processing job #1362 (backfill) - attempt 1/3
+12:27:52.242 SQL hash: 2465d8e5b512cb071a847c7ab7f89495
+12:27:52.243 Backfill (full): 2026-03-26 → 2025-01-01
+12:27:52.243 Fetching month 2026-03-01 (1/15)...12:28:08.541  ✅ 399 rows
+12:28:08.564       💾 Checkpoint: 1 months processed
+12:28:08.564 Fetching month 2026-02-01 (2/15)...12:28:25.033  ✅ 447 rows
+12:28:25.058       💾 Checkpoint: 2 months processed
+12:28:25.058 Fetching month 2026-01-01 (3/15)...12:28:46.540  ✅ 496 rows
+12:28:46.572       💾 Checkpoint: 3 months processed
+12:28:46.572 Fetching month 2025-12-01 (4/15)...12:28:47.863  ⚠️ 0 rows
+12:28:47.863       💾 Checkpoint: 4 months processed
+12:28:47.863 Fetching month 2025-11-01 (5/15)...12:28:49.100  ⚠️ 0 rows
+12:28:49.100       💾 Checkpoint: 5 months processed
+12:28:49.100 Fetching month 2025-10-01 (6/15)...12:28:50.363  ⚠️ 0 rows
+12:28:50.363       💾 Checkpoint: 6 months processed
+12:28:50.363 Fetching month 2025-09-01 (7/15)...12:28:51.597  ⚠️ 0 rows
+12:28:51.597       💾 Checkpoint: 7 months processed
+12:28:51.597 Fetching month 2025-08-01 (8/15)...12:28:52.960  ⚠️ 0 rows
+12:28:52.960       💾 Checkpoint: 8 months processed
+12:28:52.960 Fetching month 2025-07-01 (9/15)...12:28:54.294  ⚠️ 0 rows
+12:28:54.294       💾 Checkpoint: 9 months processed
+12:28:54.294 Fetching month 2025-06-01 (10/15)...12:28:55.716  ⚠️ 0 rows
+12:28:55.716       💾 Checkpoint: 10 months processed
+12:28:55.716 Fetching month 2025-05-01 (11/15)...12:28:57.089  ⚠️ 0 rows
+12:28:57.089       💾 Checkpoint: 11 months processed
+12:28:57.089 Fetching month 2025-04-01 (12/15)...12:28:58.442  ⚠️ 0 rows
+12:28:58.442       💾 Checkpoint: 12 months processed
+12:28:58.442 Fetching month 2025-03-01 (13/15)...12:28:59.714  ⚠️ 0 rows
+12:28:59.714       💾 Checkpoint: 13 months processed
+12:28:59.714 Fetching month 2025-02-01 (14/15)...12:29:01.025  ⚠️ 0 rows
+12:29:01.025       💾 Checkpoint: 14 months processed
+12:29:01.025 Fetching month 2025-01-01 (15/15)...12:29:02.422  ⚠️ 0 rows
+12:29:02.422       💾 Checkpoint: 15 months processed
+12:29:02.424 ✅ Backfill (full) complete: 1342 total rows
+12:29:02.424 ✅ Job #1362 SUCCESSFUL: 1342 rows
+ℹ️  No cumulative fields detected
+12:29:02.435 🔄 Processing job #1360 (backfill) - attempt 1/3
+12:29:02.435 SQL hash: 37811b96ed594ea4a403ce7de162c33f
+12:29:02.435 Backfill (full): 2026-03-26 → 2025-01-01
+12:29:02.435 Fetching month 2026-03-01 (1/15)...12:29:18.084  ✅ 291 rows
+12:29:18.101       💾 Checkpoint: 1 months processed
+12:29:18.101 Fetching month 2026-02-01 (2/15)...12:29:34.349  ✅ 341 rows
+12:29:34.367       💾 Checkpoint: 2 months processed
+12:29:34.367 Fetching month 2026-01-01 (3/15)...12:29:55.960  ✅ 373 rows
+12:29:55.979       💾 Checkpoint: 3 months processed
+12:29:55.979 Fetching month 2025-12-01 (4/15)...12:29:57.321  ⚠️ 0 rows
+12:29:57.322       💾 Checkpoint: 4 months processed
+12:29:57.322 Fetching month 2025-11-01 (5/15)...12:29:58.758  ⚠️ 0 rows
+12:29:58.758       💾 Checkpoint: 5 months processed
+12:29:58.758 Fetching month 2025-10-01 (6/15)...12:30:00.197  ⚠️ 0 rows
+12:30:00.197       💾 Checkpoint: 6 months processed
+12:30:00.197 Fetching month 2025-09-01 (7/15)...12:30:01.426  ⚠️ 0 rows
+12:30:01.426       💾 Checkpoint: 7 months processed
+12:30:01.426 Fetching month 2025-08-01 (8/15)...12:30:02.773  ⚠️ 0 rows
+12:30:02.773       💾 Checkpoint: 8 months processed
+12:30:02.773 Fetching month 2025-07-01 (9/15)...12:30:04.002  ⚠️ 0 rows
+12:30:04.002       💾 Checkpoint: 9 months processed
+12:30:04.002 Fetching month 2025-06-01 (10/15)...12:30:05.307  ⚠️ 0 rows
+12:30:05.307       💾 Checkpoint: 10 months processed
+12:30:05.307 Fetching month 2025-05-01 (11/15)...12:30:06.642  ⚠️ 0 rows
+12:30:06.642       💾 Checkpoint: 11 months processed
+12:30:06.642 Fetching month 2025-04-01 (12/15)...12:30:08.109  ⚠️ 0 rows
+12:30:08.109       💾 Checkpoint: 12 months processed
+12:30:08.109 Fetching month 2025-03-01 (13/15)...12:30:09.469  ⚠️ 0 rows
+12:30:09.469       💾 Checkpoint: 13 months processed
+12:30:09.469 Fetching month 2025-02-01 (14/15)...12:30:10.717  ⚠️ 0 rows
+12:30:10.717       💾 Checkpoint: 14 months processed
+12:30:10.717 Fetching month 2025-01-01 (15/15)...12:30:11.950  ⚠️ 0 rows
+12:30:11.950       💾 Checkpoint: 15 months processed
+12:30:11.950 ✅ Backfill (full) complete: 1005 total rows
+12:30:11.950 ✅ Job #1360 SUCCESSFUL: 1005 rows
+ℹ️  No cumulative fields detected
+12:30:11.955 🔄 Processing job #1369 (backfill) - attempt 1/3
+12:30:11.955 SQL hash: d6c4cc105cf73a1e5118cb761bceecf2
+12:30:11.956 Backfill (resume): existing 125 rows (1 months), 15 months to fetch
+12:30:11.956 Filling 15 missing months...
+12:30:11.957 Fetching 2026-03-01 (1/15)...12:33:15.542  ✅ 125 rows12:33:15.545  💾
+12:33:15.545 Fetching 2026-02-01 (2/15)...12:36:44.346  ✅ 140 rows12:36:44.351  💾
+12:36:44.351 Fetching 2026-01-01 (3/15)...12:40:37.590  ✅ 155 rows12:40:37.597  💾
+12:40:37.597 Fetching 2025-12-01 (4/15)...12:40:39.819  ⚠️ 0 rows
+12:40:39.819 Fetching 2025-11-01 (5/15)...12:40:41.436  ⚠️ 0 rows
+12:40:41.436 Fetching 2025-10-01 (6/15)...12:40:43.319  ⚠️ 0 rows
+12:40:43.319 Fetching 2025-09-01 (7/15)...12:40:44.791  ⚠️ 0 rows
+12:40:44.791 Fetching 2025-08-01 (8/15)...12:40:46.353  ⚠️ 0 rows
+12:40:46.353 Fetching 2025-07-01 (9/15)...12:40:47.867  ⚠️ 0 rows
+12:40:47.867 Fetching 2025-06-01 (10/15)...12:40:49.457  ⚠️ 0 rows
+12:40:49.457 Fetching 2025-05-01 (11/15)...12:40:51.048  ⚠️ 0 rows
+12:40:51.048 Fetching 2025-04-01 (12/15)...12:40:52.621  ⚠️ 0 rows
+12:40:52.621 Fetching 2025-03-01 (13/15)...12:40:54.101  ⚠️ 0 rows
+12:40:54.101 Fetching 2025-02-01 (14/15)...12:40:55.747  ⚠️ 0 rows
+12:40:55.747 Fetching 2025-01-01 (15/15)...12:40:57.255  ⚠️ 0 rows
+12:40:57.255 ⚠️  No new data to merge
+12:40:57.256 ✅ Job #1369 SUCCESSFUL: 420 rows
+ℹ️  No cumulative fields detected
+12:40:57.259 🔄 Processing job #1363 (backfill) - attempt 1/3
+12:40:57.259 SQL hash: 79b1ba0d590d4ed1c4e82123d248aff3
+12:40:57.260 Backfill (full): 2026-03-26 → 2025-01-01
+12:40:57.260 Fetching month 2026-03-01 (1/15)...12:40:57.279  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_124057_01083_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.279 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_124057_01083_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.279 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_124057_01083_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.279 ℹ️  Partial data saved via checkpoints: 0 rows
+12:40:57.279 ⚠️  Job #1363 PARTIALLY SUCCESSFUL: 0 rows saved
+12:40:57.281 🔄 Processing job #1370 (backfill) - attempt 1/3
+12:40:57.281 SQL hash: 480d92da1e9ed0e27aedb0daaf454e19
+12:40:57.281 Backfill (full): 2026-03-26 → 2025-01-01
+12:40:57.281 Fetching month 2026-03-01 (1/15)...12:40:57.361  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_124057_01085_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.361 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_124057_01085_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.361 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_124057_01085_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+12:40:57.361 ℹ️  Partial data saved via checkpoints: 0 rows
+12:40:57.362 ⚠️  Job #1370 PARTIALLY SUCCESSFUL: 0 rows saved
+12:40:57.363 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:07.365 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:17.366 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:27.368 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:37.369 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:47.370 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:41:57.372 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:07.373 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:17.374 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:27.376 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:37.377 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:47.379 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:42:57.380 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:07.381 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:17.383 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:27.385 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:37.386 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:47.388 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:43:57.389 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:07.390 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:17.392 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:27.394 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:37.395 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:47.396 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:44:57.397 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:07.399 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:17.401 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:27.402 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:37.404 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:47.406 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:45:57.407 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:07.409 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:17.410 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:27.412 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:37.413 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:47.415 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:46:57.416 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:07.417 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:17.419 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:27.420 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:37.422 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:47.423 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:47:57.425 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:07.426 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:17.428 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:27.429 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:37.430 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:47.432 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:48:57.434 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:07.435 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:17.436 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:27.438 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:37.439 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:47.441 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:49:57.442 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:07.444 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:17.445 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:27.447 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:37.448 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:47.450 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:50:57.451 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:07.453 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:17.454 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:27.456 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:37.457 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:47.459 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:51:57.460 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:07.462 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:17.463 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:27.465 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:37.466 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:47.468 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:52:57.469 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:07.471 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:17.473 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:27.474 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:37.476 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:47.477 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:53:57.479 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:07.480 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:17.482 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:27.484 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:37.485 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:47.486 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:54:57.488 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:07.488 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:17.490 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:27.491 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:37.492 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:47.494 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:55:57.495 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:07.497 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:17.498 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:27.499 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:37.501 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:47.502 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:56:57.503 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:07.505 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:17.506 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:27.508 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:37.509 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:47.510 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:57:57.512 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:07.513 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:17.514 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:27.516 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:37.517 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:47.519 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:58:57.520 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:07.522 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:17.523 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:27.525 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:37.526 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:47.528 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+12:59:57.529 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:07.531 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:17.532 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:27.534 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:37.535 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:47.537 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:00:57.538 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:07.540 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:17.541 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:27.542 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:37.544 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:47.545 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:01:57.547 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:07.548 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:17.550 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:27.551 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:37.553 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:47.554 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:02:57.556 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:07.557 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:17.558 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:27.560 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:37.561 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:47.563 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:03:57.564 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:07.566 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:17.567 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:27.569 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:37.570 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:47.571 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:04:57.573 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:07.575 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:17.576 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:27.578 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:37.579 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:47.580 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:05:57.582 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:07.583 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:17.585 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:27.586 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:37.588 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:47.589 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:06:57.591 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:07.593 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:17.594 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:27.595 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:37.596 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:47.598 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:07:57.599 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:07.601 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:17.602 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:27.604 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:37.605 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:47.607 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:08:57.608 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:07.609 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:17.611 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:27.612 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:37.614 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:47.615 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:09:57.617 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:10:07.619 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:10:17.620 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:10:27.622 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:10:37.623 No pending jobs. Waiting 10s... (processed 907 jobs so far)
+13:10:47.625 🔄 Processing job #1370 (backfill) - attempt 1/3
+13:10:47.625 SQL hash: 480d92da1e9ed0e27aedb0daaf454e19
+13:10:47.626 Backfill (full): 2026-03-26 → 2025-01-01
+13:10:47.626 Fetching month 2026-03-01 (1/15)...13:10:47.732  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131047_01095_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:47.732 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131047_01095_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:47.732 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131047_01095_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:47.732 ℹ️  Partial data saved via checkpoints: 0 rows
+13:10:47.732 ⚠️  Job #1370 PARTIALLY SUCCESSFUL: 0 rows saved
+13:10:47.733 No pending jobs. Waiting 10s... (processed 908 jobs so far)
+13:10:57.735 🔄 Processing job #1363 (backfill) - attempt 1/3
+13:10:57.735 SQL hash: 79b1ba0d590d4ed1c4e82123d248aff3
+13:10:57.736 Backfill (full): 2026-03-26 → 2025-01-01
+13:10:57.736 Fetching month 2026-03-01 (1/15)...13:10:57.758  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_131057_01097_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:57.758 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_131057_01097_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:57.758 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=SYNTAX_ERROR, message="line 7:1: mismatched input 'cte_price'. Expecting: '(', 'SELECT', 'TABLE', 'VALUES'", query_id=20260326_131057_01097_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Commodities'
+)
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply,
+sum(post_balance*price_in_usd) as marketcap,
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:10:57.759 ℹ️  Partial data saved via checkpoints: 0 rows
+13:10:57.759 ⚠️  Job #1363 PARTIALLY SUCCESSFUL: 0 rows saved
+13:10:57.760 No pending jobs. Waiting 10s... (processed 909 jobs so far)
+13:11:07.762 🔄 Processing job #1370 (backfill) - attempt 1/3
+13:11:07.762 SQL hash: 480d92da1e9ed0e27aedb0daaf454e19
+13:11:07.762 Backfill (full): 2026-03-26 → 2025-01-01
+13:11:07.763 Fetching month 2026-03-01 (1/15)...13:11:07.858  ❌ Error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131107_01099_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:11:07.858 ❌ Trino query error: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131107_01099_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:11:07.858 ❌ Error during processing: Execution failed on sql 'WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+': (trino.exceptions.TrinoUserError) TrinoUserError(type=USER_ERROR, name=AMBIGUOUS_NAME, message="line 18:8: Column 'block_date' is ambiguous", query_id=20260326_131107_01099_na42d)
+[SQL: WITH mint_mapping AS (
+ SELECT address, name, symbol, decimals, program
+ FROM solana.rwa_tokens_mapping
+ WHERE category='Tokenized Funds'
+),
+
+cte_price AS
+(
+select block_date, mint, avg(price_in_usd) as price_in_usd
+from
+solana.token_prices_1m
+where block_date < CURRENT_DATE
+  AND mint in (select address from mint_mapping)
+group by 1,2
+)
+
+
+select block_date,
+ s.mint as mint_address,
+    m.symbol as mint,
+sum(post_balance) as supply, 
+sum(post_balance*price_in_usd) as marketcap, 
+count(1) as holders,
+sum(post_balance*price_in_usd)/count(1) as avg_balance_per_holder_usd
+from solana.account_spl_balances_agg s
+JOIN mint_mapping m ON s.mint = m.address
+join cte_price p on s.mint=p.mint and s.block_date=p.block_date
+WHERE 1=1
+  AND DATE_TRUNC('month', s.block_date) = DATE('2026-03-01')
+  AND s.block_date >= DATE('2026-01-01')
+  AND s.block_date < CURRENT_DATE
+group by 1,2,3
+ORDER BY 1 DESC, 5 DESC
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+13:11:07.858 ℹ️  Partial data saved via checkpoints: 0 rows
+13:11:07.858 ⚠️  Job #1370 PARTIALLY SUCCESSFUL: 0 rows saved
+13:11:07.859 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:11:17.861 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:11:27.863 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:11:37.864 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:11:47.866 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:11:57.867 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:07.868 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:17.870 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:27.871 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:37.873 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:47.874 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:12:57.876 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:07.877 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:17.879 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:27.880 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:37.881 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:47.883 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:13:57.884 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:07.886 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:17.887 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:27.889 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:37.890 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:47.891 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:14:57.892 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:07.894 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:17.895 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:27.897 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:37.898 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:47.899 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:15:57.901 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:07.902 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:17.904 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:27.905 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:37.907 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:47.908 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:16:57.909 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:07.911 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:17.912 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:27.914 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:37.915 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:47.917 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:17:57.918 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:07.920 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:17.922 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:27.923 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:37.924 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:47.926 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:18:57.928 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:07.929 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:17.931 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:27.932 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:37.934 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:47.935 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:19:57.936 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:07.938 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:17.939 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:27.940 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:37.942 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:47.944 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:20:57.945 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:07.947 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:17.948 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:27.950 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:37.951 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:47.952 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:21:57.954 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:07.955 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:17.957 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:27.958 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:37.960 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:47.961 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:22:57.963 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:07.964 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:17.966 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:27.967 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:37.968 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:47.970 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:23:57.971 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:07.973 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:17.974 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:27.976 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:37.977 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:47.979 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:24:57.980 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:07.982 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:17.983 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:27.985 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:37.986 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:47.988 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:25:57.989 No pending jobs. Waiting 10s... (processed 910 jobs so far)
+13:26:07.991 No pending jobs. Waiting 10s... (processed 910 jobs so far)
