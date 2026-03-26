@@ -21,6 +21,7 @@ CHART_CATEGORIES = {
         'total_economic_value',
     ],
     'RWAs': [
+        'overview',
         'stablecoins',
         'tokenized_commodities',
         'tokenized_funds',
