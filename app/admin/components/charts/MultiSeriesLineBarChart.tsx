@@ -187,29 +187,26 @@ const formatXAxisLabel = (value: string, timeFilter?: string): string => {
 };
 
 // Helper function to format field names for display
+// Matches StackedBarChart.tsx: capitalize first letter of each word only — do not
+// lowercase the remainder, or ticker-style symbols (RIOTX, BTBTX, MSTR) become "Riotx", "Btbtx".
 const formatFieldName = (fieldName: string): string => {
   if (!fieldName) return '';
-  
+
   // Convert snake_case or kebab-case to space-separated
   const spaceSeparated = fieldName.replace(/[_-]/g, ' ');
-  
-  // Always capitalize the first letter of the entire string
+
   if (spaceSeparated.length === 0) return '';
-  
-  // Special cases for acronyms
+
   const acronyms = ['hhi', 'apy', 'apr', 'roi', 'tvl', 'api'];
-  
-  // Split into words and capitalize each word
+
   return spaceSeparated
     .split(' ')
     .map(word => {
       if (word.length === 0) return '';
-      // Check if word is an acronym
       if (acronyms.includes(word.toLowerCase())) {
         return word.toUpperCase();
       }
-      // Capitalize first letter, lowercase the rest
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join(' ');
 };
@@ -464,10 +461,19 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
   
   const xField = chartConfig.dataMapping.xAxis;
   const yField = chartConfig.dataMapping.yAxis;
-  
+  const groupByField = chartConfig.dataMapping.groupBy || '';
+
   // For type safety, ensure we use string values for indexing
   const xKey = typeof xField === 'string' ? xField : xField[0];
-  
+
+  // StackedBarChart.tsx ~292–300: primary Y field for groupBy legend totals
+  const yKey =
+    typeof yField === 'string'
+      ? yField
+      : Array.isArray(yField) && yField.length > 0
+        ? getYAxisField(yField[0])
+        : '';
+
   // Extract data for the chart
   const { chartData, fields, fieldColors, fieldTypes, fieldUnits, fieldDecimals } = useMemo(() => {
     // Use appropriate filtered data depending on context
@@ -484,7 +490,13 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     
     // Filter data first to remove any undefined x values
     const processedData = currentData.filter(d => d[xKey] !== undefined && d[xKey] !== null);
-    
+
+    // StackedBarChart groupBy path: all series keys come from full `data`, not brush-filtered rows
+    const fullDataForGroupDiscovery =
+      data && data.length > 0
+        ? data.filter((d: any) => d[xKey] !== undefined && d[xKey] !== null)
+        : processedData;
+
     // Sort by date if applicable
     if (processedData.length > 0) {
       // Detect if data contains dates
@@ -580,21 +592,18 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
       }
     }
     
-    // Check if groupBy is used
-    const groupByField = chartConfig.dataMapping.groupBy;
-    
+    // Check if groupBy is used (same as StackedBarChart `hasGroupBy`)
           if (groupByField && groupByField !== '') {
         // Process data with groupBy
         const groupedByX: Record<string, any> = {};
-        const uniqueGroups = new Set<string>();
-        
-        // Collect all unique x-values and group values
+        // StackedBarChart.tsx ~1696–1700: legendKeys = Set(data.map(...String(groupByField)))
+        const uniqueGroups = new Set<string>(
+          fullDataForGroupDiscovery.map((item: any) => String(item[groupByField]))
+        );
+
         processedData.forEach(item => {
           const xValue = item[xKey];
-          const groupValue = item[groupByField]?.toString() || 'Unknown';
-          
-          // Store unique groups
-          uniqueGroups.add(groupValue);
+          const groupValue = String(item[groupByField]);
           
           // Initialize x-value group if needed
           if (!groupedByX[xValue]) {
@@ -626,8 +635,8 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
         const groupTotals: Record<string, number> = {};
         if (singleYField) {
           uniqueGroupsArray.forEach(group => {
-            groupTotals[group] = processedData
-              .filter(item => (item[groupByField]?.toString() || 'Unknown') === group)
+            groupTotals[group] = fullDataForGroupDiscovery
+              .filter((item: any) => String(item[groupByField]) === group)
               .reduce((sum, item) => sum + (Number(item[singleYField]) || 0), 0);
           });
         }
@@ -798,7 +807,7 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
           fieldDecimals: resultFieldDecimals
         };
       }
-  }, [data, filteredData, isBrushActive, xKey, yField, isExpanded, isModalBrushActive, modalFilteredData, chartConfig.dataMapping.groupBy, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
+  }, [data, filteredData, isBrushActive, xKey, yField, isExpanded, isModalBrushActive, modalFilteredData, groupByField, filterValues?.currencyFilter, modalFilterValues, chartConfig.additionalOptions?.filters?.currencyFilter]);
 
   // Helper function to force reset the brush visual state
   const forceBrushVisualReset = useCallback((inModal = false) => {
@@ -1694,29 +1703,73 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
     }
   }, [isModalBrushActive, brushData, originalBrushData, isTimeAggregationEnabled, chartConfig.dataMapping.groupBy, data, xKey]);
 
-  // Update legend items when chart data changes
+  // StackedBarChart.tsx 1666–1721 — verbatim structure; `fieldColors` === chart `groupColors`
   useEffect(() => {
-    if (chartData.length > 0 && fields.length > 0) {
-      // Calculate total value for each field across all data points
-      const fieldTotals: Record<string, number> = {};
-      
-      fields.forEach(field => {
-        fieldTotals[field] = chartData.reduce((sum, d) => sum + (Number(d[field]) || 0), 0);
-      });
-      
-      // Create and sort legend items by total value (descending)
-      const newLegendItems = fields
-        .map(field => ({
-          id: field,
-          label: formatFieldName(field),
-          color: fieldColors[field] || blue,
-          value: fieldTotals[field]
-        }))
-        .sort((a, b) => b.value - a.value);
-      
-      setLegendItems(newLegendItems);
+    if (!data || data.length === 0) return;
+
+    const hasGroupBy = groupByField && groupByField.trim() !== '';
+    const keyTotals: Record<string, number> = {};
+
+    data.forEach(item => {
+      if (Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked && !hasGroupBy) {
+        yField.forEach(field => {
+          const key = typeof field === 'string' ? field : field.field;
+          const value = Number(item[key]) || 0;
+          keyTotals[key] = (keyTotals[key] || 0) + value;
+        });
+      } else if (Array.isArray(yField) && yField.length > 1 && hasGroupBy) {
+        yField.forEach(field => {
+          const fn = typeof field === 'string' ? field : field.field;
+          const key = `${fn}_${String(item[groupByField])}`;
+          const value = Number(item[fn]) || 0;
+          keyTotals[key] = (keyTotals[key] || 0) + value;
+        });
+      } else if (Array.isArray(yField) && yField.length > 1 && !hasGroupBy) {
+        yField.forEach(field => {
+          const key = typeof field === 'string' ? field : field.field;
+          const value = Number(item[key]) || 0;
+          keyTotals[key] = (keyTotals[key] || 0) + value;
+        });
+      } else if (hasGroupBy) {
+        const groupValue = String(item[groupByField]);
+        const value = Number(item[yKey]) || 0;
+        keyTotals[groupValue] = (keyTotals[groupValue] || 0) + value;
+      } else {
+        const value = Number(item[yKey]) || 0;
+        keyTotals[yKey] = (keyTotals[yKey] || 0) + value;
+      }
+    });
+
+    let legendKeys: string[];
+    if (Array.isArray(yField) && yField.length > 1 && chartConfig.isStacked && !hasGroupBy) {
+      legendKeys = yField.map(field => (typeof field === 'string' ? field : field.field));
+    } else if (hasGroupBy && Array.isArray(yField) && yField.length > 1) {
+      legendKeys = fields.length > 0 ? fields : [];
+    } else if (Array.isArray(yField) && yField.length > 1 && !hasGroupBy) {
+      legendKeys = yField.map(field => (typeof field === 'string' ? field : field.field));
+    } else if (hasGroupBy) {
+      legendKeys = Array.from(new Set(data.map(item => String(item[groupByField]))));
+    } else {
+      legendKeys = [yKey];
     }
-  }, [chartData, fields, fieldColors]);
+
+    if (legendKeys.length === 0) return;
+
+    const newLegendItems = legendKeys
+      .filter(key => {
+        const totalValue = keyTotals[key] || 0;
+        return Math.abs(totalValue) > 0.001;
+      })
+      .map(key => ({
+        id: key,
+        label: formatFieldName(key),
+        color: fieldColors[key] || blue,
+        value: keyTotals[key] || 0
+      }))
+      .sort((a, b) => b.value - a.value);
+
+    setLegendItems(newLegendItems);
+  }, [data, fieldColors, yField, yKey, groupByField, chartConfig.isStacked, fields]);
 
   // Detect if x-axis values are numerical (calculate once for the entire component)
   const isNumericalXAxis = useMemo(() => {
