@@ -43,6 +43,8 @@ from pathlib import Path
 import hashlib
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
+
 # PostgreSQL connection
 def get_db_connection():
     return psycopg2.connect(
@@ -56,6 +58,53 @@ def get_db_connection():
 def get_sql_hash(sql_content):
     """Calculate MD5 hash of SQL content."""
     return hashlib.md5(sql_content.encode()).hexdigest()
+
+
+def _x_axis_field_name(chart_dict: dict) -> str:
+    """First x-axis field from YAML dataMapping (for counter trend labels)."""
+    dm = chart_dict.get('dataMapping') or {}
+    x = dm.get('xAxis')
+    if isinstance(x, list) and x:
+        x = x[0]
+    if isinstance(x, dict):
+        x = x.get('field', x)
+    if x is None:
+        return ''
+    return str(x).strip().lower()
+
+
+def _format_day_ordinal(d: datetime) -> str:
+    """e.g. Jan 25th — used for daily incremental / block_date trend labels."""
+    day = d.day
+    if 11 <= day <= 13:
+        suffix = 'th'
+    else:
+        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(day % 10, 'th')
+    return f"{d.strftime('%b')} {day}{suffix}"
+
+
+def default_counter_trend_label(chart_dict: dict, query_run_config: dict) -> str:
+    """
+    When trendConfig is omitted in YAML:
+    - Daily series: incrementalPeriod == 'day' OR xAxis == 'block_date'
+      → label vs. (today - 2 days), e.g. vs. Mar 24th
+    - Otherwise (e.g. incrementalPeriod month) → vs. (today - 2 months), e.g. vs. Jan'26
+    """
+    now = datetime.now()
+    period = (query_run_config or {}).get('incrementalPeriod')
+    if isinstance(period, str):
+        period = period.strip().lower()
+    else:
+        period = ''
+
+    is_daily = period == 'day' or _x_axis_field_name(chart_dict) == 'block_date'
+
+    if is_daily:
+        ref = now - relativedelta(days=2)
+        return f'vs. {_format_day_ordinal(ref)}'
+
+    comparison_month = (now - relativedelta(months=2)).strftime("%b'%y")
+    return f'vs. {comparison_month}'
 
 def split_multi_chart_yaml(yaml_config, sql_file_name):
     """
@@ -213,15 +262,9 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                 if 'trendConfig' in chart_dict:
                     json_config['trendConfig'] = chart_dict['trendConfig']
                 else:
-                    # today - 2 months = comparison month (always dynamic)
-                    from datetime import datetime
-                    from dateutil.relativedelta import relativedelta
-
-                    comparison_month_name = (datetime.now() - relativedelta(months=2)).strftime("%b'%y")
-
                     json_config['trendConfig'] = {
                         'valueField': 'auto_calculate',
-                        'label': f'vs. {comparison_month_name}'
+                        'label': default_counter_trend_label(chart_dict, query_run_config),
                     }
             
             # Add additionalOptions for cumulative charts
