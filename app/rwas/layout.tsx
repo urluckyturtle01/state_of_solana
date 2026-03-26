@@ -11,7 +11,7 @@ interface RwasLayoutProps {
 
 export default function RwasLayout({ children }: RwasLayoutProps) {
   const pathname = usePathname();
-  const activeTab = pathname.split('/')[2] || "stablecoins";
+  const activeTab = pathname.split('/')[2] || "overview";
 
   return (
     <Layout>
