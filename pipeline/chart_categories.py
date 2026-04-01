@@ -27,6 +27,11 @@ CHART_CATEGORIES = {
         'tokenized_funds',
         'xstocks',
         'yield_bearing_tokens',
+    ],
+    'wrapped_btc': [
+        'dex_activity',
+        'summary',
+        'transfers',
     ]
 }
 

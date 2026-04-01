@@ -11,7 +11,7 @@ interface WrappedBtcLayoutProps {
 
 export default function WrappedBtcLayout({ children }: WrappedBtcLayoutProps) {
   const pathname = usePathname();
-  const activeTab = pathname.split('/')[2] || "dex_activity";
+  const activeTab = pathname.split('/')[2] || "summary";
 
   return (
     <Layout>

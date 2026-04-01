@@ -7,7 +7,7 @@ export default function WrappedBtcIndexPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/wrapped-btc/dex_activity");
+    router.replace("/wrapped-btc/summary");
   }, [router]);
 
   return (
