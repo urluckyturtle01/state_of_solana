@@ -1,20 +1,22 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import {
+  jobCategories,
+  jobMatchesCategory,
+  jobMatchesPage,
+  jobPages,
+} from '../utils/job-pages';
 
 type Job = {
   id: number;
   sqlHash: string;
   chartTitle: string;
   page: string | null;
+  pages?: string[];
   rowCount: number;
   status: string;
 };
-
-function getCategory(page: string | null): string | null {
-  if (!page) return null;
-  return page.split('-')[0] || null;
-}
 
 export default function TweetGeneratorModal({
   open,
@@ -74,15 +76,15 @@ export default function TweetGeneratorModal({
     });
   };
 
-  const categories = [...new Set(jobs.map((j) => getCategory(j.page)).filter(Boolean))].sort() as string[];
-  let pageOptions = [...new Set(jobs.map((j) => j.page).filter(Boolean))].sort() as string[];
+  const categories = [...new Set(jobs.flatMap((j) => jobCategories(j)))].sort() as string[];
+  let pageOptions = [...new Set(jobs.flatMap((j) => jobPages(j)))].sort() as string[];
   if (categoryFilter !== 'all') {
-    pageOptions = pageOptions.filter((p) => getCategory(p) === categoryFilter);
+    pageOptions = pageOptions.filter((p) => p.split('-')[0] === categoryFilter);
   }
 
   const filteredJobs = jobs.filter((j) => {
-    if (categoryFilter !== 'all' && getCategory(j.page) !== categoryFilter) return false;
-    if (pageFilter !== 'all' && j.page !== pageFilter) return false;
+    if (!jobMatchesCategory(j, categoryFilter)) return false;
+    if (!jobMatchesPage(j, pageFilter)) return false;
     return true;
   });
 

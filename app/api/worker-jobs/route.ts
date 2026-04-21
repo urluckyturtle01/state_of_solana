@@ -30,20 +30,31 @@ export async function GET(request: NextRequest) {
         j.completed_at,
         j.error_message,
 
-        -- Chart info (first matching chart definition) — use SQL file name as job label
+        -- Chart info: sqlFile is identical for all charts sharing this hash; page can differ (same SQL on multiple pages)
         (
-          SELECT cd.chart_config->>'sqlFile'
+          SELECT MIN(cd.chart_config->>'sqlFile')
           FROM chart_definitions cd
           WHERE cd.sql_hash = j.sql_hash
-          LIMIT 1
         ) AS chart_title,
 
         (
-          SELECT cd.chart_config->>'page'
+          SELECT MIN(cd.chart_config->>'page')
           FROM chart_definitions cd
           WHERE cd.sql_hash = j.sql_hash
-          LIMIT 1
         ) AS page,
+
+        (
+          SELECT COALESCE(
+            array_agg(x.page ORDER BY x.page),
+            ARRAY[]::text[]
+          )
+          FROM (
+            SELECT DISTINCT cd.chart_config->>'page' AS page
+            FROM chart_definitions cd
+            WHERE cd.sql_hash = j.sql_hash
+              AND cd.chart_config->>'page' IS NOT NULL
+          ) x
+        ) AS pages,
 
         -- Row count in query_results
         COALESCE(qr.row_count, 0) AS row_count,
@@ -65,6 +76,12 @@ export async function GET(request: NextRequest) {
     `);
 
     const jobs = result.rows.map(row => {
+      const pages =
+        Array.isArray(row.pages) && row.pages.length > 0
+          ? row.pages
+          : row.page
+            ? [row.page]
+            : [];
       return {
         id: row.id,
         sqlHash: row.sql_hash,
@@ -78,6 +95,7 @@ export async function GET(request: NextRequest) {
         errorMessage: row.error_message,
         chartTitle: row.chart_title || row.sql_hash.slice(0, 12) + '…',
         page: row.page || null,
+        pages,
         rowCount: row.row_count,
         lastRunAt: row.last_run_at,
         lastRunStatus: row.last_run_status,

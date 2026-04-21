@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import RequeueButton from './RequeueButton';
 import JobDetailsModal from './JobDetailsModal';
+import { jobPages } from '../utils/job-pages';
 
 export type Job = {
   id: number;
@@ -17,6 +18,8 @@ export type Job = {
   errorMessage: string | null;
   chartTitle: string;
   page: string | null;
+  /** All dashboard pages that use this sql_hash (shared SQL across pages). */
+  pages?: string[];
   rowCount: number;
   lastRunAt: string | null;
   lastRunStatus: string | null;
@@ -116,7 +119,15 @@ export default function WorkerJobCard({
             {job.chartTitle}
           </div>
           <div className="worker-log-job-sub">
-            <span className="tag">{job.page || '—'}</span>
+            {jobPages(job).length ? (
+              jobPages(job).map((p) => (
+                <span key={p} className="tag">
+                  {p}
+                </span>
+              ))
+            ) : (
+              <span className="tag">—</span>
+            )}
           </div>
         </div>
         <span className="worker-log-job-chevron">▶</span>

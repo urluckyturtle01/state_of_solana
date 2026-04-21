@@ -3,11 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import WorkerJobsHeader from './WorkerJobsHeader';
 import WorkerJobCard, { type Job } from './WorkerJobCard';
-
-function getCategory(page: string | null): string | null {
-  if (!page) return null;
-  return page.split('-')[0] || null;
-}
+import {
+  jobCategories,
+  jobMatchesCategory,
+  jobMatchesPage,
+  jobPages,
+} from '../utils/job-pages';
 
 export default function WorkerJobsArea({ mobileTab }: { mobileTab: string }) {
   const [allJobs, setAllJobs] = useState<Job[]>([]);
@@ -36,16 +37,22 @@ export default function WorkerJobsArea({ mobileTab }: { mobileTab: string }) {
     return () => clearInterval(id);
   }, [loadJobs]);
 
-  const categories = [...new Set(allJobs.map((j) => getCategory(j.page)).filter(Boolean))].sort() as string[];
-  let subcategoryPages = [...new Set(allJobs.map((j) => j.page).filter(Boolean))].sort() as string[];
+  const categories = [
+    ...new Set(allJobs.flatMap((j) => jobCategories(j))),
+  ].sort() as string[];
+  let subcategoryPages = [
+    ...new Set(allJobs.flatMap((j) => jobPages(j))),
+  ].sort() as string[];
   if (categoryFilter !== 'all') {
-    subcategoryPages = subcategoryPages.filter((p) => getCategory(p) === categoryFilter);
+    subcategoryPages = subcategoryPages.filter((p) =>
+      p.split('-')[0] === categoryFilter
+    );
   }
 
   const filteredJobs = allJobs.filter((j) => {
     if (statusFilter !== 'all' && j.status !== statusFilter) return false;
-    if (categoryFilter !== 'all' && getCategory(j.page) !== categoryFilter) return false;
-    if (subcategoryFilter !== 'all' && j.page !== subcategoryFilter) return false;
+    if (!jobMatchesCategory(j, categoryFilter)) return false;
+    if (!jobMatchesPage(j, subcategoryFilter)) return false;
     return true;
   });
 
