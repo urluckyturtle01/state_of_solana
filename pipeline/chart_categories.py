@@ -22,16 +22,12 @@ CHART_CATEGORIES = {
     ],
     'RWAs': [
         'overview',
+        'pre_stocks',
         'stablecoins',
         'tokenized_commodities',
         'tokenized_funds',
         'xstocks',
         'yield_bearing_tokens',
-    ],
-    'wrapped_btc': [
-        'dex_activity',
-        'summary',
-        'transfers',
     ]
 }
 
