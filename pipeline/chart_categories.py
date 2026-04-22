@@ -28,6 +28,11 @@ CHART_CATEGORIES = {
         'tokenized_funds',
         'xstocks',
         'yield_bearing_tokens',
+    ],
+    'Overview': [
+        'network_dynamics',
+        'network_usage',
+        'user_activity',
     ]
 }
 

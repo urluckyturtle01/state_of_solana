@@ -88,7 +88,7 @@ export default function RootLayout({
         <AnalyticsProvider>
         <AuthWrapper>
           {children}
-          <NewsletterSection /> 
+         
           <SaveNotification />
         </AuthWrapper>
         </AnalyticsProvider>
