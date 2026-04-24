@@ -33,7 +33,12 @@ CHART_CATEGORIES = {
         'network_dynamics',
         'network_usage',
         'user_activity',
-    ]
+    ],
+    'wrapped_btc': [
+        'dex_activity',
+        'summary',
+        'transfers',
+    ],
 }
 
 # Maps SQL repo category name → app folder name

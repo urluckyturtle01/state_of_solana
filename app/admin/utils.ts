@@ -507,6 +507,9 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
     'rwas-tokenized-funds',
     'rwas-xstocks',
     'rwas-yield-bearing-tokens',
+    'wrapped-btc-dex-activity',
+    'wrapped-btc-summary',
+    'wrapped-btc-transfers',
   ];
   if (dbBackedPages.includes(pageId)) {
     try {
@@ -1568,6 +1571,9 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     'rwas-tokenized-funds',
     'rwas-xstocks',
     'rwas-yield-bearing-tokens',
+    'wrapped-btc-dex-activity',
+    'wrapped-btc-summary',
+    'wrapped-btc-transfers',
   ];
     if (dbBackedPages.includes(pageId)) {
       try {
