@@ -3,28 +3,25 @@ import React, { Suspense } from 'react';
 import EnhancedDashboardRenderer from "@/app/admin/components/enhanced-dashboard-renderer";
 import PrettyLoader from "@/app/components/shared/PrettyLoader";
 
-// Create a loading component for Suspense fallback
 const ChartLoading = () => (
   <div className="w-full h-[500px] flex items-center justify-center">
     <PrettyLoader size="sm" />
   </div>
 );
 
-
-// SEO Structured Data
 const structuredData = generateStructuredData('/mev/summary');
 
 export default function MevSummaryPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
-        <EnhancedDashboardRenderer 
-          pageId="mev-summary" 
+        <EnhancedDashboardRenderer
+          pageId="mev-summary"
           enableCaching={true}
         />
       </Suspense>
     </div>
   );
-} 
+}
 
 export const metadata = generateNextMetadata('/mev/summary');

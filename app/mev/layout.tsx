@@ -11,12 +11,8 @@ interface MevLayoutProps {
 
 export default function MevLayout({ children }: MevLayoutProps) {
   const pathname = usePathname();
-  
-  // Extract the active tab from pathname
-  // /rev -> overview, /rev/by-protocol -> by-protocol, etc.
-  const pathSegments = pathname.split('/');
-  const activeTab = pathname.split('/')[2] || 'summary';
-  
+  const activeTab = pathname.split('/')[2] || "summary";
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -25,4 +21,4 @@ export default function MevLayout({ children }: MevLayoutProps) {
       </div>
     </Layout>
   );
-} 
+}

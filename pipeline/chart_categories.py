@@ -39,6 +39,11 @@ CHART_CATEGORIES = {
         'summary',
         'transfers',
     ],
+    'MEV': [
+        'extracted_value_and_pnl',
+        'liquidity_hotspot',
+        'summary',
+    ],
 }
 
 # Maps SQL repo category name → app folder name

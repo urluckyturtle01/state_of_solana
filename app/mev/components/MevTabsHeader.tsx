@@ -6,36 +6,35 @@ interface MevTabsHeaderProps {
   activeTab?: string;
 }
 
-export default function MevTabsHeader({ activeTab = "overview" }: MevTabsHeaderProps) {
+export default function MevTabsHeader({ activeTab = "summary" }: MevTabsHeaderProps) {
   const tabs: Tab[] = [
-    { 
-      name: "Summary", 
-      path: "/mev",
+    {
+      name: "Summary",
+      path: "/mev/summary",
       key: "summary",
-      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     },
-    { 
-      name: "Extracted Value & PNL", 
-      path: "/mev/extracted-value-pnl",
-      key: "extracted-value-pnl",
-      icon: "M4 0L0 3.99H3V11H5V3.99H8L4 0ZM11 14.01V7H9V14.01H6L10 18L14 14.01H11Z"
+    {
+      name: "Extracted Value And Pnl",
+      path: "/mev/extracted_value_and_pnl",
+      key: "extracted_value_and_pnl",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     },
-    { 
-      name: "Liquidity Hotspots", 
-      path: "/mev/dex-token-hotspots",
-      key: "dex-token-hotspots",
-      icon: "M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 16a6 6 0 100-12 6 6 0 000 12zm0-4a2 2 0 110-4 2 2 0 010 4z"
+    {
+      name: "Liquidity Hotspot",
+      path: "/mev/liquidity_hotspot",
+      key: "liquidity_hotspot",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
     }
-
   ];
-  
+
   return (
-    <TabsNavigation 
-      tabs={tabs} 
+    <TabsNavigation
+      tabs={tabs}
       activeTab={activeTab}
       title="MEV"
-      description="Uncovering MEV profits and patterns on Solana"
+      description="MEV (Maximal Extractable Value) metrics and sandwich attack analytics on Solana"
       showDivider={true}
     />
   );
-} 
+}
