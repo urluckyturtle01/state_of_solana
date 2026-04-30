@@ -51,6 +51,7 @@ def calculate_cumulative_fields(pg, sql_hash):
     
     # Detect cumulative fields and their base fields
     cumulative_fields = []
+    stitched_cumulative_fields = []
     for key in first_row.keys():
         if 'cumulative' in key.lower():
             # Find base field by removing 'cumulative_' prefix
@@ -74,13 +75,18 @@ def calculate_cumulative_fields(pg, sql_hash):
             if base_field:
                 cumulative_fields.append((key, base_field))
             else:
-                print(f"⚠️  Could not find base field for {key}, tried: {possible_base_fields}")
+                stitched_cumulative_fields.append(key)
+                print(
+                    f"ℹ️  No base field for {key}; will stitch existing cumulative values"
+                )
     
-    if not cumulative_fields:
+    if not cumulative_fields and not stitched_cumulative_fields:
         print(f"ℹ️  No cumulative fields detected")
         return
     
     print(f"📊 Found {len(cumulative_fields)} cumulative field(s): {[cf[0] for cf in cumulative_fields]}")
+    if stitched_cumulative_fields:
+        print(f"📊 Stitching {len(stitched_cumulative_fields)} cumulative field(s): {stitched_cumulative_fields}")
     
     # Detect group field from chart config (groupBy field)
     cur.execute("""
@@ -100,10 +106,10 @@ def calculate_cumulative_fields(pg, sql_hash):
     
     if group_field:
         print(f"📊 Grouped by: {group_field}")
-        result = _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields)
+        result = _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields, stitched_cumulative_fields)
     else:
         print(f"📊 Non-grouped data")
-        result = _calculate_ungrouped_cumulative(data, date_field, cumulative_fields)
+        result = _calculate_ungrouped_cumulative(data, date_field, cumulative_fields, stitched_cumulative_fields)
     
     # Update database
     cur.execute(
@@ -114,7 +120,24 @@ def calculate_cumulative_fields(pg, sql_hash):
     print(f"✅ Cumulative calculation complete ({len(result)} rows)")
 
 
-def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields):
+def _stitch_cumulative_value(row, cum_field, state):
+    """
+    Convert period-local cumulative values into a continuous cumulative series.
+    When the raw cumulative drops, treat it as a new period and carry forward
+    the previous adjusted cumulative as an offset.
+    """
+    raw_val = row.get(cum_field, 0) or 0
+    prev_raw = state['prev_raw'].get(cum_field)
+    if prev_raw is not None and raw_val < prev_raw:
+        state['offset'][cum_field] = state['prev_adjusted'].get(cum_field, 0)
+
+    adjusted = raw_val + state['offset'].get(cum_field, 0)
+    state['prev_raw'][cum_field] = raw_val
+    state['prev_adjusted'][cum_field] = adjusted
+    return adjusted
+
+
+def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fields, stitched_cumulative_fields):
     """Recalculate cumulative for grouped data with date backfilling."""
     
     grouped = defaultdict(list)
@@ -136,6 +159,11 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
         
         # Initialize cumulative trackers (start from 0)
         cumulative_values = {cum_field: 0 for cum_field, _ in cumulative_fields}
+        stitched_state = {
+            'offset': {cum_field: 0 for cum_field in stitched_cumulative_fields},
+            'prev_raw': {},
+            'prev_adjusted': {},
+        }
         
         current = min_date
         while current <= global_max_date:
@@ -148,6 +176,8 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
                     daily_val = row.get(base_field, 0) or 0
                     cumulative_values[cum_field] += daily_val
                     row[cum_field] = cumulative_values[cum_field]
+                for cum_field in stitched_cumulative_fields:
+                    row[cum_field] = _stitch_cumulative_value(row, cum_field, stitched_state)
                 all_results.append(row)
             else:
                 # Missing date - daily=0, cumulative stays same
@@ -155,6 +185,8 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
                 for cum_field, base_field in cumulative_fields:
                     new_row[base_field] = 0
                     new_row[cum_field] = cumulative_values[cum_field]
+                for cum_field in stitched_cumulative_fields:
+                    new_row[cum_field] = stitched_state['prev_adjusted'].get(cum_field, 0)
                 # Copy other fields as 0
                 for key in rows_sorted[0].keys():
                     if key not in new_row and 'cumulative' not in key.lower():
@@ -166,7 +198,7 @@ def _calculate_grouped_cumulative(data, date_field, group_field, cumulative_fiel
     return all_results
 
 
-def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
+def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields, stitched_cumulative_fields):
     """Recalculate cumulative for non-grouped data with date backfilling."""
     
     rows_sorted = sorted(data, key=lambda x: x[date_field])
@@ -176,6 +208,11 @@ def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
     
     # Initialize cumulative trackers (start from 0)
     cumulative_values = {cum_field: 0 for cum_field, _ in cumulative_fields}
+    stitched_state = {
+        'offset': {cum_field: 0 for cum_field in stitched_cumulative_fields},
+        'prev_raw': {},
+        'prev_adjusted': {},
+    }
     
     result = []
     current = min_date
@@ -190,6 +227,8 @@ def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
                 daily_val = row.get(base_field, 0) or 0
                 cumulative_values[cum_field] += daily_val
                 row[cum_field] = cumulative_values[cum_field]
+            for cum_field in stitched_cumulative_fields:
+                row[cum_field] = _stitch_cumulative_value(row, cum_field, stitched_state)
             result.append(row)
         else:
             # Missing date - daily=0, cumulative stays same
@@ -197,6 +236,8 @@ def _calculate_ungrouped_cumulative(data, date_field, cumulative_fields):
             for cum_field, base_field in cumulative_fields:
                 new_row[base_field] = 0
                 new_row[cum_field] = cumulative_values[cum_field]
+            for cum_field in stitched_cumulative_fields:
+                new_row[cum_field] = stitched_state['prev_adjusted'].get(cum_field, 0)
             # Copy other fields as 0
             for key in rows_sorted[0].keys():
                 if key not in new_row and 'cumulative' not in key.lower():
