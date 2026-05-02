@@ -106,6 +106,28 @@ def default_counter_trend_label(chart_dict: dict, query_run_config: dict) -> str
     comparison_month = (now - relativedelta(months=2)).strftime("%b'%y")
     return f'vs. {comparison_month}'
 
+
+def category_page_prefix(category: str) -> str:
+    """App page prefix for a SQL repo category."""
+    if category == 'dex-trades':
+        return 'dex'
+    return category.lower().replace('_', '-')
+
+
+def normalize_page_id(category: str, page: str) -> str:
+    """Normalize YAML page names to dashboard page ids."""
+    page_slug = page.strip().replace('_', '-')
+    prefix = category_page_prefix(category)
+    if page_slug == prefix or page_slug.startswith(f'{prefix}-'):
+        return page_slug
+    return f'{prefix}-{page_slug}'
+
+
+def default_page_id(category: str, folder: str) -> str:
+    """Default page id when a chart does not declare page in YAML."""
+    return normalize_page_id(category, folder)
+
+
 def split_multi_chart_yaml(yaml_config, sql_file_name):
     """
     If YAML has multiple charts, split into individual YAML configs.
@@ -188,16 +210,9 @@ def process_folder(pg, cur, category, folder, processed_uuids):
                 print(f"   ⚠️  No charts found in YAML (missing 'charts' array or 'id' field)")
                 continue
         
-        # Determine page_id
-        # Convention:
-        # - dex-trades/*      -> dex-<folder>
-        # - other categories  -> <category_slug>-<folder>
-        #   where category_slug is the lowercased category name with underscores replaced by hyphens
-        if category == 'dex-trades':
-            page_id = f"dex-{folder.replace('_', '-')}"
-        else:
-            category_slug = category.lower().replace('_', '-')
-            page_id = f"{category_slug}-{folder.replace('_', '-')}"
+        # Default page comes from the folder, but individual charts can override
+        # it with `page:` in YAML when one SQL file feeds multiple dashboards.
+        folder_page_id = default_page_id(category, folder)
         
         # Split multi-chart YAML into individual charts
         chart_configs = split_multi_chart_yaml(yaml_config, sql_name)
@@ -219,6 +234,8 @@ def process_folder(pg, cur, category, folder, processed_uuids):
             is_stacked = chart_dict.get('isStacked', False)
             index = chart_dict.get('index', 0)
             data_mapping = chart_dict.get('dataMapping', {})
+            chart_page = chart_dict.get('page')
+            page_id = normalize_page_id(category, chart_page) if chart_page else folder_page_id
             # queryRunConfig can be at chart level or root level (for multi-chart YAMLs)
             query_run_config = chart_dict.get('queryRunConfig') or yaml_config.get('queryRunConfig', {})
             
