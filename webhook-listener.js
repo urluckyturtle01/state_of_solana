@@ -7,8 +7,37 @@ const path = require('path');
 // Configuration
 const PORT = 9000;
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'your-webhook-secret-here'; // Set in .env
-const AUTO_UPDATE_SCRIPT = path.join(__dirname, 'auto-update-dex.sh');
+const PROJECT_DIR = __dirname;
+const SQL_REPO_DIR = '/root/tl-reserach-tool-sqls';
+const SYNC_SCRIPT = path.join(PROJECT_DIR, 'pipeline', 'sync-charts-to-db.py');
+const SYNC_LOG = '/tmp/sync-charts-to-db.log';
 const ALLOWED_REPO = 'Topledger/tl-reserach-tool-sqls'; // Only listen to this repo
+
+function runSync() {
+  const command = [
+    `cd ${SQL_REPO_DIR}`,
+    'git fetch origin',
+    'git pull origin "$(git rev-parse --abbrev-ref HEAD)" || git pull origin master || git pull origin main',
+    `cd ${PROJECT_DIR}`,
+    `python3 ${SYNC_SCRIPT} 2>&1 | tee ${SYNC_LOG}`,
+  ].join(' && ');
+
+  console.log('\n🚀 Starting chart sync...');
+  console.log(`📜 Sync script: ${SYNC_SCRIPT}`);
+  console.log(`📝 Sync log: ${SYNC_LOG}`);
+
+  exec(command, { maxBuffer: 20 * 1024 * 1024 }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`❌ Chart sync error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`⚠️  stderr: ${stderr}`);
+    }
+    console.log(`\n📄 Output:\n${stdout}`);
+    console.log('\n✅ Chart sync completed!');
+  });
+}
 
 // Verify GitHub webhook signature
 function verifySignature(payload, signature) {
@@ -65,19 +94,7 @@ const server = http.createServer((req, res) => {
           console.log(`👤 Pushed by: ${payload.pusher?.name}`);
           console.log(`📝 Commits: ${payload.commits?.length}`);
           
-          // Execute auto-update script
-          console.log('\n🚀 Starting auto-update process...');
-          exec(`bash ${AUTO_UPDATE_SCRIPT}`, (error, stdout, stderr) => {
-            if (error) {
-              console.error(`❌ Auto-update error: ${error.message}`);
-              return;
-            }
-            if (stderr) {
-              console.error(`⚠️  stderr: ${stderr}`);
-            }
-            console.log(`\n📄 Output:\n${stdout}`);
-            console.log('\n✅ Auto-update completed!');
-          });
+          runSync();
           
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ status: 'success', message: 'Webhook received and processing started' }));
@@ -104,7 +121,7 @@ server.listen(PORT, () => {
   console.log(`📍 Endpoint: http://localhost:${PORT}/webhook`);
   console.log(`🔐 Webhook secret: ${WEBHOOK_SECRET === 'your-webhook-secret-here' ? '⚠️  NOT SET (using default)' : '✅ Configured'}`);
   console.log(`📦 Allowed repository: ${ALLOWED_REPO}`);
-  console.log(`📜 Auto-update script: ${AUTO_UPDATE_SCRIPT}`);
+  console.log(`📜 Sync script: ${SYNC_SCRIPT}`);
   console.log('\n⏳ Waiting for GitHub webhook events...\n');
 });
 
