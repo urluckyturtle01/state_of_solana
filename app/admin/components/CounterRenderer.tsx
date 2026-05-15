@@ -395,7 +395,7 @@ const processCounterData = (counterConfig: CounterConfig, result: any): {
         if (rows.length > 1) {
           // Attempt to determine if there's a date field we can use for sorting
           let dateField = null;
-          const possibleDateFields = ['date', 'timestamp', 'time', 'period', 'day', 'created_at', 'updated_at', 'createdAt', 'updatedAt'];
+          const possibleDateFields = ['block_date', 'date', 'timestamp', 'time', 'period', 'day', 'month', 'week', 'created_at', 'updated_at', 'createdAt', 'updatedAt'];
           
           // Check if any of the common date field names exist in the data
           for (const field of possibleDateFields) {
@@ -642,13 +642,53 @@ const CounterRenderer: React.FC<CounterRendererProps> = ({
     
     // Calculate trend if trendConfig is present
     if (chartConfig.trendConfig && chartConfig.trendConfig.valueField === 'auto_calculate') {
-      // Resolve actual index (support negative rowIndex: -1 = last, -2 = second-to-last, etc.)
-      const actualIndex = rowIndex >= 0
-        ? rowIndex
-        : chartData.length + rowIndex;
-      const comparisonIndex = actualIndex - 1; // one row before = older month
+      // rowIndex is already resolved above (negative -> length + rowIndex, then clamped)
+      const actualIndex = rowIndex;
 
-      if (actualIndex > 0 && comparisonIndex >= 0 && comparisonIndex < chartData.length) {
+      // Detect data direction (ASC vs DESC) from a likely date field.
+      // We try common keys, then the configured xAxis. Older neighbour is on the
+      // opposite side of newer neighbour, so this works for both orderings.
+      const xAxisCfg = chartConfig.dataMapping?.xAxis;
+      const xAxisKey = typeof xAxisCfg === 'string'
+        ? xAxisCfg
+        : Array.isArray(xAxisCfg)
+          ? (typeof xAxisCfg[0] === 'string' ? xAxisCfg[0] : xAxisCfg[0]?.field)
+          : undefined;
+      const dateKeyCandidates = [xAxisKey, 'block_date', 'date', 'day', 'month', 'week', 'period']
+        .filter((k): k is string => Boolean(k));
+      const dateKey = dateKeyCandidates.find(k => row[k] !== undefined);
+
+      const parseDate = (v: any): number => {
+        if (v === undefined || v === null) return NaN;
+        const t = new Date(v).getTime();
+        return isNaN(t) ? NaN : t;
+      };
+
+      const prevCandidate = actualIndex - 1; // older if data is ASC
+      const nextCandidate = actualIndex + 1; // older if data is DESC
+
+      let comparisonIndex = -1;
+      if (dateKey) {
+        const currentTs = parseDate(row[dateKey]);
+        const prevTs = prevCandidate >= 0 ? parseDate(chartData[prevCandidate]?.[dateKey]) : NaN;
+        const nextTs = nextCandidate < chartData.length ? parseDate(chartData[nextCandidate]?.[dateKey]) : NaN;
+
+        // Pick the neighbour whose date is strictly older than current.
+        const prevIsOlder = !isNaN(prevTs) && !isNaN(currentTs) && prevTs < currentTs;
+        const nextIsOlder = !isNaN(nextTs) && !isNaN(currentTs) && nextTs < currentTs;
+
+        if (prevIsOlder) comparisonIndex = prevCandidate;
+        else if (nextIsOlder) comparisonIndex = nextCandidate;
+      }
+
+      // Fallback when no date field is parseable: keep legacy behaviour
+      // (previous row = actualIndex - 1) but also allow rowIndex 0 -> 1.
+      if (comparisonIndex < 0) {
+        if (prevCandidate >= 0) comparisonIndex = prevCandidate;
+        else if (nextCandidate < chartData.length) comparisonIndex = nextCandidate;
+      }
+
+      if (comparisonIndex >= 0 && comparisonIndex < chartData.length) {
         const previousRow = chartData[comparisonIndex];
         const previousValue = Number(previousRow[fieldName]);
 

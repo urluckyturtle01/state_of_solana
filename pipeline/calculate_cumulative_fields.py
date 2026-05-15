@@ -110,7 +110,14 @@ def calculate_cumulative_fields(pg, sql_hash):
     else:
         print(f"📊 Non-grouped data")
         result = _calculate_ungrouped_cumulative(data, date_field, cumulative_fields, stitched_cumulative_fields)
-    
+
+    # Storage convention: newest date first (DESC) so rowIndex 0 = latest in counters.
+    result = sorted(
+        result,
+        key=lambda r: (r.get(date_field) is None, r.get(date_field)),
+        reverse=True,
+    )
+
     # Update database
     cur.execute(
         "UPDATE query_results SET json_data = %s WHERE sql_hash = %s",

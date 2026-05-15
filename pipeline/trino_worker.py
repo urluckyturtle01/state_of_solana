@@ -539,7 +539,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                         cur.execute(f"""
                                             UPDATE query_results SET
                                                 json_data = (
-                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC, (e->>'{group_by_field}')), '[]'::jsonb)
                                                     FROM (
                                                         SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
                                                         FROM (
@@ -560,7 +560,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                                         cur.execute(f"""
                                             UPDATE query_results SET
                                                 json_data = (
-                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}')), '[]'::jsonb)
+                                                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC), '[]'::jsonb)
                                                     FROM (
                                                         SELECT DISTINCT ON (e->>'{date_field}') e
                                                         FROM (
@@ -691,7 +691,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             sql = f"""
                 UPDATE query_results SET
                     json_data = (
-                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC, (e->>'{group_by_field}')), '[]'::jsonb)
                         FROM (
                             SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
                             FROM (
@@ -718,7 +718,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             cur.execute("""
                 UPDATE query_results SET
                     json_data = (
-                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s) DESC), '[]'::jsonb)
                         FROM (
                             SELECT DISTINCT ON (e->>%s) e
                             FROM (
@@ -855,7 +855,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                             sql = f"""
                                 UPDATE query_results SET
                                     json_data = (
-                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC, (e->>'{group_by_field}')), '[]'::jsonb)
                                         FROM (
                                             SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
                                             FROM jsonb_array_elements(
@@ -875,7 +875,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                             cur.execute("""
                                 UPDATE query_results SET
                                     json_data = (
-                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                                        SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s) DESC), '[]'::jsonb)
                                         FROM (
                                             SELECT DISTINCT ON (e->>%s) e
                                             FROM jsonb_array_elements(
@@ -932,7 +932,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     sql = f"""
                         UPDATE query_results SET
                             json_data = (
-                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC, (e->>'{group_by_field}')), '[]'::jsonb)
                                 FROM (
                                     SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
                                     FROM jsonb_array_elements(
@@ -952,7 +952,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                     cur.execute("""
                         UPDATE query_results SET
                             json_data = (
-                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                                SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s) DESC), '[]'::jsonb)
                                 FROM (
                                     SELECT DISTINCT ON (e->>%s) e
                                     FROM jsonb_array_elements(
@@ -1025,7 +1025,7 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
                 checkpoint_cur.execute("""
                     UPDATE query_results SET
                         json_data = (
-                            SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                            SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s) DESC), '[]'::jsonb)
                             FROM (
                                 SELECT DISTINCT ON (e->>%s) e
                                 FROM jsonb_array_elements(
@@ -1066,7 +1066,22 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     else:
         # For daily queries or simple queries, run directly
         all_new_data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client)
-        
+
+        # Enforce DESC-by-date storage order so rowIndex 0 = latest, regardless of SQL ORDER BY.
+        if all_new_data:
+            date_field = None
+            first_row = all_new_data[0]
+            for field in ['block_date', 'week', 'week_start', 'month']:
+                if field in first_row:
+                    date_field = field
+                    break
+            if date_field:
+                all_new_data = sorted(
+                    all_new_data,
+                    key=lambda r: (r.get(date_field) is None, r.get(date_field)),
+                    reverse=True,
+                )
+
         cur = pg.cursor()
         cur.execute("""
             UPDATE query_results SET 
@@ -1200,7 +1215,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
         sql = f"""
             UPDATE query_results SET
                 json_data = (
-                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}'), (e->>'{group_by_field}')), '[]'::jsonb)
+                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>'{date_field}') DESC, (e->>'{group_by_field}')), '[]'::jsonb)
                     FROM (
                         SELECT DISTINCT ON (e->>'{date_field}', e->>'{group_by_field}') e
                         FROM (
@@ -1227,7 +1242,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
         cur.execute("""
             UPDATE query_results SET
                 json_data = (
-                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s)), '[]'::jsonb)
+                    SELECT COALESCE(jsonb_agg(e ORDER BY (e->>%s) DESC), '[]'::jsonb)
                     FROM (
                         SELECT DISTINCT ON (e->>%s) e
                         FROM (
