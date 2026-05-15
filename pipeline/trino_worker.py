@@ -12,6 +12,7 @@ Job Types:
 """
 
 import os
+import re
 import sys
 import json
 import time
@@ -44,6 +45,28 @@ class PartialCompletionException(Exception):
     def __init__(self, message, rows_saved):
         super().__init__(message)
         self.rows_saved = rows_saved
+
+# --- Placeholder detection ----------------------------------------------------
+# We must ignore placeholders that live inside SQL comments. Otherwise a SQL like
+#   --AND DATE_TRUNC('month', block_date) = DATE('{month}')
+# is treated as a monthly query, the worker loops 17 months, but the substitution
+# happens inside a comment so every iteration sends the same SQL → duplicate data.
+
+_BLOCK_COMMENT_RE = re.compile(r'/\*.*?\*/', re.DOTALL)
+_LINE_COMMENT_RE = re.compile(r'--[^\n]*')
+
+def _strip_sql_comments(sql: str) -> str:
+    """Return the SQL with -- line comments and /* */ block comments removed."""
+    if not sql:
+        return sql
+    sql = _BLOCK_COMMENT_RE.sub('', sql)
+    sql = _LINE_COMMENT_RE.sub('', sql)
+    return sql
+
+def has_placeholder(sql: str, placeholder: str) -> bool:
+    """True if placeholder (e.g. '{month}') appears outside of SQL comments."""
+    return placeholder in _strip_sql_comments(sql)
+# -----------------------------------------------------------------------------
 
 # Configuration
 BACKFILL_START = date(2025, 1, 1)  # Only fetch last 3 months for counters
@@ -143,7 +166,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
     """
     try:
         # Check if query uses {week} or {week_start} (weekly queries)
-        if '{week}' in sql_query or '{week_start}' in sql_query:
+        if has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}'):
             # Loop through each week and aggregate results
             all_results = []
             # Start at Monday of from_date's week
@@ -206,7 +229,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 
             return all_results  # No checkpoint callback — return to caller
         # Check if query uses {month} (monthly queries)
-        elif '{month}' in sql_query:
+        elif has_placeholder(sql_query, '{month}'):
             # Loop through each month and aggregate results
             all_results = []
             # Start at first day of from_date's month
@@ -268,7 +291,7 @@ def run_trino_query(sql_query, from_date, to_date, trino_client, checkpoint_call
 
             return all_results  # No checkpoint callback — return to caller
         # Check if query uses {block_date} (single-day queries)
-        elif '{block_date}' in sql_query:
+        elif has_placeholder(sql_query, '{block_date}'):
             # Loop through each day and aggregate results
             all_results = []
             current_date = from_date
@@ -433,7 +456,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         today = date.today()
         
         # For monthly queries, identify missing months
-        if '{month}' in sql_query:
+        if has_placeholder(sql_query, '{month}'):
             # Get existing months from database
             # Check both 'month' field and 'block_date' field (convert to month)
             cur.execute("""
@@ -604,40 +627,58 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
             else:
                 print(f"✅ All months present, nothing to backfill")
         else:
-            # For daily/weekly queries, use existing gap detection logic
-            gap_dates, max_date = get_dates_info(pg, sql_hash)
-            print(f"📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
-            
-            # 1. Fill gaps
-            if gap_dates:
-                print(f"   🔧 Filling {len(gap_dates)} gaps...")
-                for gap_date in gap_dates:
-                    try:
-                        print(f"Gap {gap_date}...", end='', flush=True)
-                        data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
-                        all_new_data.extend(data)
-                        dates_to_remove.add(str(gap_date))
-                        print(f" {len(data)} rows")
-                    except Exception as e:
-                        print(f" ❌ Error: {e}")
-                        gaps_failed += 1
+            # If the SQL has no date placeholder at all, gap-by-gap fetching is
+            # pointless: each call returns the same hardcoded result and just
+            # piles on duplicates. Run the query once and let the dedup at the
+            # end of this function (DISTINCT ON date+groupBy) collapse it.
+            if not has_placeholder(sql_query, '{block_date}'):
+                print(f"📅 Backfill (resume, no date placeholder): running once, BACKFILL_START → today")
+                try:
+                    data = run_trino_query(sql_query, BACKFILL_START, today, trino_client)
+                    all_new_data.extend(data)
+                    for row in data:
+                        for field in ['block_date', 'week', 'week_start', 'month']:
+                            if field in row and row[field]:
+                                dates_to_remove.add(str(row[field]))
+                                break
+                except Exception as e:
+                    print(f" ❌ Error: {e}")
+                    incremental_failed = True
+            else:
+                # For daily/weekly queries, use existing gap detection logic
+                gap_dates, max_date = get_dates_info(pg, sql_hash)
+                print(f"📅 Backfill (resume): existing {existing_count} rows, {len(gap_dates)} gaps, max_date={max_date}")
 
-            # 2. Fetch max_date → today
-            print(f"Fetching {max_date} → {today}...")
-            try:
-                data = run_trino_query(sql_query, max_date, today, trino_client)
-                all_new_data.extend(data)
-                
-                # Mark dates for removal based on what data we actually got
-                for row in data:
-                    for field in ['block_date', 'week', 'week_start', 'month']:
-                        if field in row and row[field]:
-                            dates_to_remove.add(str(row[field]))
-                            break
-            except Exception as e:
-                print(f" ❌ Error fetching max_date → today: {e}")
-                incremental_failed = True
-                pass
+                # 1. Fill gaps
+                if gap_dates:
+                    print(f"   🔧 Filling {len(gap_dates)} gaps...")
+                    for gap_date in gap_dates:
+                        try:
+                            print(f"Gap {gap_date}...", end='', flush=True)
+                            data = run_trino_query(sql_query, gap_date, gap_date, trino_client)
+                            all_new_data.extend(data)
+                            dates_to_remove.add(str(gap_date))
+                            print(f" {len(data)} rows")
+                        except Exception as e:
+                            print(f" ❌ Error: {e}")
+                            gaps_failed += 1
+
+                # 2. Fetch max_date → today
+                print(f"Fetching {max_date} → {today}...")
+                try:
+                    data = run_trino_query(sql_query, max_date, today, trino_client)
+                    all_new_data.extend(data)
+
+                    # Mark dates for removal based on what data we actually got
+                    for row in data:
+                        for field in ['block_date', 'week', 'week_start', 'month']:
+                            if field in row and row[field]:
+                                dates_to_remove.add(str(row[field]))
+                                break
+                except Exception as e:
+                    print(f" ❌ Error fetching max_date → today: {e}")
+                    incremental_failed = True
+                    pass
 
         # 3. Merge: keep rows whose date is not in dates_to_remove, then append new
         # Skip merge if no new data
@@ -763,7 +804,7 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
         all_new_data = []
         days_failed = 0  # Initialize for all paths
 
-        if '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query:
+        if has_placeholder(sql_query, '{month}') or has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}'):
             # Monthly/weekly queries: iterate with checkpointing
             def checkpoint(data):
                 """Save progress to database - just append all data from Trino."""
@@ -805,9 +846,25 @@ def process_backfill(pg, sql_hash, sql_query, trino_client):
                 # Raise exception with partial status info
                 raise PartialCompletionException(f"Partial completion: {saved_count} rows saved", saved_count)
         else:
-            # Daily queries: iterate day-by-day
-            d = date.today()
-            days_processed = 0
+            # If the SQL has no date placeholder, looping day-by-day re-runs the
+            # exact same query and stacks duplicates (1 dup per loop iteration).
+            # Detect that case and run the query once.
+            has_date_placeholder = has_placeholder(sql_query, '{block_date}')
+            if not has_date_placeholder:
+                try:
+                    print(f"Fetching all rows (SQL has no date placeholder, running once)...", end='', flush=True)
+                    data = run_trino_query(sql_query, BACKFILL_START, date.today(), trino_client)
+                    all_new_data.extend(data)
+                    print(f" {len(data)} rows")
+                except Exception as e:
+                    print(f" ❌ {e}")
+                    days_failed += 1
+                # Skip the day-by-day loop entirely
+                d = BACKFILL_START - timedelta(days=1)
+                days_processed = 0
+            else:
+                d = date.today()
+                days_processed = 0
 
             while d >= BACKFILL_START:
                 try:
@@ -991,7 +1048,7 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
     print(f"🔄 Full refresh: {BACKFILL_START} → {date.today()}")
     
     # For monthly/weekly queries, use checkpointing
-    if '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query:
+    if has_placeholder(sql_query, '{month}') or has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}'):
         # Define checkpoint callback for full refresh (replaces all data)
         def checkpoint(data):
             """Save progress to database, replacing all data."""
@@ -1098,9 +1155,9 @@ def process_full_refresh(pg, sql_hash, sql_query, trino_client):
 
 def _period_start(d: date, sql_query: str) -> date:
     """Return the period-aligned start date for grouping gaps."""
-    if '{month}' in sql_query:
+    if has_placeholder(sql_query, '{month}'):
         return date(d.year, d.month, 1)
-    if '{week}' in sql_query or '{week_start}' in sql_query:
+    if has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}'):
         return d - timedelta(days=d.weekday())  # Monday
     return d
 
@@ -1117,7 +1174,7 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
 
     # For {month}/{week} queries: group daily gaps into period buckets so we
     # don't fire the same monthly/weekly query once per missing day.
-    is_period_query = '{month}' in sql_query or '{week}' in sql_query or '{week_start}' in sql_query
+    is_period_query = has_placeholder(sql_query, '{month}') or has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}')
     if is_period_query and gap_dates:
         seen_periods = set()
         deduped = []
