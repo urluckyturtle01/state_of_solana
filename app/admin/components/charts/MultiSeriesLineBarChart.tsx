@@ -1757,6 +1757,9 @@ const MultiSeriesLineBarChart: React.FC<MultiSeriesLineBarChartProps> = ({
 
     const newLegendItems = legendKeys
       .filter(key => {
+        // For groupBy charts, keep every distinct group even when its total is 0
+        // so the legend reflects the full category set.
+        if (hasGroupBy) return true;
         const totalValue = keyTotals[key] || 0;
         return Math.abs(totalValue) > 0.001;
       })

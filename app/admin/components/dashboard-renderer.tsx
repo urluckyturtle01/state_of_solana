@@ -1701,14 +1701,10 @@ export default function DashboardRenderer({
         chart.dataMapping.yAxis[0].type === 'line';
       
       // Now create legend items using the color map
-      // Filter out groups with zero or near-zero total values
+      // For groupBy charts, keep every distinct group even when its total is 0
+      // so the legend reflects the full category set.
       chartLegends = uniqueGroups
         .filter(group => group !== null && group !== undefined)
-        .filter(group => {
-          const totalValue = groupTotals[String(group)] || 0;
-          // Filter out groups with zero or very small values (to handle floating point precision)
-          return Math.abs(totalValue) > 0.001;
-        })
         .map((group) => {
           const groupStr = String(group);
           return {

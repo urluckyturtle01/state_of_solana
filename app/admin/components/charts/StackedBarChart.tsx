@@ -1704,6 +1704,9 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({
       // Filter out keys with zero or near-zero total values
       const newLegendItems = legendKeys
         .filter(key => {
+          // For groupBy charts, keep every distinct group even when its total is 0
+          // so the legend reflects the full category set.
+          if (hasGroupBy) return true;
           const totalValue = keyTotals[key] || 0;
           // Filter out keys with zero or very small values (to handle floating point precision)
           return Math.abs(totalValue) > 0.001;
