@@ -12,7 +12,6 @@ Job Types:
 """
 
 import os
-import re
 import sys
 import json
 import time
@@ -39,6 +38,8 @@ if env_file.exists():
 # Add trino_client to path
 sys.path.append('/root/tl-reserach-tool-sqls')
 from trino_client import TrinoClient
+from tl_api_client import TlApiClient
+from query_router import QueryRouter
 
 # Custom exception for partial completion
 class PartialCompletionException(Exception):
@@ -46,26 +47,10 @@ class PartialCompletionException(Exception):
         super().__init__(message)
         self.rows_saved = rows_saved
 
-# --- Placeholder detection ----------------------------------------------------
-# We must ignore placeholders that live inside SQL comments. Otherwise a SQL like
-#   --AND DATE_TRUNC('month', block_date) = DATE('{month}')
-# is treated as a monthly query, the worker loops 17 months, but the substitution
-# happens inside a comment so every iteration sends the same SQL → duplicate data.
-
-_BLOCK_COMMENT_RE = re.compile(r'/\*.*?\*/', re.DOTALL)
-_LINE_COMMENT_RE = re.compile(r'--[^\n]*')
-
-def _strip_sql_comments(sql: str) -> str:
-    """Return the SQL with -- line comments and /* */ block comments removed."""
-    if not sql:
-        return sql
-    sql = _BLOCK_COMMENT_RE.sub('', sql)
-    sql = _LINE_COMMENT_RE.sub('', sql)
-    return sql
-
-def has_placeholder(sql: str, placeholder: str) -> bool:
-    """True if placeholder (e.g. '{month}') appears outside of SQL comments."""
-    return placeholder in _strip_sql_comments(sql)
+# --- Placeholder / comment helpers --------------------------------------------
+# Moved to pipeline/sql_utils.py so the query router can reuse them without
+# pulling in this whole worker module (which would cause a circular import).
+from sql_utils import strip_sql_comments as _strip_sql_comments, has_placeholder  # noqa: F401
 # -----------------------------------------------------------------------------
 
 # Configuration
@@ -1172,9 +1157,35 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
     gap_dates, max_date = get_dates_info(pg, sql_hash)
     today = date.today()
 
+    # If the SQL has no date placeholder at all, looping over gaps is pointless
+    # because every iteration sends the exact same SQL to Trino. Run it once
+    # and let the dedup at the end of this function collapse duplicates.
+    is_period_query = has_placeholder(sql_query, '{month}') or has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}')
+    has_any_placeholder = is_period_query or has_placeholder(sql_query, '{block_date}')
+
+    if not has_any_placeholder:
+        print(f"Incremental (no date placeholder): running once, BACKFILL_START → today")
+        all_new_data = []
+        dates_to_remove = set()
+        gaps_failed = 0
+        try:
+            data = run_trino_query(sql_query, BACKFILL_START, today, trino_client)
+            all_new_data.extend(data)
+            for row in data:
+                for field in ['block_date', 'week', 'week_start', 'month']:
+                    if field in row and row[field]:
+                        dates_to_remove.add(str(row[field]))
+                        break
+        except Exception as e:
+            print(f" ❌ Error: {e}")
+        # Skip the gap loop and the max_date → today fetch (single call covers both)
+        gap_dates = []
+        skip_max_date_fetch = True
+    else:
+        skip_max_date_fetch = False
+
     # For {month}/{week} queries: group daily gaps into period buckets so we
     # don't fire the same monthly/weekly query once per missing day.
-    is_period_query = has_placeholder(sql_query, '{month}') or has_placeholder(sql_query, '{week}') or has_placeholder(sql_query, '{week_start}')
     if is_period_query and gap_dates:
         seen_periods = set()
         deduped = []
@@ -1185,11 +1196,12 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
                 deduped.append(p)
         print(f"Incremental: {len(gap_dates)} gap days → {len(deduped)} period(s) to fill, max_date={max_date}")
         gap_dates = deduped
-    else:
+    elif has_any_placeholder:
         print(f"Incremental: {len(gap_dates)} gaps, max_date={max_date}")
 
-    all_new_data = []
-    dates_to_remove = set()
+    if has_any_placeholder:
+        all_new_data = []
+        dates_to_remove = set()
 
     # 1. Fill gaps (dates before max_date with no data)
     gaps_failed = 0
@@ -1214,22 +1226,23 @@ def process_incremental(pg, sql_hash, sql_query, trino_client):
                 gaps_failed += 1
     
     # 2. Fetch max_date → today (replace max_date, add new)
-    print(f"Fetching {max_date} → {today}...")
-    try:
-        data = run_trino_query(sql_query, max_date, today, trino_client)
-        all_new_data.extend(data)
-        
-        # Mark dates for removal based on what data we actually got
-        # Use the date field values from the fetched data
-        for row in data:
-            for field in ['block_date', 'week', 'week_start', 'month']:
-                if field in row and row[field]:
-                    dates_to_remove.add(str(row[field]))
-                    break
-    except Exception as e:
-        print(f" ❌ Error fetching max_date → today: {e}")
-        # Continue with gap-filled data only
-        pass
+    if not skip_max_date_fetch:
+        print(f"Fetching {max_date} → {today}...")
+        try:
+            data = run_trino_query(sql_query, max_date, today, trino_client)
+            all_new_data.extend(data)
+
+            # Mark dates for removal based on what data we actually got
+            # Use the date field values from the fetched data
+            for row in data:
+                for field in ['block_date', 'week', 'week_start', 'month']:
+                    if field in row and row[field]:
+                        dates_to_remove.add(str(row[field]))
+                        break
+        except Exception as e:
+            print(f" ❌ Error fetching max_date → today: {e}")
+            # Continue with gap-filled data only
+            pass
     
     # 3. Merge: remove old dates, append new, then deduplicate
     cur = pg.cursor()
@@ -1477,7 +1490,10 @@ def main():
     # Initialize connections
     pg = get_pg_conn()
     trino_client = TrinoClient()
-    
+    tl_api_client = TlApiClient()
+    # Duck-typed: exposes .query(sql) like TrinoClient, but routes per-SQL.
+    trino_client = QueryRouter(trino_client, tl_api_client)
+
     jobs_processed = 0
     
     try:
