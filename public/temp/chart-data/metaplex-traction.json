@@ -1,11 +1,31 @@
 {
   "pageId": "metaplex-traction",
   "pageName": "Traction",
-  "fetchedAt": "2026-04-30T08:29:16.584Z",
+  "fetchedAt": "2026-06-30T03:51:15.893Z",
   "charts": [
     {
       "success": true,
       "data": [
+        {
+          "month": "2026-06-01",
+          "token_type": "Fungible",
+          "mints": 77239
+        },
+        {
+          "month": "2026-06-01",
+          "token_type": "Non Fungible",
+          "mints": 27915
+        },
+        {
+          "month": "2026-05-01",
+          "token_type": "Fungible",
+          "mints": 103625
+        },
+        {
+          "month": "2026-05-01",
+          "token_type": "Non Fungible",
+          "mints": 40705
+        },
         {
           "month": "2025-02-01",
           "token_type": "Fungible",
@@ -104,7 +124,7 @@
         {
           "month": "2026-04-01",
           "token_type": "Non Fungible",
-          "mints": 30767
+          "mints": 31864
         },
         {
           "month": "2024-03-01",
@@ -239,7 +259,7 @@
         {
           "month": "2026-04-01",
           "token_type": "Fungible",
-          "mints": 101089
+          "mints": 106432
         },
         {
           "month": "2025-10-01",
@@ -287,7 +307,7 @@
           "mints": 85963
         }
       ],
-      "timestamp": 1777537755360,
+      "timestamp": 1782791474668,
       "chartId": "chart_1749629023835_wd03h9z",
       "title": "Monthly Tm Fungible And Non-fungible Mints",
       "apiType": "JSON"
@@ -296,10 +316,22 @@
       "success": true,
       "data": [
         {
+          "month": "2026-06-01",
+          "tm_fungible": 77239,
+          "tm_non_fungible": 27915,
+          "mpl_core": 213896
+        },
+        {
+          "month": "2026-05-01",
+          "tm_fungible": 103625,
+          "tm_non_fungible": 40705,
+          "mpl_core": 273254
+        },
+        {
           "month": "2026-04-01",
-          "tm_fungible": 101089,
-          "tm_non_fungible": 30767,
-          "mpl_core": 266266
+          "tm_fungible": 106432,
+          "tm_non_fungible": 31864,
+          "mpl_core": 277893
         },
         {
           "month": "2026-03-01",
@@ -464,7 +496,7 @@
           "mpl_core": null
         }
       ],
-      "timestamp": 1777537755359,
+      "timestamp": 1782791474667,
       "chartId": "chart_1749628724126_z6sgnvd",
       "title": "Monthly Digital Assets Minted",
       "apiType": "JSON"
@@ -473,8 +505,16 @@
       "success": true,
       "data": [
         {
+          "month": "2026-06-01",
+          "active-wallets": 92550
+        },
+        {
+          "month": "2026-05-01",
+          "active-wallets": 119686
+        },
+        {
           "month": "2026-04-01",
-          "active-wallets": 98890
+          "active-wallets": 113802
         },
         {
           "month": "2026-03-01",
@@ -709,7 +749,7 @@
           "active-wallets": 405
         }
       ],
-      "timestamp": 1777537755360,
+      "timestamp": 1782791474668,
       "chartId": "chart_1749627922355_vt1yejy",
       "title": "Monthly Active Wallets",
       "apiType": "JSON"
@@ -718,11 +758,25 @@
       "success": true,
       "data": [
         {
+          "month": "2026-06-01",
+          "token_metadata_nfts": 105154,
+          "compressed_nfts": 3027370,
+          "Bubblegum_v2_cNFTs": 195833,
+          "core_nft": 213896
+        },
+        {
+          "month": "2026-05-01",
+          "token_metadata_nfts": 144330,
+          "compressed_nfts": 3619123,
+          "Bubblegum_v2_cNFTs": 603520,
+          "core_nft": 273254
+        },
+        {
           "month": "2026-04-01",
-          "token_metadata_nfts": 114467,
-          "compressed_nfts": 3422674,
-          "Bubblegum_v2_cNFTs": 599232,
-          "core_nft": 243371
+          "token_metadata_nfts": 138296,
+          "compressed_nfts": 4255087,
+          "Bubblegum_v2_cNFTs": 692416,
+          "core_nft": 277893
         },
         {
           "month": "2026-03-01",
@@ -1131,7 +1185,7 @@
           "core_nft": null
         }
       ],
-      "timestamp": 1777537756380,
+      "timestamp": 1782791475691,
       "chartId": "chart_1749629260401_ack8uo5",
       "title": "Monthly Total Mints By Program",
       "apiType": "JSON"
@@ -8130,7 +8184,7 @@
               "transactions": 17
             }
           ],
-          "timestamp": 1777537756383
+          "timestamp": 1782791475693
         }
       ],
       "data": [
@@ -15123,7 +15177,7 @@
           "transactions": 17
         }
       ],
-      "timestamp": 1777537756584,
+      "timestamp": 1782791475893,
       "chartId": "chart_1749627736683_bchbaau",
       "title": "Monthly Transactions",
       "totalCombinations": 1,
@@ -15137,24 +15191,64 @@
       "success": true,
       "data": [
         {
+          "month": "2026-06-01 00:00:00",
+          "protocol": "Bubblegum",
+          "total_txn": 1899130
+        },
+        {
+          "month": "2026-06-01 00:00:00",
+          "protocol": "Bubblegum_v2",
+          "total_txn": 543589
+        },
+        {
+          "month": "2026-06-01 00:00:00",
+          "protocol": "Others",
+          "total_txn": 1110092
+        },
+        {
+          "month": "2026-06-01 00:00:00",
+          "protocol": "Token Metadata",
+          "total_txn": 940586
+        },
+        {
+          "month": "2026-05-01 00:00:00",
+          "protocol": "Bubblegum",
+          "total_txn": 1714479
+        },
+        {
+          "month": "2026-05-01 00:00:00",
+          "protocol": "Bubblegum_v2",
+          "total_txn": 1338649
+        },
+        {
+          "month": "2026-05-01 00:00:00",
+          "protocol": "Others",
+          "total_txn": 1645847
+        },
+        {
+          "month": "2026-05-01 00:00:00",
+          "protocol": "Token Metadata",
+          "total_txn": 1095266
+        },
+        {
           "month": "2026-04-01 00:00:00",
           "protocol": "Bubblegum",
-          "total_txn": 2001943
+          "total_txn": 2346758
         },
         {
           "month": "2026-04-01 00:00:00",
           "protocol": "Bubblegum_v2",
-          "total_txn": 1201875
+          "total_txn": 1402846
         },
         {
           "month": "2026-04-01 00:00:00",
           "protocol": "Others",
-          "total_txn": 1332519
+          "total_txn": 1551919
         },
         {
           "month": "2026-04-01 00:00:00",
           "protocol": "Token Metadata",
-          "total_txn": 837505
+          "total_txn": 975921
         },
         {
           "month": "2026-03-01 00:00:00",
@@ -15967,7 +16061,7 @@
           "total_txn": 2769
         }
       ],
-      "timestamp": 1777537756382,
+      "timestamp": 1782791475690,
       "chartId": "chart_1749628211337_ts1ilil",
       "title": "Monthly Transactions By Program",
       "apiType": "JSON"
