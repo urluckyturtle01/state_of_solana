@@ -8,7 +8,7 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/dex');
+    router.push('/rwas');
   }, [router]);
 
   return (
