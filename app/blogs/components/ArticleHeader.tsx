@@ -63,7 +63,9 @@ export default function ArticleHeader({ post }: ArticleHeaderProps) {
           </div>
           <div>
             <p className="text-white font-medium">{post.author}</p>
-            <p className="text-gray-400 text-sm">Product, Top Ledger</p>
+            {post.company?.name && (
+              <p className="text-gray-400 text-sm">{post.company.name}</p>
+            )}
           </div>
         </div>
         

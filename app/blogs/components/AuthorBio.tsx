@@ -18,6 +18,16 @@ export default function AuthorBio({ author }: AuthorBioProps) {
         },
         followers: undefined
       },
+      'Nitin': {
+        name: 'Nitin Shukla',
+        bio: 'Top Ledger',
+        avatar: '',
+        social: {
+          x: '@ergon50',
+          //linkedin: 'oxlchigo',
+        },
+        followers: undefined
+      },
       'Decal': {
         name: 'Decal',
         bio: 'Developer advocate and technical writer focused on Solana development tools and frameworks. Building the next generation of web3 applications.',

@@ -1,0 +1,139 @@
+{
+  "blogPost": {
+    "id": "1752404640000",
+    "title": "Powering Solana's RWA Ecosystem Tracking with an AI Data Engineering Agent",
+    "excerpt": "How Top Ledger built an agent-driven pipeline to index stablecoins, xStocks, tokenized funds, and treasuries at production scale — processing 250+ GB/day and 45+ TB of historical data.",
+    "author": "Soham",
+    "date": "JUL 13, 2026",
+    "category": "analysis",
+    "image": "https://research.topledger.xyz/twittercard.png",
+    "slug": "rwa-ai-data-engineering-agent",
+    "readTime": "12 min read",
+    "status": "published",
+    "isHero": false,
+    "company": {
+      "name": "Top Ledger",
+      "handle": "ledger_top"
+    }
+  },
+  "content": [
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "The challenge"
+    },
+    {
+      "type": "paragraph",
+      "content": "Real-world assets (RWAs) — stablecoins, tokenized equities (xStocks), tokenized funds, and tokenized treasuries — are one of the fastest-growing categories on Solana. But tracking their growth accurately requires indexing raw on-chain activity across many different programs, each with its own schema, and keeping that data continuously live as new tokens and issuers launch."
+    },
+    {
+      "type": "paragraph",
+      "content": "Building and maintaining this kind of pipeline by hand is slow: every new asset type or issuer program traditionally requires a data engineer to manually resolve the program's schema, write and test a decoder, backfill history, and keep the pipeline running as the ecosystem evolves."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "What we built"
+    },
+    {
+      "type": "paragraph",
+      "content": "Top Ledger built an AI agent-driven pipeline that automates this end to end:"
+    },
+    {
+      "type": "list",
+      "items": [
+        "**Indexing layer (agent-built):** Our AI agent suite resolves on-chain program schemas and indexes tokenized-asset activity — stablecoin transfers, xStocks trades, tokenized fund flows, and treasury activity — in real time, processing 250+ GB/day at 4-5k TPS.",
+        "**Historical depth:** Over the last 6 months alone, the pipeline has processed 45+ TB of data to build out the underlying tables.",
+        "**Live output:** This data powers our public research platform, [research.topledger.xyz/rwas/stablecoins](https://research.topledger.xyz/rwas/stablecoins), tracking stablecoins, xStocks, tokenized funds, and tokenized commodities/treasuries across the Solana ecosystem."
+      ]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "Under the hood"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "content": "End-to-end pipeline flow"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "content": "New tokenized asset / program detected\n              │\n              ▼\n   Schema Resolution\n   (Solana skill pack MCP — 100+ decentralized\n   applications of ground truth; Claude + Hermes)\n              │\n              ▼\n     Human Approval Gate\n   (schema signed off before indexing starts)\n              │\n      ┌───────┴────────┐\n      ▼                ▼\nReal-time Indexing   Historical Backfill\n(Kafka/Redis Streams,  (Jetstreamer, pulling from\n deterministic Rust)    Filecoin/Old Faithful)\n      └───────┬────────┘\n              ▼\n     Storage (Parquet on MinIO)\n              │\n              ▼\n        Query Layer (Trino)\n              │\n              ▼\nResearch Tool & Reporting\n(research.topledger.xyz)"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "content": "Reasoning vs. execution split"
+    },
+    {
+      "type": "paragraph",
+      "content": "This architecture keeps hallucination risk low by separating planning from execution:"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "content": "LLM (Claude + Hermes)\n  plans schema resolution ONCE,\n  grounded in skill pack knowledge\n  — not guessed from training data\n              │\n              ▼\n   Generates indexing logic (Rust)\n              │\n              ▼\n      Human review & approval\n              │\n              ▼\nCompiled Rust code executes on EVERY row\n  (deterministic — no LLM inference per row)\n              │\n              ▼\nCheckpointed & sample-verified\nagainst on-chain ground truth"
+    },
+    {
+      "type": "list",
+      "items": [
+        "**Reasoning layer:** Anthropic Claude plans schema resolution and pipeline construction; Hermes (Nous Research) coordinates the multi-agent system.",
+        "**Ground truth, not guesswork:** The agent resolves each program's schema against our in-house Solana skill pack MCP — a knowledge base covering 100+ decentralized applications — instead of letting the LLM guess from training data.",
+        "**Execution is deterministic, not LLM-driven:** Once a schema is resolved, indexing runs as compiled, tested Rust code on every row — not live LLM inference — so throughput and accuracy don't depend on model latency or hallucination risk.",
+        "**Real-time + historical, in parallel:** Live ingestion runs on Kafka/Redis Streams; historical backfill runs via Jetstreamer (pulling from Filecoin/Old Faithful), so new assets get both current and historical coverage without waiting weeks for backfill to finish first.",
+        "**Storage & query:** Data lands as compressed Parquet on MinIO, queried through Trino — built for cheap, fast queries at petabyte scale.",
+        "**Human-in-the-loop:** Every schema and backfill step requires human approval before it runs, with output checkpointed and verified against on-chain ground truth before scaling to full history."
+      ]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "The outcome"
+    },
+    {
+      "type": "paragraph",
+      "content": "The research platform built on this pipeline is used by teams across the Solana ecosystem — including **Solana Foundation** — to monitor RWA growth on the network. It gives a real-time, always-current view of tokenized-asset adoption without any team having to build or maintain their own indexing infrastructure for it."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "Why it matters for tokenization more broadly"
+    },
+    {
+      "type": "paragraph",
+      "content": "The same pattern — resolve schema, index continuously, keep pipelines live, surface it for querying and reporting — is not specific to Solana or to any one asset type. It's the same underlying problem any fintech, bank, or government body will face as they explore tokenized assets, stablecoins, or CBDC-adjacent infrastructure on a public or private ledger. Top Ledger's AI agent suite is built to solve that problem generically, with Solana's RWA ecosystem as the proving ground at real production scale."
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "Customers & ecosystem trust"
+    },
+    {
+      "type": "paragraph",
+      "content": "Top Ledger's broader data infrastructure work is trusted by teams including Solana Foundation & Labs, Helium, Orca, Metaplex, Exponent, and Squads, alongside a public testimonial on Nosana's platform."
+    },
+    {
+      "type": "quote",
+      "content": "Prepared by Top Ledger (topledger.xyz) — July 2026"
+    }
+  ],
+  "savedAt": "2026-07-13T09:24:00.000Z",
+  "version": "1.0"
+}
