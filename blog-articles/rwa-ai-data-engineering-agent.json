@@ -1,19 +1,19 @@
 {
   "blogPost": {
-    "id": "1752404640000",
+    "id": "1784028364669",
     "title": "Powering Solana's RWA Ecosystem Tracking with an AI Data Engineering Agent",
     "excerpt": "How Top Ledger built an agent-driven pipeline to index stablecoins, xStocks, tokenized funds, and treasuries at production scale — processing 250+ GB/day and 45+ TB of historical data.",
-    "author": "Soham",
-    "date": "JUL 13, 2026",
+    "author": "Nitin",
+    "date": "JUN 20, 2026",
     "category": "analysis",
-    "image": "https://research.topledger.xyz/twittercard.png",
+    "image": "https://research.topledger.xyz/tlrwa.png",
     "slug": "rwa-ai-data-engineering-agent",
     "readTime": "12 min read",
     "status": "published",
     "isHero": false,
     "company": {
       "name": "Top Ledger",
-      "handle": "ledger_top"
+      "handle": "ergon50"
     }
   },
   "content": [
@@ -45,9 +45,18 @@
     {
       "type": "list",
       "items": [
-        "**Indexing layer (agent-built):** Our AI agent suite resolves on-chain program schemas and indexes tokenized-asset activity — stablecoin transfers, xStocks trades, tokenized fund flows, and treasury activity — in real time, processing 250+ GB/day at 4-5k TPS.",
-        "**Historical depth:** Over the last 6 months alone, the pipeline has processed 45+ TB of data to build out the underlying tables.",
-        "**Live output:** This data powers our public research platform, [research.topledger.xyz/rwas/stablecoins](https://research.topledger.xyz/rwas/stablecoins), tracking stablecoins, xStocks, tokenized funds, and tokenized commodities/treasuries across the Solana ecosystem."
+        {
+          "text": "**Indexing layer (agent-built):** Our AI agent suite resolves on-chain program schemas and indexes tokenized-asset activity — stablecoin transfers, xStocks trades, tokenized fund flows, and treasury activity — in real time, processing 250+ GB/day at 4-5k TPS.",
+          "nested": []
+        },
+        {
+          "text": "**Historical depth:** Over the last 6 months alone, the pipeline has processed 45+ TB of data to build out the underlying tables.",
+          "nested": []
+        },
+        {
+          "text": "**Live output:** This data powers our public research platform, [research.topledger.xyz/rwas/stablecoins](https://research.topledger.xyz/rwas/stablecoins), tracking stablecoins, xStocks, tokenized funds, and tokenized commodities/treasuries across the Solana ecosystem.",
+          "nested": []
+        }
       ]
     },
     {
@@ -85,12 +94,30 @@
     {
       "type": "list",
       "items": [
-        "**Reasoning layer:** Anthropic Claude plans schema resolution and pipeline construction; Hermes (Nous Research) coordinates the multi-agent system.",
-        "**Ground truth, not guesswork:** The agent resolves each program's schema against our in-house Solana skill pack MCP — a knowledge base covering 100+ decentralized applications — instead of letting the LLM guess from training data.",
-        "**Execution is deterministic, not LLM-driven:** Once a schema is resolved, indexing runs as compiled, tested Rust code on every row — not live LLM inference — so throughput and accuracy don't depend on model latency or hallucination risk.",
-        "**Real-time + historical, in parallel:** Live ingestion runs on Kafka/Redis Streams; historical backfill runs via Jetstreamer (pulling from Filecoin/Old Faithful), so new assets get both current and historical coverage without waiting weeks for backfill to finish first.",
-        "**Storage & query:** Data lands as compressed Parquet on MinIO, queried through Trino — built for cheap, fast queries at petabyte scale.",
-        "**Human-in-the-loop:** Every schema and backfill step requires human approval before it runs, with output checkpointed and verified against on-chain ground truth before scaling to full history."
+        {
+          "text": "**Reasoning layer:** Anthropic Claude plans schema resolution and pipeline construction; Hermes (Nous Research) coordinates the multi-agent system.",
+          "nested": []
+        },
+        {
+          "text": "**Ground truth, not guesswork:** The agent resolves each program's schema against our in-house Solana skill pack MCP — a knowledge base covering 100+ decentralized applications — instead of letting the LLM guess from training data.",
+          "nested": []
+        },
+        {
+          "text": "**Execution is deterministic, not LLM-driven:** Once a schema is resolved, indexing runs as compiled, tested Rust code on every row — not live LLM inference — so throughput and accuracy don't depend on model latency or hallucination risk.",
+          "nested": []
+        },
+        {
+          "text": "**Real-time + historical, in parallel:** Live ingestion runs on Kafka/Redis Streams; historical backfill runs via Jetstreamer (pulling from Filecoin/Old Faithful), so new assets get both current and historical coverage without waiting weeks for backfill to finish first.",
+          "nested": []
+        },
+        {
+          "text": "**Storage & query:** Data lands as compressed Parquet on MinIO, queried through Trino — built for cheap, fast queries at petabyte scale.",
+          "nested": []
+        },
+        {
+          "text": "**Human-in-the-loop:** Every schema and backfill step requires human approval before it runs, with output checkpointed and verified against on-chain ground truth before scaling to full history.",
+          "nested": []
+        }
       ]
     },
     {
@@ -134,6 +161,6 @@
       "content": "Prepared by Top Ledger (topledger.xyz) — July 2026"
     }
   ],
-  "savedAt": "2026-07-13T09:24:00.000Z",
+  "savedAt": "2026-07-14T11:32:41.097Z",
   "version": "1.0"
 }
