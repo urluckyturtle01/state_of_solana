@@ -485,6 +485,8 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   
   // 🆕 For database-backed pages, load from PostgreSQL database
   const dbBackedPages = [
+    'aggregators-summary',
+    'aggregators-traders',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',
@@ -508,7 +510,7 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
     'rwas-stablecoins',
     'rwas-tokenized-commodities',
     'rwas-tokenized-funds',
-    'rwas-xstocks',
+    'rwas-tokenized-stocks',
     'rwas-yield-bearing-tokens',
     'wrapped-btc-dex-activity',
     'wrapped-btc-summary',
@@ -1552,6 +1554,8 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
 
     // For DB-backed pages, load tables from /api/db-configs/[pageId] (includes data)
     const dbBackedPages = [
+    'aggregators-summary',
+    'aggregators-traders',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',
@@ -1575,7 +1579,7 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     'rwas-stablecoins',
     'rwas-tokenized-commodities',
     'rwas-tokenized-funds',
-    'rwas-xstocks',
+    'rwas-tokenized-stocks',
     'rwas-yield-bearing-tokens',
     'wrapped-btc-dex-activity',
     'wrapped-btc-summary',

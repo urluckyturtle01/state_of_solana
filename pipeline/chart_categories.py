@@ -26,7 +26,7 @@ CHART_CATEGORIES = {
         'stablecoins',
         'tokenized_commodities',
         'tokenized_funds',
-        'xstocks',
+        'tokenized_stocks',
         'yield_bearing_tokens',
     ],
     'Overview': [
@@ -43,6 +43,10 @@ CHART_CATEGORIES = {
         'extracted_value_and_pnl',
         'liquidity_hotspot',
         'summary',
+    ],
+    'Aggregators': [
+        'summary',
+        'traders',
     ],
 }
 

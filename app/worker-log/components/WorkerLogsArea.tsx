@@ -53,6 +53,7 @@ export default function WorkerLogsArea({
   const [displayCleared, setDisplayCleared] = useState(false);
   const clearedMarkerRef = useRef<string>('');
   const [rawLogContent, setRawLogContent] = useState('');
+  const [logLoadState, setLogLoadState] = useState<'loading' | 'empty' | 'ready' | 'error'>('loading');
   const [allLines, setAllLines] = useState<string[]>([]);
   const [displayedStartIndex, setDisplayedStartIndex] = useState(0);
   const [displayedEndIndex, setDisplayedEndIndex] = useState(0);
@@ -100,7 +101,13 @@ export default function WorkerLogsArea({
   const loadLog = useCallback(
     (forceReset: boolean) => {
       fetch('/api/worker-log')
-        .then((r) => r.text())
+        .then((r) => {
+          if (!r.ok) {
+            setLogLoadState('error');
+            throw new Error(`Failed to load log (${r.status})`);
+          }
+          return r.text();
+        })
         .then((data) => {
           setRawLogContent(data);
           let contentToShow = data;
@@ -115,6 +122,7 @@ export default function WorkerLogsArea({
             setAllLines([]);
             setDisplayedStartIndex(0);
             setDisplayedEndIndex(0);
+            setLogLoadState('empty');
             onLastUpdate(new Date().toLocaleTimeString());
             return;
           }
@@ -123,10 +131,12 @@ export default function WorkerLogsArea({
             setAllLines([]);
             setDisplayedStartIndex(0);
             setDisplayedEndIndex(0);
+            setLogLoadState('empty');
             onLastUpdate(new Date().toLocaleTimeString());
             return;
           }
 
+          setLogLoadState('ready');
           setAllLines(nonEmpty);
 
           const len = nonEmpty.length;
@@ -160,6 +170,7 @@ export default function WorkerLogsArea({
           }
         })
         .catch(() => {
+          setLogLoadState((s) => (s === 'loading' ? 'error' : s));
           onLastUpdate(new Date().toLocaleTimeString());
         });
     },
@@ -439,8 +450,18 @@ export default function WorkerLogsArea({
       <div className="worker-log-container-el" ref={containerRef} id="log-container">
         {displayCleared && !allLines.length ? (
           <div className="worker-log-empty-state">Cleared. New logs will appear here.</div>
-        ) : !allLines.length ? (
+        ) : logLoadState === 'loading' ? (
           <div className="worker-log-empty-state">Loading log…</div>
+        ) : logLoadState === 'empty' ? (
+          <div className="worker-log-empty-state">
+            Log file is empty. Restart the worker with output redirected:
+            <br />
+            <code style={{ fontSize: 11, color: '#a1a1aa' }}>
+              nohup python3 -u pipeline/trino_worker.py &gt;&gt; trino_worker.log 2&gt;&amp;1 &amp;
+            </code>
+          </div>
+        ) : logLoadState === 'error' ? (
+          <div className="worker-log-empty-state">Failed to load log. Check auth or server logs.</div>
         ) : (
           <>
             <div

@@ -9,14 +9,14 @@ const ChartLoading = () => (
   </div>
 );
 
-const structuredData = generateStructuredData('/rwas/xstocks');
+const structuredData = generateStructuredData('/rwas/tokenized_stocks');
 
-export default function RwasXstocksPage() {
+export default function RwasTokenizedStocksPage() {
   return (
     <div className="space-y-4">
       <Suspense fallback={<ChartLoading />}>
         <EnhancedDashboardRenderer
-          pageId="rwas-xstocks"
+          pageId="rwas-tokenized-stocks"
           enableCaching={true}
         />
       </Suspense>
@@ -24,4 +24,4 @@ export default function RwasXstocksPage() {
   );
 }
 
-export const metadata = generateNextMetadata('/rwas/xstocks');
+export const metadata = generateNextMetadata('/rwas/tokenized_stocks');
