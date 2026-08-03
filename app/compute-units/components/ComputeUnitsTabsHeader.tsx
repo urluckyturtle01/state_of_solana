@@ -32,8 +32,8 @@ export default function ComputeUnitsTabsHeader({ activeTab = "capacity" }: Compu
     <TabsNavigation
       tabs={tabs}
       activeTab={activeTab}
-      title="Compute Units Metrics Catalog"
-      description="All metrics calculated on `solana.tx_metadata` (non-vote transactions)"
+      title="Compute Units"
+      description="Research sources: [Syndica](https://blog.syndica.io/deep-dive-solana-on-chain-activity/), [TopLedger](https://research.topledger.xyz/compute-units)"
       showDivider={true}
     />
   );
