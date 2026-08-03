@@ -487,6 +487,9 @@ export async function getChartConfigsByPage(pageId: string): Promise<ChartConfig
   const dbBackedPages = [
     'aggregators-summary',
     'aggregators-traders',
+    'compute-units-capacity',
+    'compute-units-efficiency',
+    'compute-units-programs',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',
@@ -1556,6 +1559,9 @@ export const getTableConfigsByPage = async (pageId: string): Promise<TableConfig
     const dbBackedPages = [
     'aggregators-summary',
     'aggregators-traders',
+    'compute-units-capacity',
+    'compute-units-efficiency',
+    'compute-units-programs',
     'dex-aggregators',
     'dex-compute',
     'dex-network-fees',

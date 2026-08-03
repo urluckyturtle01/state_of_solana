@@ -8,6 +8,7 @@ import {
   jobMatchesCategory,
   jobMatchesPage,
   jobPages,
+  pageMatchesCategory,
 } from '../utils/job-pages';
 
 export default function WorkerJobsArea({ mobileTab }: { mobileTab: string }) {
@@ -45,7 +46,7 @@ export default function WorkerJobsArea({ mobileTab }: { mobileTab: string }) {
   ].sort() as string[];
   if (categoryFilter !== 'all') {
     subcategoryPages = subcategoryPages.filter((p) =>
-      p.split('-')[0] === categoryFilter
+      pageMatchesCategory(p, categoryFilter)
     );
   }
 

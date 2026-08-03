@@ -6,6 +6,7 @@ import {
   jobMatchesCategory,
   jobMatchesPage,
   jobPages,
+  pageMatchesCategory,
 } from '../utils/job-pages';
 
 type Job = {
@@ -79,7 +80,7 @@ export default function TweetGeneratorModal({
   const categories = [...new Set(jobs.flatMap((j) => jobCategories(j)))].sort() as string[];
   let pageOptions = [...new Set(jobs.flatMap((j) => jobPages(j)))].sort() as string[];
   if (categoryFilter !== 'all') {
-    pageOptions = pageOptions.filter((p) => p.split('-')[0] === categoryFilter);
+    pageOptions = pageOptions.filter((p) => pageMatchesCategory(p, categoryFilter));
   }
 
   const filteredJobs = jobs.filter((j) => {

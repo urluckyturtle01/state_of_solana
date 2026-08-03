@@ -1,3 +1,23 @@
+/** Longest-match-first page prefixes (multi-segment categories before single-segment). */
+const PAGE_CATEGORY_PREFIXES = [
+  'compute-units',
+  'yield-bearing-tokens',
+  'tokenized-commodities',
+  'tokenized-funds',
+  'tokenised-stocks',
+  'pre-stocks',
+  'wrapped-btc',
+  'aggregators',
+  'overview',
+  'rwas',
+  'dex',
+  'mev',
+  'rev',
+  'wrapped',
+  'xstocks',
+  'sf',
+].sort((a, b) => b.length - a.length);
+
 /** Pages associated with a worker job (one sql_hash can back multiple dashboard pages). */
 export function jobPages(job: {
   page: string | null;
@@ -11,7 +31,17 @@ export function jobPages(job: {
 }
 
 export function pageCategory(page: string): string | null {
+  if (!page) return null;
+  for (const prefix of PAGE_CATEGORY_PREFIXES) {
+    if (page === prefix || page.startsWith(`${prefix}-`)) {
+      return prefix;
+    }
+  }
   return page.split('-')[0] || null;
+}
+
+export function pageMatchesCategory(page: string, categoryFilter: string): boolean {
+  return pageCategory(page) === categoryFilter;
 }
 
 export function jobCategories(job: {

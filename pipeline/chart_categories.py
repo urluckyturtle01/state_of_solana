@@ -48,6 +48,11 @@ CHART_CATEGORIES = {
         'summary',
         'traders',
     ],
+    'compute-units': [
+        'capacity',
+        'efficiency',
+        'programs',
+    ],
 }
 
 # Maps SQL repo category name → app folder name

@@ -33,7 +33,7 @@ export default function ComputeUnitsTabsHeader({ activeTab = "capacity" }: Compu
       tabs={tabs}
       activeTab={activeTab}
       title="Compute Units Metrics Catalog"
-      description="All metrics calculated on `solana.tx_metadata` table"
+      description="All metrics calculated on `solana.tx_metadata` (non-vote transactions)"
       showDivider={true}
     />
   );
