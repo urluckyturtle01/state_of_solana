@@ -13,7 +13,9 @@ export type HeliumQueryResult = {
 };
 
 function proxyOrigin(): string | undefined {
-  const raw = process.env.HELIUM_QUERY_PROXY_ORIGIN?.trim();
+  const raw =
+    process.env.HELIUM_QUERY_PROXY_ORIGIN?.trim() ||
+    process.env.HELIUM_SELF_HOSTED_ORIGIN?.trim();
   return raw ? raw.replace(/\/$/, '') : undefined;
 }
 
