@@ -37,14 +37,36 @@ async function runHeliumQueryViaProxy(
     cache: 'no-store',
   });
 
+  const bodyText = await res.text();
   let data: HeliumQueryResult;
   try {
-    data = (await res.json()) as HeliumQueryResult;
+    data = JSON.parse(bodyText) as HeliumQueryResult;
   } catch {
+    const nextData = bodyText.match(
+      /<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/
+    );
+    if (nextData) {
+      try {
+        const payload = JSON.parse(nextData[1]) as {
+          err?: { message?: string };
+        };
+        const msg = payload.err?.message?.trim();
+        if (msg) {
+          return {
+            success: false,
+            query: `${group}/${name}`,
+            error: `Self-hosted API ${origin} error (${res.status}): ${msg}`,
+          };
+        }
+      } catch {
+        /* fall through */
+      }
+    }
+    const snippet = bodyText.replace(/\s+/g, ' ').trim().slice(0, 120);
     return {
       success: false,
       query: `${group}/${name}`,
-      error: `Proxy ${origin} returned non-JSON (${res.status})`,
+      error: `Self-hosted API ${origin} returned HTTP ${res.status} (not JSON). Fix/restart that server. ${snippet ? `Body: ${snippet}` : ''}`,
     };
   }
 

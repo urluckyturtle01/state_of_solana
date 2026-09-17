@@ -7,6 +7,7 @@ const ROOT = path.join(__dirname, '..');
 const QUERIES = path.join(ROOT, 'queries');
 const OUT = path.join(QUERIES, 'index.html');
 const OUT_PUBLIC = path.join(ROOT, 'public', 'queries', 'index.html');
+const OUT_HELIUM_APIS = path.join(ROOT, 'public', 'helium-apis', 'index.html');
 const STYLE_SRC = OUT;
 
 require('dotenv').config({ path: path.join(ROOT, '.env') });
@@ -580,7 +581,21 @@ ${runtimeScript(dates)}
   fs.writeFileSync(OUT, html);
   fs.mkdirSync(path.dirname(OUT_PUBLIC), { recursive: true });
   fs.writeFileSync(OUT_PUBLIC, html);
-  console.log('Wrote', OUT, 'and', OUT_PUBLIC, 'with', endpoints.length, 'APIs in', groups.length, 'groups');
+  fs.mkdirSync(path.dirname(OUT_HELIUM_APIS), { recursive: true });
+  fs.writeFileSync(OUT_HELIUM_APIS, html);
+  console.log(
+    'Wrote',
+    OUT,
+    ',',
+    OUT_PUBLIC,
+    ',',
+    OUT_HELIUM_APIS,
+    'with',
+    endpoints.length,
+    'APIs in',
+    groups.length,
+    'groups'
+  );
 }
 
 main();

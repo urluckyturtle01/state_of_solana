@@ -56,6 +56,11 @@ const nextConfig = {
   },
   // Disable static export to support API routes
   // Don't change output to 'export' for Vercel deployment with API routes
+  async rewrites() {
+    return [
+      { source: '/helium-apis', destination: '/helium-apis/index.html' },
+    ];
+  },
 };
 
 module.exports = nextConfig;
