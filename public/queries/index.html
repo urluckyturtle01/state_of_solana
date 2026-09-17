@@ -143,8 +143,7 @@
       color: var(--purple-bright); margin-bottom: 8px;
     }
     .panel h1 { margin: 0 0 8px; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; }
-    .panel-desc { color: var(--text-secondary); margin: 0 0 24px; font-size: 0.95rem; }
-    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .panel-desc { color: var(--text-secondary); margin: 0 0 16px; font-size: 0.95rem; }
     .badge {
       font-size: 0.68rem; font-weight: 600; padding: 4px 9px; border-radius: 6px;
     }
@@ -363,19 +362,19 @@
     }
     .sample-search:focus { border-color: rgba(168,85,247,0.4); box-shadow: 0 0 0 3px var(--purple-soft); }
     .sample-search:disabled { opacity: 0.45; }
-    .sample-loading { color: var(--text-muted); font-size: 0.84rem; }
+    .sample-loading { color: var(--text-muted); font-size: 0.72rem; line-height: 1.4; }
     .sample-error { color: #f87171; font-size: 0.84rem; }
     .sample-toolbar { display: flex; align-items: center; gap: 6px; }
-    .sample-progress { margin-bottom: 10px; }
-    .sample-progress[hidden] { display: none; }
+    .sample-progress { margin-bottom: 8px; }
+    .sample-progress[hidden] { display: none !important; }
     .sample-progress-row {
       display: flex; justify-content: space-between; align-items: baseline;
-      font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;
+      font-size: 0.68rem; color: var(--text-muted); margin-bottom: 4px;
     }
     .sample-progress-pct { font-family: var(--mono); color: var(--purple-bright); font-weight: 600; }
     .sample-progress-time { font-family: var(--mono); color: var(--text-secondary); }
     .sample-progress-bar {
-      height: 6px; border-radius: 999px; background: rgba(255,255,255,0.06);
+      height: 2px; border-radius: 999px; background: rgba(255,255,255,0.06);
       overflow: hidden;
     }
     .sample-progress-fill {
@@ -594,10 +593,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Active Stake</h1>
     <p class="panel-desc">All HNT still locked: live delegated (Mobile/IoT) plus undelegated. Undelegated amount = VSR deposits − withdrawals − transfers, HNT only.</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_ACTIVE_STAKE</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -649,6 +644,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -669,10 +667,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Active Stake By Dao</h1>
     <p class="panel-desc">Locked HNT grouped by Mobile, IoT, and Undelegated. Undelegated amount comes from voter_stake_registry, not wallet_staking.</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_ACTIVE_STAKE_BY_DAO</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -735,6 +729,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -755,10 +752,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Delegated Positions</h1>
     <p class="panel-desc">On-chain DelegatedPositionV0 snapshot + current NFT holder / lockup from voter_stake_registry. All timestamps and voting power are UTC. Voting power (HIP-76), UTC seconds: Constant: full lock (end - start) / 4 years, does not decay</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_DELEGATED_POSITIONS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -829,6 +822,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -849,10 +845,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Open Positions</h1>
     <p class="panel-desc">Helium delegation query.</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_OPEN_POSITIONS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -923,6 +915,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -943,10 +938,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Wallet Positions</h1>
     <p class="panel-desc">All HNT locks that still have a deposit: live delegated + undelegated. wallet = creating wallet from InitializePositionV0 (recipient). Amount: live snapshot when delegated, else VSR deposit − withdraw − transfer. Empty (0 HNT) and closed locks are omitted.</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_WALLET_POSITIONS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1021,6 +1012,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1041,10 +1035,6 @@
     <div class="panel-eyebrow">Delegation</div>
     <h1>Wallet Proxies</h1>
     <p class="panel-desc">Latest assign_proxy per stake NFT, then keep rows for this wallet. role=owner: wallet is assign_proxy.payer (they assigned the proxy) role=proxy: wallet is assign_proxy.recipient (they receive the vote)</p>
-    <div class="badges">
-      <span class="badge meta">Delegation</span>
-      <span class="badge src">DELEGATION_WALLET_PROXIES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1111,6 +1101,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1131,10 +1124,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1229,6 +1218,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1249,10 +1241,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data By Datarate</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA_BY_DATARATE</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1331,6 +1319,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1351,10 +1342,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data By Region</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA_BY_REGION</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1433,6 +1420,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1453,10 +1443,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data Duplicates</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA_DUPLICATES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1539,6 +1525,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1559,10 +1548,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data Free Paid</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA_FREE_PAID</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1645,6 +1630,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1665,10 +1653,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Data Sum</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_DATA_SUM</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1751,6 +1735,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1771,10 +1758,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Rewards</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_REWARDS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1861,6 +1844,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1881,10 +1867,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Rewards Sum</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_REWARDS_SUM</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1967,6 +1949,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -1987,10 +1972,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Rewards Sum Bucketed</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_REWARDS_SUM_BUCKETED</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2073,6 +2054,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2093,10 +2077,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Rewards Sum Total</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_REWARDS_SUM_TOTAL</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2175,6 +2155,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2195,10 +2178,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Iot Rf</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_IOT_RF</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2281,6 +2260,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2301,10 +2283,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Data</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_DATA</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2391,6 +2369,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2411,10 +2392,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Data Sum</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_DATA_SUM</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2497,6 +2474,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2517,10 +2497,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Heartbeat Hours</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_HEARTBEAT_HOURS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2607,6 +2583,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2627,10 +2606,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Rewards</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_REWARDS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2717,6 +2692,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2737,10 +2715,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Rewards Sum</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_REWARDS_SUM</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2823,6 +2797,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2843,10 +2820,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Rewards Sum Bucketed</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_REWARDS_SUM_BUCKETED</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -2929,6 +2902,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -2949,10 +2925,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Rewards Sum Total</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_REWARDS_SUM_TOTAL</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3031,6 +3003,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3051,10 +3026,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Mobile Speedtest Averages</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">GATEWAY_MOBILE_SPEEDTEST_AVERAGES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3137,6 +3108,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3157,10 +3131,6 @@
     <div class="panel-eyebrow">Gateway</div>
     <h1>Radio Rewards Sum</h1>
     <p class="panel-desc">Helium gateway query.</p>
-    <div class="badges">
-      <span class="badge meta">Gateway</span>
-      <span class="badge src">RADIO_REWARDS_SUM</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3231,6 +3201,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3251,10 +3224,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspot By Maker</h1>
     <p class="panel-desc">Helium hotspot query.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOT_BY_MAKER</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3313,6 +3282,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3333,10 +3305,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspot Get</h1>
     <p class="panel-desc">Lookup by any identity: hotspot_key, entity_key, entity_key_b64, asset_id, or key_to_asset_key. Animal name is not in this table; the API enriches it from entities.nft.helium.io using the entity key.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOT_GET</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3407,6 +3375,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3427,10 +3398,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspot Lookup By Key To Asset</h1>
     <p class="panel-desc">Helium hotspot query.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOT_LOOKUP_BY_KEY_TO_ASSET</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3489,6 +3456,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3509,10 +3479,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspot Makers</h1>
     <p class="panel-desc">Helium hotspot query.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOT_MAKERS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3564,6 +3530,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3584,10 +3553,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspot Metrics</h1>
     <p class="panel-desc">Helium hotspot query.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOT_METRICS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3639,6 +3604,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3659,10 +3627,6 @@
     <div class="panel-eyebrow">Hotspot</div>
     <h1>Hotspots List</h1>
     <p class="panel-desc">Helium hotspot query.</p>
-    <div class="badges">
-      <span class="badge meta">Hotspot</span>
-      <span class="badge src">HOTSPOTS_LIST</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3725,6 +3689,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3745,10 +3712,6 @@
     <div class="panel-eyebrow">Meta</div>
     <h1>Table Max Partition Dates</h1>
     <p class="panel-desc">Helium meta query.</p>
-    <div class="badges">
-      <span class="badge meta">Meta</span>
-      <span class="badge src">TABLE_MAX_PARTITION_DATES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3807,6 +3770,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3827,10 +3793,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Iot Data</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_IOT_DATA</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3897,6 +3859,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -3917,10 +3882,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Iot Data By Region</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_IOT_DATA_BY_REGION</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -3983,6 +3944,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4003,10 +3967,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Iot Rewarded Gateways</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_IOT_REWARDED_GATEWAYS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4073,6 +4033,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4093,10 +4056,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Mobile Data</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_MOBILE_DATA</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4163,6 +4122,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4183,10 +4145,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Mobile Heartbeat Hours</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_MOBILE_HEARTBEAT_HOURS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4253,6 +4211,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4273,10 +4234,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Mobile Rewarded Gateways</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_MOBILE_REWARDED_GATEWAYS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4343,6 +4300,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4363,10 +4323,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Mobile Rewarded Radios</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_MOBILE_REWARDED_RADIOS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4433,6 +4389,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4453,10 +4412,6 @@
     <div class="panel-eyebrow">Network</div>
     <h1>Network Mobile Rewarded Subscribers</h1>
     <p class="panel-desc">Helium network query.</p>
-    <div class="badges">
-      <span class="badge meta">Network</span>
-      <span class="badge src">NETWORK_MOBILE_REWARDED_SUBSCRIBERS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4523,6 +4478,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4543,10 +4501,6 @@
     <div class="panel-eyebrow">Oui</div>
     <h1>Oui Data</h1>
     <p class="panel-desc">Helium oui query.</p>
-    <div class="badges">
-      <span class="badge meta">Oui</span>
-      <span class="badge src">OUI_DATA</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4617,6 +4571,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4637,10 +4594,6 @@
     <div class="panel-eyebrow">Oui</div>
     <h1>Oui Dc Usage</h1>
     <p class="panel-desc">Helium oui query.</p>
-    <div class="badges">
-      <span class="badge meta">Oui</span>
-      <span class="badge src">OUI_DC_USAGE</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4699,6 +4652,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4719,10 +4675,6 @@
     <div class="panel-eyebrow">Oui</div>
     <h1>Oui Packet Size Distribution</h1>
     <p class="panel-desc">Helium oui query.</p>
-    <div class="badges">
-      <span class="badge meta">Oui</span>
-      <span class="badge src">OUI_PACKET_SIZE_DISTRIBUTION</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4789,6 +4741,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4809,10 +4764,6 @@
     <div class="panel-eyebrow">Oui</div>
     <h1>Oui Top Gateways By Payload</h1>
     <p class="panel-desc">Helium oui query.</p>
-    <div class="badges">
-      <span class="badge meta">Oui</span>
-      <span class="badge src">OUI_TOP_GATEWAYS_BY_PAYLOAD</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4883,6 +4834,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -4903,10 +4857,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Iot Reward Shares</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_IOT_REWARD_SHARES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -4993,6 +4943,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -5013,10 +4966,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Iot Reward Shares Count</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_IOT_REWARD_SHARES_COUNT</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -5084,6 +5033,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -5104,10 +5056,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Iot Reward Totals</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_IOT_REWARD_TOTALS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -5178,6 +5126,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -5198,10 +5149,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Iot Reward Totals Count</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_IOT_REWARD_TOTALS_COUNT</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -5261,6 +5208,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -5281,10 +5231,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Mobile Reward Shares</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_MOBILE_REWARD_SHARES</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -5363,6 +5309,9 @@
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -5383,10 +5332,6 @@
     <div class="panel-eyebrow">Relay</div>
     <h1>Relay Mobile Reward Totals</h1>
     <p class="panel-desc">Helium relay query.</p>
-    <div class="badges">
-      <span class="badge meta">Relay</span>
-      <span class="badge src">RELAY_MOBILE_REWARD_TOTALS</span>
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -5456,6 +5401,9 @@
         <div class="sample-toolbar">
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
@@ -5662,9 +5610,34 @@
       }
     }
 
-    function setSampleActions(panel, canCopy, canCsv) {
+    function sampleDownloadBaseName(panel) {
+      const data = JSON.parse(panel.dataset.endpoint);
+      return (data.path || "sample").replace(/^\/api\/helium\//, "").replace(/\//g, "_");
+    }
+
+    function downloadBlob(filename, blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function downloadSampleJson(panel) {
+      if (!panel._sampleJson) return;
+      const blob = new Blob([panel._sampleJson], { type: "application/json;charset=utf-8" });
+      downloadBlob(sampleDownloadBaseName(panel) + ".json", blob);
+    }
+
+    function setSampleActions(panel, enabled) {
       const copyBtn = panel.querySelector(".copy-sample-btn");
-      if (copyBtn) copyBtn.disabled = !canCopy;
+      const jsonBtn = panel.querySelector(".download-sample-json-btn");
+      if (copyBtn) copyBtn.disabled = !enabled;
+      if (jsonBtn) jsonBtn.disabled = !enabled;
     }
 
     function setSampleProgress(panel, pct, ms) {
@@ -5693,10 +5666,21 @@
       panel._progressTimer = requestAnimationFrame(tick);
     }
 
+    function hideSampleProgress(panel) {
+      const wrap = panel.querySelector(".sample-progress");
+      if (wrap) wrap.hidden = true;
+    }
+
     function finishSampleProgress(panel, ok) {
       const elapsed = panel._progressStart ? performance.now() - panel._progressStart : 0;
       stopSampleProgress(panel);
-      setSampleProgress(panel, ok ? 100 : 0, elapsed);
+      if (ok) {
+        setSampleProgress(panel, 100, elapsed);
+        setTimeout(function() { hideSampleProgress(panel); }, 120);
+      } else {
+        setSampleProgress(panel, 0, elapsed);
+        setTimeout(function() { hideSampleProgress(panel); }, 400);
+      }
     }
 
     async function loadSample(panel) {
@@ -5704,9 +5688,8 @@
       const loadBtn = panel.querySelector(".load-sample-btn");
       if (!body) return;
       panel._sampleJson = "";
-      panel._sampleRows = [];
       if (loadBtn) loadBtn.disabled = true;
-      setSampleActions(panel, false, false);
+      setSampleActions(panel, false);
       body.className = "sample-body sample-loading";
       body.textContent = "Loading sample from API…";
       startSampleProgress(panel);
@@ -5715,17 +5698,16 @@
         const data = await res.json();
         if (!res.ok || data.success === false) throw new Error(data.error || res.statusText);
         finishSampleProgress(panel, true);
-        panel._sampleRows = sampleRows(data);
         panel._sampleJson = JSON.stringify(data, null, 2);
         body.className = "sample-body";
         body.innerHTML = "<pre class=\"sample-pre\">" + panel._sampleJson.replace(/</g, "&lt;") + "</pre>";
         panel.querySelector(".sample-meta").textContent = describeSampleResult(data);
-        setSampleActions(panel, true, false);
+        setSampleActions(panel, true);
       } catch (err) {
         finishSampleProgress(panel, false);
         body.className = "sample-body sample-error";
         body.textContent = "Sample failed: " + err.message;
-        setSampleActions(panel, false, false);
+        setSampleActions(panel, false);
       } finally {
         if (loadBtn) loadBtn.disabled = false;
       }
@@ -5773,6 +5755,9 @@
       });
       panel.querySelector(".copy-sample-btn")?.addEventListener("click", () => {
         if (panel._sampleJson) navigator.clipboard.writeText(panel._sampleJson);
+      });
+      panel.querySelector(".download-sample-json-btn")?.addEventListener("click", () => {
+        downloadSampleJson(panel);
       });
       syncUrl();
     });

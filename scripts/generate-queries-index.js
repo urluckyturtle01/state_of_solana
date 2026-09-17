@@ -298,6 +298,9 @@ function renderSampleCard() {
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
+          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          </button>
           <button class="btn load-sample-btn" type="button">Load sample</button>
         </div>
       </div>
@@ -343,10 +346,6 @@ function renderPanel(item, isFirst) {
     <div class="panel-eyebrow">${esc(item.tag)}</div>
     <h1>${esc(item.title)}</h1>
     <p class="panel-desc">${esc(item.long_description || item.description)}</p>
-    <div class="badges">
-      <span class="badge meta">${esc(item.tag)}</span>
-      ${item.query_name ? `<span class="badge src">${esc(item.query_name)}</span>` : ''}
-    </div>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -586,9 +585,34 @@ function runtimeScript(dates) {
       }
     }
 
-    function setSampleActions(panel, canCopy, canCsv) {
+    function sampleDownloadBaseName(panel) {
+      const data = JSON.parse(panel.dataset.endpoint);
+      return (data.path || "sample").replace(/^\\/api\\/helium\\//, "").replace(/\\//g, "_");
+    }
+
+    function downloadBlob(filename, blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function downloadSampleJson(panel) {
+      if (!panel._sampleJson) return;
+      const blob = new Blob([panel._sampleJson], { type: "application/json;charset=utf-8" });
+      downloadBlob(sampleDownloadBaseName(panel) + ".json", blob);
+    }
+
+    function setSampleActions(panel, enabled) {
       const copyBtn = panel.querySelector(".copy-sample-btn");
-      if (copyBtn) copyBtn.disabled = !canCopy;
+      const jsonBtn = panel.querySelector(".download-sample-json-btn");
+      if (copyBtn) copyBtn.disabled = !enabled;
+      if (jsonBtn) jsonBtn.disabled = !enabled;
     }
 
     function setSampleProgress(panel, pct, ms) {
@@ -617,10 +641,21 @@ function runtimeScript(dates) {
       panel._progressTimer = requestAnimationFrame(tick);
     }
 
+    function hideSampleProgress(panel) {
+      const wrap = panel.querySelector(".sample-progress");
+      if (wrap) wrap.hidden = true;
+    }
+
     function finishSampleProgress(panel, ok) {
       const elapsed = panel._progressStart ? performance.now() - panel._progressStart : 0;
       stopSampleProgress(panel);
-      setSampleProgress(panel, ok ? 100 : 0, elapsed);
+      if (ok) {
+        setSampleProgress(panel, 100, elapsed);
+        setTimeout(function() { hideSampleProgress(panel); }, 120);
+      } else {
+        setSampleProgress(panel, 0, elapsed);
+        setTimeout(function() { hideSampleProgress(panel); }, 400);
+      }
     }
 
     async function loadSample(panel) {
@@ -628,9 +663,8 @@ function runtimeScript(dates) {
       const loadBtn = panel.querySelector(".load-sample-btn");
       if (!body) return;
       panel._sampleJson = "";
-      panel._sampleRows = [];
       if (loadBtn) loadBtn.disabled = true;
-      setSampleActions(panel, false, false);
+      setSampleActions(panel, false);
       body.className = "sample-body sample-loading";
       body.textContent = "Loading sample from API…";
       startSampleProgress(panel);
@@ -639,17 +673,16 @@ function runtimeScript(dates) {
         const data = await res.json();
         if (!res.ok || data.success === false) throw new Error(data.error || res.statusText);
         finishSampleProgress(panel, true);
-        panel._sampleRows = sampleRows(data);
         panel._sampleJson = JSON.stringify(data, null, 2);
         body.className = "sample-body";
         body.innerHTML = "<pre class=\\"sample-pre\\">" + panel._sampleJson.replace(/</g, "&lt;") + "</pre>";
         panel.querySelector(".sample-meta").textContent = describeSampleResult(data);
-        setSampleActions(panel, true, false);
+        setSampleActions(panel, true);
       } catch (err) {
         finishSampleProgress(panel, false);
         body.className = "sample-body sample-error";
         body.textContent = "Sample failed: " + err.message;
-        setSampleActions(panel, false, false);
+        setSampleActions(panel, false);
       } finally {
         if (loadBtn) loadBtn.disabled = false;
       }
@@ -697,6 +730,9 @@ function runtimeScript(dates) {
       });
       panel.querySelector(".copy-sample-btn")?.addEventListener("click", () => {
         if (panel._sampleJson) navigator.clipboard.writeText(panel._sampleJson);
+      });
+      panel.querySelector(".download-sample-json-btn")?.addEventListener("click", () => {
+        downloadSampleJson(panel);
       });
       syncUrl();
     });`;
