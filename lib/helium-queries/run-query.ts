@@ -12,11 +12,63 @@ export type HeliumQueryResult = {
   error?: string;
 };
 
+function proxyOrigin(): string | undefined {
+  const raw = process.env.HELIUM_QUERY_PROXY_ORIGIN?.trim();
+  return raw ? raw.replace(/\/$/, '') : undefined;
+}
+
+async function runHeliumQueryViaProxy(
+  origin: string,
+  group: string,
+  name: string,
+  params: Record<string, unknown>
+): Promise<HeliumQueryResult> {
+  const url = new URL(`${origin}/api/helium/${encodeURIComponent(group)}/${encodeURIComponent(name)}`);
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue;
+    url.searchParams.set(key, String(value));
+  }
+
+  const res = await fetch(url.toString(), {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(180_000),
+    cache: 'no-store',
+  });
+
+  let data: HeliumQueryResult;
+  try {
+    data = (await res.json()) as HeliumQueryResult;
+  } catch {
+    return {
+      success: false,
+      query: `${group}/${name}`,
+      error: `Proxy ${origin} returned non-JSON (${res.status})`,
+    };
+  }
+
+  if (!data.query) data.query = `${group}/${name}`;
+  return data;
+}
+
 export async function runHeliumQuery(
   group: string,
   name: string,
   params: Record<string, unknown> = {}
 ): Promise<HeliumQueryResult> {
+  const proxy = proxyOrigin();
+  if (proxy) {
+    return runHeliumQueryViaProxy(proxy, group, name, params);
+  }
+
+  if (process.env.VERCEL) {
+    return {
+      success: false,
+      query: `${group}/${name}`,
+      error:
+        'Helium queries cannot run on Vercel (no Python/Trino). Set HELIUM_QUERY_PROXY_ORIGIN to your self-hosted app URL, e.g. http://84.32.71.101:8137',
+    };
+  }
+
   const root = process.cwd();
   const script = path.join(root, 'pipeline', 'run_helium_query.py');
   try {
@@ -32,13 +84,21 @@ export async function runHeliumQuery(
     );
     return JSON.parse(stdout) as HeliumQueryResult;
   } catch (err) {
-    const execErr = err as { stdout?: string; message?: string };
+    const execErr = err as { stdout?: string; code?: string; message?: string };
     if (execErr.stdout?.trim()) {
       try {
         return JSON.parse(execErr.stdout) as HeliumQueryResult;
       } catch {
         /* fall through */
       }
+    }
+    if (execErr.code === 'ENOENT') {
+      return {
+        success: false,
+        query: `${group}/${name}`,
+        error:
+          'python3 not found. On serverless hosts set HELIUM_QUERY_PROXY_ORIGIN to a machine that runs the Helium API.',
+      };
     }
     throw err;
   }
