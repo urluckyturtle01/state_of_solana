@@ -256,60 +256,42 @@ function renderFilter(f, itemId) {
   } else {
     input = `<input id="${fid}" type="text" data-name="${esc(f.name)}" value="${esc(f.default || '')}" placeholder="${esc(f.name)}">`;
   }
+  const labelTitle = f.description ? ` title="${esc(f.description)}"` : '';
   return `<div class="filter-row" data-filter="${esc(f.name)}" data-filter-type="query">
-    <label for="${fid}">${esc(f.label)}${f.required ? ' *' : ''}</label>
+    <label for="${fid}"${labelTitle}>${esc(f.label)}${f.required ? ' *' : ''}</label>
     ${input}
     ${f.description ? `<div class="hint">${esc(f.description)}</div>` : ''}
   </div>`;
 }
 
-function renderPanel(item, isFirst) {
-  const dataJson = JSON.stringify(item).replace(/</g, '\\u003c');
-  const filtersHtml = item.filters.length
-    ? `<div class="section-card">
-        <div class="section-card-head">Parameters</div>
-        <div class="section-card-body"><div class="filter-grid">${item.filters.map((f) => renderFilter(f, item.id)).join('')}</div></div>
-      </div>`
-    : '';
-
-  const schemaHtml = item.response_schema.length
-    ? `<div class="section-card">
-        <div class="section-card-head">Response schema (rows[])</div>
-        <div class="section-card-body" style="padding:0;overflow-x:auto">
-          <table class="schema-table">
-            <thead><tr><th>Field</th><th>Type</th></tr></thead>
-            <tbody>${item.response_schema
-              .map(
-                (col) =>
-                  `<tr><td><code>${esc(col.field)}</code></td><td><span class="type-pill">${esc(col.type)}</span></td></tr>`
-              )
-              .join('')}</tbody>
-          </table>
+function renderCodeSamplesCard(item) {
+  const initialShell = `curl -s '${item.url.replace(/'/g, "'\\''")}'`;
+  const lineCount = initialShell.split('\n').length;
+  const gutter = Array.from({ length: lineCount }, (_, i) => i + 1).join('\n');
+  return `<div class="section-card code-samples-card">
+      <div class="section-card-head">Client libraries</div>
+      <div class="code-tabs-row">
+        <div class="code-tabs" role="tablist">
+          <button type="button" class="code-tab active" data-lang="shell" role="tab">Shell</button>
+          <button type="button" class="code-tab" data-lang="ruby" role="tab">Ruby</button>
+          <button type="button" class="code-tab" data-lang="node" role="tab">Node.js</button>
+          <button type="button" class="code-tab" data-lang="python" role="tab">Python</button>
+          <button type="button" class="code-tab" data-lang="rust" role="tab">Rust</button>
+          <button type="button" class="code-tab" data-lang="php" role="tab">PHP</button>
         </div>
-      </div>`
-    : '';
-
-  return `<div id="panel-ep-${esc(item.id)}" class="panel${isFirst ? ' active' : ''}" data-endpoint='${dataJson}'>
-    <div class="panel-eyebrow">${esc(item.tag)}</div>
-    <h1>${esc(item.title)}</h1>
-    <p class="panel-desc">${esc(item.long_description || item.description)}</p>
-    <div class="badges">
-      <span class="badge meta">${esc(item.tag)}</span>
-      ${item.query_name ? `<span class="badge src">${esc(item.query_name)}</span>` : ''}
-    </div>
-    <div class="section-card">
-      <div class="section-card-head">Endpoint</div>
-      <div class="section-card-body">
-        <div class="path-bar"><span class="m">${item.method}</span> <span class="p">${esc(item.path)}</span></div>
-        <div class="actions">
-          <button class="btn copy-url-btn" type="button">Copy URL</button>
-          <a class="btn primary try-url-btn" href="${esc(item.url)}" target="_blank" rel="noopener">Send request</a>
-        </div>
+        <button class="icon-btn copy-code-btn" type="button" title="Copy code" aria-label="Copy code">
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
       </div>
-    </div>
-    ${filtersHtml}
-    ${schemaHtml}
-    <div class="section-card sample-card">
+      <div class="code-editor-pane">
+        <div class="code-editor-ln" aria-hidden="true">${gutter}</div>
+        <pre class="code-sample-pre"><code>${esc(initialShell)}</code></pre>
+      </div>
+    </div>`;
+}
+
+function renderSampleCard() {
+  return `<div class="section-card sample-card">
       <div class="section-card-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
         <span>Sample response</span>
         <div class="sample-toolbar">
@@ -327,6 +309,64 @@ function renderPanel(item, isFirst) {
           <div class="sample-progress-bar"><div class="sample-progress-fill"></div></div>
         </div>
         <div class="sample-body sample-loading">Press Load sample to fetch rows.</div>
+      </div>
+    </div>`;
+}
+
+function renderPanel(item, isFirst) {
+  const dataJson = JSON.stringify(item).replace(/</g, '\\u003c');
+  const filtersHtml = item.filters.length
+    ? `<div class="section-card params-card">
+        <div class="section-card-head">Parameters</div>
+        <div class="section-card-body"><div class="filter-grid">${item.filters.map((f) => renderFilter(f, item.id)).join('')}</div></div>
+      </div>`
+    : '';
+
+  const schemaBody = item.response_schema.length
+    ? `<table class="schema-table">
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>${item.response_schema
+              .map(
+                (col) =>
+                  `<tr><td><code>${esc(col.field)}</code></td><td><span class="type-pill">${esc(col.type)}</span></td></tr>`
+              )
+              .join('')}</tbody>
+          </table>`
+    : `<p class="hint" style="margin:0;padding:16px">No schema columns parsed — use sample response.</p>`;
+
+  const schemaHtml = `<div class="section-card">
+        <div class="section-card-head">Response schema (rows[])</div>
+        <div class="section-card-body" style="padding:0;overflow-x:auto">${schemaBody}</div>
+      </div>`;
+
+  return `<div id="panel-ep-${esc(item.id)}" class="panel${isFirst ? ' active' : ''}" data-endpoint='${dataJson}'>
+    <div class="panel-eyebrow">${esc(item.tag)}</div>
+    <h1>${esc(item.title)}</h1>
+    <p class="panel-desc">${esc(item.long_description || item.description)}</p>
+    <div class="badges">
+      <span class="badge meta">${esc(item.tag)}</span>
+      ${item.query_name ? `<span class="badge src">${esc(item.query_name)}</span>` : ''}
+    </div>
+    <div class="panel-row-endpoint">
+      <div class="section-card">
+        <div class="section-card-head">Endpoint</div>
+        <div class="section-card-body">
+          <div class="path-bar">
+            <span class="m">${item.method}</span>
+            <span class="p endpoint-url-text">${esc(item.path)}</span>
+            <button class="icon-btn copy-url-btn" type="button" title="Copy URL" aria-label="Copy URL">
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-row-split">
+      <div class="panel-col-schema">${schemaHtml}</div>
+      <div class="panel-col-side">
+        ${renderCodeSamplesCard(item)}
+        ${filtersHtml}
+        ${renderSampleCard()}
       </div>
     </div>
   </div>`;
@@ -409,6 +449,114 @@ function runtimeScript(dates) {
       });
       const qs = params.toString();
       return BASE + path + (qs ? "?" + qs : "");
+    }
+
+    function buildCodeSnippets(fullUrl) {
+      const q = JSON.stringify(fullUrl);
+      return {
+        shell: "curl -s " + q,
+        ruby: [
+          "require 'uri'",
+          "require 'net/http'",
+          "",
+          "url = URI(" + q + ")",
+          "http = Net::HTTP.new(url.host, url.port)",
+          "http.use_ssl = (url.scheme == 'https')",
+          "",
+          "request = Net::HTTP::Get.new(url)",
+          "response = http.request(request)",
+          "puts response.body"
+        ].join("\\n"),
+        node: [
+          "const url = " + q + ";",
+          "",
+          "const res = await fetch(url);",
+          "if (!res.ok) throw new Error(await res.text());",
+          "console.log(await res.text());"
+        ].join("\\n"),
+        php: [
+          "<?php",
+          "$ch = curl_init(" + q + ");",
+          "curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);",
+          "$response = curl_exec($ch);",
+          "if ($response === false) {",
+          "    throw new Exception(curl_error($ch));",
+          "}",
+          "curl_close($ch);",
+          "echo $response;"
+        ].join("\\n"),
+        python: [
+          "import urllib.request",
+          "",
+          "url = " + q,
+          "with urllib.request.urlopen(url) as response:",
+          "    print(response.read().decode())"
+        ].join("\\n"),
+        rust: [
+          "fn main() -> Result<(), Box<dyn std::error::Error>> {",
+          "    let url = " + q + ";",
+          "    let resp = reqwest::blocking::get(url)?;",
+          "    println!(\\"{}\\", resp.text()?);",
+          "    Ok(())",
+          "}"
+        ].join("\\n")
+      };
+    }
+
+    function escHtml(t) {
+      return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function highlightCode(text, lang) {
+      return text.split("\\n").map(function(line) {
+        var l = escHtml(line);
+        l = l.replace(/("(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*')/g, '<span class="tok-str">$1</span>');
+        l = l.replace(/\\b(require|const|await|async|if|throw|new|echo|puts|function|return|import|with|as|fn|let|mut|Ok)\\b/g, '<span class="tok-kw">$1</span>');
+        l = l.replace(/\\b(curl_setopt|curl_init|curl_exec|curl_close|curl_error|urlopen|read|decode|print)\\b/g, '<span class="tok-fn">$1</span>');
+        l = l.replace(/\\b(curl|fetch|console|Net::HTTP|URI|Exception|reqwest|println)\\b/g, '<span class="tok-fn">$1</span>');
+        if (lang === "python") {
+          l = l.replace(/\\b(import|from|with|as|print)\\b/g, '<span class="tok-kw">$1</span>');
+        }
+        if (lang === "rust") {
+          l = l.replace(/\\b(fn|let|mut|Ok|Result)\\b/g, '<span class="tok-kw">$1</span>');
+        }
+        if (lang === "shell") {
+          l = l.replace(/\\bcurl\\b/g, '<span class="tok-shell">curl</span>');
+          l = l.replace(/(-s|-G|-H)\\b/g, '<span class="tok-kw">$1</span>');
+        }
+        if (lang === "php") {
+          l = l.replace(/&lt;\\?php/g, '<span class="tok-kw">&lt;?php</span>');
+          l = l.replace(/\\$(\\w+)/g, '<span class="tok-var">$&</span>');
+        }
+        return l;
+      }).join("\\n");
+    }
+
+    function paintCodePanel(panel, lang, text) {
+      const codeEl = panel.querySelector(".code-sample-pre code");
+      const gutter = panel.querySelector(".code-editor-ln");
+      if (!codeEl) return;
+      panel._codePlain = text;
+      const lines = text.split("\\n");
+      if (gutter) gutter.textContent = lines.map(function(_, i) { return String(i + 1); }).join("\\n");
+      codeEl.innerHTML = highlightCode(text, lang);
+    }
+
+    function showCodeTab(panel, lang) {
+      panel.querySelectorAll(".code-tab").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.lang === lang);
+      });
+      const text =
+        (panel._codeSamples && panel._codeSamples[lang]) ||
+        (lang === "shell" ? "curl -s " + JSON.stringify(buildUrl(panel)) : "");
+      paintCodePanel(panel, lang, text);
+    }
+
+    function syncCodeSamples(panel) {
+      const url = buildUrl(panel);
+      panel._codeSamples = buildCodeSnippets(url);
+      const active = panel.querySelector(".code-tab.active");
+      showCodeTab(panel, active ? active.dataset.lang : "shell");
     }
 
     function sampleRows(data) {
@@ -508,19 +656,45 @@ function runtimeScript(dates) {
     }
 
     document.querySelectorAll(".panel[data-endpoint]").forEach((panel) => {
-      const tryBtn = panel.querySelector(".try-url-btn");
       const copyBtn = panel.querySelector(".copy-url-btn");
+      const urlEl = panel.querySelector(".endpoint-url-text");
       function syncUrl() {
         const url = buildUrl(panel);
-        tryBtn.href = url;
-        copyBtn.dataset.url = url;
+        const data = JSON.parse(panel.dataset.endpoint);
+        const display = url.startsWith(BASE) ? url.slice(BASE.length) || data.path : url;
+        if (urlEl) urlEl.textContent = display;
+        if (copyBtn) copyBtn.dataset.url = url;
+        syncCodeSamples(panel);
       }
       panel.querySelectorAll("[data-name]").forEach((el) => {
         el.addEventListener("input", syncUrl);
         el.addEventListener("change", syncUrl);
       });
+      panel.querySelectorAll(".code-tab").forEach((tab) => {
+        tab.addEventListener("click", () => showCodeTab(panel, tab.dataset.lang));
+      });
+      panel.querySelector(".copy-code-btn")?.addEventListener("click", () => {
+        const active = panel.querySelector(".code-tab.active");
+        const lang = active ? active.dataset.lang : "shell";
+        const text = panel._codePlain || (panel._codeSamples && panel._codeSamples[lang]);
+        if (text) {
+          navigator.clipboard.writeText(text).then(() => {
+            const btn = panel.querySelector(".copy-code-btn");
+            if (btn) {
+              btn.classList.add("copied");
+              setTimeout(() => btn.classList.remove("copied"), 1500);
+            }
+          });
+        }
+      });
       panel.querySelector(".load-sample-btn")?.addEventListener("click", () => loadSample(panel));
-      copyBtn.addEventListener("click", () => navigator.clipboard.writeText(copyBtn.dataset.url || tryBtn.href));
+      copyBtn?.addEventListener("click", () => {
+        const url = copyBtn.dataset.url || buildUrl(panel);
+        navigator.clipboard.writeText(url).then(() => {
+          copyBtn.classList.add("copied");
+          setTimeout(() => copyBtn.classList.remove("copied"), 1500);
+        });
+      });
       panel.querySelector(".copy-sample-btn")?.addEventListener("click", () => {
         if (panel._sampleJson) navigator.clipboard.writeText(panel._sampleJson);
       });
@@ -544,16 +718,15 @@ function main() {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Helium Oracle API · All endpoints</title>
+  <title>Helium APIs · Top Ledger Research</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>${styles}</style>
 </head>
 <body>
   <div class="shell">
     <header class="header">
-      <a class="logo" href="/">
-        <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Z"/></svg></div>
-        <div class="logo-text"><span>Helium Oracle</span> API</div>
+      <a class="logo" href="https://research.topledger.xyz/" target="_blank" rel="noopener">
+        <img src="https://topledger.xyz/assets/images/logo/topledger-full.svg?imwidth=384" alt="Top Ledger Research" width="160" height="26" />
       </a>
       <div class="header-meta"><span id="header-api-base"></span> · ${endpoints.length} endpoints</div>
     </header>
