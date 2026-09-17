@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import UserProfile from './auth/UserProfile';
@@ -111,11 +112,19 @@ export default function Sidebar() {
                         {/* Projects list with left border starting from below search bar */}
                         <div className="ml-4 border-l border-gray-900 pl-3">
                           <ul className="space-y-1.5">
-                          {(item.name === "Projects" ? getFilteredProjects(item.subItems) : item.subItems).map((subItem) => {
+                          {(item.name === "Projects" ? getFilteredProjects(item.subItems) : item.subItems).map((subItem, subIdx, subArr) => {
                           const isSubActive = pathname?.startsWith(subItem.path);
+                          const prevSection = subIdx > 0 ? subArr[subIdx - 1]?.section : undefined;
+                          const showSection = subItem.section && subItem.section !== prevSection;
                           
                           return (
-                            <li key={subItem.name}>
+                            <Fragment key={`${subItem.section ?? ''}-${subItem.name}`}>
+                            {showSection && (
+                              <li className="pt-2 first:pt-0 pb-0.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+                                {subItem.section}
+                              </li>
+                            )}
+                            <li>
                               {subItem.status === "soon" ? (
                                 <div className={`flex items-center gap-2 px-1 py-1.5 rounded-md text-sm transition-all duration-200 text-gray-500 cursor-not-allowed`}>
                                   {subItem.logo && (
@@ -156,6 +165,7 @@ export default function Sidebar() {
                                 </Link>
                               )}
                             </li>
+                            </Fragment>
                           );
                         })}
                       </ul>

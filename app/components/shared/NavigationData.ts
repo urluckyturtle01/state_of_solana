@@ -4,6 +4,8 @@ export interface SubMenuItem {
   path: string;
   logo?: string;
   status?: string;
+  /** Optional sidebar section label (e.g. "Helium" under APIs) */
+  section?: string;
 }
 
 export interface MenuItem {
@@ -42,6 +44,21 @@ export const menuItems: MenuItem[] = [
     path: "/sf-dashboards", 
     icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
     requiresInternalAuth: true,
+  },
+  {
+    name: "APIs",
+    path: "/apis",
+    icon: "M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    hasDropdown: true,
+    subItems: [
+      { name: "Delegation", path: "/apis/helium/delegation", section: "Helium" },
+      { name: "Gateway", path: "/apis/helium/gateway", section: "Helium" },
+      { name: "Hotspot", path: "/apis/helium/hotspot", section: "Helium" },
+      { name: "Meta", path: "/apis/helium/meta", section: "Helium" },
+      { name: "Network", path: "/apis/helium/network", section: "Helium" },
+      { name: "OUI", path: "/apis/helium/oui", section: "Helium" },
+      { name: "Relay", path: "/apis/helium/relay", section: "Helium" },
+    ],
   },
   { name: "Blogs", path: "/blogs", icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" },
   { name: "Explorer", path: "/explorer", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z", requiresAuth: true, hidden: true },

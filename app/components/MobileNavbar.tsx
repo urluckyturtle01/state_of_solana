@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import UserProfile from './auth/UserProfile';
@@ -173,11 +173,19 @@ export default function MobileNavbar() {
                             {/* Projects list with left border starting from below search bar */}
                             <div className="ml-8 border-l border-gray-800 pl-3">
                               <ul className="space-y-1.5">
-                                {(item.name === "Projects" ? getFilteredProjects(item.subItems) : item.subItems).map((subItem) => {
+                                {(item.name === "Projects" ? getFilteredProjects(item.subItems) : item.subItems).map((subItem, subIdx, subArr) => {
                               const isSubActive = pathname?.startsWith(subItem.path);
+                              const prevSection = subIdx > 0 ? subArr[subIdx - 1]?.section : undefined;
+                              const showSection = subItem.section && subItem.section !== prevSection;
                               
                               return (
-                                <li key={subItem.name}>
+                                <Fragment key={`${subItem.section ?? ''}-${subItem.name}`}>
+                                {showSection && (
+                                  <li className="pt-2 pb-0.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+                                    {subItem.section}
+                                  </li>
+                                )}
+                                <li>
                                   {subItem.status === "soon" ? (
                                     <div className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-all duration-200 text-gray-500 cursor-not-allowed`}>
                                       {subItem.logo && (
@@ -221,6 +229,7 @@ export default function MobileNavbar() {
                                     </Link>
                                   )}
                                 </li>
+                                </Fragment>
                               );
                             })}
                           </ul>

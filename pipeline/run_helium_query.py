@@ -28,6 +28,18 @@ from tl_api_client import TlApiClient  # noqa: E402
 from trino_client import TrinoClient  # noqa: E402
 
 
+def helium_trino_client() -> TrinoClient:
+    """Helium Oracle SQL uses hive.* schemas; rest of the app keeps TRINO_CATALOG=iceberg."""
+    import os
+
+    catalog = os.getenv("TRINO_HELIUM_CATALOG", "hive")
+    schema = os.getenv(
+        "TRINO_HELIUM_SCHEMA",
+        os.getenv("TRINO_SCHEMA", "helium"),
+    )
+    return TrinoClient(catalog=catalog, schema=schema)
+
+
 def load_sql(group: str, name: str) -> str:
     path = ROOT / "queries" / group / f"{name}.sql"
     if not path.is_file():
@@ -62,7 +74,7 @@ def main() -> int:
     try:
         template = load_sql(group, name)
         sql = bind_sql(template, params)
-        router = QueryRouter(TrinoClient(), TlApiClient())
+        router = QueryRouter(helium_trino_client(), TlApiClient())
         if is_tl_api_query(sql):
             router.tl_api.connect()
         else:

@@ -19,15 +19,27 @@ export async function runHeliumQuery(
 ): Promise<HeliumQueryResult> {
   const root = process.cwd();
   const script = path.join(root, 'pipeline', 'run_helium_query.py');
-  const { stdout } = await execFileAsync(
-    'python3',
-    [script, group, name, JSON.stringify(params)],
-    {
-      cwd: root,
-      maxBuffer: 50 * 1024 * 1024,
-      timeout: 180_000,
-      env: process.env,
+  try {
+    const { stdout } = await execFileAsync(
+      'python3',
+      [script, group, name, JSON.stringify(params)],
+      {
+        cwd: root,
+        maxBuffer: 50 * 1024 * 1024,
+        timeout: 180_000,
+        env: process.env,
+      }
+    );
+    return JSON.parse(stdout) as HeliumQueryResult;
+  } catch (err) {
+    const execErr = err as { stdout?: string; message?: string };
+    if (execErr.stdout?.trim()) {
+      try {
+        return JSON.parse(execErr.stdout) as HeliumQueryResult;
+      } catch {
+        /* fall through */
+      }
     }
-  );
-  return JSON.parse(stdout) as HeliumQueryResult;
+    throw err;
+  }
 }
