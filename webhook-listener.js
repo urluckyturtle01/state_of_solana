@@ -13,14 +13,38 @@ const SYNC_SCRIPT = path.join(PROJECT_DIR, 'pipeline', 'sync-charts-to-db.py');
 const SYNC_LOG = '/tmp/sync-charts-to-db.log';
 const ALLOWED_REPO = 'Topledger/tl-reserach-tool-sqls'; // Only listen to this repo
 
+// Load .env from project root (GITHUB_PAT, WEBHOOK_SECRET, etc.)
+const envFile = path.join(PROJECT_DIR, '.env');
+if (fs.existsSync(envFile)) {
+  for (const line of fs.readFileSync(envFile, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue;
+    const eq = trimmed.indexOf('=');
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim();
+    if (key && process.env[key] === undefined) process.env[key] = value;
+  }
+}
+
+const GITHUB_PAT = process.env.GITHUB_PAT || '';
+
+function gitAuthUrl() {
+  if (!GITHUB_PAT) return `https://github.com/${ALLOWED_REPO}.git`;
+  return `https://x-access-token:${GITHUB_PAT}@github.com/${ALLOWED_REPO}.git`;
+}
+
 function runSync() {
+  const authUrl = gitAuthUrl();
+  const branchCmd = 'git rev-parse --abbrev-ref HEAD';
   const command = [
     `cd ${SQL_REPO_DIR}`,
-    'git fetch origin',
-    'git pull origin "$(git rev-parse --abbrev-ref HEAD)" || git pull origin master || git pull origin main',
+    `git fetch ${authUrl} +refs/heads/master:refs/remotes/origin/master +refs/heads/main:refs/remotes/origin/main`,
+    `BRANCH=$(${branchCmd})`,
+    'git reset --hard "origin/${BRANCH}" 2>/dev/null || git reset --hard origin/master || git reset --hard origin/main',
     `cd ${PROJECT_DIR}`,
     `python3 ${SYNC_SCRIPT} 2>&1 | tee ${SYNC_LOG}`,
   ].join(' && ');
+
 
   console.log('\n🚀 Starting chart sync...');
   console.log(`📜 Sync script: ${SYNC_SCRIPT}`);
@@ -120,6 +144,7 @@ server.listen(PORT, () => {
   console.log(`\n🎣 Webhook listener running on port ${PORT}`);
   console.log(`📍 Endpoint: http://localhost:${PORT}/webhook`);
   console.log(`🔐 Webhook secret: ${WEBHOOK_SECRET === 'your-webhook-secret-here' ? '⚠️  NOT SET (using default)' : '✅ Configured'}`);
+  console.log(`🔑 GitHub PAT: ${GITHUB_PAT ? '✅ Configured' : '⚠️  NOT SET (public fetch only)'}`);
   console.log(`📦 Allowed repository: ${ALLOWED_REPO}`);
   console.log(`📜 Sync script: ${SYNC_SCRIPT}`);
   console.log('\n⏳ Waiting for GitHub webhook events...\n');
