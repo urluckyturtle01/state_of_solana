@@ -3,15 +3,19 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+const ROOT = process.cwd();
 const QUERIES = path.join(ROOT, 'queries');
 const OUT = path.join(QUERIES, 'index.html');
 const OUT_PUBLIC = path.join(ROOT, 'public', 'queries', 'index.html');
 const OUT_HELIUM_APIS = path.join(ROOT, 'public', 'helium-apis', 'index.html');
-const STYLE_SRC = OUT;
+const STYLE_SRC = OUT_HELIUM_APIS;
 
 require('dotenv').config({ path: path.join(ROOT, '.env') });
-const BASE = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+
+function resolveBaseUrl(override) {
+  if (override) return String(override).replace(/\/$/, '');
+  return (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+}
 
 const GROUP_ORDER = ['delegation', 'gateway', 'hotspot', 'meta', 'network', 'oui', 'relay'];
 
@@ -185,13 +189,26 @@ function paramToFilter(p, group, name, dates) {
   };
 }
 
-function collectEndpoints() {
+function isQueryGroupDir(name) {
+  return name && !name.startsWith('.') && name !== 'index.html';
+}
+
+function sortGroupIds(ids) {
+  const set = new Set(ids);
+  const ordered = GROUP_ORDER.filter((id) => set.has(id));
+  const rest = [...set].filter((id) => !GROUP_ORDER.includes(id)).sort((a, b) => a.localeCompare(b));
+  return [...ordered, ...rest];
+}
+
+function collectEndpoints(baseUrl) {
+  const BASE = resolveBaseUrl(baseUrl);
   const dates = defaultDates();
   const endpoints = [];
-  const groups = fs.readdirSync(QUERIES, { withFileTypes: true }).filter((d) => d.isDirectory());
+  const groups = fs
+    .readdirSync(QUERIES, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && isQueryGroupDir(d.name));
 
   for (const g of groups.sort((a, b) => a.name.localeCompare(b.name))) {
-    if (!GROUP_ORDER.includes(g.name)) continue;
     const dir = path.join(QUERIES, g.name);
     for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.sql')).sort()) {
       const name = file.replace(/\.sql$/, '');
@@ -231,7 +248,7 @@ function collectEndpoints() {
     });
   }
 
-  const groupsOut = GROUP_ORDER.filter((id) => groupMap.has(id)).map((id) => groupMap.get(id));
+  const groupsOut = sortGroupIds([...groupMap.keys()]).map((id) => groupMap.get(id));
   return { endpoints, groups: groupsOut, dates };
 }
 
@@ -738,18 +755,17 @@ function runtimeScript(dates) {
     });`;
 }
 
-function main() {
-  const { endpoints, groups, dates } = collectEndpoints();
+function buildHeliumApisCatalogHtml(options = {}) {
+  const { endpoints, groups, dates } = collectEndpoints(options.baseUrl);
   if (!endpoints.length) {
-    console.error('No endpoints found');
-    process.exit(1);
+    throw new Error('No Helium query endpoints found under queries/');
   }
   const firstId = endpoints[0].id;
   const styles = extractStyles();
   const panelsHtml = endpoints.map((ep, i) => renderPanel(ep, i === 0)).join('\n');
   const navHtml = renderNav(groups, firstId);
 
-  const html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -786,25 +802,31 @@ ${runtimeScript(dates)}
 </body>
 </html>
 `;
+}
 
+function writeCatalogFiles(html) {
   fs.writeFileSync(OUT, html);
   fs.mkdirSync(path.dirname(OUT_PUBLIC), { recursive: true });
   fs.writeFileSync(OUT_PUBLIC, html);
   fs.mkdirSync(path.dirname(OUT_HELIUM_APIS), { recursive: true });
   fs.writeFileSync(OUT_HELIUM_APIS, html);
-  console.log(
-    'Wrote',
-    OUT,
-    ',',
-    OUT_PUBLIC,
-    ',',
-    OUT_HELIUM_APIS,
-    'with',
-    endpoints.length,
-    'APIs in',
-    groups.length,
-    'groups'
-  );
 }
 
-main();
+function main() {
+  let html;
+  try {
+    html = buildHeliumApisCatalogHtml();
+  } catch (err) {
+    console.error(err.message || err);
+    process.exit(1);
+  }
+  writeCatalogFiles(html);
+  const count = (html.match(/class="panel"/g) || []).length;
+  console.log('Wrote', OUT, ',', OUT_PUBLIC, ',', OUT_HELIUM_APIS, 'with', count, 'API panels');
+}
+
+module.exports = { buildHeliumApisCatalogHtml, writeCatalogFiles };
+
+if (require.main === module) {
+  main();
+}

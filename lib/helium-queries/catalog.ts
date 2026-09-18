@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { HeliumQueryDoc, HeliumQueryParam } from './types';
+import { HELIUM_API_GROUPS } from './types';
 
 export type { HeliumApiGroup, HeliumQueryDoc, HeliumQueryParam } from './types';
 export { HELIUM_API_GROUPS, groupLabel } from './types';
@@ -276,6 +277,18 @@ export function getHeliumQueryDoc(group: string, name: string): HeliumQueryDoc {
   };
 }
 
+export function listHeliumQueryGroups(): string[] {
+  if (!fs.existsSync(QUERIES_ROOT)) return [];
+  const known = new Set<string>(HELIUM_API_GROUPS as unknown as string[]);
+  const discovered = fs
+    .readdirSync(QUERIES_ROOT, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
+    .map((d) => d.name);
+  const ordered = HELIUM_API_GROUPS.filter((g) => discovered.includes(g));
+  const rest = discovered.filter((g) => !known.has(g)).sort((a, b) => a.localeCompare(b));
+  return [...ordered, ...rest];
+}
+
 export function listHeliumQueriesByGroup(group: string): HeliumQueryDoc[] {
   const dir = path.join(QUERIES_ROOT, group);
   if (!fs.existsSync(dir)) return [];
@@ -285,4 +298,8 @@ export function listHeliumQueriesByGroup(group: string): HeliumQueryDoc[] {
     .map((f) => f.replace(/\.sql$/, ''))
     .sort()
     .map((name) => getHeliumQueryDoc(group, name));
+}
+
+export function listAllHeliumQueryDocs(): HeliumQueryDoc[] {
+  return listHeliumQueryGroups().flatMap((group) => listHeliumQueriesByGroup(group));
 }

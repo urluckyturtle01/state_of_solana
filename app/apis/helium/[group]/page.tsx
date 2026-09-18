@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import HeliumQueryApiCard from '@/app/components/apis/HeliumQueryApiCard';
-import { listHeliumQueriesByGroup } from '@/lib/helium-queries/catalog';
-import { HELIUM_API_GROUPS, type HeliumApiGroup } from '@/lib/helium-queries/types';
+import { listHeliumQueriesByGroup, listHeliumQueryGroups } from '@/lib/helium-queries/catalog';
 
 type PageProps = { params: { group: string } };
 
@@ -12,15 +11,16 @@ function baseUrlFromEnv(): string {
 }
 
 export function generateStaticParams() {
-  return HELIUM_API_GROUPS.map((group) => ({ group }));
+  return listHeliumQueryGroups().map((group) => ({ group }));
 }
 
+export const dynamic = 'force-dynamic';
+
 export default function HeliumApiGroupPage({ params }: PageProps) {
-  const group = params.group as HeliumApiGroup;
-  if (!HELIUM_API_GROUPS.includes(group)) {
+  const group = params.group;
+  if (!listHeliumQueryGroups().includes(group)) {
     notFound();
   }
-
   const queries = listHeliumQueriesByGroup(group);
   const baseUrl = baseUrlFromEnv();
 
