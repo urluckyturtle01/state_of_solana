@@ -59,3 +59,23 @@ if [[ -f "$QUERIES_DEST/app/catalog/generate-queries-index.js" ]]; then
     HELIUM_MONOREPO_ROOT="$ROOT" node app/catalog/generate-queries-index.js
   ) || echo "⚠️  Catalog generation skipped (run manually if needed)"
 fi
+
+# queries/deploy.yml — "deploy on vercel: true|false" (from helium-queries repo)
+should_deploy_vercel() {
+  local f="$QUERIES_DEST/deploy.yml"
+  if [[ ! -f "$f" ]]; then
+    echo "   (no deploy.yml — default skip Vercel push)"
+    return 1
+  fi
+  local line val
+  line="$(grep -i 'deploy on vercel' "$f" | head -1 | sed 's/#.*//' | tr -d '\r' || true)"
+  val="$(echo "$line" | sed -E 's/^[^:]*:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' | xargs)"
+  [[ "$val" == "true" || "$val" == "yes" || "$val" == "1" ]]
+}
+
+if should_deploy_vercel; then
+  echo "🌐 deploy on vercel: true — pushing state_of_solana for Vercel"
+  bash "$ROOT/scripts/push-helium-queries-to-vercel.sh"
+else
+  echo "⏭️  deploy on vercel: false — synced locally only (no git push / Vercel)"
+fi
