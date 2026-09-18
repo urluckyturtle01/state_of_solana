@@ -103,6 +103,140 @@ function apiParamsForSql(sql) {
   return [...params].sort((a, b) => a.localeCompare(b));
 }
 
+/** Output column descriptions (camelCase keys match SQL AS "…" aliases). */
+const FIELD_DESCRIPTIONS = {
+  address: 'Hotspot / gateway signing pubkey (base58).',
+  hotspotKey: 'Gateway signing pubkey used for PoC beacons and witnesses.',
+  entityKey: 'Canonical Helium Entity Manager entity identifier (bytes).',
+  entityKeyB64: 'Entity key, base64-encoded for oracle JSON transport.',
+  keyToAssetKey: 'HEM PDA linking entity + DAO to on-chain asset_id (cNFT).',
+  assetId: 'Compressed-NFT asset address for the hotspot entity.',
+  keySerialization: 'Entity key encoding for hashing (e.g. b58, utf8).',
+  dao: 'DAO scope: IoT or Mobile rewards namespace.',
+  mintDate: 'Entity / cNFT mint timestamp.',
+  cbsdId: 'Mobile CBRS radio device id (one hotspot may have many).',
+  coverageObject: 'Coverage hex snapshot UUID for Mobile reward attribution.',
+  subscriberId: 'Mobile subscriber entity key (user, not hotspot).',
+  beaconAmount: 'IoT PoC beacon reward (whole tokens; source is bones ÷ 1e6).',
+  witnessAmount: 'IoT PoC witness reward (whole tokens).',
+  dcTransferAmount: 'IoT DC transfer reward (whole tokens).',
+  dcTransferReward: 'Mobile DC transfer reward (whole tokens).',
+  pocReward: 'Mobile PoC reward for a radio (whole tokens).',
+  discoveryLocationAmount: 'Mobile subscriber onboarding / discovery reward.',
+  total_reward: 'Row total reward in whole tokens (sum of components).',
+  totalReward: 'Row total reward in whole tokens.',
+  partitionDate: 'Oracle partition date for the reward or data row.',
+  startPeriod: 'Reward period start (epoch / period id).',
+  endPeriod: 'Reward period end (epoch / period id).',
+  rewardType: 'Mobile reward line type (PoC, DC transfer, etc.).',
+  snapshotDate: 'As-of date for aggregated snapshot metrics.',
+  blockDate: 'Block date for on-chain or aggregated row.',
+  blockTime: 'Block time (UTC) for the transaction or event.',
+  bucketStart: 'Start of time bucket (hour / day / week rollup).',
+  hourStart: 'Start of UTC hour bucket.',
+  startDate: 'Lock or position start timestamp.',
+  endDate: 'Lock or position end timestamp.',
+  lockEndDate: 'Stake lock end (UTC).',
+  landrushEndDate: 'Landrush phase end for the stake position.',
+  expirationDate: 'Position or lock expiration (UTC).',
+  lastDelegatedDate: 'Last time the position was delegated.',
+  lastProxyAssignedDate: 'Last proxy assignment for the stake NFT.',
+  lastClaimedEpoch: 'Most recent claimed rewards epoch.',
+  hntAmount: 'HNT amount (atomic or scaled per query).',
+  hntStaked: 'HNT staked total (human-readable units).',
+  hntDelegated: 'HNT currently delegated to sub-DAOs.',
+  hntUndelegated: 'HNT locked but not delegated.',
+  delegatedPositions: 'Count of delegated stake positions.',
+  undelegatedPositions: 'Count of undelegated stake positions.',
+  positions: 'Count of open stake positions.',
+  stakePercent: 'Share of total stake (%).',
+  subDao: 'Sub-DAO mint (Mobile / IoT).',
+  nftMint: 'Stake position NFT mint.',
+  tokenSymbol: 'Staked token symbol (usually HNT).',
+  amountDeposited: 'HNT deposited in the position.',
+  votingPower: 'Voting power for governance (HIP-76 rules).',
+  bumpSeed: 'On-chain PDA bump seed.',
+  claimedEpochsBitmap: 'Bitmap of claimed reward epochs.',
+  proxyWallet: 'Wallet assigned as vote proxy.',
+  positionAuthority: 'Authority that opened the position.',
+  instructionType: 'On-chain instruction name for the event.',
+  txId: 'Solana transaction signature.',
+  makerName: 'Hotspot maker display name.',
+  makerCount: 'Distinct hotspot makers.',
+  hotspotCount: 'Number of hotspots.',
+  tableName: 'Oracle table name.',
+  maxPartitionDate: 'Latest partition_0 date loaded for the table.',
+  packetCount: 'Number of LoRaWAN / data packets.',
+  totalPayloadSize: 'Sum of payload bytes.',
+  payloadSize: 'Single packet payload size (bytes).',
+  payloadHash: 'Packet payload hash (duplicate detection).',
+  payloadSizeGroup: 'Histogram bucket for payload sizes.',
+  joinCount: 'Join request packet count.',
+  uplinkCount: 'Uplink packet count.',
+  freeCount: 'Free packet count.',
+  paidCount: 'Paid packet count.',
+  freePayloadSize: 'Payload bytes on free packets.',
+  paidPayloadSize: 'Payload bytes on paid packets.',
+  appearances: 'Times the same payload hash was seen.',
+  packetType: 'IoT packet type (join, uplink, etc.).',
+  dataRate: 'LoRaWAN data rate identifier.',
+  region: 'RF regulatory region.',
+  frequency: 'Radio frequency (Hz).',
+  rssi: 'Received signal strength (dBm).',
+  snr: 'Signal-to-noise ratio (dB).',
+  avgRssi: 'Average RSSI over the bucket.',
+  avgSnr: 'Average SNR over the bucket.',
+  minRssi: 'Minimum RSSI in bucket.',
+  maxRssi: 'Maximum RSSI in bucket.',
+  minSnr: 'Minimum SNR in bucket.',
+  maxSnr: 'Maximum SNR in bucket.',
+  avgFrequency: 'Average frequency (Hz).',
+  oui: 'LoRaWAN OUI (organization) id.',
+  netId: 'LoRaWAN NetID.',
+  free: 'Whether the packet was free (boolean).',
+  receivedTimestamp: 'Timestamp when the packet was received.',
+  usageTimestamp: 'Mobile session usage timestamp.',
+  eventId: 'Mobile data session event id.',
+  payer: 'Account that paid for mobile data.',
+  radioAccessTechnology: 'RAT (e.g. LTE) for the session.',
+  uploadBytes: 'Upload bytes in the session or bucket.',
+  downloadBytes: 'Download bytes in the session or bucket.',
+  rewardableBytes: 'Bytes eligible for mobile rewards.',
+  totalBytes: 'Upload + download bytes.',
+  sessionCount: 'Number of mobile data sessions.',
+  rewardCancelled: 'Whether the session reward was cancelled.',
+  heartbeatCount: 'Mobile heartbeat events in the hour.',
+  validHeartbeatCount: 'Heartbeats passing validation rules.',
+  cellType: 'Mobile cell type for heartbeat validation.',
+  uploadSpeedAvgBps: 'Average upload speed (bps).',
+  downloadSpeedAvgBps: 'Average download speed (bps).',
+  latencyAvgMs: 'Average latency (ms).',
+  rewardMultiplierAvg: 'Average speedtest reward multiplier.',
+  sampleCount: 'Number of speedtest samples.',
+  uniqueGateways: 'Distinct gateways in the bucket.',
+  rewardedGateways: 'Gateways that received rewards in the period.',
+  beaconGateways: 'Gateways earning beacon rewards.',
+  witnessGateways: 'Gateways earning witness rewards.',
+  dcTransferGateways: 'Gateways earning DC transfer rewards.',
+  rewardedRadios: 'Mobile radios rewarded in the period.',
+  rewardedSubscribers: 'Mobile subscribers rewarded in the period.',
+  gatewaysWithHeartbeat: 'Gateways with any heartbeat in bucket.',
+  gatewaysWith4h: 'Gateways meeting 4h heartbeat threshold.',
+  gatewaysWith12h: 'Gateways meeting 12h heartbeat threshold.',
+  gatewaysWith18h: 'Gateways meeting 18h heartbeat threshold.',
+  avgValidHours: 'Average valid heartbeat hours.',
+  lastDayDcUsage: 'DC usage in the last day.',
+  last7DaysDcUsage: 'DC usage in the last 7 days.',
+  gateway: 'Gateway identifier in OUI ranking queries.',
+};
+
+function fieldDescription(field) {
+  if (FIELD_DESCRIPTIONS[field]) return FIELD_DESCRIPTIONS[field];
+  const snake = field.replace(/([A-Z])/g, '_$1').toLowerCase();
+  if (FIELD_DESCRIPTIONS[snake]) return FIELD_DESCRIPTIONS[snake];
+  return '';
+}
+
 function parseOutputColumns(sql) {
   const cols = [];
   const seen = new Set();
@@ -111,7 +245,7 @@ function parseOutputColumns(sql) {
   while ((m = re.exec(sql))) {
     if (!seen.has(m[1])) {
       seen.add(m[1]);
-      cols.push({ field: m[1], type: 'varies', description: '' });
+      cols.push({ field: m[1], type: 'varies', description: fieldDescription(m[1]) });
     }
   }
   return cols;
@@ -290,11 +424,9 @@ function renderCodeSamplesCard(item) {
       <div class="code-tabs-row">
         <div class="code-tabs" role="tablist">
           <button type="button" class="code-tab active" data-lang="shell" role="tab">Shell</button>
-          <button type="button" class="code-tab" data-lang="ruby" role="tab">Ruby</button>
           <button type="button" class="code-tab" data-lang="node" role="tab">Node.js</button>
           <button type="button" class="code-tab" data-lang="python" role="tab">Python</button>
           <button type="button" class="code-tab" data-lang="rust" role="tab">Rust</button>
-          <button type="button" class="code-tab" data-lang="php" role="tab">PHP</button>
         </div>
         <button class="icon-btn copy-code-btn" type="button" title="Copy code" aria-label="Copy code">
           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -308,28 +440,29 @@ function renderCodeSamplesCard(item) {
 }
 
 function renderSampleCard() {
-  return `<div class="section-card sample-card">
-      <div class="section-card-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+  return `<div class="section-card sample-card sample-collapsed">
+      <div class="section-card-head sample-card-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
         <span>Sample response</span>
         <div class="sample-toolbar">
           <button class="icon-btn copy-sample-btn" type="button" title="Copy JSON" aria-label="Copy JSON" disabled>
             <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
-          <button class="icon-btn download-sample-json-btn" type="button" title="Download JSON" aria-label="Download JSON" disabled>
+          <button class="icon-btn download-sample-csv-btn" type="button" title="Download CSV" aria-label="Download CSV" disabled>
             <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l4-4m-4 4l-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
           </button>
-          <button class="btn load-sample-btn" type="button">Load sample</button>
+          <button class="btn load-sample-btn" type="button">Load response</button>
         </div>
       </div>
-      <div class="section-card-body">
-        <div class="sample-meta">Press Load sample for live API results.</div>
+      <div class="section-card-body sample-card-body" hidden>
+        <div class="sample-meta" hidden></div>
         <input class="sample-search" type="search" placeholder="Search sample…" autocomplete="off" disabled>
-        <div class="sample-progress" hidden>
-          <div class="sample-progress-row"><span class="sample-progress-pct">0%</span><span class="sample-progress-time">0.0s</span></div>
-          <div class="sample-progress-bar"><div class="sample-progress-fill"></div></div>
+        <div class="sample-view-tabs" role="tablist" hidden>
+          <button type="button" class="sample-view-tab active" data-sample-view="json" role="tab" aria-selected="true">JSON</button>
+          <button type="button" class="sample-view-tab" data-sample-view="table" role="tab" aria-selected="false">Table</button>
         </div>
-        <div class="sample-body sample-loading">Press Load sample to fetch rows.</div>
+        <div class="sample-body"></div>
       </div>
+      <div class="sample-edge-progress" aria-hidden="true"><div class="sample-edge-progress-fill"></div></div>
     </div>`;
 }
 
@@ -344,12 +477,12 @@ function renderPanel(item, isFirst) {
 
   const schemaBody = item.response_schema.length
     ? `<table class="schema-table">
-            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
             <tbody>${item.response_schema
-              .map(
-                (col) =>
-                  `<tr><td><code>${esc(col.field)}</code></td><td><span class="type-pill">${esc(col.type)}</span></td></tr>`
-              )
+              .map((col) => {
+                const desc = col.description || '—';
+                return `<tr><td><code>${esc(col.field)}</code></td><td><span class="type-pill">${esc(col.type)}</span></td><td class="schema-desc">${esc(desc)}</td></tr>`;
+              })
               .join('')}</tbody>
           </table>`
     : `<p class="hint" style="margin:0;padding:16px">No schema columns parsed — use sample response.</p>`;
@@ -378,11 +511,13 @@ function renderPanel(item, isFirst) {
       </div>
     </div>
     <div class="panel-row-split">
-      <div class="panel-col-schema">${schemaHtml}</div>
-      <div class="panel-col-side">
-        ${renderCodeSamplesCard(item)}
+      <div class="panel-col-main">
+        ${schemaHtml}
         ${filtersHtml}
         ${renderSampleCard()}
+      </div>
+      <div class="panel-col-side">
+        ${renderCodeSamplesCard(item)}
       </div>
     </div>
   </div>`;
@@ -471,35 +606,12 @@ function runtimeScript(dates) {
       const q = JSON.stringify(fullUrl);
       return {
         shell: "curl -s " + q,
-        ruby: [
-          "require 'uri'",
-          "require 'net/http'",
-          "",
-          "url = URI(" + q + ")",
-          "http = Net::HTTP.new(url.host, url.port)",
-          "http.use_ssl = (url.scheme == 'https')",
-          "",
-          "request = Net::HTTP::Get.new(url)",
-          "response = http.request(request)",
-          "puts response.body"
-        ].join("\\n"),
         node: [
           "const url = " + q + ";",
           "",
           "const res = await fetch(url);",
           "if (!res.ok) throw new Error(await res.text());",
           "console.log(await res.text());"
-        ].join("\\n"),
-        php: [
-          "<?php",
-          "$ch = curl_init(" + q + ");",
-          "curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);",
-          "$response = curl_exec($ch);",
-          "if ($response === false) {",
-          "    throw new Exception(curl_error($ch));",
-          "}",
-          "curl_close($ch);",
-          "echo $response;"
         ].join("\\n"),
         python: [
           "import urllib.request",
@@ -539,10 +651,6 @@ function runtimeScript(dates) {
         if (lang === "shell") {
           l = l.replace(/\\bcurl\\b/g, '<span class="tok-shell">curl</span>');
           l = l.replace(/(-s|-G|-H)\\b/g, '<span class="tok-kw">$1</span>');
-        }
-        if (lang === "php") {
-          l = l.replace(/&lt;\\?php/g, '<span class="tok-kw">&lt;?php</span>');
-          l = l.replace(/\\$(\\w+)/g, '<span class="tok-var">$&</span>');
         }
         return l;
       }).join("\\n");
@@ -584,11 +692,117 @@ function runtimeScript(dates) {
       return [];
     }
 
-    function describeSampleResult(preview) {
-      const rows = sampleRows(preview).length;
+    function describeSampleResult(preview, shown, total) {
       if (preview && preview.success === false) return preview.error || "Request failed";
-      if (rows === 1) return "1 row returned";
-      return rows + " rows returned";
+      const n = shown != null ? shown : sampleRows(preview).length;
+      const all = total != null ? total : n;
+      if (n !== all) return n + " of " + all + " rows (filtered)";
+      if (n === 1) return "1 row returned";
+      return n + " rows returned";
+    }
+
+    function filterRowsByQuery(rows, q) {
+      if (!q) return rows;
+      const needle = q.toLowerCase();
+      return rows.filter(function(row) {
+        return JSON.stringify(row || {}).toLowerCase().includes(needle);
+      });
+    }
+
+    function formatColumnLabel(key) {
+      return String(key)
+        .replace(/_/g, " ")
+        .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+        .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+        .trim()
+        .split(/\s+/)
+        .map(function(w) {
+          var lower = w.toLowerCase();
+          if (lower === "hnt" || lower === "iot" || lower === "oui" || lower === "dao") return w.toUpperCase();
+          return w.charAt(0).toUpperCase() + w.slice(1);
+        })
+        .join(" ");
+    }
+
+    function buildSampleTableHtml(rows) {
+      if (!rows.length) return '<p class="sample-table-empty">No rows match.</p>';
+      const keys = [];
+      const seen = {};
+      rows.forEach(function(row) {
+        if (!row || typeof row !== "object") return;
+        Object.keys(row).forEach(function(k) {
+          if (!seen[k]) { seen[k] = true; keys.push(k); }
+        });
+      });
+      if (!keys.length) return '<p class="sample-table-empty">No columns in rows.</p>';
+      const head = keys.map(function(k) { return "<th>" + escHtml(formatColumnLabel(k)) + "</th>"; }).join("");
+      const body = rows.map(function(row) {
+        const cells = keys.map(function(k) {
+          const v = row[k];
+          const text = v === null || v === undefined ? "" : (typeof v === "object" ? JSON.stringify(v) : String(v));
+          return "<td>" + escHtml(text) + "</td>";
+        }).join("");
+        return "<tr>" + cells + "</tr>";
+      }).join("");
+      return '<div class="sample-table-wrap"><table class="sample-table"><thead><tr>' + head + '</tr></thead><tbody>' + body + "</tbody></table></div>";
+    }
+
+    function setSampleViewTab(panel, view) {
+      panel.querySelectorAll(".sample-view-tab").forEach(function(tab) {
+        const on = tab.dataset.sampleView === view;
+        tab.classList.toggle("active", on);
+        tab.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      panel.querySelectorAll(".sample-pane").forEach(function(pane) {
+        pane.classList.toggle("active", pane.dataset.samplePane === view);
+      });
+    }
+
+    function renderSampleContent(panel) {
+      const data = panel._samplePreview;
+      if (!data) return;
+      const body = panel.querySelector(".sample-body");
+      const tabs = panel.querySelector(".sample-view-tabs");
+      const searchEl = panel.querySelector(".sample-search");
+      const q = (searchEl && searchEl.value || "").trim();
+      const allRows = sampleRows(data);
+      const rows = filterRowsByQuery(allRows, q);
+      const preview = Object.assign({}, data, { count: rows.length, rows: rows });
+      panel._sampleJson = JSON.stringify(preview, null, 2);
+      const view = panel._sampleView || "json";
+      body.className = "sample-body sample-loaded";
+      body.innerHTML =
+        '<div class="sample-pane sample-pane-json' + (view === "json" ? " active" : "") + '" data-sample-pane="json">' +
+        '<pre class="sample-pre">' + escHtml(panel._sampleJson) + "</pre></div>" +
+        '<div class="sample-pane sample-pane-table' + (view === "table" ? " active" : "") + '" data-sample-pane="table">' +
+        buildSampleTableHtml(rows) + "</div>";
+      if (tabs) tabs.hidden = false;
+      setSampleViewTab(panel, view);
+      const meta = panel.querySelector(".sample-meta");
+      if (meta) {
+        meta.hidden = false;
+        meta.textContent = describeSampleResult(data, rows.length, allRows.length);
+      }
+    }
+
+    function collapseSamplePanel(panel) {
+      const card = panel.querySelector(".sample-card");
+      const wrap = panel.querySelector(".sample-card-body");
+      if (card) {
+        card.classList.add("sample-collapsed");
+        card.classList.remove("sample-expanded");
+      }
+      if (wrap) wrap.hidden = true;
+    }
+
+    function expandSamplePanel(panel) {
+      const card = panel.querySelector(".sample-card");
+      const wrap = panel.querySelector(".sample-card-body");
+      if (card) {
+        card.classList.remove("sample-collapsed");
+        card.classList.add("sample-expanded");
+      }
+      if (wrap) wrap.hidden = false;
     }
 
     function buildSampleUrl(panel) {
@@ -619,28 +833,68 @@ function runtimeScript(dates) {
       setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
     }
 
-    function downloadSampleJson(panel) {
-      if (!panel._sampleJson) return;
-      const blob = new Blob([panel._sampleJson], { type: "application/json;charset=utf-8" });
-      downloadBlob(sampleDownloadBaseName(panel) + ".json", blob);
+    function csvEscapeCell(value) {
+      if (value === null || value === undefined) return "";
+      var s = typeof value === "object" ? JSON.stringify(value) : String(value);
+      if (/[",\\n\\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+
+    function rowsToCsv(rows) {
+      if (!rows.length) return "";
+      var keys = [];
+      var seen = {};
+      rows.forEach(function(row) {
+        if (!row || typeof row !== "object") return;
+        Object.keys(row).forEach(function(k) {
+          if (!seen[k]) { seen[k] = true; keys.push(k); }
+        });
+      });
+      if (!keys.length) return "";
+      var lines = [keys.map(csvEscapeCell).join(",")];
+      rows.forEach(function(row) {
+        lines.push(keys.map(function(k) { return csvEscapeCell(row ? row[k] : ""); }).join(","));
+      });
+      return lines.join("\\n") + "\\n";
+    }
+
+    function downloadSampleCsv(panel) {
+      if (!panel._samplePreview) return;
+      var rows = sampleRows(panel._samplePreview);
+      var csv = rowsToCsv(rows);
+      var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      downloadBlob(sampleDownloadBaseName(panel) + ".csv", blob);
     }
 
     function setSampleActions(panel, enabled) {
       const copyBtn = panel.querySelector(".copy-sample-btn");
-      const jsonBtn = panel.querySelector(".download-sample-json-btn");
+      const csvBtn = panel.querySelector(".download-sample-csv-btn");
       if (copyBtn) copyBtn.disabled = !enabled;
-      if (jsonBtn) jsonBtn.disabled = !enabled;
+      if (csvBtn) csvBtn.disabled = !enabled;
     }
 
-    function setSampleProgress(panel, pct, ms) {
-      const wrap = panel.querySelector(".sample-progress");
-      const fill = panel.querySelector(".sample-progress-fill");
-      const pctEl = panel.querySelector(".sample-progress-pct");
-      const timeEl = panel.querySelector(".sample-progress-time");
-      if (wrap) wrap.hidden = false;
-      if (fill) fill.style.width = pct + "%";
-      if (pctEl) pctEl.textContent = Math.round(pct) + "%";
-      if (timeEl) timeEl.textContent = (ms / 1000).toFixed(1) + "s";
+    const LOAD_SAMPLE_BTN_LABEL = "Load response";
+
+    function setLoadSampleBtnProgress(panel, pct) {
+      const loadBtn = panel.querySelector(".load-sample-btn");
+      if (!loadBtn) return;
+      loadBtn.disabled = true;
+      loadBtn.textContent = Math.round(Math.max(0, Math.min(100, pct))) + "%";
+    }
+
+    function resetLoadSampleBtn(panel, enabled) {
+      const loadBtn = panel.querySelector(".load-sample-btn");
+      if (!loadBtn) return;
+      loadBtn.textContent = LOAD_SAMPLE_BTN_LABEL;
+      loadBtn.disabled = !enabled;
+    }
+
+    function setSampleProgress(panel, pct) {
+      const card = panel.querySelector(".sample-card");
+      const fill = panel.querySelector(".sample-edge-progress-fill");
+      if (card) card.classList.add("sample-fetching");
+      if (fill) fill.style.width = Math.max(0, Math.min(100, pct)) + "%";
+      setLoadSampleBtnProgress(panel, pct);
     }
 
     function stopSampleProgress(panel) {
@@ -649,59 +903,76 @@ function runtimeScript(dates) {
     }
 
     function startSampleProgress(panel) {
+      setSampleProgress(panel, 0);
       panel._progressStart = performance.now();
       const tick = () => {
         const elapsed = performance.now() - panel._progressStart;
-        setSampleProgress(panel, Math.min(90, elapsed / 50), elapsed);
+        setSampleProgress(panel, Math.min(90, elapsed / 50));
         panel._progressTimer = requestAnimationFrame(tick);
       };
       panel._progressTimer = requestAnimationFrame(tick);
     }
 
     function hideSampleProgress(panel) {
-      const wrap = panel.querySelector(".sample-progress");
-      if (wrap) wrap.hidden = true;
+      const card = panel.querySelector(".sample-card");
+      const fill = panel.querySelector(".sample-edge-progress-fill");
+      if (card) card.classList.remove("sample-fetching");
+      if (fill) fill.style.width = "0%";
+      resetLoadSampleBtn(panel, true);
     }
 
     function finishSampleProgress(panel, ok) {
-      const elapsed = panel._progressStart ? performance.now() - panel._progressStart : 0;
       stopSampleProgress(panel);
       if (ok) {
-        setSampleProgress(panel, 100, elapsed);
-        setTimeout(function() { hideSampleProgress(panel); }, 120);
-      } else {
-        setSampleProgress(panel, 0, elapsed);
-        setTimeout(function() { hideSampleProgress(panel); }, 400);
+        setSampleProgress(panel, 100);
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            hideSampleProgress(panel);
+            resolve();
+          }, 220);
+        });
       }
+      hideSampleProgress(panel);
+      return Promise.resolve();
     }
 
     async function loadSample(panel) {
       const body = panel.querySelector(".sample-body");
-      const loadBtn = panel.querySelector(".load-sample-btn");
       if (!body) return;
+      collapseSamplePanel(panel);
       panel._sampleJson = "";
-      if (loadBtn) loadBtn.disabled = true;
+      panel._samplePreview = null;
+      const searchEl = panel.querySelector(".sample-search");
+      const tabsEl = panel.querySelector(".sample-view-tabs");
+      const metaEl = panel.querySelector(".sample-meta");
+      if (metaEl) metaEl.hidden = true;
+      if (searchEl) { searchEl.disabled = true; searchEl.value = ""; }
+      if (tabsEl) tabsEl.hidden = true;
       setSampleActions(panel, false);
-      body.className = "sample-body sample-loading";
-      body.textContent = "Loading sample from API…";
+      body.className = "sample-body";
+      body.textContent = "";
       startSampleProgress(panel);
       try {
         const res = await fetch(buildSampleUrl(panel));
         const data = await res.json();
         if (!res.ok || data.success === false) throw new Error(data.error || res.statusText);
-        finishSampleProgress(panel, true);
-        panel._sampleJson = JSON.stringify(data, null, 2);
-        body.className = "sample-body";
-        body.innerHTML = "<pre class=\\"sample-pre\\">" + panel._sampleJson.replace(/</g, "&lt;") + "</pre>";
-        panel.querySelector(".sample-meta").textContent = describeSampleResult(data);
+        await finishSampleProgress(panel, true);
+        expandSamplePanel(panel);
+        panel._samplePreview = data;
+        if (!panel._sampleView) panel._sampleView = "json";
+        if (searchEl) searchEl.disabled = false;
+        renderSampleContent(panel);
         setSampleActions(panel, true);
       } catch (err) {
-        finishSampleProgress(panel, false);
+        await finishSampleProgress(panel, false);
+        expandSamplePanel(panel);
         body.className = "sample-body sample-error";
         body.textContent = "Sample failed: " + err.message;
         setSampleActions(panel, false);
       } finally {
-        if (loadBtn) loadBtn.disabled = false;
+        if (!panel.querySelector(".sample-card")?.classList.contains("sample-fetching")) {
+          resetLoadSampleBtn(panel, true);
+        }
       }
     }
 
@@ -738,6 +1009,15 @@ function runtimeScript(dates) {
         }
       });
       panel.querySelector(".load-sample-btn")?.addEventListener("click", () => loadSample(panel));
+      panel.querySelector(".sample-search")?.addEventListener("input", () => {
+        if (panel._samplePreview) renderSampleContent(panel);
+      });
+      panel.querySelectorAll(".sample-view-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          panel._sampleView = tab.dataset.sampleView || "json";
+          setSampleViewTab(panel, panel._sampleView);
+        });
+      });
       copyBtn?.addEventListener("click", () => {
         const url = copyBtn.dataset.url || buildUrl(panel);
         navigator.clipboard.writeText(url).then(() => {
@@ -748,12 +1028,87 @@ function runtimeScript(dates) {
       panel.querySelector(".copy-sample-btn")?.addEventListener("click", () => {
         if (panel._sampleJson) navigator.clipboard.writeText(panel._sampleJson);
       });
-      panel.querySelector(".download-sample-json-btn")?.addEventListener("click", () => {
-        downloadSampleJson(panel);
+      panel.querySelector(".download-sample-csv-btn")?.addEventListener("click", () => {
+        downloadSampleCsv(panel);
       });
       syncUrl();
     });`;
 }
+
+const SAMPLE_VIEW_STYLES = `
+    .panel-row-split {
+      grid-template-columns: minmax(0, 1.65fr) minmax(0, 0.85fr);
+    }
+    @media (max-width: 960px) {
+      .panel-row-split { grid-template-columns: 1fr; }
+    }
+    .panel-col-main {
+      display: flex; flex-direction: column; gap: 16px; min-width: 0;
+    }
+    .panel-col-main .sample-card {
+      position: relative; overflow: hidden; min-height: 0;
+    }
+    .panel-col-main .sample-card.sample-expanded {
+      flex: 1; display: flex; flex-direction: column; min-height: 280px;
+    }
+    .panel-col-main .sample-card.sample-expanded .section-card-body {
+      flex: 1; display: flex; flex-direction: column; min-height: 0;
+    }
+    .panel-col-main .sample-card.sample-expanded .sample-body { flex: 1; min-height: 160px; }
+    .sample-toolbar .load-sample-btn {
+      min-width: 10.75rem;
+      justify-content: center;
+      font-variant-numeric: tabular-nums;
+      box-sizing: border-box;
+    }
+    .sample-card.sample-collapsed .sample-card-head { border-bottom: none !important; }
+    .sample-card.sample-expanded .sample-card-head { border-bottom: 1px solid var(--border); }
+    .sample-card.sample-collapsed .sample-card-body { display: none !important; }
+    .sample-edge-progress {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+      background: transparent; pointer-events: none; z-index: 2;
+    }
+    .sample-card.sample-fetching .sample-edge-progress { background: rgba(255,255,255,0.06); }
+    .sample-edge-progress-fill {
+      height: 100%; width: 0; border-radius: 0 2px 2px 0;
+      background: linear-gradient(90deg, var(--violet), var(--purple-bright));
+      transition: width 0.12s linear;
+    }
+    .sample-meta[hidden] { display: none !important; }
+    .sample-view-tabs { display: flex; gap: 2px; margin-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .sample-view-tabs[hidden] { display: none !important; }
+    .sample-view-tab {
+      appearance: none; border: none; background: transparent; cursor: pointer;
+      padding: 8px 12px; font: inherit; font-size: 0.78rem; font-weight: 500;
+      color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .sample-view-tab:hover { color: var(--text-secondary); }
+    .sample-view-tab.active { color: #e4e4e7; border-bottom-color: var(--purple-bright); }
+    .sample-body.sample-loaded { min-height: 160px; }
+    .sample-pane { display: none; }
+    .sample-pane.active { display: block; }
+    .sample-table-wrap {
+      overflow: auto; max-height: 420px; border: 1px solid var(--border);
+      border-radius: 8px; background: #0a0a0a;
+    }
+    .sample-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .sample-table th, .sample-table td {
+      text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .sample-table th {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
+      color: var(--text-secondary); position: sticky; top: 0; background: var(--surface-2); z-index: 1;
+    }
+    .sample-table td { font-family: var(--mono); color: #d4d4d8; word-break: break-word; }
+    .sample-table tbody tr:hover td { background: rgba(168,85,247,0.06); }
+    .sample-table-empty { color: var(--text-muted); font-size: 0.8rem; margin: 0; padding: 14px; }
+    .schema-table .schema-desc {
+      color: var(--text-secondary); font-size: 0.78rem; line-height: 1.45;
+      max-width: 360px; font-weight: 400; text-transform: none;
+    }
+    .schema-table th:nth-child(3) { min-width: 180px; text-transform: uppercase; }
+`;
 
 function buildHeliumApisCatalogHtml(options = {}) {
   const { endpoints, groups, dates } = collectEndpoints(options.baseUrl);
@@ -761,7 +1116,7 @@ function buildHeliumApisCatalogHtml(options = {}) {
     throw new Error('No Helium query endpoints found under queries/');
   }
   const firstId = endpoints[0].id;
-  const styles = extractStyles();
+  const styles = extractStyles() + SAMPLE_VIEW_STYLES;
   const panelsHtml = endpoints.map((ep, i) => renderPanel(ep, i === 0)).join('\n');
   const navHtml = renderNav(groups, firstId);
 
