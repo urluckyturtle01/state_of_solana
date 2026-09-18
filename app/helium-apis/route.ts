@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
-import { createRequire } from 'module';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,10 +14,9 @@ function proxyOrigin(): string | undefined {
 }
 
 function loadCatalogBuilder(): CatalogBuilder {
-  const catalogPath = path.join(process.cwd(), 'queries/app/catalog/generate-queries-index.js');
-  const requireFromRoot = createRequire(path.join(process.cwd(), 'package.json'));
+  // Relative path so Next does not bundle the catalog script (fs reads sql/ at runtime).
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return requireFromRoot(catalogPath) as CatalogBuilder;
+  return require('../../queries/app/catalog/generate-queries-index.js') as CatalogBuilder;
 }
 
 async function fetchCatalogFromProxy(pageOrigin: string): Promise<Response> {
@@ -37,7 +34,6 @@ async function fetchCatalogFromProxy(pageOrigin: string): Promise<Response> {
   if (!res.ok) {
     return new NextResponse(html || `Upstream catalog failed (${res.status})`, { status: res.status });
   }
-  // Rewrite embedded API base to this deployment so samples hit /api/helium here (then proxy to Trino).
   const withBase = html.replace(
     /const BASE = window\.location\.origin;/,
     `const BASE = ${JSON.stringify(pageOrigin)};`
@@ -54,7 +50,6 @@ async function fetchCatalogFromProxy(pageOrigin: string): Promise<Response> {
 export async function GET(request: Request) {
   const pageOrigin = new URL(request.url).origin;
 
-  // Vercel lambdas do not ship the full queries/sql tree unless traced; proxy catalog from bare metal.
   if (process.env.VERCEL && proxyOrigin()) {
     return fetchCatalogFromProxy(pageOrigin);
   }
