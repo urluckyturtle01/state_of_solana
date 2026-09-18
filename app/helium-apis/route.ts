@@ -8,7 +8,7 @@ type CatalogBuilder = {
 
 function loadCatalogBuilder(): CatalogBuilder {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return require('../../scripts/generate-queries-index.js') as CatalogBuilder;
+  return require('../../queries/app/catalog/generate-queries-index.js') as CatalogBuilder;
 }
 
 export async function GET(request: Request) {

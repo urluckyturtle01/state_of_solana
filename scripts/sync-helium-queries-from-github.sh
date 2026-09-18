@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pull Topledger/helium-queries and sync *.sql group folders into state_of_solana/queries/
+# Pull Topledger/helium-queries (full sub-app + SQL) into state_of_solana/queries/
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -28,7 +28,7 @@ else
   GIT_URL="https://github.com/${REPO}.git"
 fi
 
-echo "📦 Helium queries sync"
+echo "📦 Helium queries sync (full sub-app)"
 echo "   Source: ${REPO} (${BRANCH})"
 echo "   Clone:  ${CLONE_DIR}"
 echo "   Dest:   ${QUERIES_DEST}"
@@ -44,49 +44,18 @@ fi
 
 mkdir -p "$QUERIES_DEST"
 
-declare -A upstream_groups=()
+rsync -a --delete \
+  --exclude '.git' \
+  --exclude 'node_modules' \
+  --exclude '.env' \
+  "$CLONE_DIR/" "$QUERIES_DEST/"
 
-synced=0
-for dir in "$CLONE_DIR"/*/; do
-  [[ -d "$dir" ]] || continue
-  name="$(basename "$dir")"
-  [[ "$name" != .* ]] || continue
+echo "✅ Synced helium-queries repo into ${QUERIES_DEST}"
 
-  shopt -s nullglob
-  sql_files=("$dir"*.sql)
-  shopt -u nullglob
-  if [[ ${#sql_files[@]} -eq 0 ]]; then
-    continue
-  fi
-
-  upstream_groups["$name"]=1
-  mkdir -p "$QUERIES_DEST/$name"
-  rsync -a --delete "$dir" "$QUERIES_DEST/$name/"
-  echo "   ✓ ${name}/ (${#sql_files[@]} sql files)"
-  synced=$((synced + 1))
-done
-
-# Remove local group folders that no longer exist upstream (e.g. deleted on GitHub)
-for dir in "$QUERIES_DEST"/*/; do
-  [[ -d "$dir" ]] || continue
-  name="$(basename "$dir")"
-  [[ "$name" != .* ]] || continue
-  if [[ -z "${upstream_groups[$name]:-}" ]]; then
-    rm -rf "$QUERIES_DEST/$name"
-    echo "   🗑 removed stale ${name}/ (not in ${REPO})"
-  fi
-done
-
-for doc in API.md GLOSSARY.md; do
-  if [[ -f "$CLONE_DIR/$doc" ]]; then
-    cp "$CLONE_DIR/$doc" "$QUERIES_DEST/$doc"
-    echo "   ✓ ${doc}"
-  fi
-done
-
-if [[ "$synced" -eq 0 ]]; then
-  echo "⚠️  No group folders with .sql files found in clone."
-  exit 1
+if [[ -f "$QUERIES_DEST/app/catalog/generate-queries-index.js" ]]; then
+  echo "📄 Regenerating static catalog copies for monorepo..."
+  (
+    cd "$QUERIES_DEST"
+    HELIUM_MONOREPO_ROOT="$ROOT" node app/catalog/generate-queries-index.js
+  ) || echo "⚠️  Catalog generation skipped (run manually if needed)"
 fi
-
-echo "✅ Synced ${synced} group folder(s) into ${QUERIES_DEST}"

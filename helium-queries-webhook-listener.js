@@ -1,6 +1,6 @@
 /**
  * GitHub webhook for Topledger/helium-queries only.
- * Updates state_of_solana/queries/ via scripts/sync-helium-queries-from-github.sh
+ * Updates state_of_solana/queries/ (full helium-queries sub-app) via scripts/sync-helium-queries-from-github.sh
  *
  * Configure on GitHub (helium-queries repo):
  *   Payload URL: http://<your-host>:9001/helium-queries-webhook

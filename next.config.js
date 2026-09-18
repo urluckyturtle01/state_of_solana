@@ -11,7 +11,7 @@ const nextConfig = {
   compress: true,
   // This ensures Vercel properly processes all pages
   experimental: {
-    serverComponentsExternalPackages: [],
+    serverComponentsExternalPackages: ['dotenv'],
     // Increase limit for large chart data files
     largePageDataBytes: 20 * 1024 * 1024, // 20MB limit (up from default 128KB)
   },

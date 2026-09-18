@@ -94,7 +94,7 @@ export async function runHeliumQuery(
   }
 
   const root = process.cwd();
-  const script = path.join(root, 'pipeline', 'run_helium_query.py');
+  const script = path.join(root, 'queries', 'pipeline', 'run_helium_query.py');
   try {
     const { stdout } = await execFileAsync(
       'python3',
@@ -103,7 +103,7 @@ export async function runHeliumQuery(
         cwd: root,
         maxBuffer: 50 * 1024 * 1024,
         timeout: 180_000,
-        env: process.env,
+        env: { ...process.env, HELIUM_MONOREPO_ROOT: root },
       }
     );
     return JSON.parse(stdout) as HeliumQueryResult;
