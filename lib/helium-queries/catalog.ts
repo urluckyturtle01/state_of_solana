@@ -6,9 +6,7 @@ import { HELIUM_API_GROUPS } from './types';
 export type { HeliumApiGroup, HeliumQueryDoc, HeliumQueryParam } from './types';
 export { HELIUM_API_GROUPS, groupLabel } from './types';
 
-const QUERIES_ROOT = path.join(process.cwd(), 'queries');
-
-const SKIP_QUERY_DIRS = new Set(['app', 'pipeline', 'scripts', 'node_modules']);
+const QUERIES_ROOT = path.join(process.cwd(), 'queries', 'sql');
 
 const FRAGMENT_TO_PARAMS: Record<string, string[]> = {
   lookup_filter: ['address', 'entity_key', 'asset_id', 'key_to_asset_key'],
@@ -284,10 +282,7 @@ export function listHeliumQueryGroups(): string[] {
   const known = new Set<string>(HELIUM_API_GROUPS as unknown as string[]);
   const discovered = fs
     .readdirSync(QUERIES_ROOT, { withFileTypes: true })
-    .filter(
-      (d) =>
-        d.isDirectory() && !d.name.startsWith('.') && !SKIP_QUERY_DIRS.has(d.name)
-    )
+    .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
     .map((d) => d.name);
   const ordered = HELIUM_API_GROUPS.filter((g) => discovered.includes(g));
   const rest = discovered.filter((g) => !known.has(g)).sort((a, b) => a.localeCompare(b));

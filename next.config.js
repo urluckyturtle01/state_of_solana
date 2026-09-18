@@ -14,6 +14,11 @@ const nextConfig = {
     serverComponentsExternalPackages: ['dotenv'],
     // Increase limit for large chart data files
     largePageDataBytes: 20 * 1024 * 1024, // 20MB limit (up from default 128KB)
+    // Include Helium SQL + catalog assets in serverless traces (non-Vercel / local prod)
+    outputFileTracingIncludes: {
+      '/helium-apis': ['./queries/sql/**/*.sql', './queries/app/catalog/**'],
+      '/api/helium/[group]/[name]': ['./queries/sql/**/*.sql', './queries/pipeline/**'],
+    },
   },
   // Custom headers for additional compression and caching
   async headers() {

@@ -41,7 +41,7 @@ def helium_trino_client() -> TrinoClient:
 
 
 def load_sql(group: str, name: str) -> str:
-    path = ROOT / "queries" / group / f"{name}.sql"
+    path = ROOT / "queries" / "sql" / group / f"{name}.sql"
     if not path.is_file():
         raise FileNotFoundError(f"Query not found: {group}/{name}")
     return path.read_text(encoding="utf-8")

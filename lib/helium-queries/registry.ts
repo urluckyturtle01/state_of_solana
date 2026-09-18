@@ -8,9 +8,7 @@ export type HeliumQueryMeta = {
   queryName?: string;
 };
 
-const QUERIES_ROOT = path.join(process.cwd(), 'queries');
-
-const SKIP_QUERY_DIRS = new Set(['app', 'pipeline', 'scripts', 'node_modules']);
+const QUERIES_ROOT = path.join(process.cwd(), 'queries', 'sql');
 
 function parseQueryName(sql: string): string | undefined {
   const m = sql.match(/^--\s*query_name:\s*(\S+)/m);
@@ -20,7 +18,7 @@ function parseQueryName(sql: string): string | undefined {
 export function listHeliumQueries(): HeliumQueryMeta[] {
   const groups = fs
     .readdirSync(QUERIES_ROOT, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && !SKIP_QUERY_DIRS.has(d.name) && !d.name.startsWith('.'))
+    .filter((d) => d.isDirectory() && !d.name.startsWith('.'))
     .map((d) => d.name);
 
   const out: HeliumQueryMeta[] = [];
