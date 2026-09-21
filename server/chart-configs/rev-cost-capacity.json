@@ -1,8 +1,8 @@
 {
   "pageId": "rev-cost-capacity",
-  "pageName": "DEX Cost And Capacity",
+  "pageName": "rev-cost-capacity",
   "chartCount": 10,
-  "lastUpdated": "2026-02-18T09:00:02.821834",
+  "lastUpdated": "2026-09-21T12:31:21.122Z",
   "charts": [
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000027",
@@ -296,6 +296,78 @@
       "updatedAt": "2026-02-18T09:00:02.821801"
     },
     {
+      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
+      "title": "Cost Per Transaction (Avg, Median, Stddev)",
+      "subtitle": "Average, median, and std deviation in SOL and USD",
+      "chartType": "line",
+      "order": 5,
+      "isStacked": false,
+      "dataMapping": {
+        "xAxis": "block_date",
+        "yAxis": [
+          {
+            "field": "avg_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "median_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "stddev_cost_per_txn_sol",
+            "type": "line",
+            "unit": "SOL"
+          },
+          {
+            "field": "avg_cost_per_txn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          },
+          {
+            "field": "median_cost_per_txn_usd",
+            "type": "line",
+            "unit": "$",
+            "rightAxis": true
+          }
+        ],
+        "groupBy": ""
+      },
+      "page": "rev-cost-capacity",
+      "additionalOptions": {
+        "enableTimeAggregation": true,
+        "filters": {
+          "timeFilter": {
+            "paramName": "Date Part",
+            "options": [
+              "D",
+              "W",
+              "M",
+              "Q",
+              "Y"
+            ],
+            "activeValue": "W"
+          },
+          "currencyFilter": {
+            "paramName": "currency",
+            "options": [
+              "USD",
+              "SOL"
+            ],
+            "type": "field_switcher",
+            "columnMappings": {
+              "USD": "avg_cost_per_txn_usd, median_cost_per_txn_usd",
+              "SOL": "avg_cost_per_txn_sol, median_cost_per_txn_sol"
+            }
+          }
+        }
+      },
+      "createdAt": "2026-02-18T09:00:02.821823",
+      "updatedAt": "2026-02-18T09:00:02.821823"
+    },
+    {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000019",
       "title": "Failed Fee Percentage by Type",
       "subtitle": "Daily % of fee wasted on failed txns - base, priority, Jito, total",
@@ -391,78 +463,6 @@
       },
       "createdAt": "2026-02-18T09:00:02.821815",
       "updatedAt": "2026-02-18T09:00:02.821815"
-    },
-    {
-      "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000003",
-      "title": "Cost Per Transaction (Avg, Median, Stddev)",
-      "subtitle": "Average, median, and std deviation in SOL and USD",
-      "chartType": "line",
-      "order": 5,
-      "isStacked": false,
-      "dataMapping": {
-        "xAxis": "block_date",
-        "yAxis": [
-          {
-            "field": "avg_cost_per_txn_sol",
-            "type": "line",
-            "unit": "SOL"
-          },
-          {
-            "field": "median_cost_per_txn_sol",
-            "type": "line",
-            "unit": "SOL"
-          },
-          {
-            "field": "stddev_cost_per_txn_sol",
-            "type": "line",
-            "unit": "SOL"
-          },
-          {
-            "field": "avg_cost_per_txn_usd",
-            "type": "line",
-            "unit": "$",
-            "rightAxis": true
-          },
-          {
-            "field": "median_cost_per_txn_usd",
-            "type": "line",
-            "unit": "$",
-            "rightAxis": true
-          }
-        ],
-        "groupBy": ""
-      },
-      "page": "rev-cost-capacity",
-      "additionalOptions": {
-        "enableTimeAggregation": true,
-        "filters": {
-          "timeFilter": {
-            "paramName": "Date Part",
-            "options": [
-              "D",
-              "W",
-              "M",
-              "Q",
-              "Y"
-            ],
-            "activeValue": "W"
-          },
-          "currencyFilter": {
-            "paramName": "currency",
-            "options": [
-              "USD",
-              "SOL"
-            ],
-            "type": "field_switcher",
-            "columnMappings": {
-              "USD": "avg_cost_per_txn_usd, median_cost_per_txn_usd",
-              "SOL": "avg_cost_per_txn_sol, median_cost_per_txn_sol"
-            }
-          }
-        }
-      },
-      "createdAt": "2026-02-18T09:00:02.821823",
-      "updatedAt": "2026-02-18T09:00:02.821823"
     },
     {
       "id": "rev-cost-capacity-a0b1c2d3-8888-4000-8000-000000000026",

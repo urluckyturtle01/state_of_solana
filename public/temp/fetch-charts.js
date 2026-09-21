@@ -65,12 +65,12 @@ const MENU_PAGES = {
     { id: "sf-vc-funding", name: "VC Funding", path: "/sf-dashboards/vc-funding" }
   ],
  
-  "raydium": [
+  /*"raydium": [
     { id: "raydium-financials", name: "Financials", path: "/projects/raydium/financials" },
     { id: "raydium-traction", name: "Traction", path: "/projects/raydium/traction" },
     { id: "raydium-protocol-token", name: "Protocol Token", path: "/projects/raydium/protocol-token" },
     { id: "raydium-competetive-landscape", name: "Competetive Landscape", path: "/projects/raydium/competetive-landscape" }
-  ],
+  ], 
   "metaplex": [
     { id: "metaplex-financials", name: "Financials", path: "/projects/metaplex/financials" },
     { id: "metaplex-traction", name: "Traction", path: "/projects/metaplex/traction" },
@@ -104,7 +104,7 @@ const MENU_PAGES = {
     { id: "dflow-stats-traders", name: "Traders", path: "/dflow/dflow-stats/traders" },
     { id: "dflow-stats-tokens-volume", name: "Tokens Volume", path: "/dflow/dflow-stats/tokens-volume" },
     { id: "dflow-stats-dex-fee", name: "DEX Fee", path: "/dflow/dflow-stats/dex-fee" }
-  ]
+  ]*/
 };
 
 // Extract all unique page IDs
@@ -162,6 +162,15 @@ async function createPageConfigs() {
   try {
     const allCharts = await fetchAllCharts();
     const allPageIds = getAllPageIds();
+
+    if (allCharts.length === 0) {
+      console.error(
+        '❌ Admin API returned 0 charts — not writing configs (would wipe existing files).\n' +
+          '   Start Next on the port in NEXT_PUBLIC_BASE_URL (default :3001) with .env.local AWS creds.\n' +
+          '   If S3 prefix charts/ is empty, restore chart JSON in S3 or use committed server/chart-configs/.'
+      );
+      process.exit(1);
+    }
     
     console.log(`Processing ${allCharts.length} charts for ${allPageIds.length} pages...`);
     console.log(`ℹ️  Excluding DEX and Stablecoins pages (handled by Python script)`);

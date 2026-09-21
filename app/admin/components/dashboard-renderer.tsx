@@ -297,6 +297,42 @@ const setNestedProperty = (obj: any, path: string, value: any) => {
   current[keys[keys.length - 1]] = value;
 };
 
+const fetchTempChartDataIfAvailable = async (
+  chart: ChartConfig,
+  cacheKey: string,
+  cacheEnabled: boolean,
+  startTime: number
+): Promise<any[] | null> => {
+  if (!chart.page || !chart.id) return null;
+
+  try {
+    const singleChartUrl = `/api/temp-chart-data/${chart.page}/${chart.id}`;
+    const response = await fetch(singleChartUrl, { cache: 'no-store' });
+
+    if (!response.ok) return null;
+
+    const result = await response.json();
+    if (result.success === false || !Array.isArray(result.data) || result.data.length === 0) {
+      return null;
+    }
+
+    const fetchTime = performance.now() - startTime;
+    console.log(`✅ TEMP FILE: ${chart.id} (${result.data.length} rows) in ${fetchTime.toFixed(0)}ms`);
+
+    if (cacheEnabled) {
+      CHART_DATA_CACHE[cacheKey] = {
+        data: result.data,
+        timestamp: Date.now(),
+        expiresIn: CACHE_DURATION,
+      };
+    }
+
+    return result.data;
+  } catch {
+    return null;
+  }
+};
+
 const fetchFromApi = async (
   chart: ChartConfig, 
   chartFilters: Record<string, string>, 
@@ -306,6 +342,10 @@ const fetchFromApi = async (
 ): Promise<any[]> => {
   // Use performance monitoring
   const startTime = performance.now();
+
+  // Prefer public/temp/chart-data (from fetch-chart-data.js) before live Topledger APIs
+  const tempData = await fetchTempChartDataIfAvailable(chart, cacheKey, cacheEnabled, startTime);
+  if (tempData) return tempData;
   
   // For DEX temp file charts without apiEndpoint but with page property
   if (!chart.apiEndpoint && chart.page) {

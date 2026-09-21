@@ -76,7 +76,7 @@ export async function GET(
         sqlFile: chart.sqlFile
       }, {
         headers: {
-          'Cache-Control': 'public, max-age=1800, s-maxage=1800',
+          'Cache-Control': 'private, no-cache, must-revalidate',
           'X-Response-Time': `${totalTime.toFixed(2)}ms`,
           'Content-Type': 'application/json',
         },
