@@ -73,9 +73,16 @@ should_deploy_vercel() {
   [[ "$val" == "true" || "$val" == "yes" || "$val" == "1" ]]
 }
 
+export BARE_METAL_PORT="${BARE_METAL_PORT:-8137}"
+export PORT="$BARE_METAL_PORT"
+# Webhook path: always dev on :8137 (immediate). Vercel is separate via deploy.yml.
+export BARE_METAL_MODE="${BARE_METAL_MODE:-dev}"
+echo "🖥️  Bare-metal DEV (PM2 next dev on :$PORT)..."
+bash "$ROOT/scripts/restart-bare-metal-app.sh"
+
 if should_deploy_vercel; then
-  echo "🌐 deploy on vercel: true — pushing state_of_solana for Vercel"
+  echo "🌐 deploy on vercel: true — pushing state_of_solana → GitHub (Vercel prod)"
   bash "$ROOT/scripts/push-helium-queries-to-vercel.sh"
 else
-  echo "⏭️  deploy on vercel: false — synced locally only (no git push / Vercel)"
+  echo "⏭️  deploy on vercel: false — dev :8137 only (no state_of_solana push / Vercel)"
 fi

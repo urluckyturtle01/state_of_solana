@@ -1,7 +1,8 @@
 /**
  * GitHub webhook for Topledger/helium-queries only.
  * Updates state_of_solana/queries/ via scripts/sync-helium-queries-from-github.sh.
- * If queries/deploy.yml has "deploy on vercel: true", also pushes state_of_solana to GitHub (Vercel build).
+ * Always syncs queries/ and restarts PM2 dev on :8137 (bare-metal dev).
+ * If queries/deploy.yml has "deploy on vercel: true", also pushes state_of_solana to GitHub (Vercel prod).
  *
  * Configure on GitHub (helium-queries repo):
  *   Payload URL: http://<your-host>:9001/helium-queries-webhook

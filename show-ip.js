@@ -6,7 +6,8 @@ function getLocalIP() {
   for (const name in interfaces) {
     for (const iface of interfaces[name]) {
       if (iface.family === "IPv4" && !iface.internal) {
-        console.log(`🔗 On Your Network: http://${iface.address}:3000`);
+        const port = process.env.PORT || "3000";
+        console.log(`🔗 On Your Network: http://${iface.address}:${port}`);
         return;
       }
     }

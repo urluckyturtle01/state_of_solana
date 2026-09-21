@@ -40,9 +40,9 @@ fi
 git -c user.name="${GIT_COMMIT_USER_NAME:-Auto Update Bot}" \
     -c user.email="${GIT_COMMIT_USER_EMAIL:-auto-update@stateofsolana.com}" \
     commit -m "$(cat <<'EOF'
-Sync helium-queries for Vercel deploy.
+Sync helium-queries for Vercel (prod).
 
-Triggered by deploy on vercel: true in helium-queries/deploy.yml.
+Dev :8137 already updated via webhook. This push triggers Vercel (deploy on vercel: true in queries/deploy.yml).
 EOF
 )"
 
