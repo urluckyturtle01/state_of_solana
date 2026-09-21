@@ -55,7 +55,7 @@ Next.js serves `/helium-apis` and `/api/helium/*` using files under `queries/app
 On every push to **helium-queries** (webhook → `sync-helium-queries-from-github.sh`):
 
 1. Rsync into `state_of_solana/queries/` and regenerate catalog static files.
-2. **Always** restart PM2 **`next dev`** on **`:8137`** immediately (shared dev). Local monorepo work: **`npm run dev`** on **`:3000`** (or next free port).
+2. **Always** restart PM2 **`next dev`** on **`:8137`** immediately (dev).
 
 Optional prod (controlled in **helium-queries** `deploy.yml`, synced into `queries/deploy.yml`):
 
