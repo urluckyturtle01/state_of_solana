@@ -1,17 +1,13 @@
-import path from 'path';
+import { loadHeliumPagesModule, proxyHeliumHtml } from '@/lib/helium-apis-html-proxy';
 
 export const dynamic = 'force-dynamic';
 
-type PagesModule = {
-  getHeliumLandingResponse: (request: Request) => Promise<Response>;
-};
-
-async function loadPagesModule(): Promise<PagesModule> {
-  const modulePath = path.join(process.cwd(), 'queries', 'app', 'helium-apis-pages.js');
-  return import(/* webpackIgnore: true */ modulePath) as Promise<PagesModule>;
-}
-
 export async function GET(request: Request) {
-  const pages = await loadPagesModule();
+  if (process.env.VERCEL) {
+    const proxied = await proxyHeliumHtml(request, '/helium-apis', false);
+    if (proxied) return proxied;
+  }
+
+  const pages = await loadHeliumPagesModule();
   return pages.getHeliumLandingResponse(request);
 }

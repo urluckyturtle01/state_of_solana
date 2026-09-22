@@ -1,15 +1,6 @@
-import path from 'path';
+import { loadHeliumPagesModule, proxyHeliumHtml } from '@/lib/helium-apis-html-proxy';
 
 export const dynamic = 'force-dynamic';
-
-type PagesModule = {
-  getHeliumCatalogPageResponse: (request: Request) => Promise<Response>;
-};
-
-async function loadPagesModule(): Promise<PagesModule> {
-  const modulePath = path.join(process.cwd(), 'queries', 'app', 'helium-apis-pages.js');
-  return import(/* webpackIgnore: true */ modulePath) as Promise<PagesModule>;
-}
 
 type RouteContext = { params: { group: string; name: string } };
 
@@ -18,6 +9,18 @@ export async function GET(request: Request, context: RouteContext) {
   if (!group || !name || group.includes('/') || name.includes('/')) {
     return new Response('Not Found', { status: 404 });
   }
-  const pages = await loadPagesModule();
+
+  const requestUrl = new URL(request.url);
+  let catalogPath = requestUrl.pathname.replace(/\/+$/, '') || requestUrl.pathname;
+  if (requestUrl.pathname !== catalogPath) {
+    return Response.redirect(`${catalogPath}${requestUrl.search}`, 301);
+  }
+
+  if (process.env.VERCEL) {
+    const proxied = await proxyHeliumHtml(request, catalogPath, true);
+    if (proxied) return proxied;
+  }
+
+  const pages = await loadHeliumPagesModule();
   return pages.getHeliumCatalogPageResponse(request);
 }
