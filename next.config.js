@@ -16,7 +16,8 @@ const nextConfig = {
     largePageDataBytes: 20 * 1024 * 1024, // 20MB limit (up from default 128KB)
     // Include Helium SQL + catalog assets in serverless traces (non-Vercel / local prod)
     outputFileTracingIncludes: {
-      '/helium-apis': ['./queries/sql/**/*.sql', './queries/app/catalog/**'],
+      '/helium-apis': ['./queries/sql/**/*.sql', './queries/app/catalog/**', './queries/app/helium-apis-pages.js'],
+      '/helium-apis/[group]/[name]': ['./queries/sql/**/*.sql', './queries/app/catalog/**', './queries/app/helium-apis-pages.js'],
       '/api/helium/[group]/[name]': ['./queries/sql/**/*.sql', './queries/pipeline/**'],
     },
   },

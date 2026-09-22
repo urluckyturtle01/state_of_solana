@@ -28,8 +28,11 @@ if [[ ! -d .git ]]; then
 fi
 
 git add queries/
-if [[ -f public/helium-apis/index.html ]]; then
-  git add public/helium-apis/index.html public/queries/index.html 2>/dev/null || true
+if [[ -d public/helium-apis ]]; then
+  git add public/helium-apis/ 2>/dev/null || true
+fi
+if [[ -f public/queries/index.html ]]; then
+  git add public/queries/index.html 2>/dev/null || true
 fi
 
 if git diff --cached --quiet; then
