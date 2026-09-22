@@ -13,9 +13,10 @@ function proxyOrigin(): string | undefined {
   return raw ? raw.replace(/\/$/, '') : undefined;
 }
 
-function patchCatalogHtmlBase(html: string, pageOrigin: string): string {
+/** Force catalog fetch() to hit the page the user opened (not 0.0.0.0 / upstream host). */
+export function patchCatalogHtmlBase(html: string, pageOrigin: string): string {
   return html.replace(
-    /const BASE = window\.location\.origin;/,
+    /const BASE = [^;]+;/,
     `const BASE = ${JSON.stringify(pageOrigin)};`,
   );
 }
