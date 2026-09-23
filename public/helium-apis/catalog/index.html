@@ -1218,10 +1218,10 @@
       </div>
     </div>
   </div>
-<div id="panel-ep-hotspot-hotspot_onboard_cadence" class="panel" data-endpoint='{"id":"hotspot-hotspot_onboard_cadence","title":"Gateway Onboarding Activity","query_name":"HOTSPOT_ONBOARD_CADENCE","description":"Shows how many gateways were issued or onboarded to IoT and Mobile in each time period.","long_description":"Shows how many gateways were issued or onboarded to IoT and Mobile in each time period.","method":"GET","path":"/api/helium/hotspot/hotspot_onboard_cadence","url":"http://84.32.71.101:8137/api/helium/hotspot/hotspot_onboard_cadence","category":"hotspot","tag":"Gateway","filters":[{"name":"from","label":"From","type":"date","required":false,"description":"Inclusive start date. Must be paired with to; ranges are limited to 30 days.","default":"","options":null},{"name":"to","label":"To","type":"date","required":false,"description":"Inclusive end date. Must be paired with from and cannot be in the future.","default":"","options":null},{"name":"bucket","label":"Bucket","type":"select","required":false,"description":"Rollup granularity inside the date range. total = single row for the whole window.","default":"day","options":["day","week","month","total"]}],"response_schema":[{"field":"date","type":"date","description":"Calendar date for this row, in YYYY-MM-DD format."},{"field":"hotspotCount","type":"integer","description":"Number of gateways."},{"field":"issuedCount","type":"integer","description":"Distinct gateways issued in the period."},{"field":"iotOnboardCount","type":"integer","description":"Distinct gateways onboarded to IoT in the period."},{"field":"mobileOnboardCount","type":"integer","description":"Distinct gateways onboarded to Mobile in the period."}]}'>
+<div id="panel-ep-hotspot-hotspot_onboard_cadence" class="panel" data-endpoint='{"id":"hotspot-hotspot_onboard_cadence","title":"Gateway Onboarding Activity","query_name":"HOTSPOT_ONBOARD_CADENCE","description":"Shows how many gateways were issued or onboarded to IoT and Mobile each day.","long_description":"Shows how many gateways were issued or onboarded to IoT and Mobile each day.","method":"GET","path":"/api/helium/hotspot/hotspot_onboard_cadence","url":"http://84.32.71.101:8137/api/helium/hotspot/hotspot_onboard_cadence","category":"hotspot","tag":"Gateway","filters":[{"name":"from","label":"From","type":"date","required":false,"description":"Inclusive start date. Must be paired with to; ranges are limited to 30 days.","default":"","options":null},{"name":"to","label":"To","type":"date","required":false,"description":"Inclusive end date. Must be paired with from and cannot be in the future.","default":"","options":null}],"response_schema":[{"field":"date","type":"date","description":"Calendar date for this row, in YYYY-MM-DD format."},{"field":"hotspotCount","type":"integer","description":"Number of gateways."},{"field":"issuedCount","type":"integer","description":"Distinct gateways issued in the period."},{"field":"iotOnboardCount","type":"integer","description":"Distinct gateways onboarded to IoT in the period."},{"field":"mobileOnboardCount","type":"integer","description":"Distinct gateways onboarded to Mobile in the period."}]}'>
     <div class="panel-eyebrow">Gateway</div>
     <h1>Gateway Onboarding Activity</h1>
-    <p class="panel-desc">Shows how many gateways were issued or onboarded to IoT and Mobile in each time period.</p>
+    <p class="panel-desc">Shows how many gateways were issued or onboarded to IoT and Mobile each day.</p>
     <div class="panel-row-endpoint">
       <div class="section-card">
         <div class="section-card-head">Endpoint</div>
@@ -1254,14 +1254,6 @@
     </div>
     <p class="method-param-desc">Inclusive end date. Must be paired with from and cannot be in the future.</p>
     <p class="method-param-usage">If you omit it, the server uses <code>yesterday</code>.</p>
-  </article><article class="method-param">
-    <div class="method-param-head">
-      <code class="method-param-name">bucket</code>
-      <span class="req-pill optional">Optional</span>
-      <span class="type-pill">hour | day | week | total</span>
-    </div>
-    <p class="method-param-desc">Rollup granularity inside the date range. total = single row for the whole window.</p>
-    <p class="method-param-usage">If you omit it, the server uses <code>day</code>.</p>
   </article></div></div>
     </details>
         <details class="section-card section-collapse methods-card">
@@ -1325,9 +1317,6 @@
         </div>
       </div>
     </div>
-  </div><div class="filter-row" data-filter="bucket" data-filter-type="select">
-    <label for="f-hotspot-hotspot_onboard_cadence-bucket">Bucket</label>
-    <select id="f-hotspot-hotspot_onboard_cadence-bucket" data-name="bucket"><option value="day" selected>day</option><option value="week">week</option><option value="month">month</option><option value="total">total</option></select>
   </div></div></div>
       </div>
         <div class="section-card sample-card sample-collapsed">
