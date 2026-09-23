@@ -53,6 +53,9 @@ CHART_CATEGORIES = {
         'efficiency',
         'programs',
     ],
+    'phoenix': [
+        'summary',
+    ],
 }
 
 # Maps SQL repo category name → app folder name
