@@ -8,8 +8,9 @@ const PORT = 9000;
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'your-webhook-secret-here';
 const PROJECT_DIR = __dirname;
 const SQL_REPO_DIR = '/root/tl-reserach-tool-sqls';
-const CHART_SYNC_SCRIPT = path.join(PROJECT_DIR, 'pipeline', 'sync-charts-to-db.py');
 const CHART_SYNC_LOG = '/tmp/sync-charts-to-db.log';
+const RESTART_BARE_METAL = path.join(PROJECT_DIR, 'scripts', 'restart-bare-metal-app.sh');
+const CHART_PUSH_SCRIPT = path.join(PROJECT_DIR, 'scripts', 'push-chart-sync-to-github.sh');
 const HELIUM_SYNC_SCRIPT = path.join(PROJECT_DIR, 'scripts', 'sync-helium-queries-from-github.sh');
 const HELIUM_SYNC_LOG = '/tmp/sync-helium-queries.log';
 
@@ -56,16 +57,21 @@ function runExec(label, command, logPath) {
 function runChartSync() {
   const authUrl = gitAuthUrl('Topledger/tl-reserach-tool-sqls');
   const branchCmd = 'git rev-parse --abbrev-ref HEAD';
+  const pipeline = path.join(PROJECT_DIR, 'pipeline');
   const command = [
     `cd ${SQL_REPO_DIR}`,
     `git fetch ${authUrl} +refs/heads/master:refs/remotes/origin/master +refs/heads/main:refs/remotes/origin/main`,
     `BRANCH=$(${branchCmd})`,
     'git reset --hard "origin/${BRANCH}" 2>/dev/null || git reset --hard origin/master || git reset --hard origin/main',
     `cd ${PROJECT_DIR}`,
-    `python3 ${CHART_SYNC_SCRIPT} 2>&1 | tee ${CHART_SYNC_LOG}`,
+    `python3 ${path.join(pipeline, 'update_chart_categories.py')}`,
+    `python3 ${path.join(pipeline, 'scaffold_sections.py')}`,
+    `python3 ${path.join(pipeline, 'sync-charts-to-db.py')}`,
+    `bash ${RESTART_BARE_METAL}`,
+    `bash ${CHART_PUSH_SCRIPT}`,
   ].join(' && ');
 
-  runExec('Chart sync (tl-reserach-tool-sqls)', command, CHART_SYNC_LOG);
+  runExec('Chart sync (tl-reserach-tool-sqls)', `${command} 2>&1 | tee ${CHART_SYNC_LOG}`, CHART_SYNC_LOG);
 }
 
 function runHeliumQueriesSync() {
